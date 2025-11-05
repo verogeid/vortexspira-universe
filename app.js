@@ -318,7 +318,7 @@
           keyboard: { enabled: false },
           speed: 400,
         });
-    }
+    },
 
     _destroyCarousel() {
       if (this.STATE.carouselInstance) {
