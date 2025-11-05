@@ -26,7 +26,7 @@
       this.DOM.detalleContenido = document.getElementById('detalle-contenido');
       this.DOM.btnVolverDetalle = document.getElementById('btn-volver-a-navegacion');
       this.DOM.swiperContainer = document.getElementById('nav-swiper'); 
-      this.DOM.cardVolverFija = document.getElementById('card-volver-fija'); // NUEVO
+      this.DOM.cardVolverFija = document.getElementById('card-volver-fija');
 
       // Cargar los datos
       try {
@@ -90,7 +90,7 @@
         html += this._generarTarjetaHTML(item, estaActivo);
       }
       
-      // --- NUEVO: Lógica de Relleno de Rejilla ---
+      // --- Lógica de Relleno de Rejilla ---
       const totalItems = itemsARenderizar.length;
       const { itemsPorColumna } = this.STATE;
       const itemsFaltantes = totalItems % itemsPorColumna;
@@ -98,7 +98,6 @@
       if (itemsFaltantes > 0) {
           const numRelleno = itemsPorColumna - itemsFaltantes;
           for (let i = 0; i < numRelleno; i++) {
-              // esRelleno=true
               html += this._generarTarjetaHTML({nombre: ''}, false, true); 
           }
       }
@@ -115,7 +114,6 @@
       const allSlides = this.DOM.track.children;
       let firstEnabledIndex = 0;
       for (let i = 0; i < allSlides.length; i++) {
-        // Ignorar tarjetas de relleno o deshabilitadas para el foco inicial
         if (!allSlides[i].classList.contains('disabled') && allSlides[i].dataset.tipo !== 'relleno') {
           firstEnabledIndex = i;
           break;
@@ -128,16 +126,16 @@
       this._initCarousel(initialSwiperSlide, numColumnas);
       
       this.STATE.currentFocusIndex = firstEnabledIndex;
-      this._updateFocus(false); // No deslizar, ya lo hace initialSlide
+      this._updateFocus(false);
     },
 
-    // --- 5. SETUP LISTENERS (MODIFICADO para Tarjeta Fija) ---
+    // --- 5. SETUP LISTENERS ---
     setupListeners() {
       this.DOM.track.addEventListener('click', this._handleTrackClick.bind(this));
       this.DOM.btnVolverNav.addEventListener('click', this._handleVolverNav.bind(this));
       this.DOM.btnVolverDetalle.addEventListener('click', this._handleVolverDetalle.bind(this));
       
-      // NUEVO: Listener para la Tarjeta Volver Fija
+      // Listener para la Tarjeta Volver Fija
       this.DOM.cardVolverFija.addEventListener('click', this._handleVolverNav.bind(this));
       
       document.addEventListener('keydown', (e) => {
@@ -159,7 +157,6 @@
     _handleTrackClick(e) {
       const tarjeta = e.target.closest('.swiper-slide');
       
-      // Si es disabled O es tarjeta de relleno, salir
       if (!tarjeta || tarjeta.classList.contains('disabled') || tarjeta.dataset.tipo === 'relleno') {
         return;
       }
@@ -205,7 +202,6 @@
           return;
       }
       
-      // Si el nuevo índice cae en un ítem deshabilitado o de relleno, lo ignoramos y no movemos el foco
       if (allSlides[newIndex].classList.contains('disabled') || allSlides[newIndex].dataset.tipo === 'relleno') {
          newIndex = oldIndex;
       }
@@ -282,7 +278,6 @@
       if (newItemsPorColumna !== this.STATE.itemsPorColumna) {
         console.log(`Reflow: Cambiando a ${newItemsPorColumna} filas.`);
         this.STATE.itemsPorColumna = newItemsPorColumna;
-        // La destrucción y reinicialización se encarga de re-aplicar el grid
         this.renderNavegacion(); 
       }
     },
@@ -344,7 +339,6 @@
 
     _generarTarjetaHTML(nodo, estaActivo, esRelleno = false) {
       if (esRelleno) {
-        // Tarjeta de relleno: sin contenido, deshabilitada, con data-tipo="relleno"
         return `<div class="swiper-slide disabled" data-tipo="relleno" tabindex="-1"></div>`;
       }
       
