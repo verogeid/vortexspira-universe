@@ -12,10 +12,10 @@
       carouselInstance: null,
       resizeObserver: null,
       currentFocusIndex: 0,
-      isInitialLoad: true // NUEVO FLAG
+      isInitialLoad: true
     },
 
-    // --- 2. INICIALIZACIÓN ---
+    // --- 2. INICIALIZACIÓN (MODIFICADA) ---
     async init() {
       console.log("App: Iniciando...");
       
@@ -41,17 +41,20 @@
       // 2.5. Configurar observador de resize ANTES de renderizar
       this._setupResizeObserver();
       
-      // 2.3. Renderizar el estado inicial (Esto ahora lo gestiona el observer o _updateGridRows)
-      // Lo llamamos directamente para iniciar el contenido, luego el observer tomará el control.
+      // 2.3. Renderizar el estado inicial
       this.renderNavegacion(); 
-      this.STATE.isInitialLoad = false; // El flag se pone a false después del primer renderizado
+      
+      // ⭐️ CORRECCIÓN CLAVE: Aplazar la desactivación del flag ⭐️
+      setTimeout(() => {
+          this.STATE.isInitialLoad = false;
+      }, 50); // Pequeño retraso de 50ms para asegurar que el evento de "carga" ya ha pasado.
       
 
       // 2.4. Configurar listeners
       this.setupListeners();
     },
 
-    // --- 3. CARGA DE DATOS ---
+    // --- 3. CARGA DE DATOS (Sin cambios) ---
     async loadData() {
       try {
         const response = await fetch('./cursos.json'); 
@@ -65,7 +68,7 @@
       }
     },
 
-    // --- 4. RENDERIZADO PRINCIPAL ---
+    // --- 4. RENDERIZADO PRINCIPAL (Sin cambios) ---
     renderNavegacion() {
       console.log("Renderizando nivel:", this.STATE.navStack);
 
@@ -110,8 +113,6 @@
 
       // 4.5. Gestionar botón/tarjeta "Volver"
       const isSubLevel = this.STATE.navStack.length > 0;
-      // **CORRECCIÓN DE DISPLAY:** Ya tienen style="display: none" en el HTML, 
-      // pero JS debe re-aplicarlo si es el nivel raíz.
       this.DOM.btnVolverNav.style.display = isSubLevel ? 'block' : 'none';
       this.DOM.cardVolverFija.style.display = isSubLevel ? 'flex' : 'none';
 
@@ -266,7 +267,7 @@
     _setupResizeObserver() {
       this.STATE.resizeObserver = new ResizeObserver(entries => {
         // Ejecutar la lógica de reflow SÓLO después de la carga inicial
-        if (this.STATE.isInitialLoad) return; // Evitar el primer reflow conflictivo
+        if (this.STATE.isInitialLoad) return; 
 
         for (let entry of entries) {
           const height = entry.contentRect.height;
@@ -290,34 +291,28 @@
     },
 
     _initCarousel(initialSwiperSlide, numColumnas) {
-        if (this.STATE.carouselInstance) return;
-    
-        this.STATE.carouselInstance = new Swiper(this.DOM.swiperContainer, {
-          direction: 'horizontal',
-          slidesPerView: 1, 
-          grid: {
-            rows: this.STATE.itemsPorColumna,
-            fill: 'column',
-          },
-          centeredSlides: true,
-          
-          // ⭐️ CORRECCIÓN AÑADIDA AQUÍ ⭐️
-          mousewheel: { 
-              enabled: true,
-              passive: false // Debe ser false para que Swiper pueda llamar a preventDefault.
-                             // Sin embargo, si quieres silenciar la advertencia, 
-                             // en un uso estándar de Swiper se usaría 'passive: true'.
-                             // Dado que estás usando scroll-blocking features, Swiper lo deja en 'false'.
-                             // La mejor solución es ignorar la advertencia si el rendimiento es aceptable.
-          },
-          // ⭐️ FIN CORRECCIÓN ⭐️
-    
-          grabCursor: true,
-          loop: numColumnas > 3,
-          initialSlide: initialSwiperSlide,
-          keyboard: { enabled: false },
-          speed: 400,
-        });
+      if (this.STATE.carouselInstance) return;
+
+      this.STATE.carouselInstance = new Swiper(this.DOM.swiperContainer, {
+        direction: 'horizontal',
+        slidesPerView: 1, 
+        grid: {
+          rows: this.STATE.itemsPorColumna,
+          fill: 'column',
+        },
+        centeredSlides: true,
+        
+        mousewheel: { 
+            enabled: true,
+            passive: false
+        },
+        
+        grabCursor: true,
+        loop: numColumnas > 3,
+        initialSlide: initialSwiperSlide,
+        keyboard: { enabled: false },
+        speed: 400,
+      });
     },
 
     _destroyCarousel() {
