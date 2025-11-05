@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VortexSpira® Universe</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <main id="app-container">
+
+    <div id="vista-navegacion" class="vista active">
+      
+      <button class="btn-volver" id="btn-volver-navegacion" style="display: none;">
+         &larr; Volver
+      </button>
+
+      <div class="carousel-mask">
+        <div class="mask-left"></div>
+        <div class="mask-right"></div>
+      </div>
+
+      <div class="carousel-viewport">
+        <div class="grid-track" id="track-navegacion">
+          </div>
+      </div>
+    </div>
+
+    <div id="vista-detalle" class="vista">
+      <button class="btn-volver" id="btn-volver-a-navegacion">
+        &larr; Volver
+      </button>
+      <div id="detalle-contenido" class="contenido-curso">
+        </div>
+    </div>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
