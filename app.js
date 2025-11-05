@@ -37,13 +37,13 @@
         return;
       }
 
-      // Renderizar el estado inicial
+      // 2.3. Renderizar el estado inicial
       this.renderNavegacion();
 
-      // Configurar listeners
+      // 2.4. Configurar listeners
       this.setupListeners();
       
-      // Configurar observador de resize
+      // 2.5. Configurar observador de resize
       this._setupResizeObserver();
     },
 
@@ -61,7 +61,7 @@
       }
     },
 
-    // --- 4. RENDERIZADO PRINCIPAL (MODIFICADO para RELLENO) ---
+    // --- 4. RENDERIZADO PRINCIPAL ---
     renderNavegacion() {
       console.log("Renderizando nivel:", this.STATE.navStack);
 
@@ -101,7 +101,6 @@
               html += this._generarTarjetaHTML({nombre: ''}, false, true); 
           }
       }
-      // ------------------------------------------
 
       this.DOM.track.innerHTML = html;
 
@@ -110,7 +109,7 @@
       this.DOM.btnVolverNav.style.display = isSubLevel ? 'block' : 'none';
       this.DOM.cardVolverFija.style.display = isSubLevel ? 'flex' : 'none';
 
-      // 4.6. Lógica de Foco Inicial
+      // 4.6. Lógica de Foco Inicial (Centrado)
       const allSlides = this.DOM.track.children;
       let firstEnabledIndex = 0;
       for (let i = 0; i < allSlides.length; i++) {
