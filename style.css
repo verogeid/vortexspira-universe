@@ -20,11 +20,11 @@
   --color-success: #28a745;
   --color-success-bg: rgba(40, 167, 69, 0.1);
 
-  /* ⭐️ VARIABLES DE LAYOUT ⭐️ */
+  /* VARIABLES DE LAYOUT */
   --header-height: 50px;
   --footer-height: 30px;
-  /* Espacio Lateral Reservado (Tarjeta 180px + Margen 30px) */
-  --reserved-side-space: 210px; 
+  --card-width-min: 200px;
+  --card-width-max: 320px;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -61,44 +61,55 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative; /* Contexto para la tarjeta Volver */
+    position: relative; /* Contexto para elementos absolutos */
     
     background: var(--color-bg);
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); 
 }
 
+/* El DIV principal de la vista, que contiene el Grid 1fr | 3fr | 1fr */
 .vista {
   position: relative; 
   width: 100%; 
   height: 100%;
   
-  /* Habilitamos flex para centrar el carrusel */
-  display: flex; 
-  justify-content: center; 
-  align-items: center;
+  /* ⭐️ CRÍTICO: División de espacio 1/5 | 3/5 | 1/5 ⭐️ */
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr; 
+  gap: 0; 
+  
   overflow: hidden; 
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-.vista.active { display: flex; opacity: 1; } 
+.vista.active { display: grid; opacity: 1; } 
+
+
+/* ⭐️ RESPONSIVIDAD DEL TÍTULO ⭐️ */
+header h1 {
+    /* Mínimo 1.5rem, preferido 4vw, máximo 2.5rem */
+    font-size: clamp(1.5rem, 4vw, 2.5rem); 
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+    white-space: nowrap; /* Evitar que el texto del h1 salte de línea */
+}
 
 
 /* --- 3. El Marco de Foco (La Máscara) --- */
 .carousel-mask {
-    position: absolute;
+    position: relative; /* Relativo al Grid Item */
     z-index: 10; 
     
-    /* Damos a la máscara el mismo ancho y altura que al carrusel */
-    width: 70%; 
-    height: 80%; 
-    max-width: 900px;
-    max-height: 700px;
+    /* ⭐️ CRÍTICO: Ocupa la columna central (3fr) ⭐️ */
+    grid-column: 2 / 3; 
+    
+    width: 100%; /* 100% del área 3fr */
+    height: 100%; /* 100% del área */
 
-    /* ⭐️ CORRECCIÓN: Centramos la máscara sobre el área del carrusel ⭐️ */
-    top: 50%;
-    /* Desplazamiento para compensar el margen izquierdo/derecho del Swiper */
-    left: 50%;
-    transform: translate(calc(-50% + (var(--reserved-side-space) / 2)), -50%); 
+    top: 0;
+    left: 0;
+    transform: none; 
 }
 .mask-left, 
 .mask-right {
@@ -118,20 +129,21 @@ body {
 
 /* --- 4. El Carrusel (Viewport y Track) --- */
 .swiper {
-    width: 70%; 
-    height: 80%; 
-    max-width: 900px; 
+    /* ⭐️ CRÍTICO: Ocupa la columna central (3fr) ⭐️ */
+    grid-column: 2 / 3; 
+    
+    width: 100%; /* Ocupa todo el 3fr de la vista */
+    height: 100%; 
     max-height: 700px; 
     
     overflow: visible;
     position: relative; 
     z-index: 1;
     
-    /* ⭐️ CRÍTICO: MARGEN SIMÉTRICO PARA EL ESPACIO LATERAL ⭐️ */
-    /* El margen izquierdo empuja el carrusel fuera del botón Volver. */
-    /* El margen derecho crea el espacio simétrico. */
-    margin-left: var(--reserved-side-space); 
-    margin-right: var(--reserved-side-space); 
+    /* Centramos el contenido dentro del 3fr */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .swiper-wrapper {
@@ -148,8 +160,8 @@ body {
 
 /* --- 5. Tarjetas (Efecto Ghost) --- */
 .swiper-slide {
-  /* ⭐️ CRÍTICO: Dimensionamiento Dinámico para que 3 columnas quepan ⭐️ */
-  width: clamp(200px, 20vw, 320px) !important;
+  /* ⭐️ Dimensionamiento Dinámico ⭐️ */
+  width: clamp(var(--card-width-min), 18vw, var(--card-width-max)) !important;
   height: clamp(150px, 20vh, 180px) !important;
   
   /* Anula el margen inyectado por Swiper */
@@ -212,12 +224,20 @@ body {
     opacity: 0.2;
 }
 
-/* --- 7. Tarjeta Fija de Volver (POSICIONAMIENTO CORRECTO) --- */
-
-/* Ocultación crítica */
+/* --- 7. Tarjeta Fija de Volver (POSICIONAMIENTO EN GRID) --- */
+#btn-volver-navegacion {
+    /* El botón simple Volver (para detalle) usa posición absoluta normal */
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    z-index: 50; 
+}
 #btn-volver-navegacion,
 #card-volver-fija {
-    display: none !important; 
+    display: none !important; /* Ocultación inicial */
+    /* Posicionamiento en el GRID (Columna 1) */
+    grid-column: 1 / 2;
+    place-self: center; /* Centrarlo dentro de su columna */
 }
 
 /* Mostrar solo cuando JS lo fuerza */
@@ -226,15 +246,13 @@ body {
 }
 
 #card-volver-fija {
-  /* Posicionamiento relativo al #app-container */
-  position: absolute; 
-  top: 50%;
-  left: 30px; /* Margen fijo desde la izquierda del #app-container */
-  transform: translateY(-50%);
-  z-index: 50; /* Z-index alto para estar sobre el carrusel */
+  /* Retornamos a posición relativa al Grid Item */
+  position: relative; 
+  transform: translateY(0); 
+  z-index: 50; 
   
-  width: 180px; 
-  height: clamp(150px, 20vh, 180px); /* Mismo alto que las tarjetas del carrusel */
+  width: 180px; /* Ancho fijo para esta tarjeta, independientemente del VW */
+  height: clamp(150px, 20vh, 180px); 
   opacity: 0.6;
   
   /* Estado por defecto (Rojo/Deshabilitado) */
@@ -264,35 +282,22 @@ body {
 #card-volver-fija.active-volver:hover,
 #card-volver-fija.active-volver:focus-visible {
   outline: none;
-  transform: translateY(-50%) scale(1.05); 
+  transform: scale(1.05); 
   box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
 }
 
 /* Efecto Hover/Focus cuando está DESHABILITADO (Rojo) */
 #card-volver-fija:not(.active-volver):hover,
 #card-volver-fija:not(.active-volver):focus-visible {
-    transform: translateY(-50%) scale(1.05);
+    transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
 }
 
 
-/* --- 8. Botón Volver y Detalle --- */
-.btn-volver {
-  position: absolute;
-  top: 30px;
-  left: 30px;
-  z-index: 50; /* Alto z-index */
-  background: #333;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-.btn-volver:hover {
-  background: var(--color-primary);
-}
+/* --- 8. Pie de Página y Extras --- */
+
+/* Nota: El header y footer usan position: fixed definido en el HTML style attribute. */
+/* El padding del body lo compensa. */
 
 .contenido-curso {
   max-width: 700px;
