@@ -1,23 +1,37 @@
 /* --- 1. Paleta de Colores (Variables CSS) --- */
+
+/* 1.1. Paleta por Defecto (Modo Claro) */
 :root {
+  /* Fondos */
   --color-bg: #f4f4f4;
   --color-card-bg: rgba(255, 255, 255, 0.7);
   --color-mask-gradient: rgba(244, 244, 244, 0.4);
+
+  /* Texto y Bordes */
   --color-text: #111;
   --color-card-border: #bbb;
   --color-card-border-disabled: #ccc;
+  
+  /* Acentos (Ghost) */
   --color-primary: #007bff;
   --color-primary-bg: rgba(0, 123, 255, 0.1);
   --color-danger: #dc3545;
   --color-danger-bg: rgba(220, 53, 69, 0.1);
+
+  /* Acento Volver (Verde) */
   --color-success: #28a745;
   --color-success-bg: rgba(40, 167, 69, 0.1);
 }
+
+/* 1.2. Sobrescritura para Modo Oscuro */
 @media (prefers-color-scheme: dark) {
   :root {
+    /* Fondos */
     --color-bg: #111;
     --color-card-bg: rgba(255, 255, 255, 0.02);
     --color-mask-gradient: rgba(17, 17, 17, 0.4);
+
+    /* Texto y Bordes */
     --color-text: #eee;
     --color-card-border: #555;
     --color-card-border-disabled: #444;
@@ -78,7 +92,7 @@ body {
   overflow: visible;
   display: flex;
   align-items: center;
-  position: relative; /* ¡CRÍTICO: z-index para la máscara! */
+  position: relative; 
   z-index: 1;
 }
 
@@ -98,6 +112,11 @@ body {
 .swiper-slide {
   width: 320px !important; 
   height: 180px !important;
+  /* Anula el margen inyectado por Swiper para usar el gap */
+  margin-right: 25px !important; 
+  margin-left: 0 !important;
+  margin-top: 0 !important;
+  
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
   padding: 1.5rem;
@@ -156,10 +175,11 @@ body {
 /* --- 7. Tarjeta Fija de Volver (CORRECCIÓN CRÍTICA DE VISIBILIDAD) --- */
 #btn-volver-navegacion,
 #card-volver-fija {
-    display: none !important; /* REGLA CRÍTICA DE INICIO */
+    /* Regla crítica para la carga inicial */
+    display: none !important; 
 }
 
-/* La tarjeta fija SOLO se muestra cuando JS lo fuerza a 'flex' */
+/* Mostrar solo cuando JS lo fuerza */
 #card-volver-fija[style*="display: flex"] {
     display: flex !important;
 }
@@ -173,13 +193,13 @@ body {
   width: 180px; 
   height: 80px; 
   opacity: 0.6;
-  border: 2px solid var(--color-card-border);
-  background: var(--color-card-bg);
+  /* Estado por defecto (Rojo/Deshabilitado) */
+  border: 2px solid var(--color-danger);
+  background: var(--color-danger-bg);
   padding: 1rem;
   border-radius: 12px;
   transition: all 0.2s ease;
   cursor: pointer;
-  /* display: flex !important; YA CUBIERTO ARRIBA */
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
@@ -189,16 +209,28 @@ body {
     font-size: 1.2rem;
 }
 
-/* Efecto GHOST VERDE para Volver */
-#card-volver-fija:hover,
-#card-volver-fija:focus-visible {
+/* Estilo ACTIVO (Ghost Verde) */
+#card-volver-fija.active-volver {
+    border-color: var(--color-success) !important;
+    background: var(--color-success-bg) !important;
+    opacity: 1;
+}
+
+/* Efecto Hover/Focus cuando está ACTIVO (Verde) */
+#card-volver-fija.active-volver:hover,
+#card-volver-fija.active-volver:focus-visible {
   outline: none;
-  border-color: var(--color-success);
-  background: var(--color-success-bg);
   transform: translateY(-50%) scale(1.05); 
   box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
-  opacity: 1;
 }
+
+/* Efecto Hover/Focus cuando está DESHABILITADO (Rojo) */
+#card-volver-fija:not(.active-volver):hover,
+#card-volver-fija:not(.active-volver):focus-visible {
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+}
+
 
 /* --- 8. Botón Volver y Detalle --- */
 .btn-volver {
