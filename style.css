@@ -71,7 +71,8 @@ body {
   
   /* Habilitamos flex para centrar el carrusel */
   display: flex;
-  justify-content: center;
+  /* ⭐️ CRÍTICO: Alineamos a la derecha para empujar el carrusel fuera del botón Volver ⭐️ */
+  justify-content: flex-end; 
   align-items: center;
 }
 .vista.active { display: flex; opacity: 1; }
@@ -81,12 +82,15 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
   pointer-events: none;
   display: flex;
   justify-content: space-between;
   z-index: 10;
+  
+  /* ⭐️ CRÍTICO: Redefinir la máscara para cubrir solo el carrusel ⭐️ */
+  width: 70%; /* Aproximadamente el ancho del carrusel */
+  height: 80%; /* Aproximadamente la altura del carrusel */
+  max-width: 900px;
 }
 .mask-left, 
 .mask-right {
@@ -105,15 +109,18 @@ body {
 
 /* --- 4. El Carrusel (Viewport y Track) --- */
 .swiper {
-    /* Limitamos el tamaño para dejar espacio lateral para el botón Volver */
-    width: 75%; /* El carrusel ocupa el 75% del ancho del contenedor */
-    height: 90%; /* El carrusel ocupa el 90% de la altura del contenedor */
-    max-width: 900px; /* Limite máximo para evitar que sea demasiado grande en escritorio */
+    /* ⭐️ CRÍTICO: Reducimos el tamaño para dejar espacio lateral para el botón Volver ⭐️ */
+    width: 90%; /* Ocupa casi todo el ancho de su padre (.vista) */
+    height: 90%; 
+    max-width: 900px; 
+    max-height: 700px; 
     
     overflow: visible;
     position: relative; 
     z-index: 1;
-    margin: auto; 
+    
+    /* ⭐️ CRÍTICO: Empujar el carrusel hacia la derecha, lejos de la tarjeta "Volver" (30px + ancho de tarjeta) ⭐️ */
+    margin: 0 0 0 250px; 
 }
 
 .swiper-wrapper {
@@ -215,7 +222,7 @@ body {
   top: 50%;
   left: 30px; 
   transform: translateY(-50%);
-  z-index: 50; /* ⭐️ MUY ALTO: Asegurar que esté sobre todo ⭐️ */
+  z-index: 50;
   width: 180px; 
   height: 80px; 
   opacity: 0.6;
