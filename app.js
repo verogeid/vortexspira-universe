@@ -11,7 +11,8 @@
       itemsPorColumna: 3, 
       carouselInstance: null,
       resizeObserver: null,
-      currentFocusIndex: 0 
+      currentFocusIndex: 0,
+      isInitialLoad: true // NUEVO FLAG
     },
 
     // --- 2. INICIALIZACIÓN ---
@@ -37,14 +38,17 @@
         return;
       }
 
-      // 2.3. Renderizar el estado inicial
-      this.renderNavegacion();
+      // 2.5. Configurar observador de resize ANTES de renderizar
+      this._setupResizeObserver();
+      
+      // 2.3. Renderizar el estado inicial (Esto ahora lo gestiona el observer o _updateGridRows)
+      // Lo llamamos directamente para iniciar el contenido, luego el observer tomará el control.
+      this.renderNavegacion(); 
+      this.STATE.isInitialLoad = false; // El flag se pone a false después del primer renderizado
+      
 
       // 2.4. Configurar listeners
       this.setupListeners();
-      
-      // 2.5. Configurar observador de resize
-      this._setupResizeObserver();
     },
 
     // --- 3. CARGA DE DATOS ---
@@ -106,6 +110,8 @@
 
       // 4.5. Gestionar botón/tarjeta "Volver"
       const isSubLevel = this.STATE.navStack.length > 0;
+      // **CORRECCIÓN DE DISPLAY:** Ya tienen style="display: none" en el HTML, 
+      // pero JS debe re-aplicarlo si es el nivel raíz.
       this.DOM.btnVolverNav.style.display = isSubLevel ? 'block' : 'none';
       this.DOM.cardVolverFija.style.display = isSubLevel ? 'flex' : 'none';
 
@@ -128,13 +134,11 @@
       this._updateFocus(false);
     },
 
-    // --- 5. SETUP LISTENERS ---
+    // --- 5. SETUP LISTENERS (Sin cambios) ---
     setupListeners() {
       this.DOM.track.addEventListener('click', this._handleTrackClick.bind(this));
       this.DOM.btnVolverNav.addEventListener('click', this._handleVolverNav.bind(this));
       this.DOM.btnVolverDetalle.addEventListener('click', this._handleVolverDetalle.bind(this));
-      
-      // Listener para la Tarjeta Volver Fija
       this.DOM.cardVolverFija.addEventListener('click', this._handleVolverNav.bind(this));
       
       document.addEventListener('keydown', (e) => {
@@ -152,7 +156,7 @@
       });
     },
 
-    // --- 6. HANDLERS DE EVENTOS ---
+    // --- 6. HANDLERS DE EVENTOS (Sin cambios) ---
     _handleTrackClick(e) {
       const tarjeta = e.target.closest('.swiper-slide');
       
@@ -258,14 +262,18 @@
       this.DOM.vistaNav.classList.add('active');
     },
 
-    // --- 7. LÓGICA DE RESPONSIVE Y CARRUSEL ---
+    // --- 7. LÓGICA DE RESPONSIVE Y CARRUSEL (MODIFICADA) ---
     _setupResizeObserver() {
       this.STATE.resizeObserver = new ResizeObserver(entries => {
+        // Ejecutar la lógica de reflow SÓLO después de la carga inicial
+        if (this.STATE.isInitialLoad) return; // Evitar el primer reflow conflictivo
+
         for (let entry of entries) {
           const height = entry.contentRect.height;
           this._updateGridRows(height);
         }
       });
+      // Observar el contenedor principal, que determina el espacio vertical
       this.STATE.resizeObserver.observe(document.getElementById('app-container'));
     },
 
