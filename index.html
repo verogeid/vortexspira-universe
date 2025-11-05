@@ -4,26 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VortexSpira®: Selector de Cursos</title>
-    
+
+    <!-- CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="style.css">
-    
-    </head>
+</head>
 <body>
 
   <main id="app-container">
-    
+
     <button class="btn-volver" id="btn-volver-navegacion" style="display: none;">
         &larr; Volver
     </button>
-      
+
     <div id="card-volver-fija" class="swiper-slide" 
          role="button" tabindex="0">
         <h3>&larr; Volver al menú anterior</h3>
     </div>
 
     <div id="vista-navegacion" class="vista active">
-      
+
       <div class="carousel-mask">
         <div class="mask-left"></div>
         <div class="mask-right"></div>
@@ -52,8 +52,15 @@
   <footer style="position: fixed; bottom: 0; width: 100%; text-align: center; background: #222; color: #888; padding: 5px; z-index: 100;">
     <small>Desarrollado por Diego González Fernández | Datos Dinámicos</small>
   </footer>
-  
+
+  <!-- Bibliotecas externas -->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  
+  <!-- ⭐️ MÓDULOS DE LA APLICACIÓN (ORDEN CRÍTICO) ⭐️ -->
+  <script src="data.js"></script>
+  <script src="render.js"></script>
+  <script src="nav.js"></script>
   <script src="app.js"></script>
+
 </body>
 </html>
