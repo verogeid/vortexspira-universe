@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortexSpira® Universe</title>
+    <title>Selector de Cursos 2D</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,10 +24,11 @@
         <div class="mask-right"></div>
       </div>
 
-      <div class="carousel-viewport">
-        <div class="grid-track" id="track-navegacion">
+      <div id="nav-swiper" class="swiper carousel-viewport">
+        <div class="swiper-wrapper grid-track" id="track-navegacion">
           </div>
       </div>
+
     </div>
 
     <div id="vista-detalle" class="vista">
@@ -37,6 +41,8 @@
 
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  
   <script src="app.js"></script>
 </body>
 </html>
