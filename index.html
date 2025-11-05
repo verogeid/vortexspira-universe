@@ -7,37 +7,8 @@
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="style.css">
-
-    <script>
-        // Definiciones de color para SVG y uso interno
-        const PRIMARY_COLOR = '#999';
-        const SECONDARY_COLOR = '#F89707';
-
-        /**
-         * Crea la cadena SVG de VortexSpira con colores especificados.
-         */
-        function createVortexSpiraSVG(primaryColor, accentColor = SECONDARY_COLOR, className = '') {
-            // NOTE: The SVG path data is truncated here for brevity in this response
-            // but the full data string from your input should be used in the actual file.
-            return `<svg class="${className}" xmlns="http://www.w3.org/2000/svg" viewBox="-331 132.8 296.2 296.2" height="40" style="vertical-align: middle; margin-right: 10px;">
-                <g>
-                    <path id="XMLID_150_" fill="${accentColor}" d="M-242.5,261.2c31.6,9.9,57.2,15.2,65.9,13.4c-3.2-3.9-5.9-7-11.8-7.6..."/> 
-                    <path fill="${primaryColor}" d="M-66.6,148.4c-0.7,0-1.3-0.3-1.8-0.8c-0.5-0.6-0.7-1.4-0.7-2.5c0-1.1,0.2-1.9,0.7-2.5c0.4-0.6,1-0.9,1.8-0.9..."/>
-                </g>
-            </svg>`;
-        }
-        
-        // ⭐️ 1. INYECTAR FAVICON ⭐️
-        const FAVICON_SVG_STRING = createVortexSpiraSVG(PRIMARY_COLOR, SECONDARY_COLOR, 'favicon-icon');
-        const FAVICON_SVG_DATA_URI = `data:image/svg+xml,${encodeURIComponent(FAVICON_SVG_STRING)}`;
-
-        const faviconLink = document.createElement('link');
-        faviconLink.rel = 'icon';
-        faviconLink.href = FAVICON_SVG_DATA_URI;
-        faviconLink.type = 'image/svg+xml';
-        document.head.appendChild(faviconLink);
-    </script>
-</head>
+    
+    </head>
 <body>
 
   <main id="app-container">
