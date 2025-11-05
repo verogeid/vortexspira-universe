@@ -8,45 +8,46 @@
     STATE: {
       fullData: null,
       navStack: [],
-      itemsPorColumna: 3, // Valor por defecto
-      carouselInstance: null, // (NUEVO) Para guardar la instancia de Swiper
-      resizeObserver: null,   // (NUEVO) Para el 'reflow'
-      currentFocusIndex: 0    // (NUEVO) Para la navegación por teclado
+      itemsPorColumna: 3, 
+      carouselInstance: null,
+      resizeObserver: null,
+      currentFocusIndex: 0 
     },
 
     // --- 2. INICIALIZACIÓN ---
     async init() {
       console.log("App: Iniciando...");
       
-      // 2.1. Cachear el DOM
+      // Cachear el DOM
       this.DOM.track = document.getElementById('track-navegacion');
       this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion');
       this.DOM.vistaNav = document.getElementById('vista-navegacion');
       this.DOM.vistaDetalle = document.getElementById('vista-detalle');
       this.DOM.detalleContenido = document.getElementById('detalle-contenido');
       this.DOM.btnVolverDetalle = document.getElementById('btn-volver-a-navegacion');
-      this.DOM.swiperContainer = document.getElementById('nav-swiper'); // (NUEVO)
+      this.DOM.swiperContainer = document.getElementById('nav-swiper'); 
+      this.DOM.cardVolverFija = document.getElementById('card-volver-fija'); // NUEVO
 
-      // 2.2. Cargar los datos
+      // Cargar los datos
       try {
         await this.loadData();
       } catch (error) {
         console.error("Error fatal al cargar datos:", error);
+        this.DOM.track.innerHTML = "<p>Error al cargar el contenido.</p>";
         return;
       }
 
-      // 2.3. Renderizar el estado inicial
+      // Renderizar el estado inicial
       this.renderNavegacion();
 
-      // 2.4. Configurar listeners
+      // Configurar listeners
       this.setupListeners();
       
-      // 2.5. Configurar observador de resize (NUEVO)
+      // Configurar observador de resize
       this._setupResizeObserver();
     },
 
     // --- 3. CARGA DE DATOS ---
-    // (Sin cambios)
     async loadData() {
       try {
         const response = await fetch('./cursos.json'); 
@@ -60,11 +61,10 @@
       }
     },
 
-    // --- 4. RENDERIZADO PRINCIPAL ---
+    // --- 4. RENDERIZADO PRINCIPAL (MODIFICADO para RELLENO) ---
     renderNavegacion() {
       console.log("Renderizando nivel:", this.STATE.navStack);
 
-      // (NUEVO) Destruir carrusel anterior antes de renderizar
       this._destroyCarousel();
       
       let itemsARenderizar = [];
@@ -83,47 +83,72 @@
 
       this.DOM.track.innerHTML = '';
       let html = '';
+      
+      // 4.3. Generar HTML para cada nodo
       for (const item of itemsARenderizar) {
         const estaActivo = this._tieneContenidoActivo(item.id);
         html += this._generarTarjetaHTML(item, estaActivo);
       }
+      
+      // --- NUEVO: Lógica de Relleno de Rejilla ---
+      const totalItems = itemsARenderizar.length;
+      const { itemsPorColumna } = this.STATE;
+      const itemsFaltantes = totalItems % itemsPorColumna;
+
+      if (itemsFaltantes > 0) {
+          const numRelleno = itemsPorColumna - itemsFaltantes;
+          for (let i = 0; i < numRelleno; i++) {
+              // esRelleno=true
+              html += this._generarTarjetaHTML({nombre: ''}, false, true); 
+          }
+      }
+      // ------------------------------------------
+
       this.DOM.track.innerHTML = html;
 
-      this.DOM.btnVolverNav.style.display = this.STATE.navStack.length > 0 ? 'block' : 'none';
+      // 4.5. Gestionar botón/tarjeta "Volver"
+      const isSubLevel = this.STATE.navStack.length > 0;
+      this.DOM.btnVolverNav.style.display = isSubLevel ? 'block' : 'none';
+      this.DOM.cardVolverFija.style.display = isSubLevel ? 'flex' : 'none';
+
+      // 4.6. Lógica de Foco Inicial
+      const allSlides = this.DOM.track.children;
+      let firstEnabledIndex = 0;
+      for (let i = 0; i < allSlides.length; i++) {
+        // Ignorar tarjetas de relleno o deshabilitadas para el foco inicial
+        if (!allSlides[i].classList.contains('disabled') && allSlides[i].dataset.tipo !== 'relleno') {
+          firstEnabledIndex = i;
+          break;
+        }
+      }
       
-      // (NUEVO) Inicializar el carrusel DESPUÉS de pintar el HTML
-      this._initCarousel();
+      const initialSwiperSlide = Math.floor(firstEnabledIndex / this.STATE.itemsPorColumna);
+      const numColumnas = Math.ceil(allSlides.length / this.STATE.itemsPorColumna);
+
+      this._initCarousel(initialSwiperSlide, numColumnas);
       
-      // (NUEVO) Poner el foco en el primer elemento
-      this.STATE.currentFocusIndex = 0;
-      this._updateFocus();
+      this.STATE.currentFocusIndex = firstEnabledIndex;
+      this._updateFocus(false); // No deslizar, ya lo hace initialSlide
     },
 
-    // --- 5. SETUP LISTENERS ---
+    // --- 5. SETUP LISTENERS (MODIFICADO para Tarjeta Fija) ---
     setupListeners() {
-      // 5.1. Listener para el track (delegación de eventos)
       this.DOM.track.addEventListener('click', this._handleTrackClick.bind(this));
-      
-      // 5.2. Listener para "Volver" en Navegación
       this.DOM.btnVolverNav.addEventListener('click', this._handleVolverNav.bind(this));
-
-      // 5.3. Listener para "Volver" en Detalle
       this.DOM.btnVolverDetalle.addEventListener('click', this._handleVolverDetalle.bind(this));
-
-      // 5.4. Listener para teclas (MODIFICADO)
+      
+      // NUEVO: Listener para la Tarjeta Volver Fija
+      this.DOM.cardVolverFija.addEventListener('click', this._handleVolverNav.bind(this));
+      
       document.addEventListener('keydown', (e) => {
-        // Solo gestionar teclas si estamos en la vista de navegación
         if (this.DOM.vistaNav.classList.contains('active')) {
           if (e.key === 'Escape') {
-            if (this.STATE.navStack.length > 0) {
-              this._handleVolverNav();
-            }
+            if (this.STATE.navStack.length > 0) this._handleVolverNav();
           } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
-            e.preventDefault(); // Evitar que la página haga scroll
+            e.preventDefault(); 
             this._handleKeyNavigation(e.key);
           }
         } 
-        // Si estamos en el detalle, solo 'Escape'
         else if (this.DOM.vistaDetalle.classList.contains('active') && e.key === 'Escape') {
           this._handleVolverDetalle();
         }
@@ -132,10 +157,10 @@
 
     // --- 6. HANDLERS DE EVENTOS ---
     _handleTrackClick(e) {
-      // (CLASE MODIFICADA de .card a .swiper-slide)
       const tarjeta = e.target.closest('.swiper-slide');
       
-      if (!tarjeta || tarjeta.classList.contains('disabled')) {
+      // Si es disabled O es tarjeta de relleno, salir
+      if (!tarjeta || tarjeta.classList.contains('disabled') || tarjeta.dataset.tipo === 'relleno') {
         return;
       }
 
@@ -150,13 +175,15 @@
       }
     },
     
-    // (NUEVO) Manejador para navegación por teclado
     _handleKeyNavigation(key) {
       const { itemsPorColumna } = this.STATE;
-      const totalItems = this.DOM.track.children.length;
+      const allSlides = this.DOM.track.children;
+      const totalItems = allSlides.length;
       let newIndex = this.STATE.currentFocusIndex;
 
       if (totalItems === 0) return;
+      
+      const oldIndex = newIndex;
 
       switch (key) {
         case 'ArrowUp':
@@ -173,123 +200,113 @@
           break;
         case 'Enter':
         case ' ':
-          // Simular clic en el elemento enfocado
-          const focusedCard = this.DOM.track.children[newIndex];
-          if (focusedCard) {
-            focusedCard.click();
-          }
-          return; // No actualizar foco, la vista cambiará
+          const focusedCard = allSlides[newIndex];
+          if (focusedCard) focusedCard.click();
+          return;
+      }
+      
+      // Si el nuevo índice cae en un ítem deshabilitado o de relleno, lo ignoramos y no movemos el foco
+      if (allSlides[newIndex].classList.contains('disabled') || allSlides[newIndex].dataset.tipo === 'relleno') {
+         newIndex = oldIndex;
       }
       
       this.STATE.currentFocusIndex = newIndex;
-      this._updateFocus();
+      this._updateFocus(true);
     },
 
-    // (NUEVO) Función para actualizar el foco visual y del carrusel
-    _updateFocus() {
+    _updateFocus(shouldSlide = true) {
       const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
       
-      // Quitar foco de todos
       Array.from(this.DOM.track.children).forEach(child => {
         child.classList.remove('focus-visible');
       });
 
-      // Poner foco en el actual
       const targetSlide = this.DOM.track.children[currentFocusIndex];
       if (targetSlide) {
         targetSlide.classList.add('focus-visible');
 
-        // Mover el carrusel
-        // Calculamos a qué columna (slide de Swiper) pertenece el ítem
         const targetSwiperSlide = Math.floor(currentFocusIndex / itemsPorColumna);
-        if (carouselInstance) {
-          carouselInstance.slideTo(targetSwiperSlide, 400); // 400ms de velocidad
+        if (carouselInstance && shouldSlide) {
+          carouselInstance.slideTo(targetSwiperSlide, 400); 
         }
       }
     },
     
-    _handleVolverNav() { /* (Sin cambios) */ },
-    _mostrarDetalle(cursoId) { /* (Sin cambios) */ },
-    _handleVolverDetalle() { /* (Sin cambios) */ },
+    _handleVolverNav() {
+      if (this.STATE.navStack.length > 0) {
+        this.STATE.navStack.pop();
+        this.renderNavegacion();
+      }
+    },
 
-    // --- 7. LÓGICA DE RESPONSIVE Y CARRUSEL (NUEVA SECCIÓN) ---
+    _mostrarDetalle(cursoId) {
+      const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion);
+      if (!curso) return;
+      
+      let enlacesHtml = (curso.enlaces || []).map(enlace => 
+        `<a href="${enlace.url || '#'}" class="enlace-curso" target="_blank">${enlace.texto}</a>`
+      ).join('');
 
-    // 7.1. Observador de Resize (Reflow)
+      this.DOM.detalleContenido.innerHTML = `
+        <h2>${curso.titulo}</h2>
+        <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
+        <div class="enlaces-curso">
+          ${enlacesHtml || 'No hay enlaces para este curso.'}
+        </div>
+      `;
+      this.DOM.vistaNav.classList.remove('active');
+      this.DOM.vistaDetalle.classList.add('active');
+    },
+    
+    _handleVolverDetalle() {
+      this.DOM.vistaDetalle.classList.remove('active');
+      this.DOM.vistaNav.classList.add('active');
+    },
+
+    // --- 7. LÓGICA DE RESPONSIVE Y CARRUSEL ---
     _setupResizeObserver() {
       this.STATE.resizeObserver = new ResizeObserver(entries => {
         for (let entry of entries) {
-          // Usamos la altura del viewport del carrusel
           const height = entry.contentRect.height;
           this._updateGridRows(height);
         }
       });
-      // Observar el contenedor de la app
       this.STATE.resizeObserver.observe(document.getElementById('app-container'));
     },
 
-    // 7.2. Actualizar la rejilla (CSS)
     _updateGridRows(height) {
-      let newItemsPorColumna = 3; // Estándar
+      let newItemsPorColumna = 3; 
       if (height <= 800) newItemsPorColumna = 2;
       if (height <= 500) newItemsPorColumna = 1;
 
-      // Si el valor cambia, lo actualizamos
       if (newItemsPorColumna !== this.STATE.itemsPorColumna) {
         console.log(`Reflow: Cambiando a ${newItemsPorColumna} filas.`);
         this.STATE.itemsPorColumna = newItemsPorColumna;
-        
-        // Actualizar el CSS
-        this.DOM.track.style.gridTemplateRows = `repeat(${newItemsPorColumna}, 1fr)`;
-        
-        // Actualizar el carrusel para que sepa que la geometría cambió
-        if (this.STATE.carouselInstance) {
-          this.STATE.carouselInstance.update();
-        }
+        // La destrucción y reinicialización se encarga de re-aplicar el grid
+        this.renderNavegacion(); 
       }
     },
 
-    // 7.3. Inicializar Swiper
-    _initCarousel() {
-      if (this.STATE.carouselInstance) return; // Ya existe
+    _initCarousel(initialSwiperSlide, numColumnas) {
+      if (this.STATE.carouselInstance) return;
 
       this.STATE.carouselInstance = new Swiper(this.DOM.swiperContainer, {
-        // --- Configuración ---
         direction: 'horizontal',
-        
-        // Agrupa los slides (tarjetas) en columnas
-        // Le decimos que muestre 1 columna (de 3 ítems) a la vez
         slidesPerView: 1, 
-        
-        // (NUEVO) Le decimos a Swiper cuántos ítems forman 1 slide (columna)
         grid: {
           rows: this.STATE.itemsPorColumna,
           fill: 'column',
         },
-        
-        // Centra el slide activo (la columna)
         centeredSlides: true,
-        
-        // Mueve el carrusel con la rueda del ratón
         mousewheel: true,
-        
-        // Permite drag-and-drop
         grabCursor: true,
-        
-        // Desactiva el loop infinito si hay 3 o menos columnas
-        loop: this.DOM.track.children.length > (this.STATE.itemsPorColumna * 3),
-
-        // Le quitamos la navegación por teclado de Swiper
-        // porque haremos la nuestra (saltando ítems)
-        keyboard: {
-          enabled: false,
-        },
-        
-        // Velocidad de la transición
+        loop: numColumnas > 3,
+        initialSlide: initialSwiperSlide,
+        keyboard: { enabled: false },
         speed: 400,
       });
     },
 
-    // 7.4. Destruir Swiper
     _destroyCarousel() {
       if (this.STATE.carouselInstance) {
         this.STATE.carouselInstance.destroy(true, true);
@@ -298,11 +315,39 @@
     },
     
     // --- 8. HELPERS (Funciones auxiliares) ---
-    _findNodoById(id, nodos) { /* (Sin cambios) */ },
-    _tieneContenidoActivo(nodoId) { /* (Sin cambios) */ },
+    _findNodoById(id, nodos) {
+      if (!nodos) return null;
+      for (const n of nodos) {
+        if (n.id === id) return n;
+        if (n.subsecciones && n.subsecciones.length > 0) {
+          const encontrado = this._findNodoById(id, n.subsecciones);
+          if (encontrado) return encontrado;
+        }
+        if (n.cursos && n.cursos.length > 0) {
+          const encontrado = this._findNodoById(id, n.cursos);
+          if (encontrado) return encontrado;
+        }
+      }
+      return null;
+    },
+    
+    _tieneContenidoActivo(nodoId) {
+      const nodo = this._findNodoById(nodoId, this.STATE.fullData.navegacion);
+      if (!nodo) return false;
+      if (nodo.cursos && nodo.cursos.length > 0) return true;
+      if (nodo.titulo) return true;
+      if (!nodo.subsecciones || nodo.subsecciones.length === 0) return false;
+      return nodo.subsecciones.some(subseccion => 
+        this._tieneContenidoActivo(subseccion.id)
+      );
+    },
 
-    // (CLASE MODIFICADA de .card a .swiper-slide)
-    _generarTarjetaHTML(nodo, estaActivo) {
+    _generarTarjetaHTML(nodo, estaActivo, esRelleno = false) {
+      if (esRelleno) {
+        // Tarjeta de relleno: sin contenido, deshabilitada, con data-tipo="relleno"
+        return `<div class="swiper-slide disabled" data-tipo="relleno" tabindex="-1"></div>`;
+      }
+      
       const claseDisabled = estaActivo ? '' : 'disabled';
       const tagAria = estaActivo ? '' : 'aria-disabled="true"';
       const tabindex = estaActivo ? '0' : '-1';
@@ -312,11 +357,8 @@
                        : 'data-tipo="curso"';
 
       let hint = '';
-      if (!estaActivo) {
-        hint = '<span>(Próximamente)</span>';
-      }
+      if (!estaActivo) hint = '<span>(Próximamente)</span>';
 
-      // Añadimos la clase 'swiper-slide'
       return `
         <div class="swiper-slide ${claseDisabled}" 
              data-id="${nodo.id}" 
@@ -324,7 +366,6 @@
              role="button" 
              tabindex="${tabindex}" 
              ${tagAria}>
-          
           <h3>${nodo.nombre || nodo.titulo}</h3>
           ${hint}
         </div>
