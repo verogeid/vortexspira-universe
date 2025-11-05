@@ -33,13 +33,28 @@
           "nombre": "Frameworks",
           "subsecciones": [],
           "cursos": [
-            { "id": "c-02-01", "titulo": "React Moderno (Hooks)", "descripcion": "...", "enlaces": [] }
+            { 
+              "id": "c-02-01", 
+              "titulo": "React Moderno (Hooks)", 
+              "descripcion": "Crea aplicaciones web interactivas y escalables con la librería más popular de JavaScript. Incluye Context API y React Router.", 
+              "enlaces": [] 
+            }
           ]
         }
       ],
       "cursos": [
-        { "id": "c-02-02", "titulo": "CSS Grid y Flexbox", "descripcion": "...", "enlaces": [] },
-        { "id": "c-02-03", "titulo": "Web Performance (WPO)", "descripcion": "...", "enlaces": [] }
+        { 
+          "id": "c-02-02", 
+          "titulo": "CSS Grid y Flexbox", 
+          "descripcion": "Maquetación web moderna sin complicaciones. Aprende a dominar el layout en CSS para cualquier dispositivo.", 
+          "enlaces": [] 
+        },
+        { 
+          "id": "c-02-03", 
+          "titulo": "Web Performance (WPO)", 
+          "descripcion": "Optimiza la velocidad de carga de tu web para mejorar la experiencia de usuario y el SEO. Analiza cuellos de botella.", 
+          "enlaces": [] 
+        }
       ]
     },
     {
@@ -51,7 +66,12 @@
           "nombre": "Automation",
           "subsecciones": [],
           "cursos": [
-             { "id": "c-03-01", "titulo": "Selenium WebDriver", "descripcion": "...", "enlaces": [] }
+             { 
+               "id": "c-03-01", 
+               "titulo": "Selenium WebDriver", 
+               "descripcion": "Aprende a automatizar pruebas web con Selenium y Java/Python.", 
+               "enlaces": [] 
+             }
           ]
         },
         {
