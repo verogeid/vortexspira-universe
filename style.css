@@ -38,7 +38,7 @@
   }
 }
 
-/* --- 2. Configuración General y Vistas --- */
+/* --- 2. Configuración General y Vistas (MODIFICADO) --- */
 body {
   background: var(--color-bg);
   color: var(--color-text);
@@ -48,26 +48,27 @@ body {
   padding-top: 50px; 
   padding-bottom: 50px; 
   
-  /* ⭐️ CORRECCIÓN CENTRADO: Usamos grid para un centrado vertical y horizontal robusto ⭐️ */
   display: grid;
-  place-items: center; /* Centra el contenido (el #app-container) en el centro de la pantalla */
+  place-items: center; 
   min-height: 100vh;
 }
+
 #app-container {
     width: 90%; 
     max-width: 1400px; 
-    flex-grow: 1; 
+    /* Altura total disponible entre header y footer */
+    height: calc(100vh - 100px); 
+    
     display: flex;
-    /* Centrado interno para las vistas */
     justify-content: center;
     align-items: center;
     position: relative;
-    max-height: calc(100vh - 100px); 
     
-    /* ⭐️ CRÍTICO: Aseguramos el fondo para las máscaras ⭐️ */
     background: var(--color-bg);
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); /* Sombra sutil para delimitar el área */
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); 
 }
+
+/* El DIV principal de la vista ahora ocupa el 100% de la altura de #app-container */
 .vista {
   position: absolute;
   top: 0;
@@ -111,10 +112,11 @@ body {
 
 /* --- 4. El Carrusel (Viewport y Track) --- */
 .swiper {
-    /* ⭐️ CRÍTICO: Reducir tamaño relativo del carrusel para el espacio izquierdo y derecho ⭐️ */
-    width: 65%; 
+    /* ⭐️ CRÍTICO: Reducimos el tamaño para dejar espacio libre ⭐️ */
+    /* Dejamos ~30% para márgenes laterales y tarjeta Volver */
+    width: 70%; 
     height: 80%; 
-    max-width: 700px; 
+    max-width: 900px; /* Limitar el ancho máximo del carrusel */
     
     overflow: visible;
     display: flex;
@@ -200,9 +202,9 @@ body {
 }
 
 /* --- 7. Tarjeta Fija de Volver (CORRECCIÓN CRÍTICA DE VISIBILIDAD) --- */
+/* Ocultación crítica */
 #btn-volver-navegacion,
 #card-volver-fija {
-    /* Regla crítica para la carga inicial */
     display: none !important; 
 }
 
@@ -212,14 +214,16 @@ body {
 }
 
 #card-volver-fija {
-  position: absolute;
+  /* Posicionamiento relativo al #app-container (Ahora es su padre) */
+  position: absolute; 
   top: 50%;
-  left: 30px; 
+  left: 30px; /* Margen fijo desde la izquierda del #app-container */
   transform: translateY(-50%);
   z-index: 15;
   width: 180px; 
   height: 80px; 
   opacity: 0.6;
+  
   /* Estado por defecto (Rojo/Deshabilitado) */
   border: 2px solid var(--color-danger);
   background: var(--color-danger-bg);
