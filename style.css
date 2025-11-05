@@ -49,7 +49,7 @@ body {
   top: 0;
   left: 0;
   width: 90%;
-  height: 90vh; /* Ocupan toda la pantalla */
+  height: 80vh; /* Ocupan toda la pantalla */
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -72,11 +72,11 @@ body {
 }
 .mask-left, 
 .mask-right {
-  width: 20%; /* Ajusta esto para cambiar el ancho del foco */
+  width: 33%; /* Ajusta esto para cambiar el ancho del foco */
   height: 90%;
   
   /* ¡La magia! Difumina lo que esté detrás */
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(2px);
   
   /* Degradado para oscurecer los bordes */
   background: linear-gradient(to right, 
