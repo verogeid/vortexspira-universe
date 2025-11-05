@@ -1,21 +1,30 @@
 /* --- 1. Paleta de Colores (Variables CSS) --- */
 :root {
+  /* Fondos */
   --color-bg: #f4f4f4;
   --color-card-bg: rgba(255, 255, 255, 0.7);
   --color-mask-gradient: rgba(244, 244, 244, 0.4);
+
+  /* Texto y Bordes */
   --color-text: #111;
   --color-card-border: #bbb;
   --color-card-border-disabled: #ccc;
+  
+  /* Acentos (Ghost) */
   --color-primary: #007bff;
   --color-primary-bg: rgba(0, 123, 255, 0.1);
   --color-danger: #dc3545;
   --color-danger-bg: rgba(220, 53, 69, 0.1);
+
+  /* Acento Volver (Verde) */
   --color-success: #28a745;
   --color-success-bg: rgba(40, 167, 69, 0.1);
-  
-  /* NUEVAS VARIABLES para dimensionamiento */
+
+  /* ⭐️ VARIABLES DE LAYOUT ⭐️ */
   --header-height: 50px;
   --footer-height: 30px;
+  /* Espacio Lateral Reservado (Tarjeta 180px + Margen 30px) */
+  --reserved-side-space: 210px; 
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -28,17 +37,16 @@
   }
 }
 
-/* --- 2. Configuración General y Vistas (MODIFICADO) --- */
+/* --- 2. Configuración General y Vistas --- */
 body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  overflow: hidden; /* Controlamos el scroll en #app-container si es necesario */
+  overflow: hidden; 
   margin: 0;
   
-  /* ⭐️ Centrado robusto ⭐️ */
   display: grid;
-  place-items: center; 
+  place-items: center; /* Centra el #app-container */
   min-height: 100vh;
 }
 
@@ -46,45 +54,51 @@ body {
     width: 90%; 
     max-width: 1400px; 
     
-    /* ⭐️ CRÍTICO: Definimos la altura total del área de trabajo ⭐️ */
+    /* Altura total disponible entre header y footer */
     height: calc(100vh - var(--header-height) - var(--footer-height) - 40px); 
     min-height: 500px;
     
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
+    position: relative; /* Contexto para la tarjeta Volver */
     
     background: var(--color-bg);
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); 
 }
 
-/* El DIV principal de la vista ocupa el 100% de su padre */
 .vista {
-  position: relative; /* Aseguramos que es un contexto de posicionamiento para los elementos absolutos */
-  width: 100%; /* Ocupa el 100% del #app-container */
+  position: relative; 
+  width: 100%; 
   height: 100%;
   
-  /* ⭐️ CRÍTICO: Alineamos al centro para que el carrusel con sus nuevos márgenes se centre ⭐️ */
-  display: flex;
+  /* Habilitamos flex para centrar el carrusel */
+  display: flex; 
   justify-content: center; 
   align-items: center;
-  overflow: hidden; /* Para que nada desborde si los cálculos son un poco grandes */
+  overflow: hidden; 
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
-.vista.active { display: flex; opacity: 1; }
+.vista.active { display: flex; opacity: 1; } 
+
 
 /* --- 3. El Marco de Foco (La Máscara) --- */
 .carousel-mask {
-  position: absolute;
-  top: 50%;
-  left: 50%; /* Centrado en relación al .vista */
-  transform: translate(-50%, -50%); /* Centrado con transform */
-  z-index: 10; 
-  
-  /* ⭐️ CRÍTICO: Ancho y alto de la máscara, un poco más grandes que el carrusel para el efecto blur ⭐️ */
-  width: clamp(700px, 70vw, 1000px); /* Un ancho que abarque el carrusel + espacios */
-  height: clamp(300px, 70vh, 700px); /* Un alto que abarque el carrusel */
-  max-width: 900px;
+    position: absolute;
+    z-index: 10; 
+    
+    /* Damos a la máscara el mismo ancho y altura que al carrusel */
+    width: 70%; 
+    height: 80%; 
+    max-width: 900px;
+    max-height: 700px;
+
+    /* ⭐️ CORRECCIÓN: Centramos la máscara sobre el área del carrusel ⭐️ */
+    top: 50%;
+    /* Desplazamiento para compensar el margen izquierdo/derecho del Swiper */
+    left: 50%;
+    transform: translate(calc(-50% + (var(--reserved-side-space) / 2)), -50%); 
 }
 .mask-left, 
 .mask-right {
@@ -101,34 +115,30 @@ body {
   );
 }
 
+
 /* --- 4. El Carrusel (Viewport y Track) --- */
 .swiper {
-    /* ⭐️ CRÍTICO: Calculamos el ancho del swiper basado en 3 tarjetas + 2 gaps + 2x ancho del botón volver ⭐️ */
-    /* Ancho de una tarjeta: ~20vw (max 320px) */
-    /* Ancho del botón volver: ~180px (lo medimos visualmente) */
-    /* Gap: 25px */
-    
-    /* Calculo APROXIMADO: (3 * 20vw) + (2 * 25px) + (2 * 180px) = 60vw + 50px + 360px = 60vw + 410px */
-    /* Usamos un max-width para evitar que crezca demasiado en pantallas muy grandes */
-    width: clamp(700px, 70vw, 1000px); /* Ajustado para contener las tarjetas y los espacios */
-    height: 90%; 
-    max-height: 700px; /* Limite la altura para no ocupar todo el viewport */
+    width: 70%; 
+    height: 80%; 
+    max-width: 900px; 
+    max-height: 700px; 
     
     overflow: visible;
     position: relative; 
     z-index: 1;
     
-    /* ⭐️ CRÍTICO: Centramos el swiper automáticamente con margin: auto ⭐️ */
-    /* No necesitamos un margin-left fijo si el width es correcto y el padre es flex-center */
-    margin: auto; 
+    /* ⭐️ CRÍTICO: MARGEN SIMÉTRICO PARA EL ESPACIO LATERAL ⭐️ */
+    /* El margen izquierdo empuja el carrusel fuera del botón Volver. */
+    /* El margen derecho crea el espacio simétrico. */
+    margin-left: var(--reserved-side-space); 
+    margin-right: var(--reserved-side-space); 
 }
 
 .swiper-wrapper {
   display: grid;
-  /* ⭐️ IMPORTANTE: El gap es entre elementos, no un padding general ⭐️ */
-  gap: 25px;
   grid-auto-flow: column;
   grid-template-rows: repeat(3, 1fr); 
+  gap: 25px;
   padding: 0;
   width: auto !important; 
   height: auto;
@@ -138,11 +148,11 @@ body {
 
 /* --- 5. Tarjetas (Efecto Ghost) --- */
 .swiper-slide {
-  /* Mantén el width con clamp para flexibilidad */
+  /* ⭐️ CRÍTICO: Dimensionamiento Dinámico para que 3 columnas quepan ⭐️ */
   width: clamp(200px, 20vw, 320px) !important;
   height: clamp(150px, 20vh, 180px) !important;
   
-  /* ⭐️ CRÍTICO: Eliminamos margin-right fijo para que el gap del grid lo maneje ⭐️ */
+  /* Anula el margen inyectado por Swiper */
   margin-right: 0px !important; 
   margin-left: 0 !important;
   margin-top: 0 !important;
@@ -202,7 +212,7 @@ body {
     opacity: 0.2;
 }
 
-/* --- 7. Tarjeta Fija de Volver (AJUSTES DE Z-INDEX) --- */
+/* --- 7. Tarjeta Fija de Volver (POSICIONAMIENTO CORRECTO) --- */
 
 /* Ocultación crítica */
 #btn-volver-navegacion,
@@ -216,34 +226,27 @@ body {
 }
 
 #card-volver-fija {
+  /* Posicionamiento relativo al #app-container */
   position: absolute; 
   top: 50%;
-  
-  /* ⭐️ CRÍTICO: Posicionamos a la izquierda del CONTENEDOR VISTA ⭐️ */
-  left: 30px; /* Separación del borde izquierdo del #app-container */
-  
+  left: 30px; /* Margen fijo desde la izquierda del #app-container */
   transform: translateY(-50%);
-  z-index: 50; 
-
-  /* ⭐️ CRÍTICO: Damos un ancho explícito a esta tarjeta para que el cálculo del swiper funcione ⭐️ */
+  z-index: 50; /* Z-index alto para estar sobre el carrusel */
+  
   width: 180px; 
   height: clamp(150px, 20vh, 180px); /* Mismo alto que las tarjetas del carrusel */
+  opacity: 0.6;
   
-  border: 2px solid var(--color-card-border-disabled); /* Borde por defecto para inactivo */
-  background: var(--color-card-bg);
-  padding: 1.5rem;
+  /* Estado por defecto (Rojo/Deshabilitado) */
+  border: 2px solid var(--color-danger);
+  background: var(--color-danger-bg);
+  padding: 1rem;
   border-radius: 12px;
-  display: flex;
+  transition: all 0.2s ease;
+  cursor: default;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  text-align: center;
   box-sizing: border-box;
-  color: var(--color-text);
-  font-weight: bold;
-  font-size: 1.1em;
-  transition: all 0.2s ease;
-  cursor: default; /* Inactivo por defecto */
 }
 
 #card-volver-fija h3 {
@@ -278,7 +281,7 @@ body {
   position: absolute;
   top: 30px;
   left: 30px;
-  z-index: 20;
+  z-index: 50; /* Alto z-index */
   background: #333;
   color: #fff;
   border: none;
