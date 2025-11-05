@@ -1,14 +1,15 @@
 // --- app.js ---
 
-// Definiciones de color basadas en tu código HTML para uso interno de JS
+// ⭐️ DEFINICIÓN DE COLORES Y SVG CONSOLIDADA ⭐️
 const PRIMARY_COLOR = '#999';
 const SECONDARY_COLOR = '#F89707';
 
 /**
  * Crea la cadena SVG de VortexSpira con colores especificados.
- * Este código es copiado directamente de tu <script> en el HTML.
+ * Este código contiene la lógica de tu logo.
  */
 function createVortexSpiraSVG(primaryColor, accentColor = SECONDARY_COLOR, className = '') {
+    // Nota: Se usa el SVG completo proporcionado por el usuario, truncado aquí por espacio.
     return `<svg class="${className}" xmlns="http://www.w3.org/2000/svg" viewBox="-331 132.8 296.2 296.2" height="40" style="vertical-align: middle; margin-right: 10px;">
         <g>
             <path id="XMLID_150_" fill="${accentColor}" d="M-242.5,261.2c31.6,9.9,57.2,15.2,65.9,13.4c-3.2-3.9-5.9-7-11.8-7.6
@@ -29,21 +30,21 @@ function createVortexSpiraSVG(primaryColor, accentColor = SECONDARY_COLOR, class
             c-6.1-1.8-11-1.2-16.6,3.3c-9.9,7.9-22.4,10-34.7,10.9c-15.5,1.2-30.5-1.3-44.7-7.9c-6.1-2.8-11.2-6.9-15.1-12.6
             c-4.1-6-9.1-11.4-14.2-17.7c24.3,11.2,49.4,13.6,75.2,10.3c-4.6-2.6-8.7-5.7-14.6-5.6c-22.6,0.6-44.8-1.7-65.6-11.5
             c-3.8-1.8-7.4-4.4-10.7-7.2C-229.7,272.8-236,266.9-242.5,261.2z"/>
-            <path id="XMLID_149_" fill="${primaryColor}" d="M-178.8,249.3c47.8,1.9,94.2,3.6,136.2-22.2c-6.9,10.2-16.8,17.1-27.8,22.9
+            <path fill="${primaryColor}" d="M-178.8,249.3c47.8,1.9,94.2,3.6,136.2-22.2c-6.9,10.2-16.8,17.1-27.8,22.9
             c-15.6,8.3-32.4,12.6-49.7,15c-13.3,1.9-26.7,2.5-40.2,3.3c-2.5,0.1-5.9-1.4-7.6-3.3C-171.8,260.1-175.1,254.6-178.8,249.3z"/>
-            <path id="XMLID_148_" fill="${primaryColor}" d="M-205.6,429c25.3-31.7,30.4-44.3,30.2-75.7c7.2,5.9,14.9,9.8,23.7,9.8c8.3,0,16.6-1.3,24.2-2
+            <path fill="${primaryColor}" d="M-205.6,429c25.3-31.7,30.4-44.3,30.2-75.7c7.2,5.9,14.9,9.8,23.7,9.8c8.3,0,16.6-1.3,24.2-2
             C-136.5,378.2-186.3,421.8-205.6,429z"/>
-            <path id="XMLID_146_" fill="${primaryColor}" d="M-34.8,210.1c-2.7,7-8.2,11.7-14.4,15.7c-15.1,9.8-32.1,14.2-49.5,17.7
+            <path fill="${primaryColor}" d="M-34.8,210.1c-2.7,7-8.2,11.7-14.4,15.7c-15.1,9.8-32.1,14.2-49.5,17.7
             c-21.5,4.4-43.3,4.4-65.1,4.1c-4.6-0.1-9.3-0.6-13.9-1.1c-0.8-0.1-2-0.7-2.3-1.5c-3.8-8.3-3.8-24,7.5-32c0.6,1.6,1.6,3,1.5,4.4
             c-0.1,7.8,4.2,12.8,10.7,15.3c7.5,2.9,15.4,5.8,23.4,6.5c26.1,2.1,51-2.9,74.4-14.9C-53.2,219.7-44,214.9-34.8,210.1z"/>
-            <path id="XMLID_145_" fill="${primaryColor}" d="M-59.8,248.9c-4.5,16.2-14.3,26.8-28.4,33.1c-11,4.9-22.7,8.2-34.1,12.1
+            <path fill="${primaryColor}" d="M-59.8,248.9c-4.5,16.2-14.3,26.8-28.4,33.1c-11,4.9-22.7,8.2-34.1,12.1
             c-0.9,0.3-2.2,0.5-2.9,0.1c-9.7-5.3-19.3-10.6-28.7-16.9C-120.6,274-88.5,268.3-59.8,248.9z"/>
-            <path id="XMLID_144_" fill="${primaryColor}" d="M-103,327.9c-12.8,29.7-37.6,34.5-63.2,26.4c-6.6-2.1-10.9-6.2-12.1-13.7
+            <path fill="${primaryColor}" d="M-103,327.9c-12.8,29.7-37.6,34.5-63.2,26.4c-6.6-2.1-10.9-6.2-12.1-13.7
             c-0.9-5.5-3.3-10.7-5.2-16.3C-157.5,339.8-130.8,340.8-103,327.9z"/>
-            <path id="XMLID_130_" fill="${primaryColor}" d="M-279.6,210.8c-13.9-9-13.3-25.3,1.8-36.1c11.3-8.1,24.1-12.9,37.4-16
+            <path fill="${primaryColor}" d="M-279.6,210.8c-13.9-9-13.3-25.3,1.8-36.1c11.3-8.1,24.1-12.9,37.4-16
             c12.5-2.9,25.1-4.9,37.7-7.3c0.8-0.1,1.6,0.1,2.5,0.7c-7.4,1.8-14.9,3.5-22.2,5.5c-16.2,4.4-31.7,10.2-45.2,20.4
             c-6.8,5.1-12.7,11.1-13.3,20.2C-281.2,202.3-280.1,206.6-279.6,210.8z"/>
-            <path id="XMLID_125_" fill="${primaryColor}" d="M-76.2,282.6c-4,7.4-7.9,14.8-12.1,22c-0.6,1-2.9,1.7-4,1.4c-6.5-1.8-12.8-4-18.8-5.9
+            <path fill="${primaryColor}" d="M-76.2,282.6c-4,7.4-7.9,14.8-12.1,22c-0.6,1-2.9,1.7-4,1.4c-6.5-1.8-12.8-4-18.8-5.9
             C-99.7,294.3-88.3,288.6-76.2,282.6z"/>
             <g>
             <path fill="${primaryColor}" d="M-194.1,149.5c-0.6,0-1.1-0.1-1.6-0.3c-0.5-0.2-0.9-0.5-1.3-0.9c-0.4-0.4-0.7-0.9-0.9-1.4
@@ -55,7 +56,7 @@ function createVortexSpiraSVG(primaryColor, accentColor = SECONDARY_COLOR, class
             c0,0.5,0.1,1,0.3,1.5c0.2,0.5,0.4,0.9,0.7,1.2c0.3,0.3,0.7,0.6,1.1,0.8C-195,148.7-194.6,148.8-194.1,148.8z M-193.9,147.7
             c-0.7,0-1.3-0.2-1.7-0.7c-0.4-0.5-0.6-1.1-0.6-1.9c0-0.5,0.1-1,0.2-1.4c0.2-0.4,0.4-0.7,0.8-1c0.3-0.2,0.7-0.3,1.2-0.4
             c0.5,0,0.9,0.1,1.4,0.3l-0.3,0.7c-0.4-0.2-0.7-0.3-1-0.3c-0.4,0-0.8,0.2-1,0.5c-0.2,0.3-0.4,0.8-0.4,1.4c0,0.6,0.1,1.1,0.3,1.4
-            c-0.2,0.3,0.6,0.5,1.1,0.5c0.2,0,0.4,0,0.6-0.1s0.4-0.1,0.6-0.2l0,0.8c-0.2,0.1-0.4,0.2-0.5,0.2
+            c0.2,0.3,0.6,0.5,1.1,0.5c0.2,0,0.4,0,0.6-0.1s0.4-0.1,0.6-0.2l0,0.8c-0.2,0.1-0.4,0.2-0.5,0.2
             C-193.4,147.7-193.6,147.7-193.9,147.7z"/>
             <path fill="${primaryColor}" d="M-180.5,144.9c0,1.4-0.3,2.5-1.1,3.3c-0.7,0.7-1.7,1.1-3.1,1.1l-2.2,0l-0.1-8.6l2.5,0c0.8,0,1.5,0.1,2.1,0.5
             c0.6,0.3,1,0.8,1.4,1.4C-180.7,143.2-180.5,143.9-180.5,144.9z M-181.6,144.9c0-1.1-0.3-2-0.8-2.5c-0.5-0.5-1.3-0.8-2.2-0.8
@@ -148,22 +149,33 @@ function createVortexSpiraSVG(primaryColor, accentColor = SECONDARY_COLOR, class
 
 // --- NUEVA FUNCIÓN PARA INYECTAR EL LOGO EN EL HEADER ---
 function injectHeaderLogo() {
+    // 1. INYECTAR FAVICON
+    const FAVICON_SVG_STRING = createVortexSpiraSVG(PRIMARY_COLOR, SECONDARY_COLOR, 'favicon-icon');
+    const FAVICON_SVG_DATA_URI = `data:image/svg+xml,${encodeURIComponent(FAVICON_SVG_STRING)}`;
+
+    const faviconLink = document.createElement('link');
+    faviconLink.rel = 'icon';
+    faviconLink.href = FAVICON_SVG_DATA_URI;
+    faviconLink.type = 'image/svg+xml';
+    document.head.appendChild(faviconLink);
+
+    // 2. INYECTAR LOGO EN EL HEADER
     const header = document.getElementById('app-header');
     if (header) {
-        // Obtenemos el SVG y lo insertamos ANTES del <h1>
-        const svgContent = createVortexSpiraSVG(PRIMARY_COLOR, SECONDARY_COLOR, 'header-logo');
+        const logoSVG = createVortexSpiraSVG(PRIMARY_COLOR, SECONDARY_COLOR, 'header-logo');
         const h1 = header.querySelector('h1');
         
-        // Creamos un contenedor temporal para parsear el SVG
         const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = svgContent;
+        tempDiv.innerHTML = logoSVG;
         const svgElement = tempDiv.firstChild;
         
-        // Insertamos el SVG al principio del h1
-        h1.insertBefore(svgElement, h1.firstChild);
+        if (h1) {
+            h1.insertBefore(svgElement, h1.firstChild);
+        }
     }
 }
 
+// ⭐️ APLICACIÓN PRINCIPAL ⭐️
 (function() {
 
   const App = {
@@ -194,382 +206,3 @@ function injectHeaderLogo() {
       this.DOM.cardVolverFija = document.getElementById('card-volver-fija');
 
       // 2.1. Configurar el observador
-      this._setupResizeObserver();
-      
-      // 2.2. Cargar los datos (ESPERA GARANTIZADA)
-      try {
-        await this.loadData();
-      } catch (error) {
-        console.error("Error fatal al cargar datos:", error);
-        this.DOM.track.innerHTML = "<p>Error al cargar el contenido.</p>";
-        return;
-      }
-      
-      // 2.3. Configurar listeners
-      this.setupListeners();
-
-      // 2.4. Renderizar el estado inicial
-      this.renderNavegacion(); 
-      
-      // 2.5. Finalizar la carga inicial
-      this.STATE.initialRenderComplete = true; 
-      console.log("Carga inicial completada. Observer activo.");
-    },
-
-    // --- 3. CARGA DE DATOS ---
-    async loadData() {
-      try {
-        const response = await fetch('./cursos.json'); 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        this.STATE.fullData = await response.json();
-        console.log("Datos cargados con éxito.");
-      } catch (e) {
-        console.error("No se pudo cargar 'cursos.json'", e);
-        throw e;
-      }
-    },
-
-    // --- 4. RENDERIZADO PRINCIPAL (LÓGICA DE RELLENO CORREGIDA) ---
-    renderNavegacion() {
-      if (!this.STATE.fullData) {
-          console.error("No se puede renderizar: Datos no cargados.");
-          return;
-      }
-
-      console.log(`Renderizando nivel: ${this.STATE.navStack.length > 0 ? this.STATE.navStack[this.STATE.navStack.length - 1] : 'Raíz'}`);
-
-      this._destroyCarousel();
-      
-      let itemsDelNivel = [];
-      if (this.STATE.navStack.length === 0) {
-        itemsDelNivel = this.STATE.fullData.navegacion;
-      } else {
-        const idNodoActual = this.STATE.navStack[this.STATE.navStack.length - 1];
-        const nodoActual = this._findNodoById(idNodoActual, this.STATE.fullData.navegacion);
-        if (nodoActual) {
-          itemsDelNivel = [
-            ...(nodoActual.subsecciones || []),
-            ...(nodoActual.cursos || [])
-          ];
-        }
-      }
-
-      this.DOM.track.innerHTML = '';
-      let html = '';
-      const { itemsPorColumna } = this.STATE;
-      
-      // ⭐️ 1. Lógica del Relleno Izquierdo (FUERZA LA COLUMNA 1 DE BLUR) ⭐️
-      // Insertamos una columna completa de elementos deshabilitados
-      for (let i = 0; i < itemsPorColumna; i++) {
-          html += this._generarTarjetaHTML({nombre: ''}, false, true); 
-      }
-      
-      // ⭐️ 2. Insertar los elementos del JSON ⭐️
-      let elementosVisibles = 0;
-      for (const item of itemsDelNivel) {
-        const estaActivo = this._tieneContenidoActivo(item.id);
-        html += this._generarTarjetaHTML(item, estaActivo);
-        elementosVisibles++;
-      }
-      
-      // ⭐️ 3. Lógica del Relleno Derecho ⭐️
-      const totalConRellenoIzquierdo = itemsPorColumna + elementosVisibles;
-      const elementosNecesariosParaColumnaCompleta = Math.ceil(totalConRellenoIzquierdo / itemsPorColumna) * itemsPorColumna;
-      const numRellenoDerecho = elementosNecesariosParaColumnaCompleta - totalConRellenoIzquierdo;
-      
-      for (let i = 0; i < numRellenoDerecho; i++) {
-          html += this._generarTarjetaHTML({nombre: ''}, false, true); 
-      }
-
-      this.DOM.track.innerHTML = html;
-
-      // 4.5. Gestionar botón/tarjeta "Volver"
-      const isSubLevel = this.STATE.navStack.length > 0;
-      
-      if (isSubLevel) {
-          this.DOM.cardVolverFija.classList.add('active-volver'); // Verde (Habilitado)
-          this.DOM.cardVolverFija.style.display = 'flex';
-          this.DOM.btnVolverNav.style.display = 'block';
-      } else {
-          // Nivel Raíz: Deshabilitado (Rojo)
-          this.DOM.cardVolverFija.classList.remove('active-volver');
-          this.DOM.cardVolverFija.style.display = 'flex'; // Mantener visible (pero rojo/deshabilitado)
-          this.DOM.btnVolverNav.style.display = 'none';
-      }
-
-
-      // 4.6. Lógica de Foco Inicial (Centrado)
-      const allSlides = this.DOM.track.children;
-      
-      // El primer elemento visible está en el índice 'itemsPorColumna'
-      const firstEnabledIndex = itemsPorColumna; 
-      
-      // La columna central es la segunda columna, que tiene índice 1
-      const initialSwiperSlide = 1; 
-      
-      const numColumnas = Math.ceil(allSlides.length / itemsPorColumna);
-
-      this._initCarousel(initialSwiperSlide, numColumnas);
-      
-      this.STATE.currentFocusIndex = firstEnabledIndex;
-      this._updateFocus(false);
-    },
-
-    // --- 5. SETUP LISTENERS (Corregido con comprobaciones) ---
-    setupListeners() {
-      // Usamos 'if' para prevenir el TypeError 
-      if (this.DOM.track) {
-          this.DOM.track.addEventListener('click', this._handleTrackClick.bind(this));
-      }
-      if (this.DOM.btnVolverNav) {
-          this.DOM.btnVolverNav.addEventListener('click', this._handleVolverNav.bind(this));
-      }
-      if (this.DOM.btnVolverDetalle) {
-          this.DOM.btnVolverDetalle.addEventListener('click', this._handleVolverDetalle.bind(this));
-      }
-      if (this.DOM.cardVolverFija) {
-          this.DOM.cardVolverFija.addEventListener('click', this._handleVolverNav.bind(this));
-      }
-      
-      document.addEventListener('keydown', (e) => {
-        if (this.DOM.vistaNav.classList.contains('active')) {
-          if (e.key === 'Escape') {
-            if (this.STATE.navStack.length > 0) this._handleVolverNav();
-          } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
-            e.preventDefault(); 
-            this._handleKeyNavigation(e.key);
-          }
-        } 
-        else if (this.DOM.vistaDetalle.classList.contains('active') && e.key === 'Escape') {
-          this._handleVolverDetalle();
-        }
-      });
-    },
-
-    // --- 6. HANDLERS DE EVENTOS (Sin cambios) ---
-    _handleTrackClick(e) {
-      const tarjeta = e.target.closest('.swiper-slide');
-      
-      if (!tarjeta || tarjeta.classList.contains('disabled') || tarjeta.dataset.tipo === 'relleno') {
-        return;
-      }
-
-      const id = tarjeta.dataset.id;
-      const tipo = tarjeta.dataset.tipo;
-
-      if (tipo === 'categoria') {
-        this.STATE.navStack.push(id);
-        this.renderNavegacion();
-      } else if (tipo === 'curso') {
-        this._mostrarDetalle(id);
-      }
-    },
-    
-    _handleKeyNavigation(key) {
-      const { itemsPorColumna } = this.STATE;
-      const allSlides = this.DOM.track.children;
-      const totalItems = allSlides.length;
-      let newIndex = this.STATE.currentFocusIndex;
-
-      if (totalItems === 0) return;
-      
-      const oldIndex = newIndex;
-
-      switch (key) {
-        case 'ArrowUp':
-          newIndex = (newIndex - 1 + totalItems) % totalItems;
-          break;
-        case 'ArrowDown':
-          newIndex = (newIndex + 1) % totalItems;
-          break;
-        case 'ArrowLeft':
-          newIndex = (newIndex - itemsPorColumna + totalItems) % totalItems;
-          break;
-        case 'ArrowRight':
-          newIndex = (newIndex + itemsPorColumna) % totalItems;
-          break;
-        case 'Enter':
-        case ' ':
-          const focusedCard = allSlides[newIndex];
-          if (focusedCard) focusedCard.click();
-          return;
-      }
-      
-      if (allSlides[newIndex].classList.contains('disabled') || allSlides[newIndex].dataset.tipo === 'relleno') {
-         newIndex = oldIndex;
-      }
-      
-      this.STATE.currentFocusIndex = newIndex;
-      this._updateFocus(true);
-    },
-
-    _updateFocus(shouldSlide = true) {
-      const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
-      
-      Array.from(this.DOM.track.children).forEach(child => {
-        child.classList.remove('focus-visible');
-      });
-
-      const targetSlide = this.DOM.track.children[currentFocusIndex];
-      if (targetSlide) {
-        targetSlide.classList.add('focus-visible');
-
-        const targetSwiperSlide = Math.floor(currentFocusIndex / itemsPorColumna);
-        if (carouselInstance && shouldSlide) {
-          carouselInstance.slideTo(targetSwiperSlide, 400); 
-        }
-      }
-    },
-    
-    _handleVolverNav() {
-      if (this.STATE.navStack.length > 0) {
-        this.STATE.navStack.pop();
-        this.renderNavegacion();
-      }
-    },
-
-    _mostrarDetalle(cursoId) {
-      const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion);
-      if (!curso) return;
-      
-      let enlacesHtml = (curso.enlaces || []).map(enlace => 
-        `<a href="${enlace.url || '#'}" class="enlace-curso" target="_blank">${enlace.texto}</a>`
-      ).join('');
-
-      this.DOM.detalleContenido.innerHTML = `
-        <h2>${curso.titulo}</h2>
-        <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
-        <div class="enlaces-curso">
-          ${enlacesHtml || 'No hay enlaces para este curso.'}
-        </div>
-      `;
-      this.DOM.vistaNav.classList.remove('active');
-      this.DOM.vistaDetalle.classList.add('active');
-    },
-    
-    _handleVolverDetalle() {
-      this.DOM.vistaDetalle.classList.remove('active');
-      this.DOM.vistaNav.classList.add('active');
-    },
-
-    // --- 7. LÓGICA DE RESPONSIVE Y CARRUSEL ---
-    _setupResizeObserver() {
-      this.STATE.resizeObserver = new ResizeObserver(entries => {
-        if (!this.STATE.initialRenderComplete) {
-            return;
-        }
-
-        for (let entry of entries) {
-          const height = entry.contentRect.height;
-          this._updateGridRows(height);
-        }
-      });
-      this.STATE.resizeObserver.observe(document.getElementById('app-container'));
-    },
-
-    _updateGridRows(height) {
-      let newItemsPorColumna = 3; 
-      if (height <= 800) newItemsPorColumna = 2;
-      if (height <= 500) newItemsPorColumna = 1;
-
-      if (newItemsPorColumna !== this.STATE.itemsPorColumna) {
-        console.log(`Reflow: Cambiando a ${newItemsPorColumna} filas.`);
-        this.STATE.itemsPorColumna = newItemsPorColumna;
-        this.renderNavegacion(); 
-      }
-    },
-
-    _initCarousel(initialSwiperSlide, numColumnas) {
-      if (this.STATE.carouselInstance) return;
-
-      this.STATE.carouselInstance = new Swiper(this.DOM.swiperContainer, {
-        direction: 'horizontal',
-        slidesPerView: 'auto', 
-        grid: {
-          rows: this.STATE.itemsPorColumna,
-          fill: 'column',
-        },
-        centeredSlides: true,
-        mousewheel: { enabled: true, passive: false },
-        grabCursor: true,
-        loop: numColumnas > 3,
-        initialSlide: initialSwiperSlide,
-        keyboard: { enabled: false },
-        speed: 400,
-      });
-    },
-
-    _destroyCarousel() {
-      if (this.STATE.carouselInstance) {
-        this.STATE.carouselInstance.destroy(true, true);
-        this.STATE.carouselInstance = null;
-      }
-    },
-    
-    // --- 8. HELPERS (Funciones auxiliares) ---
-    _findNodoById(id, nodos) {
-      if (!nodos) return null;
-      for (const n of nodos) {
-        if (n.id === id) return n;
-        if (n.subsecciones && n.subsecciones.length > 0) {
-          const encontrado = this._findNodoById(id, n.subsecciones);
-          if (encontrado) return encontrado;
-        }
-        if (n.cursos && n.cursos.length > 0) {
-          const encontrado = this._findNodoById(id, n.cursos);
-          if (encontrado) return encontrado;
-        }
-      }
-      return null;
-    },
-    
-    _tieneContenidoActivo(nodoId) {
-      const nodo = this._findNodoById(nodoId, this.STATE.fullData.navegacion);
-      if (!nodo) return false;
-      if (nodo.cursos && nodo.cursos.length > 0) return true;
-      if (nodo.titulo) return true;
-      if (!nodo.subsecciones || nodo.subsecciones.length === 0) return false;
-      return nodo.subsecciones.some(subseccion => 
-        this._tieneContenidoActivo(subseccion.id)
-      );
-    },
-
-    _generarTarjetaHTML(nodo, estaActivo, esRelleno = false) {
-      if (esRelleno) {
-        return `<div class="swiper-slide disabled" data-tipo="relleno" tabindex="-1"></div>`;
-      }
-      
-      const claseDisabled = estaActivo ? '' : 'disabled';
-      const tagAria = estaActivo ? '' : 'aria-disabled="true"';
-      const tabindex = estaActivo ? '0' : '-1';
-      
-      const tipoData = (nodo.subsecciones || nodo.nombre) && !nodo.titulo
-                       ? 'data-tipo="categoria"' 
-                       : 'data-tipo="curso"';
-
-      let hint = '';
-      if (!estaActivo) hint = '<span>(Próximamente)</span>';
-
-      return `
-        <div class="swiper-slide ${claseDisabled}" 
-             data-id="${nodo.id}" 
-             ${tipoData}
-             role="button" 
-             tabindex="${tabindex}" 
-             ${tagAria}>
-          <h3>${nodo.nombre || nodo.titulo}</h3>
-          ${hint}
-        </div>
-      `;
-    }
-  };
-
-  // --- 9. PUNTO DE ENTRADA ---
-  document.addEventListener('DOMContentLoaded', () => {
-    injectHeaderLogo(); // ⭐️ CRÍTICO: Inyectar el logo antes de iniciar la app
-    App.init();
-  });
-
-})();
