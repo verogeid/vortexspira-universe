@@ -405,8 +405,19 @@
     }
   };
 
-  // --- 9. PUNTO DE ENTRADA ---
+  // --- 9. INYECTAR EL LOGO EN EL HEADER ---
+  function injectHeaderLogo() {
+      const header = document.getElementById('app-header');
+      if (header) {
+          // Obtenemos el SVG y lo insertamos ANTES del <h1>
+          const svgContent = createVortexSpiraSVG(PRIMARY_COLOR, SECONDARY_COLOR, 'header-logo');
+          header.querySelector('h1').innerHTML = svgContent + header.querySelector('h1').innerHTML;
+      }
+  }
+    
+  // --- 10. PUNTO DE ENTRADA ---
   document.addEventListener('DOMContentLoaded', () => {
+    injectHeaderLogo();
     App.init();
   });
 
