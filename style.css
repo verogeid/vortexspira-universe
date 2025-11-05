@@ -1,37 +1,27 @@
 /* --- 1. Paleta de Colores (Variables CSS) --- */
-
-/* 1.1. Paleta por Defecto (Modo Claro) */
 :root {
-  /* Fondos */
   --color-bg: #f4f4f4;
   --color-card-bg: rgba(255, 255, 255, 0.7);
   --color-mask-gradient: rgba(244, 244, 244, 0.4);
-
-  /* Texto y Bordes */
   --color-text: #111;
   --color-card-border: #bbb;
   --color-card-border-disabled: #ccc;
-  
-  /* Acentos (Ghost) */
   --color-primary: #007bff;
   --color-primary-bg: rgba(0, 123, 255, 0.1);
   --color-danger: #dc3545;
   --color-danger-bg: rgba(220, 53, 69, 0.1);
-
-  /* Acento Volver (Verde) */
   --color-success: #28a745;
   --color-success-bg: rgba(40, 167, 69, 0.1);
+  
+  /* NUEVAS VARIABLES para dimensionamiento */
+  --header-height: 50px;
+  --footer-height: 30px;
 }
-
-/* 1.2. Sobrescritura para Modo Oscuro */
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Fondos */
     --color-bg: #111;
     --color-card-bg: rgba(255, 255, 255, 0.02);
     --color-mask-gradient: rgba(17, 17, 17, 0.4);
-
-    /* Texto y Bordes */
     --color-text: #eee;
     --color-card-border: #555;
     --color-card-border-disabled: #444;
@@ -43,11 +33,10 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  overflow: auto; 
+  overflow: hidden; /* Controlamos el scroll en #app-container si es necesario */
   margin: 0;
-  padding-top: 50px; 
-  padding-bottom: 50px; 
   
+  /* ⭐️ Centrado robusto ⭐️ */
   display: grid;
   place-items: center; 
   min-height: 100vh;
@@ -56,12 +45,14 @@ body {
 #app-container {
     width: 90%; 
     max-width: 1400px; 
-    height: calc(100vh - 100px); 
     
-    /* Usamos flex para contener los elementos (Vista y Volver) */
-    display: flex; 
-    justify-content: center; /* Centrado horizontal del contenido de la vista */
-    align-items: center; /* Centrado vertical del contenido de la vista */
+    /* ⭐️ CRÍTICO: Definimos la altura total del área de trabajo ⭐️ */
+    height: calc(100vh - var(--header-height) - var(--footer-height) - 40px); 
+    min-height: 500px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     
     background: var(--color-bg);
@@ -114,17 +105,14 @@ body {
 
 /* --- 4. El Carrusel (Viewport y Track) --- */
 .swiper {
-    /* Limitamos el tamaño del carrusel, y el margen auto lo centra */
-    width: 70%; 
-    height: 80%; 
-    max-width: 900px; 
-    max-height: 700px; /* Altura máxima para evitar que sea demasiado grande */
+    /* Limitamos el tamaño para dejar espacio lateral para el botón Volver */
+    width: 75%; /* El carrusel ocupa el 75% del ancho del contenedor */
+    height: 90%; /* El carrusel ocupa el 90% de la altura del contenedor */
+    max-width: 900px; /* Limite máximo para evitar que sea demasiado grande en escritorio */
     
     overflow: visible;
     position: relative; 
     z-index: 1;
-    
-    /* ⭐️ CRÍTICO: Centra el carrusel dentro del .vista ⭐️ */
     margin: auto; 
 }
 
@@ -142,8 +130,13 @@ body {
 
 /* --- 5. Tarjetas (Efecto Ghost) --- */
 .swiper-slide {
-  width: 320px !important; 
-  height: 180px !important;
+  /* ⭐️ CRÍTICO: ANCHURA DINÁMICA (33% del viewport para asegurar 3 columnas visibles) ⭐️ */
+  /* Usamos un clamp para limitar el tamaño, pero se calcula por vw */
+  width: clamp(200px, 20vw, 320px) !important;
+  
+  /* ⭐️ ALTURA DINÁMICA (Relativa a la altura de la pantalla, clamp asegura que sea legible) ⭐️ */
+  height: clamp(150px, 20vh, 180px) !important;
+  
   /* Anula el margen inyectado por Swiper para usar el gap */
   margin-right: 25px !important; 
   margin-left: 0 !important;
