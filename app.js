@@ -290,24 +290,35 @@
     },
 
     _initCarousel(initialSwiperSlide, numColumnas) {
-      if (this.STATE.carouselInstance) return;
-
-      this.STATE.carouselInstance = new Swiper(this.DOM.swiperContainer, {
-        direction: 'horizontal',
-        slidesPerView: 1, 
-        grid: {
-          rows: this.STATE.itemsPorColumna,
-          fill: 'column',
-        },
-        centeredSlides: true,
-        mousewheel: true,
-        grabCursor: true,
-        loop: numColumnas > 3,
-        initialSlide: initialSwiperSlide,
-        keyboard: { enabled: false },
-        speed: 400,
-      });
-    },
+        if (this.STATE.carouselInstance) return;
+    
+        this.STATE.carouselInstance = new Swiper(this.DOM.swiperContainer, {
+          direction: 'horizontal',
+          slidesPerView: 1, 
+          grid: {
+            rows: this.STATE.itemsPorColumna,
+            fill: 'column',
+          },
+          centeredSlides: true,
+          
+          // ⭐️ CORRECCIÓN AÑADIDA AQUÍ ⭐️
+          mousewheel: { 
+              enabled: true,
+              passive: false // Debe ser false para que Swiper pueda llamar a preventDefault.
+                             // Sin embargo, si quieres silenciar la advertencia, 
+                             // en un uso estándar de Swiper se usaría 'passive: true'.
+                             // Dado que estás usando scroll-blocking features, Swiper lo deja en 'false'.
+                             // La mejor solución es ignorar la advertencia si el rendimiento es aceptable.
+          },
+          // ⭐️ FIN CORRECCIÓN ⭐️
+    
+          grabCursor: true,
+          loop: numColumnas > 3,
+          initialSlide: initialSwiperSlide,
+          keyboard: { enabled: false },
+          speed: 400,
+        });
+    }
 
     _destroyCarousel() {
       if (this.STATE.carouselInstance) {
