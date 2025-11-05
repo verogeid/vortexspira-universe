@@ -1,5 +1,4 @@
 /* --- 1. Paleta de Colores (Variables CSS) --- */
-/* (Se mantiene igual) */
 :root {
   --color-bg: #f4f4f4;
   --color-card-bg: rgba(255, 255, 255, 0.7);
@@ -79,6 +78,8 @@ body {
   overflow: visible;
   display: flex;
   align-items: center;
+  position: relative; /* ¡CRÍTICO: z-index para la máscara! */
+  z-index: 1;
 }
 
 .swiper-wrapper {
@@ -90,14 +91,11 @@ body {
   width: auto !important; 
   height: auto;
   align-items: center;
-  
-  /* CRÍTICO: Asegura que el backdrop-filter funcione */
   transform: translate3d(0, 0, 0); 
 }
 
 /* --- 5. Tarjetas (Efecto Ghost) --- */
 .swiper-slide {
-  /* CORRECCIÓN: Usamos !important para forzar el tamaño contra Swiper */
   width: 320px !important; 
   height: 180px !important;
   border: 2px solid var(--color-card-border);
@@ -155,7 +153,17 @@ body {
     opacity: 0.2;
 }
 
-/* --- 7. Tarjeta Fija de Volver --- */
+/* --- 7. Tarjeta Fija de Volver (CORRECCIÓN CRÍTICA DE VISIBILIDAD) --- */
+#btn-volver-navegacion,
+#card-volver-fija {
+    display: none !important; /* REGLA CRÍTICA DE INICIO */
+}
+
+/* La tarjeta fija SOLO se muestra cuando JS lo fuerza a 'flex' */
+#card-volver-fija[style*="display: flex"] {
+    display: flex !important;
+}
+
 #card-volver-fija {
   position: absolute;
   top: 50%;
@@ -171,7 +179,7 @@ body {
   border-radius: 12px;
   transition: all 0.2s ease;
   cursor: pointer;
-  display: flex;
+  /* display: flex !important; YA CUBIERTO ARRIBA */
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
