@@ -1,0 +1,79 @@
+{
+  "navegacion": [
+    {
+      "id": "s-01",
+      "nombre": "Diseño UX/UI",
+      "subsecciones": [],
+      "cursos": [
+        {
+          "id": "c-01-01",
+          "titulo": "Introducción al Diseño UX",
+          "descripcion": "Aprende los fundamentos del diseño centrado en el usuario, la investigación y la creación de prototipos para crear productos digitales que la gente ame.",
+          "enlaces": [
+            { "texto": "Ver temario (PDF)", "url": "#" },
+            { "texto": "Inscribirse ahora", "url": "#" }
+          ]
+        },
+        {
+          "id": "c-01-02",
+          "titulo": "Figma de Cero a Experto",
+          "descripcion": "Domina la herramienta líder en diseño de interfaces y colaboración en tiempo real. Desde los básicos hasta los design systems.",
+          "enlaces": [
+            { "texto": "Inscribirse ahora", "url": "#" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s-02",
+      "nombre": "Desarrollo Front-End",
+      "subsecciones": [
+        {
+          "id": "ss-02-01",
+          "nombre": "Frameworks",
+          "subsecciones": [],
+          "cursos": [
+            { "id": "c-02-01", "titulo": "React Moderno (Hooks)", "descripcion": "...", "enlaces": [] }
+          ]
+        }
+      ],
+      "cursos": [
+        { "id": "c-02-02", "titulo": "CSS Grid y Flexbox", "descripcion": "...", "enlaces": [] },
+        { "id": "c-02-03", "titulo": "Web Performance (WPO)", "descripcion": "...", "enlaces": [] }
+      ]
+    },
+    {
+      "id": "s-03",
+      "nombre": "QA (Testing)",
+      "subsecciones": [
+        {
+          "id": "ss-03-01",
+          "nombre": "Automation",
+          "subsecciones": [],
+          "cursos": [
+             { "id": "c-03-01", "titulo": "Selenium WebDriver", "descripcion": "...", "enlaces": [] }
+          ]
+        },
+        {
+          "id": "ss-03-02",
+          "nombre": "Performance",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "ss-03-03",
+          "nombre": "General (ISTQB, Cyber)",
+          "subsecciones": [],
+          "cursos": []
+        }
+      ],
+      "cursos": []
+    },
+    {
+      "id": "s-04",
+      "nombre": "Inteligencia Artificial",
+      "subsecciones": [],
+      "cursos": []
+    }
+  ]
+}
