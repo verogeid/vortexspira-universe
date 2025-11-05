@@ -15,7 +15,7 @@
       isInitialLoad: true
     },
 
-    // --- 2. INICIALIZACIÓN (MODIFICADA) ---
+    // --- 2. INICIALIZACIÓN (ESTRUCTURA MÁS ROBUSTA) ---
     async init() {
       console.log("App: Iniciando...");
       
@@ -29,7 +29,7 @@
       this.DOM.swiperContainer = document.getElementById('nav-swiper'); 
       this.DOM.cardVolverFija = document.getElementById('card-volver-fija');
 
-      // Cargar los datos
+      // 2.1. Cargar los datos (DEBE SER LO PRIMERO)
       try {
         await this.loadData();
       } catch (error) {
@@ -37,24 +37,24 @@
         this.DOM.track.innerHTML = "<p>Error al cargar el contenido.</p>";
         return;
       }
+      
+      // 2.2. Configurar listeners (para que el DOM sea interactivo inmediatamente)
+      this.setupListeners();
 
-      // 2.5. Configurar observador de resize ANTES de renderizar
+      // 2.3. Configurar el observador ANTES de renderizar el contenido
       this._setupResizeObserver();
       
-      // 2.3. Renderizar el estado inicial
+      // 2.4. Renderizar el estado inicial (Ahora que los datos están garantizados)
       this.renderNavegacion(); 
       
-      // ⭐️ CORRECCIÓN CLAVE: Aplazar la desactivación del flag ⭐️
+      // 2.5. Desactivar el flag de carga inicial con un retraso para ignorar el primer resize
       setTimeout(() => {
           this.STATE.isInitialLoad = false;
-      }, 50); // Pequeño retraso de 50ms para asegurar que el evento de "carga" ya ha pasado.
-      
-
-      // 2.4. Configurar listeners
-      this.setupListeners();
+          console.log("Carga inicial completada. Observer activo.");
+      }, 500); // 500ms es un tiempo seguro para que el navegador termine el reflow inicial.
     },
 
-    // --- 3. CARGA DE DATOS (Sin cambios) ---
+    // --- 3. CARGA DE DATOS ---
     async loadData() {
       try {
         const response = await fetch('./cursos.json'); 
@@ -62,6 +62,7 @@
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         this.STATE.fullData = await response.json();
+        console.log("Datos cargados con éxito."); // Mensaje de éxito aquí
       } catch (e) {
         console.error("No se pudo cargar 'cursos.json'", e);
         throw e;
@@ -70,7 +71,7 @@
 
     // --- 4. RENDERIZADO PRINCIPAL (Sin cambios) ---
     renderNavegacion() {
-      console.log("Renderizando nivel:", this.STATE.navStack);
+      console.log(`Renderizando nivel: ${this.STATE.navStack.length > 0 ? this.STATE.navStack[this.STATE.navStack.length - 1] : 'Raíz'}`);
 
       this._destroyCarousel();
       
@@ -263,10 +264,10 @@
       this.DOM.vistaNav.classList.add('active');
     },
 
-    // --- 7. LÓGICA DE RESPONSIVE Y CARRUSEL (MODIFICADA) ---
+    // --- 7. LÓGICA DE RESPONSIVE Y CARRUSEL (Sin cambios) ---
     _setupResizeObserver() {
       this.STATE.resizeObserver = new ResizeObserver(entries => {
-        // Ejecutar la lógica de reflow SÓLO después de la carga inicial
+        // Ejecutar la lógica de reflow SÓLO después de que el flag sea false
         if (this.STATE.isInitialLoad) return; 
 
         for (let entry of entries) {
@@ -301,12 +302,7 @@
           fill: 'column',
         },
         centeredSlides: true,
-        
-        mousewheel: { 
-            enabled: true,
-            passive: false
-        },
-        
+        mousewheel: { enabled: true, passive: false },
         grabCursor: true,
         loop: numColumnas > 3,
         initialSlide: initialSwiperSlide,
