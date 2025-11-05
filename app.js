@@ -12,10 +12,10 @@
       carouselInstance: null,
       resizeObserver: null,
       currentFocusIndex: 0,
-      isInitialLoad: true
+      initialRenderComplete: false // Nuevo flag de control de renderizado
     },
 
-    // --- 2. INICIALIZACIÓN (ESTRUCTURA MÁS ROBUSTA) ---
+    // --- 2. INICIALIZACIÓN (MODIFICADA) ---
     async init() {
       console.log("App: Iniciando...");
       
@@ -29,7 +29,10 @@
       this.DOM.swiperContainer = document.getElementById('nav-swiper'); 
       this.DOM.cardVolverFija = document.getElementById('card-volver-fija');
 
-      // 2.1. Cargar los datos (DEBE SER LO PRIMERO)
+      // 2.1. Configurar el observador ANTES de cargar datos, pero con un control de ejecución
+      this._setupResizeObserver();
+      
+      // 2.2. Cargar los datos (ESPERA GARANTIZADA)
       try {
         await this.loadData();
       } catch (error) {
@@ -38,20 +41,12 @@
         return;
       }
       
-      // 2.2. Configurar listeners (para que el DOM sea interactivo inmediatamente)
-      this.setupListeners();
-
-      // 2.3. Configurar el observador ANTES de renderizar el contenido
-      this._setupResizeObserver();
-      
-      // 2.4. Renderizar el estado inicial (Ahora que los datos están garantizados)
+      // 2.3. RENDERIZADO INICIAL (SÓLO AQUÍ, después de await)
       this.renderNavegacion(); 
+      this.STATE.initialRenderComplete = true; // El renderizado inicial ya se hizo.
       
-      // 2.5. Desactivar el flag de carga inicial con un retraso para ignorar el primer resize
-      setTimeout(() => {
-          this.STATE.isInitialLoad = false;
-          console.log("Carga inicial completada. Observer activo.");
-      }, 500); // 500ms es un tiempo seguro para que el navegador termine el reflow inicial.
+      // 2.4. Configurar listeners
+      this.setupListeners();
     },
 
     // --- 3. CARGA DE DATOS ---
@@ -62,15 +57,21 @@
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         this.STATE.fullData = await response.json();
-        console.log("Datos cargados con éxito."); // Mensaje de éxito aquí
+        console.log("Datos cargados con éxito.");
       } catch (e) {
         console.error("No se pudo cargar 'cursos.json'", e);
         throw e;
       }
     },
 
-    // --- 4. RENDERIZADO PRINCIPAL (Sin cambios) ---
+    // --- 4. RENDERIZADO PRINCIPAL (MODIFICADO) ---
     renderNavegacion() {
+      // ⭐️ SEGURIDAD: Prevenir renderizado si fullData no está cargado ⭐️
+      if (!this.STATE.fullData) {
+          console.error("No se puede renderizar: Datos no cargados.");
+          return;
+      }
+
       console.log(`Renderizando nivel: ${this.STATE.navStack.length > 0 ? this.STATE.navStack[this.STATE.navStack.length - 1] : 'Raíz'}`);
 
       this._destroyCarousel();
@@ -264,11 +265,14 @@
       this.DOM.vistaNav.classList.add('active');
     },
 
-    // --- 7. LÓGICA DE RESPONSIVE Y CARRUSEL (Sin cambios) ---
+    // --- 7. LÓGICA DE RESPONSIVE Y CARRUSEL (MODIFICADA) ---
     _setupResizeObserver() {
       this.STATE.resizeObserver = new ResizeObserver(entries => {
-        // Ejecutar la lógica de reflow SÓLO después de que el flag sea false
-        if (this.STATE.isInitialLoad) return; 
+        // ⭐️ CONTROL DE RENDERIZADO AQUÍ ⭐️
+        // El observer solo actúa si el renderizado inicial ha terminado
+        if (!this.STATE.initialRenderComplete) {
+            return;
+        }
 
         for (let entry of entries) {
           const height = entry.contentRect.height;
