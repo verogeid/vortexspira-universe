@@ -122,15 +122,16 @@ footer a {
     box-sizing: border-box;
 }
 
-/* El DIV principal de la vista, que contiene el Grid 1fr | 3fr | 1fr */
+/* El DIV principal de la vista, que contiene el Grid */
 .vista {
   position: relative; 
   width: 100%; 
   height: 100%;
   
-  /* LAYOUT DE ESCRITORIO: División de espacio 1/5 | 3/5 | 1/5 */
+  /* ⭐️ CORRECCIÓN: Layout Fijo para laterales, flexible para el centro */
+  /* Esto soluciona el problema de las proporciones al redimensionar */
   display: grid;
-  grid-template-columns: 1fr 3fr 1fr; 
+  grid-template-columns: 250px 1fr 250px; 
   gap: 0; 
   
   overflow: visible; /* Asegurar que no se corte el contenido */
@@ -174,14 +175,14 @@ header h1 {
     transform: none; 
     pointer-events: none; /* No debe capturar clics */
     
-    /* ⭐️ CORRECCIÓN: Añadido padding para márgenes laterales */
-    padding: 0 20px;
     box-sizing: border-box;
 }
 .mask-left, 
 .mask-right {
-  position: absolute; /* Posicionar sobre el swiper */
+  /* ⭐️ CORRECCIÓN: Posicionar la máscara SOBRE el slider */
+  position: absolute; 
   top: 0;
+  
   width: 25%;
   height: 100%;
   -webkit-backdrop-filter: blur(4px);
@@ -189,7 +190,7 @@ header h1 {
   background: linear-gradient(to right, 
     var(--color-mask-gradient), transparent
   );
-  z-index: 10;
+  z-index: 10; /* Asegurar que esté sobre el swiper (z-index: 1) */
 }
 .mask-left {
     left: 0;
@@ -212,7 +213,7 @@ header h1 {
     
     overflow: visible;
     position: relative; 
-    z-index: 1;
+    z-index: 1; /* Detrás de la máscara (z-index: 10) */
     
     display: flex;
     justify-content: center; /* Centramos el contenido en el 3fr */
@@ -221,9 +222,6 @@ header h1 {
     align-items: flex-start;
     padding-top: 50px; /* Ajustar este valor para la alineación vertical */
     
-    /* ⭐️ CORRECCIÓN: Añadido padding para márgenes laterales */
-    padding-left: 20px;
-    padding-right: 20px;
     box-sizing: border-box;
 }
 
@@ -403,7 +401,11 @@ header h1 {
   grid-column: 2 / 3;
   
   max-width: 700px;
-  margin: 10% auto; /* El margin auto centrará dentro de la columna 3fr */
+  margin: 0 auto; /* El margin auto centrará dentro de la columna 3fr */
+  
+  /* ⭐️ CORRECCIÓN: Alinear al inicio (top) + padding */
+  padding-top: 50px; /* Coincidir con el slider */
+  
   padding: 2rem;
   box-sizing: border-box; /* Asegurar que el padding no desborde */
 }
@@ -482,6 +484,7 @@ header h1 {
         height: 100% !important;
         max-height: none;
         margin: 0 auto !important; /* Centrar y quitar márgenes extraños */
+        padding-top: 0; /* Resetear el padding de desktop */
     }
     
     .contenido-curso {
