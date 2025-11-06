@@ -24,7 +24,8 @@
   --header-height: 50px;
   --footer-height: 30px;
   --card-width-min: 200px;
-  --card-width-max: 320px;
+  /* ⭐️ AJUSTE: Reducido el max-width para mejor responsividad */
+  --card-width-max: 280px; 
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -45,9 +46,11 @@ body {
   overflow: hidden; 
   margin: 0;
   
-  display: grid;
-  place-items: center; /* Centra el #app-container */
+  /* ⭐️ CORRECCIÓN: Separación de Header/Footer fijos */
+  box-sizing: border-box;
   min-height: 100vh;
+  padding-top: var(--header-height);
+  padding-bottom: var(--footer-height);
 }
 
 /* ESTILOS DE HEADER Y FOOTER MOVILIZADOS */
@@ -104,22 +107,20 @@ footer a {
 
 
 #app-container {
-    width: 100%; /* Ocupa todo el ancho */
-    max-width: 1400px; /* Pero con un máximo */
-    margin: 0 auto;
+  /* ⭐️ CORRECCIÓN: Ocupa todo el espacio disponible (definido por el padding del body) */
+  height: calc(100vh - var(--header-height) - var(--footer-height));
+  width: 100%; /* Ocupa todo el ancho */
+  max-width: 1600px; /* Incrementado para pantallas grandes */
+  margin: 0 auto;
     
-    /* Altura total disponible entre header y footer */
-    height: calc(100vh - var(--header-height) - var(--footer-height) - 40px); 
-    min-height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Contexto para elementos como el botón Volver */
     
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative; /* Contexto para elementos como el botón Volver */
-    
-    background: var(--color-bg);
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); 
-    box-sizing: border-box;
+  background: var(--color-bg);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); 
+  box-sizing: border-box;
 }
 
 /* El DIV principal de la vista, que contiene el Grid */
@@ -128,11 +129,12 @@ footer a {
   width: 100%; 
   height: 100%;
   
-  /* ⭐️ CORRECCIÓN: Layout Fijo para laterales, flexible para el centro */
-  /* Esto soluciona el problema de las proporciones al redimensionar */
+  /* ⭐️ CORRECCIÓN: Layout 1/5, 3/5, 1/5 con GAPs */
   display: grid;
-  grid-template-columns: 250px 1fr 250px; 
-  gap: 0; 
+  grid-template-columns: 1fr 3fr 1fr; 
+  gap: 20px; /* Separación entre columnas */
+  padding: 0 20px; /* Margen de los bordes de la app */
+  box-sizing: border-box;
   
   overflow: visible; /* Asegurar que no se corte el contenido */
   opacity: 0;
@@ -152,30 +154,27 @@ footer a {
 
 /* RESPONSIVIDAD DEL TÍTULO (CORREGIDO) */
 header h1 {
-    /* Mínimo 1.4rem, preferido 2.8vw, máximo 2.2rem */
     font-size: clamp(1.4rem, 2.8vw, 2.2rem); 
     margin: 0;
     padding: 0;
     line-height: 1.2;
-    /* white-space: nowrap; ELIMINADO PARA PERMITIR SALTO DE LÍNEA */
 }
 
 
 /* --- 3. El Marco de Foco (La Máscara) --- */
 .carousel-mask {
-    position: relative; 
-    z-index: 10; 
-    grid-column: 2 / 3; /* Columna Central (3fr) */
-    
-    width: 100%; 
-    height: 100%; 
-
-    top: 0;
-    left: 0;
-    transform: none; 
-    pointer-events: none; /* No debe capturar clics */
-    
-    box-sizing: border-box;
+  /* ⭐️ CORRECCIÓN: Posicionamiento absoluto para superponerse */
+  position: absolute;
+  /* Alineado con la columna central */
+  grid-column: 2 / 3; 
+  width: 100%; 
+  height: 100%; 
+  top: 0;
+  left: 0;
+  
+  z-index: 10; 
+  pointer-events: none; /* No debe capturar clics */
+  overflow: hidden; /* Contiene las máscaras absolutas */
 }
 .mask-left, 
 .mask-right {
@@ -209,14 +208,13 @@ header h1 {
     
     width: 100%; 
     height: 100%; 
-    max-height: 700px; 
     
     overflow: visible;
     position: relative; 
     z-index: 1; /* Detrás de la máscara (z-index: 10) */
     
     display: flex;
-    justify-content: center; /* Centramos el contenido en el 3fr */
+    justify-content: center;
     
     /* ⭐️ CORRECCIÓN: Alinear al inicio (top) + padding */
     align-items: flex-start;
@@ -233,18 +231,18 @@ header h1 {
   padding: 0;
   width: auto !important; 
   height: auto;
-  align-items: center;
+  /* ⭐️ CORRECCIÓN: Alinear grid al inicio (soluciona bug de subsección) */
+  align-items: start; 
   transform: translate3d(0, 0, 0); 
 }
 
 /* --- 5. Tarjetas (Efecto Ghost) --- */
 .swiper-slide {
+  /* ⭐️ AJUSTE: Ancho responsivo mejorado */
   width: clamp(var(--card-width-min), 18vw, var(--card-width-max)) !important;
   height: clamp(150px, 20vh, 180px) !important;
   
-  margin-right: 0px !important; 
-  margin-left: 0 !important;
-  margin-top: 0 !important;
+  margin: 0 !important; /* Reset de Swiper */
   
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
@@ -307,26 +305,25 @@ header h1 {
     top: 30px;
     left: 30px;
     z-index: 50; 
-    display: none; /* Ocultación inicial (solo visible si JS lo fuerza en móvil) */
+    display: none; 
 }
 #card-volver-fija {
     display: none !important; /* Ocultación inicial (JS lo cambiará a 'flex') */
-    grid-column: 1 / 2; /* Columna Izquierda (1fr) */
+    grid-column: 1 / 2; /* Columna Izquierda */
     
-    /* ⭐️ CORRECCIÓN: Alinear al inicio (top) y centro (horizontal) */
+    /* Alinear al inicio (top) y centro (horizontal) */
     place-self: start center; 
-    
-    /* ⭐️ CORRECCIÓN: Añadido padding-top para alinear con el slider */
-    margin-top: 50px; /* Debe coincidir con el padding-top de .swiper */
+    margin-top: 50px; /* Coincidir con el padding-top de .swiper */
 
     position: relative; 
-    transform: translateY(0); 
     z-index: 50; 
     
-    width: 180px; 
-    height: clamp(150px, 20vh, 180px); 
-    opacity: 0.6;
+    /* ⭐️ CORRECCIÓN: Ancho responsivo (100% de su columna 1fr) */
+    width: 100%; 
+    max-width: var(--card-width-max); /* Límite de ancho */
+    height: clamp(150px, 20vh, 180px); /* Altura igual a las cards */
     
+    opacity: 0.6;
     border: 2px solid var(--color-danger);
     background: var(--color-danger-bg);
     padding: 1rem;
@@ -340,8 +337,6 @@ header h1 {
 /* Mostrar solo cuando JS lo fuerza */
 #card-volver-fija[style*="display: flex"] {
     display: flex !important;
-    position: relative; /* Usar posición relativa al Grid Item */
-    transform: translateY(0); 
 }
 
 #card-volver-fija h3 {
@@ -379,7 +374,6 @@ header h1 {
 
 /* --- 8. VISTA DE DETALLE DEL CURSO --- */
 .btn-volver {
-  /* Se utiliza para volver al listado de categorías/cursos */
   position: absolute;
   top: 30px;
   left: 30px;
@@ -397,17 +391,14 @@ header h1 {
 }
 
 .contenido-curso {
-  /* ⭐️ CORRECCIÓN: Asignar al Grid central ⭐️ */
   grid-column: 2 / 3;
-  
+  width: 100%;
   max-width: 700px;
-  margin: 0 auto; /* El margin auto centrará dentro de la columna 3fr */
-  
-  /* ⭐️ CORRECCIÓN: Alinear al inicio (top) + padding */
+  margin: 0 auto; 
   padding-top: 50px; /* Coincidir con el slider */
-  
   padding: 2rem;
-  box-sizing: border-box; /* Asegurar que el padding no desborde */
+  padding-top: 50px;
+  box-sizing: border-box;
 }
 .enlace-curso {
     display: inline-block;
@@ -425,17 +416,16 @@ header h1 {
 
 /* --- 9. ZONA DE INFORMACIÓN ADICIONAL (1/5 DERECHA) --- */
 .info-adicional {
-    grid-column: 3 / 4; /* Columna Derecha (1fr) */
+    grid-column: 3 / 4; /* Columna Derecha */
     
-    /* ⭐️ CORRECCIÓN: Alinear al inicio (top) y centro (horizontal) */
+    /* Alinear al inicio (top) y centro (horizontal) */
     place-self: start center;
-    
-    /* ⭐️ CORRECCIÓN: Añadido padding-top para alinear con el slider */
-    margin-top: 50px; /* Debe coincidir con el padding-top de .swiper */
+    margin-top: 50px; /* Coincidir con el padding-top de .swiper */
 
-    /* ⭐️ CORRECCIÓN: Dimensiones idénticas a #card-volver-fija */
-    width: 180px; 
-    height: clamp(150px, 20vh, 180px); 
+    /* ⭐️ CORRECCIÓN: Ancho responsivo y altura 100% */
+    width: 100%; 
+    max-width: var(--card-width-max); /* Límite de ancho */
+    height: 100%; /* Ocupa toda la altura del slider */
     
     padding: 1.5rem;
     border-radius: 12px;
@@ -466,6 +456,8 @@ header h1 {
     .vista,
     .vista.active {
         grid-template-columns: 1fr; /* Una sola columna para móvil */
+        padding: 0 5%; /* Reducir padding lateral en móvil */
+        gap: 0; /* Sin gap en móvil */
     }
 
     /* 2. OCULTAR ELEMENTOS LATERALES AGRESIVOS */
@@ -479,12 +471,12 @@ header h1 {
     .carousel-mask,
     .contenido-curso { /* Asegurar que el detalle también ocupe el centro */
         grid-column: 1 / 2; /* Ocupa toda la única columna */
-        width: 95% !important; 
-        max-width: 95% !important;
+        width: 100% !important; 
+        max-width: 100% !important;
         height: 100% !important;
         max-height: none;
         margin: 0 auto !important; /* Centrar y quitar márgenes extraños */
-        padding-top: 0; /* Resetear el padding de desktop */
+        padding-top: 10px; /* Resetear el padding de desktop */
     }
     
     .contenido-curso {
