@@ -253,7 +253,6 @@ header h1 {
   padding: 1rem;
   border-radius: 12px;
   transition: all 0.2s ease;
-  cursor: default;
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
@@ -316,6 +315,31 @@ header h1 {
   padding: 2rem;
 }
 
+/* --- 9. ZONA DE INFORMACIÓN ADICIONAL (1/5 DERECHA) (NUEVO) --- */
+.info-adicional {
+    grid-column: 3 / 4; /* Columna Derecha (1fr) */
+    place-self: center; /* Centrarlo dentro de su columna */
+    width: 80%; /* Para que no toque los bordes */
+    height: 80%;
+    padding: 1.5rem;
+    border-radius: 12px;
+    background: var(--color-card-bg);
+    border: 2px dashed var(--color-card-border);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+}
+.info-adicional p {
+    margin-bottom: 0.5rem;
+}
+.info-adicional small {
+    color: #999;
+    font-size: 0.8rem;
+}
+
 
 /* ---------------------------------------------------------------------- */
 /* ⭐️ MEDIA QUERY: ADAPTACIÓN PARA MÓVILES (< 768px) ⭐️ */
@@ -328,8 +352,9 @@ header h1 {
     }
 
     /* 2. OCULTAR ELEMENTOS LATERALES AGRESIVOS */
-    #card-volver-fija {
-        display: none !important; /* Ocultamos la tarjeta fija lateralmente */
+    #card-volver-fija,
+    .info-adicional { /* OCULTAMOS EL NUEVO CONTENEDOR EN MÓVIL */
+        display: none !important; 
     }
     
     /* 3. REPOSICIONAR CARRUSEL Y MÁSCARA */
@@ -373,16 +398,17 @@ header h1 {
 @media (prefers-reduced-motion: reduce) {
   .mask-left,
   .mask-right {
+    -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
   
   .swiper-slide, .swiper-wrapper {
-     transition: none !important;
+    transition: none !important;
   }
 
   .swiper-slide:hover,
   .swiper-slide:focus-visible {
-     transform: none;
-     box-shadow: none;
+    transform: none;
+    box-shadow: none;
   }
 }

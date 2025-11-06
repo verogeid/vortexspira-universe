@@ -33,6 +33,8 @@
       this.DOM.btnVolverDetalle = document.getElementById('btn-volver-a-navegacion');
       this.DOM.swiperContainer = document.getElementById('nav-swiper'); 
       this.DOM.cardVolverFija = document.getElementById('card-volver-fija');
+      // NUEVO: Cachear el contenedor de información adicional
+      this.DOM.infoAdicional = document.getElementById('info-adicional'); 
 
       // 2.1. Configurar el observador (definido en render.js)
       // Nota: Llamamos al método extendido por render.js

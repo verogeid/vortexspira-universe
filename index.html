@@ -18,12 +18,15 @@
     </button>
 
     <div id="card-volver-fija" class="swiper-slide" 
-         role="button" tabindex="0">
+        role="button" tabindex="0">
         <h3>&larr; Volver al menú anterior</h3>
     </div>
 
     <div id="vista-navegacion" class="vista active">
-
+      
+      <!-- Zona 1/5: Botón Volver Fijo (ya implementado) -->
+      
+      <!-- Zona 3/5: Carrusel de Navegación -->
       <div class="carousel-mask">
         <div class="mask-left"></div>
         <div class="mask-right"></div>
@@ -32,6 +35,12 @@
       <div id="nav-swiper" class="swiper carousel-viewport">
         <div class="swiper-wrapper grid-track" id="track-navegacion">
           </div>
+      </div>
+
+      <!-- ZONA 1/5: Informaciones Adicionales (NUEVO) -->
+      <div id="info-adicional" class="info-adicional">
+        <p>Espacio reservado para información contextual.</p>
+        <small>Aquí se podrán añadir datos como el progreso o notas relacionadas con la sobrecarga cognitiva.</small>
       </div>
 
     </div>
@@ -59,9 +68,10 @@
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   
   <!-- ⭐️ MÓDULOS DE LA APLICACIÓN (ORDEN CRÍTICO) ⭐️ -->
+  <script src="debug.js"></script>
   <script src="data.js"></script>
   <script src="render.js"></script>
   <script src="nav.js"></script>
-  <script src="debug.js"></script> <script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
