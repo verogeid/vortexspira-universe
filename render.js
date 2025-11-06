@@ -21,7 +21,8 @@
         this._destroyCarousel();
         
         // Obtener los elementos para el nivel actual
-        let itemsDelNivel = this.STATE.navStack.length === 0 
+        let itemsDelNivel = this.STATE.navStack.length === 0  
+                          ? this.STATE.fullData.navegacion
                           : this._findNodoById(this.STATE.navStack[this.STATE.navStack.length - 1], this.STATE.fullData.navegacion).subsecciones.concat(this._findNodoById(this.STATE.navStack[this.STATE.navStack.length - 1], this.STATE.fullData.navegacion).cursos);
 
         this.DOM.track.innerHTML = '';

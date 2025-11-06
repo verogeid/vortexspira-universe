@@ -113,6 +113,7 @@ header h1 {
 .mask-right {
   width: 25%;
   height: 100%;
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px); 
   background: linear-gradient(to right, 
     var(--color-mask-gradient), transparent
