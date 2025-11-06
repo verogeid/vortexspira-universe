@@ -186,12 +186,17 @@
         
         const swiperConfig = {
             direction: isMobile ? 'vertical' : 'horizontal', 
-            slidesPerView: isMobile ? 'auto' : 1, 
             
-            grid: isMobile ? {} : { 
-                rows: this.STATE.itemsPorColumna,
-                fill: 'row', // CRÍTICO: Debe ser 'row' para la correcta ordenación de la cuadrícula 3xN
-            },
+            // ⭐️ CORRECCIÓN 1: 
+            // Cambiamos '1' por 'auto'. 
+            // 'auto' respeta el 'width: clamp(...)' de nuestro CSS.
+            slidesPerView: isMobile ? 'auto' : 'auto', 
+            
+            // ⭐️ CORRECCIÓN 2: 
+            // Eliminamos el parámetro 'grid' para desktop.
+            // Nuestro CSS en .swiper-wrapper ya gestiona el grid de 3 filas.
+            // Dejar esto aquí causa el bug de 'width: 650px'.
+            grid: isMobile ? {} : false, // Deshabilitado para desktop
 
             centeredSlides: !isMobile, 
             mousewheel: { sensitivity: 1 }, 
