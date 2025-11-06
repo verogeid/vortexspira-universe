@@ -20,18 +20,37 @@
         // Destruir la instancia anterior de Swiper antes de recrear el HTML
         this._destroyCarousel();
         
-        // Obtener los elementos para el nivel actual
-        let itemsDelNivel = this.STATE.navStack.length === 0  
-                          ? this.STATE.fullData.navegacion
-                          : this._findNodoById(this.STATE.navStack[this.STATE.navStack.length - 1], this.STATE.fullData.navegacion).subsecciones.concat(this._findNodoById(this.STATE.navStack[this.STATE.navStack.length - 1], this.STATE.fullData.navegacion).cursos);
-
-        this.DOM.track.innerHTML = '';
-        let html = '';
+        let itemsDelNivel = [];
         const { itemsPorColumna } = this.STATE;
         
         const isSubLevel = this.STATE.navStack.length > 0;
         const isMobile = window.innerWidth <= 768; 
+        
+        // ⭐️ LÓGICA REFACTORIZADA PARA OBTENER itemsDelNivel ⭐️
+        if (!isSubLevel) {
+            // Nivel Raíz: Usar la navegación completa
+            itemsDelNivel = this.STATE.fullData.navegacion;
+        } else {
+            // Nivel Sub-sección: Buscar el nodo y concatenar subsecciones y cursos
+            const currentLevelId = this.STATE.navStack[this.STATE.navStack.length - 1];
+            const nodoActual = this._findNodoById(currentLevelId, this.STATE.fullData.navegacion);
 
+            if (nodoActual) {
+                // Aseguramos que subsecciones y cursos sean arrays antes de concatenar.
+                const subsecciones = nodoActual.subsecciones || [];
+                const cursos = nodoActual.cursos || [];
+                itemsDelNivel = subsecciones.concat(cursos);
+            } else {
+                console.warn(`Nodo no encontrado para el ID: ${currentLevelId}. Volviendo a la raíz.`);
+                this.STATE.navStack.pop(); // Limpiar el stack para evitar errores futuros
+                this.renderNavegacion(); // Volver a renderizar la raíz
+                return;
+            }
+        }
+        
+        this.DOM.track.innerHTML = '';
+        let html = '';
+        
         // ⭐️ 1. INSERCIÓN DEL BOTÓN 'VOLVER' EN EL FLUJO VERTICAL (MÓVIL) ⭐️
         if (isSubLevel && isMobile) {
             // Tarjeta 'Volver' solo para móvil, insertada al inicio del carrusel.
@@ -114,8 +133,8 @@
         
         // En escritorio, forzar que el Swiper se desplace a la primera columna real
         if (!isMobile && this.STATE.carouselInstance) {
-            const targetSwiperSlide = Math.floor(firstEnabledIndex / itemsPorColumna);
-            this.STATE.carouselInstance.slideTo(targetSwiperSlide, 0); 
+             const targetSwiperSlide = Math.floor(firstEnabledIndex / itemsPorColumna);
+             this.STATE.carouselInstance.slideTo(targetSwiperSlide, 0); 
         }
     };
 
@@ -215,7 +234,7 @@
           
           // Asegurar que el elemento esté visible, especialmente en móvil (scrollIntoView)
           if (isMobile || !shouldSlide) {
-            targetSlide.scrollIntoView({ behavior: 'smooth', block: 'center' });
+             targetSlide.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }
         }
     };
@@ -262,10 +281,10 @@
         if (tipoEspecial === 'volver-vertical') {
           return `
               <div class="swiper-slide card-volver-vertical active-volver" 
-                  data-id="volver-nav" 
-                  data-tipo="volver-vertical" 
-                  role="button" 
-                  tabindex="0">
+                   data-id="volver-nav" 
+                   data-tipo="volver-vertical" 
+                   role="button" 
+                   tabindex="0">
                   <h3>← Volver al menú anterior</h3>
               </div>
           `;
@@ -286,11 +305,11 @@
 
         return `
           <div class="swiper-slide ${claseDisabled}" 
-              data-id="${nodo.id}" 
-              ${tipoData}
-              role="button" 
-              tabindex="${tabindex}" 
-              ${tagAria}>
+               data-id="${nodo.id}" 
+               ${tipoData}
+               role="button" 
+               tabindex="${tabindex}" 
+               ${tagAria}>
             <h3>${displayTitle}</h3>
             ${hint}
           </div>
