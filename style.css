@@ -50,6 +50,40 @@ body {
   min-height: 100vh;
 }
 
+/* ESTILOS DE HEADER Y FOOTER MOVILIZADOS */
+header, footer {
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    background: #222;
+    color: #fff; /* Aseguramos color para el header */
+    padding: 10px;
+    z-index: 100;
+    box-sizing: border-box;
+}
+
+header {
+    top: 0;
+    padding: 10px;
+}
+footer {
+    bottom: 0;
+    padding: 5px;
+    color: #888; /* Color específico para el texto del footer */
+}
+footer a {
+    color: #888; /* Color para los enlaces del footer */
+    text-decoration: underline;
+}
+#debug-console {
+    color: #ffcc00; 
+    font-size: 10px; 
+    height: 16px; 
+    overflow: hidden; 
+    white-space: nowrap;
+}
+
+
 #app-container {
     width: 90%; 
     max-width: 1400px; 
@@ -85,14 +119,14 @@ body {
 .vista.active { display: grid; opacity: 1; } 
 
 
-/* RESPONSIVIDAD DEL TÍTULO */
+/* RESPONSIVIDAD DEL TÍTULO (CORREGIDO) */
 header h1 {
-    /* Mínimo 1.5rem, preferido 4vw, máximo 2.5rem */
-    font-size: clamp(1.5rem, 4vw, 2.5rem); 
+    /* Mínimo 1.4rem, preferido 2.8vw, máximo 2.2rem */
+    font-size: clamp(1.4rem, 2.8vw, 2.2rem); 
     margin: 0;
     padding: 0;
     line-height: 1.2;
-    white-space: nowrap; 
+    /* white-space: nowrap; ELIMINADO PARA PERMITIR SALTO DE LÍNEA */
 }
 
 
@@ -225,12 +259,29 @@ header h1 {
     top: 30px;
     left: 30px;
     z-index: 50; 
+    display: none; /* Ocultación inicial (solo visible si JS lo fuerza en móvil) */
 }
-#btn-volver-navegacion,
 #card-volver-fija {
     display: none !important; /* Ocultación inicial */
     grid-column: 1 / 2; /* Columna Izquierda (1fr) */
     place-self: center; /* Centrarlo dentro de su columna */
+
+    position: relative; 
+    transform: translateY(0); 
+    z-index: 50; 
+    
+    width: 180px; 
+    height: clamp(150px, 20vh, 180px); 
+    opacity: 0.6;
+    
+    border: 2px solid var(--color-danger);
+    background: var(--color-danger-bg);
+    padding: 1rem;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
 }
 
 /* Mostrar solo cuando JS lo fuerza */
@@ -238,25 +289,6 @@ header h1 {
     display: flex !important;
     position: relative; /* Usar posición relativa al Grid Item */
     transform: translateY(0); 
-}
-
-#card-volver-fija {
-  position: relative; 
-  transform: translateY(0); 
-  z-index: 50; 
-  
-  width: 180px; 
-  height: clamp(150px, 20vh, 180px); 
-  opacity: 0.6;
-  
-  border: 2px solid var(--color-danger);
-  background: var(--color-danger-bg);
-  padding: 1rem;
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  flex-direction: column;
-  justify-content: center;
-  box-sizing: border-box;
 }
 
 #card-volver-fija h3 {
@@ -292,8 +324,9 @@ header h1 {
     height: auto !important;
 }
 
-/* --- 8. Pie de Página y Extras --- */
+/* --- 8. VISTA DE DETALLE DEL CURSO --- */
 .btn-volver {
+  /* Se utiliza para volver al listado de categorías/cursos */
   position: absolute;
   top: 30px;
   left: 30px;
@@ -315,8 +348,21 @@ header h1 {
   margin: 10% auto;
   padding: 2rem;
 }
+.enlace-curso {
+    display: inline-block;
+    padding: 8px 15px;
+    margin: 10px 10px 0 0;
+    border-radius: 6px;
+    background: var(--color-primary);
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.enlaces-curso a:hover {
+    background: var(--color-success);
+}
 
-/* --- 9. ZONA DE INFORMACIÓN ADICIONAL (1/5 DERECHA) (NUEVO) --- */
+/* --- 9. ZONA DE INFORMACIÓN ADICIONAL (1/5 DERECHA) --- */
 .info-adicional {
     grid-column: 3 / 4; /* Columna Derecha (1fr) */
     place-self: center; /* Centrarlo dentro de su columna */
@@ -354,7 +400,7 @@ header h1 {
 
     /* 2. OCULTAR ELEMENTOS LATERALES AGRESIVOS */
     #card-volver-fija,
-    .info-adicional { /* OCULTAMOS EL NUEVO CONTENEDOR EN MÓVIL */
+    .info-adicional { 
         display: none !important; 
     }
     
