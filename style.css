@@ -173,6 +173,10 @@ header h1 {
     left: 0;
     transform: none; 
     pointer-events: none; /* No debe capturar clics */
+    
+    /* ⭐️ CORRECCIÓN: Añadido padding para márgenes laterales */
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 .mask-left, 
 .mask-right {
@@ -212,7 +216,15 @@ header h1 {
     
     display: flex;
     justify-content: center; /* Centramos el contenido en el 3fr */
-    align-items: center;
+    
+    /* ⭐️ CORRECCIÓN: Alinear al inicio (top) + padding */
+    align-items: flex-start;
+    padding-top: 50px; /* Ajustar este valor para la alineación vertical */
+    
+    /* ⭐️ CORRECCIÓN: Añadido padding para márgenes laterales */
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
 }
 
 .swiper-wrapper {
@@ -302,7 +314,12 @@ header h1 {
 #card-volver-fija {
     display: none !important; /* Ocultación inicial (JS lo cambiará a 'flex') */
     grid-column: 1 / 2; /* Columna Izquierda (1fr) */
-    place-self: center; /* Centrarlo dentro de su columna */
+    
+    /* ⭐️ CORRECCIÓN: Alinear al inicio (top) y centro (horizontal) */
+    place-self: start center; 
+    
+    /* ⭐️ CORRECCIÓN: Añadido padding-top para alinear con el slider */
+    margin-top: 50px; /* Debe coincidir con el padding-top de .swiper */
 
     position: relative; 
     transform: translateY(0); 
@@ -407,9 +424,17 @@ header h1 {
 /* --- 9. ZONA DE INFORMACIÓN ADICIONAL (1/5 DERECHA) --- */
 .info-adicional {
     grid-column: 3 / 4; /* Columna Derecha (1fr) */
-    place-self: center; /* Centrarlo dentro de su columna */
-    width: 80%; /* Para que no toque los bordes */
-    height: 80%;
+    
+    /* ⭐️ CORRECCIÓN: Alinear al inicio (top) y centro (horizontal) */
+    place-self: start center;
+    
+    /* ⭐️ CORRECCIÓN: Añadido padding-top para alinear con el slider */
+    margin-top: 50px; /* Debe coincidir con el padding-top de .swiper */
+
+    /* ⭐️ CORRECCIÓN: Dimensiones idénticas a #card-volver-fija */
+    width: 180px; 
+    height: clamp(150px, 20vh, 180px); 
+    
     padding: 1.5rem;
     border-radius: 12px;
     background: var(--color-card-bg);

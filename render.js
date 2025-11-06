@@ -52,6 +52,7 @@
         let html = '';
         
         // ⭐️ 1. INSERCIÓN DEL BOTÓN 'VOLVER' EN EL FLUJO VERTICAL (MÓVIL) ⭐️
+        // (Tal como lo describiste para móvil)
         if (isSubLevel && isMobile) {
             // Tarjeta 'Volver' solo para móvil, insertada al inicio del carrusel.
             html += this._generarTarjetaHTML({}, false, false, 'volver-vertical'); 
@@ -75,13 +76,25 @@
           elementosVisibles++;
         }
         
-        // ⭐️ 4. Lógica del Relleno Derecho (ESCRITORIO) ⭐️
+        // ⭐️ 4. Lógica del Relleno Derecho (ESCRITORIO) - CORREGIDA ⭐️
+        // (Esta es la lógica que soluciona el 'bug de 6 cards')
         if (!isMobile) {
-            // Calculamos cuántos elementos de relleno se necesitan para completar las columnas de la derecha
             const totalConRellenoIzquierdo = itemsPorColumna + elementosVisibles;
-            const numTotalSlots = Math.ceil(totalConRellenoIzquierdo / itemsPorColumna) * itemsPorColumna;
+            
+            // ⭐️ CORRECCIÓN: 
+            // Forzamos un mínimo de 3 columnas (itemsPorColumna * 3 = 9 slots)
+            // para asegurar el centrado, incluso si hay pocos elementos (como 3 o 6).
+            const minTotalSlots = itemsPorColumna * 3; // 3 (col) * 3 (items) = 9
+            
+            // Calculamos el número de slots necesarios (el múltiplo de 3 más cercano)
+            const slotsNecesarios = Math.ceil(totalConRellenoIzquierdo / itemsPorColumna) * itemsPorColumna;
+            
+            // Usamos el valor mayor (mínimo 9, o más si hay mucho contenido)
+            const numTotalSlots = Math.max(minTotalSlots, slotsNecesarios);
+            
             const numRellenoDerecho = numTotalSlots - totalConRellenoIzquierdo;
             
+            // (Este bucle faltaba en tu versión anterior, causando el bug de 6 cards)
             for (let i = 0; i < numRellenoDerecho; i++) {
                 html += this._generarTarjetaHTML({nombre: ''}, false, true); 
             }
@@ -90,6 +103,7 @@
         this.DOM.track.innerHTML = html;
 
         // 5. Gestión de Tarjeta "Volver" Fija (Escritorio) y Área de Información Adicional
+        // (Esta lógica respeta la alineación superior y visibilidad)
         if (!isMobile) { 
             // 5a. Mostrar el área de Información Adicional (Siempre visible en desktop)
             // (Aseguramos que el CSS no lo oculte si es desktop)
@@ -137,8 +151,8 @@
         
         // En escritorio, forzar que el Swiper se desplace a la primera columna real
         if (!isMobile && this.STATE.carouselInstance) {
-             const targetSwiperSlide = Math.floor(firstEnabledIndex / itemsPorColumna);
-             this.STATE.carouselInstance.slideTo(targetSwiperSlide, 0); 
+            const targetSwiperSlide = Math.floor(firstEnabledIndex / itemsPorColumna);
+            this.STATE.carouselInstance.slideTo(targetSwiperSlide, 0); 
         }
     };
 
@@ -244,7 +258,7 @@
           // Asegurar que el elemento esté visible, especialmente en móvil (scrollIntoView)
           if (isMobile || !shouldSlide) {
              // Usamos 'nearest' para evitar saltos bruscos si ya está parcialmente visible
-             targetSlide.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            targetSlide.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           }
         }
     };
@@ -295,10 +309,10 @@
         if (tipoEspecial === 'volver-vertical') {
           return `
               <div class="swiper-slide card-volver-vertical active-volver" 
-                   data-id="volver-nav" 
-                   data-tipo="volver-vertical" 
-                   role="button" 
-                   tabindex="0">
+                  data-id="volver-nav" 
+                  data-tipo="volver-vertical" 
+                  role="button" 
+                  tabindex="0">
                   <h3>← Volver al menú anterior</h3>
               </div>
           `;
@@ -319,11 +333,11 @@
 
         return `
           <div class="swiper-slide ${claseDisabled}" 
-               data-id="${nodo.id}" 
-               ${tipoData}
-               role="button" 
-               tabindex="${tabindex}" 
-               ${tagAria}>
+              data-id="${nodo.id}" 
+              ${tipoData}
+              role="button" 
+              tabindex="${tabindex}" 
+              ${tagAria}>
             <h3>${displayTitle}</h3>
             ${hint}
           </div>
