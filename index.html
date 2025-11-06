@@ -13,20 +13,26 @@
 
   <main id="app-container">
 
-    <button class="btn-volver" id="btn-volver-navegacion">
+    <button class="btn-volver" id="btn-volver-navegacion" style="display: none;">
         &larr; Volver
     </button>
 
+    <!-- 
+      Tarjeta fija para "Volver" en Desktop. 
+      Inicia con tabindex="-1" (no enfocable).
+      JS la activará (display: flex, tabindex: 0) en subniveles.
+    -->
     <div id="card-volver-fija" class="swiper-slide" 
-        role="button" tabindex="0">
+        role="button" tabindex="-1">
         <h3>&larr; Volver al menú anterior</h3>
     </div>
 
+    <!-- Vista principal de navegación (Grid 1/5 | 3/5 | 1/5) -->
     <div id="vista-navegacion" class="vista active">
       
-      <!-- Zona 1/5: Botón Volver Fijo (ya implementado) -->
+      <!-- Columna 1/5: Ocupada por #card-volver-fija cuando está activa -->
       
-      <!-- Zona 3/5: Carrusel de Navegación -->
+      <!-- Columna 3/5: Carrusel de Navegación -->
       <div class="carousel-mask">
         <div class="mask-left"></div>
         <div class="mask-right"></div>
@@ -34,10 +40,11 @@
 
       <div id="nav-swiper" class="swiper carousel-viewport">
         <div class="swiper-wrapper grid-track" id="track-navegacion">
-          </div>
+          <!-- JS insertará las tarjetas aquí -->
+        </div>
       </div>
 
-      <!-- ZONA 1/5: Informaciones Adicionales (NUEVO) -->
+      <!-- Columna 1/5: Informaciones Adicionales -->
       <div id="info-adicional" class="info-adicional">
         <p>Espacio reservado para información contextual.</p>
         <small>Aquí se podrán añadir datos como el progreso o notas relacionadas con la sobrecarga cognitiva.</small>
@@ -45,22 +52,33 @@
 
     </div>
 
+    <!-- Vista de Detalle (inicialmente oculta) -->
     <div id="vista-detalle" class="vista">
       <button class="btn-volver" id="btn-volver-a-navegacion">
         &larr; Volver
       </button>
       <div id="detalle-contenido" class="contenido-curso">
-        </div>
+        <!-- JS insertará el detalle del curso aquí -->
+      </div>
     </div>
 
   </main>
 
+  <!-- Header (Sin estilos inline) -->
   <header id="app-header">
     <h1>VortexSpira®: Tu Mentor de Audio-Aprendizaje Técnico</h1>
   </header>
 
+  <!-- Footer (Sin estilos inline) -->
   <footer>
-    <small>Desarrollado por Diego González Fernández | <a href="https://www.linkedin.com/in/diego-gonzalez-fernandez" target="_top">LinkedIn</a></small>
+    <small>Desarrollado por Diego González Fernández | 
+      <!-- Enlace actualizado con icono SVG -->
+      <a href="https://www.linkedin.com/in/diego-gonzalez-fernandez" target="_top" aria-label="Perfil de LinkedIn" class="footer-social-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="linkedin-icon">
+          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+        </svg>
+      </a>
+    </small>
     <div id="debug-console"></div>
   </footer>
 

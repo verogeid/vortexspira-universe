@@ -89,26 +89,30 @@
 
         this.DOM.track.innerHTML = html;
 
-        // 5. Gestión de Tarjeta "Volver" Fija (Escritorio)
-        if (this.DOM.cardVolverFija) {
-          if (!isMobile) { 
-              // Mostrar la tarjeta fija solo en escritorio (columna 1/5)
-              this.DOM.cardVolverFija.style.display = 'flex'; 
-              
-              if (isSubLevel) {
-                  // Si estamos en un subnivel, la activamos (estilo verde/clic activo)
-                  this.DOM.cardVolverFija.classList.add('active-volver'); 
-                  this.DOM.cardVolverFija.tabIndex = 0; 
-              } else {
-                  // Si estamos en la raíz, la desactivamos (estilo rojo/clic inactivo)
-                  this.DOM.cardVolverFija.classList.remove('active-volver');
-                  this.DOM.cardVolverFija.tabIndex = -1;
-              }
-              this.DOM.btnVolverNav.style.display = 'none'; // Ocultamos el botón Volver simple
-          } else {
-              // En móvil, aseguramos que el botón Volver fijo esté oculto
-              this.DOM.cardVolverFija.style.display = 'none'; 
-          }
+        // 5. Gestión de Tarjeta "Volver" Fija (Escritorio) y Área de Información Adicional
+        if (!isMobile) { 
+            // 5a. Mostrar el área de Información Adicional (Siempre visible en desktop)
+            // (Aseguramos que el CSS no lo oculte si es desktop)
+            this.DOM.infoAdicional.style.display = 'flex'; 
+            
+            // 5b. Gestión de la Tarjeta Volver Fija (Columna 1/5)
+            if (isSubLevel) {
+                // Si estamos en un subnivel, la activamos y mostramos
+                this.DOM.cardVolverFija.style.display = 'flex'; 
+                this.DOM.cardVolverFija.classList.add('active-volver'); 
+                this.DOM.cardVolverFija.tabIndex = 0; 
+            } else {
+                // Si estamos en la raíz, la ocultamos y desactivamos
+                this.DOM.cardVolverFija.style.display = 'none'; 
+                this.DOM.cardVolverFija.classList.remove('active-volver');
+                this.DOM.cardVolverFija.tabIndex = -1;
+            }
+            // Ocultamos el botón Volver simple (el que está fuera de flujo)
+            this.DOM.btnVolverNav.style.display = 'none'; 
+        } else {
+            // En móvil, aseguramos que el botón Volver fijo y el área de info adicional estén ocultos
+            this.DOM.cardVolverFija.style.display = 'none'; 
+            this.DOM.infoAdicional.style.display = 'none';
         }
 
 
@@ -234,7 +238,8 @@
           
           // Asegurar que el elemento esté visible, especialmente en móvil (scrollIntoView)
           if (isMobile || !shouldSlide) {
-             targetSlide.scrollIntoView({ behavior: 'smooth', block: 'center' });
+             // Usamos 'nearest' para evitar saltos bruscos si ya está parcialmente visible
+             targetSlide.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           }
         }
     };
@@ -253,6 +258,7 @@
           }
           // Buscar en cursos (si el nodo es un contenedor y tiene cursos)
           if (n.cursos && n.cursos.length > 0) {
+            // Un curso también es un "nodo" que se puede encontrar por ID
             const cursoEncontrado = n.cursos.find(c => c.id === id);
             if (cursoEncontrado) return cursoEncontrado;
           }
@@ -264,11 +270,14 @@
         const nodo = this._findNodoById(nodoId, this.STATE.fullData.navegacion);
         if (!nodo) return false;
         
-        if (nodo.titulo) return true; // Es un curso, es activo
-        if (nodo.subsecciones && nodo.subsecciones.length > 0) return true; // Es una sección/subsección con más niveles
-        if (nodo.cursos && nodo.cursos.length > 0) return true; // Es una sección/subsección con cursos
+        // Si es un curso (tiene 'titulo'), está activo por definición.
+        if (nodo.titulo) return true; 
         
-        return false; // No tiene nada, es "Próximamente"
+        // Si es una categoría/sección, comprobamos si tiene contenido.
+        const hasSubsecciones = nodo.subsecciones && nodo.subsecciones.length > 0;
+        const hasCursos = nodo.cursos && nodo.cursos.length > 0;
+        
+        return hasSubsecciones || hasCursos; // Es activo si tiene CUALQUIERA de los dos.
     };
     
     // ⭐️ 5. GENERADOR DE HTML ⭐️
