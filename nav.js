@@ -1,49 +1,45 @@
 // --- nav.js ---
 
-// Asume que la variable App ya existe en el scope global o será extendida.
-// Las funciones auxiliares (_findNodoById, etc.) deben estar definidas antes (p.ej., en render.js o data.js).
-
+// Asume que la variable App ya existe en el scope global.
 (function() {
 
-    // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS ⭐️
+    // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS (UNIFICADA) ⭐️
     App.setupListeners = function() {
       // 5.1. Listener para el track (delegación de eventos)
       if (this.DOM.track) {
           this.DOM.track.addEventListener('click', this._handleTrackClick.bind(this));
       }
       
-      // 5.2. Listener para "Volver" simple (botón)
+      // 5.2. Listener para "Volver" (MÓVIL)
+      // Apunta al NUEVO handler unificado
       if (this.DOM.btnVolverNav) {
-          this.DOM.btnVolverNav.addEventListener('click', this._handleVolverNav.bind(this));
-      }
-
-      // 5.3. Listener para "Volver" en Detalle
-      if (this.DOM.btnVolverDetalle) {
-          this.DOM.btnVolverDetalle.addEventListener('click', this._handleVolverDetalle.bind(this));
+          this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
       }
       
-      // 5.4. Listener para la Tarjeta Volver Fija (Escritorio)
+      // 5.3. Listener para la Tarjeta Volver Fija (DESKTOP)
+      // Apunta al NUEVO handler unificado
       if (this.DOM.cardVolverFija) {
-          this.DOM.cardVolverFija.addEventListener('click', this._handleVolverNav.bind(this));
+          this.DOM.cardVolverFija.addEventListener('click', this._handleVolverClick.bind(this));
       }
       
-      // 5.5. Listener para teclas (Escape y Flechas)
+      // 5.4. Listener para teclas (Escape y Flechas)
       document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            // El Escape también usa la lógica unificada
+            this._handleVolverClick(); 
+        }
+        
+        // Navegación con flechas (solo en vista de navegación)
         if (this.DOM.vistaNav.classList.contains('active')) {
-          if (e.key === 'Escape') {
-            if (this.STATE.navStack.length > 0) this._handleVolverNav();
-          } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
+          if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
             e.preventDefault(); 
             this._handleKeyNavigation(e.key);
           }
         } 
-        else if (this.DOM.vistaDetalle.classList.contains('active') && e.key === 'Escape') {
-          this._handleVolverDetalle();
-        }
       });
     };
 
-    // ⭐️ 2. MANEJADORES DE EVENTOS ⭐️
+    // ⭐️ 2. MANEJADORES DE EVENTOS (Track y Teclas) ⭐️
 
     App._handleTrackClick = function(e) {
       const tarjeta = e.target.closest('.swiper-slide');
@@ -52,9 +48,9 @@
         return;
       }
       
-      // Si es el botón 'Volver' vertical, activamos la navegación inversa.
+      // Si es el botón 'Volver' vertical (móvil)
       if (tarjeta.dataset.tipo === 'volver-vertical') {
-          this._handleVolverNav();
+          this._handleVolverClick(); // Usa el handler unificado
           return;
       }
 
@@ -99,7 +95,8 @@
           return;
       }
       
-      if (allSlides[newIndex].classList.contains('disabled') || allSlides[newIndex].dataset.tipo === 'relleno') {
+      // No mover el foco si el nuevo índice es un relleno (padding)
+      if (newIndex < itemsPorColumna || allSlides[newIndex].dataset.tipo === 'relleno') {
          newIndex = oldIndex;
       }
       
@@ -107,22 +104,33 @@
       this._updateFocus(true);
     };
 
-    // ⭐️ 3. FUNCIONES DE NAVEGACIÓN Y VISTA ⭐️
+    // ⭐️ 3. FUNCIONES DE NAVEGACIÓN Y VISTA (UNIFICADAS) ⭐️
 
-    App._handleVolverNav = function() {
-      if (this.STATE.navStack.length > 0) {
-        this.STATE.navStack.pop();
-        this.renderNavegacion();
-      }
+    /**
+     * NUEVO: Handler unificado para CUALQUIER acción de "Volver"
+     * (Tarjeta Fija, Botón Móvil, Tecla Escape).
+     */
+    App._handleVolverClick = function() {
+        // Caso 1: Estamos en la vista de Detalle de un curso
+        if (this.DOM.vistaDetalle.classList.contains('active')) {
+            this.DOM.vistaDetalle.classList.remove('active');
+            this.DOM.vistaNav.classList.add('active');
+            // Forzamos un re-render de la navegación para que
+            // la tarjeta "Volver" muestre el estado correcto (p.ej., "Volver a Front-End")
+            this.renderNavegacion(); 
+        } 
+        // Caso 2: Estamos en una sub-sección (pero en la vista de Navegación)
+        else if (this.STATE.navStack.length > 0) {
+            this.STATE.navStack.pop();
+            this.renderNavegacion();
+        }
+        // (Si no se cumple nada, estamos en la raíz y no hace nada)
     };
 
-    App._handleVolverDetalle = function() {
-      this.DOM.vistaDetalle.classList.remove('active');
-      this.DOM.vistaNav.classList.add('active');
-    };
-
+    /**
+     * MODIFICADO: Ahora también controla la visibilidad de la tarjeta "Volver".
+     */
     App._mostrarDetalle = function(cursoId) {
-      // Nota: asume que _findNodoById existe en el scope global (definido en otro módulo).
       const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion);
       if (!curso) return;
       
@@ -137,8 +145,21 @@
           ${enlacesHtml || 'No hay enlaces para este curso.'}
         </div>
       `;
+      
+      // Cambiar vistas
       this.DOM.vistaNav.classList.remove('active');
       this.DOM.vistaDetalle.classList.add('active');
+      
+      // ⭐️ NUEVO: Activar la tarjeta "Volver" (Desktop)
+      const isMobile = window.innerWidth <= 768; 
+      if (!isMobile) {
+          this.DOM.cardVolverFija.style.display = 'flex';
+          this.DOM.cardVolverFija.classList.add('active-volver');
+          this.DOM.cardVolverFija.tabIndex = 0;
+          
+          // Aseguramos que la info adicional esté visible también
+          this.DOM.infoAdicional.style.display = 'flex';
+      }
     };
 
 })();

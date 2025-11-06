@@ -3,9 +3,6 @@
 (function() {
 
   // ⭐️ DEFINICIÓN DEL OBJETO GLOBAL DE LA APLICACIÓN ⭐️
-  // (Asumimos que loadData, renderNavegacion, setupListeners, _setupResizeObserver, 
-  // y injectHeaderLogo ya han sido definidos en los módulos anteriores.)
-  
   window.App = {
     // --- 1. PROPIEDADES ---
     DOM: {}, 
@@ -26,24 +23,24 @@
       
       // Cachear el DOM
       this.DOM.track = document.getElementById('track-navegacion');
-      this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion');
+      this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); // (Para móvil)
       this.DOM.vistaNav = document.getElementById('vista-navegacion');
       this.DOM.vistaDetalle = document.getElementById('vista-detalle');
       this.DOM.detalleContenido = document.getElementById('detalle-contenido');
-      this.DOM.btnVolverDetalle = document.getElementById('btn-volver-a-navegacion');
       this.DOM.swiperContainer = document.getElementById('nav-swiper'); 
-      this.DOM.cardVolverFija = document.getElementById('card-volver-fija');
-      // NUEVO: Cachear el contenedor de información adicional
-      this.DOM.infoAdicional = document.getElementById('info-adicional'); 
+      this.DOM.cardVolverFija = document.getElementById('card-volver-fija'); // (Para Desktop, unificado)
+      this.DOM.infoAdicional = document.getElementById('info-adicional'); // (Columna derecha)
+      
+      // ⭐️ CORRECCIÓN: Eliminada la referencia a 'btn-volver-a-navegacion'
+      // this.DOM.btnVolverDetalle = ... (Eliminado)
 
+      
       // 2.1. Configurar el observador (definido en render.js)
-      // Nota: Llamamos al método extendido por render.js
       this._setupResizeObserver();
       
       // 2.2. Cargar los datos (definido en data.js)
       try {
         logDebug("Iniciando carga de datos.");
-        // Nota: loadData debe ser implementado para aceptar 'this' (App)
         await loadData(this); 
       } catch (error) {
         console.error("Error fatal al cargar datos:", error);

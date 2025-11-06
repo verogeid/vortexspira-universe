@@ -24,8 +24,13 @@
   --header-height: 50px;
   --footer-height: 30px;
   --card-width-min: 200px;
-  /* ⭐️ AJUSTE: Reducido el max-width para mejor responsividad */
-  --card-width-max: 280px; 
+  --card-width-max: 280px;
+  /* Ancho de las tarjetas laterales fijas */
+  --sidebar-card-width: 180px; 
+  /* Ancho de las columnas laterales (tarjeta + márgenes) */
+  --sidebar-column-width: 220px;
+  /* Alineación vertical superior */
+  --top-align-padding: 50px;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -129,12 +134,15 @@ footer a {
   width: 100%; 
   height: 100%;
   
-  /* ⭐️ CORRECCIÓN: Layout 1/5, 3/5, 1/5 con GAPs */
+  /* ⭐️ CORRECCIÓN: Layout Fijo-Flexible-Fijo con GAPs */
   display: grid;
-  grid-template-columns: 1fr 3fr 1fr; 
+  grid-template-columns: var(--sidebar-column-width) 1fr var(--sidebar-column-width); 
   gap: 20px; /* Separación entre columnas */
   padding: 0 20px; /* Margen de los bordes de la app */
   box-sizing: border-box;
+  
+  /* ⭐️ CORRECCIÓN: Alinear todo arriba */
+  align-items: start;
   
   overflow: visible; /* Asegurar que no se corte el contenido */
   opacity: 0;
@@ -218,7 +226,7 @@ header h1 {
     
     /* ⭐️ CORRECCIÓN: Alinear al inicio (top) + padding */
     align-items: flex-start;
-    padding-top: 50px; /* Ajustar este valor para la alineación vertical */
+    padding-top: var(--top-align-padding); /* 50px */
     
     box-sizing: border-box;
 }
@@ -311,16 +319,15 @@ header h1 {
     display: none !important; /* Ocultación inicial (JS lo cambiará a 'flex') */
     grid-column: 1 / 2; /* Columna Izquierda */
     
-    /* Alinear al inicio (top) y centro (horizontal) */
+    /* ⭐️ CORRECCIÓN: Alinear al inicio (top) y centro (horizontal) */
     place-self: start center; 
-    margin-top: 50px; /* Coincidir con el padding-top de .swiper */
+    margin-top: var(--top-align-padding); /* Coincidir con el padding-top de .swiper */
 
     position: relative; 
     z-index: 50; 
     
-    /* ⭐️ CORRECCIÓN: Ancho responsivo (100% de su columna 1fr) */
-    width: 100%; 
-    max-width: var(--card-width-max); /* Límite de ancho */
+    /* ⭐️ CORRECCIÓN: Ancho fijo (simétrico) */
+    width: var(--sidebar-card-width); /* 180px */
     height: clamp(150px, 20vh, 180px); /* Altura igual a las cards */
     
     opacity: 0.6;
@@ -373,31 +380,16 @@ header h1 {
 }
 
 /* --- 8. VISTA DE DETALLE DEL CURSO --- */
-.btn-volver {
-  position: absolute;
-  top: 30px;
-  left: 30px;
-  z-index: 50; 
-  background: #333;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-.btn-volver:hover {
-  background: var(--color-primary);
-}
-
+/* (El botón .btn-volver se elimina, solo se usa #card-volver-fija) */
 .contenido-curso {
-  grid-column: 2 / 3;
+  grid-column: 2 / 3; /* Columna Central */
   width: 100%;
   max-width: 700px;
-  margin: 0 auto; 
-  padding-top: 50px; /* Coincidir con el slider */
-  padding: 2rem;
-  padding-top: 50px;
+  margin: 0 auto; /* Centrado horizontal en su columna */
+  
+  /* ⭐️ CORRECCIÓN: Alinear al inicio (top) + padding */
+  padding-top: var(--top-align-padding); /* Coincidir con el slider */
+  
   box-sizing: border-box;
 }
 .enlace-curso {
@@ -418,20 +410,19 @@ header h1 {
 .info-adicional {
     grid-column: 3 / 4; /* Columna Derecha */
     
-    /* Alinear al inicio (top) y centro (horizontal) */
+    /* ⭐️ CORRECCIÓN: Alinear al inicio (top) y centro (horizontal) */
     place-self: start center;
-    margin-top: 50px; /* Coincidir con el padding-top de .swiper */
+    margin-top: var(--top-align-padding); /* Coincidir con el padding-top de .swiper */
 
-    /* ⭐️ CORRECCIÓN: Ancho responsivo y altura 100% */
-    width: 100%; 
-    max-width: var(--card-width-max); /* Límite de ancho */
+    /* ⭐️ CORRECCIÓN: Ancho fijo (simétrico) y altura 100% */
+    width: var(--sidebar-card-width); /* 180px */
     height: 100%; /* Ocupa toda la altura del slider */
     
     padding: 1.5rem;
     border-radius: 12px;
     background: var(--color-card-bg);
     border: 2px dashed var(--color-card-border);
-    display: flex;
+    display: none; /* JS lo activa */
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -506,6 +497,12 @@ header h1 {
     /* 6. TÍTULO EN MÓVIL */
     header h1 {
         white-space: normal; /* Permitir que el h1 salte de línea */
+    }
+    
+    /* 7. BOTÓN VOLVER MÓVIL */
+    /* (Aseguramos que el botón simple #btn-volver-navegacion SÍ se vea en móvil) */
+    #btn-volver-navegacion {
+        display: none; /* JS lo gestionará */
     }
 }
 
