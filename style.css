@@ -73,29 +73,25 @@ footer {
 }
 footer a {
     color: #888; /* Color para los enlaces del footer */
-    text-decoration: underline;
-}
-
-/* ⭐️ NUEVOS ESTILOS PARA EL ICONO DE LINKEDIN ⭐️ */
-.footer-social-link {
-    display: inline-flex; /* Para alinear el SVG verticalmente */
-    vertical-align: middle;
-    margin-left: 5px;
-    text-decoration: none; /* Quitar subrayado del icono */
-}
-
-.footer-social-link .linkedin-icon {
-    width: 16px;
-    height: 16px;
-    color: #888; /* Color inicial igual al texto */
+    text-decoration: none; /* Quitar subrayado por defecto */
     transition: color 0.2s ease;
 }
-
-.footer-social-link:hover .linkedin-icon,
-.footer-social-link:focus-visible .linkedin-icon {
-    color: #fff; /* Color más brillante al pasar el ratón */
+/* Estilos para el icono de LinkedIn */
+.footer-social-link {
+    display: inline-block;
+    vertical-align: middle; /* Alinear icono con el texto */
+    margin-left: 5px;
 }
-/* ⭐️ FIN DE NUEVOS ESTILOS ⭐️ */
+.linkedin-icon {
+    width: 16px;
+    height: 16px;
+    fill: #888; /* Color inicial del icono */
+    transition: fill 0.2s ease;
+}
+.footer-social-link:hover .linkedin-icon,
+.footer-social-link:focus .linkedin-icon {
+    fill: #fff; /* Color del icono en hover */
+}
 
 
 #debug-console {
@@ -108,8 +104,9 @@ footer a {
 
 
 #app-container {
-    width: 90%; 
-    max-width: 1400px; 
+    width: 100%; /* Ocupa todo el ancho */
+    max-width: 1400px; /* Pero con un máximo */
+    margin: 0 auto;
     
     /* Altura total disponible entre header y footer */
     height: calc(100vh - var(--header-height) - var(--footer-height) - 40px); 
@@ -122,6 +119,7 @@ footer a {
     
     background: var(--color-bg);
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); 
+    box-sizing: border-box;
 }
 
 /* El DIV principal de la vista, que contiene el Grid 1fr | 3fr | 1fr */
@@ -135,11 +133,20 @@ footer a {
   grid-template-columns: 1fr 3fr 1fr; 
   gap: 0; 
   
-  overflow: visible; /* Aseguramos que nada se corte */
+  overflow: visible; /* Asegurar que no se corte el contenido */
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-.vista.active { display: grid; opacity: 1; } 
+/* Ocultar vistas no activas */
+.vista {
+    display: none;
+    opacity: 0;
+}
+/* Mostrar vista activa usando 'grid' para que el layout funcione */
+.vista.active { 
+    display: grid; 
+    opacity: 1; 
+} 
 
 
 /* RESPONSIVIDAD DEL TÍTULO (CORREGIDO) */
@@ -149,7 +156,7 @@ header h1 {
     margin: 0;
     padding: 0;
     line-height: 1.2;
-    white-space: normal;
+    /* white-space: nowrap; ELIMINADO PARA PERMITIR SALTO DE LÍNEA */
 }
 
 
@@ -165,9 +172,12 @@ header h1 {
     top: 0;
     left: 0;
     transform: none; 
+    pointer-events: none; /* No debe capturar clics */
 }
 .mask-left, 
 .mask-right {
+  position: absolute; /* Posicionar sobre el swiper */
+  top: 0;
   width: 25%;
   height: 100%;
   -webkit-backdrop-filter: blur(4px);
@@ -175,8 +185,13 @@ header h1 {
   background: linear-gradient(to right, 
     var(--color-mask-gradient), transparent
   );
+  z-index: 10;
+}
+.mask-left {
+    left: 0;
 }
 .mask-right {
+  right: 0;
   background: linear-gradient(to left, 
     var(--color-mask-gradient), transparent
   );
@@ -282,10 +297,10 @@ header h1 {
     top: 30px;
     left: 30px;
     z-index: 50; 
-    display: none; /* Ocultación inicial del botón simple (siempre oculto en desktop) */
+    display: none; /* Ocultación inicial (solo visible si JS lo fuerza en móvil) */
 }
 #card-volver-fija {
-    display: none !important; /* Ocultación inicial (solo JS lo muestra en subniveles desktop) */
+    display: none !important; /* Ocultación inicial (JS lo cambiará a 'flex') */
     grid-column: 1 / 2; /* Columna Izquierda (1fr) */
     place-self: center; /* Centrarlo dentro de su columna */
 
@@ -367,9 +382,13 @@ header h1 {
 }
 
 .contenido-curso {
+  /* ⭐️ CORRECCIÓN: Asignar al Grid central ⭐️ */
+  grid-column: 2 / 3;
+  
   max-width: 700px;
-  margin: 10% auto;
+  margin: 10% auto; /* El margin auto centrará dentro de la columna 3fr */
   padding: 2rem;
+  box-sizing: border-box; /* Asegurar que el padding no desborde */
 }
 .enlace-curso {
     display: inline-block;
@@ -395,7 +414,7 @@ header h1 {
     border-radius: 12px;
     background: var(--color-card-bg);
     border: 2px dashed var(--color-card-border);
-    display: none; /* Oculto por defecto, JS lo muestra en desktop */
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -417,7 +436,8 @@ header h1 {
 @media screen and (max-width: 768px) {
     
     /* 1. LAYOUT: Colapsar a una única columna vertical */
-    .vista {
+    .vista,
+    .vista.active {
         grid-template-columns: 1fr; /* Una sola columna para móvil */
     }
 
@@ -429,13 +449,19 @@ header h1 {
     
     /* 3. REPOSICIONAR CARRUSEL Y MÁSCARA */
     .swiper, 
-    .carousel-mask {
+    .carousel-mask,
+    .contenido-curso { /* Asegurar que el detalle también ocupe el centro */
         grid-column: 1 / 2; /* Ocupa toda la única columna */
         width: 95% !important; 
         max-width: 95% !important;
         height: 100% !important;
         max-height: none;
-        margin: 0 !important; /* Quitar cualquier margen de empuje */
+        margin: 0 auto !important; /* Centrar y quitar márgenes extraños */
+    }
+    
+    .contenido-curso {
+        margin-top: 60px !important; /* Dejar espacio para el botón volver */
+        padding: 1rem;
     }
     
     /* 4. ELIMINAR EL GRID DE SWIPER PARA CREAR UNA LISTA VERTICAL */
