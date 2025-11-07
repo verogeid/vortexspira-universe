@@ -25,12 +25,8 @@
   --footer-height: 30px;
   --card-width-min: 200px;
   --card-width-max: 280px;
-  /* Ancho de las tarjetas laterales fijas */
   --sidebar-card-width: 180px; 
-  /* Ancho de las columnas laterales (tarjeta + márgenes) */
   --sidebar-column-width: 220px;
-  /* Alineación vertical superior */
-  --top-align-padding: 50px;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -111,52 +107,58 @@ footer a {
 }
 
 
+/* ⭐️ CORRECCIÓN: #app-container es AHORA el Grid Layout */
 #app-container {
-  /* ⭐️ CORRECCIÓN: Ocupa todo el espacio disponible (definido por el padding del body) */
-  height: calc(100vh - var(--header-height) - var(--footer-height));
-  width: 100%; /* Ocupa todo el ancho */
-  max-width: 1600px; /* Incrementado para pantallas grandes */
+  /* ⭐️ CORRECCIÓN: Cambiado a 100% para respetar el padding del body */
+  height: 100%; 
+  width: 100%;
+  max-width: 1600px; 
   margin: 0 auto;
     
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative; /* Contexto para elementos como el botón Volver */
+  /* ⭐️ NUEVO: Layout Fijo-Flexible-Fijo con GAPs */
+  display: grid;
+  grid-template-columns: var(--sidebar-column-width) 1fr var(--sidebar-column-width); 
+  gap: 20px; /* ⭐️ NUEVO: Separación entre columnas */
+  padding: 20px; /* ⭐️ NUEVO: Separación de header/footer y bordes */
+  box-sizing: border-box;
+  
+  /* Alinear todo arriba */
+  align-items: start;
     
   background: var(--color-bg);
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); 
-  box-sizing: border-box;
 }
 
-/* El DIV principal de la vista, que contiene el Grid */
+/* ⭐️ NUEVO: Contenedor para las vistas centrales */
+#vista-central {
+  grid-column: 2 / 3;
+  width: 100%;
+  height: 100%;
+  position: relative; /* ⭐️ CRÍTICO: Contexto para la máscara */
+  overflow: hidden; /* Evitar desbordamiento del slider */
+}
+
+/* El DIV principal de la vista */
 .vista {
-  position: relative; 
+  /* ⭐️ CORRECCIÓN: Las vistas ahora son absolutas dentro de #vista-central */
+  position: absolute; 
   width: 100%; 
   height: 100%;
+  top: 0;
+  left: 0;
   
-  /* ⭐️ CORRECCIÓN: Layout Fijo-Flexible-Fijo con GAPs */
-  display: grid;
-  grid-template-columns: var(--sidebar-column-width) 1fr var(--sidebar-column-width); 
-  gap: 20px; /* Separación entre columnas */
-  padding: 0 20px; /* Margen de los bordes de la app */
-  box-sizing: border-box;
+  /* Ya no son un grid */
+  display: flex; 
+  flex-direction: column;
+  justify-content: start; /* Alinear al inicio */
   
-  /* ⭐️ CORRECCIÓN: Alinear todo arriba */
-  align-items: start;
-  
-  overflow: visible; /* Asegurar que no se corte el contenido */
   opacity: 0;
   transition: opacity 0.3s ease;
+  visibility: hidden;
 }
-/* Ocultar vistas no activas */
-.vista {
-    display: none;
-    opacity: 0;
-}
-/* Mostrar vista activa usando 'grid' para que el layout funcione */
 .vista.active { 
-    display: grid; 
     opacity: 1; 
+    visibility: visible;
 } 
 
 
@@ -171,25 +173,21 @@ header h1 {
 
 /* --- 3. El Marco de Foco (La Máscara) --- */
 .carousel-mask {
-  /* ⭐️ CORRECCIÓN: Posicionamiento absoluto para superponerse */
+  /* ⭐️ CORRECCIÓN: Absoluto, pero ahora relativo a #vista-central */
   position: absolute;
-  /* Alineado con la columna central */
-  grid-column: 2 / 3; 
   width: 100%; 
   height: 100%; 
   top: 0;
   left: 0;
   
   z-index: 10; 
-  pointer-events: none; /* No debe capturar clics */
-  overflow: hidden; /* Contiene las máscaras absolutas */
+  pointer-events: none;
+  overflow: hidden; 
 }
 .mask-left, 
 .mask-right {
-  /* ⭐️ CORRECCIÓN: Posicionar la máscara SOBRE el slider */
   position: absolute; 
   top: 0;
-  
   width: 25%;
   height: 100%;
   -webkit-backdrop-filter: blur(4px);
@@ -197,7 +195,7 @@ header h1 {
   background: linear-gradient(to right, 
     var(--color-mask-gradient), transparent
   );
-  z-index: 10; /* Asegurar que esté sobre el swiper (z-index: 1) */
+  z-index: 10;
 }
 .mask-left {
     left: 0;
@@ -212,21 +210,19 @@ header h1 {
 
 /* --- 4. El Carrusel (Viewport y Track) --- */
 .swiper {
-    grid-column: 2 / 3; /* Columna Central */
-    
+    /* ⭐️ CORRECCIÓN: Ya no es un item de grid, es 100% de #vista-navegacion */
     width: 100%; 
     height: 100%; 
     
-    overflow: visible;
+    /* ⭐️ CORRECCIÓN: Cambiado a 'hidden' para evitar solapamiento */
+    overflow-y: auto;
+    overflow-x: hidden; 
     position: relative; 
     z-index: 1; /* Detrás de la máscara (z-index: 10) */
     
     display: flex;
     justify-content: center;
-    
-    /* ⭐️ CORRECCIÓN: Alinear al inicio (top) + padding */
-    align-items: flex-start;
-    padding-top: var(--top-align-padding); /* 50px */
+    align-items: flex-start; /* Alinear al inicio (top) */
     
     box-sizing: border-box;
 }
@@ -236,22 +232,18 @@ header h1 {
   grid-auto-flow: column;
   grid-template-rows: repeat(3, 1fr); 
   gap: 25px;
-  padding: 0;
+  padding: 0; /* ⭐️ CORRECCIÓN: El padding está ahora en #app-container */
   width: auto !important; 
-  height: auto;
-  /* ⭐️ CORRECCIÓN: Alinear grid al inicio (soluciona bug de subsección) */
+  height: auto; /* Dejar que el contenido defina la altura */
   align-items: start; 
   transform: translate3d(0, 0, 0); 
 }
 
 /* --- 5. Tarjetas (Efecto Ghost) --- */
 .swiper-slide {
-  /* ⭐️ AJUSTE: Ancho responsivo mejorado */
   width: clamp(var(--card-width-min), 18vw, var(--card-width-max)) !important;
   height: clamp(150px, 20vh, 180px) !important;
-  
-  margin: 0 !important; /* Reset de Swiper */
-  
+  margin: 0 !important;
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
   padding: 1.5rem;
@@ -268,7 +260,6 @@ header h1 {
   font-size: 1.5rem;
 }
 
-/* El efecto GHOST normal (Azul) */
 .swiper-slide:hover,
 .swiper-slide:focus-visible,
 .swiper-slide.focus-visible {
@@ -289,7 +280,6 @@ header h1 {
   font-size: 0.9rem;
   color: #999;
 }
-/* El efecto GHOST rojo */
 .swiper-slide.disabled:hover,
 .swiper-slide.disabled:focus-visible,
 .swiper-slide.disabled.focus-visible {
@@ -299,8 +289,6 @@ header h1 {
   transform: none;
   box-shadow: none;
 }
-
-/* Estilo para las tarjetas de relleno */
 .swiper-slide[data-tipo="relleno"] {
     background: transparent;
     border: 2px dashed var(--color-card-border-disabled);
@@ -309,26 +297,20 @@ header h1 {
 
 /* --- 7. Tarjeta Fija de Volver (POSICIONAMIENTO EN GRID) --- */
 #btn-volver-navegacion {
-    position: absolute;
-    top: 30px;
-    left: 30px;
-    z-index: 50; 
-    display: none; 
+    display: none; /* Se gestiona en el @media query */
 }
 #card-volver-fija {
-    display: none !important; /* Ocultación inicial (JS lo cambiará a 'flex') */
-    grid-column: 1 / 2; /* Columna Izquierda */
+    display: none !important; /* JS lo cambiará a 'flex' */
+    grid-column: 1 / 2; /* Columna Izquierda (del #app-container) */
     
     /* ⭐️ CORRECCIÓN: Alinear al inicio (top) y centro (horizontal) */
     place-self: start center; 
-    margin-top: var(--top-align-padding); /* Coincidir con el padding-top de .swiper */
 
     position: relative; 
     z-index: 50; 
     
-    /* ⭐️ CORRECCIÓN: Ancho fijo (simétrico) */
     width: var(--sidebar-card-width); /* 180px */
-    height: clamp(150px, 20vh, 180px); /* Altura igual a las cards */
+    height: clamp(150px, 20vh, 180px); 
     
     opacity: 0.6;
     border: 2px solid var(--color-danger);
@@ -340,39 +322,28 @@ header h1 {
     justify-content: center;
     box-sizing: border-box;
 }
-
-/* Mostrar solo cuando JS lo fuerza */
 #card-volver-fija[style*="display: flex"] {
     display: flex !important;
 }
-
 #card-volver-fija h3 {
     font-size: 1.2rem;
 }
-
-/* Estilo ACTIVO (Ghost Verde) */
 #card-volver-fija.active-volver {
     border-color: var(--color-success) !important;
     background: var(--color-success-bg) !important;
     opacity: 1;
 }
-
-/* Efecto Hover/Focus cuando está ACTIVO (Verde) */
 #card-volver-fija.active-volver:hover,
 #card-volver-fija.active-volver:focus-visible {
   outline: none;
   transform: scale(1.05); 
   box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
 }
-
-/* Efecto Hover/Focus cuando está DESHABILITADO (Rojo) */
 #card-volver-fija:not(.active-volver):hover,
 #card-volver-fija:not(.active-volver):focus-visible {
     transform: scale(1.05);
     box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
 }
-
-/* Estilos de la tarjeta 'Volver' cuando se inserta en el carrusel (en móvil) */
 .card-volver-vertical {
     width: 100% !important; 
     margin-bottom: 15px;
@@ -380,15 +351,12 @@ header h1 {
 }
 
 /* --- 8. VISTA DE DETALLE DEL CURSO --- */
-/* (El botón .btn-volver se elimina, solo se usa #card-volver-fija) */
 .contenido-curso {
-  grid-column: 2 / 3; /* Columna Central */
+  /* ⭐️ CORRECCIÓN: Ya no es un item de grid, es contenido flexible */
   width: 100%;
   max-width: 700px;
-  margin: 0 auto; /* Centrado horizontal en su columna */
-  
-  /* ⭐️ CORRECCIÓN: Alinear al inicio (top) + padding */
-  padding-top: var(--top-align-padding); /* Coincidir con el slider */
+  margin: 0 auto; /* Centrado horizontal */
+  padding: 0 1rem; /* Padding interno */
   
   box-sizing: border-box;
 }
@@ -408,15 +376,14 @@ header h1 {
 
 /* --- 9. ZONA DE INFORMACIÓN ADICIONAL (1/5 DERECHA) --- */
 .info-adicional {
-    grid-column: 3 / 4; /* Columna Derecha */
+    grid-column: 3 / 4; /* Columna Derecha (del #app-container) */
     
     /* ⭐️ CORRECCIÓN: Alinear al inicio (top) y centro (horizontal) */
     place-self: start center;
-    margin-top: var(--top-align-padding); /* Coincidir con el padding-top de .swiper */
 
     /* ⭐️ CORRECCIÓN: Ancho fijo (simétrico) y altura 100% */
     width: var(--sidebar-card-width); /* 180px */
-    height: 100%; /* Ocupa toda la altura del slider */
+    height: 100%; 
     
     padding: 1.5rem;
     border-radius: 12px;
@@ -443,12 +410,12 @@ header h1 {
 /* ---------------------------------------------------------------------- */
 @media screen and (max-width: 768px) {
     
-    /* 1. LAYOUT: Colapsar a una única columna vertical */
-    .vista,
-    .vista.active {
-        grid-template-columns: 1fr; /* Una sola columna para móvil */
-        padding: 0 5%; /* Reducir padding lateral en móvil */
-        gap: 0; /* Sin gap en móvil */
+    /* ⭐️ CORRECCIÓN: El layout de #app-container se colapsa */
+    #app-container {
+        grid-template-columns: 1fr; /* Una sola columna */
+        padding: 0; /* Sin padding en móvil */
+        gap: 0;
+        height: 100%; /* Ocupar todo el espacio disponible */
     }
 
     /* 2. OCULTAR ELEMENTOS LATERALES AGRESIVOS */
@@ -457,21 +424,26 @@ header h1 {
         display: none !important; 
     }
     
+    /* ⭐️ CORRECCIÓN: #vista-central ocupa todo */
+    #vista-central {
+        grid-column: 1 / 2;
+    }
+    
     /* 3. REPOSICIONAR CARRUSEL Y MÁSCARA */
     .swiper, 
     .carousel-mask,
-    .contenido-curso { /* Asegurar que el detalle también ocupe el centro */
-        grid-column: 1 / 2; /* Ocupa toda la única columna */
+    .contenido-curso { 
         width: 100% !important; 
         max-width: 100% !important;
         height: 100% !important;
         max-height: none;
-        margin: 0 auto !important; /* Centrar y quitar márgenes extraños */
-        padding-top: 10px; /* Resetear el padding de desktop */
+        margin: 0 auto !important;
+        padding: 10px 5%; /* Padding interno en móvil */
+        box-sizing: border-box;
     }
     
     .contenido-curso {
-        margin-top: 60px !important; /* Dejar espacio para el botón volver */
+        margin-top: 60px !important; 
         padding: 1rem;
     }
     
@@ -500,9 +472,13 @@ header h1 {
     }
     
     /* 7. BOTÓN VOLVER MÓVIL */
-    /* (Aseguramos que el botón simple #btn-volver-navegacion SÍ se vea en móvil) */
     #btn-volver-navegacion {
-        display: none; /* JS lo gestionará */
+        /* ⭐️ CORRECCIÓN: El botón de móvil ahora es gestionado por JS */
+        display: none; 
+        position: absolute;
+        top: 10px; /* Separado del header */
+        left: 10px;
+        z-index: 1000; /* Encima de todo */
     }
 }
 
