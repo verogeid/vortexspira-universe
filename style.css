@@ -38,7 +38,6 @@
 }
 
 /* --- 2. Configuración General y Vistas --- */
-/* ... (Sin cambios) ... */
 body {
   background: var(--color-bg);
   color: var(--color-text);
@@ -111,7 +110,7 @@ header h1 {
 }
 
 /* --- 3. El Marco de Foco (La Máscara) --- */
-/* ⭐️ CAMBIO 1: Degradado más suave para el blur */
+/* ✅ Scroll y Degradado: Degradado más suave para el blur */
 .carousel-mask {
   position: absolute;
   width: 100%; 
@@ -150,7 +149,7 @@ header h1 {
     width: 100%; 
     height: 100%; 
     
-    /* ⭐️ CAMBIO 2: De 'auto' a 'hidden' para eliminar el scroll vertical */
+    /* ✅ Scroll: De 'auto' a 'hidden' para eliminar el scroll vertical */
     overflow-y: hidden;
     overflow-x: hidden; 
     
@@ -194,18 +193,17 @@ header h1 {
   font-size: 1.5rem;
 }
 
-/* ⭐️ CAMBIO 3: GHOST AZUL (Minimalista: sin fondo, solo borde y sombra) */
-.swiper-slide:not(.disabled):not([data-tipo="relleno"]):hover,
-.swiper-slide:not(.disabled):not([data-tipo="relleno"]):focus-visible,
+/* ✅ Ghost Azul: Minimalista (solo borde y sombra) y selector de foco corregido */
 .swiper-slide.focus-visible:not(.disabled):not([data-tipo="relleno"]),
+.swiper-slide:not(.disabled):not([data-tipo="relleno"]):hover,
+.swiper-slide:not(.disabled):not([data-tipo="relleno"]):focus-visible, 
 #card-volver-fija:hover,
 #card-volver-fija:focus-visible {
   outline: none;
   border-color: var(--color-primary);
-  /* background: var(--color-primary-bg); <-- ELIMINADO (petición) */
+  background: var(--color-card-bg); /* Mantener fondo original/card-bg */
   transform: scale(1.03);
-  /* Sombra más pronunciada para el efecto "halo" */
-  box-shadow: 0 0 25px rgba(0, 123, 255, 0.4);
+  box-shadow: 0 0 25px rgba(0, 123, 255, 0.4); /* Sombra pronunciada para el "halo" */
 }
 
 /* --- 6. El caso especial (Sección Vacía y Relleno) --- */
@@ -219,29 +217,29 @@ header h1 {
   color: #999;
 }
 
-/* ⭐️ CAMBIO 3 (bis): GHOST GRIS (Más pronunciado para que se note) */
+/* ✅ Ghost Gris: Más pronunciado para que se note en hover/focus */
 .swiper-slide.disabled:hover,
 .swiper-slide.disabled:focus-visible,
 .swiper-slide.disabled.focus-visible {
   outline: none;
   border-color: var(--color-card-border); /* Borde más nítido */
-  background: var(--color-card-bg); /* Sin fondo */
+  background: var(--color-card-bg);
   opacity: 0.8; /* Más visible */
   transform: scale(1.03);
-  /* Sombra gris más pronunciada para el "halo" */
   box-shadow: 0 0 20px rgba(150, 150, 150, 0.2); 
 }
 
-/* ⭐️ CAMBIO 4: Tarjetas de relleno (visibles con borde discontinuo) */
+/* ✅ Tarjetas de relleno: Visibles con borde discontinuo */
 .swiper-slide[data-tipo="relleno"] {
     background: transparent;
     border: 2px dashed var(--color-card-border-disabled);
     opacity: 0.2; /* Ligeramente visible */
     pointer-events: none;
     cursor: default;
-    /* visibility: hidden; <-- ELIMINADO */
+    /* Eliminar cualquier estado de hover/focus indeseado */
+    transform: none;
+    box-shadow: none;
 }
-/* Asegurar que no hagan nada raro en hover/focus */
 .swiper-slide[data-tipo="relleno"]:hover,
 .swiper-slide[data-tipo="relleno"]:focus-visible {
     background: transparent;
@@ -253,7 +251,6 @@ header h1 {
 
 
 /* --- 7. Tarjeta Fija de Volver (POSICIONAMIENTO EN GRID) --- */
-/* ... (Sin cambios, ya está unificado con el Ghost Azul) ... */
 #btn-volver-navegacion { display: none; }
 #card-volver-fija {
     display: none !important; 
@@ -263,10 +260,13 @@ header h1 {
     z-index: 50; 
     width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
+    
+    /* Estilo base unificado con tarjetas activas */
     opacity: 1;
     border: 2px solid var(--color-card-border);
     background: var(--color-card-bg);
     cursor: pointer;
+
     padding: 1rem;
     border-radius: 12px;
     transition: all 0.2s ease;
@@ -283,7 +283,6 @@ header h1 {
 }
 
 /* --- 8. VISTA DE DETALLE DEL CURSO --- */
-/* ... (Sin cambios) ... */
 .contenido-curso {
   width: 100%;
   max-width: 700px;
@@ -304,7 +303,6 @@ header h1 {
 .enlaces-curso a:hover { background: var(--color-success); }
 
 /* --- 9. ZONA DE INFORMACIÓN ADICIONAL (1/5 DERECHA) --- */
-/* ... (Sin cambios) ... */
 .info-adicional {
     grid-column: 3 / 4;
     place-self: start center;
@@ -325,7 +323,7 @@ header h1 {
 .info-adicional small { color: #999; font-size: 0.8rem; }
 
 
-/* --- MEDIA QUERIES (Sin cambios) --- */
+/* --- MEDIA QUERIES --- */
 @media screen and (max-width: 768px) {
     #app-container {
         grid-template-columns: 1fr; 

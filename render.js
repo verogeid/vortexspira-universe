@@ -122,7 +122,7 @@
             firstEnabledIndex = 0;
         }
         
-        // Asignar el tabindex="0" inicial
+        // Asignar el tabindex="0" inicial (CLAVE para el Composite Widget/navegación por Tab)
         if (allSlides[firstEnabledIndex]) {
             allSlides[firstEnabledIndex].tabIndex = 0;
         }
@@ -199,6 +199,7 @@
         }
     };
 
+    // ⭐️ CAMBIO: Función _updateFocus reescrita para manejar tabindex y .focus()
     App._updateFocus = function(shouldSlide = true) {
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         const isMobile = window.innerWidth <= 768;
@@ -299,6 +300,7 @@
         const claseDisabled = estaActivo ? '' : 'disabled';
         const tagAria = estaActivo ? '' : 'aria-disabled="true"';
         
+        // CLAVE para el Composite Widget: todas las tarjetas empiezan con tabindex="-1"
         const tabindex = '-1';
         
         let hint = '';
@@ -306,7 +308,6 @@
 
         const displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
 
-        // ⭐️ CORRECCIÓN: Aquí estaba el error (class. en lugar de class=)
         return `
             <div class="swiper-slide ${claseDisabled}" 
                 data-id="${nodo.id}" 

@@ -153,13 +153,13 @@
         
         // Elementos comunes (siempre están)
         const footerLinks = Array.from(document.querySelectorAll('footer a'));
+        const activeCard = this.DOM.track.querySelector('.swiper-slide[tabindex="0"]');
 
         if (viewType === 'nav') {
             // En la vista NAV, los focuseables son:
             // 1. Tarjeta "Volver" (si es desktop y visible)
             // 2. La tarjeta activa del slider (la que tiene tabindex="0")
             // 3. Los enlaces del footer
-            const activeCard = this.DOM.track.querySelector('.swiper-slide[tabindex="0"]');
             
             if (isMobile) {
                 // En móvil: Botón Volver (si existe) -> Slider -> Footer
@@ -206,6 +206,18 @@
             }
         }
         
+        // ⭐️ FIX CRÍTICO: Limpiar el estado visual del slide activo al salir ⭐️
+        // Si el foco se mueve *fuera* de la tarjeta activa del carrusel, debemos quitarle la clase focus-visible
+        // para evitar el doble halo (ya que otros elementos usan el :focus-visible nativo del navegador).
+        if (viewType === 'nav' && activeCard) {
+            const activeCardIndexInFocusables = focusableElements.indexOf(activeCard);
+            
+            // Si actualmente estamos en la tarjeta activa Y el foco se moverá a otro elemento:
+            if (currentIndex === activeCardIndexInFocusables && nextIndex !== activeCardIndexInFocusables) {
+                activeCard.classList.remove('focus-visible');
+            }
+        }
+
         focusableElements[nextIndex].focus();
     };
 
@@ -275,7 +287,6 @@
       if (!isMobile) {
           // Mostrar y activar la tarjeta "Volver"
           this.DOM.cardVolverFija.style.display = 'flex';
-          // this.DOM.cardVolverFija.classList.add('active-volver'); // (Clase ya no usada para estilos)
           this.DOM.cardVolverFija.tabIndex = 0;
           primerElementoFocuseable = this.DOM.cardVolverFija;
           
