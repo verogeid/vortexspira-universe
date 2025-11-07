@@ -6,9 +6,9 @@ Expositor de cursos de VortexSpira® e-learning mentor
 
 ## Enlaces de intéres
 
-* Landing page: [https://subscribepage.io/vortexspira](https://subscribepage.io/vortexspira)
-* Dev Diary: [https://github.com/verogeid/vortexspira](https://github.com/verogeid/vortexspira)
-* VortexSpira® Universe [https://verogeid.github.io/vortexspira-universe/](https://verogeid.github.io/vortexspira-universe/) 🏗️
+* VortexSpira® Landing page: [https://subscribepage.io/vortexspira](https://subscribepage.io/vortexspira)
+* VortexSpira® Dev Diary: [https://github.com/verogeid/vortexspira](https://github.com/verogeid/vortexspira)
+* VortexSpira® Universe (🏗️): [https://verogeid.github.io/vortexspira-universe/](https://verogeid.github.io/vortexspira-universe/)
 
 ---
 
