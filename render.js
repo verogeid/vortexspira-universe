@@ -93,12 +93,9 @@
             
             if (isSubLevel) {
                 this.DOM.cardVolverFija.style.display = 'flex'; 
-                // ⭐️ CAMBIO: La clase .active-volver ya no es necesaria (CSS unificado)
-                // this.DOM.cardVolverFija.classList.add('active-volver'); 
                 this.DOM.cardVolverFija.tabIndex = 0; 
             } else {
                 this.DOM.cardVolverFija.style.display = 'none'; 
-                // this.DOM.cardVolverFija.classList.remove('active-volver');
                 this.DOM.cardVolverFija.tabIndex = -1;
             }
             this.DOM.btnVolverNav.style.display = 'none'; 
@@ -125,13 +122,11 @@
             firstEnabledIndex = 0;
         }
         
-        // ⭐️ CAMBIO: Asignar el tabindex="0" inicial
-        // Asegurarnos de que el slide inicial sea focuseable
+        // Asignar el tabindex="0" inicial
         if (allSlides[firstEnabledIndex]) {
             allSlides[firstEnabledIndex].tabIndex = 0;
         }
         
-        // ⭐️ ESTAS LÍNEAS SON CORRECTAS Y SE MANTIENEN ⭐️
         // Recalculamos el número de columnas para Swiper
         const numColumnas = Math.ceil(allSlides.length / itemsPorColumna);
 
@@ -204,7 +199,6 @@
         }
     };
 
-    // ⭐️ CAMBIO: Función _updateFocus completamente reescrita para manejar tabindex y .focus()
     App._updateFocus = function(shouldSlide = true) {
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         const isMobile = window.innerWidth <= 768;
@@ -224,10 +218,8 @@
 
             // 3. Mover el foco real del navegador
             if (shouldSlide) {
-                // preventScroll evita un salto brusco, Swiper/scrollIntoView lo manejarán
                 targetSlide.focus({ preventScroll: true }); 
             } else {
-                // En la carga inicial (shouldSlide=false), mover el foco
                 targetSlide.focus();
             }
 
@@ -244,7 +236,7 @@
         }
     };
 
-    // ⭐️ 4. HELPERS DE DATOS ⭐️
+    // --- 4. HELPERS DE DATOS ---
     
     App._findNodoById = function(id, nodos) {
         if (!nodos) return null;
@@ -295,7 +287,8 @@
                     data-id="volver-nav" 
                     data-tipo="volver-vertical" 
                     role="button" 
-                    tabindex="-1"> <h3>&larr; Volver al menú anterior</h3>
+                    tabindex="-1">
+                    <h3>&larr; Volver al menú anterior</h3>
                 </div>
             `;
         }
@@ -306,8 +299,6 @@
         const claseDisabled = estaActivo ? '' : 'disabled';
         const tagAria = estaActivo ? '' : 'aria-disabled="true"';
         
-        // ⭐️ CAMBIO: Todas las tarjetas (incluso activas) empiezan en -1.
-        // _updateFocus les dará el 0 cuando estén activas.
         const tabindex = '-1';
         
         let hint = '';
@@ -315,8 +306,9 @@
 
         const displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
 
+        // ⭐️ CORRECCIÓN: Aquí estaba el error (class. en lugar de class=)
         return `
-            <div class.swiper-slide ${claseDisabled}" 
+            <div class="swiper-slide ${claseDisabled}" 
                 data-id="${nodo.id}" 
                 ${tipoData}
                 role="button" 
