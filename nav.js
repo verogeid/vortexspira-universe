@@ -19,7 +19,7 @@
           this.DOM.cardVolverFija.addEventListener('click', this._handleVolverClick.bind(this));
       }
       
-      // 5.4. Listener central de teclado (MODIFICADO)
+      // 5.4. Listener central de teclado (MODIFICADO para Tab y Flechas)
       document.addEventListener('keydown', (e) => {
         const isNavActive = this.DOM.vistaNav.classList.contains('active');
         const isDetailActive = this.DOM.vistaDetalle.classList.contains('active');
@@ -35,6 +35,7 @@
         if (isNavActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault(); 
+                // 🚨 Se llama al manejador que ahora verifica el foco actual
                 this._handleKeyNavigation(e.key);
             } 
             // Interceptar Tab
@@ -60,7 +61,6 @@
       
       if (!tarjeta || tarjeta.classList.contains('disabled') || tarjeta.dataset.tipo === 'relleno') {
         // Si la tarjeta está deshabilitada o es relleno, no hacer nada
-        // (Aunque sea focuseable, no es clicable)
         return;
       }
       
@@ -81,14 +81,25 @@
       }
     };
     
-    // ⭐️ 3. NAVEGACIÓN POR TECLADO (FLECHAS) ⭐️
+    // ⭐️ 3. NAVEGACIÓN POR TECLADO (FLECHAS) - CORREGIDA ⭐️
     App._handleKeyNavigation = function(key) {
+      
+      // 🚨 FIX CRÍTICO: Verificar si el foco está DENTRO del Swiper 
+      const activeElement = document.activeElement;
+      if (!activeElement || !activeElement.closest('#track-navegacion')) {
+          // Si el elemento activo no está dentro del track (ej. es la tarjeta "Volver"), ignorar las flechas
+          return; 
+      }
+      
       const { itemsPorColumna } = this.STATE;
       const allSlides = Array.from(this.DOM.track.children);
       const totalItems = allSlides.length;
-      let newIndex = this.STATE.currentFocusIndex;
-
-      if (totalItems === 0) return;
+      
+      // Usar el elemento enfocado como punto de partida
+      const currentFocusedSlide = activeElement.closest('.swiper-slide');
+      let newIndex = Array.from(allSlides).indexOf(currentFocusedSlide);
+      
+      if (newIndex === -1 || totalItems === 0) return;
       
       const oldIndex = newIndex;
 
@@ -129,8 +140,8 @@
           break;
         case 'Enter':
         case ' ':
-          const focusedCard = allSlides[newIndex];
-          if (focusedCard) focusedCard.click();
+          // Activar el click sobre el elemento que tiene el foco
+          currentFocusedSlide.click();
           return;
       }
       
@@ -141,41 +152,25 @@
       }
     };
 
-    // ⭐️ 4. NUEVA FUNCIÓN HELPER: _handleFocusTrap (TAB) ⭐️
-    /**
-     * Gestiona el bucle de foco (Tab y Shift+Tab) dentro de la aplicación.
-     * @param {KeyboardEvent} e El evento de teclado.
-     * @param {'nav' | 'detail'} viewType El tipo de vista activa.
-     */
+    // ⭐️ 4. FUNCIÓN HELPER: _handleFocusTrap (TAB) - DOBLE HALO FIX ⭐️
     App._handleFocusTrap = function(e, viewType) {
         const isMobile = window.innerWidth <= 768;
         let focusableElements = [];
         
-        // Elementos comunes (siempre están)
         const footerLinks = Array.from(document.querySelectorAll('footer a'));
+        // activeCard es la tarjeta del Swiper que actualmente tiene tabindex="0"
         const activeCard = this.DOM.track.querySelector('.swiper-slide[tabindex="0"]');
 
         if (viewType === 'nav') {
-            // En la vista NAV, los focuseables son:
-            // 1. Tarjeta "Volver" (si es desktop y visible)
-            // 2. La tarjeta activa del slider (la que tiene tabindex="0")
-            // 3. Los enlaces del footer
-            
             if (isMobile) {
-                // En móvil: Botón Volver (si existe) -> Slider -> Footer
                 const btnVolver = this.DOM.btnVolverNav.style.display === 'none' ? null : this.DOM.btnVolverNav;
                 focusableElements = [btnVolver, activeCard, ...footerLinks].filter(Boolean);
             } else {
-                // En desktop: Volver Fijo -> Slider -> Footer
                 const cardVolver = this.DOM.cardVolverFija.style.display === 'none' ? null : this.DOM.cardVolverFija;
                 focusableElements = [cardVolver, activeCard, ...footerLinks].filter(Boolean);
             }
         } 
         else if (viewType === 'detail') {
-            // En la vista DETALLE, los focuseables son:
-            // 1. Tarjeta/Botón "Volver"
-            // 2. Los enlaces del curso
-            // 3. Los enlaces del footer
             const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('a.enlace-curso'));
             
             if (isMobile) {
@@ -206,9 +201,7 @@
             }
         }
         
-        // ⭐️ FIX CRÍTICO: Limpiar el estado visual del slide activo al salir ⭐️
-        // Si el foco se mueve *fuera* de la tarjeta activa del carrusel, debemos quitarle la clase focus-visible
-        // para evitar el doble halo (ya que otros elementos usan el :focus-visible nativo del navegador).
+        // ⭐️ FIX CRÍTICO DOBLE HALO: Limpiar el estado visual del slide activo al salir ⭐️
         if (viewType === 'nav' && activeCard) {
             const activeCardIndexInFocusables = focusableElements.indexOf(activeCard);
             
@@ -224,20 +217,15 @@
 
     // ⭐️ 5. FUNCIONES DE NAVEGACIÓN Y VISTA (UNIFICADAS) ⭐️
 
-    /**
-     * Handler unificado para CUALQUIER acción de "Volver"
-     */
     App._handleVolverClick = function() {
         // Caso 1: Estamos en la vista de Detalle de un curso
         if (this.DOM.vistaDetalle.classList.contains('active')) {
             this.DOM.vistaDetalle.classList.remove('active');
             this.DOM.vistaNav.classList.add('active');
             
-            // Re-renderizar la navegación para actualizar el estado visual
-            // y restaurar el foco al slider
             this.renderNavegacion(); 
             
-            // Forzar el foco de vuelta al slider (específicamente a la tarjeta activa)
+            // Forzar el foco de vuelta al slider
             const activeCard = this.DOM.track.querySelector('.swiper-slide[tabindex="0"]');
             if (activeCard) {
                 activeCard.focus();
@@ -256,15 +244,12 @@
         }
     };
 
-    /**
-     * MODIFICADO: Ahora también controla la visibilidad de las columnas laterales.
-     */
     App._mostrarDetalle = function(cursoId) {
       const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion);
       if (!curso) return;
       
       let enlacesHtml = (curso.enlaces || []).map(enlace => 
-        // ⭐️ CAMBIO: Asegurar que los enlaces tengan tabindex="0" para la trampa de foco
+        // Asegurar que los enlaces tengan tabindex="0" para la trampa de foco
         `<a href="${enlace.url || '#'}" class="enlace-curso" target="_blank" tabindex="0">${enlace.texto}</a>`
       ).join('');
 
@@ -280,7 +265,6 @@
       this.DOM.vistaNav.classList.remove('active');
       this.DOM.vistaDetalle.classList.add('active');
       
-      // ⭐️ CRÍTICO: Gestionar la visibilidad y foco de "Volver" ⭐️
       const isMobile = window.innerWidth <= 768; 
       let primerElementoFocuseable = null;
 
@@ -290,12 +274,11 @@
           this.DOM.cardVolverFija.tabIndex = 0;
           primerElementoFocuseable = this.DOM.cardVolverFija;
           
-          // Asegurar que la info adicional esté visible también
           this.DOM.infoAdicional.style.display = 'flex';
       } else {
           // En móvil, mostrar el botón de volver simple
           this.DOM.btnVolverNav.style.display = 'block';
-          this.DOM.btnVolverNav.tabIndex = 0; // Asegurar que sea focuseable
+          this.DOM.btnVolverNav.tabIndex = 0; 
           primerElementoFocuseable = this.DOM.btnVolverNav;
       }
 
