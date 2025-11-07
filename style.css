@@ -7,8 +7,8 @@
 
   /* Texto y Bordes */
   --color-text: #111;
-  --color-card-border: #bbb; /* Gris nítido para bordes de tarjetas activas/discontinuas */
-  --color-card-border-disabled: #ccc; /* Gris claro para borde continuo deshabilitado */
+  --color-card-border: #bbb;
+  --color-card-border-disabled: #ccc;
   
   /* Acentos (Ghost) */
   --color-primary: #007bff;
@@ -32,8 +32,8 @@
     --color-card-bg: rgba(255, 255, 255, 0.02);
     --color-mask-gradient: rgba(17, 17, 17, 0.4);
     --color-text: #eee;
-    --color-card-border: #555; /* Gris nítido para bordes de tarjetas activas/discontinuas */
-    --color-card-border-disabled: #444; /* Gris oscuro para borde continuo deshabilitado */
+    --color-card-border: #555;
+    --color-card-border-disabled: #444;
   }
 }
 
@@ -42,25 +42,38 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* El body no debe tener overflow hidden, ya que el contenido principal ya ocupa el 100% visible */
   overflow: hidden; 
   margin: 0;
   box-sizing: border-box;
   min-height: 100vh;
+  /* Margen fijo en Desktop para header y footer */
   padding-top: var(--header-height);
   padding-bottom: var(--footer-height);
 }
+
+/* ⭐️ ESTILOS DE HEADER Y FOOTER - DESKTOP (DEFAULT) ⭐️ */
 header, footer {
-    position: fixed;
     width: 100%;
     text-align: center;
     background: #222;
     color: #fff;
-    padding: 10px;
     z-index: 100;
     box-sizing: border-box;
 }
-header { top: 0; padding: 10px; }
-footer { bottom: 0; padding: 5px; color: #888; }
+
+header {
+    position: fixed; /* Header fijo en ambos */
+    top: 0;
+    padding: 10px;
+}
+footer {
+    position: fixed; /* FIX: Footer fijo en Desktop */
+    bottom: 0;
+    padding: 5px;
+    color: #888;
+}
+
 footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 
 /* LINKEDIN: Estilos de Foco (Ghost Azul) */
@@ -79,16 +92,12 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     fill: #888; 
     transition: fill 0.2s ease;
 }
-
-/* Aplicar el Ghost Azul (Borde y Halo) al enlace social */
 .footer-social-link:hover,
 .footer-social-link:focus-visible {
     border: 1px solid var(--color-primary); 
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
     color: var(--color-primary); 
 }
-
-/* Colorear el icono de azul en hover y focus */
 .footer-social-link:hover .linkedin-icon,
 .footer-social-link:focus-visible .linkedin-icon {
     fill: var(--color-primary); 
@@ -138,7 +147,6 @@ header h1 {
 }
 
 /* --- 3. El Marco de Foco (La Máscara) --- */
-/* Degradado y Blur menos agresivos */
 .carousel-mask {
   position: absolute;
   width: 100%; 
@@ -201,7 +209,6 @@ header h1 {
   width: clamp(var(--card-width-min), 18vw, var(--card-width-max)) !important;
   height: clamp(150px, 20vh, 180px) !important;
   margin: 0 !important;
-  /* Borde CONTINUO para tarjetas activas */
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
   padding: 1.5rem;
@@ -218,7 +225,7 @@ header h1 {
   font-size: 1.5rem;
 }
 
-/* Ghost Azul: Minimalista (solo borde y sombra) */
+/* Ghost Azul: Minimalista (solo borde y sombra) y selector de foco corregido */
 .swiper-slide.focus-visible:not(.disabled):not([data-tipo="relleno"]),
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):hover,
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):focus-visible, 
@@ -235,7 +242,6 @@ header h1 {
 /* Tarjeta deshabilitada (navegable) */
 .swiper-slide.disabled {
   opacity: 0.5;
-  /* Borde CONTINUO, pero color deshabilitado */
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);
   cursor: default;
@@ -250,7 +256,7 @@ header h1 {
 .swiper-slide.disabled:focus-visible,
 .swiper-slide.disabled.focus-visible {
   outline: none;
-  border-color: var(--color-card-border); /* Gris nítido del activo */
+  border-color: var(--color-card-border); 
   background: var(--color-card-bg);
   opacity: 0.8; 
   transform: scale(1.03);
@@ -260,7 +266,6 @@ header h1 {
 /* Tarjetas de relleno: Pasivas/Discontinuas */
 .swiper-slide[data-tipo="relleno"] {
     background: transparent;
-    /* Borde DISCONTINUO (Consistencia con info-adicional) */
     border: 2px dashed var(--color-card-border); 
     opacity: 0.2; 
     pointer-events: none;
@@ -289,7 +294,6 @@ header h1 {
     width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
     
-    /* Estilo base de tarjeta activa/focuseable: CONTINUO */
     opacity: 1;
     border: 2px solid var(--color-card-border);
     background: var(--color-card-bg);
@@ -306,7 +310,6 @@ header h1 {
 /* Estética de tarjeta inactiva (borde discontinuo) */
 #card-volver-fija[tabindex="-1"] {
     opacity: 0.5;
-    /* Borde DISCONTINUO (Consistencia con info-adicional) */
     border: 2px dashed var(--color-card-border);
     background: var(--color-card-bg);
     cursor: default;
@@ -331,7 +334,7 @@ header h1 {
   box-sizing: border-box;
 }
 
-/* Enlaces/Botones de Curso: Estética Ghost consistente (Continuo) */
+/* Enlaces/Botones de Curso: Estética Ghost consistente */
 .enlace-curso {
     display: inline-block;
     padding: 1rem; 
@@ -366,7 +369,7 @@ header h1 {
     height: 100%; 
     padding: 1.5rem;
     border-radius: 12px;
-    /* Borde DISCONTINUO para denotar espacio reservado */
+    /* Borde discontinuo para denotar espacio reservado */
     background: var(--color-card-bg);
     border: 2px dashed var(--color-card-border); 
     display: none; 
@@ -380,13 +383,39 @@ header h1 {
 .info-adicional small { color: #999; font-size: 0.8rem; }
 
 
-/* --- MEDIA QUERIES --- */
+/* ---------------------------------------------------------------------- */
+/* ⭐️ MEDIA QUERY: ADAPTACIÓN PARA MÓVILES (< 768px) ⭐️ */
+/* ---------------------------------------------------------------------- */
 @media screen and (max-width: 768px) {
+    
+    /* FIX: Body debe permitir el scroll completo en móvil */
+    body {
+        overflow: auto; 
+        /* Reducir el padding superior/inferior para maximizar el espacio de contenido */
+        padding-top: 40px; 
+        padding-bottom: 5px; 
+    }
+    
+    /* FIX: Header móvil: Fijo y reducido */
+    header {
+        position: fixed;
+        padding: 5px; /* Altura mínima */
+    }
+    
+    /* FIX: Footer móvil: No fijo, fluye con el contenido */
+    footer {
+        position: static; 
+        padding: 5px;
+    }
+    
+    /* Layout principal */
     #app-container {
         grid-template-columns: 1fr; 
         padding: 0; 
         gap: 0;
-        height: 100%; 
+        /* Permitir que el contenido empuje la altura del body */
+        height: auto; 
+        min-height: calc(100vh - 45px); /* Altura mínima restando header y footer reducidos */
     }
     #card-volver-fija,
     .info-adicional { 
