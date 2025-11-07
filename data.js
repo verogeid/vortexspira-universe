@@ -172,8 +172,7 @@ function injectHeaderLogo() {
 
     const faviconLink = document.createElement('link');
     faviconLink.rel = 'icon';
-    //faviconLink.href = FAVICON_SVG_DATA_URI;
-    faviconLink.href = fetch('./images/logo.svg');
+    faviconLink.href = FAVICON_SVG_DATA_URI;
     faviconLink.type = 'image/svg+xml';
     document.head.appendChild(faviconLink);
 
