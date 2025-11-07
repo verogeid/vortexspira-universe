@@ -13,10 +13,10 @@
   /* Acentos (Ghost) */
   --color-primary: #007bff;
   --color-primary-bg: rgba(0, 123, 255, 0.1);
+  
+  /* ⭐️ NOTA: Danger y Success ya no se usan para estados de tarjeta */
   --color-danger: #dc3545;
   --color-danger-bg: rgba(220, 53, 69, 0.1);
-
-  /* Acento Volver (Verde) */
   --color-success: #28a745;
   --color-success-bg: rgba(40, 167, 69, 0.1);
 
@@ -40,21 +40,18 @@
 }
 
 /* --- 2. Configuración General y Vistas --- */
+/* ... (Esta sección no tiene cambios) ... */
 body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   overflow: hidden; 
   margin: 0;
-  
-  /* ⭐️ Separación de Header/Footer fijos */
   box-sizing: border-box;
   min-height: 100vh;
   padding-top: var(--header-height);
   padding-bottom: var(--footer-height);
 }
-
-/* ESTILOS DE HEADER Y FOOTER MOVILIZADOS */
 header, footer {
     position: fixed;
     width: 100%;
@@ -65,99 +62,49 @@ header, footer {
     z-index: 100;
     box-sizing: border-box;
 }
-header {
-    top: 0;
-    padding: 10px;
-}
-footer {
-    bottom: 0;
-    padding: 5px;
-    color: #888;
-}
-footer a {
-    color: #888;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-.footer-social-link {
-    display: inline-block;
-    vertical-align: middle;
-    margin-left: 5px;
-}
-.linkedin-icon {
-    width: 16px;
-    height: 16px;
-    fill: #888;
-    transition: fill 0.2s ease;
-}
+header { top: 0; padding: 10px; }
+footer { bottom: 0; padding: 5px; color: #888; }
+footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
+.footer-social-link { display: inline-block; vertical-align: middle; margin-left: 5px; }
+.linkedin-icon { width: 16px; height: 16px; fill: #888; transition: fill 0.2s ease; }
 .footer-social-link:hover .linkedin-icon,
-.footer-social-link:focus .linkedin-icon {
-    fill: #fff;
-}
-#debug-console {
-    color: #ffcc00; 
-    font-size: 10px; 
-    height: 16px; 
-    overflow: hidden; 
-    white-space: nowrap;
-}
-
-
-/* ⭐️ #app-container es el Grid Layout ⭐️ */
+.footer-social-link:focus .linkedin-icon { fill: #fff; }
+#debug-console { color: #ffcc00; font-size: 10px; height: 16px; overflow: hidden; white-space: nowrap; }
 #app-container {
-  /* Altura total disponible para el contenido */
   height: calc(100vh - var(--header-height) - var(--footer-height)); 
   width: 100%;
   max-width: 1600px; 
   margin: 0 auto;
-    
-  /* Layout Fijo-Flexible-Fijo con GAPs */
   display: grid;
   grid-template-columns: var(--sidebar-column-width) 1fr var(--sidebar-column-width); 
-  gap: 20px; /* Separación entre columnas */
-  padding: 20px; /* Espacio de los bordes internos */
-  box-sizing: border-box; /* ⭐️ CORRECCIÓN CLAVE para evitar desbordamiento ⭐️ */
-  
-  /* Alinear todo arriba */
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
   align-items: start;
-    
   background: var(--color-bg);
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); 
 }
-
-/* ⭐️ Contenedor Central ⭐️ */
-/* Contenedor relativo que alberga las vistas absolutas (navegación/detalle) */
 #vista-central {
   grid-column: 2 / 3;
   width: 100%;
-  height: 100%; /* Ocupa el 100% de la celda del grid */
+  height: 100%;
   position: relative; 
   overflow: hidden; 
 }
-
-/* El DIV principal de la vista (se posiciona absolutamente dentro de #vista-central) */
 .vista {
   position: absolute; 
   width: 100%; 
   height: 100%;
   top: 0;
   left: 0;
-  
   display: flex; 
   flex-direction: column;
   justify-content: start; 
-  
   opacity: 0;
   transition: opacity 0.3s ease;
   visibility: hidden;
 }
-.vista.active { 
-    opacity: 1; 
-    visibility: visible;
-} 
-
-
-/* RESPONSIVIDAD DEL TÍTULO (CORREGIDO) */
+.vista.active { opacity: 1; visibility: visible; } 
 header h1 {
     font-size: clamp(1.4rem, 2.8vw, 2.2rem); 
     margin: 0;
@@ -165,15 +112,14 @@ header h1 {
     line-height: 1.2;
 }
 
-
 /* --- 3. El Marco de Foco (La Máscara) --- */
+/* ... (Esta sección no tiene cambios) ... */
 .carousel-mask {
   position: absolute;
   width: 100%; 
   height: 100%; 
   top: 0;
   left: 0;
-  
   z-index: 10; 
   pointer-events: none;
   overflow: hidden; 
@@ -191,9 +137,7 @@ header h1 {
   );
   z-index: 10;
 }
-.mask-left {
-    left: 0;
-}
+.mask-left { left: 0; }
 .mask-right {
   right: 0;
   background: linear-gradient(to left, 
@@ -201,25 +145,20 @@ header h1 {
   );
 }
 
-
 /* --- 4. El Carrusel (Viewport y Track) --- */
+/* ... (Esta sección no tiene cambios) ... */
 .swiper {
     width: 100%; 
     height: 100%; 
-    
-    /* ⭐️ CORRECCIÓN: Ocultar overflow-x para evitar solapamiento */
     overflow-y: auto;
     overflow-x: hidden; 
     position: relative; 
     z-index: 1; 
-    
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Alinear al inicio (top) */
-    
+    align-items: flex-start;
     box-sizing: border-box;
 }
-
 .swiper-wrapper {
   display: grid;
   grid-auto-flow: column;
@@ -253,9 +192,12 @@ header h1 {
   font-size: 1.5rem;
 }
 
-.swiper-slide:hover,
-.swiper-slide:focus-visible,
-.swiper-slide.focus-visible {
+/* ⭐️ CAMBIO: Efecto GHOST AZUL (Solo para tarjetas activas y el botón volver) */
+.swiper-slide:not(.disabled):not([data-tipo="relleno"]):hover,
+.swiper-slide:not(.disabled):not([data-tipo="relleno"]):focus-visible,
+.swiper-slide.focus-visible:not(.disabled):not([data-tipo="relleno"]),
+#card-volver-fija:hover,
+#card-volver-fija:focus-visible {
   outline: none;
   border-color: var(--color-primary);
   background: var(--color-primary-bg);
@@ -264,29 +206,46 @@ header h1 {
 }
 
 /* --- 6. El caso especial (Sección Vacía y Relleno) --- */
+
+/* ⭐️ CAMBIO: Estilo base de la tarjeta deshabilitada */
 .swiper-slide.disabled {
-  opacity: 0.4;
+  opacity: 0.5;
   border-color: var(--color-card-border-disabled);
-  cursor: not-allowed;
+  cursor: default; /* Navegable, pero no "pointer" */
 }
 .swiper-slide.disabled span {
   font-size: 0.9rem;
   color: #999;
 }
+
+/* ⭐️ CAMBIO: Efecto GHOST GRIS (Para tarjetas deshabilitadas) */
 .swiper-slide.disabled:hover,
 .swiper-slide.disabled:focus-visible,
 .swiper-slide.disabled.focus-visible {
-  border-color: var(--color-danger);
-  background: var(--color-danger-bg);
-  opacity: 0.6;
-  transform: none;
-  box-shadow: none;
+  outline: none;
+  border-color: var(--color-card-border); /* Borde más nítido */
+  background: var(--color-card-bg); /* Sin fondo de color */
+  opacity: 0.7; /* Más visible */
+  transform: scale(1.03);
+  box-shadow: 0 4px 15px rgba(100, 100, 100, 0.1); /* Sombra gris neutra */
 }
+
+/* ⭐️ CAMBIO: Tarjetas de relleno (invisibles) */
 .swiper-slide[data-tipo="relleno"] {
     background: transparent;
-    border: 2px dashed var(--color-card-border-disabled);
-    opacity: 0.2;
+    border: none;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    cursor: default;
 }
+/* Anular cualquier hover/focus en el relleno */
+.swiper-slide[data-tipo="relleno"]:hover,
+.swiper-slide[data-tipo="relleno"]:focus-visible {
+    transform: none;
+    box-shadow: none;
+}
+
 
 /* --- 7. Tarjeta Fija de Volver (POSICIONAMIENTO EN GRID) --- */
 #btn-volver-navegacion {
@@ -294,19 +253,19 @@ header h1 {
 }
 #card-volver-fija {
     display: none !important; 
-    grid-column: 1 / 2; /* Columna Izquierda del #app-container */
-    
+    grid-column: 1 / 2;
     place-self: start center; 
-
     position: relative; 
     z-index: 50; 
-    
     width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
     
-    opacity: 0.6;
-    border: 2px solid var(--color-danger);
-    background: var(--color-danger-bg);
+    /* ⭐️ CAMBIO: Estilo base normalizado (como una card activa) */
+    opacity: 1;
+    border: 2px solid var(--color-card-border);
+    background: var(--color-card-bg);
+    cursor: pointer; /* Añadido */
+
     padding: 1rem;
     border-radius: 12px;
     transition: all 0.2s ease;
@@ -320,22 +279,11 @@ header h1 {
 #card-volver-fija h3 {
     font-size: 1.2rem;
 }
-#card-volver-fija.active-volver {
-    border-color: var(--color-success) !important;
-    background: var(--color-success-bg) !important;
-    opacity: 1;
-}
-#card-volver-fija.active-volver:hover,
-#card-volver-fija.active-volver:focus-visible {
-  outline: none;
-  transform: scale(1.05); 
-  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
-}
-#card-volver-fija:not(.active-volver):hover,
-#card-volver-fija:not(.active-volver):focus-visible {
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
-}
+
+/* ⭐️ CAMBIO: Eliminados los bloques .active-volver y :not(.active-volver) */
+/* El hover/focus ahora lo gestiona el selector principal en la sección 5 */
+
+
 .card-volver-vertical {
     width: 100% !important; 
     margin-bottom: 15px;
@@ -343,12 +291,12 @@ header h1 {
 }
 
 /* --- 8. VISTA DE DETALLE DEL CURSO --- */
+/* ... (Esta sección no tiene cambios) ... */
 .contenido-curso {
   width: 100%;
   max-width: 700px;
   margin: 0 auto; 
   padding: 0 1rem; 
-  
   box-sizing: border-box;
 }
 .enlace-curso {
@@ -362,44 +310,37 @@ header h1 {
     transition: background 0.2s;
 }
 .enlaces-curso a:hover {
-    background: var(--color-success);
+    background: var(--color-success); /* Este verde (éxito) aquí está bien */
 }
 
 /* --- 9. ZONA DE INFORMACIÓN ADICIONAL (1/5 DERECHA) --- */
+/* ... (Esta sección no tiene cambios) ... */
 .info-adicional {
-    grid-column: 3 / 4; /* Columna Derecha del #app-container */
-    
+    grid-column: 3 / 4;
     place-self: start center;
-
     width: var(--sidebar-card-width); 
     height: 100%; 
-    
     padding: 1.5rem;
     border-radius: 12px;
     background: var(--color-card-bg);
     border: 2px dashed var(--color-card-border);
-    display: none; /* JS lo activa */
+    display: none; 
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
     box-sizing: border-box;
 }
-.info-adicional p {
-    margin-bottom: 0.5rem;
-}
-.info-adicional small {
-    color: #999;
-    font-size: 0.8rem;
-}
+.info-adicional p { margin-bottom: 0.5rem; }
+.info-adicional small { color: #999; font-size: 0.8rem; }
 
 
+/* --- MEDIA QUERIES (Sin cambios) --- */
 /* ---------------------------------------------------------------------- */
 /* ⭐️ MEDIA QUERY: ADAPTACIÓN PARA MÓVILES (< 768px) ⭐️ */
 /* ---------------------------------------------------------------------- */
 @media screen and (max-width: 768px) {
     
-    /* ⭐️ CORRECCIÓN: El layout de #app-container se colapsa */
     #app-container {
         grid-template-columns: 1fr; 
         padding: 0; 
@@ -407,13 +348,11 @@ header h1 {
         height: 100%; 
     }
 
-    /* 2. OCULTAR ELEMENTOS LATERALES AGRESIVOS */
     #card-volver-fija,
     .info-adicional { 
         display: none !important; 
     }
     
-    /* ⭐️ CORRECCIÓN: Las vistas ocupan toda la única columna */
     .vista, 
     .vista.active {
         grid-template-columns: 1fr;
@@ -437,7 +376,6 @@ header h1 {
         padding: 1rem;
     }
     
-    /* 4. ELIMINAR EL GRID DE SWIPER PARA CREAR UNA LISTA VERTICAL */
     .swiper-wrapper {
         display: flex; 
         flex-direction: column;
@@ -448,7 +386,6 @@ header h1 {
         width: 100%;
     }
     
-    /* 5. TAMAÑO DE TARJETA EN MÓVIL (100% de ancho) */
     .swiper-slide {
         width: 100% !important; 
         margin-bottom: 15px;
@@ -456,14 +393,12 @@ header h1 {
         min-height: 100px; 
     }
     
-    /* 6. TÍTULO EN MÓVIL */
     header h1 {
         white-space: normal; 
     }
     
-    /* 7. BOTÓN VOLVER MÓVIL */
     #btn-volver-navegacion {
-        display: block; /* Se muestra en móvil cuando JS lo permite */
+        display: block; 
         position: absolute;
         top: 10px; 
         left: 10px;
