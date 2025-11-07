@@ -19,7 +19,7 @@
           this.DOM.cardVolverFija.addEventListener('click', this._handleVolverClick.bind(this));
       }
       
-      // 5.4. Listener central de teclado (MODIFICADO para Tab y Flechas)
+      // 5.4. Listener central de teclado (MODIFICADO para Tab, Flechas y Detalle)
       document.addEventListener('keydown', (e) => {
         const isNavActive = this.DOM.vistaNav.classList.contains('active');
         const isDetailActive = this.DOM.vistaDetalle.classList.contains('active');
@@ -33,9 +33,9 @@
 
         // Caso 1: VISTA DE NAVEGACIÓN
         if (isNavActive) {
+            // Flechas, Enter y Space para el carrusel (requiere preventDefault)
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault(); 
-                // 🚨 Se llama al manejador que ahora verifica el foco actual
                 this._handleKeyNavigation(e.key);
             } 
             // Interceptar Tab
@@ -46,8 +46,13 @@
         } 
         // Caso 2: VISTA DE DETALLE
         else if (isDetailActive) {
-            // Interceptar Tab también aquí
-            if (e.key === 'Tab') {
+            // ⭐️ NUEVO: Flechas, Enter y Space para la navegación de Detalle
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
+                e.preventDefault();
+                this._handleDetailNavigation(e.key);
+            }
+            // Interceptar Tab
+            else if (e.key === 'Tab') {
                 e.preventDefault();
                 this._handleFocusTrap(e, 'detail');
             }
@@ -60,7 +65,6 @@
       const tarjeta = e.target.closest('.swiper-slide');
       
       if (!tarjeta || tarjeta.classList.contains('disabled') || tarjeta.dataset.tipo === 'relleno') {
-        // Si la tarjeta está deshabilitada o es relleno, no hacer nada
         return;
       }
       
@@ -81,13 +85,13 @@
       }
     };
     
-    // ⭐️ 3. NAVEGACIÓN POR TECLADO (FLECHAS) - CORREGIDA ⭐️
+    // ⭐️ 3. NAVEGACIÓN POR TECLADO (FLECHAS) - CORREGIDA (VISTA NAV) ⭐️
     App._handleKeyNavigation = function(key) {
       
       // 🚨 FIX CRÍTICO: Verificar si el foco está DENTRO del Swiper 
       const activeElement = document.activeElement;
       if (!activeElement || !activeElement.closest('#track-navegacion')) {
-          // Si el elemento activo no está dentro del track (ej. es la tarjeta "Volver"), ignorar las flechas
+          // Si el elemento activo no está dentro del track (ej. es la tarjeta "Volver" fija), ignorar las flechas
           return; 
       }
       
@@ -121,31 +125,26 @@
           }
           break;
         case 'ArrowLeft':
-            // Saltar a la columna anterior (índice - 3)
             let prevColIndex = newIndex - itemsPorColumna;
-            // Asegurarse de que no caiga en el relleno izquierdo
             if (prevColIndex < itemsPorColumna) {
-                prevColIndex = newIndex; // No mover si ya está en la primera columna
+                prevColIndex = newIndex; 
             }
             newIndex = prevColIndex;
           break;
         case 'ArrowRight':
-            // Saltar a la columna siguiente (índice + 3)
             let nextColIndex = newIndex + itemsPorColumna;
-            // Asegurarse de que no caiga en el relleno derecho (o fuera de rango)
             if (nextColIndex >= totalItems || allSlides[nextColIndex].dataset.tipo === 'relleno') {
-                nextColIndex = newIndex; // No mover si está en la última
+                nextColIndex = newIndex; 
             }
             newIndex = nextColIndex;
           break;
         case 'Enter':
         case ' ':
-          // Activar el click sobre el elemento que tiene el foco
+          // ⭐️ ACTIVACIÓN: Activar click sobre el elemento enfocado (swiper-slide)
           currentFocusedSlide.click();
           return;
       }
       
-      // Validar si el índice cambió y es válido
       if (newIndex !== oldIndex && allSlides[newIndex]) {
           this.STATE.currentFocusIndex = newIndex;
           this._updateFocus(true);
@@ -158,9 +157,9 @@
         let focusableElements = [];
         
         const footerLinks = Array.from(document.querySelectorAll('footer a'));
-        // activeCard es la tarjeta del Swiper que actualmente tiene tabindex="0"
         const activeCard = this.DOM.track.querySelector('.swiper-slide[tabindex="0"]');
 
+        // ... (lógica de construcción de focusableElements, sin cambios) ...
         if (viewType === 'nav') {
             if (isMobile) {
                 const btnVolver = this.DOM.btnVolverNav.style.display === 'none' ? null : this.DOM.btnVolverNav;
@@ -171,15 +170,9 @@
             }
         } 
         else if (viewType === 'detail') {
-            const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('a.enlace-curso'));
-            
-            if (isMobile) {
-                const btnVolver = this.DOM.btnVolverNav.style.display === 'none' ? null : this.DOM.btnVolverNav;
-                focusableElements = [btnVolver, ...detailLinks, ...footerLinks].filter(Boolean);
-            } else {
-                const cardVolver = this.DOM.cardVolverFija.style.display === 'none' ? null : this.DOM.cardVolverFija;
-                focusableElements = [cardVolver, ...detailLinks, ...footerLinks].filter(Boolean);
-            }
+            // Usamos el helper para obtener los elementos interactivos del detalle + footer
+            const detailInteractive = this._getFocusableDetailElements();
+            focusableElements = [...detailInteractive, ...footerLinks].filter(Boolean);
         }
 
         if (focusableElements.length === 0) return;
@@ -201,11 +194,10 @@
             }
         }
         
-        // ⭐️ FIX CRÍTICO DOBLE HALO: Limpiar el estado visual del slide activo al salir ⭐️
+        // FIX CRÍTICO DOBLE HALO
         if (viewType === 'nav' && activeCard) {
             const activeCardIndexInFocusables = focusableElements.indexOf(activeCard);
             
-            // Si actualmente estamos en la tarjeta activa Y el foco se moverá a otro elemento:
             if (currentIndex === activeCardIndexInFocusables && nextIndex !== activeCardIndexInFocusables) {
                 activeCard.classList.remove('focus-visible');
             }
@@ -215,8 +207,68 @@
     };
 
 
-    // ⭐️ 5. FUNCIONES DE NAVEGACIÓN Y VISTA (UNIFICADAS) ⭐️
+    // ⭐️ 5. NUEVA FUNCIÓN HELPER: Obtener elementos focuseables del detalle ⭐️
+    App._getFocusableDetailElements = function() {
+        const isMobile = window.innerWidth <= 768;
+        // Seleccionar solo los enlaces con tabindex="0"
+        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('a.enlace-curso[tabindex="0"]'));
+        let elements = [];
 
+        // Añadir la tarjeta Volver o el botón Volver móvil, si están activos
+        if (!isMobile && this.DOM.cardVolverFija.tabIndex === 0) {
+            elements.push(this.DOM.cardVolverFija);
+        } else if (isMobile && this.DOM.btnVolverNav.tabIndex === 0) {
+            elements.push(this.DOM.btnVolverNav);
+        }
+        
+        // Agregar enlaces del curso
+        elements.push(...detailLinks);
+        
+        return elements;
+    };
+
+
+    // ⭐️ 6. NUEVA FUNCIÓN: Manejo de Navegación por Flechas en Detalles (VISTA DETALLE) ⭐️
+    App._handleDetailNavigation = function(key) {
+        const activeElement = document.activeElement;
+        
+        // Obtener todos los elementos navegables (Volver + Links)
+        const focusableDetailElements = this._getFocusableDetailElements();
+        
+        let currentIndex = focusableDetailElements.indexOf(activeElement);
+        if (currentIndex === -1) return; // Foco no está en un elemento navegable del detalle
+
+        let newIndex = currentIndex;
+
+        switch (key) {
+            case 'ArrowLeft':
+            case 'ArrowUp':
+                // Mover al anterior (circularidad no es requerida aquí)
+                newIndex = (currentIndex > 0) ? currentIndex - 1 : currentIndex;
+                break;
+            case 'ArrowRight':
+            case 'ArrowDown':
+                // Mover al siguiente
+                newIndex = (currentIndex < focusableDetailElements.length - 1) ? currentIndex + 1 : currentIndex;
+                break;
+            case 'Enter':
+            case ' ':
+                // ⭐️ FIX ACTIVACIÓN: Simular click en el elemento activo
+                activeElement.click(); 
+                return;
+        }
+
+        if (newIndex !== currentIndex) {
+            focusableDetailElements[newIndex].focus();
+        }
+    };
+
+
+    // ⭐️ 7. FUNCIONES DE NAVEGACIÓN Y VISTA (UNIFICADAS) ⭐️
+
+    /**
+     * Handler unificado para CUALQUIER acción de "Volver"
+     */
     App._handleVolverClick = function() {
         // Caso 1: Estamos en la vista de Detalle de un curso
         if (this.DOM.vistaDetalle.classList.contains('active')) {
@@ -244,12 +296,15 @@
         }
     };
 
+    /**
+     * MODIFICADO: Ahora también controla la visibilidad de las columnas laterales.
+     */
     App._mostrarDetalle = function(cursoId) {
       const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion);
       if (!curso) return;
       
       let enlacesHtml = (curso.enlaces || []).map(enlace => 
-        // Asegurar que los enlaces tengan tabindex="0" para la trampa de foco
+        // Asegurar que los enlaces tengan tabindex="0" para la trampa y flechas
         `<a href="${enlace.url || '#'}" class="enlace-curso" target="_blank" tabindex="0">${enlace.texto}</a>`
       ).join('');
 

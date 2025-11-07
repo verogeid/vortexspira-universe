@@ -42,7 +42,7 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  overflow: hidden; 
+  overflow: hidden; /* Controla el overflow global */
   margin: 0;
   box-sizing: border-box;
   min-height: 100vh;
@@ -110,7 +110,7 @@ header h1 {
 }
 
 /* --- 3. El Marco de Foco (La Máscara) --- */
-/* ✅ Scroll y Degradado: Degradado más suave para el blur */
+/* Degradado más suave para el blur */
 .carousel-mask {
   position: absolute;
   width: 100%; 
@@ -129,7 +129,6 @@ header h1 {
   height: 100%;
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px); 
-  /* El degradado va de 0% a 80% (más suave) */
   background: linear-gradient(to right, 
     var(--color-mask-gradient) 0%, transparent 80%
   );
@@ -149,7 +148,7 @@ header h1 {
     width: 100%; 
     height: 100%; 
     
-    /* ✅ Scroll: De 'auto' a 'hidden' para eliminar el scroll vertical */
+    /* FIX: Eliminar el scroll vertical */
     overflow-y: hidden;
     overflow-x: hidden; 
     
@@ -193,7 +192,7 @@ header h1 {
   font-size: 1.5rem;
 }
 
-/* ✅ Ghost Azul: Minimalista (solo borde y sombra) y selector de foco corregido */
+/* Ghost Azul: Minimalista (solo borde y sombra) y selector de foco corregido */
 .swiper-slide.focus-visible:not(.disabled):not([data-tipo="relleno"]),
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):hover,
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):focus-visible, 
@@ -201,15 +200,18 @@ header h1 {
 #card-volver-fija:focus-visible {
   outline: none;
   border-color: var(--color-primary);
-  background: var(--color-card-bg); /* Mantener fondo original/card-bg */
+  background: var(--color-card-bg); /* Mantener fondo original */
   transform: scale(1.03);
-  box-shadow: 0 0 25px rgba(0, 123, 255, 0.4); /* Sombra pronunciada para el "halo" */
+  box-shadow: 0 0 25px rgba(0, 123, 255, 0.4); 
 }
 
 /* --- 6. El caso especial (Sección Vacía y Relleno) --- */
+/* Tarjeta deshabilitada (navegable, no clicable) */
 .swiper-slide.disabled {
   opacity: 0.5;
-  border-color: var(--color-card-border-disabled);
+  /* Consistencia con el info-adicional */
+  border: 2px dashed var(--color-card-border-disabled); 
+  background: var(--color-card-bg);
   cursor: default;
 }
 .swiper-slide.disabled span {
@@ -217,23 +219,23 @@ header h1 {
   color: #999;
 }
 
-/* ✅ Ghost Gris: Más pronunciado para que se note en hover/focus */
+/* Ghost Gris: Más pronunciado para que se note en hover/focus */
 .swiper-slide.disabled:hover,
 .swiper-slide.disabled:focus-visible,
 .swiper-slide.disabled.focus-visible {
   outline: none;
-  border-color: var(--color-card-border); /* Borde más nítido */
+  border-color: var(--color-card-border); 
   background: var(--color-card-bg);
-  opacity: 0.8; /* Más visible */
+  opacity: 0.8; 
   transform: scale(1.03);
   box-shadow: 0 0 20px rgba(150, 150, 150, 0.2); 
 }
 
-/* ✅ Tarjetas de relleno: Visibles con borde discontinuo */
+/* Tarjetas de relleno: Visibles con borde discontinuo */
 .swiper-slide[data-tipo="relleno"] {
     background: transparent;
     border: 2px dashed var(--color-card-border-disabled);
-    opacity: 0.2; /* Ligeramente visible */
+    opacity: 0.2; 
     pointer-events: none;
     cursor: default;
     /* Eliminar cualquier estado de hover/focus indeseado */
@@ -261,7 +263,7 @@ header h1 {
     width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
     
-    /* Estilo base unificado con tarjetas activas */
+    /* Estilo base de tarjeta activa/focuseable */
     opacity: 1;
     border: 2px solid var(--color-card-border);
     background: var(--color-card-bg);
@@ -274,6 +276,16 @@ header h1 {
     justify-content: center;
     box-sizing: border-box;
 }
+
+/* Estética de tarjeta inactiva (cuando tabindex="-1" en la raíz) */
+#card-volver-fija[tabindex="-1"] {
+    opacity: 0.5;
+    border: 2px dashed var(--color-card-border-disabled);
+    cursor: default;
+    transform: none;
+    box-shadow: none;
+}
+
 #card-volver-fija[style*="display: flex"] { display: flex !important; }
 #card-volver-fija h3 { font-size: 1.2rem; }
 .card-volver-vertical {
@@ -290,17 +302,34 @@ header h1 {
   padding: 0 1rem; 
   box-sizing: border-box;
 }
+
+/* Enlaces/Botones de Curso: Estética Ghost consistente */
 .enlace-curso {
     display: inline-block;
-    padding: 8px 15px;
+    padding: 1rem; /* Más grandes */
     margin: 10px 10px 0 0;
-    border-radius: 6px;
-    background: var(--color-primary);
-    color: #fff;
+    border-radius: 12px; /* Mismo radio que las cards */
+    
+    /* Estilo inicial neutro */
+    background: var(--color-card-bg); 
+    color: var(--color-text);
+    border: 2px solid var(--color-card-border);
     text-decoration: none;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
-.enlaces-curso a:hover { background: var(--color-success); }
+
+/* Ghost Azul para enlaces de curso */
+.enlace-curso:hover,
+.enlace-curso:focus-visible {
+    border-color: var(--color-primary);
+    background: var(--color-card-bg);
+    transform: scale(1.03);
+    box-shadow: 0 0 25px rgba(0, 123, 255, 0.4);
+}
+.enlaces-curso a:hover {
+    /* Dejamos que el estilo Ghost lo maneje */
+}
 
 /* --- 9. ZONA DE INFORMACIÓN ADICIONAL (1/5 DERECHA) --- */
 .info-adicional {
@@ -310,8 +339,9 @@ header h1 {
     height: 100%; 
     padding: 1.5rem;
     border-radius: 12px;
+    /* Consistencia con el borde discontinuo */
     background: var(--color-card-bg);
-    border: 2px dashed var(--color-card-border);
+    border: 2px dashed var(--color-card-border); 
     display: none; 
     flex-direction: column;
     justify-content: center;
