@@ -20,44 +20,43 @@
         // Destruir la instancia anterior de Swiper antes de recrear el HTML
         this._destroyCarousel();
         
-        // ⭐️ NUEVO: Cálculo dinámico de itemsPorColumna (Ajuste de filas)
-        const swiperHeight = this.DOM.swiperContainer.offsetHeight;
-        // Asumimos una altura mínima (160px) + gap (25px). Esto puede necesitar un ajuste fino en CSS.
-        const cardHeightWithGap = 160 + 25; 
-        
-        let newItemsPorColumna = Math.max(1, Math.min(3, Math.floor(swiperHeight / cardHeightWithGap)));
-        
-        // Si el contenedor tiene 0 de alto (renderizado inicial), forzamos 3.
-        if (swiperHeight === 0 || newItemsPorColumna === 0) {
-            newItemsPorColumna = 3; 
-        }
-        this.STATE.itemsPorColumna = newItemsPorColumna;
-
-        const { itemsPorColumna } = this.STATE;
-
-        let itemsDelNivel = [];
-        
         const isSubLevel = this.STATE.navStack.length > 0;
         const isMobile = window.innerWidth <= 768; 
         
-        // ⭐️ LÓGICA REFACTORIZADA PARA OBTENER itemsDelNivel ⭐️
+        let newItemsPorColumna = 3; 
+
+        if (!isMobile) {
+            const swiperHeight = this.DOM.swiperContainer.offsetHeight;
+            const cardHeightWithGap = 160 + 25; 
+            
+            newItemsPorColumna = Math.max(1, Math.min(3, Math.floor(swiperHeight / cardHeightWithGap)));
+            
+            if (swiperHeight === 0 || newItemsPorColumna === 0) {
+                newItemsPorColumna = 3; 
+            }
+        } else {
+            newItemsPorColumna = 1;
+        }
+
+        this.STATE.itemsPorColumna = newItemsPorColumna;
+        const { itemsPorColumna } = this.STATE;
+        
+        let itemsDelNivel = [];
+        
         if (!isSubLevel) {
-            // Nivel Raíz: Usar la navegación completa
             itemsDelNivel = this.STATE.fullData.navegacion;
         } else {
-            // Nivel Sub-sección: Buscar el nodo y concatenar subsecciones y cursos
             const currentLevelId = this.STATE.navStack[this.STATE.navStack.length - 1];
             const nodoActual = this._findNodoById(currentLevelId, this.STATE.fullData.navegacion);
 
             if (nodoActual) {
-                // Aseguramos que subsecciones y cursos sean arrays antes de concatenar.
                 const subsecciones = nodoActual.subsecciones || [];
                 const cursos = nodoActual.cursos || [];
                 itemsDelNivel = subsecciones.concat(cursos);
             } else {
                 console.warn(`Nodo no encontrado para el ID: ${currentLevelId}. Volviendo a la raíz.`);
-                this.STATE.navStack.pop(); // Limpiar el stack para evitar errores futuros
-                this.renderNavegacion(); // Volver a renderizar la raíz
+                this.STATE.navStack.pop(); 
+                this.renderNavegacion();
                 return;
             }
         }
@@ -70,12 +69,7 @@
             html += this._generarTarjetaHTML({}, false, false, 'volver-vertical'); 
         }
 
-        // ⭐️ 2. Lógica del Relleno Izquierdo (ESCRITORIO) ⭐️
-        if (!isMobile) { 
-            for (let i = 0; i < itemsPorColumna; i++) {
-                html += this._generarTarjetaHTML({nombre: ''}, false, true); // Tarjeta de relleno
-            }
-        }
+        // ⭐️ 2. Relleno Izquierdo (ELIMINADO)
         
         // ⭐️ 3. Insertar los elementos del JSON ⭐️
         let elementosVisibles = 0;
@@ -88,20 +82,22 @@
         
         // ⭐️ 4. Lógica del Relleno Derecho (ESCRITORIO) ⭐️
         if (!isMobile) {
-            const totalConRellenoIzquierdo = itemsPorColumna + elementosVisibles;
-            const minTotalSlots = itemsPorColumna * 3; 
-            const slotsNecesarios = Math.ceil(totalConRellenoIzquierdo / itemsPorColumna) * itemsPorColumna;
-            const numTotalSlots = Math.max(minTotalSlots, slotsNecesarios);
-            const numRellenoDerecho = numTotalSlots - totalConRellenoIzquierdo;
+            const totalItems = itemsDelNivel.length;
             
-            for (let i = 0; i < numRellenoDerecho; i++) {
-                html += this._generarTarjetaHTML({nombre: ''}, false, true); 
+            if (totalItems < 9) { 
+                const totalConElementosReales = totalItems;
+                const slotsNecesarios = Math.ceil(totalConElementosReales / itemsPorColumna) * itemsPorColumna;
+                const numRellenoDerecho = slotsNecesarios - totalConElementosReales;
+                
+                for (let i = 0; i < numRellenoDerecho; i++) {
+                    html += this._generarTarjetaHTML({nombre: ''}, false, true); 
+                }
             }
         }
 
         this.DOM.track.innerHTML = html;
         
-        // ⭐️ FIX: Inyección dinámica de las filas al wrapper (para el ajuste de alto)
+        // FIX: Inyección dinámica de las filas al wrapper
         this.DOM.track.style.gridTemplateRows = `repeat(${itemsPorColumna}, 1fr)`;
 
 
@@ -132,34 +128,22 @@
         // 6. Lógica de Foco Inicial y Carousel
         const allSlides = this.DOM.track.children;
         
-        // Definir el índice inicial de foco
         let firstEnabledIndex = 0;
-        if (!isMobile) {
-            firstEnabledIndex = itemsPorColumna; 
-        } else if (isSubLevel) {
-            firstEnabledIndex = 0;
-        }
         
-        // Asignar el tabindex="0" inicial (CLAVE para el Composite Widget/navegación por Tab)
         if (allSlides[firstEnabledIndex]) {
             allSlides[firstEnabledIndex].tabIndex = 0;
         }
         
-        // Recalculamos el número de columnas para Swiper
         const numColumnas = Math.ceil(allSlides.length / itemsPorColumna);
 
-        // Inicializamos Swiper con la configuración correcta (vertical/horizontal)
-        // ⭐️ FIX: Activar loop: true para navegación infinita en escritorio
         this._initCarousel(0, numColumnas, isMobile);
         
         this.STATE.currentFocusIndex = firstEnabledIndex;
-        this._updateFocus(false); // Establecer el foco sin animación de slide
+        this._updateFocus(false);
         
-        // ⭐️ FIX: Al iniciar con loop: true, el slideTo(0) del Swiper no es necesario si el foco está en el primer elemento real.
+        // Mover el Swiper a la posición inicial centrada del primer elemento real (índice 0)
         if (!isMobile && this.STATE.carouselInstance) {
-            const targetSwiperSlide = Math.floor(firstEnabledIndex / itemsPorColumna);
-            // targetSwiperSlide ya será 1 si firstEnabledIndex es 3 y itemsPorColumna es 3.
-            this.STATE.carouselInstance.slideTo(targetSwiperSlide, 0); 
+            this.STATE.carouselInstance.slideToLoop(0, 0); 
         }
     };
 
@@ -201,7 +185,6 @@
             grid: isMobile ? {} : false,
             centeredSlides: !isMobile, 
             mousewheel: { sensitivity: 1 }, 
-            // ⭐️ FIX: Bucle infinito (loop: true)
             loop: true, 
             initialSlide: initialSwiperSlide,
             keyboard: { enabled: false }, 
@@ -221,7 +204,7 @@
         }
     };
 
-    // ⭐️ _updateFocus: Actualiza el foco dentro del carrusel ⭐️
+    // ⭐️ FIX: _updateFocus - Mueve la columna enfocada al centro ⭐️
     App._updateFocus = function(shouldSlide = true) {
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         const isMobile = window.innerWidth <= 768;
@@ -230,14 +213,14 @@
         // 1. Quitar el foco anterior y resetear tabIndex
         allSlides.forEach(child => {
             child.classList.remove('focus-visible');
-            child.tabIndex = -1; // Reseteamos todas a -1
+            child.tabIndex = -1; 
         });
 
         // 2. Obtener y preparar la nueva tarjeta activa
         const targetSlide = allSlides[currentFocusIndex];
         if (targetSlide) {
             targetSlide.classList.add('focus-visible');
-            targetSlide.tabIndex = 0; // Asignamos el 0 solo a la activa
+            targetSlide.tabIndex = 0; 
 
             // 3. Mover el foco real del navegador
             if (shouldSlide) {
@@ -247,9 +230,9 @@
             }
 
             // 4. Mover el Swiper (solo en desktop)
+            // ⭐️ CLAVE: Esto asegura que la columna con el foco se centre con la máscara ⭐️
             if (carouselInstance && shouldSlide && !isMobile) {
                 const targetSwiperSlide = Math.floor(currentFocusIndex / itemsPorColumna);
-                // Usamos slideToLoop para Swiper con loop: true
                 carouselInstance.slideToLoop(targetSwiperSlide, 400); 
             }
             
