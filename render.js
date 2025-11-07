@@ -20,8 +20,22 @@
         // Destruir la instancia anterior de Swiper antes de recrear el HTML
         this._destroyCarousel();
         
-        let itemsDelNivel = [];
+        // ⭐️ NUEVO: Cálculo dinámico de itemsPorColumna (Ajuste de filas)
+        const swiperHeight = this.DOM.swiperContainer.offsetHeight;
+        // Asumimos una altura mínima (160px) + gap (25px). Esto puede necesitar un ajuste fino en CSS.
+        const cardHeightWithGap = 160 + 25; 
+        
+        let newItemsPorColumna = Math.max(1, Math.min(3, Math.floor(swiperHeight / cardHeightWithGap)));
+        
+        // Si el contenedor tiene 0 de alto (renderizado inicial), forzamos 3.
+        if (swiperHeight === 0 || newItemsPorColumna === 0) {
+            newItemsPorColumna = 3; 
+        }
+        this.STATE.itemsPorColumna = newItemsPorColumna;
+
         const { itemsPorColumna } = this.STATE;
+
+        let itemsDelNivel = [];
         
         const isSubLevel = this.STATE.navStack.length > 0;
         const isMobile = window.innerWidth <= 768; 
@@ -86,6 +100,10 @@
         }
 
         this.DOM.track.innerHTML = html;
+        
+        // ⭐️ FIX: Inyección dinámica de las filas al wrapper (para el ajuste de alto)
+        this.DOM.track.style.gridTemplateRows = `repeat(${itemsPorColumna}, 1fr)`;
+
 
         // 5. Gestión de Tarjeta "Volver" Fija (Escritorio) y Área de Información Adicional
         if (!isMobile) { 
@@ -131,13 +149,16 @@
         const numColumnas = Math.ceil(allSlides.length / itemsPorColumna);
 
         // Inicializamos Swiper con la configuración correcta (vertical/horizontal)
+        // ⭐️ FIX: Activar loop: true para navegación infinita en escritorio
         this._initCarousel(0, numColumnas, isMobile);
         
         this.STATE.currentFocusIndex = firstEnabledIndex;
         this._updateFocus(false); // Establecer el foco sin animación de slide
         
+        // ⭐️ FIX: Al iniciar con loop: true, el slideTo(0) del Swiper no es necesario si el foco está en el primer elemento real.
         if (!isMobile && this.STATE.carouselInstance) {
             const targetSwiperSlide = Math.floor(firstEnabledIndex / itemsPorColumna);
+            // targetSwiperSlide ya será 1 si firstEnabledIndex es 3 y itemsPorColumna es 3.
             this.STATE.carouselInstance.slideTo(targetSwiperSlide, 0); 
         }
     };
@@ -180,7 +201,8 @@
             grid: isMobile ? {} : false,
             centeredSlides: !isMobile, 
             mousewheel: { sensitivity: 1 }, 
-            loop: !isMobile && numColumnas > 3, 
+            // ⭐️ FIX: Bucle infinito (loop: true)
+            loop: true, 
             initialSlide: initialSwiperSlide,
             keyboard: { enabled: false }, 
             speed: 400,
@@ -199,7 +221,7 @@
         }
     };
 
-    // ⭐️ CAMBIO: Función _updateFocus reescrita para manejar tabindex y .focus()
+    // ⭐️ _updateFocus: Actualiza el foco dentro del carrusel ⭐️
     App._updateFocus = function(shouldSlide = true) {
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         const isMobile = window.innerWidth <= 768;
@@ -227,7 +249,8 @@
             // 4. Mover el Swiper (solo en desktop)
             if (carouselInstance && shouldSlide && !isMobile) {
                 const targetSwiperSlide = Math.floor(currentFocusIndex / itemsPorColumna);
-                carouselInstance.slideTo(targetSwiperSlide, 400); 
+                // Usamos slideToLoop para Swiper con loop: true
+                carouselInstance.slideToLoop(targetSwiperSlide, 400); 
             }
             
             // 5. Asegurar visibilidad (scroll) en móvil
@@ -300,7 +323,6 @@
         const claseDisabled = estaActivo ? '' : 'disabled';
         const tagAria = estaActivo ? '' : 'aria-disabled="true"';
         
-        // CLAVE para el Composite Widget: todas las tarjetas empiezan con tabindex="-1"
         const tabindex = '-1';
         
         let hint = '';

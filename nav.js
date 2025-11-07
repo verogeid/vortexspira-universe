@@ -46,7 +46,7 @@
         } 
         // Caso 2: VISTA DE DETALLE
         else if (isDetailActive) {
-            // ⭐️ NUEVO: Flechas, Enter y Space para la navegación de Detalle
+            // Flechas, Enter y Space para la navegación de Detalle
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault();
                 this._handleDetailNavigation(e.key);
@@ -85,10 +85,10 @@
       }
     };
     
-    // ⭐️ 3. NAVEGACIÓN POR TECLADO (FLECHAS) - CORREGIDA (VISTA NAV) ⭐️
+    // ⭐️ 3. NAVEGACIÓN POR TECLADO (FLECHAS) - VISTA NAV ⭐️
     App._handleKeyNavigation = function(key) {
       
-      // 🚨 FIX CRÍTICO: Verificar si el foco está DENTRO del Swiper 
+      // FIX CRÍTICO: Verificar si el foco está DENTRO del Swiper 
       const activeElement = document.activeElement;
       if (!activeElement || !activeElement.closest('#track-navegacion')) {
           // Si el elemento activo no está dentro del track (ej. es la tarjeta "Volver" fija), ignorar las flechas
@@ -140,7 +140,7 @@
           break;
         case 'Enter':
         case ' ':
-          // ⭐️ ACTIVACIÓN: Activar click sobre el elemento enfocado (swiper-slide)
+          // ACTIVACIÓN: Activar click sobre el elemento enfocado (swiper-slide)
           currentFocusedSlide.click();
           return;
       }
@@ -159,7 +159,6 @@
         const footerLinks = Array.from(document.querySelectorAll('footer a'));
         const activeCard = this.DOM.track.querySelector('.swiper-slide[tabindex="0"]');
 
-        // ... (lógica de construcción de focusableElements, sin cambios) ...
         if (viewType === 'nav') {
             if (isMobile) {
                 const btnVolver = this.DOM.btnVolverNav.style.display === 'none' ? null : this.DOM.btnVolverNav;
@@ -170,7 +169,6 @@
             }
         } 
         else if (viewType === 'detail') {
-            // Usamos el helper para obtener los elementos interactivos del detalle + footer
             const detailInteractive = this._getFocusableDetailElements();
             focusableElements = [...detailInteractive, ...footerLinks].filter(Boolean);
         }
@@ -210,7 +208,6 @@
     // ⭐️ 5. NUEVA FUNCIÓN HELPER: Obtener elementos focuseables del detalle ⭐️
     App._getFocusableDetailElements = function() {
         const isMobile = window.innerWidth <= 768;
-        // Seleccionar solo los enlaces con tabindex="0"
         const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('a.enlace-curso[tabindex="0"]'));
         let elements = [];
 
@@ -243,17 +240,15 @@
         switch (key) {
             case 'ArrowLeft':
             case 'ArrowUp':
-                // Mover al anterior (circularidad no es requerida aquí)
                 newIndex = (currentIndex > 0) ? currentIndex - 1 : currentIndex;
                 break;
             case 'ArrowRight':
             case 'ArrowDown':
-                // Mover al siguiente
                 newIndex = (currentIndex < focusableDetailElements.length - 1) ? currentIndex + 1 : currentIndex;
                 break;
             case 'Enter':
             case ' ':
-                // ⭐️ FIX ACTIVACIÓN: Simular click en el elemento activo
+                // FIX ACTIVACIÓN: Simular click en el elemento activo (Volver o Enlace de Curso)
                 activeElement.click(); 
                 return;
         }
