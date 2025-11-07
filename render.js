@@ -26,6 +26,7 @@
         let newItemsPorColumna = 3; 
 
         if (!isMobile) {
+            // Lógica de cálculo de filas solo para ESCRITORIO
             const swiperHeight = this.DOM.swiperContainer.offsetHeight;
             const cardHeightWithGap = 160 + 25; 
             
@@ -35,6 +36,7 @@
                 newItemsPorColumna = 3; 
             }
         } else {
+            // FIX MÓVIL: Forzar 1 fila (lista vertical)
             newItemsPorColumna = 1;
         }
 
@@ -97,8 +99,13 @@
 
         this.DOM.track.innerHTML = html;
         
-        // FIX: Inyección dinámica de las filas al wrapper
-        this.DOM.track.style.gridTemplateRows = `repeat(${itemsPorColumna}, 1fr)`;
+        // 🚨 FIX CRÍTICO: SOLO aplicar reglas de Grid en Desktop 🚨
+        if (!isMobile) {
+            this.DOM.track.style.gridTemplateRows = `repeat(${itemsPorColumna}, 1fr)`;
+        } else {
+            // Asegurar que no haya reglas de Grid en línea en móvil
+            this.DOM.track.style.gridTemplateRows = '';
+        }
 
 
         // 5. Gestión de Tarjeta "Volver" Fija (Escritorio) y Área de Información Adicional
@@ -182,7 +189,8 @@
         const swiperConfig = {
             direction: isMobile ? 'vertical' : 'horizontal', 
             slidesPerView: isMobile ? 'auto' : 'auto', 
-            grid: isMobile ? {} : false,
+            // 🚨 FIX MÓVIL: No usar Grid en móvil
+            grid: isMobile ? { rows: 1, fill: 'row' } : false, 
             centeredSlides: !isMobile, 
             mousewheel: { sensitivity: 1 }, 
             loop: true, 
@@ -204,7 +212,7 @@
         }
     };
 
-    // ⭐️ FIX: _updateFocus - Mueve la columna enfocada al centro ⭐️
+    // _updateFocus: Actualiza el foco dentro del carrusel 
     App._updateFocus = function(shouldSlide = true) {
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         const isMobile = window.innerWidth <= 768;
@@ -230,7 +238,6 @@
             }
 
             // 4. Mover el Swiper (solo en desktop)
-            // ⭐️ CLAVE: Esto asegura que la columna con el foco se centre con la máscara ⭐️
             if (carouselInstance && shouldSlide && !isMobile) {
                 const targetSwiperSlide = Math.floor(currentFocusIndex / itemsPorColumna);
                 carouselInstance.slideToLoop(targetSwiperSlide, 400); 
