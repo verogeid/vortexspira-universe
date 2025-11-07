@@ -154,7 +154,7 @@ async function loadData(appInstance) {
     try {
         const response = await fetch('./cursos.json'); 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         appInstance.STATE.fullData = await response.json();
         console.log("Datos cargados con éxito.");
@@ -172,7 +172,8 @@ function injectHeaderLogo() {
 
     const faviconLink = document.createElement('link');
     faviconLink.rel = 'icon';
-    faviconLink.href = FAVICON_SVG_DATA_URI;
+    //faviconLink.href = FAVICON_SVG_DATA_URI;
+    faviconLink.href = fetch('./images/logo.svg');
     faviconLink.type = 'image/svg+xml';
     document.head.appendChild(faviconLink);
 
