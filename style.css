@@ -7,8 +7,8 @@
 
   /* Texto y Bordes */
   --color-text: #111;
-  --color-card-border: #bbb;
-  --color-card-border-disabled: #ccc;
+  --color-card-border: #bbb; /* Gris nítido para bordes de tarjetas activas/discontinuas */
+  --color-card-border-disabled: #ccc; /* Gris claro para borde continuo deshabilitado */
   
   /* Acentos (Ghost) */
   --color-primary: #007bff;
@@ -32,8 +32,8 @@
     --color-card-bg: rgba(255, 255, 255, 0.02);
     --color-mask-gradient: rgba(17, 17, 17, 0.4);
     --color-text: #eee;
-    --color-card-border: #555;
-    --color-card-border-disabled: #444;
+    --color-card-border: #555; /* Gris nítido para bordes de tarjetas activas/discontinuas */
+    --color-card-border-disabled: #444; /* Gris oscuro para borde continuo deshabilitado */
   }
 }
 
@@ -201,6 +201,7 @@ header h1 {
   width: clamp(var(--card-width-min), 18vw, var(--card-width-max)) !important;
   height: clamp(150px, 20vh, 180px) !important;
   margin: 0 !important;
+  /* Borde CONTINUO para tarjetas activas */
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
   padding: 1.5rem;
@@ -217,7 +218,7 @@ header h1 {
   font-size: 1.5rem;
 }
 
-/* Ghost Azul: Minimalista (solo borde y sombra) y selector de foco corregido */
+/* Ghost Azul: Minimalista (solo borde y sombra) */
 .swiper-slide.focus-visible:not(.disabled):not([data-tipo="relleno"]),
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):hover,
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):focus-visible, 
@@ -231,10 +232,10 @@ header h1 {
 }
 
 /* --- 6. El caso especial (Sección Vacía y Relleno) --- */
-/* Tarjeta deshabilitada (navegable, no clicable) */
+/* Tarjeta deshabilitada (navegable) */
 .swiper-slide.disabled {
   opacity: 0.5;
-  /* Borde continuo (solid) para denotar que es una tarjeta real */
+  /* Borde CONTINUO, pero color deshabilitado */
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);
   cursor: default;
@@ -249,16 +250,17 @@ header h1 {
 .swiper-slide.disabled:focus-visible,
 .swiper-slide.disabled.focus-visible {
   outline: none;
-  border-color: var(--color-card-border); 
+  border-color: var(--color-card-border); /* Gris nítido del activo */
   background: var(--color-card-bg);
   opacity: 0.8; 
   transform: scale(1.03);
   box-shadow: 0 0 20px rgba(150, 150, 150, 0.2); 
 }
 
-/* Tarjetas de relleno: Visibles con borde discontinuo */
+/* Tarjetas de relleno: Pasivas/Discontinuas */
 .swiper-slide[data-tipo="relleno"] {
     background: transparent;
+    /* Borde DISCONTINUO (Consistencia con info-adicional) */
     border: 2px dashed var(--color-card-border); 
     opacity: 0.2; 
     pointer-events: none;
@@ -287,7 +289,7 @@ header h1 {
     width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
     
-    /* Estilo base de tarjeta activa/focuseable */
+    /* Estilo base de tarjeta activa/focuseable: CONTINUO */
     opacity: 1;
     border: 2px solid var(--color-card-border);
     background: var(--color-card-bg);
@@ -304,6 +306,7 @@ header h1 {
 /* Estética de tarjeta inactiva (borde discontinuo) */
 #card-volver-fija[tabindex="-1"] {
     opacity: 0.5;
+    /* Borde DISCONTINUO (Consistencia con info-adicional) */
     border: 2px dashed var(--color-card-border);
     background: var(--color-card-bg);
     cursor: default;
@@ -328,7 +331,7 @@ header h1 {
   box-sizing: border-box;
 }
 
-/* Enlaces/Botones de Curso: Estética Ghost consistente */
+/* Enlaces/Botones de Curso: Estética Ghost consistente (Continuo) */
 .enlace-curso {
     display: inline-block;
     padding: 1rem; 
@@ -363,7 +366,7 @@ header h1 {
     height: 100%; 
     padding: 1.5rem;
     border-radius: 12px;
-    /* Borde discontinuo para denotar espacio reservado */
+    /* Borde DISCONTINUO para denotar espacio reservado */
     background: var(--color-card-bg);
     border: 2px dashed var(--color-card-border); 
     display: none; 
