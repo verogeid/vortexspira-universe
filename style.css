@@ -47,7 +47,7 @@ body {
   overflow: hidden; 
   margin: 0;
   
-  /* ⭐️ CORRECCIÓN: Separación de Header/Footer fijos */
+  /* ⭐️ Separación de Header/Footer fijos */
   box-sizing: border-box;
   min-height: 100vh;
   padding-top: var(--header-height);
@@ -60,12 +60,11 @@ header, footer {
     width: 100%;
     text-align: center;
     background: #222;
-    color: #fff; /* Aseguramos color para el header */
+    color: #fff;
     padding: 10px;
     z-index: 100;
     box-sizing: border-box;
 }
-
 header {
     top: 0;
     padding: 10px;
@@ -73,31 +72,28 @@ header {
 footer {
     bottom: 0;
     padding: 5px;
-    color: #888; /* Color específico para el texto del footer */
+    color: #888;
 }
 footer a {
-    color: #888; /* Color para los enlaces del footer */
-    text-decoration: none; /* Quitar subrayado por defecto */
+    color: #888;
+    text-decoration: none;
     transition: color 0.2s ease;
 }
-/* Estilos para el icono de LinkedIn */
 .footer-social-link {
     display: inline-block;
-    vertical-align: middle; /* Alinear icono con el texto */
+    vertical-align: middle;
     margin-left: 5px;
 }
 .linkedin-icon {
     width: 16px;
     height: 16px;
-    fill: #888; /* Color inicial del icono */
+    fill: #888;
     transition: fill 0.2s ease;
 }
 .footer-social-link:hover .linkedin-icon,
 .footer-social-link:focus .linkedin-icon {
-    fill: #fff; /* Color del icono en hover */
+    fill: #fff;
 }
-
-
 #debug-console {
     color: #ffcc00; 
     font-size: 10px; 
@@ -107,20 +103,20 @@ footer a {
 }
 
 
-/* ⭐️ CORRECCIÓN: #app-container es AHORA el Grid Layout */
+/* ⭐️ #app-container es el Grid Layout ⭐️ */
 #app-container {
-  /* ⭐️ CORRECCIÓN: Cambiado a 100% para respetar el padding del body */
-  height: 100%; 
+  /* Altura total disponible para el contenido */
+  height: calc(100vh - var(--header-height) - var(--footer-height)); 
   width: 100%;
   max-width: 1600px; 
   margin: 0 auto;
     
-  /* ⭐️ NUEVO: Layout Fijo-Flexible-Fijo con GAPs */
+  /* Layout Fijo-Flexible-Fijo con GAPs */
   display: grid;
   grid-template-columns: var(--sidebar-column-width) 1fr var(--sidebar-column-width); 
-  gap: 20px; /* ⭐️ NUEVO: Separación entre columnas */
-  padding: 20px; /* ⭐️ NUEVO: Separación de header/footer y bordes */
-  box-sizing: border-box;
+  gap: 20px; /* Separación entre columnas */
+  padding: 20px; /* Espacio de los bordes internos */
+  box-sizing: border-box; /* ⭐️ CORRECCIÓN CLAVE para evitar desbordamiento ⭐️ */
   
   /* Alinear todo arriba */
   align-items: start;
@@ -129,28 +125,27 @@ footer a {
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); 
 }
 
-/* ⭐️ NUEVO: Contenedor para las vistas centrales */
+/* ⭐️ Contenedor Central ⭐️ */
+/* Contenedor relativo que alberga las vistas absolutas (navegación/detalle) */
 #vista-central {
   grid-column: 2 / 3;
   width: 100%;
-  height: 100%;
-  position: relative; /* ⭐️ CRÍTICO: Contexto para la máscara */
-  overflow: hidden; /* Evitar desbordamiento del slider */
+  height: 100%; /* Ocupa el 100% de la celda del grid */
+  position: relative; 
+  overflow: hidden; 
 }
 
-/* El DIV principal de la vista */
+/* El DIV principal de la vista (se posiciona absolutamente dentro de #vista-central) */
 .vista {
-  /* ⭐️ CORRECCIÓN: Las vistas ahora son absolutas dentro de #vista-central */
   position: absolute; 
   width: 100%; 
   height: 100%;
   top: 0;
   left: 0;
   
-  /* Ya no son un grid */
   display: flex; 
   flex-direction: column;
-  justify-content: start; /* Alinear al inicio */
+  justify-content: start; 
   
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -173,7 +168,6 @@ header h1 {
 
 /* --- 3. El Marco de Foco (La Máscara) --- */
 .carousel-mask {
-  /* ⭐️ CORRECCIÓN: Absoluto, pero ahora relativo a #vista-central */
   position: absolute;
   width: 100%; 
   height: 100%; 
@@ -210,15 +204,14 @@ header h1 {
 
 /* --- 4. El Carrusel (Viewport y Track) --- */
 .swiper {
-    /* ⭐️ CORRECCIÓN: Ya no es un item de grid, es 100% de #vista-navegacion */
     width: 100%; 
     height: 100%; 
     
-    /* ⭐️ CORRECCIÓN: Cambiado a 'hidden' para evitar solapamiento */
+    /* ⭐️ CORRECCIÓN: Ocultar overflow-x para evitar solapamiento */
     overflow-y: auto;
     overflow-x: hidden; 
     position: relative; 
-    z-index: 1; /* Detrás de la máscara (z-index: 10) */
+    z-index: 1; 
     
     display: flex;
     justify-content: center;
@@ -232,9 +225,9 @@ header h1 {
   grid-auto-flow: column;
   grid-template-rows: repeat(3, 1fr); 
   gap: 25px;
-  padding: 0; /* ⭐️ CORRECCIÓN: El padding está ahora en #app-container */
+  padding: 0; 
   width: auto !important; 
-  height: auto; /* Dejar que el contenido defina la altura */
+  height: auto; 
   align-items: start; 
   transform: translate3d(0, 0, 0); 
 }
@@ -297,19 +290,18 @@ header h1 {
 
 /* --- 7. Tarjeta Fija de Volver (POSICIONAMIENTO EN GRID) --- */
 #btn-volver-navegacion {
-    display: none; /* Se gestiona en el @media query */
+    display: none; 
 }
 #card-volver-fija {
-    display: none !important; /* JS lo cambiará a 'flex' */
-    grid-column: 1 / 2; /* Columna Izquierda (del #app-container) */
+    display: none !important; 
+    grid-column: 1 / 2; /* Columna Izquierda del #app-container */
     
-    /* ⭐️ CORRECCIÓN: Alinear al inicio (top) y centro (horizontal) */
     place-self: start center; 
 
     position: relative; 
     z-index: 50; 
     
-    width: var(--sidebar-card-width); /* 180px */
+    width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
     
     opacity: 0.6;
@@ -352,11 +344,10 @@ header h1 {
 
 /* --- 8. VISTA DE DETALLE DEL CURSO --- */
 .contenido-curso {
-  /* ⭐️ CORRECCIÓN: Ya no es un item de grid, es contenido flexible */
   width: 100%;
   max-width: 700px;
-  margin: 0 auto; /* Centrado horizontal */
-  padding: 0 1rem; /* Padding interno */
+  margin: 0 auto; 
+  padding: 0 1rem; 
   
   box-sizing: border-box;
 }
@@ -376,13 +367,11 @@ header h1 {
 
 /* --- 9. ZONA DE INFORMACIÓN ADICIONAL (1/5 DERECHA) --- */
 .info-adicional {
-    grid-column: 3 / 4; /* Columna Derecha (del #app-container) */
+    grid-column: 3 / 4; /* Columna Derecha del #app-container */
     
-    /* ⭐️ CORRECCIÓN: Alinear al inicio (top) y centro (horizontal) */
     place-self: start center;
 
-    /* ⭐️ CORRECCIÓN: Ancho fijo (simétrico) y altura 100% */
-    width: var(--sidebar-card-width); /* 180px */
+    width: var(--sidebar-card-width); 
     height: 100%; 
     
     padding: 1.5rem;
@@ -412,10 +401,10 @@ header h1 {
     
     /* ⭐️ CORRECCIÓN: El layout de #app-container se colapsa */
     #app-container {
-        grid-template-columns: 1fr; /* Una sola columna */
-        padding: 0; /* Sin padding en móvil */
+        grid-template-columns: 1fr; 
+        padding: 0; 
         gap: 0;
-        height: 100%; /* Ocupar todo el espacio disponible */
+        height: 100%; 
     }
 
     /* 2. OCULTAR ELEMENTOS LATERALES AGRESIVOS */
@@ -424,12 +413,13 @@ header h1 {
         display: none !important; 
     }
     
-    /* ⭐️ CORRECCIÓN: #vista-central ocupa todo */
-    #vista-central {
-        grid-column: 1 / 2;
+    /* ⭐️ CORRECCIÓN: Las vistas ocupan toda la única columna */
+    .vista, 
+    .vista.active {
+        grid-template-columns: 1fr;
+        padding: 0 5%;
     }
     
-    /* 3. REPOSICIONAR CARRUSEL Y MÁSCARA */
     .swiper, 
     .carousel-mask,
     .contenido-curso { 
@@ -438,7 +428,7 @@ header h1 {
         height: 100% !important;
         max-height: none;
         margin: 0 auto !important;
-        padding: 10px 5%; /* Padding interno en móvil */
+        padding: 10px 5%; 
         box-sizing: border-box;
     }
     
@@ -451,9 +441,9 @@ header h1 {
     .swiper-wrapper {
         display: flex; 
         flex-direction: column;
-        grid-template-rows: none; /* Ignorar las 3 filas */
+        grid-template-rows: none; 
         padding-top: 10px;
-        overflow: auto; /* Permitir el scroll vertical nativo */
+        overflow: auto; 
         height: 100%;
         width: 100%;
     }
@@ -468,17 +458,16 @@ header h1 {
     
     /* 6. TÍTULO EN MÓVIL */
     header h1 {
-        white-space: normal; /* Permitir que el h1 salte de línea */
+        white-space: normal; 
     }
     
     /* 7. BOTÓN VOLVER MÓVIL */
     #btn-volver-navegacion {
-        /* ⭐️ CORRECCIÓN: El botón de móvil ahora es gestionado por JS */
-        display: none; 
+        display: block; /* Se muestra en móvil cuando JS lo permite */
         position: absolute;
-        top: 10px; /* Separado del header */
+        top: 10px; 
         left: 10px;
-        z-index: 1000; /* Encima de todo */
+        z-index: 1000; 
     }
 }
 

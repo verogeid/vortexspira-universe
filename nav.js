@@ -1,6 +1,5 @@
 // --- nav.js ---
 
-// Asume que la variable App ya existe en el scope global.
 (function() {
 
     // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS (UNIFICADA) ⭐️
@@ -11,13 +10,11 @@
       }
       
       // 5.2. Listener para "Volver" (MÓVIL)
-      // Apunta al NUEVO handler unificado
       if (this.DOM.btnVolverNav) {
           this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
       }
       
       // 5.3. Listener para la Tarjeta Volver Fija (DESKTOP)
-      // Apunta al NUEVO handler unificado
       if (this.DOM.cardVolverFija) {
           this.DOM.cardVolverFija.addEventListener('click', this._handleVolverClick.bind(this));
       }
@@ -25,7 +22,6 @@
       // 5.4. Listener para teclas (Escape y Flechas)
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            // El Escape también usa la lógica unificada
             this._handleVolverClick(); 
         }
         
@@ -39,8 +35,7 @@
       });
     };
 
-    // ⭐️ 2. MANEJADORES DE EVENTOS (Track y Teclas) ⭐️
-
+    // ⭐️ 2. MANEJADOR DE EVENTOS (Track) ⭐️
     App._handleTrackClick = function(e) {
       const tarjeta = e.target.closest('.swiper-slide');
       
@@ -50,7 +45,7 @@
       
       // Si es el botón 'Volver' vertical (móvil)
       if (tarjeta.dataset.tipo === 'volver-vertical') {
-          this._handleVolverClick(); // Usa el handler unificado
+          this._handleVolverClick();
           return;
       }
 
@@ -65,6 +60,7 @@
       }
     };
     
+    // ⭐️ (Funciones de navegación por teclas omitidas por brevedad) ⭐️
     App._handleKeyNavigation = function(key) {
       const { itemsPorColumna } = this.STATE;
       const allSlides = this.DOM.track.children;
@@ -95,8 +91,8 @@
           return;
       }
       
-      // No mover el foco si el nuevo índice es un relleno (padding)
-      if (newIndex < itemsPorColumna || allSlides[newIndex].dataset.tipo === 'relleno') {
+      // Prevenir el foco en el relleno
+      if (newIndex < itemsPorColumna || (allSlides[newIndex] && allSlides[newIndex].dataset.tipo === 'relleno')) {
          newIndex = oldIndex;
       }
       
@@ -104,31 +100,33 @@
       this._updateFocus(true);
     };
 
+
     // ⭐️ 3. FUNCIONES DE NAVEGACIÓN Y VISTA (UNIFICADAS) ⭐️
 
     /**
-     * NUEVO: Handler unificado para CUALQUIER acción de "Volver"
-     * (Tarjeta Fija, Botón Móvil, Tecla Escape).
+     * Handler unificado para CUALQUIER acción de "Volver"
      */
     App._handleVolverClick = function() {
+        const isMobile = window.innerWidth <= 768;
+        
         // Caso 1: Estamos en la vista de Detalle de un curso
         if (this.DOM.vistaDetalle.classList.contains('active')) {
             this.DOM.vistaDetalle.classList.remove('active');
             this.DOM.vistaNav.classList.add('active');
-            // Forzamos un re-render de la navegación para que
-            // la tarjeta "Volver" muestre el estado correcto (p.ej., "Volver a Front-End")
+            
+            // Re-renderizar la navegación para actualizar el estado visual
+            // (esto re-activará la tarjeta volver si aún estamos en subnivel)
             this.renderNavegacion(); 
         } 
-        // Caso 2: Estamos en una sub-sección (pero en la vista de Navegación)
+        // Caso 2: Estamos en una sub-sección (en la vista de Navegación)
         else if (this.STATE.navStack.length > 0) {
             this.STATE.navStack.pop();
             this.renderNavegacion();
         }
-        // (Si no se cumple nada, estamos en la raíz y no hace nada)
     };
 
     /**
-     * MODIFICADO: Ahora también controla la visibilidad de la tarjeta "Volver".
+     * MODIFICADO: Ahora también controla la visibilidad de las columnas laterales.
      */
     App._mostrarDetalle = function(cursoId) {
       const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion);
@@ -150,15 +148,19 @@
       this.DOM.vistaNav.classList.remove('active');
       this.DOM.vistaDetalle.classList.add('active');
       
-      // ⭐️ NUEVO: Activar la tarjeta "Volver" (Desktop)
+      // ⭐️ CRÍTICO: Gestionar la visibilidad de las columnas laterales ⭐️
       const isMobile = window.innerWidth <= 768; 
       if (!isMobile) {
+          // Mostrar y activar la tarjeta "Volver"
           this.DOM.cardVolverFija.style.display = 'flex';
           this.DOM.cardVolverFija.classList.add('active-volver');
           this.DOM.cardVolverFija.tabIndex = 0;
           
-          // Aseguramos que la info adicional esté visible también
+          // Asegurar que la info adicional esté visible también
           this.DOM.infoAdicional.style.display = 'flex';
+      } else {
+          // En móvil, mostrar el botón de volver simple
+          this.DOM.btnVolverNav.style.display = 'block';
       }
     };
 

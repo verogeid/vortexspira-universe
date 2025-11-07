@@ -24,15 +24,17 @@
       // Cachear el DOM
       this.DOM.track = document.getElementById('track-navegacion');
       this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); // (Para móvil)
+      
+      // Vistas centrales
+      this.DOM.vistaCentral = document.getElementById('vista-central');
       this.DOM.vistaNav = document.getElementById('vista-navegacion');
       this.DOM.vistaDetalle = document.getElementById('vista-detalle');
       this.DOM.detalleContenido = document.getElementById('detalle-contenido');
       this.DOM.swiperContainer = document.getElementById('nav-swiper'); 
-      this.DOM.cardVolverFija = document.getElementById('card-volver-fija'); // (Para Desktop, unificado)
-      this.DOM.infoAdicional = document.getElementById('info-adicional'); // (Columna derecha)
       
-      // ⭐️ CORRECCIÓN: Eliminada la referencia a 'btn-volver-a-navegacion'
-      // this.DOM.btnVolverDetalle = ... (Eliminado)
+      // Columnas laterales persistentes
+      this.DOM.cardVolverFija = document.getElementById('card-volver-fija'); 
+      this.DOM.infoAdicional = document.getElementById('info-adicional'); 
 
       
       // 2.1. Configurar el observador (definido en render.js)

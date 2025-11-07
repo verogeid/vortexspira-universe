@@ -52,9 +52,7 @@
         let html = '';
         
         // ⭐️ 1. INSERCIÓN DEL BOTÓN 'VOLVER' EN EL FLUJO VERTICAL (MÓVIL) ⭐️
-        // (Tal como lo describiste para móvil)
         if (isSubLevel && isMobile) {
-            // Tarjeta 'Volver' solo para móvil, insertada al inicio del carrusel.
             html += this._generarTarjetaHTML({}, false, false, 'volver-vertical'); 
         }
 
@@ -69,22 +67,18 @@
         // ⭐️ 3. Insertar los elementos del JSON ⭐️
         let elementosVisibles = 0;
         for (const item of itemsDelNivel) {
-          // Comprobamos si el elemento tiene contenido (subsecciones o cursos) para habilitarlo
-          const estaActivo = this._tieneContenidoActivo(item.id);
-          
-          html += this._generarTarjetaHTML(item, estaActivo);
-          elementosVisibles++;
+            const estaActivo = this._tieneContenidoActivo(item.id);
+            
+            html += this._generarTarjetaHTML(item, estaActivo);
+            elementosVisibles++;
         }
         
-        // ⭐️ 4. Lógica del Relleno Derecho (ESCRITORIO) - CORREGIDA ⭐️
-        // (Esta es la lógica que soluciona el 'bug de 6 cards')
+        // ⭐️ 4. Lógica del Relleno Derecho (ESCRITORIO) - (Soluciona el bug de 6 cards) ⭐️
         if (!isMobile) {
             const totalConRellenoIzquierdo = itemsPorColumna + elementosVisibles;
             
-            // ⭐️ CORRECCIÓN: 
-            // Forzamos un mínimo de 3 columnas (itemsPorColumna * 3 = 9 slots)
-            // para asegurar el centrado, incluso si hay pocos elementos (como 3 o 6).
-            const minTotalSlots = itemsPorColumna * 3; // 3 (col) * 3 (items) = 9
+            // Forzamos un mínimo de 3 columnas (itemsPorColumna * 3 = 9 slots) para el centrado.
+            const minTotalSlots = itemsPorColumna * 3; 
             
             // Calculamos el número de slots necesarios (el múltiplo de 3 más cercano)
             const slotsNecesarios = Math.ceil(totalConRellenoIzquierdo / itemsPorColumna) * itemsPorColumna;
@@ -94,7 +88,6 @@
             
             const numRellenoDerecho = numTotalSlots - totalConRellenoIzquierdo;
             
-            // (Este bucle faltaba en tu versión anterior, causando el bug de 6 cards)
             for (let i = 0; i < numRellenoDerecho; i++) {
                 html += this._generarTarjetaHTML({nombre: ''}, false, true); 
             }
@@ -103,10 +96,8 @@
         this.DOM.track.innerHTML = html;
 
         // 5. Gestión de Tarjeta "Volver" Fija (Escritorio) y Área de Información Adicional
-        // (Esta lógica respeta la alineación superior y visibilidad)
         if (!isMobile) { 
             // 5a. Mostrar el área de Información Adicional (Siempre visible en desktop)
-            // (Aseguramos que el CSS no lo oculte si es desktop)
             this.DOM.infoAdicional.style.display = 'flex'; 
             
             // 5b. Gestión de la Tarjeta Volver Fija (Columna 1/5)
@@ -121,12 +112,19 @@
                 this.DOM.cardVolverFija.classList.remove('active-volver');
                 this.DOM.cardVolverFija.tabIndex = -1;
             }
-            // Ocultamos el botón Volver simple (el que está fuera de flujo)
+            // Ocultamos el botón Volver simple (móvil)
             this.DOM.btnVolverNav.style.display = 'none'; 
         } else {
             // En móvil, aseguramos que el botón Volver fijo y el área de info adicional estén ocultos
             this.DOM.cardVolverFija.style.display = 'none'; 
             this.DOM.infoAdicional.style.display = 'none';
+            
+            // ⭐️ NUEVO: Mostrar el botón Volver simple (móvil) si es subnivel
+            if (isSubLevel) {
+                this.DOM.btnVolverNav.style.display = 'block'; 
+            } else {
+                this.DOM.btnVolverNav.style.display = 'none';
+            }
         }
 
 
@@ -138,6 +136,9 @@
         if (!isMobile) {
             // En escritorio, el primer elemento seleccionable es después del relleno izquierdo (índice 3)
             firstEnabledIndex = itemsPorColumna; 
+        } else if (isSubLevel) {
+             // En móvil con subnivel, el primer elemento es el botón 'volver-vertical' (índice 0)
+            firstEnabledIndex = 0;
         }
         
         // Recalculamos el número de columnas para Swiper
@@ -201,15 +202,8 @@
         const swiperConfig = {
             direction: isMobile ? 'vertical' : 'horizontal', 
             
-            // ⭐️ CORRECCIÓN 1: 
-            // Cambiamos '1' por 'auto'. 
-            // 'auto' respeta el 'width: clamp(...)' de nuestro CSS.
             slidesPerView: isMobile ? 'auto' : 'auto', 
             
-            // ⭐️ CORRECCIÓN 2: 
-            // Eliminamos el parámetro 'grid' para desktop.
-            // Nuestro CSS en .swiper-wrapper ya gestiona el grid de 3 filas.
-            // Dejar esto aquí causa el bug de 'width: 650px'.
             grid: isMobile ? {} : false, // Deshabilitado para desktop
 
             centeredSlides: !isMobile, 
@@ -242,24 +236,24 @@
 
         // Quitar el foco anterior
         Array.from(this.DOM.track.children).forEach(child => {
-          child.classList.remove('focus-visible');
+            child.classList.remove('focus-visible');
         });
 
         const targetSlide = this.DOM.track.children[currentFocusIndex];
         if (targetSlide) {
-          targetSlide.classList.add('focus-visible');
+            targetSlide.classList.add('focus-visible');
 
-          if (carouselInstance && shouldSlide && !isMobile) {
-            // Calcular el slide (columna) al que mover
-            const targetSwiperSlide = Math.floor(currentFocusIndex / itemsPorColumna);
-            carouselInstance.slideTo(targetSwiperSlide, 400); 
-          }
-          
-          // Asegurar que el elemento esté visible, especialmente en móvil (scrollIntoView)
-          if (isMobile || !shouldSlide) {
-             // Usamos 'nearest' para evitar saltos bruscos si ya está parcialmente visible
-            targetSlide.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
+            if (carouselInstance && shouldSlide && !isMobile) {
+                // Calcular el slide (columna) al que mover
+                const targetSwiperSlide = Math.floor(currentFocusIndex / itemsPorColumna);
+                carouselInstance.slideTo(targetSwiperSlide, 400); 
+            }
+            
+            // Asegurar que el elemento esté visible, especialmente en móvil (scrollIntoView)
+            if (isMobile || !shouldSlide) {
+                // Usamos 'nearest' para evitar saltos bruscos si ya está parcialmente visible
+                targetSlide.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         }
     };
 
@@ -268,23 +262,23 @@
     App._findNodoById = function(id, nodos) {
         if (!nodos) return null;
         for (const n of nodos) {
-          if (n.id === id) return n;
-          
-          // Buscar en subsecciones
-          if (n.subsecciones && n.subsecciones.length > 0) {
-            const encontrado = this._findNodoById(id, n.subsecciones);
-            if (encontrado) return encontrado;
-          }
-          // Buscar en cursos (si el nodo es un contenedor y tiene cursos)
-          if (n.cursos && n.cursos.length > 0) {
-            // Un curso también es un "nodo" que se puede encontrar por ID
-            const cursoEncontrado = n.cursos.find(c => c.id === id);
-            if (cursoEncontrado) return cursoEncontrado;
-          }
+            if (n.id === id) return n;
+            
+            // Buscar en subsecciones
+            if (n.subsecciones && n.subsecciones.length > 0) {
+                const encontrado = this._findNodoById(id, n.subsecciones);
+                if (encontrado) return encontrado;
+            }
+            // Buscar en cursos (si el nodo es un contenedor y tiene cursos)
+            if (n.cursos && n.cursos.length > 0) {
+                // Un curso también es un "nodo" que se puede encontrar por ID
+                const cursoEncontrado = n.cursos.find(c => c.id === id);
+                if (cursoEncontrado) return cursoEncontrado;
+            }
         }
         return null;
     };
-      
+
     App._tieneContenidoActivo = function(nodoId) {
         const nodo = this._findNodoById(nodoId, this.STATE.fullData.navegacion);
         if (!nodo) return false;
@@ -296,26 +290,36 @@
         const hasSubsecciones = nodo.subsecciones && nodo.subsecciones.length > 0;
         const hasCursos = nodo.cursos && nodo.cursos.length > 0;
         
-        return hasSubsecciones || hasCursos; // Es activo si tiene CUALQUIERA de los dos.
+        // Si tiene subsecciones, comprobamos recursivamente
+        if (hasSubsecciones) {
+            // Un nodo es activo si alguna de sus subsecciones tiene contenido activo
+            for (const sub of nodo.subsecciones) {
+                if (this._tieneContenidoActivo(sub.id)) {
+                    return true;
+                }
+            }
+        }
+        
+        return hasCursos; // Es activo si tiene cursos directos.
     };
     
     // ⭐️ 5. GENERADOR DE HTML ⭐️
 
     App._generarTarjetaHTML = function(nodo, estaActivo, esRelleno = false, tipoEspecial = null) {
         if (esRelleno) {
-          return `<div class="swiper-slide disabled" data-tipo="relleno" tabindex="-1"></div>`;
+            return `<div class="swiper-slide disabled" data-tipo="relleno" tabindex="-1"></div>`;
         }
         
         if (tipoEspecial === 'volver-vertical') {
-          return `
-              <div class="swiper-slide card-volver-vertical active-volver" 
-                  data-id="volver-nav" 
-                  data-tipo="volver-vertical" 
-                  role="button" 
-                  tabindex="0">
-                  <h3>← Volver al menú anterior</h3>
-              </div>
-          `;
+            return `
+                <div class="swiper-slide card-volver-vertical active-volver" 
+                    data-id="volver-nav" 
+                    data-tipo="volver-vertical" 
+                    role="button" 
+                    tabindex="0">
+                    <h3>&larr; Volver al menú anterior</h3>
+                </div>
+            `;
         }
         
         const isCourse = !!nodo.titulo;
@@ -328,19 +332,19 @@
         
         let hint = '';
         if (!estaActivo) hint = '<span>(Próximamente)</span>';
-  
+
         const displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
 
         return `
-          <div class="swiper-slide ${claseDisabled}" 
-              data-id="${nodo.id}" 
-              ${tipoData}
-              role="button" 
-              tabindex="${tabindex}" 
-              ${tagAria}>
+            <div class="swiper-slide ${claseDisabled}" 
+                data-id="${nodo.id}" 
+                ${tipoData}
+                role="button" 
+                tabindex="${tabindex}" 
+                ${tagAria}>
             <h3>${displayTitle}</h3>
             ${hint}
-          </div>
+            </div>
         `;
     };
 
