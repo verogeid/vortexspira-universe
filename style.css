@@ -13,8 +13,6 @@
   /* Acentos (Ghost) */
   --color-primary: #007bff;
   --color-primary-bg: rgba(0, 123, 255, 0.1);
-  
-  /* ⭐️ NOTA: Danger y Success ya no se usan para estados de tarjeta */
   --color-danger: #dc3545;
   --color-danger-bg: rgba(220, 53, 69, 0.1);
   --color-success: #28a745;
@@ -40,7 +38,7 @@
 }
 
 /* --- 2. Configuración General y Vistas --- */
-/* ... (Esta sección no tiene cambios) ... */
+/* ... (Sin cambios) ... */
 body {
   background: var(--color-bg);
   color: var(--color-text);
@@ -113,7 +111,7 @@ header h1 {
 }
 
 /* --- 3. El Marco de Foco (La Máscara) --- */
-/* ... (Esta sección no tiene cambios) ... */
+/* ⭐️ CAMBIO 1: Degradado más suave para el blur */
 .carousel-mask {
   position: absolute;
   width: 100%; 
@@ -132,6 +130,7 @@ header h1 {
   height: 100%;
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px); 
+  /* El degradado va de 0% a 80% (más suave) */
   background: linear-gradient(to right, 
     var(--color-mask-gradient) 0%, transparent 80%
   );
@@ -145,13 +144,16 @@ header h1 {
   );
 }
 
+
 /* --- 4. El Carrusel (Viewport y Track) --- */
-/* ... (Esta sección no tiene cambios) ... */
 .swiper {
     width: 100%; 
     height: 100%; 
-    overflow-y: auto;
+    
+    /* ⭐️ CAMBIO 2: De 'auto' a 'hidden' para eliminar el scroll vertical */
+    overflow-y: hidden;
     overflow-x: hidden; 
+    
     position: relative; 
     z-index: 1; 
     display: flex;
@@ -163,7 +165,7 @@ header h1 {
   display: grid;
   grid-auto-flow: column;
   grid-template-rows: repeat(3, 1fr); 
-  gap: 15px;
+  gap: 25px;
   padding: 0; 
   width: auto !important; 
   height: auto; 
@@ -192,7 +194,7 @@ header h1 {
   font-size: 1.5rem;
 }
 
-/* ⭐️ CAMBIO: Efecto GHOST AZUL (Solo para tarjetas activas y el botón volver) */
+/* ⭐️ CAMBIO 3: GHOST AZUL (Minimalista: sin fondo, solo borde y sombra) */
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):hover,
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):focus-visible,
 .swiper-slide.focus-visible:not(.disabled):not([data-tipo="relleno"]),
@@ -200,57 +202,59 @@ header h1 {
 #card-volver-fija:focus-visible {
   outline: none;
   border-color: var(--color-primary);
-  background: var(--color-primary-bg);
+  /* background: var(--color-primary-bg); <-- ELIMINADO (petición) */
   transform: scale(1.03);
-  box-shadow: 0 4px 20px rgba(0, 123, 255, 0.2);
+  /* Sombra más pronunciada para el efecto "halo" */
+  box-shadow: 0 0 25px rgba(0, 123, 255, 0.4);
 }
 
 /* --- 6. El caso especial (Sección Vacía y Relleno) --- */
-
-/* ⭐️ CAMBIO: Estilo base de la tarjeta deshabilitada */
 .swiper-slide.disabled {
   opacity: 0.5;
   border-color: var(--color-card-border-disabled);
-  cursor: default; /* Navegable, pero no "pointer" */
+  cursor: default;
 }
 .swiper-slide.disabled span {
   font-size: 0.9rem;
   color: #999;
 }
 
-/* ⭐️ CAMBIO: Efecto GHOST GRIS (Para tarjetas deshabilitadas) */
+/* ⭐️ CAMBIO 3 (bis): GHOST GRIS (Más pronunciado para que se note) */
 .swiper-slide.disabled:hover,
 .swiper-slide.disabled:focus-visible,
 .swiper-slide.disabled.focus-visible {
   outline: none;
   border-color: var(--color-card-border); /* Borde más nítido */
-  background: var(--color-card-bg); /* Sin fondo de color */
-  opacity: 0.7; /* Más visible */
+  background: var(--color-card-bg); /* Sin fondo */
+  opacity: 0.8; /* Más visible */
   transform: scale(1.03);
-  box-shadow: 0 4px 15px rgba(100, 100, 100, 0.1); /* Sombra gris neutra */
+  /* Sombra gris más pronunciada para el "halo" */
+  box-shadow: 0 0 20px rgba(150, 150, 150, 0.2); 
 }
 
-/* ⭐️ CAMBIO: Tarjetas de relleno (invisibles) */
+/* ⭐️ CAMBIO 4: Tarjetas de relleno (visibles con borde discontinuo) */
 .swiper-slide[data-tipo="relleno"] {
     background: transparent;
-    border: none;
-    opacity: 0;
+    border: 2px dashed var(--color-card-border-disabled);
+    opacity: 0.2; /* Ligeramente visible */
     pointer-events: none;
-    visibility: hidden;
     cursor: default;
+    /* visibility: hidden; <-- ELIMINADO */
 }
-/* Anular cualquier hover/focus en el relleno */
+/* Asegurar que no hagan nada raro en hover/focus */
 .swiper-slide[data-tipo="relleno"]:hover,
 .swiper-slide[data-tipo="relleno"]:focus-visible {
+    background: transparent;
+    border-color: var(--color-card-border-disabled);
     transform: none;
     box-shadow: none;
+    opacity: 0.2;
 }
 
 
 /* --- 7. Tarjeta Fija de Volver (POSICIONAMIENTO EN GRID) --- */
-#btn-volver-navegacion {
-    display: none; 
-}
+/* ... (Sin cambios, ya está unificado con el Ghost Azul) ... */
+#btn-volver-navegacion { display: none; }
 #card-volver-fija {
     display: none !important; 
     grid-column: 1 / 2;
@@ -259,13 +263,10 @@ header h1 {
     z-index: 50; 
     width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
-    
-    /* ⭐️ CAMBIO: Estilo base normalizado (como una card activa) */
     opacity: 1;
     border: 2px solid var(--color-card-border);
     background: var(--color-card-bg);
-    cursor: pointer; /* Añadido */
-
+    cursor: pointer;
     padding: 1rem;
     border-radius: 12px;
     transition: all 0.2s ease;
@@ -273,17 +274,8 @@ header h1 {
     justify-content: center;
     box-sizing: border-box;
 }
-#card-volver-fija[style*="display: flex"] {
-    display: flex !important;
-}
-#card-volver-fija h3 {
-    font-size: 1.2rem;
-}
-
-/* ⭐️ CAMBIO: Eliminados los bloques .active-volver y :not(.active-volver) */
-/* El hover/focus ahora lo gestiona el selector principal en la sección 5 */
-
-
+#card-volver-fija[style*="display: flex"] { display: flex !important; }
+#card-volver-fija h3 { font-size: 1.2rem; }
 .card-volver-vertical {
     width: 100% !important; 
     margin-bottom: 15px;
@@ -291,7 +283,7 @@ header h1 {
 }
 
 /* --- 8. VISTA DE DETALLE DEL CURSO --- */
-/* ... (Esta sección no tiene cambios) ... */
+/* ... (Sin cambios) ... */
 .contenido-curso {
   width: 100%;
   max-width: 700px;
@@ -309,12 +301,10 @@ header h1 {
     text-decoration: none;
     transition: background 0.2s;
 }
-.enlaces-curso a:hover {
-    background: var(--color-success); /* Este verde (éxito) aquí está bien */
-}
+.enlaces-curso a:hover { background: var(--color-success); }
 
 /* --- 9. ZONA DE INFORMACIÓN ADICIONAL (1/5 DERECHA) --- */
-/* ... (Esta sección no tiene cambios) ... */
+/* ... (Sin cambios) ... */
 .info-adicional {
     grid-column: 3 / 4;
     place-self: start center;
@@ -336,29 +326,22 @@ header h1 {
 
 
 /* --- MEDIA QUERIES (Sin cambios) --- */
-/* ---------------------------------------------------------------------- */
-/* ⭐️ MEDIA QUERY: ADAPTACIÓN PARA MÓVILES (< 768px) ⭐️ */
-/* ---------------------------------------------------------------------- */
 @media screen and (max-width: 768px) {
-    
     #app-container {
         grid-template-columns: 1fr; 
         padding: 0; 
         gap: 0;
         height: 100%; 
     }
-
     #card-volver-fija,
     .info-adicional { 
         display: none !important; 
     }
-    
     .vista, 
     .vista.active {
         grid-template-columns: 1fr;
         padding: 0 5%;
     }
-    
     .swiper, 
     .carousel-mask,
     .contenido-curso { 
@@ -370,12 +353,10 @@ header h1 {
         padding: 10px 5%; 
         box-sizing: border-box;
     }
-    
     .contenido-curso {
         margin-top: 60px !important; 
         padding: 1rem;
     }
-    
     .swiper-wrapper {
         display: flex; 
         flex-direction: column;
@@ -385,18 +366,15 @@ header h1 {
         height: 100%;
         width: 100%;
     }
-    
     .swiper-slide {
         width: 100% !important; 
         margin-bottom: 15px;
         height: auto !important;
         min-height: 100px; 
     }
-    
     header h1 {
         white-space: normal; 
     }
-    
     #btn-volver-navegacion {
         display: block; 
         position: absolute;
@@ -405,20 +383,15 @@ header h1 {
         z-index: 1000; 
     }
 }
-
-
-/* --- 9. Media Query para Movimiento Reducido --- */
 @media (prefers-reduced-motion: reduce) {
   .mask-left,
   .mask-right {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
-  
   .swiper-slide, .swiper-wrapper {
     transition: none !important;
   }
-
   .swiper-slide:hover,
   .swiper-slide:focus-visible {
     transform: none;
