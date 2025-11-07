@@ -328,7 +328,7 @@
         // Si tiene la bandera estaActivo en false, es una tarjeta deshabilitada
         const claseDisabled = estaActivo ? '' : 'disabled';
         const tagAria = estaActivo ? '' : 'aria-disabled="true"';
-        const tabindex = estaActivo ? '0' : '-1';
+        const tabindex = '0';
         
         let hint = '';
         if (!estaActivo) hint = '<span>(Próximamente)</span>';
