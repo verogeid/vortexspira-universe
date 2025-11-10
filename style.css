@@ -213,7 +213,8 @@ header h1 {
 /* --- 5. Tarjetas (Efecto Ghost) --- */
 .swiper-slide {
   /* FIX CRÍTICO: Ancho calculado para responsividad y 3x3 */
-  width: calc((100% - 50px) / 3) !important;
+  /* 50px es la suma de los dos gaps entre 3 tarjetas (25px + 25px) */
+  width: calc((100% - 50px) / 3) !important; 
   height: clamp(150px, 20vh, 180px) !important;
   margin: 0 !important;
   border: 2px solid var(--color-card-border);
@@ -255,8 +256,6 @@ header h1 {
 .swiper-slide.focus-visible:not(.disabled):not([data-tipo="relleno"]),
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):hover,
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):focus-visible, 
-#card-volver-fija[tabindex="0"]:hover,
-#card-volver-fija[tabindex="0"]:focus-visible,
 .mobile-track article:hover,
 .mobile-track article:focus-visible {
   outline: none;
@@ -344,6 +343,15 @@ header h1 {
     cursor: pointer;
 }
 
+/* 🚨 FIX: Aplicar el Ghost Azul completo al hover/focus de la tarjeta ACTIVA 🚨 */
+#card-volver-fija[tabindex="0"]:hover,
+#card-volver-fija[tabindex="0"]:focus-visible {
+    outline: none;
+    border-color: var(--color-primary);
+    background: var(--color-card-bg); 
+    transform: scale(1.03);
+    box-shadow: 0 0 25px rgba(0, 123, 255, 0.4); 
+}
 
 #card-volver-fija[style*="display: flex"] { display: flex !important; }
 #card-volver-fija h3 { font-size: 1.2rem; }
@@ -402,12 +410,11 @@ header h1 {
     /* Borde Discontinuo */
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
-    display: flex !important; 
     
-    /* FIX: Forzar apilado vertical */
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    /* 🚨 FIX: Usar display: block para que se comporte como una columna de Grid */
+    display: block !important; 
+    
+    /* Centrado de contenido interno */
     text-align: center;
     box-sizing: border-box;
 }
@@ -415,6 +422,7 @@ header h1 {
 .info-adicional p, .info-adicional small {
     width: 100%; 
     text-align: center;
+    display: block;
 }
 .info-adicional p { margin-bottom: 0.5rem; }
 .info-adicional small { color: #999; font-size: 0.8rem; }

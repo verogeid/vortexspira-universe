@@ -8,11 +8,25 @@
       // 5.2. Listener para "Volver" (MÓVIL)
       if (this.DOM.btnVolverNav) {
           this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
+          // 🚨 FIX: Listener para Enter/Espacio en botón Volver móvil 🚨
+          this.DOM.btnVolverNav.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  this._handleVolverClick();
+              }
+          });
       }
       
       // 5.3. Listener para la Tarjeta Volver Fija (DESKTOP)
       if (this.DOM.cardVolverFija) {
           this.DOM.cardVolverFija.addEventListener('click', this._handleVolverClick.bind(this));
+          // 🚨 FIX: Listener para Enter/Espacio en tarjeta Volver fija 🚨
+          this.DOM.cardVolverFija.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  this._handleVolverClick();
+              }
+          });
       }
       
       // 5.4. Listener central de teclado (MODIFICADO para Tab, Flechas y Detalle)
@@ -31,6 +45,12 @@
         if (isNavActive) {
             // Flechas, Enter y Space para el carrusel (requiere preventDefault)
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
+                
+                // Si el foco está en la tarjeta "Volver" fija, lo manejamos con el listener específico (ya corregido arriba).
+                if (document.activeElement === this.DOM.cardVolverFija) {
+                     return;
+                }
+                
                 e.preventDefault(); 
                 this._handleKeyNavigation(e.key);
             } 
@@ -92,7 +112,7 @@
       const id = tarjeta.dataset.id;
       const tipo = tarjeta.dataset.tipo;
       
-      // 🚨 FIX: Llamar a la función centralizada de manejo de clic/activación 🚨
+      // Llamar a la función centralizada de manejo de clic/activación 
       this._handleCardClick(id, tipo);
     };
 
@@ -200,6 +220,7 @@
                 focusableElements = [btnVolver, activeCard, ...footerLinks].filter(Boolean);
             } else {
                 const cardVolver = this.DOM.cardVolverFija.tabIndex === 0 ? this.DOM.cardVolverFija : null;
+                // 🚨 FIX: Incluir la tarjeta activa del track en el focus trap para desktop, si existe. 🚨
                 focusableElements = [cardVolver, activeCard, ...footerLinks].filter(Boolean);
             }
         } 
