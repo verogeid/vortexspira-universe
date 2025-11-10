@@ -42,19 +42,19 @@
 /* ⭐️ 3. LA REGLA CLAVE: AGRUPACIÓN 3x1 EN COLUMNA ⭐️ */
 .cards-column-group {
     display: flex;
-    flex-direction: column; /* CLAVE: Apila las tarjetas verticalmente */
-    justify-content: space-between; /* Distribuye el espacio entre ellas */
-    height: 100%; /* Ocupa toda la altura fija del slide */
-    gap: var(--card-gap); /* Usa el gap definido entre las tarjetas */
-    padding: 0 15px; /* Padding interno */
+    flex-direction: column; 
+    justify-content: space-between; 
+    height: 100%; 
+    gap: var(--card-gap); 
+    padding: 0 15px; 
     box-sizing: border-box;
     width: 100%;
 }
 
 /* ⭐️ 4. AJUSTES DE TARJETAS ⭐️ */
 .cards-column-group .card {
-    flex: 1 1 auto; /* Permite que la tarjeta crezca para llenar 1/3 de la columna */
-    /* La altura se ajusta automáticamente, pero mantenemos el min-height como referencia visual */
+    flex: 1 1 auto; 
+    /* CORRECCIÓN: Calcular la altura exacta para que el layout 3x1 funcione perfectamente */
     min-height: calc((var(--nav-desktop-height) - (2 * var(--card-gap))) / 3); 
 }
 
