@@ -289,17 +289,20 @@
     App._updateNavViews = function(isSubLevel, isMobile) {
         // Gestión de la Tarjeta 'Volver' Fija (Desktop) y Área de Información Adicional
         if (!isMobile) {
-            this.DOM.infoAdicional.style.display = 'flex'; 
+            // 🚨 FIX: La tarjeta Volver Fija e Info Adicional SIEMPRE deben ser visibles en desktop
+            this.DOM.cardVolverFija.style.display = 'flex';
+            this.DOM.infoAdicional.style.display = 'block'; // Usamos 'block' para respetar el grid
+            this.DOM.btnVolverNav.style.display = 'none'; 
             
             if (isSubLevel) {
-                this.DOM.cardVolverFija.style.display = 'flex';
+                // Activar tarjeta "Volver" (Borde continuo azul)
                 this.DOM.cardVolverFija.tabIndex = 0; 
             } else {
-                this.DOM.cardVolverFija.style.display = 'none';
+                // Desactivar tarjeta "Volver" (Borde discontinuo gris)
                 this.DOM.cardVolverFija.tabIndex = -1;
             }
-            this.DOM.btnVolverNav.style.display = 'none'; 
         } else {
+            // Lógica móvil (card fija invisible, info adicional invisible)
             this.DOM.cardVolverFija.style.display = 'none'; 
             this.DOM.infoAdicional.style.display = 'none';
             

@@ -204,7 +204,8 @@ header h1 {
   grid-template-rows: repeat(3, 1fr); 
   gap: 25px;
   padding: 0; 
-  width: auto !important; 
+  /* 🚨 FIX CRÍTICO: Forzar el ancho del wrapper al 100% del contenedor para que las tarjetas calculen bien el 1/3 */
+  width: 100% !important; 
   height: auto; 
   align-items: start; 
   transform: translate3d(0, 0, 0); 
