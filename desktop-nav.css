@@ -13,7 +13,7 @@
 /* CRÍTICO: Fija la altura total necesaria (usa la variable de base.css) */
 #nav-swiper {
     height: var(--nav-desktop-height); 
-    width: 100%; 
+    width: 100%; /* Ocupa el 100% de la columna 1fr de su padre (#vista-central) */
     overflow-y: hidden;
     overflow-x: hidden; 
     position: relative; 
