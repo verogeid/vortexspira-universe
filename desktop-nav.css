@@ -30,7 +30,9 @@
 
 /* El Slide ahora es el contenedor de una columna completa */
 .swiper-slide {
-  width: auto !important; 
+  /* FIX CRÍTICO: Forzar el ancho del slide a 1/3 para ver 3 columnas */
+  width: calc(100% / 3) !important; 
+  
   height: 100% !important; 
   margin: 0 !important;
   border: none !important; 
@@ -54,7 +56,7 @@
 /* ⭐️ 4. AJUSTES DE TARJETAS ⭐️ */
 .cards-column-group .card {
     flex: 1 1 auto; 
-    /* CORRECCIÓN: La min-height usa la nueva variable de altura única */
+    /* La min-height usa la variable de altura única */
     min-height: var(--card-height-single); 
 }
 
