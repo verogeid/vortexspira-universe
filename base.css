@@ -239,13 +239,12 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 /* Tarjeta Fija de Volver (Sidebar Izquierdo) */
 #card-volver-fija {
     grid-column: 1 / 2;
-    place-self: start center; 
+    /* ⭐️ CORRECCIÓN: Quitar place-self para usar margin ⭐️ */
+    /* place-self: start center; */
     position: relative; 
     z-index: 50; 
     
-    /* ⭐️ CORRECCIÓN: El ancho ahora es 100% de la columna 1fr ⭐️ */
     width: 100%; 
-    /* Altura forzada de la tarjeta individual */
     height: var(--card-height-single) !important; 
     max-height: var(--card-height-single) !important; 
     min-height: var(--card-height-single) !important;
@@ -253,8 +252,10 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     padding: 1rem;
     cursor: default;
     
-    /* AJUSTE: Aplicar el margen superior para alinear con la primera tarjeta del carrusel */
+    /* ⭐️ CORRECCIÓN: Usar margin para alinear ⭐️ */
     margin-top: var(--nav-carousel-top-offset); 
+    margin-left: auto;
+    margin-right: auto;
 
     /* LAYOUT: Forzar layout Flexbox */
     display: flex !important; 
@@ -312,20 +313,24 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 /* ZONA DE INFORMACIÓN ADICIONAL (Sidebar Derecho) */
 #info-adicional {
     grid-column: 3 / 4;
-    place-self: start center;
-    /* ⭐️ CORRECCIÓN: El ancho ahora es 100% de la columna 1fr ⭐️ */
+    /* ⭐️ CORRECCIÓN: Quitar place-self para usar margin ⭐️ */
+    /* place-self: start center; */
     width: 100%; 
-    /* AJUSTE: Altura = Altura del carrusel */
     height: var(--nav-desktop-height); 
     
     padding: 1.5rem;
     border-radius: 12px;
-    /* Mismo borde discontinuo que el Volver inactivo */
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
     display: block !important; 
     text-align: center;
     box-sizing: border-box;
+    
+    /* ⭐️ CORRECCIÓN: Usar margin para alinear ⭐️ */
+    margin-top: 0; /* Ya se alinea con el grid 'start' */
+    margin-left: auto;
+    margin-right: auto;
+    
     /* AJUSTE: Alinear el contenido interno con el carrusel */
     padding-top: calc(var(--nav-carousel-top-offset) + 1.5rem);
 }
