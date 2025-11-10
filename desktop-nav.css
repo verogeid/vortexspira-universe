@@ -54,8 +54,8 @@
 /* ⭐️ 4. AJUSTES DE TARJETAS ⭐️ */
 .cards-column-group .card {
     flex: 1 1 auto; 
-    /* CORRECCIÓN: Calcular la altura exacta para que el layout 3x1 funcione perfectamente */
-    min-height: calc((var(--nav-desktop-height) - (2 * var(--card-gap))) / 3); 
+    /* CORRECCIÓN: La min-height usa la nueva variable de altura única */
+    min-height: var(--card-height-single); 
 }
 
 
