@@ -3,8 +3,6 @@
 (function() {
 
     // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS (UNIFICADA) ⭐️
-    // NOTA: Esta función se llama desde app.js. Los listeners de clic del track
-    // se manejan ahora dentro de render.js para asegurar que el targetTrack esté vivo.
     App.setupListeners = function() {
       
       // 5.2. Listener para "Volver" (MÓVIL)
@@ -142,12 +140,12 @@
           break;
         case 'ArrowLeft':
             let prevColIndex = newIndex - itemsPorColumna;
-            // FIX: Permitir el loop en la navegación de columna/fila
+            // Permitir el loop en la navegación de columna/fila
             newIndex = (prevColIndex < 0) ? totalItems - 1 : prevColIndex;
           break;
         case 'ArrowRight':
             let nextColIndex = newIndex + itemsPorColumna;
-            // FIX: Permitir el loop en la navegación de columna/fila
+            // Permitir el loop en la navegación de columna/fila
             newIndex = (nextColIndex >= totalItems) ? 0 : nextColIndex;
           break;
         case 'Enter':
@@ -169,6 +167,7 @@
         let focusableElements = [];
         
         const footerLinks = Array.from(document.querySelectorAll('footer a'));
+        // Buscar la tarjeta activa por el tabindex="0" en el track correcto
         const activeCard = this.DOM.track.querySelector('[tabindex="0"]');
 
         if (viewType === 'nav') {

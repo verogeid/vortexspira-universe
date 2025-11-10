@@ -32,7 +32,7 @@
     --color-card-bg: rgba(255, 255, 255, 0.02);
     --color-mask-gradient: rgba(17, 17, 17, 0.4);
     --color-text: #eee;
-    --color-card-border: #aaa; /* Gris nítido para bordes discontinuos y activos (más visible) */
+    --color-card-border: #aaa; /* Gris nítido para bordes discontinuos y activos */
     --color-card-border-disabled: #666; /* Gris oscuro para borde continuo deshabilitado */
   }
 }
@@ -42,12 +42,10 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  /* En Desktop, overflow hidden en body */
   overflow: hidden; 
   margin: 0;
   box-sizing: border-box;
   min-height: 100vh;
-  /* Margen fijo en Desktop para header y footer */
   padding-top: var(--header-height);
   padding-bottom: var(--footer-height);
 }
@@ -63,12 +61,12 @@ header, footer {
 }
 
 header {
-    position: fixed; /* Header fijo en Desktop */
+    position: fixed; 
     top: 0;
     padding: 10px;
 }
 footer {
-    position: fixed; /* Footer fijo en Desktop */
+    position: fixed; 
     bottom: 0;
     padding: 5px;
     color: #888;
@@ -203,7 +201,6 @@ header h1 {
 .swiper-wrapper {
   display: grid;
   grid-auto-flow: column;
-  /* El número de filas se inyecta con JS, por defecto 3 */
   grid-template-rows: repeat(3, 1fr); 
   gap: 25px;
   padding: 0; 
@@ -218,7 +215,6 @@ header h1 {
   width: clamp(var(--card-width-min), 18vw, var(--card-width-max)) !important;
   height: clamp(150px, 20vh, 180px) !important;
   margin: 0 !important;
-  /* Borde CONTINUO para tarjetas activas/reales */
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
   padding: 1.5rem;
@@ -273,7 +269,8 @@ header h1 {
 /* Tarjeta deshabilitada (navegable) - Borde Continuo */
 .swiper-slide.disabled,
 .mobile-track article.disabled {
-  opacity: 0.6; /* FIX: Opacidad aumentada para visibilidad */
+  /* FIX: Opacidad Eliminada */
+  /* opacity: 0.5; */ 
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);
   cursor: default;
@@ -293,7 +290,7 @@ header h1 {
   outline: none;
   border-color: var(--color-card-border); 
   background: var(--color-card-bg);
-  opacity: 0.8; 
+  /* opacity: 0.8; <-- Opacidad Eliminada */
   transform: scale(1.03);
   box-shadow: 0 0 20px rgba(150, 150, 150, 0.2); 
 }
@@ -302,7 +299,7 @@ header h1 {
 .swiper-slide[data-tipo="relleno"] {
     background: transparent;
     border: 2px dashed var(--color-card-border); 
-    opacity: 0.35; /* FIX: Opacidad ajustada para visibilidad */
+    /* opacity: 0.35; <-- Opacidad Eliminada */
     pointer-events: none;
     cursor: default;
     transform: none;
@@ -314,7 +311,7 @@ header h1 {
     border-color: var(--color-card-border);
     transform: none;
     box-shadow: none;
-    opacity: 0.35;
+    /* opacity: 0.35; <-- Opacidad Eliminada */
 }
 
 
@@ -328,7 +325,7 @@ header h1 {
     width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
     
-    opacity: 1;
+    /* opacity: 1; <-- Opacidad Eliminada */
     border: 2px solid var(--color-card-border);
     background: var(--color-card-bg);
     cursor: pointer;
@@ -344,7 +341,7 @@ header h1 {
 
 /* Estética de tarjeta inactiva (borde discontinuo) */
 #card-volver-fija[tabindex="-1"] {
-    opacity: 0.5;
+    /* opacity: 0.5; <-- Opacidad Eliminada */
     border: 2px dashed var(--color-card-border);
     background: var(--color-card-bg);
     cursor: default;
@@ -393,6 +390,9 @@ header h1 {
     background: var(--color-card-bg);
     transform: scale(1.03);
     box-shadow: 0 0 25px rgba(0, 123, 255, 0.4);
+}
+.enlaces-curso a:hover {
+    /* Dejamos que el estilo Ghost lo maneje */
 }
 
 /* --- 9. ZONA DE INFORMACIÓN ADICIONAL (1/5 DERECHA) --- */

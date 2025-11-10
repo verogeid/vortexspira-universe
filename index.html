@@ -25,7 +25,7 @@
             </div>
             <div id="nav-swiper" class="swiper carousel-viewport">
                 <div class="swiper-wrapper grid-track" id="track-desktop">
-                    </div>
+                </div>
             </div>
         </div>
         
@@ -58,23 +58,23 @@
 
   <footer>
     <small>&copy;2025 VortexSpira® | Desarrollado por Diego González Fernández | 
-        </small>
+      <a href="https://www.linkedin.com/in/diego-gonzalez-fernandez" target="_top" aria-label="Perfil de LinkedIn" class="footer-social-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="linkedin-icon">
+          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3.
+          5v-11h3.5v11zm-1.75-12.25c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.75 
+          12.25h-3.5v-5.603c0-3.368-4-3.535-4 0v5.603h-3.5v-11h3.5v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+        </svg>
+      </a>
+    </small>
     <div id="debug-console"></div>
   </footer>
-
+  
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="debug.js"></script>
   <script src="data.js"></script>
-  <script src="app.js"></script> 
-  <script src="render.js"></script>
+  <script src="app.js"></script>
   <script src="nav.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // La carga del logo ya está en data.js, aquí solo llamamos a init
-        if (window.App && window.App.init) {
-            App.init();
-        }
-    });
-  </script>
+  <script src="render.js"></script>
+
 </body>
 </html>

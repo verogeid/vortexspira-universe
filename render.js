@@ -21,13 +21,13 @@
         const isMobile = window.innerWidth <= 768; 
         
         // --- Cálculo de Filas ---
-        let itemsPorColumna = 3; 
+        let calculatedItemsPerColumn = 3; 
+
         if (!isMobile) {
             // Lógica de Conteo de Columnas (Solo afecta a Desktop)
-            // FIX: Forzamos a 3 filas en Desktop (para el layout 3x3)
-            itemsPorColumna = 3; 
+            calculatedItemsPerColumn = 3; 
         } else {
-            itemsPorColumna = 1;
+            calculatedItemsPerColumn = 1;
         }
 
         // 🚨 1. SELECCIÓN DINÁMICA DE ELEMENTOS DEL DOM 🚨
@@ -51,7 +51,10 @@
             desktopView.classList.add('active');
         }
 
-        this.STATE.itemsPorColumna = itemsPorColumna;
+        this.STATE.itemsPorColumna = calculatedItemsPerColumn;
+        
+        // 🚨 OBTENER VALOR: Usamos const para evitar conflictos de ámbito 🚨
+        const { itemsPorColumna } = this.STATE;
         
         // 4. Obtener los ítems del nivel
         let itemsDelNivel = [];
@@ -91,10 +94,10 @@
         
         // 5.3. Lógica del Relleno Derecho (SOLO DESKTOP)
         if (!isMobile) {
-            const totalItems = itemsDelNivel.length; // (Total de tarjetas reales: 4)
-            const totalSlotsDeseados = 9; // 3 columnas * 3 filas
+            const totalItems = itemsDelNivel.length; 
+            const totalSlotsDeseados = 9; 
 
-            // FIX: Calculamos el número exacto de rellenos para llegar a 9
+            // Calculamos el número exacto de rellenos para llegar a 9
             const numRellenoDerecho = totalSlotsDeseados - totalItems;
             
             for (let i = 0; i < numRellenoDerecho; i++) {
@@ -135,7 +138,7 @@
             }
         }
 
-        // 🚨 FIX: Llamar a setupTrackClickListener después de que DOM.track esté definido 🚨
+        // FIX: Llamar a setupTrackClickListener después de que DOM.track esté definido
         if (typeof this.setupTrackClickListener === 'function') {
              this.setupTrackClickListener();
         }
@@ -146,7 +149,8 @@
         let firstEnabledIndex = 0;
         
         if (isMobile && isSubLevel) {
-             firstEnabledIndex = 1;
+             // El primer elemento es la tarjeta Volver vertical
+             firstEnabledIndex = 0;
         }
 
         if (allSlides[firstEnabledIndex]) {
@@ -215,7 +219,7 @@
             grid: false, 
             centeredSlides: true, 
             mousewheel: { sensitivity: 1 }, 
-            //loop: true, 
+            loop: true, 
             initialSlide: initialSwiperSlide,
             keyboard: { enabled: false }, 
             speed: 400,
@@ -236,6 +240,7 @@
 
     // _updateFocus: Actualiza el foco dentro del carrusel 
     App._updateFocus = function(shouldSlide = true) {
+        // FIX: Desestructurar el STATE aquí
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         const isMobile = window.innerWidth <= 768;
         const allSlides = Array.from(this.DOM.track.children);
@@ -254,15 +259,14 @@
 
             // 3. Mover el foco real del navegador
             if (shouldSlide) {
-                targetSlide.focus({ preventScroll: true }); 
+                targetSlide.focus(); 
             } else {
-                targetSlide.focus();
+                targetSlide.focus({ preventScroll: true }); 
             }
 
             // 4. Mover el Swiper (solo en desktop)
             const isSwiper = carouselInstance && !isMobile;
             if (isSwiper && shouldSlide) {
-                // FIX: Centrar la columna activa 
                 const targetSwiperSlide = Math.floor(currentFocusIndex / itemsPorColumna);
                 carouselInstance.slideToLoop(targetSwiperSlide, 400); 
             }
