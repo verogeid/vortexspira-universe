@@ -58,9 +58,23 @@
 
   <footer>
     <small>&copy;2025 VortexSpira® | Desarrollado por Diego González Fernández | 
-      </small>
+        </small>
     <div id="debug-console"></div>
   </footer>
 
-  </body>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="debug.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script> 
+  <script src="render.js"></script>
+  <script src="nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // La carga del logo ya está en data.js, aquí solo llamamos a init
+        if (window.App && window.App.init) {
+            App.init();
+        }
+    });
+  </script>
+</body>
 </html>
