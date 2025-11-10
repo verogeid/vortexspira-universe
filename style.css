@@ -269,8 +269,6 @@ header h1 {
 /* Tarjeta deshabilitada (navegable) - Borde Continuo */
 .swiper-slide.disabled,
 .mobile-track article.disabled {
-  /* FIX: Opacidad Eliminada */
-  /* opacity: 0.5; */ 
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);
   cursor: default;
@@ -290,7 +288,6 @@ header h1 {
   outline: none;
   border-color: var(--color-card-border); 
   background: var(--color-card-bg);
-  /* opacity: 0.8; <-- Opacidad Eliminada */
   transform: scale(1.03);
   box-shadow: 0 0 20px rgba(150, 150, 150, 0.2); 
 }
@@ -298,8 +295,7 @@ header h1 {
 /* Tarjetas de relleno: Pasivas/Discontinuas */
 .swiper-slide[data-tipo="relleno"] {
     background: transparent;
-    border: 2px dashed var(--color-card-border); 
-    /* opacity: 0.35; <-- Opacidad Eliminada */
+    border: 2px dashed var(--color-card-border); /* Borde discontinuo */
     pointer-events: none;
     cursor: default;
     transform: none;
@@ -311,7 +307,6 @@ header h1 {
     border-color: var(--color-card-border);
     transform: none;
     box-shadow: none;
-    /* opacity: 0.35; <-- Opacidad Eliminada */
 }
 
 
@@ -325,10 +320,10 @@ header h1 {
     width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
     
-    /* opacity: 1; <-- Opacidad Eliminada */
-    border: 2px solid var(--color-card-border);
+    /* ESTILO POR DEFECTO: Borde discontinuo (Inactivo) */
+    border: 2px dashed var(--color-card-border);
     background: var(--color-card-bg);
-    cursor: pointer;
+    cursor: default;
 
     padding: 1rem;
     border-radius: 12px;
@@ -337,17 +332,16 @@ header h1 {
     justify-content: center;
     box-sizing: border-box;
     display: none !important; 
-}
-
-/* Estética de tarjeta inactiva (borde discontinuo) */
-#card-volver-fija[tabindex="-1"] {
-    /* opacity: 0.5; <-- Opacidad Eliminada */
-    border: 2px dashed var(--color-card-border);
-    background: var(--color-card-bg);
-    cursor: default;
+    
     transform: none;
     box-shadow: none;
 }
+
+/* Estilo específico para la tarjeta Volver ACTIVA (tabindex="0") */
+#card-volver-fija[tabindex="0"] {
+    cursor: pointer;
+}
+
 
 #card-volver-fija[style*="display: flex"] { display: flex !important; }
 #card-volver-fija h3 { font-size: 1.2rem; }
@@ -403,7 +397,7 @@ header h1 {
     height: 100%; 
     padding: 1.5rem;
     border-radius: 12px;
-    /* Borde Discontinuo y color nítido */
+    /* Borde Discontinuo como las tarjetas de relleno */
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
     display: flex !important; 
