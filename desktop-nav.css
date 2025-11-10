@@ -62,12 +62,12 @@
     justify-content: flex-start; 
     height: 100%; 
     gap: var(--card-gap); /* ⭐️ Este es el 'margin-bottom' que preguntabas ⭐️ */
-    padding: 0 15px; 
+    
+    /* ⭐️ CORRECCIÓN: Padding en todos los lados para dar espacio al scale() ⭐️ */
+    padding: var(--nav-carousel-top-offset) 15px var(--card-gap) 15px;
+    
     box-sizing: border-box;
     width: 100%;
-    
-    /* ⭐️ AJUSTE: Añadir padding superior para alinear contenido (wrapper) ⭐️ */
-    padding-top: var(--nav-carousel-top-offset);
 }
 
 /* ⭐️ 4. AJUSTES DE TARJETAS ⭐️ */
