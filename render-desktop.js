@@ -6,7 +6,6 @@
         let html = '';
         
         // ⭐️ CORRECCIÓN CRÍTICA: Añadir una columna de Relleno al PRINCIPIO ⭐️
-        // Esto es necesario para que 'centeredSlides' pueda centrar la primera columna de datos.
         let rellenoInicial = '';
         for (let k = 0; k < itemsPerSlide; k++) {
             rellenoInicial += App._generarTarjetaHTML({ tipo: 'relleno' }, false, true);
@@ -75,8 +74,8 @@
             slidesPerGroup: 1, 
             loop: true, 
             
-            // ⭐️ CORRECCIÓN: Fijar en 1 para centrar el primer slide de DATOS (ya que 0 es Relleno) ⭐️
-            initialSlide: 1, 
+            // ⭐️ NOTA: initialSlide puede ser 0 o ignorarse, slideToLoop lo corregirá ⭐️
+            initialSlide: 0, 
             
             touchRatio: 1, 
             simulateTouch: true,
@@ -101,7 +100,13 @@
         
         if (App.STATE.carouselInstance) {
             App.STATE.carouselInstance.update(); 
-            console.log("Swiper inicializado y forzado a actualizar dimensiones.");
+            
+            // ⭐️ CORRECCIÓN CRÍTICA: Forzar el centrado en el primer slide de DATOS (índice 1) ⭐️
+            // El índice 1 es el primer slide de datos (ya que el 0 es el relleno inicial)
+            // El '0' en el segundo parámetro es la velocidad (0 = sin animación)
+            App.STATE.carouselInstance.slideToLoop(1, 0); 
+            
+            console.log("Swiper inicializado, actualizado y centrado en el slide 1.");
         }
     };
 
