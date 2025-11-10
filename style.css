@@ -46,9 +46,12 @@ body {
   margin: 0;
   box-sizing: border-box;
   min-height: 100vh;
+  /* Margen fijo en Desktop para header y footer */
   padding-top: var(--header-height);
   padding-bottom: var(--footer-height);
 }
+
+/* ⭐️ ESTILOS DE HEADER Y FOOTER - DESKTOP (DEFAULT) ⭐️ */
 header, footer {
     width: 100%;
     text-align: center;
@@ -59,12 +62,12 @@ header, footer {
 }
 
 header {
-    position: fixed;
+    position: fixed; /* Header fijo en Desktop */
     top: 0;
     padding: 10px;
 }
 footer {
-    position: fixed;
+    position: fixed; /* Footer fijo en Desktop */
     bottom: 0;
     padding: 5px;
     color: #888;
@@ -88,16 +91,12 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     fill: #888; 
     transition: fill 0.2s ease;
 }
-
-/* Aplicar el Ghost Azul (Borde y Halo) al enlace social */
 .footer-social-link:hover,
 .footer-social-link:focus-visible {
     border: 1px solid var(--color-primary); 
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
     color: var(--color-primary); 
 }
-
-/* Colorear el icono de azul en hover y focus */
 .footer-social-link:hover .linkedin-icon,
 .footer-social-link:focus-visible .linkedin-icon {
     fill: var(--color-primary); 
@@ -121,7 +120,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 #vista-central {
   grid-column: 2 / 3;
   width: 100%;
-  /* FIX: Usar altura 100% para la gestión de vistas absolutas en Desktop */
   height: 100%;
   position: relative; 
   overflow: hidden; 
@@ -147,11 +145,15 @@ header h1 {
     line-height: 1.2;
 }
 
+/* ⭐️ VISIBILIDAD DE LAS VISTAS SEGÚN MODO ⭐️ */
+#vista-navegacion-mobile { display: none; }
+
+
 /* --- 3. El Marco de Foco (La Máscara) --- */
+/* Degradado y Blur menos agresivos */
 .carousel-mask {
   position: absolute;
   width: 100%; 
-  /* FIX: Usar altura 100% para el efecto de máscara en Desktop */
   height: 100%; 
   top: 0;
   left: 0;
@@ -184,7 +186,6 @@ header h1 {
 /* --- 4. El Carrusel (Viewport y Track) --- */
 .swiper {
     width: 100%; 
-    /* FIX: Usar altura 100% para el contenedor del swiper en Desktop */
     height: 100%; 
     overflow-y: hidden;
     overflow-x: hidden; 
@@ -212,6 +213,7 @@ header h1 {
   width: clamp(var(--card-width-min), 18vw, var(--card-width-max)) !important;
   height: clamp(150px, 20vh, 180px) !important;
   margin: 0 !important;
+  /* Borde CONTINUO para tarjetas activas/reales */
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
   padding: 1.5rem;
@@ -223,17 +225,41 @@ header h1 {
   justify-content: center !important;
   box-sizing: border-box;
 }
-.swiper-slide h3 {
+
+/* ⭐️ Estilo para Tarjetas Mobile (sin swiper-slide) ⭐️ */
+.mobile-track article {
+    /* Estilos base de las tarjetas en móvil */
+    width: 100%; 
+    margin-bottom: 15px;
+    height: auto; 
+    min-height: 100px;
+    /* Copiar estilos de borde de swiper-slide */
+    border: 2px solid var(--color-card-border);
+    background: var(--color-card-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.swiper-slide h3, .mobile-track article h3 {
   margin: 0;
   font-size: 1.5rem;
 }
 
 /* Ghost Azul: Minimalista (solo borde y sombra) y selector de foco corregido */
+/* Incluye las tarjetas article en el focus/hover */
 .swiper-slide.focus-visible:not(.disabled):not([data-tipo="relleno"]),
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):hover,
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):focus-visible, 
 #card-volver-fija:hover,
-#card-volver-fija:focus-visible {
+#card-volver-fija:focus-visible,
+.mobile-track article:hover,
+.mobile-track article:focus-visible {
   outline: none;
   border-color: var(--color-primary);
   background: var(--color-card-bg); 
@@ -242,14 +268,16 @@ header h1 {
 }
 
 /* --- 6. El caso especial (Sección Vacía y Relleno) --- */
-/* Tarjeta deshabilitada (navegable) */
-.swiper-slide.disabled {
+/* Tarjeta deshabilitada (navegable) - Borde Continuo */
+.swiper-slide.disabled,
+.mobile-track article.disabled {
   opacity: 0.5;
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);
   cursor: default;
 }
-.swiper-slide.disabled span {
+.swiper-slide.disabled span,
+.mobile-track article.disabled span {
   font-size: 0.9rem;
   color: #999;
 }
@@ -257,7 +285,9 @@ header h1 {
 /* Ghost Gris: Más pronunciado para que se note en hover/focus */
 .swiper-slide.disabled:hover,
 .swiper-slide.disabled:focus-visible,
-.swiper-slide.disabled.focus-visible {
+.swiper-slide.disabled.focus-visible,
+.mobile-track article.disabled:hover,
+.mobile-track article.disabled:focus-visible {
   outline: none;
   border-color: var(--color-card-border); 
   background: var(--color-card-bg);
@@ -322,10 +352,13 @@ header h1 {
 
 #card-volver-fija[style*="display: flex"] { display: flex !important; }
 #card-volver-fija h3 { font-size: 1.2rem; }
+
+/* ⭐️ Estilo específico del botón Volver dentro del track móvil ⭐️ */
 .card-volver-vertical {
-    width: 100% !important; 
+    width: 100%; 
     margin-bottom: 15px;
-    height: auto !important;
+    height: auto;
+    /* Foco/Hover ya cubierto arriba */
 }
 
 /* --- 8. VISTA DE DETALLE DEL CURSO --- */
@@ -369,11 +402,11 @@ header h1 {
     grid-column: 3 / 4;
     place-self: start center;
     width: var(--sidebar-card-width); 
-    /* FIX: Usar altura 100% en Desktop */
     height: 100%; 
     padding: 1.5rem;
     border-radius: 12px;
     border: 2px dashed var(--color-card-border); 
+    background: var(--color-card-bg);
     display: none; 
     flex-direction: column;
     justify-content: center;
@@ -414,7 +447,7 @@ header h1 {
         grid-template-columns: 1fr; 
         padding: 0; 
         gap: 0;
-        height: auto; /* FIX: Dejar que el contenido defina la altura */
+        height: auto; 
         min-height: calc(100vh - 45px); 
     }
     #card-volver-fija,
@@ -422,25 +455,43 @@ header h1 {
         display: none !important; 
     }
 
-    /* FIX: Contenedores centrales en móvil */
+    /* ⭐️ VISIBILIDAD DE LAS VISTAS ⭐️ */
+    #vista-navegacion-desktop { display: none !important; }
+    #vista-navegacion-mobile { 
+        display: flex !important; 
+        /* FIX: Permitir altura automática y posición relativa */
+        height: auto;
+        position: relative; 
+        width: 100%; 
+        padding: 0 5%;
+    }
+
+    /* FIX: Contenedores internos en móvil */
     #vista-central {
-        height: auto !important; /* FIX: Permitir altura automática */
+        height: auto !important;
         position: relative;
     }
     .vista, 
     .vista.active {
-        /* FIX: Altura automática */
         height: auto; 
         position: relative;
         grid-template-columns: 1fr;
-        padding: 0 5%;
     }
+    .mobile-track {
+        /* Convierte el track móvil en una lista vertical con scroll nativo */
+        display: flex; 
+        flex-direction: column;
+        width: 100%;
+        overflow-y: auto; 
+        height: auto;
+        padding-top: 10px;
+    }
+
     .swiper, 
     .carousel-mask,
     .contenido-curso { 
         width: 100% !important; 
         max-width: 100% !important;
-        /* FIX: Altura automática para el scroll vertical */
         height: auto !important; 
         max-height: none;
         margin: 0 auto !important;
@@ -452,12 +503,12 @@ header h1 {
         padding: 1rem;
     }
     .swiper-wrapper {
+        /* Anulamos las reglas Grid/Swiper en móvil para que Flexbox funcione */
         display: flex; 
         flex-direction: column;
         grid-template-rows: none; 
-        padding-top: 10px;
+        padding: 0;
         overflow: auto; 
-        /* FIX: Altura debe ser 100% del contenedor padre si no se usa scroll */
         height: auto; 
         width: 100%;
     }
