@@ -22,9 +22,6 @@
     /* ⭐️ Borde de DEPURACIÓN: Amarillo ⭐️ */
     border: 5px solid yellow !important; 
     box-sizing: border-box; 
-    
-    /* ⭐️ ELIMINADO: El padding se gestiona dentro del .cards-column-group ⭐️ */
-    /* padding-top: var(--nav-carousel-top-offset); */
 }
 
 /* El Swiper Wrapper debe comportarse como un contenedor horizontal que Swiper controla */
