@@ -24,12 +24,13 @@
   --sidebar-card-width: 180px; 
   --sidebar-column-width: 220px;
   --card-gap: 25px; 
-  /* Altura total del carrusel (3 cards + 2 gaps) */
-  --nav-desktop-height: 800px; 
   /* Altura individual de una tarjeta */
   --card-height-single: 250px; 
-  /* Valor de alineación vertical / espacio superior del carrusel */
+  /* Valor de alineación vertical (espacio superior) */
   --nav-carousel-top-offset: 30px; 
+  
+  /* ⭐️ CORRECCIÓN: Altura total = (3 * 250px) + (2 * 25px gap) + 30px offset ⭐️ */
+  --nav-desktop-height: 830px; 
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -117,7 +118,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   height: 100%;
   position: relative; 
   overflow: hidden; 
-  display: flex; /* Ayuda a contener la vista activa */
+  display: flex; 
 }
 .vista {
   position: absolute; 
@@ -260,14 +261,15 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     flex-direction: column;
     justify-content: center;
 
-    /* ⭐️ Borde discontinuo para INACTIVA + Borde de depuración amarillo ⭐️ */
-    border: 2px dashed var(--color-card-border); /* Borde funcional */
+    /* Estilo Inactivo - Borde Discontinuo */
+    border: 2px dashed var(--color-card-border);
     background: transparent;
     transform: none;
     box-shadow: none;
-
+    
     /* ⭐️ Borde de DEPURACIÓN: Amarillo ⭐️ */
     outline: 3px solid yellow !important; 
+    outline-offset: -1px; /* Para que el borde esté pegado */
 }
 
 /* Ocultar texto por defecto */
@@ -279,8 +281,10 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 
 /* ⭐️ REAFIRMACIÓN: Asegurar que el borde discontinuo se ve cuando está inactiva ⭐️ */
 #card-volver-fija[tabindex="-1"] {
-    border: 2px dashed var(--color-card-border);
-    background: transparent;
+    border: 2px dashed var(--color-card-border) !important; /* Forzar el discontinuo */
+    background: transparent !important;
+    /* Mostrar el borde amarillo de depuración también cuando está inactivo */
+    outline: 3px solid yellow !important; 
 }
 
 
@@ -288,7 +292,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     border: 2px solid var(--color-primary); /* Borde continuo azul (ACTIVA) */
     background: var(--color-card-bg); /* Fondo sólido cuando está activo (Ghost) */
     cursor: pointer;
-    /* Remover el borde amarillo cuando está activa */
+    /* ⭐️ Remover el borde amarillo de depuración cuando está activa ⭐️ */
     outline: none !important; 
 }
 
@@ -312,17 +316,19 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     grid-column: 3 / 4;
     place-self: start center;
     width: var(--sidebar-column-width); 
-    /* Altura = Altura del carrusel + margen de alineación */
-    height: calc(var(--nav-desktop-height) + var(--nav-carousel-top-offset)); 
+    /* ⭐️ AJUSTE: Altura = Altura del carrusel (que ahora incluye el offset) ⭐️ */
+    height: var(--nav-desktop-height); 
     
     padding: 1.5rem;
     border-radius: 12px;
-    /* Mismo borde discontinuo que el Volver inactivo y tarjetas de relleno */
+    /* Mismo borde discontinuo que el Volver inactivo */
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
     display: block !important; 
     text-align: center;
     box-sizing: border-box;
+    /* ⭐️ AJUSTE: Alinear el contenido interno con el carrusel ⭐️ */
+    padding-top: calc(var(--nav-carousel-top-offset) + 1.5rem);
 }
 #info-adicional p, #info-adicional small {
     width: 100%; 
