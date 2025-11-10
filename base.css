@@ -24,8 +24,10 @@
   --sidebar-card-width: 180px; 
   --sidebar-column-width: 220px;
   --card-gap: 25px; 
-  /* CORRECCIÓN: Altura fija de referencia para 3 tarjetas */
+  /* Altura total del carrusel (3 cards + 2 gaps) */
   --nav-desktop-height: 800px; 
+  /* CORRECCIÓN: Altura individual de una tarjeta */
+  --card-height-single: 250px; 
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -232,9 +234,12 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     place-self: start center; 
     position: relative; 
     z-index: 50; 
-    width: var(--sidebar-card-width); 
-    /* CORRECCIÓN: Usar la altura de referencia para que sea igual al grupo de 3 tarjetas */
-    height: var(--nav-desktop-height); 
+    
+    /* ⭐️ CORRECCIÓN: Usamos el ANCHO de la COLUMNA ⭐️ */
+    width: var(--sidebar-column-width); 
+    /* ⭐️ CORRECCIÓN: Usamos la ALTURA de UNA SOLA tarjeta ⭐️ */
+    height: var(--card-height-single); 
+    
     padding: 1rem;
     cursor: default;
 
@@ -282,8 +287,10 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 #info-adicional {
     grid-column: 3 / 4;
     place-self: start center;
-    width: var(--sidebar-card-width); 
-    height: 100%; 
+    /* Usamos el ANCHO de la COLUMNA */
+    width: var(--sidebar-column-width); 
+    
+    height: 100%; /* Ocupa la altura del carrusel completo */
     padding: 1.5rem;
     border-radius: 12px;
     border: 2px dashed var(--color-card-border); 
