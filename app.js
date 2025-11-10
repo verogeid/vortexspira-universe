@@ -22,8 +22,7 @@
       logDebug("Iniciando orquestación de la App."); 
       
       // Cachear el DOM (Solo elementos estables y necesarios)
-      // 🚨 FIX: Eliminamos el track y vistaNav de aquí, se asignan dinámicamente en render.js
-      // this.DOM.track y this.DOM.vistaNav son asignados dentro de renderNavegacion
+      // FIX: this.DOM.track y this.DOM.vistaNav son asignados dinámicamente en render.js
       
       this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); 
       this.DOM.vistaDetalle = document.getElementById('vista-detalle');
@@ -36,8 +35,6 @@
 
       
       // 2.1. Configurar el observador (definido en render.js)
-      // Esta llamada fallaría si los elementos no existieran, pero como existen
-      // en el DOM (aunque estén ocultos), la inicialización es segura.
       this._setupResizeObserver();
       
       // 2.2. Cargar los datos (definido en data.js)
@@ -79,7 +76,7 @@
     if (typeof injectHeaderLogo === 'function') {
         injectHeaderLogo(); 
     }
-    // 2. La inicialización de la App ahora se llama desde el HTML/DOMContentLoaded
+    // 2. La inicialización de la App se espera que sea llamada desde el HTML/DOMContentLoaded
   });
 
 })();
