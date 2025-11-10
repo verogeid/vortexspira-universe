@@ -74,7 +74,6 @@
             slidesPerGroup: 1, 
             loop: true, 
             
-            // ⭐️ NOTA: initialSlide puede ser 0 o ignorarse, slideToLoop lo corregirá ⭐️
             initialSlide: 0, 
             
             touchRatio: 1, 
@@ -102,8 +101,6 @@
             App.STATE.carouselInstance.update(); 
             
             // ⭐️ CORRECCIÓN CRÍTICA: Forzar el centrado en el primer slide de DATOS (índice 1) ⭐️
-            // El índice 1 es el primer slide de datos (ya que el 0 es el relleno inicial)
-            // El '0' en el segundo parámetro es la velocidad (0 = sin animación)
             App.STATE.carouselInstance.slideToLoop(1, 0); 
             
             console.log("Swiper inicializado, actualizado y centrado en el slide 1.");
