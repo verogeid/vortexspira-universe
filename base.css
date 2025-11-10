@@ -28,6 +28,8 @@
   --nav-desktop-height: 800px; 
   /* Altura individual de una tarjeta */
   --card-height-single: 250px; 
+  /* Valor de alineación vertical */
+  --nav-align-top: 30px; 
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -115,7 +117,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   height: 100%;
   position: relative; 
   overflow: hidden; 
-  /* FIX: Añadir display: flex para ayudar a contener la vista activa */
   display: flex; 
 }
 .vista {
@@ -197,6 +198,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 
 /* Tarjetas de relleno: Pasivas/Discontinuas */
 .card[data-tipo="relleno"] {
+    /* ⭐️ Asegura el mismo borde discontinuo que info-adicional ⭐️ */
     border: 2px dashed var(--color-card-border); 
     background: transparent;
     pointer-events: none;
@@ -242,13 +244,15 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     z-index: 50; 
     
     width: var(--sidebar-column-width); 
-    /* Altura forzada de la tarjeta individual */
     height: var(--card-height-single) !important; 
     max-height: var(--card-height-single) !important; 
     min-height: var(--card-height-single) !important;
     
     padding: 1rem;
     cursor: default;
+    
+    /* Aplicar margen superior para alinear con la primera tarjeta del carrusel */
+    margin-top: var(--nav-align-top); 
 
     /* LAYOUT: Forzar layout Flexbox */
     display: flex !important; 
@@ -257,7 +261,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 
     /* Estilo Inactivo - Borde Discontinuo */
     border: 2px dashed var(--color-card-border);
-    background: transparent; /* Fondo transparente para ver el fondo del body */
+    background: transparent;
     transform: none;
     box-shadow: none;
 }
@@ -269,7 +273,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     font-size: 1.2rem;
 }
 
-/* Aplicar el borde discontinuo cuando está inactivo (redundancia para asegurar) */
+/* Aplicar el borde discontinuo cuando está inactivo (redundancia) */
 #card-volver-fija[tabindex="-1"] {
     border: 2px dashed var(--color-card-border);
     background: transparent;
@@ -284,7 +288,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 
 /* REGLA ACTIVA: Mostrar el texto */
 #card-volver-fija[tabindex="0"] h3 {
-    display: block; /* Mostrar el texto solo cuando está activo */
+    display: block; 
 }
 
 #card-volver-fija[tabindex="0"]:hover,
@@ -302,10 +306,12 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     grid-column: 3 / 4;
     place-self: start center;
     width: var(--sidebar-column-width); 
-    height: 100%; /* Ocupa la altura del carrusel completo */
+    /* Altura = Altura del carrusel + margen de alineación */
+    height: calc(var(--nav-desktop-height) + var(--nav-align-top)); 
+    
     padding: 1.5rem;
     border-radius: 12px;
-    /* Mismo borde que el Volver inactivo */
+    /* Mismo borde discontinuo que el Volver inactivo y tarjetas de relleno */
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
     display: block !important; 
@@ -322,7 +328,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 
 
 /* Botón Volver (Móvil) */
-#btn-volver-navegacion { display: none; } /* Por defecto oculto */
+#btn-volver-navegacion { display: none; } 
 
 /* Lógica de Reducción de Movimiento */
 @media (prefers-reduced-motion: reduce) {
