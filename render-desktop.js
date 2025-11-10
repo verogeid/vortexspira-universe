@@ -55,16 +55,16 @@
             // CLAVE: Muestra 3 slides (columnas) a la vez.
             slidesPerView: 3, 
 
-            // CORRECCIÓN: Desplaza de 1 en 1 para un centrado más suave
+            // Desplaza de 1 en 1 para un centrado más suave
             slidesPerGroup: 1, 
 
             loop: true, 
             initialSlide: initialSwiperSlide,
 
-            // CORRECCIÓN: Habilitar interacción táctil y centrado para mejor visualización.
+            // Habilitar interacción táctil y centrado para mejor visualización.
             touchRatio: 1, 
             simulateTouch: true,
-            centeredSlides: true, // Para asegurar que el slide enfocado esté en el centro visual.
+            centeredSlides: true, // Asegura que el slide enfocado esté en el centro visual.
 
             mousewheel: { 
                 sensitivity: 1 
