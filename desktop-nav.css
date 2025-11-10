@@ -13,11 +13,14 @@
 /* CRÍTICO: Fija la altura total necesaria (usa la variable de base.css) */
 #nav-swiper {
     height: var(--nav-desktop-height); 
-    width: 100%; /* Ocupa el 100% de la columna 1fr de su padre (#vista-central) */
+    width: 100%; 
     overflow-y: hidden;
     overflow-x: hidden; 
     position: relative; 
     z-index: 1; 
+    /* ⭐️ FIX DE DEPURACIÓN: Borde amarillo grueso para ver el espacio de Swiper ⭐️ */
+    border: 5px solid yellow !important; 
+    box-sizing: border-box; /* Asegurar que el borde no añada ancho extra */
 }
 
 /* El Swiper Wrapper debe comportarse como un contenedor horizontal que Swiper controla */
