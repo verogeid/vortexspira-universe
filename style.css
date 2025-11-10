@@ -42,17 +42,13 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  /* El body no debe tener overflow hidden, ya que el contenido principal ya ocupa el 100% visible */
   overflow: hidden; 
   margin: 0;
   box-sizing: border-box;
   min-height: 100vh;
-  /* Margen fijo en Desktop para header y footer */
   padding-top: var(--header-height);
   padding-bottom: var(--footer-height);
 }
-
-/* ⭐️ ESTILOS DE HEADER Y FOOTER - DESKTOP (DEFAULT) ⭐️ */
 header, footer {
     width: 100%;
     text-align: center;
@@ -63,12 +59,12 @@ header, footer {
 }
 
 header {
-    position: fixed; /* Header fijo en ambos */
+    position: fixed;
     top: 0;
     padding: 10px;
 }
 footer {
-    position: fixed; /* FIX: Footer fijo en Desktop */
+    position: fixed;
     bottom: 0;
     padding: 5px;
     color: #888;
@@ -92,12 +88,16 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     fill: #888; 
     transition: fill 0.2s ease;
 }
+
+/* Aplicar el Ghost Azul (Borde y Halo) al enlace social */
 .footer-social-link:hover,
 .footer-social-link:focus-visible {
     border: 1px solid var(--color-primary); 
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
     color: var(--color-primary); 
 }
+
+/* Colorear el icono de azul en hover y focus */
 .footer-social-link:hover .linkedin-icon,
 .footer-social-link:focus-visible .linkedin-icon {
     fill: var(--color-primary); 
@@ -121,6 +121,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 #vista-central {
   grid-column: 2 / 3;
   width: 100%;
+  /* FIX: Usar altura 100% para la gestión de vistas absolutas en Desktop */
   height: 100%;
   position: relative; 
   overflow: hidden; 
@@ -150,6 +151,7 @@ header h1 {
 .carousel-mask {
   position: absolute;
   width: 100%; 
+  /* FIX: Usar altura 100% para el efecto de máscara en Desktop */
   height: 100%; 
   top: 0;
   left: 0;
@@ -182,6 +184,7 @@ header h1 {
 /* --- 4. El Carrusel (Viewport y Track) --- */
 .swiper {
     width: 100%; 
+    /* FIX: Usar altura 100% para el contenedor del swiper en Desktop */
     height: 100%; 
     overflow-y: hidden;
     overflow-x: hidden; 
@@ -366,11 +369,10 @@ header h1 {
     grid-column: 3 / 4;
     place-self: start center;
     width: var(--sidebar-card-width); 
+    /* FIX: Usar altura 100% en Desktop */
     height: 100%; 
     padding: 1.5rem;
     border-radius: 12px;
-    /* Borde discontinuo para denotar espacio reservado */
-    background: var(--color-card-bg);
     border: 2px dashed var(--color-card-border); 
     display: none; 
     flex-direction: column;
@@ -391,7 +393,6 @@ header h1 {
     /* FIX: Body debe permitir el scroll completo en móvil */
     body {
         overflow: auto; 
-        /* Reducir el padding superior/inferior para maximizar el espacio de contenido */
         padding-top: 40px; 
         padding-bottom: 5px; 
     }
@@ -408,21 +409,29 @@ header h1 {
         padding: 5px;
     }
     
-    /* Layout principal */
+    /* Layout principal: Altura automática para fluir verticalmente */
     #app-container {
         grid-template-columns: 1fr; 
         padding: 0; 
         gap: 0;
-        /* Permitir que el contenido empuje la altura del body */
-        height: auto; 
-        min-height: calc(100vh - 45px); /* Altura mínima restando header y footer reducidos */
+        height: auto; /* FIX: Dejar que el contenido defina la altura */
+        min-height: calc(100vh - 45px); 
     }
     #card-volver-fija,
     .info-adicional { 
         display: none !important; 
     }
+
+    /* FIX: Contenedores centrales en móvil */
+    #vista-central {
+        height: auto !important; /* FIX: Permitir altura automática */
+        position: relative;
+    }
     .vista, 
     .vista.active {
+        /* FIX: Altura automática */
+        height: auto; 
+        position: relative;
         grid-template-columns: 1fr;
         padding: 0 5%;
     }
@@ -431,7 +440,8 @@ header h1 {
     .contenido-curso { 
         width: 100% !important; 
         max-width: 100% !important;
-        height: 100% !important;
+        /* FIX: Altura automática para el scroll vertical */
+        height: auto !important; 
         max-height: none;
         margin: 0 auto !important;
         padding: 10px 5%; 
@@ -447,7 +457,8 @@ header h1 {
         grid-template-rows: none; 
         padding-top: 10px;
         overflow: auto; 
-        height: 100%;
+        /* FIX: Altura debe ser 100% del contenedor padre si no se usa scroll */
+        height: auto; 
         width: 100%;
     }
     .swiper-slide {

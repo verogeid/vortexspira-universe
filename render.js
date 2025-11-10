@@ -103,7 +103,7 @@
         if (!isMobile) {
             this.DOM.track.style.gridTemplateRows = `repeat(${itemsPorColumna}, 1fr)`;
         } else {
-            // Asegurar que no haya reglas de Grid en línea en móvil
+            // Asegurar que no haya reglas de Grid en línea en móvil (Flexbox del CSS lo maneja)
             this.DOM.track.style.gridTemplateRows = '';
         }
 
@@ -143,12 +143,12 @@
         
         const numColumnas = Math.ceil(allSlides.length / itemsPorColumna);
 
+        // 🚨 FIX CRÍTICO: Eliminar 'grid: {}' en móvil de _initCarousel
         this._initCarousel(0, numColumnas, isMobile);
         
         this.STATE.currentFocusIndex = firstEnabledIndex;
         this._updateFocus(false);
         
-        // Mover el Swiper a la posición inicial centrada del primer elemento real (índice 0)
         if (!isMobile && this.STATE.carouselInstance) {
             this.STATE.carouselInstance.slideToLoop(0, 0); 
         }
@@ -189,8 +189,8 @@
         const swiperConfig = {
             direction: isMobile ? 'vertical' : 'horizontal', 
             slidesPerView: isMobile ? 'auto' : 'auto', 
-            // 🚨 FIX MÓVIL: No usar Grid en móvil
-            grid: isMobile ? { rows: 1, fill: 'row' } : false, 
+            // 🚨 FIX CRÍTICO: Si es móvil, no usar grid para evitar conflictos con Flexbox
+            grid: false, 
             centeredSlides: !isMobile, 
             mousewheel: { sensitivity: 1 }, 
             loop: true, 
