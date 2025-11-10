@@ -3,12 +3,9 @@
 (function() {
 
     // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS (UNIFICADA) ⭐️
+    // NOTA: Esta función se llama desde app.js. Los listeners de clic del track
+    // se manejan ahora dentro de render.js para asegurar que el targetTrack esté vivo.
     App.setupListeners = function() {
-      // 5.1. Listener para el track (delegación de eventos)
-      // El listener es delegado al track activo que render.js asignó dinámicamente
-      if (this.DOM.track) { 
-          this.DOM.track.addEventListener('click', this._handleTrackClick.bind(this));
-      }
       
       // 5.2. Listener para "Volver" (MÓVIL)
       if (this.DOM.btnVolverNav) {
@@ -22,8 +19,8 @@
       
       // 5.4. Listener central de teclado (MODIFICADO para Tab, Flechas y Detalle)
       document.addEventListener('keydown', (e) => {
-        const isNavActive = this.DOM.vistaNav.classList.contains('active');
-        const isDetailActive = this.DOM.vistaDetalle.classList.contains('active');
+        const isNavActive = this.DOM.vistaNav ? this.DOM.vistaNav.classList.contains('active') : false;
+        const isDetailActive = this.DOM.vistaDetalle ? this.DOM.vistaDetalle.classList.contains('active') : false;
             
         // El 'Escape' siempre debe funcionar
         if (e.key === 'Escape') {
@@ -60,8 +57,21 @@
         }
       });
     };
+    
+    // ⭐️ Función para agregar el listener de CLIC al track activo (llamado desde render.js) ⭐️
+    // Necesario porque el DOM.track se redefine en cada render.
+    App.setupTrackClickListener = function() {
+        if (this.DOM.track) {
+            // Limpiar listeners anteriores para evitar duplicados
+            this.DOM.track.removeEventListener('click', this._handleTrackClick.bind(this));
+            
+            // Suscribir el listener de clic al track activo
+            this.DOM.track.addEventListener('click', this._handleTrackClick.bind(this));
+        }
+    };
 
-    // ⭐️ 2. MANEJADOR DE EVENTOS (Track) - CORREGIDO PARA <article> Y <div> ⭐️
+
+    // ⭐️ 2. MANEJADOR DE EVENTOS (Track) - CORREGIDO PARA [data-id] ⭐️
     App._handleTrackClick = function(e) {
       // FIX CRÍTICO: Buscar la tarjeta por el selector más general [data-id]
       const tarjeta = e.target.closest('[data-id]'); 
@@ -97,7 +107,6 @@
       
       // Verificar si el foco está DENTRO del Swiper 
       const activeElement = document.activeElement;
-      // Busca en el track activo (Desktop o Mobile)
       if (!activeElement || !activeElement.closest('#track-desktop, #track-mobile')) {
           return; 
       }
@@ -133,19 +142,13 @@
           break;
         case 'ArrowLeft':
             let prevColIndex = newIndex - itemsPorColumna;
-            if (prevColIndex < 0) {
-                newIndex = totalItems - 1; 
-            } else {
-                newIndex = prevColIndex;
-            }
+            // FIX: Permitir el loop en la navegación de columna/fila
+            newIndex = (prevColIndex < 0) ? totalItems - 1 : prevColIndex;
           break;
         case 'ArrowRight':
             let nextColIndex = newIndex + itemsPorColumna;
-            if (nextColIndex >= totalItems) {
-                newIndex = 0; 
-            } else {
-                newIndex = nextColIndex;
-            }
+            // FIX: Permitir el loop en la navegación de columna/fila
+            newIndex = (nextColIndex >= totalItems) ? 0 : nextColIndex;
           break;
         case 'Enter':
         case ' ':
@@ -166,7 +169,6 @@
         let focusableElements = [];
         
         const footerLinks = Array.from(document.querySelectorAll('footer a'));
-        // Buscar la tarjeta activa por el tabindex="0" en el track correcto
         const activeCard = this.DOM.track.querySelector('[tabindex="0"]');
 
         if (viewType === 'nav') {

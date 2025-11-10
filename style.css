@@ -32,8 +32,8 @@
     --color-card-bg: rgba(255, 255, 255, 0.02);
     --color-mask-gradient: rgba(17, 17, 17, 0.4);
     --color-text: #eee;
-    --color-card-border: #555;
-    --color-card-border-disabled: #444;
+    --color-card-border: #aaa; /* Gris nítido para bordes discontinuos y activos (más visible) */
+    --color-card-border-disabled: #666; /* Gris oscuro para borde continuo deshabilitado */
   }
 }
 
@@ -203,7 +203,7 @@ header h1 {
 .swiper-wrapper {
   display: grid;
   grid-auto-flow: column;
-  /* Por defecto 3, el JS puede inyectar otro valor */
+  /* El número de filas se inyecta con JS, por defecto 3 */
   grid-template-rows: repeat(3, 1fr); 
   gap: 25px;
   padding: 0; 
@@ -273,7 +273,7 @@ header h1 {
 /* Tarjeta deshabilitada (navegable) - Borde Continuo */
 .swiper-slide.disabled,
 .mobile-track article.disabled {
-  opacity: 0.5;
+  opacity: 0.6; /* FIX: Opacidad aumentada para visibilidad */
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);
   cursor: default;
@@ -301,9 +301,8 @@ header h1 {
 /* Tarjetas de relleno: Pasivas/Discontinuas */
 .swiper-slide[data-tipo="relleno"] {
     background: transparent;
-    /* Borde Discontinuo y color nítido */
     border: 2px dashed var(--color-card-border); 
-    opacity: 0.2; 
+    opacity: 0.35; /* FIX: Opacidad ajustada para visibilidad */
     pointer-events: none;
     cursor: default;
     transform: none;
@@ -315,7 +314,7 @@ header h1 {
     border-color: var(--color-card-border);
     transform: none;
     box-shadow: none;
-    opacity: 0.2;
+    opacity: 0.35;
 }
 
 
@@ -410,7 +409,7 @@ header h1 {
     /* Borde Discontinuo y color nítido */
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
-    display: flex !important; /* Aseguramos visibilidad en Desktop */
+    display: flex !important; 
     
     /* FIX: Forzar apilado vertical */
     flex-direction: column;

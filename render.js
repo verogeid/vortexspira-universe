@@ -20,13 +20,14 @@
         const isSubLevel = this.STATE.navStack.length > 0;
         const isMobile = window.innerWidth <= 768; 
         
-        let calculatedItemsPerColumn = 3; 
-
+        // --- Cálculo de Filas ---
+        let itemsPorColumna = 3; 
         if (!isMobile) {
-            // ⭐️ FIX: Forzamos a 3 filas en Desktop (para el layout 3x3) ⭐️
-            calculatedItemsPerColumn = 3; 
+            // Lógica de Conteo de Columnas (Solo afecta a Desktop)
+            // FIX: Forzamos a 3 filas en Desktop (para el layout 3x3)
+            itemsPorColumna = 3; 
         } else {
-            calculatedItemsPerColumn = 1;
+            itemsPorColumna = 1;
         }
 
         // 🚨 1. SELECCIÓN DINÁMICA DE ELEMENTOS DEL DOM 🚨
@@ -50,8 +51,7 @@
             desktopView.classList.add('active');
         }
 
-        this.STATE.itemsPorColumna = calculatedItemsPerColumn;
-        const { itemsPorColumna } = this.STATE;
+        this.STATE.itemsPorColumna = itemsPorColumna;
         
         // 4. Obtener los ítems del nivel
         let itemsDelNivel = [];
@@ -135,6 +135,10 @@
             }
         }
 
+        // 🚨 FIX: Llamar a setupTrackClickListener después de que DOM.track esté definido 🚨
+        if (typeof this.setupTrackClickListener === 'function') {
+             this.setupTrackClickListener();
+        }
 
         // 7. Lógica de Foco Inicial y Carousel
         const allSlides = this.DOM.track.children;
