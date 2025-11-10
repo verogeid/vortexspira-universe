@@ -21,8 +21,7 @@
   /* VARIABLES DE LAYOUT */
   --header-height: 50px;
   --footer-height: 30px;
-  --sidebar-card-width: 180px; /* Obsoleto, usamos column-width */
-  --sidebar-column-width: 220px;
+  /* --sidebar-column-width: 220px;  <- ELIMINADO: Ahora es flexible (1fr) */
   --card-gap: 25px; 
   /* Altura individual de una tarjeta */
   --card-height-single: 250px; 
@@ -102,7 +101,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   max-width: 1600px; 
   margin: 0 auto;
   display: grid;
-  grid-template-columns: var(--sidebar-column-width) 1fr var(--sidebar-column-width); 
+  /* ⭐️ CORRECCIÓN: Grid Proporcional 1fr (Sidebar) | 3fr (Centro) | 1fr (Sidebar) ⭐️ */
+  grid-template-columns: 1fr 3fr 1fr; 
   gap: 20px;
   padding: 20px;
   box-sizing: border-box;
@@ -199,7 +199,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 
 /* Tarjetas de relleno: Pasivas/Discontinuas */
 .card[data-tipo="relleno"] {
-    /* ⭐️ Asegura el mismo borde discontinuo que info-adicional ⭐️ */
     border: 2px dashed var(--color-card-border); 
     background: transparent;
     pointer-events: none;
@@ -244,8 +243,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     position: relative; 
     z-index: 50; 
     
-    /* ⭐️ CORRECCIÓN: Usar el ANCHO de la COLUMNA ⭐️ */
-    width: var(--sidebar-column-width); 
+    /* ⭐️ CORRECCIÓN: El ancho ahora es 100% de la columna 1fr ⭐️ */
+    width: 100%; 
     /* Altura forzada de la tarjeta individual */
     height: var(--card-height-single) !important; 
     max-height: var(--card-height-single) !important; 
@@ -292,7 +291,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     border: 2px solid var(--color-primary); 
     background: var(--color-card-bg); 
     cursor: pointer;
-    /* Remover el borde amarillo de depuración cuando está activa */
     outline: none !important; 
 }
 
@@ -315,7 +313,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 #info-adicional {
     grid-column: 3 / 4;
     place-self: start center;
-    width: var(--sidebar-column-width); 
+    /* ⭐️ CORRECCIÓN: El ancho ahora es 100% de la columna 1fr ⭐️ */
+    width: 100%; 
     /* AJUSTE: Altura = Altura del carrusel */
     height: var(--nav-desktop-height); 
     
