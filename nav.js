@@ -5,7 +5,8 @@
     // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS (UNIFICADA) ⭐️
     App.setupListeners = function() {
       // 5.1. Listener para el track (delegación de eventos)
-      if (this.DOM.track) {
+      // El listener es delegado al track activo que render.js asignó dinámicamente
+      if (this.DOM.track) { 
           this.DOM.track.addEventListener('click', this._handleTrackClick.bind(this));
       }
       
@@ -60,11 +61,17 @@
       });
     };
 
-    // ⭐️ 2. MANEJADOR DE EVENTOS (Track) ⭐️
+    // ⭐️ 2. MANEJADOR DE EVENTOS (Track) - CORREGIDO PARA <article> Y <div> ⭐️
     App._handleTrackClick = function(e) {
-      const tarjeta = e.target.closest('.swiper-slide');
+      // FIX CRÍTICO: Buscar la tarjeta por el selector más general [data-id]
+      const tarjeta = e.target.closest('[data-id]'); 
       
-      if (!tarjeta || tarjeta.classList.contains('disabled') || tarjeta.dataset.tipo === 'relleno') {
+      if (!tarjeta) {
+        return;
+      }
+      
+      // Si es una tarjeta deshabilitada o relleno
+      if (tarjeta.dataset.tipo === 'relleno' || tarjeta.classList.contains('disabled')) {
         return;
       }
       
@@ -88,10 +95,10 @@
     // ⭐️ 3. NAVEGACIÓN POR TECLADO (FLECHAS) - VISTA NAV ⭐️
     App._handleKeyNavigation = function(key) {
       
-      // FIX CRÍTICO: Verificar si el foco está DENTRO del Swiper 
+      // Verificar si el foco está DENTRO del Swiper 
       const activeElement = document.activeElement;
-      if (!activeElement || !activeElement.closest('#track-navegacion')) {
-          // Si el elemento activo no está dentro del track (ej. es la tarjeta "Volver" fija), ignorar las flechas
+      // Busca en el track activo (Desktop o Mobile)
+      if (!activeElement || !activeElement.closest('#track-desktop, #track-mobile')) {
           return; 
       }
       
@@ -100,7 +107,7 @@
       const totalItems = allSlides.length;
       
       // Usar el elemento enfocado como punto de partida
-      const currentFocusedSlide = activeElement.closest('.swiper-slide');
+      const currentFocusedSlide = activeElement.closest('[data-id]');
       let newIndex = Array.from(allSlides).indexOf(currentFocusedSlide);
       
       if (newIndex === -1 || totalItems === 0) return;
@@ -126,21 +133,23 @@
           break;
         case 'ArrowLeft':
             let prevColIndex = newIndex - itemsPorColumna;
-            if (prevColIndex < itemsPorColumna) {
-                prevColIndex = newIndex; 
+            if (prevColIndex < 0) {
+                newIndex = totalItems - 1; 
+            } else {
+                newIndex = prevColIndex;
             }
-            newIndex = prevColIndex;
           break;
         case 'ArrowRight':
             let nextColIndex = newIndex + itemsPorColumna;
-            if (nextColIndex >= totalItems || allSlides[nextColIndex].dataset.tipo === 'relleno') {
-                nextColIndex = newIndex; 
+            if (nextColIndex >= totalItems) {
+                newIndex = 0; 
+            } else {
+                newIndex = nextColIndex;
             }
-            newIndex = nextColIndex;
           break;
         case 'Enter':
         case ' ':
-          // ACTIVACIÓN: Activar click sobre el elemento enfocado (swiper-slide)
+          // ACTIVACIÓN: Activar click sobre el elemento enfocado
           currentFocusedSlide.click();
           return;
       }
@@ -157,7 +166,8 @@
         let focusableElements = [];
         
         const footerLinks = Array.from(document.querySelectorAll('footer a'));
-        const activeCard = this.DOM.track.querySelector('.swiper-slide[tabindex="0"]');
+        // Buscar la tarjeta activa por el tabindex="0" en el track correcto
+        const activeCard = this.DOM.track.querySelector('[tabindex="0"]');
 
         if (viewType === 'nav') {
             if (isMobile) {
@@ -273,7 +283,7 @@
             this.renderNavegacion(); 
             
             // Forzar el foco de vuelta al slider
-            const activeCard = this.DOM.track.querySelector('.swiper-slide[tabindex="0"]');
+            const activeCard = this.DOM.track.querySelector('[tabindex="0"]');
             if (activeCard) {
                 activeCard.focus();
             }
@@ -284,7 +294,7 @@
             this.renderNavegacion();
             
             // Forzar el foco de vuelta al slider
-            const activeCard = this.DOM.track.querySelector('.swiper-slide[tabindex="0"]');
+            const activeCard = this.DOM.track.querySelector('[tabindex="0"]');
             if (activeCard) {
                 activeCard.focus();
             }
