@@ -24,7 +24,7 @@
   --sidebar-card-width: 180px; 
   --sidebar-column-width: 220px;
   --card-gap: 25px; 
-  /* CORRECCIÓN: Altura para 3 tarjetas de 250px + 2 gaps de 25px = 800px */
+  /* CORRECCIÓN: Altura fija de referencia para 3 tarjetas */
   --nav-desktop-height: 800px; 
 }
 @media (prefers-color-scheme: dark) {
@@ -238,18 +238,36 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     padding: 1rem;
     cursor: default;
 
-    /* ESTILO INACTIVA: Discontinuo, el activo lo maneja la regla [tabindex="0"] */
+    /* LAYOUT: Forzar layout Flexbox */
+    display: flex !important; 
+    flex-direction: column;
+    justify-content: center;
+
+    /* ESTILO INACTIVA (Primer menú): Borde discontinuo y fondo transparente */
     border: 2px dashed var(--color-card-border);
-    background: var(--color-card-bg);
+    background: transparent;
     transform: none;
     box-shadow: none;
-    display: none !important; /* Por defecto oculto, el JS lo activa en Desktop */
+}
+
+/* ⭐️ NUEVA REGLA: Ocultar el texto por defecto ⭐️ */
+#card-volver-fija h3 {
+    display: none; 
+    margin: 0;
+    font-size: 1.2rem;
 }
 
 #card-volver-fija[tabindex="0"] {
     border: 2px solid var(--color-primary); /* Borde continuo azul (ACTIVA) */
+    background: var(--color-card-bg); /* Fondo sólido cuando está activo (Ghost) */
     cursor: pointer;
 }
+
+/* ⭐️ REGLA ACTIVA: Mostrar el texto ⭐️ */
+#card-volver-fija[tabindex="0"] h3 {
+    display: block; /* Mostrar el texto solo cuando está activo */
+}
+
 #card-volver-fija[tabindex="0"]:hover,
 #card-volver-fija[tabindex="0"]:focus-visible {
     outline: none;
