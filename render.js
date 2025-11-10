@@ -20,8 +20,15 @@
         const isSubLevel = this.STATE.navStack.length > 0;
         const isMobile = window.innerWidth <= 768; 
         
-        // 🚨 FIX: Usamos una variable local temporal para el cálculo y luego la asignamos a STATE.
         let calculatedItemsPerColumn = 3; 
+
+        if (!isMobile) {
+            // Lógica de Conteo de Columnas (Solo afecta a Desktop)
+            // ⭐️ FIX: Forzamos a 3 si no es móvil, confiando en el CSS para la altura ⭐️
+            calculatedItemsPerColumn = 3; 
+        } else {
+            calculatedItemsPerColumn = 1;
+        }
 
         // 🚨 1. SELECCIÓN DINÁMICA DE ELEMENTOS DEL DOM 🚨
         const desktopView = document.getElementById('vista-navegacion-desktop');
@@ -31,7 +38,6 @@
         
         const targetTrack = isMobile ? mobileTrack : desktopTrack;
         
-        // ⭐️ CRÍTICO: Actualizar la referencia DOM.track y vistaNav en App ⭐️
         this.DOM.track = targetTrack;
         this.DOM.vistaNav = isMobile ? mobileView : desktopView; 
         
@@ -44,28 +50,8 @@
             desktopView.classList.add('active');
         }
 
-        // 3. Lógica de Conteo de Columnas (Solo afecta a Desktop)
-        if (!isMobile) {
-            this.DOM.swiperContainer = document.getElementById('nav-swiper');
-            const swiperHeight = this.DOM.swiperContainer.offsetHeight;
-            const cardHeightWithGap = 160 + 25; 
-            
-            let calculatedRows = Math.max(1, Math.floor(swiperHeight / cardHeightWithGap));
-            
-            calculatedItemsPerColumn = calculatedRows >= 3 ? 3 : 2;
-
-            if (swiperHeight === 0 || calculatedItemsPerColumn === 0) {
-                calculatedItemsPerColumn = 3; 
-            }
-        } else {
-            calculatedItemsPerColumn = 1;
-        }
-
-        // Asignamos el valor calculado al STATE
         this.STATE.itemsPorColumna = calculatedItemsPerColumn;
-        
-        // 🚨 Obtenemos el valor del STATE para usar en el resto de la función 🚨
-        const { itemsPorColumna } = this.STATE; 
+        const { itemsPorColumna } = this.STATE;
         
         // 4. Obtener los ítems del nivel
         let itemsDelNivel = [];
@@ -112,11 +98,12 @@
                 const slotsNecesarios = Math.ceil(totalConElementosReales / itemsPorColumna) * itemsPorColumna;
                 const numRellenoDerecho = slotsNecesarios - totalConElementosReales;
                 
+                // ⭐️ FIX: Aseguramos que se inserten las tarjetas de relleno ⭐️
                 for (let i = 0; i < numRellenoDerecho; i++) {
                     html += this._generarTarjetaHTML({nombre: ''}, false, true, null, true); 
                 }
             }
-            // Aplicar reglas de Grid en el track DESKTOP
+            // Aplicar reglas de Grid en el track DESKTOP (fijo a 3)
             targetTrack.style.gridTemplateRows = `repeat(${itemsPorColumna}, 1fr)`;
 
         } else {
@@ -214,7 +201,6 @@
     App._initCarousel = function(initialSwiperSlide, numColumnas, isMobile) {
         if (this.STATE.carouselInstance) return;
         
-        // FIX CRÍTICO: No inicializar Swiper en modo móvil
         if (isMobile) {
             console.log("Swiper Initialization Skipped: Mobile Mode.");
             return;
@@ -247,7 +233,6 @@
 
     // _updateFocus: Actualiza el foco dentro del carrusel 
     App._updateFocus = function(shouldSlide = true) {
-        // 🚨 FIX: Desestructurar el STATE aquí para obtener itemsPorColumna 🚨
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         const isMobile = window.innerWidth <= 768;
         const allSlides = Array.from(this.DOM.track.children);
@@ -336,7 +321,6 @@
         }
         
         if (tipoEspecial === 'volver-vertical') {
-            // Se usa en el track móvil (<article>)
             return `
                 <${wrapperTag} class="${swiperClass} card-volver-vertical" 
                     data-id="volver-nav" 

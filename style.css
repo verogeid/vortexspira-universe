@@ -203,6 +203,7 @@ header h1 {
 .swiper-wrapper {
   display: grid;
   grid-auto-flow: column;
+  /* grid-template-rows se inyecta con JS, por defecto 3 para la altura mínima */
   grid-template-rows: repeat(3, 1fr); 
   gap: 25px;
   padding: 0; 
@@ -223,6 +224,7 @@ header h1 {
   border-radius: 12px;
   transition: all 0.2s ease;
   cursor: pointer;
+  /* FIX: Usamos display flex/column en swiper-slide */
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
@@ -235,13 +237,11 @@ header h1 {
     margin-bottom: 15px;
     height: auto; 
     min-height: 100px;
-    /* Copiar estilos de borde de swiper-slide */
     border: 2px solid var(--color-card-border);
     background: var(--color-card-bg);
     padding: 1.5rem;
     border-radius: 12px;
     transition: all 0.2s ease;
-    cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -327,7 +327,6 @@ header h1 {
     width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
     
-    /* Estilo base de tarjeta activa/focuseable: CONTINUO */
     opacity: 1;
     border: 2px solid var(--color-card-border);
     background: var(--color-card-bg);
