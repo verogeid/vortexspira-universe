@@ -18,22 +18,25 @@
     overflow-x: hidden; 
     position: relative; 
     z-index: 1; 
-    /* ⭐️ RE-INTRODUCCIÓN: Borde amarillo grueso para depuración ⭐️ */
+    
+    /* ⭐️ Borde de DEPURACIÓN: Amarillo ⭐️ */
     border: 5px solid yellow !important; 
-    box-sizing: border-box; /* Asegurar que el borde no añada ancho extra */
+    box-sizing: border-box; 
+    
+    /* ⭐️ AJUSTE: Añadir padding superior para alinear contenido (wrapper) ⭐️ */
+    padding-top: var(--nav-carousel-top-offset);
 }
 
 /* El Swiper Wrapper debe comportarse como un contenedor horizontal que Swiper controla */
 .swiper-wrapper {
   display: flex !important; 
+  /* ⭐️ AJUSTE: La altura ahora es 100% del espacio restante DENTRO del padding del padre ⭐️ */
   height: 100% !important; 
   gap: 0; 
   align-items: start;
   
-  /* Aplicar el margen superior al SWIPER WRAPPER para compensar el TOP ALIGNMENT */
-  margin-top: var(--nav-carousel-top-offset);
-  /* Ajustar la altura total para compensar el margen superior */
-  height: calc(100% - var(--nav-carousel-top-offset)) !important; 
+  /* ⭐️ Borde de DEPURACIÓN: Rojo ⭐️ */
+  border: 3px solid red !important;
 }
 
 /* El Slide ahora es el contenedor de una columna completa */
@@ -46,6 +49,9 @@
   border: none !important; 
   background: transparent !important; 
   padding: 0 !important; 
+  
+  /* ⭐️ Borde de DEPURACIÓN: Azul ⭐️ */
+  border: 2px solid blue !important;
 }
 
 
@@ -53,28 +59,24 @@
 .cards-column-group {
     display: flex;
     flex-direction: column; 
-    justify-content: space-between; 
+    /* ⭐️ CORRECCIÓN: Apilar al inicio, no estirar ⭐️ */
+    justify-content: flex-start; 
     height: 100%; 
-    gap: var(--card-gap); 
-    padding: 0 15px; /* Padding para separar las cards de los bordes del swipe */
+    gap: var(--card-gap); /* ⭐️ Este es el 'margin-bottom' que preguntabas ⭐️ */
+    padding: 0 15px; 
     box-sizing: border-box;
     width: 100%;
 }
 
 /* ⭐️ 4. AJUSTES DE TARJETAS ⭐️ */
 .cards-column-group .card {
-    flex: 1 1 auto; 
-    /* La min-height usa la variable de altura única */
-    min-height: var(--card-height-single); 
-    margin-bottom: 0; /* Asegurar que el gap controla el espacio, no el margin de la última card */
-}
-
-/* Ajuste específico para el texto dentro de las cards */
-.cards-column-group .card h3 {
-    font-size: 1.2rem; /* Reducir un poco el tamaño de letra si es necesario */
-    white-space: normal; /* Permitir que el texto se rompa en varias líneas */
-    overflow: hidden;
-    text-overflow: ellipsis; /* Opcional: añadir puntos suspensivos si el texto es muy largo */
+    /* ⭐️ CORRECCIÓN: No crecer, usar altura fija ⭐️ */
+    flex: none; 
+    height: var(--card-height-single);
+    min-height: var(--card-height-single); /* Asegurar la altura fija */
+    
+    /* ⭐️ Borde de DEPURACIÓN: Verde ⭐️ */
+    border: 2px solid limegreen !important;
 }
 
 
