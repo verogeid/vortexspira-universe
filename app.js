@@ -19,15 +19,13 @@
     // --- 2. INICIALIZACIÓN ---
     async init() {
       console.log("App: Iniciando orquestación...");
-      logDebug("Iniciando orquestación de la App."); // Usando la consola de emergencia
+      logDebug("Iniciando orquestación de la App."); 
       
-      // Cachear el DOM
-      this.DOM.track = document.getElementById('track-navegacion');
-      this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); // (Para móvil)
+      // Cachear el DOM (Solo elementos estables y necesarios)
+      // 🚨 FIX: Eliminamos el track y vistaNav de aquí, se asignan dinámicamente en render.js
+      // this.DOM.track y this.DOM.vistaNav son asignados dentro de renderNavegacion
       
-      // Vistas centrales
-      this.DOM.vistaCentral = document.getElementById('vista-central');
-      this.DOM.vistaNav = document.getElementById('vista-navegacion');
+      this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); 
       this.DOM.vistaDetalle = document.getElementById('vista-detalle');
       this.DOM.detalleContenido = document.getElementById('detalle-contenido');
       this.DOM.swiperContainer = document.getElementById('nav-swiper'); 
@@ -38,21 +36,33 @@
 
       
       // 2.1. Configurar el observador (definido en render.js)
+      // Esta llamada fallaría si los elementos no existieran, pero como existen
+      // en el DOM (aunque estén ocultos), la inicialización es segura.
       this._setupResizeObserver();
       
       // 2.2. Cargar los datos (definido en data.js)
       try {
         logDebug("Iniciando carga de datos.");
-        await loadData(this); 
+        // Asumiendo que loadData está definido globalmente en data.js
+        if (typeof loadData === 'function') {
+            await loadData(this); 
+        }
       } catch (error) {
         console.error("Error fatal al cargar datos:", error);
         logDebug(`ERROR: Carga de datos fallida. ${error.message}`);
-        this.DOM.track.innerHTML = "<p>Error al cargar el contenido.</p>";
+        // Intentar usar un track existente para mostrar el error
+        const track = document.getElementById('track-desktop') || document.getElementById('track-mobile');
+        if (track) {
+            track.innerHTML = "<p>Error al cargar el contenido.</p>";
+        }
         return;
       }
       
       // 2.3. Configurar listeners (definido en nav.js)
-      this.setupListeners();
+      // Asumiendo que setupListeners está definido globalmente en nav.js
+      if (typeof this.setupListeners === 'function') {
+          this.setupListeners();
+      }
 
       // 2.4. Renderizar el estado inicial (definido en render.js)
       this.renderNavegacion(); 
@@ -66,10 +76,10 @@
   // ⭐️ PUNTO DE ENTRADA ⭐️
   document.addEventListener('DOMContentLoaded', () => {
     // 1. Inyectar logo/favicon (definido en data.js)
-    injectHeaderLogo(); 
-    
-    // 2. Iniciar la aplicación
-    App.init();
+    if (typeof injectHeaderLogo === 'function') {
+        injectHeaderLogo(); 
+    }
+    // 2. La inicialización de la App ahora se llama desde el HTML/DOMContentLoaded
   });
 
 })();

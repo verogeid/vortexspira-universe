@@ -11,7 +11,8 @@
 
   <main id="app-container">
 
-    <div id="card-volver-fija" class="swiper-slide" role="button" tabindex="-1">
+    <div id="card-volver-fija" class="swiper-slide" 
+        role="button" tabindex="-1">
         <h3>&larr; Volver al menú anterior</h3>
     </div>
 
@@ -26,18 +27,21 @@
         </div>
         
         <div id="nav-swiper" class="swiper carousel-viewport">
-          <div class="swiper-wrapper grid-track" id="track-desktop"></div>
+          <div class="swiper-wrapper grid-track" id="track-desktop">
+            </div>
         </div>
       </div>
       
 
       <div id="vista-navegacion-mobile" class="vista">
-          <div class="mobile-track" id="track-mobile"></div>
+          <div class="mobile-track" id="track-mobile">
+              </div>
       </div>
 
 
       <div id="vista-detalle" class="vista">
-        <div class="contenido-curso" id="detalle-contenido"></div>
+        <div class="contenido-curso" id="detalle-contenido">
+          </div>
       </div>
 
     </div>
@@ -59,10 +63,24 @@
 
   <footer>
     <small>&copy;2025 VortexSpira® | Desarrollado por Diego González Fernández | 
-      <a href="https://www.linkedin.com/in/diego-gonzalez-fernandez" target="_top" aria-label="Perfil de LinkedIn" class="footer-social-link"></a>
+      <a href="https://www.linkedin.com/in/diego-gonzalez-fernandez" target="_top" aria-label="Perfil de LinkedIn" class="footer-social-link">
+        </a>
     </small>
+    <div id="debug-console"></div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  </body>
+  <script src="debug.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script> 
+  <script src="render.js"></script>
+  <script src="nav.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.App && window.App.init) {
+            App.init();
+        }
+    });
+  </script>
+</body>
 </html>
