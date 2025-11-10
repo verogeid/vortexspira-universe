@@ -215,7 +215,7 @@
             grid: false, 
             centeredSlides: true, 
             mousewheel: { sensitivity: 1 }, 
-            loop: true, 
+            //loop: true, 
             initialSlide: initialSwiperSlide,
             keyboard: { enabled: false }, 
             speed: 400,
