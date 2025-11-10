@@ -21,7 +21,7 @@
   /* VARIABLES DE LAYOUT */
   --header-height: 50px;
   --footer-height: 30px;
-  --sidebar-card-width: 180px; 
+  --sidebar-card-width: 180px; /* Obsoleto, usamos column-width */
   --sidebar-column-width: 220px;
   --card-gap: 25px; 
   /* Altura individual de una tarjeta */
@@ -29,7 +29,7 @@
   /* Valor de alineación vertical (espacio superior) */
   --nav-carousel-top-offset: 30px; 
   
-  /* ⭐️ CORRECCIÓN: Altura total = (3 * 250px) + (2 * 25px gap) + 30px offset ⭐️ */
+  /* Altura total = (3 * 250px) + (2 * 25px gap) + 30px offset */
   --nav-desktop-height: 830px; 
 }
 @media (prefers-color-scheme: dark) {
@@ -244,6 +244,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     position: relative; 
     z-index: 50; 
     
+    /* ⭐️ CORRECCIÓN: Usar el ANCHO de la COLUMNA ⭐️ */
     width: var(--sidebar-column-width); 
     /* Altura forzada de la tarjeta individual */
     height: var(--card-height-single) !important; 
@@ -253,7 +254,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     padding: 1rem;
     cursor: default;
     
-    /* ⭐️ AJUSTE: Aplicar el margen superior para alinear con la primera tarjeta del carrusel ⭐️ */
+    /* AJUSTE: Aplicar el margen superior para alinear con la primera tarjeta del carrusel */
     margin-top: var(--nav-carousel-top-offset); 
 
     /* LAYOUT: Forzar layout Flexbox */
@@ -267,9 +268,9 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     transform: none;
     box-shadow: none;
     
-    /* ⭐️ Borde de DEPURACIÓN: Amarillo ⭐️ */
+    /* Borde de DEPURACIÓN: Amarillo */
     outline: 3px solid yellow !important; 
-    outline-offset: -1px; /* Para que el borde esté pegado */
+    outline-offset: -1px;
 }
 
 /* Ocultar texto por defecto */
@@ -279,20 +280,19 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     font-size: 1.2rem;
 }
 
-/* ⭐️ REAFIRMACIÓN: Asegurar que el borde discontinuo se ve cuando está inactiva ⭐️ */
+/* REAFIRMACIÓN: Asegurar que el borde discontinuo se ve cuando está inactiva */
 #card-volver-fija[tabindex="-1"] {
-    border: 2px dashed var(--color-card-border) !important; /* Forzar el discontinuo */
+    border: 2px dashed var(--color-card-border) !important; 
     background: transparent !important;
-    /* Mostrar el borde amarillo de depuración también cuando está inactivo */
     outline: 3px solid yellow !important; 
 }
 
 
 #card-volver-fija[tabindex="0"] {
-    border: 2px solid var(--color-primary); /* Borde continuo azul (ACTIVA) */
-    background: var(--color-card-bg); /* Fondo sólido cuando está activo (Ghost) */
+    border: 2px solid var(--color-primary); 
+    background: var(--color-card-bg); 
     cursor: pointer;
-    /* ⭐️ Remover el borde amarillo de depuración cuando está activa ⭐️ */
+    /* Remover el borde amarillo de depuración cuando está activa */
     outline: none !important; 
 }
 
@@ -316,7 +316,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     grid-column: 3 / 4;
     place-self: start center;
     width: var(--sidebar-column-width); 
-    /* ⭐️ AJUSTE: Altura = Altura del carrusel (que ahora incluye el offset) ⭐️ */
+    /* AJUSTE: Altura = Altura del carrusel */
     height: var(--nav-desktop-height); 
     
     padding: 1.5rem;
@@ -327,7 +327,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     display: block !important; 
     text-align: center;
     box-sizing: border-box;
-    /* ⭐️ AJUSTE: Alinear el contenido interno con el carrusel ⭐️ */
+    /* AJUSTE: Alinear el contenido interno con el carrusel */
     padding-top: calc(var(--nav-carousel-top-offset) + 1.5rem);
 }
 #info-adicional p, #info-adicional small {
