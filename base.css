@@ -28,8 +28,8 @@
   --nav-desktop-height: 800px; 
   /* Altura individual de una tarjeta */
   --card-height-single: 250px; 
-  /* Valor de alineación vertical */
-  --nav-align-top: 30px; 
+  /* Valor de alineación vertical / espacio superior del carrusel */
+  --nav-carousel-top-offset: 30px; 
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -117,7 +117,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   height: 100%;
   position: relative; 
   overflow: hidden; 
-  display: flex; 
+  display: flex; /* Ayuda a contener la vista activa */
 }
 .vista {
   position: absolute; 
@@ -244,6 +244,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     z-index: 50; 
     
     width: var(--sidebar-column-width); 
+    /* Altura forzada de la tarjeta individual */
     height: var(--card-height-single) !important; 
     max-height: var(--card-height-single) !important; 
     min-height: var(--card-height-single) !important;
@@ -251,19 +252,22 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     padding: 1rem;
     cursor: default;
     
-    /* Aplicar margen superior para alinear con la primera tarjeta del carrusel */
-    margin-top: var(--nav-align-top); 
+    /* ⭐️ AJUSTE: Aplicar el margen superior para alinear con la primera tarjeta del carrusel ⭐️ */
+    margin-top: var(--nav-carousel-top-offset); 
 
     /* LAYOUT: Forzar layout Flexbox */
     display: flex !important; 
     flex-direction: column;
     justify-content: center;
 
-    /* Estilo Inactivo - Borde Discontinuo */
-    border: 2px dashed var(--color-card-border);
+    /* ⭐️ Borde discontinuo para INACTIVA + Borde de depuración amarillo ⭐️ */
+    border: 2px dashed var(--color-card-border); /* Borde funcional */
     background: transparent;
     transform: none;
     box-shadow: none;
+
+    /* ⭐️ Borde de DEPURACIÓN: Amarillo ⭐️ */
+    outline: 3px solid yellow !important; 
 }
 
 /* Ocultar texto por defecto */
@@ -273,7 +277,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     font-size: 1.2rem;
 }
 
-/* Aplicar el borde discontinuo cuando está inactivo (redundancia) */
+/* ⭐️ REAFIRMACIÓN: Asegurar que el borde discontinuo se ve cuando está inactiva ⭐️ */
 #card-volver-fija[tabindex="-1"] {
     border: 2px dashed var(--color-card-border);
     background: transparent;
@@ -284,6 +288,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     border: 2px solid var(--color-primary); /* Borde continuo azul (ACTIVA) */
     background: var(--color-card-bg); /* Fondo sólido cuando está activo (Ghost) */
     cursor: pointer;
+    /* Remover el borde amarillo cuando está activa */
+    outline: none !important; 
 }
 
 /* REGLA ACTIVA: Mostrar el texto */
@@ -307,7 +313,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     place-self: start center;
     width: var(--sidebar-column-width); 
     /* Altura = Altura del carrusel + margen de alineación */
-    height: calc(var(--nav-desktop-height) + var(--nav-align-top)); 
+    height: calc(var(--nav-desktop-height) + var(--nav-carousel-top-offset)); 
     
     padding: 1.5rem;
     border-radius: 12px;
