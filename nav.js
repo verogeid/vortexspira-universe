@@ -220,7 +220,7 @@
                 focusableElements = [btnVolver, activeCard, ...footerLinks].filter(Boolean);
             } else {
                 const cardVolver = this.DOM.cardVolverFija.tabIndex === 0 ? this.DOM.cardVolverFija : null;
-                // 🚨 FIX: Incluir la tarjeta activa del track en el focus trap para desktop, si existe. 🚨
+                // 🚨 FIX CRÍTICO DESKTOP: Incluir la tarjeta activa del carrusel en el focus trap 🚨
                 focusableElements = [cardVolver, activeCard, ...footerLinks].filter(Boolean);
             }
         } 
@@ -387,7 +387,7 @@
           this.DOM.cardVolverFija.tabIndex = 0;
           primerElementoFocuseable = this.DOM.cardVolverFija;
           
-          this.DOM.infoAdicional.style.display = 'flex';
+          this.DOM.infoAdicional.style.display = 'block'; // Usar 'block' para consistencia con CSS
       } else {
           // En móvil, mostrar el botón de volver simple
           this.DOM.btnVolverNav.style.display = 'block';
