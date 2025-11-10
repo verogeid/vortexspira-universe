@@ -76,8 +76,13 @@
             desktopView.classList.add('active');
 
             // 5. INICIALIZAR EL CARRUSEL (Swiper) si no es móvil
-            const initialSwiperSlide = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
-            this._initCarousel(initialSwiperSlide, this.STATE.itemsPorColumna, isMobile);
+            const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+            let initialSlideIndex = 0;
+            if (this.STATE.currentFocusIndex >= 0) {
+                 // Calcula qué columna contiene la tarjeta enfocada
+                initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
+            }
+            this._initCarousel(initialSlideIndex, this.STATE.itemsPorColumna, isMobile);
         }
         
         // Llamar a setupTrackClickListener después de que DOM.track esté definido
@@ -112,7 +117,7 @@
         // 2. Relleno (Padding) para Desktop (SOLO SI NO ES MÓVIL)
         if (!isMobile) {
             const totalItems = items.length; 
-            const totalSlotsDeseados = itemsPorColumna * 3; // 9 slots
+            const totalSlotsDeseados = Math.ceil(totalItems / itemsPorColumna) * itemsPorColumna; // Multiplo de 3
             const numRellenoDerecho = totalSlotsDeseados - totalItems;
             
             for (let i = 0; i < numRellenoDerecho; i++) {
@@ -200,16 +205,17 @@
             slidesPerView: itemsPorColumna, 
             // Desplaza por grupos de 3 (una columna) en mousewheel y drag
             slidesPerGroup: itemsPorColumna, 
-            // Fuerza la disposición de las tarjetas en 3 filas
-            grid: {
-                rows: itemsPorColumna, 
-                fill: 'row'
-            },
+            
+            // 🚨 CAMBIO CRÍTICO: Desactivar la cuadrícula estricta para que el loop funcione.
+            // La visualización 3x3 la maneja CSS Grid en el swiper-wrapper.
+            grid: false, 
+            
             // Deshabilitar centrado para usar slidePerGroup: 3
             centeredSlides: false, 
             mousewheel: { 
                 sensitivity: 1 
             }, 
+            // ⭐️ FIX: Activamos el modo loop para la simulación cilíndrica ⭐️
             loop: true, 
             initialSlide: initialSwiperSlide,
             keyboard: { enabled: false }, 
