@@ -344,7 +344,7 @@ header h1 {
     cursor: pointer;
 }
 
-/* 🚨 FIX: Aplicar el Ghost Azul completo al hover/focus de la tarjeta ACTIVA 🚨 */
+/* Aplicar el Ghost Azul completo al hover/focus de la tarjeta ACTIVA */
 #card-volver-fija[tabindex="0"]:hover,
 #card-volver-fija[tabindex="0"]:focus-visible {
     outline: none;
@@ -412,7 +412,7 @@ header h1 {
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
     
-    /* 🚨 FIX: Usar display: block para que se comporte como una columna de Grid */
+    /* FIX: Usar display: block para que se comporte como una columna de Grid */
     display: block !important; 
     
     /* Centrado de contenido interno */

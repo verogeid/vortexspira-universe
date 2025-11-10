@@ -206,8 +206,7 @@
             // Desplaza por grupos de 3 (una columna) en mousewheel y drag
             slidesPerGroup: itemsPorColumna, 
             
-            // 🚨 CAMBIO CRÍTICO: Desactivar la cuadrícula estricta para que el loop funcione.
-            // La visualización 3x3 la maneja CSS Grid en el swiper-wrapper.
+            // ⭐️ FIX CILÍNDRICO: Desactivamos la cuadrícula estricta para que el loop funcione.
             grid: false, 
             
             // Deshabilitar centrado para usar slidePerGroup: 3
@@ -215,7 +214,7 @@
             mousewheel: { 
                 sensitivity: 1 
             }, 
-            // ⭐️ FIX: Activamos el modo loop para la simulación cilíndrica ⭐️
+            // Activamos el modo loop para la simulación cilíndrica
             loop: true, 
             initialSlide: initialSwiperSlide,
             keyboard: { enabled: false }, 
@@ -295,7 +294,7 @@
     App._updateNavViews = function(isSubLevel, isMobile) {
         // Gestión de la Tarjeta 'Volver' Fija (Desktop) y Área de Información Adicional
         if (!isMobile) {
-            // 🚨 FIX: La tarjeta Volver Fija e Info Adicional SIEMPRE deben ser visibles en desktop
+            // FIX: La tarjeta Volver Fija e Info Adicional SIEMPRE deben ser visibles en desktop
             this.DOM.cardVolverFija.style.display = 'flex';
             this.DOM.infoAdicional.style.display = 'block'; // Usamos 'block' para respetar el grid
             this.DOM.btnVolverNav.style.display = 'none'; 
