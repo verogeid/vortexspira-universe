@@ -26,7 +26,7 @@
   --card-gap: 25px; 
   /* Altura total del carrusel (3 cards + 2 gaps) */
   --nav-desktop-height: 800px; 
-  /* CORRECCIÓN: Altura individual de una tarjeta */
+  /* Altura individual de una tarjeta */
   --card-height-single: 250px; 
 }
 @media (prefers-color-scheme: dark) {
@@ -191,8 +191,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 
 /* Tarjetas de relleno: Pasivas/Discontinuas */
 .card[data-tipo="relleno"] {
-    background: transparent;
     border: 2px dashed var(--color-card-border); 
+    background: transparent;
     pointer-events: none;
     cursor: default;
     transform: none;
@@ -235,10 +235,11 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     position: relative; 
     z-index: 50; 
     
-    /* ⭐️ CORRECCIÓN: Usamos el ANCHO de la COLUMNA ⭐️ */
     width: var(--sidebar-column-width); 
-    /* ⭐️ CORRECCIÓN: Usamos la ALTURA de UNA SOLA tarjeta ⭐️ */
-    height: var(--card-height-single); 
+    /* Altura forzada de la tarjeta individual */
+    height: var(--card-height-single) !important; 
+    max-height: var(--card-height-single) !important; 
+    min-height: var(--card-height-single) !important;
     
     padding: 1rem;
     cursor: default;
@@ -248,19 +249,26 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     flex-direction: column;
     justify-content: center;
 
-    /* ESTILO INACTIVA (Primer menú): Borde discontinuo y fondo transparente */
+    /* Estilo Inactivo - Borde Discontinuo */
     border: 2px dashed var(--color-card-border);
-    background: transparent;
+    background: transparent; /* Fondo transparente para ver el fondo del body */
     transform: none;
     box-shadow: none;
 }
 
-/* ⭐️ NUEVA REGLA: Ocultar el texto por defecto ⭐️ */
+/* Ocultar texto por defecto */
 #card-volver-fija h3 {
     display: none; 
     margin: 0;
     font-size: 1.2rem;
 }
+
+/* Aplicar el borde discontinuo cuando está inactivo (redundancia para asegurar) */
+#card-volver-fija[tabindex="-1"] {
+    border: 2px dashed var(--color-card-border);
+    background: transparent;
+}
+
 
 #card-volver-fija[tabindex="0"] {
     border: 2px solid var(--color-primary); /* Borde continuo azul (ACTIVA) */
@@ -268,7 +276,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     cursor: pointer;
 }
 
-/* ⭐️ REGLA ACTIVA: Mostrar el texto ⭐️ */
+/* REGLA ACTIVA: Mostrar el texto */
 #card-volver-fija[tabindex="0"] h3 {
     display: block; /* Mostrar el texto solo cuando está activo */
 }
@@ -287,12 +295,11 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 #info-adicional {
     grid-column: 3 / 4;
     place-self: start center;
-    /* Usamos el ANCHO de la COLUMNA */
     width: var(--sidebar-column-width); 
-    
     height: 100%; /* Ocupa la altura del carrusel completo */
     padding: 1.5rem;
     border-radius: 12px;
+    /* Mismo borde que el Volver inactivo */
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
     display: block !important; 
