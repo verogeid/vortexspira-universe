@@ -18,7 +18,9 @@
     overflow-x: hidden; 
     position: relative; 
     z-index: 1; 
-    border: none; /* Asegurar que no quede el borde amarillo de depuración */
+    /* ⭐️ RE-INTRODUCCIÓN: Borde amarillo grueso para depuración ⭐️ */
+    border: 5px solid yellow !important; 
+    box-sizing: border-box; /* Asegurar que el borde no añada ancho extra */
 }
 
 /* El Swiper Wrapper debe comportarse como un contenedor horizontal que Swiper controla */
@@ -28,10 +30,10 @@
   gap: 0; 
   align-items: start;
   
-  /* Aplicar el margen superior al Wrapper */
-  margin-top: var(--nav-align-top);
+  /* Aplicar el margen superior al SWIPER WRAPPER para compensar el TOP ALIGNMENT */
+  margin-top: var(--nav-carousel-top-offset);
   /* Ajustar la altura total para compensar el margen superior */
-  height: calc(100% - var(--nav-align-top)) !important; 
+  height: calc(100% - var(--nav-carousel-top-offset)) !important; 
 }
 
 /* El Slide ahora es el contenedor de una columna completa */
@@ -54,7 +56,7 @@
     justify-content: space-between; 
     height: 100%; 
     gap: var(--card-gap); 
-    padding: 0 15px; 
+    padding: 0 15px; /* Padding para separar las cards de los bordes del swipe */
     box-sizing: border-box;
     width: 100%;
 }
@@ -64,6 +66,15 @@
     flex: 1 1 auto; 
     /* La min-height usa la variable de altura única */
     min-height: var(--card-height-single); 
+    margin-bottom: 0; /* Asegurar que el gap controla el espacio, no el margin de la última card */
+}
+
+/* Ajuste específico para el texto dentro de las cards */
+.cards-column-group .card h3 {
+    font-size: 1.2rem; /* Reducir un poco el tamaño de letra si es necesario */
+    white-space: normal; /* Permitir que el texto se rompa en varias líneas */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Opcional: añadir puntos suspensivos si el texto es muy largo */
 }
 
 
