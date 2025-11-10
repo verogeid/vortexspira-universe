@@ -23,14 +23,13 @@
     border: 5px solid yellow !important; 
     box-sizing: border-box; 
     
-    /* ⭐️ AJUSTE: Añadir padding superior para alinear contenido (wrapper) ⭐️ */
-    padding-top: var(--nav-carousel-top-offset);
+    /* ⭐️ ELIMINADO: El padding se gestiona dentro del .cards-column-group ⭐️ */
+    /* padding-top: var(--nav-carousel-top-offset); */
 }
 
 /* El Swiper Wrapper debe comportarse como un contenedor horizontal que Swiper controla */
 .swiper-wrapper {
   display: flex !important; 
-  /* ⭐️ AJUSTE: La altura ahora es 100% del espacio restante DENTRO del padding del padre ⭐️ */
   height: 100% !important; 
   gap: 0; 
   align-items: start;
@@ -66,6 +65,9 @@
     padding: 0 15px; 
     box-sizing: border-box;
     width: 100%;
+    
+    /* ⭐️ AJUSTE: Añadir padding superior para alinear contenido (wrapper) ⭐️ */
+    padding-top: var(--nav-carousel-top-offset);
 }
 
 /* ⭐️ 4. AJUSTES DE TARJETAS ⭐️ */
