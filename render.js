@@ -23,8 +23,7 @@
         let calculatedItemsPerColumn = 3; 
 
         if (!isMobile) {
-            // Lógica de Conteo de Columnas (Solo afecta a Desktop)
-            // ⭐️ FIX: Forzamos a 3 si no es móvil, confiando en el CSS para la altura ⭐️
+            // ⭐️ FIX: Forzamos a 3 filas en Desktop (para el layout 3x3) ⭐️
             calculatedItemsPerColumn = 3; 
         } else {
             calculatedItemsPerColumn = 1;
@@ -38,6 +37,7 @@
         
         const targetTrack = isMobile ? mobileTrack : desktopTrack;
         
+        // ⭐️ CRÍTICO: Actualizar la referencia DOM.track y vistaNav en App ⭐️
         this.DOM.track = targetTrack;
         this.DOM.vistaNav = isMobile ? mobileView : desktopView; 
         
@@ -91,18 +91,16 @@
         
         // 5.3. Lógica del Relleno Derecho (SOLO DESKTOP)
         if (!isMobile) {
-            const totalItems = itemsDelNivel.length;
+            const totalItems = itemsDelNivel.length; // (Total de tarjetas reales: 4)
+            const totalSlotsDeseados = 9; // 3 columnas * 3 filas
+
+            // FIX: Calculamos el número exacto de rellenos para llegar a 9
+            const numRellenoDerecho = totalSlotsDeseados - totalItems;
             
-            if (totalItems < 9) { 
-                const totalConElementosReales = totalItems;
-                const slotsNecesarios = Math.ceil(totalConElementosReales / itemsPorColumna) * itemsPorColumna;
-                const numRellenoDerecho = slotsNecesarios - totalConElementosReales;
-                
-                // ⭐️ FIX: Aseguramos que se inserten las tarjetas de relleno ⭐️
-                for (let i = 0; i < numRellenoDerecho; i++) {
-                    html += this._generarTarjetaHTML({nombre: ''}, false, true, null, true); 
-                }
+            for (let i = 0; i < numRellenoDerecho; i++) {
+                html += this._generarTarjetaHTML({nombre: ''}, false, true, null, true); 
             }
+            
             // Aplicar reglas de Grid en el track DESKTOP (fijo a 3)
             targetTrack.style.gridTemplateRows = `repeat(${itemsPorColumna}, 1fr)`;
 
@@ -201,6 +199,7 @@
     App._initCarousel = function(initialSwiperSlide, numColumnas, isMobile) {
         if (this.STATE.carouselInstance) return;
         
+        // FIX CRÍTICO: No inicializar Swiper en modo móvil
         if (isMobile) {
             console.log("Swiper Initialization Skipped: Mobile Mode.");
             return;

@@ -203,6 +203,7 @@ header h1 {
 .swiper-wrapper {
   display: grid;
   grid-auto-flow: column;
+  /* Por defecto 3, el JS puede inyectar otro valor */
   grid-template-rows: repeat(3, 1fr); 
   gap: 25px;
   padding: 0; 
@@ -217,6 +218,7 @@ header h1 {
   width: clamp(var(--card-width-min), 18vw, var(--card-width-max)) !important;
   height: clamp(150px, 20vh, 180px) !important;
   margin: 0 !important;
+  /* Borde CONTINUO para tarjetas activas/reales */
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
   padding: 1.5rem;
@@ -299,6 +301,7 @@ header h1 {
 /* Tarjetas de relleno: Pasivas/Discontinuas */
 .swiper-slide[data-tipo="relleno"] {
     background: transparent;
+    /* Borde Discontinuo y color nítido */
     border: 2px dashed var(--color-card-border); 
     opacity: 0.2; 
     pointer-events: none;
@@ -326,7 +329,6 @@ header h1 {
     width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
     
-    /* Estilo base de tarjeta activa/focuseable: CONTINUO */
     opacity: 1;
     border: 2px solid var(--color-card-border);
     background: var(--color-card-bg);
@@ -405,6 +407,7 @@ header h1 {
     height: 100%; 
     padding: 1.5rem;
     border-radius: 12px;
+    /* Borde Discontinuo y color nítido */
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
     display: flex !important; /* Aseguramos visibilidad en Desktop */
