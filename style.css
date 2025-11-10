@@ -42,12 +42,10 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  /* En Desktop, overflow hidden en body */
   overflow: hidden; 
   margin: 0;
   box-sizing: border-box;
   min-height: 100vh;
-  /* Margen fijo en Desktop para header y footer */
   padding-top: var(--header-height);
   padding-bottom: var(--footer-height);
 }
@@ -63,12 +61,12 @@ header, footer {
 }
 
 header {
-    position: fixed; /* Header fijo en Desktop */
+    position: fixed; 
     top: 0;
     padding: 10px;
 }
 footer {
-    position: fixed; /* Footer fijo en Desktop */
+    position: fixed; 
     bottom: 0;
     padding: 5px;
     color: #888;
@@ -235,7 +233,6 @@ header h1 {
     margin-bottom: 15px;
     height: auto; 
     min-height: 100px;
-    /* Copiar estilos de borde de swiper-slide */
     border: 2px solid var(--color-card-border);
     background: var(--color-card-bg);
     padding: 1.5rem;
@@ -327,7 +324,6 @@ header h1 {
     width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
     
-    /* Estilo base de tarjeta activa/focuseable: CONTINUO */
     opacity: 1;
     border: 2px solid var(--color-card-border);
     background: var(--color-card-bg);
@@ -339,7 +335,6 @@ header h1 {
     flex-direction: column;
     justify-content: center;
     box-sizing: border-box;
-    /* FIX: Lo gestionamos con la media query */
     display: none !important; 
 }
 
@@ -409,13 +404,18 @@ header h1 {
     border-radius: 12px;
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
-    /* FIX: Lo gestionamos con la media query */
     display: none; 
+    /* FIX: Forzar apilado vertical */
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
     box-sizing: border-box;
+}
+/* Aseguramos que los elementos dentro de info-adicional se apilen */
+.info-adicional p, .info-adicional small {
+    width: 100%; /* Ocupa el ancho completo */
+    text-align: center;
 }
 .info-adicional p { margin-bottom: 0.5rem; }
 .info-adicional small { color: #999; font-size: 0.8rem; }
@@ -468,7 +468,6 @@ header h1 {
         position: relative; 
         width: 100%; 
         padding: 0 5%;
-        /* Aseguramos que la vista activa ocupe el espacio */
     }
     #vista-central {
         grid-column: 1 / 2; /* Ocupa el 100% del ancho en móvil */
