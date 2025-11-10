@@ -26,11 +26,9 @@
         const desktopTrack = document.getElementById('track-desktop');
         const mobileTrack = document.getElementById('track-mobile');
         
-        // El track activo será el que se use para inyección de HTML y eventos
         const targetTrack = isMobile ? mobileTrack : desktopTrack;
         
         // ⭐️ CRÍTICO: Actualizar la referencia DOM.track y vistaNav en App ⭐️
-        // (Esto es necesario para que nav.js y _updateFocus sigan funcionando)
         this.DOM.track = targetTrack;
         this.DOM.vistaNav = isMobile ? mobileView : desktopView; 
         
@@ -51,14 +49,12 @@
             const swiperHeight = this.DOM.swiperContainer.offsetHeight;
             const cardHeightWithGap = 160 + 25; 
             
-            // Cálculo de filas en Desktop
             itemsPorColumna = Math.max(1, Math.min(3, Math.floor(swiperHeight / cardHeightWithGap)));
             
             if (swiperHeight === 0 || itemsPorColumna === 0) {
                 itemsPorColumna = 3; 
             }
         } else {
-            // En móvil, siempre es una columna vertical
             itemsPorColumna = 1;
         }
 
@@ -87,17 +83,18 @@
         // 5. Generación de HTML
         targetTrack.innerHTML = '';
         let html = '';
+        const isSwiperSlide = !isMobile;
         
         // 5.1. Tarjeta 'Volver' en Móvil
         if (isSubLevel && isMobile) {
-            html += this._generarTarjetaHTML({}, false, false, 'volver-vertical'); 
+            // FIX: Usamos isSwiperSlide=false aquí para generar <article>
+            html += this._generarTarjetaHTML({}, false, false, 'volver-vertical', false); 
         }
 
         // 5.2. Insertar los elementos del JSON
         for (const item of itemsDelNivel) {
             const estaActivo = this._tieneContenidoActivo(item.id);
-            // En móvil, la tarjeta NO debe llevar la clase swiper-slide (solo en desktop)
-            const isSwiperSlide = !isMobile;
+            // El tag usado (<article> o <div>.swiper-slide) depende de isSwiperSlide
             html += this._generarTarjetaHTML(item, estaActivo, false, null, isSwiperSlide);
         }
         
@@ -111,10 +108,11 @@
                 const numRellenoDerecho = slotsNecesarios - totalConElementosReales;
                 
                 for (let i = 0; i < numRellenoDerecho; i++) {
-                    html += this._generarTarjetaHTML({nombre: ''}, false, true); // Relleno siempre usa swiper-slide
+                    // El relleno siempre usa la etiqueta div/swiper-slide
+                    html += this._generarTarjetaHTML({nombre: ''}, false, true, null, true); 
                 }
             }
-            // 🚨 Aplicar reglas de Grid en el track DESKTOP 🚨
+            // Aplicar reglas de Grid en el track DESKTOP
             targetTrack.style.gridTemplateRows = `repeat(${itemsPorColumna}, 1fr)`;
 
         } else {
@@ -138,7 +136,6 @@
             }
             this.DOM.btnVolverNav.style.display = 'none'; 
         } else {
-            // Móvil: Ocultar columnas laterales
             this.DOM.cardVolverFija.style.display = 'none'; 
             this.DOM.infoAdicional.style.display = 'none';
             
@@ -154,7 +151,7 @@
         const allSlides = this.DOM.track.children;
         
         let firstEnabledIndex = 0;
-        // Si hay tarjeta "volver-vertical", el primer foco real es la siguiente (índice 1)
+        
         if (isMobile && isSubLevel) {
              firstEnabledIndex = 1;
         }
@@ -225,7 +222,7 @@
             grid: false, 
             centeredSlides: true, 
             mousewheel: { sensitivity: 1 }, 
-            loop: true, // Esto es requerido por el usuario
+            loop: true, 
             initialSlide: initialSwiperSlide,
             keyboard: { enabled: false }, 
             speed: 400,
@@ -248,8 +245,7 @@
     App._updateFocus = function(shouldSlide = true) {
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         const isMobile = window.innerWidth <= 768;
-        const allSlides = Array.from(this.DOM.track.children); // Usamos el track dinámico
-        const isSwiper = carouselInstance && !isMobile;
+        const allSlides = Array.from(this.DOM.track.children);
 
         // 1. Quitar el foco anterior y resetear tabIndex
         allSlides.forEach(child => {
@@ -271,12 +267,13 @@
             }
 
             // 4. Mover el Swiper (solo en desktop)
+            const isSwiper = carouselInstance && !isMobile;
             if (isSwiper && shouldSlide) {
                 const targetSwiperSlide = Math.floor(currentFocusIndex / itemsPorColumna);
                 carouselInstance.slideToLoop(targetSwiperSlide, 400); 
             }
             
-            // 5. Asegurar visibilidad (scroll) en móvil (scroll nativo)
+            // 5. Asegurar visibilidad (scroll) en móvil
             if (isMobile) {
                 targetSlide.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
@@ -330,10 +327,12 @@
         const swiperClass = isSwiperSlide ? 'swiper-slide' : '';
 
         if (esRelleno) {
-            return `<${wrapperTag} class="${swiperClass} disabled" data-tipo="relleno" tabindex="-1"></${wrapperTag}>`;
+            // El relleno solo existe en el track de Desktop, siempre es swiper-slide
+            return `<div class="swiper-slide disabled" data-tipo="relleno" tabindex="-1"></div>`;
         }
         
         if (tipoEspecial === 'volver-vertical') {
+            // Se usa en el track móvil (<article>)
             return `
                 <${wrapperTag} class="${swiperClass} card-volver-vertical" 
                     data-id="volver-nav" 
