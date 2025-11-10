@@ -20,6 +20,9 @@
         const isSubLevel = this.STATE.navStack.length > 0;
         const isMobile = window.innerWidth <= 768; 
         
+        // 🚨 FIX: Usamos una variable local temporal para el cálculo y luego la asignamos a STATE.
+        let calculatedItemsPerColumn = 3; 
+
         // 🚨 1. SELECCIÓN DINÁMICA DE ELEMENTOS DEL DOM 🚨
         const desktopView = document.getElementById('vista-navegacion-desktop');
         const mobileView = document.getElementById('vista-navegacion-mobile');
@@ -42,23 +45,27 @@
         }
 
         // 3. Lógica de Conteo de Columnas (Solo afecta a Desktop)
-        let itemsPorColumna = 3; 
-
         if (!isMobile) {
-            this.DOM.swiperContainer = document.getElementById('nav-swiper'); // Asegurar el contenedor Swiper
+            this.DOM.swiperContainer = document.getElementById('nav-swiper');
             const swiperHeight = this.DOM.swiperContainer.offsetHeight;
             const cardHeightWithGap = 160 + 25; 
             
-            itemsPorColumna = Math.max(1, Math.min(3, Math.floor(swiperHeight / cardHeightWithGap)));
+            let calculatedRows = Math.max(1, Math.floor(swiperHeight / cardHeightWithGap));
             
-            if (swiperHeight === 0 || itemsPorColumna === 0) {
-                itemsPorColumna = 3; 
+            calculatedItemsPerColumn = calculatedRows >= 3 ? 3 : 2;
+
+            if (swiperHeight === 0 || calculatedItemsPerColumn === 0) {
+                calculatedItemsPerColumn = 3; 
             }
         } else {
-            itemsPorColumna = 1;
+            calculatedItemsPerColumn = 1;
         }
 
-        this.STATE.itemsPorColumna = itemsPorColumna;
+        // Asignamos el valor calculado al STATE
+        this.STATE.itemsPorColumna = calculatedItemsPerColumn;
+        
+        // 🚨 Obtenemos el valor del STATE para usar en el resto de la función 🚨
+        const { itemsPorColumna } = this.STATE; 
         
         // 4. Obtener los ítems del nivel
         let itemsDelNivel = [];
@@ -87,14 +94,12 @@
         
         // 5.1. Tarjeta 'Volver' en Móvil
         if (isSubLevel && isMobile) {
-            // FIX: Usamos isSwiperSlide=false aquí para generar <article>
             html += this._generarTarjetaHTML({}, false, false, 'volver-vertical', false); 
         }
 
         // 5.2. Insertar los elementos del JSON
         for (const item of itemsDelNivel) {
             const estaActivo = this._tieneContenidoActivo(item.id);
-            // El tag usado (<article> o <div>.swiper-slide) depende de isSwiperSlide
             html += this._generarTarjetaHTML(item, estaActivo, false, null, isSwiperSlide);
         }
         
@@ -108,7 +113,6 @@
                 const numRellenoDerecho = slotsNecesarios - totalConElementosReales;
                 
                 for (let i = 0; i < numRellenoDerecho; i++) {
-                    // El relleno siempre usa la etiqueta div/swiper-slide
                     html += this._generarTarjetaHTML({nombre: ''}, false, true, null, true); 
                 }
             }
@@ -162,7 +166,7 @@
         
         const numColumnas = Math.ceil(allSlides.length / itemsPorColumna);
 
-        // 🚨 Inicializar Swiper solo en Desktop 🚨
+        // Inicializar Swiper solo si es Desktop
         this._initCarousel(0, numColumnas, isMobile);
         
         this.STATE.currentFocusIndex = firstEnabledIndex;
@@ -210,7 +214,7 @@
     App._initCarousel = function(initialSwiperSlide, numColumnas, isMobile) {
         if (this.STATE.carouselInstance) return;
         
-        // 🚨 FIX CRÍTICO: No inicializar Swiper en modo móvil
+        // FIX CRÍTICO: No inicializar Swiper en modo móvil
         if (isMobile) {
             console.log("Swiper Initialization Skipped: Mobile Mode.");
             return;
@@ -243,6 +247,7 @@
 
     // _updateFocus: Actualiza el foco dentro del carrusel 
     App._updateFocus = function(shouldSlide = true) {
+        // 🚨 FIX: Desestructurar el STATE aquí para obtener itemsPorColumna 🚨
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         const isMobile = window.innerWidth <= 768;
         const allSlides = Array.from(this.DOM.track.children);
@@ -269,6 +274,7 @@
             // 4. Mover el Swiper (solo en desktop)
             const isSwiper = carouselInstance && !isMobile;
             if (isSwiper && shouldSlide) {
+                // FIX: Centrar la columna activa 
                 const targetSwiperSlide = Math.floor(currentFocusIndex / itemsPorColumna);
                 carouselInstance.slideToLoop(targetSwiperSlide, 400); 
             }
@@ -322,12 +328,10 @@
 
     App._generarTarjetaHTML = function(nodo, estaActivo, esRelleno = false, tipoEspecial = null, isSwiperSlide = true) {
         
-        // El relleno y el swiper-slide son exclusivamente para el DOM de Desktop
         const wrapperTag = isSwiperSlide ? 'div' : 'article';
         const swiperClass = isSwiperSlide ? 'swiper-slide' : '';
 
         if (esRelleno) {
-            // El relleno solo existe en el track de Desktop, siempre es swiper-slide
             return `<div class="swiper-slide disabled" data-tipo="relleno" tabindex="-1"></div>`;
         }
         
