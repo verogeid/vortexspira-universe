@@ -4,21 +4,24 @@
     // ⭐️ 1. FUNCIÓN DE GENERACIÓN DE HTML ESPECÍFICA PARA DESKTOP ⭐️
     App._generateCardHTML_Desktop = function(items, itemsPerSlide) {
         let html = '';
-
-        // 1. Preparar datos con relleno
-        const totalItems = items.length;
         
-        // Calcula el múltiplo de 3 más cercano (ej: 7 items -> 9 slots)
+        // ⭐️ CORRECCIÓN CRÍTICA: Añadir una columna de Relleno al PRINCIPIO ⭐️
+        // Esto es necesario para que 'centeredSlides' pueda centrar la primera columna de datos.
+        let rellenoInicial = '';
+        for (let k = 0; k < itemsPerSlide; k++) {
+            rellenoInicial += App._generarTarjetaHTML({ tipo: 'relleno' }, false, true);
+        }
+        html += `<div class="swiper-slide"><div class="cards-column-group">${rellenoInicial}</div></div>`;
+
+
+        // 1. Preparar datos con relleno (para el final)
+        const totalItems = items.length;
         let totalSlotsDeseados = Math.ceil(totalItems / itemsPerSlide) * itemsPerSlide; 
         
-        // ⭐️ CORRECCIÓN CRÍTICA: Asegurar un MÍNIMO de slides para Swiper ⭐️
-        // Si usamos slidesPerView: 3 y loop: true, necesitamos MÍNIMO 3 slides (9 slots) 
-        // para que funcione 'centeredSlides' y el loop.
-        const minSlides = 3; 
-        const minSlots = minSlides * itemsPerSlide; // 3 * 3 = 9
-
-        if (totalSlotsDeseados < minSlots) {
-            totalSlotsDeseados = minSlots; 
+        // Asegurar un mínimo de 2 slides de datos/relleno (además del slide inicial)
+        const minDataSlides = 2;
+        if (totalSlotsDeseados < (minDataSlides * itemsPerSlide)) {
+            totalSlotsDeseados = (minDataSlides * itemsPerSlide);
         }
 
         const itemsConRelleno = [...items];
@@ -28,7 +31,6 @@
         }
 
         // 2. Iterar de 3 en 3 para crear los slides (grupos de columnas)
-        // Ahora, si hay 5 items, generará 9 slots (3 slides)
         for (let i = 0; i < itemsConRelleno.length; i += itemsPerSlide) {
 
             let slideContent = '';
@@ -38,11 +40,9 @@
                 const item = itemsConRelleno[i + j];
 
                 if (item.tipo === 'relleno') {
-                    // Usa la función base para crear la tarjeta de relleno
                     slideContent += App._generarTarjetaHTML(item, false, true); 
                 } else {
                     const estaActivo = App._tieneContenidoActivo(item.id);
-                    // Usa la función base para crear la tarjeta normal
                     slideContent += App._generarTarjetaHTML(item, estaActivo, false);
                 }
             }
@@ -51,7 +51,6 @@
             html += `<div class="swiper-slide"><div class="cards-column-group">${slideContent}</div></div>`;
         }
 
-        // Aseguramos que el track de desktop NO use grid.
         App.DOM.track.style.gridTemplateRows = '';
 
         return html;
@@ -76,8 +75,8 @@
             slidesPerGroup: 1, 
             loop: true, 
             
-            // ⭐️ CORRECCIÓN: initialSlide debe ser 0 para centrar la primera columna de datos ⭐️
-            initialSlide: 0, 
+            // ⭐️ CORRECCIÓN: Fijar en 1 para centrar el primer slide de DATOS (ya que 0 es Relleno) ⭐️
+            initialSlide: 1, 
             
             touchRatio: 1, 
             simulateTouch: true,
@@ -100,7 +99,6 @@
 
         App.STATE.carouselInstance = new Swiper(document.getElementById('nav-swiper'), swiperConfig);
         
-        // ⭐️ FIX CRÍTICO: Forzar la actualización del layout inmediatamente después de la inicialización ⭐️
         if (App.STATE.carouselInstance) {
             App.STATE.carouselInstance.update(); 
             console.log("Swiper inicializado y forzado a actualizar dimensiones.");
