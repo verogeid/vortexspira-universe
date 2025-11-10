@@ -91,13 +91,25 @@
 
       const id = tarjeta.dataset.id;
       const tipo = tarjeta.dataset.tipo;
+      
+      // 🚨 FIX: Llamar a la función centralizada de manejo de clic/activación 🚨
+      this._handleCardClick(id, tipo);
+    };
 
-      if (tipo === 'categoria') {
-        this.STATE.navStack.push(id);
-        this.renderNavegacion();
-      } else if (tipo === 'curso') {
-        this._mostrarDetalle(id);
-      }
+    /**
+     * 🚨 NUEVA FUNCIÓN: Manejador centralizado para la activación (clic, Enter, Espacio) 🚨
+     * @param {string} id - El ID del nodo a navegar.
+     * @param {string} tipo - El tipo de nodo ('categoria' o 'curso').
+     */
+    App._handleCardClick = function(id, tipo) {
+        if (tipo === 'categoria') {
+            this.STATE.navStack.push(id);
+            // Restablecer el foco al primer elemento de la nueva vista
+            this.STATE.currentFocusIndex = 0; 
+            this.renderNavegacion();
+        } else if (tipo === 'curso') {
+            this._mostrarDetalle(id);
+        }
     };
     
     // ⭐️ 3. NAVEGACIÓN POR TECLADO (FLECHAS) - VISTA NAV ⭐️
@@ -109,53 +121,64 @@
           return; 
       }
       
+      const isMobile = window.innerWidth <= 768;
       const { itemsPorColumna } = this.STATE;
-      const allSlides = Array.from(this.DOM.track.children);
-      const totalItems = allSlides.length;
       
-      // Usar el elemento enfocado como punto de partida
-      const currentFocusedSlide = activeElement.closest('[data-id]');
-      let newIndex = Array.from(allSlides).indexOf(currentFocusedSlide);
+      // Solo consideramos las tarjetas que tienen un data-id real (excluye relleno)
+      const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+      const totalCards = allCards.length;
       
-      if (newIndex === -1 || totalItems === 0) return;
+      // Buscar el índice de la tarjeta activa dentro de la lista filtrada (allCards)
+      let currentIndex = allCards.findIndex(card => card.classList.contains('focus-visible'));
       
-      const oldIndex = newIndex;
+      if (currentIndex === -1 || totalCards === 0) {
+          // Si el foco no está en una tarjeta o no hay tarjetas reales, no hacemos nada.
+          return;
+      }
 
-      // Filtrar slides "reales" (no relleno) para navegación
-      const navigableSlides = allSlides.map((slide, index) => ({ slide, index }))
-                                     .filter(item => item.slide.dataset.tipo !== 'relleno');
-      
-      const currentNavigableIndex = navigableSlides.findIndex(item => item.index === newIndex);
+      let newIndex = currentIndex;
+      let nextElementToClick = allCards[currentIndex]; // Por defecto, es el elemento actual
 
       switch (key) {
         case 'ArrowUp':
-          if (currentNavigableIndex > 0) {
-            newIndex = navigableSlides[currentNavigableIndex - 1].index;
-          }
-          break;
+            // Navegación secuencial vertical
+            newIndex = (currentIndex > 0) ? currentIndex - 1 : (isMobile ? currentIndex : totalCards - 1);
+            break;
         case 'ArrowDown':
-          if (currentNavigableIndex < navigableSlides.length - 1) {
-            newIndex = navigableSlides[currentNavigableIndex + 1].index;
-          }
-          break;
+            // Navegación secuencial vertical
+            newIndex = (currentIndex < totalCards - 1) ? currentIndex + 1 : (isMobile ? currentIndex : 0);
+            break;
         case 'ArrowLeft':
-            let prevColIndex = newIndex - itemsPorColumna;
-            // Permitir el loop en la navegación de columna/fila
-            newIndex = (prevColIndex < 0) ? totalItems - 1 : prevColIndex;
-          break;
+            // Navegación horizontal: saltar una columna (3 tarjetas) hacia la izquierda
+            if (!isMobile) {
+                newIndex = currentIndex - itemsPorColumna;
+                // Si salta más allá del inicio, loop al final
+                newIndex = (newIndex < 0) ? totalCards - 1 : newIndex;
+            } else {
+                // En móvil, izquierda/derecha actúa como arriba/abajo
+                newIndex = (currentIndex > 0) ? currentIndex - 1 : currentIndex;
+            }
+            break;
         case 'ArrowRight':
-            let nextColIndex = newIndex + itemsPorColumna;
-            // Permitir el loop en la navegación de columna/fila
-            newIndex = (nextColIndex >= totalItems) ? 0 : nextColIndex;
-          break;
+            // Navegación horizontal: saltar una columna (3 tarjetas) hacia la derecha
+            if (!isMobile) {
+                newIndex = currentIndex + itemsPorColumna;
+                // Si salta más allá del final, loop al inicio
+                newIndex = (newIndex >= totalCards) ? 0 : newIndex;
+            } else {
+                // En móvil, izquierda/derecha actúa como arriba/abajo
+                newIndex = (currentIndex < totalCards - 1) ? currentIndex + 1 : currentIndex;
+            }
+            break;
         case 'Enter':
         case ' ':
           // ACTIVACIÓN: Activar click sobre el elemento enfocado
-          currentFocusedSlide.click();
+          nextElementToClick.click();
           return;
       }
       
-      if (newIndex !== oldIndex && allSlides[newIndex]) {
+      // Si el índice cambia, actualizamos el foco
+      if (newIndex !== currentIndex) {
           this.STATE.currentFocusIndex = newIndex;
           this._updateFocus(true);
       }
@@ -168,14 +191,15 @@
         
         const footerLinks = Array.from(document.querySelectorAll('footer a'));
         // Buscar la tarjeta activa por el tabindex="0" en el track correcto
-        const activeCard = this.DOM.track.querySelector('[tabindex="0"]');
+        const activeCard = this.DOM.track ? this.DOM.track.querySelector('[tabindex="0"]') : null;
 
         if (viewType === 'nav') {
             if (isMobile) {
                 const btnVolver = this.DOM.btnVolverNav.style.display === 'none' ? null : this.DOM.btnVolverNav;
+                // En móvil, la tarjeta "Volver" vertical está dentro del track
                 focusableElements = [btnVolver, activeCard, ...footerLinks].filter(Boolean);
             } else {
-                const cardVolver = this.DOM.cardVolverFija.style.display === 'none' ? null : this.DOM.cardVolverFija;
+                const cardVolver = this.DOM.cardVolverFija.tabIndex === 0 ? this.DOM.cardVolverFija : null;
                 focusableElements = [cardVolver, activeCard, ...footerLinks].filter(Boolean);
             }
         } 
@@ -203,11 +227,10 @@
             }
         }
         
-        // FIX CRÍTICO DOBLE HALO
-        if (viewType === 'nav' && activeCard) {
-            const activeCardIndexInFocusables = focusableElements.indexOf(activeCard);
-            
-            if (currentIndex === activeCardIndexInFocusables && nextIndex !== activeCardIndexInFocusables) {
+        // FIX CRÍTICO DOBLE HALO: Quitar la clase de foco visual del elemento anterior
+        if (activeCard && activeCard.classList.contains('focus-visible')) {
+            // Solo quitar el foco visual si estamos saliendo de la tarjeta navegable
+            if (focusableElements[currentIndex] === activeCard && focusableElements[nextIndex] !== activeCard) {
                 activeCard.classList.remove('focus-visible');
             }
         }
@@ -225,14 +248,15 @@
         // Añadir la tarjeta Volver o el botón Volver móvil, si están activos
         if (!isMobile && this.DOM.cardVolverFija.tabIndex === 0) {
             elements.push(this.DOM.cardVolverFija);
-        } else if (isMobile && this.DOM.btnVolverNav.tabIndex === 0) {
+        } else if (isMobile && this.DOM.btnVolverNav.style.display === 'block') {
+            // Solo considerar el botón móvil si está visible
             elements.push(this.DOM.btnVolverNav);
         }
         
         // Agregar enlaces del curso
         elements.push(...detailLinks);
         
-        return elements;
+        return elements.filter(el => el && el.tabIndex !== -1);
     };
 
 
@@ -276,22 +300,29 @@
      * Handler unificado para CUALQUIER acción de "Volver"
      */
     App._handleVolverClick = function() {
-        // Caso 1: Estamos en la vista de Detalle de un curso
+        // 1. Caso Detalle -> Navegación
         if (this.DOM.vistaDetalle.classList.contains('active')) {
             this.DOM.vistaDetalle.classList.remove('active');
-            this.DOM.vistaNav.classList.add('active');
             
+            // Reestablecer tabIndex de elementos de detalle
+            this.DOM.cardVolverFija.tabIndex = -1;
+            this.DOM.btnVolverNav.tabIndex = -1;
+            
+            this.DOM.vistaNav.classList.add('active');
             this.renderNavegacion(); 
             
-            // Forzar el foco de vuelta al slider
-            const activeCard = this.DOM.track.querySelector('[tabindex="0"]');
+            // Forzar el foco de vuelta a la tarjeta que nos llevó al detalle
+            const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+            const activeCard = allCards[this.STATE.currentFocusIndex] || this.DOM.track.querySelector('[tabindex="0"]');
+            
             if (activeCard) {
                 activeCard.focus();
             }
         } 
-        // Caso 2: Estamos en una sub-sección (en la vista de Navegación)
+        // 2. Caso Sub-sección -> Nivel anterior
         else if (this.STATE.navStack.length > 0) {
             this.STATE.navStack.pop();
+            this.STATE.currentFocusIndex = 0; // Resetear foco al primer elemento del nuevo nivel
             this.renderNavegacion();
             
             // Forzar el foco de vuelta al slider
@@ -330,7 +361,7 @@
       let primerElementoFocuseable = null;
 
       if (!isMobile) {
-          // Mostrar y activar la tarjeta "Volver"
+          // Mostrar y activar la tarjeta "Volver" (Desktop)
           this.DOM.cardVolverFija.style.display = 'flex';
           this.DOM.cardVolverFija.tabIndex = 0;
           primerElementoFocuseable = this.DOM.cardVolverFija;

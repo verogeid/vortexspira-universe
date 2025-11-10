@@ -212,7 +212,8 @@ header h1 {
 
 /* --- 5. Tarjetas (Efecto Ghost) --- */
 .swiper-slide {
-  width: clamp(var(--card-width-min), 18vw, var(--card-width-max)) !important;
+  /* FIX CRÍTICO: Ancho calculado para responsividad y 3x3 */
+  width: calc((100% - 50px) / 3) !important;
   height: clamp(150px, 20vh, 180px) !important;
   margin: 0 !important;
   border: 2px solid var(--color-card-border);
@@ -254,8 +255,8 @@ header h1 {
 .swiper-slide.focus-visible:not(.disabled):not([data-tipo="relleno"]),
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):hover,
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):focus-visible, 
-#card-volver-fija:hover,
-#card-volver-fija:focus-visible,
+#card-volver-fija[tabindex="0"]:hover,
+#card-volver-fija[tabindex="0"]:focus-visible,
 .mobile-track article:hover,
 .mobile-track article:focus-visible {
   outline: none;
@@ -266,7 +267,7 @@ header h1 {
 }
 
 /* --- 6. El caso especial (Sección Vacía y Relleno) --- */
-/* Tarjeta deshabilitada (navegable) - Borde Continuo */
+/* Tarjeta deshabilitada (navegable) - Borde Continuo Gris Oscuro */
 .swiper-slide.disabled,
 .mobile-track article.disabled {
   border: 2px solid var(--color-card-border-disabled); 
@@ -320,7 +321,7 @@ header h1 {
     width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
     
-    /* ESTILO POR DEFECTO: Borde discontinuo (Inactivo) */
+    /* ESTILO POR DEFECTO (INACTIVA): Borde discontinuo */
     border: 2px dashed var(--color-card-border);
     background: var(--color-card-bg);
     cursor: default;
@@ -339,6 +340,7 @@ header h1 {
 
 /* Estilo específico para la tarjeta Volver ACTIVA (tabindex="0") */
 #card-volver-fija[tabindex="0"] {
+    border: 2px solid var(--color-primary); /* Borde continuo azul */
     cursor: pointer;
 }
 
@@ -397,7 +399,7 @@ header h1 {
     height: 100%; 
     padding: 1.5rem;
     border-radius: 12px;
-    /* Borde Discontinuo como las tarjetas de relleno */
+    /* Borde Discontinuo */
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
     display: flex !important; 
