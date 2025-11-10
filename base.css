@@ -23,8 +23,9 @@
   --footer-height: 30px;
   --sidebar-card-width: 180px; 
   --sidebar-column-width: 220px;
-  --card-gap: 25px; /* Nuevo: Define el espacio estándar entre tarjetas/elementos */
-  --nav-desktop-height: 960px; /* Nuevo: Altura fija para el carrusel de 3 tarjetas */
+  --card-gap: 25px; 
+  /* CORRECCIÓN: Altura para 3 tarjetas de 250px + 2 gaps de 25px = 800px */
+  --nav-desktop-height: 800px; 
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -42,7 +43,7 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  overflow: hidden; /* Desktop default */
+  overflow: hidden; 
   margin: 0;
   box-sizing: border-box;
   min-height: 100vh;
@@ -58,7 +59,7 @@ header, footer {
     color: #fff;
     z-index: 100;
     box-sizing: border-box;
-    font-size: 1.5rem; /* Ajuste para el header */
+    font-size: 1.5rem; 
 }
 
 header {
@@ -143,7 +144,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-  
+
   /* Reset de tamaño, el layout lo definen los archivos desktop/mobile */
   height: auto; 
   min-height: 150px; 
@@ -232,10 +233,11 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     position: relative; 
     z-index: 50; 
     width: var(--sidebar-card-width); 
-    height: var(--nav-desktop-height); /* Se ajustará en desktop-nav.css */
+    /* CORRECCIÓN: Usar la altura de referencia para que sea igual al grupo de 3 tarjetas */
+    height: var(--nav-desktop-height); 
     padding: 1rem;
     cursor: default;
-    
+
     /* ESTILO INACTIVA: Discontinuo, el activo lo maneja la regla [tabindex="0"] */
     border: 2px dashed var(--color-card-border);
     background: var(--color-card-bg);
@@ -271,7 +273,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     display: block !important; 
     text-align: center;
     box-sizing: border-box;
-    /* Por defecto en base.css, ocultaremos en mobile-nav.css */
 }
 #info-adicional p, #info-adicional small {
     width: 100%; 
