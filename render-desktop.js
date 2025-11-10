@@ -5,10 +5,22 @@
     App._generateCardHTML_Desktop = function(items, itemsPerSlide) {
         let html = '';
 
-        // 1. Preparar datos con relleno para asegurar múltiplos de 3 (para el loop de Swiper)
+        // 1. Preparar datos con relleno
         const totalItems = items.length;
+        
         // Calcula el múltiplo de 3 más cercano (ej: 7 items -> 9 slots)
-        const totalSlotsDeseados = Math.ceil(totalItems / itemsPerSlide) * itemsPerSlide; 
+        let totalSlotsDeseados = Math.ceil(totalItems / itemsPerSlide) * itemsPerSlide; 
+        
+        // ⭐️ CORRECCIÓN CRÍTICA: Asegurar un MÍNIMO de slides para Swiper ⭐️
+        // Si usamos slidesPerView: 3 y loop: true, necesitamos MÍNIMO 3 slides (9 slots) 
+        // para que funcione 'centeredSlides' y el loop.
+        const minSlides = 3; 
+        const minSlots = minSlides * itemsPerSlide; // 3 * 3 = 9
+
+        if (totalSlotsDeseados < minSlots) {
+            totalSlotsDeseados = minSlots; 
+        }
+
         const itemsConRelleno = [...items];
 
         for (let i = totalItems; i < totalSlotsDeseados; i++) {
@@ -16,6 +28,7 @@
         }
 
         // 2. Iterar de 3 en 3 para crear los slides (grupos de columnas)
+        // Ahora, si hay 5 items, generará 9 slots (3 slides)
         for (let i = 0; i < itemsConRelleno.length; i += itemsPerSlide) {
 
             let slideContent = '';
@@ -52,7 +65,6 @@
             return;
         }
         
-        // Si ya existe, solo necesitamos actualizarlo (el update() lo hará después de la inicialización)
         if (App.STATE.carouselInstance) {
             App.STATE.carouselInstance.update();
             return;
@@ -63,7 +75,10 @@
             slidesPerView: 3, 
             slidesPerGroup: 1, 
             loop: true, 
-            initialSlide: initialSwiperSlide,
+            
+            // ⭐️ CORRECCIÓN: initialSlide debe ser 0 para centrar la primera columna de datos ⭐️
+            initialSlide: 0, 
+            
             touchRatio: 1, 
             simulateTouch: true,
             centeredSlides: true,
