@@ -47,25 +47,26 @@
 
     // ⭐️ 2. INICIALIZACIÓN DE SWIPER (Lógica de Carrusel) ⭐️
     App._initCarousel = function(initialSwiperSlide, itemsPorColumna, isMobile) {
-        if (isMobile || App.STATE.carouselInstance) return;
+        if (isMobile) {
+            App._destroyCarousel();
+            return;
+        }
+        
+        // Si ya existe, solo necesitamos actualizarlo (el update() lo hará después de la inicialización)
+        if (App.STATE.carouselInstance) {
+            App.STATE.carouselInstance.update();
+            return;
+        }
 
         const swiperConfig = {
             direction: 'horizontal', 
-
-            // CLAVE: Muestra 3 slides (columnas) a la vez.
             slidesPerView: 3, 
-
-            // Desplaza de 1 en 1 para un centrado más suave
             slidesPerGroup: 1, 
-
             loop: true, 
             initialSlide: initialSwiperSlide,
-
-            // Habilitar interacción táctil y centrado para mejor visualización.
             touchRatio: 1, 
             simulateTouch: true,
-            centeredSlides: true, // Asegura que el slide enfocado esté en el centro visual.
-
+            centeredSlides: true,
             mousewheel: { 
                 sensitivity: 1 
             }, 
@@ -83,6 +84,12 @@
         };
 
         App.STATE.carouselInstance = new Swiper(document.getElementById('nav-swiper'), swiperConfig);
+        
+        // ⭐️ FIX CRÍTICO: Forzar la actualización del layout inmediatamente después de la inicialización ⭐️
+        if (App.STATE.carouselInstance) {
+            App.STATE.carouselInstance.update(); 
+            console.log("Swiper inicializado y forzado a actualizar dimensiones.");
+        }
     };
 
 
