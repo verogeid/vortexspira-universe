@@ -42,6 +42,7 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* En Desktop, overflow hidden en body */
   overflow: hidden; 
   margin: 0;
   box-sizing: border-box;
@@ -103,6 +104,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 }
 
 #debug-console { color: #ffcc00; font-size: 10px; height: 16px; overflow: hidden; white-space: nowrap; }
+
+/* ⭐️ CONTENEDOR PRINCIPAL: GRID 1-3-1 (Desktop) ⭐️ */
 #app-container {
   height: calc(100vh - var(--header-height) - var(--footer-height)); 
   width: 100%;
@@ -117,6 +120,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   background: var(--color-bg);
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); 
 }
+
+/* ⭐️ VISTA CENTRAL (Columna 2) ⭐️ */
 #vista-central {
   grid-column: 2 / 3;
   width: 100%;
@@ -145,12 +150,11 @@ header h1 {
     line-height: 1.2;
 }
 
-/* ⭐️ VISIBILIDAD DE LAS VISTAS SEGÚN MODO ⭐️ */
+/* ⭐️ VISIBILIDAD DE LAS VISTAS SEGÚN MODO (Desktop Default) ⭐️ */
 #vista-navegacion-mobile { display: none; }
 
 
 /* --- 3. El Marco de Foco (La Máscara) --- */
-/* Degradado y Blur menos agresivos */
 .carousel-mask {
   position: absolute;
   width: 100%; 
@@ -213,7 +217,6 @@ header h1 {
   width: clamp(var(--card-width-min), 18vw, var(--card-width-max)) !important;
   height: clamp(150px, 20vh, 180px) !important;
   margin: 0 !important;
-  /* Borde CONTINUO para tarjetas activas/reales */
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
   padding: 1.5rem;
@@ -226,9 +229,8 @@ header h1 {
   box-sizing: border-box;
 }
 
-/* ⭐️ Estilo para Tarjetas Mobile (sin swiper-slide) ⭐️ */
+/* ⭐️ Estilo para Tarjetas Mobile (articles) ⭐️ */
 .mobile-track article {
-    /* Estilos base de las tarjetas en móvil */
     width: 100%; 
     margin-bottom: 15px;
     height: auto; 
@@ -251,8 +253,7 @@ header h1 {
   font-size: 1.5rem;
 }
 
-/* Ghost Azul: Minimalista (solo borde y sombra) y selector de foco corregido */
-/* Incluye las tarjetas article en el focus/hover */
+/* Ghost Azul: Minimalista (solo borde y sombra) */
 .swiper-slide.focus-visible:not(.disabled):not([data-tipo="relleno"]),
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):hover,
 .swiper-slide:not(.disabled):not([data-tipo="relleno"]):focus-visible, 
@@ -319,7 +320,6 @@ header h1 {
 /* --- 7. Tarjeta Fija de Volver (POSICIONAMIENTO EN GRID) --- */
 #btn-volver-navegacion { display: none; }
 #card-volver-fija {
-    display: none !important; 
     grid-column: 1 / 2;
     place-self: start center; 
     position: relative; 
@@ -327,6 +327,7 @@ header h1 {
     width: var(--sidebar-card-width); 
     height: clamp(150px, 20vh, 180px); 
     
+    /* Estilo base de tarjeta activa/focuseable: CONTINUO */
     opacity: 1;
     border: 2px solid var(--color-card-border);
     background: var(--color-card-bg);
@@ -338,6 +339,8 @@ header h1 {
     flex-direction: column;
     justify-content: center;
     box-sizing: border-box;
+    /* FIX: Lo gestionamos con la media query */
+    display: none !important; 
 }
 
 /* Estética de tarjeta inactiva (borde discontinuo) */
@@ -353,12 +356,11 @@ header h1 {
 #card-volver-fija[style*="display: flex"] { display: flex !important; }
 #card-volver-fija h3 { font-size: 1.2rem; }
 
-/* ⭐️ Estilo específico del botón Volver dentro del track móvil ⭐️ */
+/* Estilo específico del botón Volver dentro del track móvil */
 .card-volver-vertical {
     width: 100%; 
     margin-bottom: 15px;
     height: auto;
-    /* Foco/Hover ya cubierto arriba */
 }
 
 /* --- 8. VISTA DE DETALLE DEL CURSO --- */
@@ -407,6 +409,7 @@ header h1 {
     border-radius: 12px;
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
+    /* FIX: Lo gestionamos con la media query */
     display: none; 
     flex-direction: column;
     justify-content: center;
@@ -450,24 +453,25 @@ header h1 {
         height: auto; 
         min-height: calc(100vh - 45px); 
     }
+    
+    /* ⭐️ OCULTAR COLUMNAS LATERALES Y SWIPER EN MÓVIL ⭐️ */
     #card-volver-fija,
-    .info-adicional { 
+    .info-adicional,
+    #vista-navegacion-desktop { 
         display: none !important; 
     }
-
-    /* ⭐️ VISIBILIDAD DE LAS VISTAS ⭐️ */
-    #vista-navegacion-desktop { display: none !important; }
+    
+    /* ⭐️ MOSTRAR VISTA MÓVIL (LISTA NATIVA) ⭐️ */
     #vista-navegacion-mobile { 
         display: flex !important; 
-        /* FIX: Permitir altura automática y posición relativa */
         height: auto;
         position: relative; 
         width: 100%; 
         padding: 0 5%;
+        /* Aseguramos que la vista activa ocupe el espacio */
     }
-
-    /* FIX: Contenedores internos en móvil */
     #vista-central {
+        grid-column: 1 / 2; /* Ocupa el 100% del ancho en móvil */
         height: auto !important;
         position: relative;
     }
@@ -477,8 +481,9 @@ header h1 {
         position: relative;
         grid-template-columns: 1fr;
     }
+    
+    /* Track Móvil: Lista vertical con scroll nativo */
     .mobile-track {
-        /* Convierte el track móvil en una lista vertical con scroll nativo */
         display: flex; 
         flex-direction: column;
         width: 100%;
@@ -503,7 +508,6 @@ header h1 {
         padding: 1rem;
     }
     .swiper-wrapper {
-        /* Anulamos las reglas Grid/Swiper en móvil para que Flexbox funcione */
         display: flex; 
         flex-direction: column;
         grid-template-rows: none; 

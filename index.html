@@ -17,35 +17,30 @@
     </div>
 
     <div id="vista-central">
-      
-      
-      <div id="vista-navegacion-desktop" class="vista active">
         
-        <div class="carousel-mask">
-          <div class="mask-left"></div>
-          <div class="mask-right"></div>
-        </div>
-        
-        <div id="nav-swiper" class="swiper carousel-viewport">
-          <div class="swiper-wrapper grid-track" id="track-desktop">
+        <div id="vista-navegacion-desktop" class="vista active">
+            <div class="carousel-mask">
+                <div class="mask-left"></div>
+                <div class="mask-right"></div>
+            </div>
+            <div id="nav-swiper" class="swiper carousel-viewport">
+                <div class="swiper-wrapper grid-track" id="track-desktop">
+                    </div>
             </div>
         </div>
-      </div>
-      
+        
+        <div id="vista-navegacion-mobile" class="vista">
+            <div class="mobile-track" id="track-mobile">
+                </div>
+        </div>
 
-      <div id="vista-navegacion-mobile" class="vista">
-          <div class="mobile-track" id="track-mobile">
-              </div>
-      </div>
+        <div id="vista-detalle" class="vista">
+            <div class="contenido-curso" id="detalle-contenido">
+                </div>
+        </div>
 
-
-      <div id="vista-detalle" class="vista">
-        <div class="contenido-curso" id="detalle-contenido">
-          </div>
-      </div>
-
-    </div>
-
+    </div> 
+    
     <div id="info-adicional">
         <p>Espacio reservado para información contextual.</p>
         <small>Aquí se podrán añadir datos como el progreso o notas relacionadas con la sobrecarga cognitiva.</small>
@@ -63,24 +58,9 @@
 
   <footer>
     <small>&copy;2025 VortexSpira® | Desarrollado por Diego González Fernández | 
-      <a href="https://www.linkedin.com/in/diego-gonzalez-fernandez" target="_top" aria-label="Perfil de LinkedIn" class="footer-social-link">
-        </a>
-    </small>
+      </small>
     <div id="debug-console"></div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script src="debug.js"></script>
-  <script src="data.js"></script>
-  <script src="app.js"></script> 
-  <script src="render.js"></script>
-  <script src="nav.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        if (window.App && window.App.init) {
-            App.init();
-        }
-    });
-  </script>
-</body>
+  </body>
 </html>
