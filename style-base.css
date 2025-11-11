@@ -30,8 +30,8 @@
   /* Altura total = Altura de la vista central (100% de la celda del grid) */
   --nav-desktop-height: calc(100% - 0px); 
   
-  /* Offset superior para alineación de la primera tarjeta */
-  --nav-carousel-top-offset: 10px; 
+  /* ⭐️ FIX: Offset superior para alinear la tarjeta "Volver" con el carrusel ⭐️ */
+  --nav-carousel-top-offset: 35px; 
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -78,6 +78,12 @@ footer {
     bottom: 0;
     padding: 5px;
     color: #888;
+    /* ⭐️ FIX: Habilitar Flexbox para alineación vertical de contenido ⭐️ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; 
+    height: var(--footer-height); 
 }
 
 header h1 {
@@ -88,11 +94,21 @@ header h1 {
 }
 
 /* Enlaces del footer y debug console */
+footer small {
+    display: flex;
+    align-items: center; /* Centra verticalmente todos los elementos internos */
+    gap: 8px; 
+}
 footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 .footer-social-link { /* Mantenido */ }
 .linkedin-icon { /* Mantenido */ }
 .footer-social-link:hover, .footer-social-link:focus-visible { /* Mantenido */ }
 .linkedin-icon:hover, .linkedin-icon:focus-visible { /* Mantenido */ }
+.footer-license-link img {
+    height: 16px; /* Ajustar altura para que coincida con el ícono de LinkedIn */
+    width: auto;
+    vertical-align: middle;
+}
 #debug-console { color: #ffcc00; font-size: 10px; height: 16px; overflow: hidden; white-space: nowrap; }
 
 
@@ -243,7 +259,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     position: relative; 
     z-index: 50; 
     
-    /* 🚨 CRÍTICO: Usar altura y ancho dinámicos y margen para alineación TOP 🚨 */
+    /* ⭐️ FIX: Usar altura y ancho dinámicos y margen para alineación TOP ⭐️ */
     width: 100%; 
     height: var(--card-height-calc) !important; 
     max-height: var(--card-height-calc) !important; 
@@ -261,7 +277,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     flex-direction: column;
     justify-content: center;
 
-    /* Estilo Inactivo - Borde Discontinuo */
+    /* Estilo Inactivo - Borde Discontinuo (Restaurado) */
     border: 2px dashed var(--color-card-border);
     background: transparent;
     transform: none;
