@@ -61,7 +61,7 @@
     height: calc(100% - var(--nav-carousel-top-offset)); 
     gap: var(--card-gap); 
     
-    /* 🚨 FIX CRÍTICO: Reducir el padding-bottom para eliminar el espacio sobrante 🚨 */
+    /* FIX CRÍTICO: Padding BOTTOM ajustado (15px) */
     /* Padding: TOP (Offset), RIGHT, BOTTOM (Reducido), LEFT */
     padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
     

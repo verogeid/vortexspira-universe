@@ -21,16 +21,13 @@
   /* VARIABLES DE LAYOUT */
   --header-height: 50px;
   --footer-height: 30px;
-  --card-gap: 25px; 
+  --card-gap: 25px; /* Espacio entre tarjetas en el centro */
   
-  /* 🚨 CRÍTICO: Redefinir las alturas para ser dinámicas y respetar el 3x3 🚨 */
   /* Altura individual de una tarjeta = (100% de la columna - 2 * gaps) / 3 */
   --card-height-calc: calc((100% - (2 * var(--card-gap))) / 3); 
-  
-  /* Altura total = Altura de la vista central (100% de la celda del grid) */
   --nav-desktop-height: calc(100% - 0px); 
   
-  /* ⭐️ FIX: Offset superior para alinear la tarjeta "Volver" con el carrusel ⭐️ */
+  /* Offset superior para alinear la tarjeta "Volver" con el carrusel */
   --nav-carousel-top-offset: 35px; 
 }
 @media (prefers-color-scheme: dark) {
@@ -120,7 +117,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   display: grid;
   /* Grid Proporcional 1fr (Sidebar) | 3fr (Centro) | 1fr (Sidebar) */
   grid-template-columns: 1fr 3fr 1fr; 
-  gap: 20px;
+  /* Eliminamos el gap del grid para que las celdas se toquen y usamos margins */
+  gap: 20px; 
   padding: 20px;
   box-sizing: border-box;
   align-items: start;
@@ -252,80 +250,111 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     box-shadow: 0 0 25px rgba(0, 123, 255, 0.4);
 }
 
-/* Tarjeta Fija de Volver (Sidebar Izquierdo) */
+/* 🛑 INICIO: ESTILOS PARA LA NUEVA ESTRUCTURA DE COLUMNA IZQUIERDA 🛑 */
+
+/* Contenedor de la Columna (el elemento que está en grid-column: 1 / 2) */
 #card-volver-fija {
     grid-column: 1 / 2;
     position: relative; 
     z-index: 50; 
     
-    /* 🚨 FIX: Aseguramos el ancho 100% de la columna 🚨 */
+    /* ⭐️ CRÍTICO: Configurar como CONTENEDOR DE COLUMNA Flexbox ⭐️ */
+    display: flex; 
+    flex-direction: column;
+    justify-content: flex-start;
+    
+    height: 100%; 
+    width: 100%;
+    
+    /* Simular el padding/gap del carrusel */
+    padding-top: var(--nav-carousel-top-offset); 
+    padding-left: 15px; /* Padding interno */
+    padding-right: 15px; /* Padding interno */
+    padding-bottom: 15px; /* Padding inferior */
+    
+    /* Simular el gap con la columna central */
+    margin-right: var(--card-gap); 
+    
+    /* Limpiar estilos de tarjeta */
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    box-sizing: border-box;
+    
+    /* 🛑 DEPURACIÓN VISUAL: Contorno del contenedor de columna 🛑 */
+    outline: 3px solid blue; 
+    outline-offset: -1px;
+}
+
+/* Elemento Interactivo Real (La tarjeta dentro del contenedor) */
+#card-volver-fija-elemento {
+    /* CRÍTICO: Dimensionamiento de tarjeta (no crecer, usar altura calculada) */
     width: 100%; 
     height: var(--card-height-calc) !important; 
-    max-height: var(--card-height-calc) !important; 
-    min-height: var(--card-height-calc) !important;
+    flex: 0 0 auto;
     
+    /* Estilos visuales de tarjeta (Restaurados) */
+    border: 2px dashed var(--color-card-border);
+    background: transparent;
     padding: 1rem;
-    cursor: default;
+    border-radius: 12px;
     
-    /* FIX: Simular el offset superior */
-    margin-top: var(--nav-carousel-top-offset); 
-    
-    /* 🚨 FIX CRÍTICO: Añadir margen derecho para simular el gap (20px del app-container + 25px de gap) 🚨 */
-    padding-right: 15px; 
-    
-    margin-left: auto;
-    margin-right: auto;
-
-    /* LAYOUT: Forzar layout Flexbox para centrado interno */
+    /* Diseño interno */
     display: flex !important; 
     flex-direction: column;
     justify-content: center;
-
-    /* Estilo Inactivo - Borde Discontinuo (Restaurado) */
-    border: 2px dashed var(--color-card-border);
-    background: transparent;
-    transform: none;
-    box-shadow: none;
+    cursor: default;
     
-    /* 🛑 DEPURACIÓN VISUAL: Contorno de la tarjeta Volver 🛑 */
+    /* Simular el gap debajo de la tarjeta */
+    margin-bottom: var(--card-gap); 
+
+    /* 🛑 DEPURACIÓN VISUAL: Contorno del elemento interactivo 🛑 */
     outline: 3px solid red; 
     outline-offset: -1px;
 }
 
+/* Elemento de Relleno (ocupa el resto del espacio) */
+#columna-volver-relleno {
+    flex-grow: 1; /* Ocupa el resto del espacio vertical */
+    width: 100%;
+    
+    /* Estilo de depuración para ver el relleno */
+    border: 2px dashed rgba(255, 255, 0, 0.3);
+}
+
 /* Ocultar texto por defecto */
-#card-volver-fija h3 {
+#card-volver-fija-elemento h3 {
     display: none; 
     margin: 0;
     font-size: 1.2rem;
 }
 
-/* REAFIRMACIÓN: Asegurar que el borde discontinuo se ve cuando está inactiva */
-#card-volver-fija[tabindex="-1"] {
+/* REGLAS DE ESTADO: Aplicadas al elemento interactivo */
+#card-volver-fija-elemento[tabindex="-1"] {
     border: 2px dashed var(--color-card-border) !important; 
     background: transparent !important;
 }
 
-
-#card-volver-fija[tabindex="0"] {
+#card-volver-fija-elemento[tabindex="0"] {
     border: 2px solid var(--color-primary); 
     background: var(--color-card-bg); 
     cursor: pointer;
 }
-
 /* REGLA ACTIVA: Mostrar el texto */
-#card-volver-fija[tabindex="0"] h3 {
+#card-volver-fija-elemento[tabindex="0"] h3 {
     display: block; 
 }
-
-#card-volver-fija[tabindex="0"]:hover,
-#card-volver-fija[tabindex="0"]:focus-visible {
+/* Reglas de hover/focus se mantienen en el elemento */
+#card-volver-fija-elemento[tabindex="0"]:hover,
+#card-volver-fija-elemento[tabindex="0"]:focus-visible {
     outline: none;
     border-color: var(--color-primary);
     background: var(--color-card-bg); 
     transform: scale(1.03);
     box-shadow: 0 0 25px rgba(0, 123, 255, 0.4); 
 }
-#card-volver-fija[style*="display: flex"] { display: flex !important; }
+/* 🛑 FIN: ESTILOS PARA LA NUEVA ESTRUCTURA DE COLUMNA IZQUIERDA 🛑 */
+
 
 /* ZONA DE INFORMACIÓN ADICIONAL (Sidebar Derecho) */
 #info-adicional {
@@ -335,21 +364,20 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     
     padding: 1.5rem;
     border-radius: 12px;
-    /* Asegurar borde discontinuo */
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
     
-    /* Usar display: block para que se comporte como una columna de Grid */
     display: block !important; 
     text-align: center;
     box-sizing: border-box;
     
+    /* Simular el gap con la columna central */
+    margin-left: var(--card-gap); 
+    
     /* AJUSTE: Alinear el contenido interno con el carrusel */
     padding-top: calc(var(--nav-carousel-top-offset) + 1.5rem);
     padding-right: 1.5rem; 
-    
-    /* 🚨 FIX CRÍTICO: Añadir padding izquierdo para simular el gap 🚨 */
-    padding-left: 15px; 
+    padding-left: 1.5rem; 
     
     /* 🛑 DEPURACIÓN VISUAL: Contorno del panel de información 🛑 */
     outline: 3px solid red; 

@@ -22,25 +22,25 @@
       logDebug("Iniciando orquestación de la App."); 
       
       // Cachear el DOM (Solo elementos estables y necesarios)
-      // FIX: this.DOM.track y this.DOM.vistaNav son asignados dinámicamente en render.js
-      
       this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); 
       this.DOM.vistaDetalle = document.getElementById('vista-detalle');
       this.DOM.detalleContenido = document.getElementById('detalle-contenido');
       this.DOM.swiperContainer = document.getElementById('nav-swiper'); 
       
       // Columnas laterales persistentes
-      this.DOM.cardVolverFija = document.getElementById('card-volver-fija'); 
+      // 🚨 FIX: La tarjeta interactiva es ahora el elemento anidado dentro del contenedor 🚨
+      this.DOM.cardVolverFija = document.getElementById('card-volver-fija-elemento'); 
       this.DOM.infoAdicional = document.getElementById('info-adicional'); 
 
       
-      // 2.1. Configurar el observador (definido en render.js)
-      this._setupResizeObserver();
+      // 2.1. Configurar el observador (definido en render-base.js)
+      if (typeof this._setupResizeObserver === 'function') {
+        this._setupResizeObserver();
+      }
       
       // 2.2. Cargar los datos (definido en data.js)
       try {
         logDebug("Iniciando carga de datos.");
-        // Asumiendo que loadData está definido globalmente en data.js
         if (typeof loadData === 'function') {
             await loadData(this); 
         }
@@ -55,14 +55,15 @@
         return;
       }
       
-      // 2.3. Configurar listeners (definido en nav.js)
-      // Asumiendo que setupListeners está definido globalmente en nav.js
+      // 2.3. Configurar listeners (definido en nav-base.js)
       if (typeof this.setupListeners === 'function') {
           this.setupListeners();
       }
 
-      // 2.4. Renderizar el estado inicial (definido en render.js)
-      this.renderNavegacion(); 
+      // 2.4. Renderizar el estado inicial (definido en render-base.js)
+      if (typeof this.renderNavegacion === 'function') {
+        this.renderNavegacion(); 
+      }
       
       // 2.5. Finalizar la carga inicial
       this.STATE.initialRenderComplete = true; 
@@ -71,12 +72,6 @@
   };
 
   // ⭐️ PUNTO DE ENTRADA ⭐️
-  document.addEventListener('DOMContentLoaded', () => {
-    // 1. Inyectar logo/favicon (definido en data.js)
-    if (typeof injectHeaderLogo === 'function') {
-        injectHeaderLogo(); 
-    }
-    // 2. La inicialización de la App se espera que sea llamada desde el HTML/DOMContentLoaded
-  });
-
+  // La llamada a App.init() se ha movido al final del index.html para asegurar la carga completa de módulos.
+  
 })();
