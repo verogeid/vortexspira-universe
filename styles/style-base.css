@@ -261,16 +261,18 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     /* ⭐️ CRÍTICO: Configurar como CONTENEDOR DE COLUMNA Flexbox ⭐️ */
     display: flex; 
     flex-direction: column;
-    justify-content: flex-start;
+    /* 🚨 FIX CRÍTICO: Usar space-between para distribuir el espacio restante 🚨 */
+    justify-content: space-between;
     
     height: 100%; 
     width: 100%;
     
     /* Simular el padding/gap del carrusel */
     padding-top: var(--nav-carousel-top-offset); 
-    padding-left: 15px; /* Padding interno */
-    padding-right: 15px; /* Padding interno */
-    padding-bottom: 15px; /* Padding inferior */
+    padding-left: 15px; 
+    padding-right: 15px; 
+    /* FIX: Simular padding-bottom simétrico para que space-between funcione */
+    padding-bottom: var(--nav-carousel-top-offset); 
     
     /* Simular el gap con la columna central */
     margin-right: var(--card-gap); 
@@ -288,7 +290,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 
 /* Elemento Interactivo Real (La tarjeta dentro del contenedor) */
 #card-volver-fija-elemento {
-    /* CRÍTICO: Dimensionamiento de tarjeta (no crecer, usar altura calculada) */
+    /* CRÍTICO: Dimensionamiento de tarjeta */
     width: 100%; 
     height: var(--card-height-calc) !important; 
     flex: 0 0 auto;
@@ -305,8 +307,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     justify-content: center;
     cursor: default;
     
-    /* 🚨 FIX CRÍTICO: Añadir el margin-bottom para el GAP con el relleno 🚨 */
-    margin-bottom: var(--card-gap); 
+    /* 🚨 FIX CRÍTICO: Eliminar margin-bottom, el espaciado lo maneja space-between 🚨 */
+    margin-bottom: 0; 
 
     /* 🛑 DEPURACIÓN VISUAL: Contorno del elemento interactivo 🛑 */
     outline: 3px solid red; 
