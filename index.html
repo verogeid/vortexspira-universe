@@ -6,12 +6,16 @@
     <title>VortexSpira®: Selector de Cursos</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     
-    <link rel="stylesheet" href="style-base.css">
-    <link rel="stylesheet" href="style-desktop.css">
-    <link rel="stylesheet" href="style-mobile.css">
+    <link rel="stylesheet" href="styles/style-base.css">
+    <link rel="stylesheet" href="styles/style-desktop.css">
+    <link rel="stylesheet" href="styles/style-mobile.css">
 
 </head>
 <body>
+
+  <header id="app-header">
+    <h1>VortexSpira®: Tu Mentor de Audio-Aprendizaje Técnico</h1>
+  </header>
 
   <main id="app-container">
 
@@ -42,53 +46,48 @@
             <div class="contenido-curso" id="detalle-contenido">
                 </div>
         </div>
-
-    </div> 
+    </div>
     
-    <div id="info-adicional">
-        <p>Espacio reservado para información contextual.</p>
-        <small>Aquí se podrán añadir datos como el progreso o notas relacionadas con la sobrecarga cognitiva.</small>
+    <div id="info-adicional" style="display: none;">
+        <p>Selecciona una opción para ver más detalles.</p>
+        <small>Este contenido es dinámico.</small>
     </div>
 
-    <button class="btn-volver" id="btn-volver-navegacion">
-        &larr; Volver
-    </button>
-
   </main>
-
-  <header id="app-header">
-    <h1>VortexSpira®: Tu Mentor de Audio-Aprendizaje Técnico</h1>
-  </header>
-
+    
+  <button id="btn-volver-navegacion" style="display: none;" tabindex="-1">
+    &larr; Volver
+  </button>
+  
   <footer>
-    <small>&copy;2025 VortexSpira® | Desarrollado por Diego González Fernández | 
-      <a href="https://www.linkedin.com/in/diego-gonzalez-fernandez" target="_top" aria-label="Perfil de LinkedIn" class="footer-social-link">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="linkedin-icon">
-            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3.5v-11h3.5v11zm-1.75-12.25c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.75 12.25h-3.5v-5.603c0-3.368-4-3.535-4 0v5.603h-3.5v-11h3.5v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-        </svg>
-      </a> | <a href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_top" aria-label="License CC BY-NC-ND 4.0 description" class="footer-license-link">
-        <img src="https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png" width=88 height=31 alt="Creative Commons License"/>
-      </a>
-    </small>
+    <small id="footer-content">
+      </small>
     <div id="debug-console"></div>
   </footer>
   
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <script src="debug.js"></script>
-  <script src="data.js"></script>
-  <script src="app.js"></script>
-
-  <script src="nav-base.js"></script>
-  <script src="nav-keyboard.js"></script>
   
-  <script src="render-base.js"></script>
-  <script src="render-desktop.js"></script> 
-  <script src="render-mobile.js"></script>
+  <script src="code/debug.js"></script>
+  <script src="code/data.js"></script>
+  <script src="code/app.js"></script>
+
+  <script src="code/nav-base.js"></script>
+  <script src="code/nav-keyboard.js"></script>
+  
+  <script src="code/render-base.js"></script>
+  <script src="code/render-desktop.js"></script> 
+  <script src="code/render-mobile.js"></script>
 
   <script>
-    // 🚨 FIX CRÍTICO: Asegurar que App.init se llama aquí 🚨
     document.addEventListener('DOMContentLoaded', () => {
-        // La carga del logo ya está en data.js, aquí solo llamamos a init
+        // La inyección del logo y footer se realiza en el DOMContentLoaded
+        if (typeof injectHeaderLogo === 'function') {
+            injectHeaderLogo(); 
+        }
+        if (typeof injectFooterContent === 'function') {
+            injectFooterContent(); 
+        }
+        
         if (window.App && window.App.init) {
             App.init();
         }

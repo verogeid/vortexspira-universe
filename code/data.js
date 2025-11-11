@@ -3,15 +3,13 @@
 // ⭐️ 1. DEFINICIÓN DE COLORES Y CONSTANTES ⭐️
 const PRIMARY_COLOR = '#999';
 const SECONDARY_COLOR = '#F89707';
-// Nota: 'App' debe ser inicializado en 'app.js' antes de que otros módulos lo extiendan.
+const FOOTER_ICON_COLOR = '#888';
+const LINKEDIN_URL = "https://www.linkedin.com/in/diego-gonzalez-fernandez";
+const LICENSE_URL = "http://creativecommons.org/licenses/by-nc-nd/4.0/";
+const LICENSE_IMG_SRC = "https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png";
 
-// ⭐️ 2. FUNCIÓN DE UTILIDAD SVG ⭐️
-
-/**
- * Crea la cadena SVG de VortexSpira con colores especificados.
- */
+// ⭐️ 2. FUNCIÓN DE UTILIDAD SVG (VortexSpira) ⭐️
 function createVortexSpiraSVG(primaryColor, accentColor = SECONDARY_COLOR, className = '') {
-    // Nota: El SVG completo va aquí. Se usa 'height' y 'style' para el header.
     return `<svg class="${className}" xmlns="http://www.w3.org/2000/svg" viewBox="-331 132.8 296.2 296.2" height="40" style="vertical-align: middle; margin-right: 10px;">
         <g>
             <path id="XMLID_150_" fill="${accentColor}" d="M-242.5,261.2c31.6,9.9,57.2,15.2,65.9,13.4c-3.2-3.9-5.9-7-11.8-7.6
@@ -152,7 +150,8 @@ function createVortexSpiraSVG(primaryColor, accentColor = SECONDARY_COLOR, class
 // ⭐️ 3. FUNCIÓN DE CARGA DE DATOS ⭐️
 async function loadData(appInstance) {
     try {
-        const response = await fetch('./cursos.json'); 
+        // 🚨 RUTA CORREGIDA: Apuntar a la subcarpeta /data/ 🚨
+        const response = await fetch('./data/cursos.json'); 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -189,5 +188,39 @@ function injectHeaderLogo() {
         if (h1) {
             h1.insertBefore(svgElement, h1.firstChild);
         }
+    }
+}
+
+/**
+ * Crea la cadena SVG del icono de LinkedIn.
+ */
+function createLinkedInSVG(color = FOOTER_ICON_COLOR) {
+    // 🚨 SVG COMPLETO: Retorno del SVG de LinkedIn 🚨
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="${color}" class="linkedin-icon">
+        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3.5v-11h3.5v11zm-1.75-12.25c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.75 12.25h-3.5v-5.603c0-3.368-4-3.535-4 0v5.603h-3.5v-11h3.5v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+    </svg>`;
+}
+
+/**
+ * Inyecta el contenido HTML dinámico en el footer.
+ */
+function injectFooterContent() {
+    const footerContent = document.getElementById('footer-content');
+    const linkedInSvg = createLinkedInSVG();
+    
+    if (footerContent) {
+        footerContent.innerHTML = `
+            &copy;2025 VortexSpira® | 
+            
+            <a href="${LICENSE_URL}" target="_top" aria-label="License CC BY-NC-ND 4.0 description" class="footer-license-link">
+                <img src="${LICENSE_IMG_SRC}" width=88 height=31 alt="Creative Commons License"/>
+            </a>
+            
+            | Desarrollado por Diego González Fernández | 
+            
+            <a href="${LINKEDIN_URL}" target="_top" aria-label="Perfil de LinkedIn" class="footer-social-link">
+                ${linkedInSvg}
+            </a>
+        `;
     }
 }

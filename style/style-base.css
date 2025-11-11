@@ -78,7 +78,6 @@ footer {
     bottom: 0;
     padding: 5px;
     color: #888;
-    /* ⭐️ FIX: Habilitar Flexbox para alineación vertical de contenido ⭐️ */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -96,7 +95,7 @@ header h1 {
 /* Enlaces del footer y debug console */
 footer small {
     display: flex;
-    align-items: center; /* Centra verticalmente todos los elementos internos */
+    align-items: center; 
     gap: 8px; 
 }
 footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
@@ -105,7 +104,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 .footer-social-link:hover, .footer-social-link:focus-visible { /* Mantenido */ }
 .linkedin-icon:hover, .linkedin-icon:focus-visible { /* Mantenido */ }
 .footer-license-link img {
-    height: 16px; /* Ajustar altura para que coincida con el ícono de LinkedIn */
+    height: 16px; 
     width: auto;
     vertical-align: middle;
 }
@@ -259,7 +258,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     position: relative; 
     z-index: 50; 
     
-    /* ⭐️ FIX: Usar altura y ancho dinámicos y margen para alineación TOP ⭐️ */
+    /* 🚨 FIX: Aseguramos el ancho 100% de la columna 🚨 */
     width: 100%; 
     height: var(--card-height-calc) !important; 
     max-height: var(--card-height-calc) !important; 
@@ -268,7 +267,12 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     padding: 1rem;
     cursor: default;
     
+    /* FIX: Simular el offset superior */
     margin-top: var(--nav-carousel-top-offset); 
+    
+    /* 🚨 FIX CRÍTICO: Añadir margen derecho para simular el gap (20px del app-container + 25px de gap) 🚨 */
+    padding-right: 15px; 
+    
     margin-left: auto;
     margin-right: auto;
 
@@ -282,6 +286,10 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     background: transparent;
     transform: none;
     box-shadow: none;
+    
+    /* 🛑 DEPURACIÓN VISUAL: Contorno de la tarjeta Volver 🛑 */
+    outline: 3px solid red; 
+    outline-offset: -1px;
 }
 
 /* Ocultar texto por defecto */
@@ -338,6 +346,14 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     
     /* AJUSTE: Alinear el contenido interno con el carrusel */
     padding-top: calc(var(--nav-carousel-top-offset) + 1.5rem);
+    padding-right: 1.5rem; 
+    
+    /* 🚨 FIX CRÍTICO: Añadir padding izquierdo para simular el gap 🚨 */
+    padding-left: 15px; 
+    
+    /* 🛑 DEPURACIÓN VISUAL: Contorno del panel de información 🛑 */
+    outline: 3px solid red; 
+    outline-offset: -1px;
 }
 #info-adicional p, #info-adicional small {
     width: 100%; 

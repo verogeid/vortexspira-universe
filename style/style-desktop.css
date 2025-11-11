@@ -19,7 +19,7 @@
     position: relative; 
     z-index: 1; 
     
-    /* DEPURACIÓN: Color del borde amarillo (contenedor de la vista central) */
+    /* 🛑 DEPURACIÓN VISUAL: Contenedor Principal (Vista Central) 🛑 */
     border: 5px solid yellow; 
     box-sizing: border-box; 
 }
@@ -31,7 +31,7 @@
   gap: 0; 
   align-items: start;
   
-  /* DEPURACIÓN: Color del borde rojo (contenedor del track de slides) */
+  /* 🛑 DEPURACIÓN VISUAL: Contenedor de Slides (Track) 🛑 */
   border: 3px solid red;
 }
 
@@ -46,7 +46,7 @@
   background: transparent !important; 
   padding: 0 !important; 
   
-  /* DEPURACIÓN: Color del borde azul (cada columna deslizante) */
+  /* 🛑 DEPURACIÓN VISUAL: Cada Columna Deslizante (Slide) 🛑 */
   border: 2px solid blue;
 }
 
@@ -61,8 +61,9 @@
     height: calc(100% - var(--nav-carousel-top-offset)); 
     gap: var(--card-gap); 
     
-    /* ⭐️ FIX: Padding BOTTOM incrementado para evitar colapso/desborde en hover ⭐️ */
-    padding: var(--nav-carousel-top-offset) 15px 40px 15px; 
+    /* 🚨 FIX CRÍTICO: Reducir el padding-bottom para eliminar el espacio sobrante 🚨 */
+    /* Padding: TOP (Offset), RIGHT, BOTTOM (Reducido), LEFT */
+    padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
     
     box-sizing: border-box;
     width: 100%;
@@ -77,7 +78,7 @@
     
     margin-bottom: 0; 
     
-    /* DEPURACIÓN: Color del borde verde (cada tarjeta) */
+    /* 🛑 DEPURACIÓN VISUAL: Cada Tarjeta (Article) 🛑 */
     border: 2px solid limegreen !important;
 }
 
