@@ -305,7 +305,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     justify-content: center;
     cursor: default;
     
-    /* Simular el gap debajo de la tarjeta */
+    /* 🚨 FIX CRÍTICO: Añadir el margin-bottom para el GAP con el relleno 🚨 */
     margin-bottom: var(--card-gap); 
 
     /* 🛑 DEPURACIÓN VISUAL: Contorno del elemento interactivo 🛑 */
@@ -353,7 +353,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     transform: scale(1.03);
     box-shadow: 0 0 25px rgba(0, 123, 255, 0.4); 
 }
-/* 🛑 FIN: ESTILOS PARA LA NUEVA ESTRUCTURA DE COLUMNA IZQUIERDA 🛑 */
 
 
 /* ZONA DE INFORMACIÓN ADICIONAL (Sidebar Derecho) */
@@ -371,7 +370,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     text-align: center;
     box-sizing: border-box;
     
-    /* Simular el gap con la columna central */
+    /* 🚨 FIX CRÍTICO: Usar margin-left para simular el gap con la columna central 🚨 */
     margin-left: var(--card-gap); 
     
     /* AJUSTE: Alinear el contenido interno con el carrusel */
