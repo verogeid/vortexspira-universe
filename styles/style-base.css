@@ -274,8 +274,11 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     /* FIX: Simular padding-bottom simétrico para que space-between funcione */
     padding-bottom: var(--nav-carousel-top-offset); 
     
-    /* Simular el gap con la columna central */
+    /* 🚨 FIX CRÍTICO: Simular el gap con la columna central 🚨 */
     margin-right: var(--card-gap); 
+    
+    /* 🚨 FIX CRÍTICO: Añadir gap entre los elementos hijos 🚨 */
+    gap: var(--card-gap);
     
     /* Limpiar estilos de tarjeta */
     border: none;
@@ -307,7 +310,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     justify-content: center;
     cursor: default;
     
-    /* 🚨 FIX CRÍTICO: Eliminar margin-bottom, el espaciado lo maneja space-between 🚨 */
+    /* FIX: Margin-bottom es 0 porque el espaciado vertical lo maneja el gap del padre */
     margin-bottom: 0; 
 
     /* 🛑 DEPURACIÓN VISUAL: Contorno del elemento interactivo 🛑 */
