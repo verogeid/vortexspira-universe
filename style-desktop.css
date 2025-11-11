@@ -10,17 +10,17 @@
 
 /* ⭐️ 2. LAYOUT DEL CARRUSEL (Swiper) ⭐️ */
 
-/* CRÍTICO: Fija la altura total necesaria (usa la variable de base.css) */
+/* Fija la altura total necesaria (usa la variable de base.css) */
 #nav-swiper {
-    height: var(--nav-desktop-height); 
+    height: 100%; 
     width: 100%; 
     overflow-y: hidden;
     overflow-x: hidden; 
     position: relative; 
     z-index: 1; 
     
-    /* ⭐️ Borde de DEPURACIÓN: Amarillo ⭐️ */
-    border: 5px solid yellow !important; 
+    /* DEPURACIÓN: Color del borde amarillo (contenedor de la vista central) */
+    border: 5px solid yellow; 
     box-sizing: border-box; 
 }
 
@@ -31,13 +31,13 @@
   gap: 0; 
   align-items: start;
   
-  /* ⭐️ Borde de DEPURACIÓN: Rojo ⭐️ */
-  border: 3px solid red !important;
+  /* DEPURACIÓN: Color del borde rojo (contenedor del track de slides) */
+  border: 3px solid red;
 }
 
 /* El Slide ahora es el contenedor de una columna completa */
 .swiper-slide {
-  /* FIX CRÍTICO: Forzar el ancho del slide a 1/3 para ver 3 columnas */
+  /* 🚨 CRÍTICO: Forzar el ancho del slide a 1/3 para ver 3 columnas */
   width: calc(100% / 3) !important; 
   
   height: 100% !important; 
@@ -46,8 +46,8 @@
   background: transparent !important; 
   padding: 0 !important; 
   
-  /* ⭐️ Borde de DEPURACIÓN: Azul ⭐️ */
-  border: 2px solid blue !important;
+  /* DEPURACIÓN: Color del borde azul (cada columna deslizante) */
+  border: 2px solid blue;
 }
 
 
@@ -55,13 +55,14 @@
 .cards-column-group {
     display: flex;
     flex-direction: column; 
-    /* ⭐️ CORRECCIÓN: Apilar al inicio, no estirar ⭐️ */
     justify-content: flex-start; 
-    height: 100%; 
-    gap: var(--card-gap); /* ⭐️ Este es el 'margin-bottom' que preguntabas ⭐️ */
     
-    /* ⭐️ CORRECCIÓN: Padding en todos los lados para dar espacio al scale() ⭐️ */
-    padding: var(--nav-carousel-top-offset) 15px var(--card-gap) 15px;
+    /* 🚨 CRÍTICO: La altura de la columna debe ser 100% menos el padding superior. */
+    height: calc(100% - var(--nav-carousel-top-offset)); 
+    gap: var(--card-gap); 
+    
+    /* Padding en TOP para el offset y en LEFT/RIGHT para el scale */
+    padding: var(--nav-carousel-top-offset) 15px 0 15px; 
     
     box-sizing: border-box;
     width: 100%;
@@ -69,12 +70,15 @@
 
 /* ⭐️ 4. AJUSTES DE TARJETAS ⭐️ */
 .cards-column-group .card {
-    /* ⭐️ CORRECCIÓN: No crecer, usar altura fija ⭐️ */
+    /* Usamos el calc dinámico de style-base (Altura = (100% - 2*gaps) / 3) */
     flex: none; 
-    height: var(--card-height-single);
-    min-height: var(--card-height-single); /* Asegurar la altura fija */
+    height: var(--card-height-calc); 
+    min-height: var(--card-height-calc); 
     
-    /* ⭐️ Borde de DEPURACIÓN: Verde ⭐️ */
+    /* Asegurar que el margin-bottom es solo el gap */
+    margin-bottom: 0; 
+    
+    /* DEPURACIÓN: Color del borde verde (cada tarjeta) */
     border: 2px solid limegreen !important;
 }
 

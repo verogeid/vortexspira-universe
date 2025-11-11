@@ -21,15 +21,17 @@
   /* VARIABLES DE LAYOUT */
   --header-height: 50px;
   --footer-height: 30px;
-  /* --sidebar-column-width: 220px;  <- ELIMINADO: Ahora es flexible (1fr) */
   --card-gap: 25px; 
-  /* Altura individual de una tarjeta */
-  --card-height-single: 250px; 
-  /* Valor de alineación vertical (espacio superior) */
-  --nav-carousel-top-offset: 30px; 
   
-  /* Altura total = (3 * 250px) + (2 * 25px gap) + 30px offset */
-  --nav-desktop-height: 830px; 
+  /* 🚨 CRÍTICO: Redefinir las alturas para ser dinámicas y respetar el 3x3 🚨 */
+  /* Altura individual de una tarjeta = (100% de la columna - 2 * gaps) / 3 */
+  --card-height-calc: calc((100% - (2 * var(--card-gap))) / 3); 
+  
+  /* Altura total = Altura de la vista central (100% de la celda del grid) */
+  --nav-desktop-height: calc(100% - 0px); 
+  
+  /* Offset superior para alineación de la primera tarjeta */
+  --nav-carousel-top-offset: 10px; 
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -87,10 +89,10 @@ header h1 {
 
 /* Enlaces del footer y debug console */
 footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
-.footer-social-link { /* ... (se mantiene la regla) ... */ }
-.linkedin-icon { /* ... (se mantiene la regla) ... */ }
-.footer-social-link:hover, .footer-social-link:focus-visible { /* ... (se mantiene la regla) ... */ }
-.linkedin-icon:hover, .linkedin-icon:focus-visible { /* ... (se mantiene la regla) ... */ }
+.footer-social-link { /* Mantenido */ }
+.linkedin-icon { /* Mantenido */ }
+.footer-social-link:hover, .footer-social-link:focus-visible { /* Mantenido */ }
+.linkedin-icon:hover, .linkedin-icon:focus-visible { /* Mantenido */ }
 #debug-console { color: #ffcc00; font-size: 10px; height: 16px; overflow: hidden; white-space: nowrap; }
 
 
@@ -101,7 +103,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   max-width: 1600px; 
   margin: 0 auto;
   display: grid;
-  /* ⭐️ CORRECCIÓN: Grid Proporcional 1fr (Sidebar) | 3fr (Centro) | 1fr (Sidebar) ⭐️ */
+  /* Grid Proporcional 1fr (Sidebar) | 3fr (Centro) | 1fr (Sidebar) */
   grid-template-columns: 1fr 3fr 1fr; 
   gap: 20px;
   padding: 20px;
@@ -115,7 +117,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 #vista-central {
   grid-column: 2 / 3;
   width: 100%;
-  height: 100%;
+  height: 100%; 
   position: relative; 
   overflow: hidden; 
   display: flex; 
@@ -155,7 +157,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   justify-content: center;
   box-sizing: border-box;
 
-  /* Reset de tamaño, el layout lo definen los archivos desktop/mobile */
   height: auto; 
   min-height: 150px; 
 }
@@ -239,25 +240,23 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 /* Tarjeta Fija de Volver (Sidebar Izquierdo) */
 #card-volver-fija {
     grid-column: 1 / 2;
-    /* ⭐️ CORRECCIÓN: Quitar place-self para usar margin ⭐️ */
-    /* place-self: start center; */
     position: relative; 
     z-index: 50; 
     
+    /* 🚨 CRÍTICO: Usar altura y ancho dinámicos y margen para alineación TOP 🚨 */
     width: 100%; 
-    height: var(--card-height-single) !important; 
-    max-height: var(--card-height-single) !important; 
-    min-height: var(--card-height-single) !important;
+    height: var(--card-height-calc) !important; 
+    max-height: var(--card-height-calc) !important; 
+    min-height: var(--card-height-calc) !important;
     
     padding: 1rem;
     cursor: default;
     
-    /* ⭐️ CORRECCIÓN: Usar margin para alinear ⭐️ */
     margin-top: var(--nav-carousel-top-offset); 
     margin-left: auto;
     margin-right: auto;
 
-    /* LAYOUT: Forzar layout Flexbox */
+    /* LAYOUT: Forzar layout Flexbox para centrado interno */
     display: flex !important; 
     flex-direction: column;
     justify-content: center;
@@ -267,10 +266,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     background: transparent;
     transform: none;
     box-shadow: none;
-    
-    /* Borde de DEPURACIÓN: Amarillo */
-    outline: 3px solid yellow !important; 
-    outline-offset: -1px;
 }
 
 /* Ocultar texto por defecto */
@@ -284,7 +279,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 #card-volver-fija[tabindex="-1"] {
     border: 2px dashed var(--color-card-border) !important; 
     background: transparent !important;
-    outline: 3px solid yellow !important; 
 }
 
 
@@ -292,7 +286,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     border: 2px solid var(--color-primary); 
     background: var(--color-card-bg); 
     cursor: pointer;
-    outline: none !important; 
 }
 
 /* REGLA ACTIVA: Mostrar el texto */
@@ -313,23 +306,19 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 /* ZONA DE INFORMACIÓN ADICIONAL (Sidebar Derecho) */
 #info-adicional {
     grid-column: 3 / 4;
-    /* ⭐️ CORRECCIÓN: Quitar place-self para usar margin ⭐️ */
-    /* place-self: start center; */
     width: 100%; 
-    height: var(--nav-desktop-height); 
+    height: 100%; 
     
     padding: 1.5rem;
     border-radius: 12px;
+    /* Asegurar borde discontinuo */
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
+    
+    /* Usar display: block para que se comporte como una columna de Grid */
     display: block !important; 
     text-align: center;
     box-sizing: border-box;
-    
-    /* ⭐️ CORRECCIÓN: Usar margin para alinear ⭐️ */
-    margin-top: 0; /* Ya se alinea con el grid 'start' */
-    margin-left: auto;
-    margin-right: auto;
     
     /* AJUSTE: Alinear el contenido interno con el carrusel */
     padding-top: calc(var(--nav-carousel-top-offset) + 1.5rem);
