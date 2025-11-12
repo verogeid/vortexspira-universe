@@ -1,4 +1,4 @@
-/* --- desktop-nav.css --- */
+/* --- styles/style-desktop.css --- */
 
 /* ⭐️ 1. VISIBILIDAD DE VISTAS ⭐️ */
 #vista-navegacion-desktop {
@@ -18,10 +18,12 @@
     overflow-x: hidden; 
     position: relative; 
     z-index: 1; 
-    
-    /* 🛑 DEPURACIÓN VISUAL: Contenedor Principal (Vista Central) 🛑 */
-    /*border: 5px solid yellow; 
-    box-sizing: border-box; */
+
+    /* ⭐️⭐️⭐️ LA CORRECCIÓN "SWIPE" (PARTE 2) ⭐️⭐️⭐️
+       Esto le dice al navegador que NO robe el gesto
+       de swipe horizontal.
+    */
+    touch-action: pan-y;
 }
 
 /* El Swiper Wrapper debe comportarse como un contenedor horizontal que Swiper controla */
@@ -30,24 +32,18 @@
   height: 100% !important; 
   gap: 0; 
   align-items: start;
-  
-  /* 🛑 DEPURACIÓN VISUAL: Contenedor de Slides (Track) 🛑 */
-  /*border: 3px solid red;*/
 }
 
 /* El Slide ahora es el contenedor de una columna completa */
 .swiper-slide {
   /* CRÍTICO: Forzar el ancho del slide a 1/3 para ver 3 columnas */
   width: calc(100% / 3) !important; 
-  
+
   height: 100% !important; 
   margin: 0 !important;
   border: none !important; 
   background: transparent !important; 
   padding: 0 !important; 
-  
-  /* 🛑 DEPURACIÓN VISUAL: Cada Columna Deslizante (Slide) 🛑 */
-  /*border: 2px solid blue;*/
 }
 
 
@@ -56,15 +52,14 @@
     display: flex;
     flex-direction: column; 
     justify-content: flex-start; 
-    
+
     /* La altura de la columna debe ser 100% menos el padding superior. */
     height: calc(100% - var(--nav-carousel-top-offset)); 
     gap: var(--card-gap); 
-    
-    /* FIX CRÍTICO: Padding BOTTOM ajustado (15px) */
-    /* Padding: TOP (Offset), RIGHT, BOTTOM (Reducido), LEFT */
+
+    /* Padding: TOP (Offset), RIGHT, BOTTOM, LEFT */
     padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
-    
+
     box-sizing: border-box;
     width: 100%;
 }
@@ -75,11 +70,8 @@
     flex: none; 
     height: var(--card-height-calc); 
     min-height: var(--card-height-calc); 
-    
+
     margin-bottom: 0; 
-    
-    /* 🛑 DEPURACIÓN VISUAL: Cada Tarjeta (Article) 🛑 */
-    /*border: 2px solid limegreen !important;*/
 }
 
 
@@ -92,7 +84,7 @@
   top: 0;
   left: 0;
   z-index: 10; 
-  pointer-events: none;
+  pointer-events: none; /* Importante: no bloquea el swipe */
   overflow: hidden; 
 }
 .mask-left, 
