@@ -1,3 +1,4 @@
+/* --- styles/style-base.css --- */
 /* --- 1. Paleta de Colores (Variables CSS) --- */
 :root {
   /* Fondos */
@@ -22,11 +23,11 @@
   --header-height: 9vh;
   --footer-height: 6vh;
   --card-gap: 3vh; /* Espacio entre tarjetas en el centro */
-  
+
   /* Altura individual de una tarjeta = (100% de la columna - 2 * gaps) / 3 */
   --card-height-calc: calc((100% - (2 * var(--card-gap))) / 3); 
   --nav-desktop-height: calc(100% - 0px); 
-  
+
   /* Offset superior para alinear la tarjeta "Volver" con el carrusel */
   --nav-carousel-top-offset: 2vh; 
 }
@@ -121,7 +122,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   box-sizing: border-box;
   align-items: start;
   background: var(--color-bg);
-  /*box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); */
 }
 
 /* VISTA CENTRAL (Columna 2) y VISTAS ACTIVAS */
@@ -255,78 +255,69 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     grid-column: 1 / 2;
     position: relative; 
     z-index: 50; 
-    
+
     /* ⭐️ CRÍTICO: Configurar como CONTENEDOR DE COLUMNA Flexbox ⭐️ */
     display: flex; 
     flex-direction: column;
     /* 🚨 FIX CRÍTICO: Usar space-between para distribuir el espacio restante 🚨 */
     justify-content: space-between;
-    
+
     height: 100%; 
     width: 100%;
-    
+
     /* Simular el padding/gap del carrusel */
     padding-top: 3vh; /*var(--nav-carousel-top-offset); */
     padding-left: 15px; 
     padding-right: 15px; 
     /* FIX: Simular padding-bottom simétrico al padding-top */
     padding-bottom: 5vh; /*var(--nav-carousel-top-offset); */
-    
+
     /* 🚨 FIX CRÍTICO: Simular el gap con la columna central 🚨 */
     margin-right: var(--card-gap); 
-    
+
     /* 🚨 FIX CRÍTICO: Añadir gap entre los elementos hijos 🚨 */
     gap: var(--card-gap);
-    
+
     /* Limpiar estilos de tarjeta */
     border: none;
     background: transparent;
     box-shadow: none;
     box-sizing: border-box;
-    
-    /* 🛑 DEPURACIÓN VISUAL: Contorno del contenedor de columna 🛑 */
-    /*outline: 3px solid blue; 
-    outline-offset: -1px;*/
 }
 
 /* Elemento Interactivo Real (La tarjeta dentro del contenedor) */
 #card-volver-fija-elemento {
     /* CRÍTICO: Dimensionamiento de tarjeta */
-    /*width: var(--card-width, 100%);*/
     height: 16vh; /*var(--card-height-calc); */
     flex: 0 0 auto;
-    
+
     /* Estilos visuales de tarjeta (Restaurados) */
     border: 2px dashed var(--color-card-border);
     background: transparent;
     padding: 1rem;
     border-radius: 12px;
-    
+
     /* Diseño interno */
     display: flex !important; 
     flex-direction: column;
     justify-content: center;
     cursor: default;
     
+    /* Centrar el texto (para el emoji) */
+    align-items: center;
+
     /* FIX: Margin-bottom es 0 porque el espaciado vertical lo maneja el gap del padre */
     margin-bottom: 0; 
-
-    /* 🛑 DEPURACIÓN VISUAL: Contorno del elemento interactivo 🛑 */
-    /*outline: 3px solid red; 
-    outline-offset: -1px;*/
 }
 
 /* Elemento de Relleno (ocupa el resto del espacio) */
 #columna-volver-relleno {
     flex-grow: 1; /* Ocupa el resto del espacio vertical */
     width: 100%;
-    
-    /* Estilo de depuración para ver el relleno */
-    /*border: 2px dashed rgba(255, 255, 0, 0.3);*/
     border: none;
 }
 
-/* Ocultar texto por defecto */
+/* Ocultar texto por defecto (el h3 del emoji) */
 #card-volver-fija-elemento h3 {
     display: none; 
     margin: 0;
@@ -364,27 +355,23 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     grid-column: 3 / 4;
     width: 100%; 
     height: 100%; 
-    
+
     padding: 1rem;
     border-radius: 12px;
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
-    
+
     display: block !important; 
     text-align: left;
     box-sizing: border-box;
-    
+
     /* 🚨 FIX CRÍTICO: Usar margin-left de 0 🚨 */
     margin-left: 0; 
-    
+
     /* AJUSTE: Alinear el contenido interno con el carrusel */
     padding-top: calc(var(--nav-carousel-top-offset) + 1.5rem);
     padding-right: 1.5rem; 
     padding-left: 1.5rem; 
-    
-    /* 🛑 DEPURACIÓN VISUAL: Contorno del panel de información 🛑 */
-    /*outline: 3px solid red; 
-    outline-offset: -1px;*/
 }
 #info-adicional p, #info-adicional small {
     width: 100%; 
@@ -413,4 +400,39 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   .card:hover, .card:focus-visible, #card-volver-fija:hover, #card-volver-fija:focus-visible {
     transform: none; box-shadow: none;
   }
+}
+
+/*
+ * ⭐️ 5. ESTILOS DEL EMOJI "VOLVER" (AÑADIDO) ⭐️
+ */
+
+/* Reglas comunes para el h3 que contiene el emoji */
+#card-volver-fija-elemento h3,
+.card-volver-vertical h3 {
+    text-align: center;
+    margin: 0;
+    line-height: 1;
+    /* 1. Hereda el color del texto por defecto */
+    color: inherit; 
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+/* 2. Tamaño del emoji en DESKTOP (basado en la altura de la tarjeta) */
+#card-volver-fija-elemento h3 {
+    font-size: clamp(4rem, 8vh, 100px); /* Ajusta 8vh si es necesario */
+}
+
+/* 3. Tamaño del emoji en MÓVIL (un tamaño fijo grande) */
+.card-volver-vertical h3 {
+    font-size: 5rem; /* 5rem suele ser un buen tamaño en móvil */
+}
+
+/* 4. Color al estar ACTIVO (hover/focus) 
+      Hacemos que el emoji herede el color primario */
+#card-volver-fija-elemento[tabindex="0"]:hover h3,
+#card-volver-fija-elemento[tabindex="0"]:focus-visible h3,
+.card-volver-vertical:hover h3,
+.card-volver-vertical:focus-visible h3 {
+    color: var(--color-primary);
+    transform: scale(1.1); /* Efecto extra opcional */
 }
