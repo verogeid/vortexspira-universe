@@ -30,7 +30,7 @@
               }
           });
       }
-      
+
       // La lógica de 'keydown' para todo el documento se moverá a nav-teclado.js
     };
 
@@ -95,7 +95,7 @@
         if (this.DOM.vistaDetalle.classList.contains('active')) {
             this.DOM.vistaDetalle.classList.remove('active');
             this.DOM.vistaNav.classList.add('active');
-            
+
             // Reestablecer tabIndex de elementos de detalle
             this.DOM.cardVolverFija.tabIndex = -1;
             this.DOM.btnVolverNav.tabIndex = -1;
@@ -170,7 +170,7 @@
           primerElementoFocuseable.focus();
       }
     };
-    
+
     // ⭐️ 4. FUNCIÓN HELPER: Obtener elementos focuseables del detalle ⭐️
     // Se necesita en la vista detalle para navegación por flechas y Tab
     App._getFocusableDetailElements = function() {
@@ -191,6 +191,43 @@
 
         // Devolvemos todos los elementos con tabindex=0 (o que son botones/enlaces sin -1)
         return elements.filter(el => el && el.tabIndex !== -1);
+    };
+
+    // ⭐️ 5. HELPER DE FOCO TÁCTIL (AÑADIDO) ⭐️
+    // Esta es la lógica clave que pediste para TÁCTIL (y teclado L/R)
+    /**
+     * Encuentra la mejor tarjeta para enfocar en una columna, dada una fila objetivo.
+     * @param {Array<HTMLElement>} columnCards - Array de elementos .card en la columna (incluye rellenos).
+     * @param {number} targetRow - El índice de fila (0, 1, o 2) que se desea enfocar.
+     * @returns {HTMLElement | null} La tarjeta focuseable encontrada.
+     */
+    App.findBestFocusInColumn = function(columnCards, targetRow) {
+        
+        const isFocusable = (card) => {
+            return card && card.dataset.id && card.dataset.tipo !== 'relleno' && !card.classList.contains('disabled');
+        };
+
+        // 1. Intentar la misma fila
+        if (isFocusable(columnCards[targetRow])) {
+            return columnCards[targetRow];
+        }
+
+        // 2. Buscar hacia ARRIBA (desde la fila objetivo - 1)
+        for (let i = targetRow - 1; i >= 0; i--) {
+            if (isFocusable(columnCards[i])) {
+                return columnCards[i];
+            }
+        }
+
+        // 3. Buscar hacia ABAJO (desde la fila objetivo + 1)
+        for (let i = targetRow + 1; i < columnCards.length; i++) {
+            if (isFocusable(columnCards[i])) {
+                return columnCards[i];
+            }
+        }
+
+        // 4. Si no hay nada, no devuelve nada (raro)
+        return null;
     };
 
 
