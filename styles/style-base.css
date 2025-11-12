@@ -391,7 +391,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     display: block;
 }
 #info-adicional ul {
-    padding-left: 0; /* Quita el padding izquierdo por defecto */
+    padding-left: 10px; /* Quita el padding izquierdo por defecto */
     margin-top: 0.5rem;
     font-size: 0.9rem;
 }
