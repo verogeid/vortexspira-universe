@@ -321,7 +321,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 #card-volver-fija-elemento h3 {
     display: none; 
     margin: 0;
-    font-size: 1.2rem;
+    font-size: clamp(4rem, 8vh, 100px);
 }
 
 /* REGLAS DE ESTADO: Aplicadas al elemento interactivo */
