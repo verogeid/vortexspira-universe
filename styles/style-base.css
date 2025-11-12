@@ -11,6 +11,9 @@
   --color-card-border: #bbb;
   --color-card-border-disabled: #ccc;
 
+  /* ⭐️ Color para el emoji (Blanco por defecto) */
+  --color-emoji-default: #fff;
+
   /* Acentos (Ghost) */
   --color-primary: #007bff;
   --color-primary-bg: rgba(0, 123, 255, 0.1);
@@ -39,6 +42,9 @@
     --color-text: #eee;
     --color-card-border: #aaa; 
     --color-card-border-disabled: #666; 
+    
+    /* ⭐️ Color para el emoji (Blanco-ish en modo oscuro) */
+    --color-emoji-default: #eee;
   }
 }
 
@@ -114,9 +120,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   max-width: 1600px; 
   margin: 0 auto;
   display: grid;
-  /* Grid Proporcional 1fr (Sidebar) | 3fr (Centro) | 1fr (Sidebar) */
   grid-template-columns: 1fr 3fr 1fr; 
-  /* Eliminamos el gap del grid para que las celdas se toquen y usamos margins */
   gap: 20px; 
   padding: 20px;
   box-sizing: border-box;
@@ -156,7 +160,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 /* --- 3. Estilos Base de las Tarjetas (<article class="card">) --- */
 
 .card {
-  /* Estilos visuales comunes (aplicados tanto en móvil como en desktop) */
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
   padding: 1.5rem;
@@ -167,7 +170,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   flex-direction: column;
   justify-content: center;
   box-sizing: border-box;
-
   height: auto; 
   min-height: 150px; 
 }
@@ -188,7 +190,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   box-shadow: 0 0 25px rgba(0, 123, 255, 0.4); 
 }
 
-/* Tarjeta deshabilitada - Borde Continuo Gris Oscuro */
+/* Tarjeta deshabilitada */
 .card.disabled {
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);
@@ -209,7 +211,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   box-shadow: 0 0 20px rgba(150, 150, 150, 0.2); 
 }
 
-/* Tarjetas de relleno: Pasivas/Discontinuas */
+/* Tarjetas de relleno */
 .card[data-tipo="relleno"] {
     border: 2px dashed var(--color-card-border); 
     background: transparent;
@@ -228,7 +230,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 
 /* --- 4. Elementos de la Vista Detalle y Adicional --- */
 
-/* Elementos comunes de navegación que usan el estilo 'Ghost' */
 .enlace-curso {
     display: inline-block;
     padding: 1rem; 
@@ -248,83 +249,60 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     box-shadow: 0 0 25px rgba(0, 123, 255, 0.4);
 }
 
-/* 🛑 INICIO: ESTILOS PARA LA NUEVA ESTRUCTURA DE COLUMNA IZQUIERDA 🛑 */
+/* 🛑 INICIO: ESTILOS COLUMNA IZQUIERDA (VOLVER) 🛑 */
 
-/* Contenedor de la Columna (el elemento que está en grid-column: 1 / 2) */
 #card-volver-fija {
     grid-column: 1 / 2;
     position: relative; 
     z-index: 50; 
-
-    /* ⭐️ CRÍTICO: Configurar como CONTENEDOR DE COLUMNA Flexbox ⭐️ */
     display: flex; 
     flex-direction: column;
-    /* 🚨 FIX CRÍTICO: Usar space-between para distribuir el espacio restante 🚨 */
     justify-content: space-between;
-
     height: 100%; 
     width: 100%;
-
-    /* Simular el padding/gap del carrusel */
-    padding-top: 3vh; /*var(--nav-carousel-top-offset); */
+    padding-top: 3vh;
     padding-left: 15px; 
     padding-right: 15px; 
-    /* FIX: Simular padding-bottom simétrico al padding-top */
-    padding-bottom: 5vh; /*var(--nav-carousel-top-offset); */
-
-    /* 🚨 FIX CRÍTICO: Simular el gap con la columna central 🚨 */
+    padding-bottom: 5vh;
     margin-right: var(--card-gap); 
-
-    /* 🚨 FIX CRÍTICO: Añadir gap entre los elementos hijos 🚨 */
     gap: var(--card-gap);
-
-    /* Limpiar estilos de tarjeta */
     border: none;
     background: transparent;
     box-shadow: none;
     box-sizing: border-box;
 }
 
-/* Elemento Interactivo Real (La tarjeta dentro del contenedor) */
+/* Elemento Interactivo Real */
 #card-volver-fija-elemento {
-    /* CRÍTICO: Dimensionamiento de tarjeta */
-    height: 16vh; /*var(--card-height-calc); */
+    height: 16vh; /* Altura fija */
     flex: 0 0 auto;
-
-    /* Estilos visuales de tarjeta (Restaurados) */
     border: 2px dashed var(--color-card-border);
     background: transparent;
     padding: 1rem;
     border-radius: 12px;
-
-    /* Diseño interno */
     display: flex !important; 
     flex-direction: column;
     justify-content: center;
+    align-items: center; /* Centrado horizontal */
     cursor: default;
-    
-    /* Centrar el texto (para el emoji) */
-    align-items: center;
-
-    /* FIX: Margin-bottom es 0 porque el espaciado vertical lo maneja el gap del padre */
     margin-bottom: 0; 
+    overflow: hidden; /* Evita que el emoji se desborde */
 }
 
-/* Elemento de Relleno (ocupa el resto del espacio) */
+/* Elemento de Relleno */
 #columna-volver-relleno {
-    flex-grow: 1; /* Ocupa el resto del espacio vertical */
+    flex-grow: 1;
     width: 100%;
     border: none;
 }
 
-/* Ocultar texto por defecto (el h3 del emoji) */
+/* Ocultar h3 por defecto */
 #card-volver-fija-elemento h3 {
     display: none; 
     margin: 0;
-    font-size: clamp(4rem, 8vh, 100px);
 }
 
-/* REGLAS DE ESTADO: Aplicadas al elemento interactivo */
+/* Reglas de Estado (Aplicadas al elemento interactivo) */
 #card-volver-fija-elemento[tabindex="-1"] {
     border: 2px dashed var(--color-card-border) !important; 
     background: transparent !important;
@@ -335,11 +313,11 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     background: var(--color-card-bg); 
     cursor: pointer;
 }
-/* REGLA ACTIVA: Mostrar el texto */
+/* Mostrar h3 cuando está activo */
 #card-volver-fija-elemento[tabindex="0"] h3 {
     display: block; 
 }
-/* Reglas de hover/focus se mantienen en el elemento */
+/* Hover/Focus */
 #card-volver-fija-elemento[tabindex="0"]:hover,
 #card-volver-fija-elemento[tabindex="0"]:focus-visible {
     outline: none;
@@ -355,20 +333,14 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     grid-column: 3 / 4;
     width: 100%; 
     height: 100%; 
-
     padding: 1rem;
     border-radius: 12px;
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
-
     display: block !important; 
     text-align: left;
     box-sizing: border-box;
-
-    /* 🚨 FIX CRÍTICO: Usar margin-left de 0 🚨 */
     margin-left: 0; 
-
-    /* AJUSTE: Alinear el contenido interno con el carrusel */
     padding-top: calc(var(--nav-carousel-top-offset) + 1.5rem);
     padding-right: 1.5rem; 
     padding-left: 1.5rem; 
@@ -403,7 +375,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 }
 
 /*
- * ⭐️ 5. ESTILOS DEL EMOJI "VOLVER" (AÑADIDO) ⭐️
+ * ⭐️ 5. ESTILOS DEL EMOJI "VOLVER" (MODIFICADO) ⭐️
  */
 
 /* Reglas comunes para el h3 que contiene el emoji */
@@ -411,28 +383,48 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 .card-volver-vertical h3 {
     text-align: center;
     margin: 0;
-    line-height: 1;
-    /* 1. Hereda el color del texto por defecto */
-    color: inherit; 
+    line-height: 1; /* Resetear line-height */
+    transition: color 0.2s ease, transform 0.2s ease;
+    width: 100%;
+    
+    /* Forzar que el emoji sea tratado como texto */
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "cv01";
+    -webkit-font-feature-settings: "cv01";
+}
+
+/* El <span> dentro del h3 es el que tiene el emoji y el color */
+#card-volver-fija-elemento h3 span,
+.card-volver-vertical h3 span {
+    display: inline-block;
+    color: var(--color-emoji-default); /* ⭐️ Blanco/Eee por defecto */
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
-/* 2. Tamaño del emoji en DESKTOP (basado en la altura de la tarjeta) */
+
+/* Tamaño del emoji en DESKTOP (basado en la altura de la tarjeta) */
 #card-volver-fija-elemento h3 {
-    font-size: clamp(4rem, 8vh, 100px); /* Ajusta 8vh si es necesario */
+    /* ⭐️ Ajusta la altura de línea a la altura de la tarjeta */
+    line-height: 16vh; 
+    /* ⭐️ Ajusta el font-size para que quepa dentro de esa altura */
+    font-size: 10vh; /* Ligeramente más pequeño que la altura */
 }
 
-/* 3. Tamaño del emoji en MÓVIL (un tamaño fijo grande) */
+/* Tamaño del emoji en MÓVIL (un tamaño fijo grande) */
 .card-volver-vertical h3 {
-    font-size: 5rem; /* 5rem suele ser un buen tamaño en móvil */
+    font-size: 5rem; 
+    padding: 1rem 0;
+}
+.card-volver-vertical h3 span {
+    color: var(--color-text); /* En móvil, usar el color de texto normal */
 }
 
-/* 4. Color al estar ACTIVO (hover/focus) 
-      Hacemos que el emoji herede el color primario */
-#card-volver-fija-elemento[tabindex="0"]:hover h3,
-#card-volver-fija-elemento[tabindex="0"]:focus-visible h3,
-.card-volver-vertical:hover h3,
-.card-volver-vertical:focus-visible h3 {
-    color: var(--color-primary);
-    transform: scale(1.1); /* Efecto extra opcional */
+
+/* ⭐️ Color al estar ACTIVO (hover/focus) */
+#card-volver-fija-elemento[tabindex="0"]:hover h3 span,
+#card-volver-fija-elemento[tabindex="0"]:focus-visible h3 span,
+.card-volver-vertical:hover h3 span,
+.card-volver-vertical:focus-visible h3 span {
+    color: var(--color-primary); /* ⭐️ Azul Ghost al enfocar */
+    transform: scale(1.1);
 }
