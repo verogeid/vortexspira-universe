@@ -89,7 +89,7 @@ header h1 {
     line-height: 1.2;
 }
 
-/* Enlaces del footer */
+/* Enlaces del footer y debug console */
 footer small {
     display: flex;
     align-items: center; 
@@ -105,6 +105,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     width: auto;
     vertical-align: middle;
 }
+/* 🛑 DEBUG: Eliminado #debug-console 🛑 */
+
 
 /* ⭐️ CONTENEDOR PRINCIPAL: GRID 1-3-1 (Desktop Default) ⭐️ */
 #app-container {
@@ -292,8 +294,9 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 /* Elemento Interactivo Real (La tarjeta dentro del contenedor) */
 #card-volver-fija-elemento {
     /* CRÍTICO: Dimensionamiento de tarjeta */
-    width: var(--card-width, 100%);
-    height: var(--card-height-calc); 
+    width: 100%; 
+    /* 🚨 FIX CRÍTICO: Restaurar la altura CLAMP original que dimensiona bien la celda 🚨 */
+    height: clamp(150px, 20vh, 180px);
     flex: 0 0 auto;
     
     /* Estilos visuales de tarjeta (Restaurados) */
@@ -310,7 +313,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     
     /* FIX: Margin-bottom es 0 porque el espaciado vertical lo maneja el gap del padre */
     margin-bottom: 0; 
-    margin-right: var(--card-gap);
 
     /* 🛑 DEPURACIÓN VISUAL: Contorno del elemento interactivo 🛑 */
     outline: 3px solid red; 
@@ -365,14 +367,12 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     width: 100%; 
     height: 100%; 
     
-    padding: 1rem;
+    padding: 1.5rem;
     border-radius: 12px;
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
     
     display: block !important; 
-    text-align: left;
-    box-sizing: border-box;
     
     /* 🚨 FIX CRÍTICO: Usar margin-left de 0 🚨 */
     margin-left: 0; 
@@ -388,11 +388,14 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 }
 #info-adicional p, #info-adicional small {
     width: 100%; 
-    text-align: left;
+    /* FIX: Usamos el text-align: left del padre */
+    text-align: left; 
     display: block;
 }
+/* Estilos para la lista de info (asumimos que está dentro de small/p) */
 #info-adicional ul {
-    padding-left: 15px;
+    list-style-type: none; /* Quita viñetas por defecto */
+    padding-left: 0; /* Quita el padding izquierdo por defecto */
     margin-top: 0.5rem;
     font-size: 0.9rem;
 }
@@ -400,7 +403,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     margin-bottom: 0.2rem;
 }
 #info-adicional p { margin-bottom: 0.5rem; }
-#info-adicional small { color: #999; font-size: 0.8rem; }
 
 
 /* Botón Volver (Móvil) */
