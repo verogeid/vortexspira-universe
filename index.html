@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VortexSpira®: Selector de Cursos</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    
+
     <link rel="stylesheet" href="styles/style-base.css">
     <link rel="stylesheet" href="styles/style-desktop.css">
     <link rel="stylesheet" href="styles/style-mobile.css">
@@ -20,16 +20,15 @@
   <main id="app-container">
 
     <div id="card-volver-fija"> 
-        
         <div id="card-volver-fija-elemento" 
             role="button" tabindex="-1">
-            <h3>🔙</h3>
+            <h3>🔙&#xFE0E;</h3>
         </div>
-        
         <div id="columna-volver-relleno"></div>
     </div>
+
     <div id="vista-central">
-        
+
         <div id="vista-navegacion-desktop" class="vista active">
             <div class="carousel-mask">
                 <div class="mask-left"></div>
@@ -37,10 +36,10 @@
             </div>
             <div id="nav-swiper" class="swiper carousel-viewport">
                 <div class="swiper-wrapper grid-track" id="track-desktop">
-                </div>
+                    </div>
             </div>
         </div>
-        
+
         <div id="vista-navegacion-mobile" class="vista">
             <div class="mobile-track" id="track-mobile">
                 </div>
@@ -51,7 +50,7 @@
                 </div>
         </div>
     </div>
-    
+
     <div id="info-adicional" style="display: none;">
         <p>Ayuda Rápida:</p>
         <small>
@@ -63,28 +62,29 @@
     </div>
 
   </main>
-    
+
   <button id="btn-volver-navegacion" style="display: none;" tabindex="-1">
     &larr; Volver
   </button>
-  
+
   <footer>
     <small id="footer-content">
-    </small>
+      </small>
   </footer>
-  
+
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  
+
   <script src="code/debug.js"></script>
   <script src="code/data.js"></script>
   <script src="code/app.js"></script>
 
-  <script src="code/nav-base.js"></script>
-  <script src="code/nav-keyboard.js"></script>
-  
   <script src="code/render-base.js"></script>
   <script src="code/render-desktop.js"></script> 
   <script src="code/render-mobile.js"></script>
+
+  <script src="code/nav-base.js"></script>
+  <script src="code/nav-keyboard.js"></script>
+  <script src="code/nav-tactil.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -95,7 +95,8 @@
         if (typeof injectFooterContent === 'function') {
             injectFooterContent(); 
         }
-        
+
+        // Iniciar la aplicación
         if (window.App && window.App.init) {
             App.init();
         }
