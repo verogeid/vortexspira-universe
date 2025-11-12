@@ -364,7 +364,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     width: 100%; 
     height: 100%; 
     
-    padding: 1.5rem;
+    padding: 1rem;
     border-radius: 12px;
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
@@ -387,7 +387,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 }
 #info-adicional p, #info-adicional small {
     width: 100%; 
-    text-align: center;
+    text-align: left;
     display: block;
 }
 #info-adicional p { margin-bottom: 0.5rem; }
