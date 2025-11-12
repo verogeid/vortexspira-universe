@@ -394,8 +394,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 }
 /* Estilos para la lista de info (asumimos que está dentro de small/p) */
 #info-adicional ul {
-    list-style-type: none; /* Quita viñetas por defecto */
-    padding-left: 0; /* Quita el padding izquierdo por defecto */
+    padding-left: 15px; /* Quita el padding izquierdo por defecto */
     margin-top: 0.5rem;
     font-size: 0.9rem;
 }
