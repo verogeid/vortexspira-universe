@@ -4,7 +4,7 @@
     // ⭐️ 1. FUNCIÓN DE GENERACIÓN DE HTML ESPECÍFICA PARA DESKTOP ⭐️
     App._generateCardHTML_Desktop = function(items, itemsPerSlide) {
         let html = '';
-        
+
         // ⭐️ CORRECCIÓN CRÍTICA: Añadir una columna de Relleno al PRINCIPIO ⭐️
         let rellenoInicial = '';
         for (let k = 0; k < itemsPerSlide; k++) {
@@ -16,7 +16,7 @@
         // 1. Preparar datos con relleno (para el final)
         const totalItems = items.length;
         let totalSlotsDeseados = Math.ceil(totalItems / itemsPerSlide) * itemsPerSlide; 
-        
+
         // Asegurar un mínimo de 2 slides de datos/relleno (además del slide inicial)
         const minDataSlides = 2;
         if (totalSlotsDeseados < (minDataSlides * itemsPerSlide)) {
@@ -62,7 +62,7 @@
             App._destroyCarousel();
             return;
         }
-        
+
         if (App.STATE.carouselInstance) {
             App.STATE.carouselInstance.update();
             return;
@@ -73,16 +73,22 @@
             slidesPerView: 3, 
             slidesPerGroup: 1, 
             loop: true, 
-            
-            initialSlide: 0, 
-            
+
+            // Usar el índice calculado (slide de DATOS)
+            // Sumamos 1 porque el índice 0 es nuestro slide de relleno
+            initialSlide: initialSwiperSlide + 1,
+
             touchRatio: 1, 
-            simulateTouch: true,
+            
+            // ❗️❗️❗️ LA CORRECCIÓN ❗️❗️❗️
+            // Poner en 'false' para usar eventos táctiles reales
+            simulateTouch: false,
+            
             centeredSlides: true,
             mousewheel: { 
                 sensitivity: 1 
             }, 
-            keyboard: { enabled: false }, 
+            keyboard: { enabled: false }, // Deshabilitado, lo controlamos nosotros
             speed: 400,
             freeMode: false,
             autoHeight: false,
@@ -96,14 +102,10 @@
         };
 
         App.STATE.carouselInstance = new Swiper(document.getElementById('nav-swiper'), swiperConfig);
-        
+
         if (App.STATE.carouselInstance) {
             App.STATE.carouselInstance.update(); 
-            
-            // ⭐️ CORRECCIÓN CRÍTICA: Forzar el centrado en el primer slide de DATOS (índice 1) ⭐️
-            App.STATE.carouselInstance.slideToLoop(1, 0); 
-            
-            console.log("Swiper inicializado, actualizado y centrado en el slide 1.");
+            console.log(`Swiper inicializado. Slide inicial de datos: ${initialSwiperSlide} (Real: ${initialSwiperSlide + 1})`);
         }
     };
 
