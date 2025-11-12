@@ -121,7 +121,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   box-sizing: border-box;
   align-items: start;
   background: var(--color-bg);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); 
+  /*box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); */
 }
 
 /* VISTA CENTRAL (Columna 2) y VISTAS ACTIVAS */
@@ -285,8 +285,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     box-sizing: border-box;
     
     /* 🛑 DEPURACIÓN VISUAL: Contorno del contenedor de columna 🛑 */
-    outline: 3px solid blue; 
-    outline-offset: -1px;
+    /*outline: 3px solid blue; 
+    outline-offset: -1px;*/
 }
 
 /* Elemento Interactivo Real (La tarjeta dentro del contenedor) */
@@ -312,8 +312,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     margin-bottom: 0; 
 
     /* 🛑 DEPURACIÓN VISUAL: Contorno del elemento interactivo 🛑 */
-    outline: 3px solid red; 
-    outline-offset: -1px;
+    /*outline: 3px solid red; 
+    outline-offset: -1px;*/
 }
 
 /* Elemento de Relleno (ocupa el resto del espacio) */
@@ -322,7 +322,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     width: 100%;
     
     /* Estilo de depuración para ver el relleno */
-    border: 2px dashed rgba(255, 255, 0, 0.3);
+    /*border: 2px dashed rgba(255, 255, 0, 0.3);*/
+    border: none;
 }
 
 /* Ocultar texto por defecto */
@@ -382,8 +383,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     padding-left: 1.5rem; 
     
     /* 🛑 DEPURACIÓN VISUAL: Contorno del panel de información 🛑 */
-    outline: 3px solid red; 
-    outline-offset: -1px;
+    /*outline: 3px solid red; 
+    outline-offset: -1px;*/
 }
 #info-adicional p, #info-adicional small {
     width: 100%; 

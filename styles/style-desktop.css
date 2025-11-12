@@ -20,8 +20,8 @@
     z-index: 1; 
     
     /* 🛑 DEPURACIÓN VISUAL: Contenedor Principal (Vista Central) 🛑 */
-    border: 5px solid yellow; 
-    box-sizing: border-box; 
+    /*border: 5px solid yellow; 
+    box-sizing: border-box; */
 }
 
 /* El Swiper Wrapper debe comportarse como un contenedor horizontal que Swiper controla */
@@ -32,7 +32,7 @@
   align-items: start;
   
   /* 🛑 DEPURACIÓN VISUAL: Contenedor de Slides (Track) 🛑 */
-  border: 3px solid red;
+  /*border: 3px solid red;*/
 }
 
 /* El Slide ahora es el contenedor de una columna completa */
@@ -47,7 +47,7 @@
   padding: 0 !important; 
   
   /* 🛑 DEPURACIÓN VISUAL: Cada Columna Deslizante (Slide) 🛑 */
-  border: 2px solid blue;
+  /*border: 2px solid blue;*/
 }
 
 
@@ -79,7 +79,7 @@
     margin-bottom: 0; 
     
     /* 🛑 DEPURACIÓN VISUAL: Cada Tarjeta (Article) 🛑 */
-    border: 2px solid limegreen !important;
+    /*border: 2px solid limegreen !important;*/
 }
 
 
