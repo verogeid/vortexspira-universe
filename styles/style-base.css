@@ -292,7 +292,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 /* Elemento Interactivo Real (La tarjeta dentro del contenedor) */
 #card-volver-fija-elemento {
     /* CRÍTICO: Dimensionamiento de tarjeta */
-    width: var(--card-width, 100%);
+    /*width: var(--card-width, 100%);*/
     height: var(--card-height-calc); 
     flex: 0 0 auto;
     
