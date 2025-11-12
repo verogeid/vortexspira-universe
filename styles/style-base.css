@@ -11,7 +11,7 @@
   --color-card-border: #bbb;
   --color-card-border-disabled: #ccc;
 
-  /* ⭐️ Color para el emoji (Blanco por defecto) */
+  /* Color para el emoji (si se usara) */
   --color-emoji-default: #fff;
 
   /* Acentos (Ghost) */
@@ -43,7 +43,6 @@
     --color-card-border: #aaa; 
     --color-card-border-disabled: #666; 
     
-    /* ⭐️ Color para el emoji (Blanco-ish en modo oscuro) */
     --color-emoji-default: #eee;
   }
 }
@@ -274,55 +273,65 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 
 /* Elemento Interactivo Real */
 #card-volver-fija-elemento {
-    height: 16vh; /* Altura fija */
+    height: 16vh; /* Mantenemos la altura proporcional original */
     flex: 0 0 auto;
-    border: 2px dashed var(--color-card-border);
-    background: transparent;
-    padding: 1rem;
+    
+    /* Propiedades base para layout */
+    padding: 0.5rem;
     border-radius: 12px;
     display: flex !important; 
     flex-direction: column;
     justify-content: center;
-    align-items: center; /* Centrado horizontal */
-    cursor: default;
+    align-items: center;
     margin-bottom: 0; 
-    overflow: hidden; /* Evita que el emoji se desborde */
+    overflow: hidden; /* Evita que el botón "BACK" desborde */
+    box-sizing: border-box; 
+    
+    /* Transición para el efecto "Ghost" */
+    transition: all 0.2s ease;
 }
 
-/* Elemento de Relleno */
-#columna-volver-relleno {
-    flex-grow: 1;
-    width: 100%;
-    border: none;
-}
-
-/* Ocultar h3 por defecto */
-#card-volver-fija-elemento h3 {
-    display: none; 
+/* ⭐️ SOLUCIÓN AL DESBORDAMIENTO ⭐️
+   Fuerza a tu botón "BACK" a encogerse
+*/
+#card-volver-fija-elemento > * {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
     margin: 0;
 }
 
-/* Reglas de Estado (Aplicadas al elemento interactivo) */
+/* --- ⭐️ LÓGICA DE FOCO PARA "VOLVER" (CORREGIDA) ⭐️ --- */
+
+/* Regla 1: Nivel Raíz (Deshabilitado) */
 #card-volver-fija-elemento[tabindex="-1"] {
-    border: 2px dashed var(--color-card-border) !important; 
-    background: transparent !important;
+    border: 2px dashed var(--color-card-border);
+    background: transparent;
+    cursor: default;
+}
+/* Ocultar contenido si está inactivo */
+#card-volver-fija-elemento[tabindex="-1"] > * {
+    display: none;
 }
 
+
+/* Regla 2: Sub-nivel (Habilitado, sin foco) */
 #card-volver-fija-elemento[tabindex="0"] {
-    border: 2px solid var(--color-primary); 
-    background: var(--color-card-bg); 
+    border: 2px solid var(--color-card-border); /* Borde continuo */
+    background: var(--color-card-bg); /* Fondo de tarjeta normal */
     cursor: pointer;
 }
-/* Mostrar h3 cuando está activo */
-#card-volver-fija-elemento[tabindex="0"] h3 {
-    display: block; 
+/* Mostrar contenido si está disponible */
+#card-volver-fija-elemento[tabindex="0"] > * {
+    display: block; /* O 'flex', lo que necesite tu botón */
 }
-/* Hover/Focus */
+
+
+/* Regla 3: Sub-nivel (CON Foco Real) */
 #card-volver-fija-elemento[tabindex="0"]:hover,
 #card-volver-fija-elemento[tabindex="0"]:focus-visible {
     outline: none;
-    border-color: var(--color-primary);
-    background: var(--color-card-bg); 
+    border-color: var(--color-primary); /* Borde azul "Ghost" */
     transform: scale(1.03);
     box-shadow: 0 0 25px rgba(0, 123, 255, 0.4); 
 }
@@ -375,7 +384,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 }
 
 /*
- * ⭐️ 5. ESTILOS DEL EMOJI "VOLVER" (MODIFICADO) ⭐️
+ * ⭐️ 5. ESTILOS DEL EMOJI "VOLVER" (Si se usara) ⭐️
+ * (Se mantiene por si vuelves a usar el emoji)
  */
 
 /* Reglas comunes para el h3 que contiene el emoji */
@@ -383,11 +393,10 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 .card-volver-vertical h3 {
     text-align: center;
     margin: 0;
-    line-height: 1; /* Resetear line-height */
+    line-height: 1; 
     transition: color 0.2s ease, transform 0.2s ease;
     width: 100%;
     
-    /* Forzar que el emoji sea tratado como texto */
     text-rendering: optimizeLegibility;
     font-feature-settings: "cv01";
     -webkit-font-feature-settings: "cv01";
@@ -397,34 +406,30 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 #card-volver-fija-elemento h3 span,
 .card-volver-vertical h3 span {
     display: inline-block;
-    color: var(--color-emoji-default); /* ⭐️ Blanco/Eee por defecto */
+    color: var(--color-emoji-default); 
     transition: color 0.2s ease, transform 0.2s ease;
 }
 
-
-/* Tamaño del emoji en DESKTOP (basado en la altura de la tarjeta) */
+/* Tamaño del emoji en DESKTOP */
 #card-volver-fija-elemento h3 {
-    /* ⭐️ Ajusta la altura de línea a la altura de la tarjeta */
     line-height: 16vh; 
-    /* ⭐️ Ajusta el font-size para que quepa dentro de esa altura */
-    font-size: 10vh; /* Ligeramente más pequeño que la altura */
+    font-size: 10vh; 
 }
 
-/* Tamaño del emoji en MÓVIL (un tamaño fijo grande) */
+/* Tamaño del emoji en MÓVIL */
 .card-volver-vertical h3 {
     font-size: 5rem; 
     padding: 1rem 0;
 }
 .card-volver-vertical h3 span {
-    color: var(--color-text); /* En móvil, usar el color de texto normal */
+    color: var(--color-text); 
 }
 
-
-/* ⭐️ Color al estar ACTIVO (hover/focus) */
+/* Color al estar ACTIVO (hover/focus) */
 #card-volver-fija-elemento[tabindex="0"]:hover h3 span,
 #card-volver-fija-elemento[tabindex="0"]:focus-visible h3 span,
 .card-volver-vertical:hover h3 span,
 .card-volver-vertical:focus-visible h3 span {
-    color: var(--color-primary); /* ⭐️ Azul Ghost al enfocar */
+    color: var(--color-primary); 
     transform: scale(1.1);
 }
