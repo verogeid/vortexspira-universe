@@ -19,16 +19,16 @@
   --color-success-bg: rgba(40, 167, 69, 0.1);
 
   /* VARIABLES DE LAYOUT */
-  --header-height: 50px;
-  --footer-height: 30px;
-  --card-gap: 25px; /* Espacio entre tarjetas en el centro */
+  --header-height: 9vh;
+  --footer-height: 6vh;
+  --card-gap: 3vh; /* Espacio entre tarjetas en el centro */
   
   /* Altura individual de una tarjeta = (100% de la columna - 2 * gaps) / 3 */
   --card-height-calc: calc((100% - (2 * var(--card-gap))) / 3); 
   --nav-desktop-height: calc(100% - 0px); 
   
   /* Offset superior para alinear la tarjeta "Volver" con el carrusel */
-  --nav-carousel-top-offset: 35px; 
+  --nav-carousel-top-offset: 2vh; 
 }
 @media (prefers-color-scheme: dark) {
   :root {

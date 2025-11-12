@@ -116,7 +116,7 @@
                     data-tipo="volver-vertical" 
                     role="button" 
                     tabindex="-1">
-                    <h3>&larr; Volver al menú anterior</h3>
+                    <h3>🔙</h3>
                 </${wrapperTag}>
             `;
         }
