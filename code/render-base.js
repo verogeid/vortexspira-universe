@@ -111,6 +111,7 @@
         }
 
         if (tipoEspecial === 'volver-vertical') {
+            // (El <span> es para el emoji 🔙)
             return `
                 <${wrapperTag} class="card card-volver-vertical" 
                     data-id="volver-nav" 
@@ -151,12 +152,19 @@
         const isMobile = window.innerWidth <= 768; 
 
         // 1. Limpiar focos anteriores
-        // ❗️ FIX: Limpiar no solo los slides, sino TODAS las tarjetas dentro del track
         const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
         allCardsInTrack.forEach(card => {
              card.classList.remove('focus-visible');
              card.tabIndex = -1;
         });
+
+        // ⭐️⭐️⭐️ LA CORRECCIÓN "DOBLE FOCO" ⭐️⭐️⭐️
+        // Limpiar también el foco visual de la tarjeta "Volver"
+        if (App.DOM.cardVolverFija) {
+             App.DOM.cardVolverFija.classList.remove('focus-visible');
+             // No tocamos su tabindex, eso lo maneja _updateNavViews
+        }
+        // ⭐️⭐️⭐️ FIN DE LA CORRECCIÓN ⭐️⭐️⭐️
 
         // 2. Obtener la nueva tarjeta REAL (excluyendo rellenos)
         const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
@@ -188,7 +196,7 @@
             if (!isMobile && carouselInstance && shouldSlide) {
                 // Lógica de DESKOP: Swiper
                 const targetSwiperSlide = Math.floor(normalizedIndex / itemsPorColumna); 
-                // ❗️ FIX: El índice real de swiper es +1 por el slide de relleno inicial
+                // El índice real de swiper es +1 por el slide de relleno inicial
                 carouselInstance.slideToLoop(targetSwiperSlide + 1, 400); 
             } else if (isMobile && shouldSlide) {
                 // Lógica de MOBILE: Scroll (solo si shouldSlide es true)
@@ -199,7 +207,6 @@
 
 
     // ⭐️ 4. LÓGICA DE CONTROL DEL CARRUSEL (DELEGACIÓN) ⭐️
-    // Estas funciones deben ser implementadas en render-desktop.js y render-mobile.js
     App._initCarousel = App._initCarousel || function() { console.error("App._initCarousel no está definido."); };
     App._destroyCarousel = App._destroyCarousel || function() { 
         if (this.STATE.carouselInstance) {
@@ -259,7 +266,6 @@
                 if (encontrado) return encontrado;
             }
             if (n.cursos && n.cursos.length > 0) {
-                // Los cursos no tienen más sub-árboles, pero hay que buscarlos
                 const cursoEncontrado = n.cursos.find(c => c.id === id);
                 if (cursoEncontrado) return cursoEncontrado;
             }
@@ -271,25 +277,20 @@
         const nodo = this._findNodoById(nodoId, this.STATE.fullData.navegacion);
         if (!nodo) return false;
         
-        // Un curso (nodo final) siempre está "activo"
         if (nodo.titulo) return true; 
 
-        // Una categoría está activa si tiene cursos...
         if (nodo.cursos && nodo.cursos.length > 0) {
             return true;
         }
 
-        // ...o si tiene subsecciones que TENGAN contenido activo
         if (nodo.subsecciones && nodo.subsecciones.length > 0) {
             for (const sub of nodo.subsecciones) {
-                // Búsqueda recursiva
                 if (this._tieneContenidoActivo(sub.id)) {
                     return true;
                 }
             }
         }
         
-        // Si no tiene cursos ni subsecciones activas, no está activo
         return false;
     };
 
