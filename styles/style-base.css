@@ -310,6 +310,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     
     /* FIX: Margin-bottom es 0 porque el espaciado vertical lo maneja el gap del padre */
     margin-bottom: 0; 
+    margin-right: var(--card-gap);
 
     /* 🛑 DEPURACIÓN VISUAL: Contorno del elemento interactivo 🛑 */
     outline: 3px solid red; 
