@@ -127,7 +127,7 @@
         const tagAria = estaActivo ? '' : 'aria-disabled="true"';
         const tabindex = '-1'; 
         let hint = '';
-        if (!estaActivo) hint = '<span>🔜</span>';
+        if (!estaActivo) hint = '<span>🚧</span>';
         const displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
 
         return `
