@@ -1,234 +1,296 @@
-// --- code/nav-base.js ---
-
+// --- code/render-base.js ---
 (function() {
 
-    // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS (UNIFICADA) ⭐️
-    App.setupListeners = function() {
+    // Almacena el estado de la última comprobación de móvil para el ResizeObserver
+    let _lastIsMobile = window.innerWidth <= 768; 
 
-      // Delegamos el listener de teclado global a nav-teclado.js
-      // Los listeners de clic/activación son más simples y se mantienen aquí.
-
-      // 1. Listener para "Volver" (MÓVIL)
-      if (this.DOM.btnVolverNav) {
-          this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
-          this.DOM.btnVolverNav.addEventListener('keydown', (e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  this._handleVolverClick();
-              }
-          });
-      }
-
-      // 2. Listener para la Tarjeta Volver Fija (DESKTOP)
-      if (this.DOM.cardVolverFija) {
-          this.DOM.cardVolverFija.addEventListener('click', this._handleVolverClick.bind(this));
-          this.DOM.cardVolverFija.addEventListener('keydown', (e) => {
-              // Manejamos la activación solo si está activo (tabindex=0)
-              if ((e.key === 'Enter' || e.key === ' ') && this.DOM.cardVolverFija.tabIndex === 0) {
-                  e.preventDefault();
-                  this._handleVolverClick();
-              }
-          });
-      }
-
-      // La lógica de 'keydown' para todo el documento se moverá a nav-teclado.js
-    };
-
-    // ⭐️ Función para agregar el listener de CLIC al track activo (llamado desde render.js) ⭐️
-    App.setupTrackClickListener = function() {
-        if (this.DOM.track) {
-            // Limpiar listeners anteriores para evitar duplicados
-            // Nota: bind(this) crea una nueva función, necesitamos un enfoque diferente para removeEventListener
-            // Para simplificar, asumimos que se llamará UNA VEZ o que el DOM.track se reemplaza.
-
-            // Suscribir el listener de clic al track activo
-            this.DOM.track.addEventListener('click', this._handleTrackClick.bind(this));
+    // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL (ROUTER) ⭐️
+    App.renderNavegacion = function() {
+        if (!this.STATE.fullData) {
+            console.error("No se puede renderizar: Datos no cargados.");
+            return;
         }
-    };
 
+        console.log(`Renderizando nivel: ${this.STATE.navStack.length > 0 ? this.STATE.navStack[this.STATE.navStack.length - 1] : 'Raíz'}`);
 
-    // ⭐️ 2. MANEJADOR DE EVENTOS (Track) - CLIC ⭐️
-    App._handleTrackClick = function(e) {
-      const tarjeta = e.target.closest('[data-id]'); 
+        const isSubLevel = this.STATE.navStack.length > 0;
+        const isMobile = window.innerWidth <= 768; 
 
-      if (!tarjeta) return;
+        // CRÍTICO: Definir las funciones de renderizado y control. 
+        const renderHtmlFn = isMobile ? App._generateCardHTML_Mobile : App._generateCardHTML_Desktop;
+        const initCarouselFn = isMobile ? App._destroyCarousel : App._initCarousel; // Destruimos en móvil
 
-      // Si es una tarjeta deshabilitada o relleno
-      if (tarjeta.dataset.tipo === 'relleno' || tarjeta.classList.contains('disabled')) {
-        return;
-      }
+        // --- Configuración de Parámetros ---
+        let calculatedItemsPerColumn = isMobile ? 1 : 3; 
+        this.STATE.itemsPorColumna = calculatedItemsPerColumn;
 
-      // Si es el botón 'Volver' vertical (móvil)
-      if (tarjeta.dataset.tipo === 'volver-vertical') {
-          this._handleVolverClick();
-          return;
-      }
+        // 🚨 1. SELECCIÓN DINÁMICA DE ELEMENTOS DEL DOM 🚨
+        const desktopView = document.getElementById('vista-navegacion-desktop');
+        const mobileView = document.getElementById('vista-navegacion-mobile');
 
-      const id = tarjeta.dataset.id;
-      const tipo = tarjeta.dataset.tipo;
+        // CRÍTICO: Actualizar la referencia DOM.track y vistaNav en App 
+        this.DOM.vistaNav = isMobile ? mobileView : desktopView; 
+        this.DOM.track = isMobile ? document.getElementById('track-mobile') : document.getElementById('track-desktop');
 
-      // Llamar a la función centralizada de manejo de clic/activación 
-      this._handleCardClick(id, tipo);
-    };
+        // 2. OBTENER DATOS ACTUALES
+        const nodoActual = this._findNodoById(this.STATE.navStack[this.STATE.navStack.length - 1], this.STATE.fullData.navegacion);
+        let itemsDelNivel = [];
 
-    /**
-     * Manejador centralizado para la activación de tarjetas (clic, Enter, Espacio)
-     */
-    App._handleCardClick = function(id, tipo) {
-        if (tipo === 'categoria') {
-            this.STATE.navStack.push(id);
-            // Restablecer el foco al primer elemento de la nueva vista
-            this.STATE.currentFocusIndex = 0; 
+        if (!isSubLevel) {
+            itemsDelNivel = this.STATE.fullData.navegacion;
+        } else if (nodoActual) {
+            const subsecciones = nodoActual.subsecciones || [];
+            const cursos = nodoActual.cursos || [];
+            itemsDelNivel = subsecciones.concat(cursos);
+        } else {
+            console.warn(`Nodo no encontrado para el ID: ${this.STATE.navStack[this.STATE.navStack.length - 1]}. Volviendo a la raíz.`);
+            this.STATE.navStack.pop(); 
             this.renderNavegacion();
-        } else if (tipo === 'curso') {
-            this._mostrarDetalle(id);
+            return;
+        }
+
+        // Si es un subnivel, añadir la tarjeta "Volver" al inicio de la lista móvil
+        if (isSubLevel && isMobile) {
+             itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
+        }
+
+        // 3. Destruir e Inicializar Vistas
+        App._destroyCarousel(); // Aseguramos que se destruya antes de renderizar
+
+        // 4. GENERAR HTML DE LAS TARJETAS (delegado a los archivos específicos)
+        let htmlContent = renderHtmlFn(itemsDelNivel, this.STATE.itemsPorColumna);
+
+        // 5. INYECTAR Y GESTIONAR VISTAS
+        this.DOM.track.innerHTML = htmlContent;
+
+        if (isMobile) {
+            desktopView.classList.remove('active');
+            mobileView.classList.add('active');
+        } else {
+            mobileView.classList.remove('active');
+            desktopView.classList.add('active');
+        }
+
+        // 6. INICIALIZAR EL CARRUSEL (delegado, solo se inicializará si es desktop)
+        let initialSlideIndex = 0;
+        if (this.STATE.currentFocusIndex >= 0 && !isMobile) {
+             // Calcula qué columna contiene la tarjeta enfocada
+            initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
+        }
+        initCarouselFn(initialSlideIndex, this.STATE.itemsPorColumna, isMobile);
+
+
+        // ⭐️ Llamar a los listeners de navegación ⭐️
+        if (typeof this.setupTrackClickListener === 'function') {
+             this.setupTrackClickListener();
+        }
+        // Llamar al setup táctil DESPUÉS de initCarousel
+        if (typeof this.setupTouchListeners === 'function') {
+            this.setupTouchListeners();
+        }
+
+        // 7. GESTIÓN DE FOCO INICIAL Y VISTAS LATERALES
+        this._updateNavViews(isSubLevel, isMobile);
+        this._updateFocus(false); // false = no deslizar
+
+        // 8. Configurar el ResizeObserver la primera vez
+        if (!this.STATE.resizeObserver) {
+            this._setupResizeObserver();
         }
     };
 
-    // ⭐️ 3. FUNCIONES DE NAVEGACIÓN Y VISTA (UNIFICADAS) ⭐️
 
-    /**
-     * Handler unificado para CUALQUIER acción de "Volver" (Escape, Botón, Tarjeta)
-     */
-    App._handleVolverClick = function() {
-        // 1. Caso Detalle -> Navegación
-        if (this.DOM.vistaDetalle.classList.contains('active')) {
-            this.DOM.vistaDetalle.classList.remove('active');
-            this.DOM.vistaNav.classList.add('active');
+    // ⭐️ 2. FUNCIÓN DE PINTADO DE TARJETA INDIVIDUAL (Común) ⭐️
+    App._generarTarjetaHTML = function(nodo, estaActivo, esRelleno = false, tipoEspecial = null) {
 
-            // Reestablecer tabIndex de elementos de detalle
-            this.DOM.cardVolverFija.tabIndex = -1;
-            this.DOM.btnVolverNav.tabIndex = -1;
+        const wrapperTag = 'article'; // Siempre <article>
 
-            this.renderNavegacion(); 
+        if (esRelleno) {
+            // Tarjetas de Relleno 
+            return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1"></article>`;
+        }
 
-            // Forzar el foco de vuelta a la tarjeta que nos llevó al detalle
-            const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
-            const activeCard = allCards[this.STATE.currentFocusIndex] || this.DOM.track.querySelector('[tabindex="0"]');
+        if (tipoEspecial === 'volver-vertical') {
+            return `
+                <${wrapperTag} class="card card-volver-vertical" 
+                    data-id="volver-nav" 
+                    data-tipo="volver-vertical" 
+                    role="button" 
+                    tabindex="-1">
+                    <h3>🔙&#xFE0E;</h3>
+                </${wrapperTag}>
+            `;
+        }
 
-            if (activeCard) {
-                activeCard.focus();
+        const isCourse = !!nodo.titulo;
+        const tipoData = isCourse ? 'data-tipo="curso"' : 'data-tipo="categoria"';
+        const claseDisabled = estaActivo ? '' : 'disabled';
+        const tagAria = estaActivo ? '' : 'aria-disabled="true"';
+        const tabindex = '-1'; 
+        let hint = '';
+        if (!estaActivo) hint = '<span>🚧</span>';
+        const displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
+
+        return `
+            <${wrapperTag} class="card ${claseDisabled}" 
+                data-id="${nodo.id}" 
+                ${tipoData}
+                role="button" 
+                tabindex="${tabindex}" 
+                ${tagAria}>
+                <h3>${displayTitle}</h3>
+                ${hint}
+            </${wrapperTag}>
+        `;
+    };
+
+
+    // ⭐️ 3. LÓGICA DE FOCO Y NAVEGACIÓN (Unificado) ⭐️
+    App._updateFocus = function(shouldSlide = true) {
+        const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
+        const isMobile = window.innerWidth <= 768; 
+
+        // 1. Limpiar focos anteriores
+        // ❗️ FIX: Limpiar no solo los slides, sino TODAS las tarjetas dentro del track
+        const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
+        allCardsInTrack.forEach(card => {
+             card.classList.remove('focus-visible');
+             card.tabIndex = -1;
+        });
+
+        // 2. Obtener la nueva tarjeta REAL (excluyendo rellenos)
+        const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+        if (allCards.length === 0) return;
+
+        // Normalizar el índice para el loop
+        let normalizedIndex = currentFocusIndex % allCards.length;
+        if (normalizedIndex < 0) normalizedIndex += allCards.length;
+
+        const nextFocusedCard = allCards[normalizedIndex];
+
+        // 3. Actualizar el estado con el índice normalizado
+        this.STATE.currentFocusIndex = normalizedIndex;
+
+
+        // 4. Aplicar nuevo foco y mover
+        if (nextFocusedCard) {
+            nextFocusedCard.classList.add('focus-visible');
+            nextFocusedCard.tabIndex = 0;
+
+            // Mover el foco real del navegador
+            if (shouldSlide) {
+                nextFocusedCard.focus(); 
+            } else {
+                nextFocusedCard.focus({ preventScroll: true }); 
             }
-        } 
-        // 2. Caso Sub-sección -> Nivel anterior
-        else if (this.STATE.navStack.length > 0) {
-            this.STATE.navStack.pop();
-            this.STATE.currentFocusIndex = 0; // Resetear foco al primer elemento del nuevo nivel
-            this.renderNavegacion();
 
-            // Forzar el foco de vuelta al slider
-            const activeCard = this.DOM.track.querySelector('[tabindex="0"]');
-            if (activeCard) {
-                activeCard.focus();
+            // 5. DELEGAR LA ACCIÓN DE DESLIZAMIENTO/SCROLL
+            if (!isMobile && carouselInstance && shouldSlide) {
+                // Lógica de DESKOP: Swiper
+                const targetSwiperSlide = Math.floor(normalizedIndex / itemsPorColumna); 
+                // ❗️ FIX: El índice real de swiper es +1 por el slide de relleno inicial
+                carouselInstance.slideToLoop(targetSwiperSlide + 1, 400); 
+            } else if (isMobile && shouldSlide) {
+                // Lógica de MOBILE: Scroll (solo si shouldSlide es true)
+                nextFocusedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         }
     };
 
-    /**
-     * Muestra la vista de detalle del curso.
-     */
-    App._mostrarDetalle = function(cursoId) {
-      const curso = App._findNodoById(cursoId, App.STATE.fullData.navegacion);
-      if (!curso) return;
 
-      let enlacesHtml = (curso.enlaces || []).map(enlace => 
-        // Asegurar que los enlaces tengan tabindex="0" para la trampa y flechas
-        `<a href="${enlace.url || '#'}" class="enlace-curso" target="_blank" tabindex="0">${enlace.texto}</a>`
-      ).join('');
-
-      this.DOM.detalleContenido.innerHTML = `
-        <h2>${curso.titulo}</h2>
-        <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
-        <div class="enlaces-curso">
-          ${enlacesHtml || 'No hay enlaces para este curso.'}
-        </div>
-      `;
-
-      // Cambiar vistas
-      this.DOM.vistaNav.classList.remove('active');
-      this.DOM.vistaDetalle.classList.add('active');
-
-      const isMobile = window.innerWidth <= 768; 
-      let primerElementoFocuseable = null;
-
-      if (!isMobile) {
-          // Mostrar y activar la tarjeta "Volver" (Desktop)
-          this.DOM.cardVolverFija.style.display = 'flex';
-          this.DOM.cardVolverFija.tabIndex = 0;
-          primerElementoFocuseable = this.DOM.cardVolverFija;
-
-          this.DOM.infoAdicional.style.display = 'block'; 
-      } else {
-          // En móvil, mostrar el botón de volver simple
-          this.DOM.btnVolverNav.style.display = 'block';
-          this.DOM.btnVolverNav.tabIndex = 0; 
-          primerElementoFocuseable = this.DOM.btnVolverNav;
-      }
-
-      // Mover el foco al primer elemento de la nueva vista (el botón/tarjeta de volver)
-      if (primerElementoFocuseable) {
-          primerElementoFocuseable.focus();
-      }
+    // ⭐️ 4. LÓGICA DE CONTROL DEL CARRUSEL (DELEGACIÓN) ⭐️
+    // Estas funciones deben ser implementadas en render-desktop.js y render-mobile.js
+    App._initCarousel = App._initCarousel || function() { console.error("App._initCarousel no está definido."); };
+    App._destroyCarousel = App._destroyCarousel || function() { 
+        if (this.STATE.carouselInstance) {
+            this.STATE.carouselInstance.destroy(true, true);
+            this.STATE.carouselInstance = null;
+        }
     };
 
-    // ⭐️ 4. FUNCIÓN HELPER: Obtener elementos focuseables del detalle ⭐️
-    // Se necesita en la vista detalle para navegación por flechas y Tab
-    App._getFocusableDetailElements = function() {
-        const isMobile = window.innerWidth <= 768;
-        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('a.enlace-curso[tabindex="0"]'));
-        let elements = [];
 
-        // Añadir la tarjeta Volver o el botón Volver móvil, si están activos
-        if (!isMobile && this.DOM.cardVolverFija.tabIndex === 0) {
-            elements.push(this.DOM.cardVolverFija);
-        } else if (isMobile && this.DOM.btnVolverNav.style.display === 'block') {
-            // Solo considerar el botón móvil si está visible
-            elements.push(this.DOM.btnVolverNav);
+    // ⭐️ 5. UTILIDADES DE VISTAS LATERALES Y DATOS (Común) ⭐️
+    App._updateNavViews = function(isSubLevel, isMobile) {
+        // Lógica de visibilidad de cardVolverFija, infoAdicional, btnVolverNav
+        if (!isMobile) {
+            this.DOM.cardVolverFija.style.display = 'flex';
+            this.DOM.infoAdicional.style.display = 'block'; 
+            this.DOM.btnVolverNav.style.display = 'none'; 
+
+            if (isSubLevel) {
+                this.DOM.cardVolverFija.tabIndex = 0; 
+            } else {
+                this.DOM.cardVolverFija.tabIndex = -1;
+            }
+        } else {
+            this.DOM.cardVolverFija.style.display = 'none'; 
+            this.DOM.infoAdicional.style.display = 'none';
+
+            if (isSubLevel) {
+                this.DOM.btnVolverNav.style.display = 'block'; 
+            } else {
+                this.DOM.btnVolverNav.style.display = 'none';
+            }
         }
-
-        // Agregar enlaces del curso
-        elements.push(...detailLinks);
-
-        // Devolvemos todos los elementos con tabindex=0 (o que son botones/enlaces sin -1)
-        return elements.filter(el => el && el.tabIndex !== -1);
     };
 
-    // ⭐️ 5. HELPER DE FOCO TÁCTIL (AÑADIDO) ⭐️
-    // Esta es la lógica clave que pediste para TÁCTIL (y teclado L/R)
-    /**
-     * Encuentra la mejor tarjeta para enfocar en una columna, dada una fila objetivo.
-     * @param {Array<HTMLElement>} columnCards - Array de elementos .card en la columna (incluye rellenos).
-     * @param {number} targetRow - El índice de fila (0, 1, o 2) que se desea enfocar.
-     * @returns {HTMLElement | null} La tarjeta focuseable encontrada.
-     */
-    App.findBestFocusInColumn = function(columnCards, targetRow) {
-        
-        const isFocusable = (card) => {
-            return card && card.dataset.id && card.dataset.tipo !== 'relleno' && !card.classList.contains('disabled');
-        };
+    App._setupResizeObserver = function() {
+        console.log("ResizeObserver configurado.");
+        this.STATE.resizeObserver = new ResizeObserver(() => {
+            const currentIsMobile = window.innerWidth <= 768;
 
-        // 1. Intentar la misma fila
-        if (isFocusable(columnCards[targetRow])) {
-            return columnCards[targetRow];
-        }
+            if (currentIsMobile !== _lastIsMobile && this.STATE.initialRenderComplete) {
+                console.log(`Cambiando de vista: ${currentIsMobile ? 'Móvil' : 'Escritorio'}`);
+                _lastIsMobile = currentIsMobile;
+                this.renderNavegacion(); 
+            }
+        });
 
-        // 2. Buscar hacia ARRIBA (desde la fila objetivo - 1)
-        for (let i = targetRow - 1; i >= 0; i--) {
-            if (isFocusable(columnCards[i])) {
-                return columnCards[i];
+        this.STATE.resizeObserver.observe(document.body);
+    };
+
+    App._findNodoById = function(id, nodos) {
+        if (!nodos || !id) return null;
+        for (const n of nodos) {
+            if (n.id === id) return n;
+
+            if (n.subsecciones && n.subsecciones.length > 0) {
+                const encontrado = this._findNodoById(id, n.subsecciones);
+                if (encontrado) return encontrado;
+            }
+            if (n.cursos && n.cursos.length > 0) {
+                // Los cursos no tienen más sub-árboles, pero hay que buscarlos
+                const cursoEncontrado = n.cursos.find(c => c.id === id);
+                if (cursoEncontrado) return cursoEncontrado;
             }
         }
-
-        // 3. Buscar hacia ABAJO (desde la fila objetivo + 1)
-        for (let i = targetRow + 1; i < columnCards.length; i++) {
-            if (isFocusable(columnCards[i])) {
-                return columnCards[i];
-            }
-        }
-
-        // 4. Si no hay nada, no devuelve nada (raro)
         return null;
     };
 
+    App._tieneContenidoActivo = function(nodoId) {
+        const nodo = this._findNodoById(nodoId, this.STATE.fullData.navegacion);
+        if (!nodo) return false;
+        
+        // Un curso (nodo final) siempre está "activo"
+        if (nodo.titulo) return true; 
+
+        // Una categoría está activa si tiene cursos...
+        if (nodo.cursos && nodo.cursos.length > 0) {
+            return true;
+        }
+
+        // ...o si tiene subsecciones que TENGAN contenido activo
+        if (nodo.subsecciones && nodo.subsecciones.length > 0) {
+            for (const sub of nodo.subsecciones) {
+                // Búsqueda recursiva
+                if (this._tieneContenidoActivo(sub.id)) {
+                    return true;
+                }
+            }
+        }
+        
+        // Si no tiene cursos ni subsecciones activas, no está activo
+        return false;
+    };
 
 })();
