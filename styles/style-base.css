@@ -271,7 +271,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     padding-top: var(--nav-carousel-top-offset); 
     padding-left: 15px; 
     padding-right: 15px; 
-    /* FIX: Simular padding-bottom simétrico para que space-between funcione */
+    /* FIX: Simular padding-bottom simétrico al padding-top */
     padding-bottom: var(--nav-carousel-top-offset); 
     
     /* 🚨 FIX CRÍTICO: Simular el gap con la columna central 🚨 */
@@ -375,8 +375,8 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     text-align: center;
     box-sizing: border-box;
     
-    /* 🚨 FIX CRÍTICO: Usar margin-left para simular el gap con la columna central 🚨 */
-    margin-left: var(--card-gap); 
+    /* 🚨 FIX CRÍTICO: Usar margin-left de 0 🚨 */
+    margin-left: 0; 
     
     /* AJUSTE: Alinear el contenido interno con el carrusel */
     padding-top: calc(var(--nav-carousel-top-offset) + 1.5rem);
