@@ -1,4 +1,4 @@
-// --- nav-keyboard.js ---
+// --- code/nav-keyboard.js ---
 
 (function() {
     

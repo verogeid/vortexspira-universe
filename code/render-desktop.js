@@ -1,4 +1,4 @@
-// --- render-desktop.js ---
+// --- code/render-desktop.js ---
 (function() {
 
     // ⭐️ 1. FUNCIÓN DE GENERACIÓN DE HTML ESPECÍFICA PARA DESKTOP ⭐️

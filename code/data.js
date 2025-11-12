@@ -1,4 +1,4 @@
-// --- data.js ---
+// --- code/data.js ---
 
 // ⭐️ 1. DEFINICIÓN DE COLORES Y CONSTANTES ⭐️
 const PRIMARY_COLOR = '#999';

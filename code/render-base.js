@@ -1,4 +1,4 @@
-// --- render-base.js ---
+// --- code/render-base.js ---
 (function() {
 
     // Almacena el estado de la última comprobación de móvil para el ResizeObserver
