@@ -48,7 +48,7 @@ export function log(moduleName, requiredLevel, ...args) {
  * @param {string} moduleName - El nombre del módulo.
  * @param {...any} args - Los mensajes a mostrar.
  */
-export function warn(moduleName, ...args) {
+export function logWarn(moduleName, ...args) {
     if (DEBUG_CONFIG[moduleName] >= DEBUG_LEVELS.BASIC) {
         if (!IS_PRODUCTION) {
             console.warn(`[${moduleName}]`, ...args);
@@ -61,7 +61,7 @@ export function warn(moduleName, ...args) {
  * @param {string} moduleName - El nombre del módulo.
  * @param {...any} args - Los mensajes a mostrar.
  */
-export function error(moduleName, ...args) {
+export function logError(moduleName, ...args) {
     // Los errores siempre usan el nivel ALLWAYS, ignorando la configuración del módulo.
     if (!IS_PRODUCTION) {
         console.error(`[${moduleName}]`, ...args);
@@ -74,7 +74,7 @@ export function error(moduleName, ...args) {
  * @param {number} requiredLevel - El nivel de importancia de este mensaje.
  * @param {...any} args - El título del grupo.
  */
-export function groupCollapsed(moduleName, requiredLevel, ...args) {
+export function logGroupCollapsed(moduleName, requiredLevel, ...args) {
     if (DEBUG_CONFIG[moduleName] >= requiredLevel && !IS_PRODUCTION) {
         console.groupCollapsed(`[${moduleName}]`, ...args);
     }
@@ -85,7 +85,7 @@ export function groupCollapsed(moduleName, requiredLevel, ...args) {
  * @param {string} moduleName - El nombre del módulo.
  * @param {number} requiredLevel - El nivel de importancia debe coincidir con el del grupo que abrió.
  */
-export function groupEnd(moduleName, requiredLevel) {
+export function logGroupEnd(moduleName, requiredLevel) {
     if (DEBUG_CONFIG[moduleName] >= requiredLevel && !IS_PRODUCTION) {
         console.groupEnd();
     }

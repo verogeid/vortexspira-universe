@@ -1,7 +1,5 @@
 // --- code/app.js ---
 
-import * as DEBUG from './debug.js';
-
 (function() {
 
   // ⭐️ DEFINICIÓN DEL OBJETO GLOBAL DE LA APLICACIÓN ⭐️
@@ -20,7 +18,7 @@ import * as DEBUG from './debug.js';
 
     // --- 2. INICIALIZACIÓN ---
     async init() {
-      DEBUG.log('app', DEBUG.DEBUG_LEVELS.BASIC, "App: Iniciando orquestación...");
+      log('app', DEBUG_LEVELS.BASIC, "App: Iniciando orquestación...");
       
       // Cachear el DOM (Solo elementos estables y necesarios)
       this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); 
@@ -41,12 +39,12 @@ import * as DEBUG from './debug.js';
       
       // 2.2. Cargar los datos (definido en data.js)
       try {
-        DEBUG.log('app', DEBUG.DEBUG_LEVELS.BASIC, "Iniciando carga de datos.");
+        log('app', DEBUG_LEVELS.BASIC, "Iniciando carga de datos.");
         if (typeof loadData === 'function') {
             await loadData(this); 
         }
       } catch (error) {
-        DEBUG.error('app', `ERROR: Carga de datos fallida. ${error.message}`);
+        logError('app', `ERROR: Carga de datos fallida. ${error.message}`);
 
         // Intentar usar un track existente para mostrar el error
         const track = document.getElementById('track-desktop') || document.getElementById('track-mobile');
@@ -68,7 +66,7 @@ import * as DEBUG from './debug.js';
       
       // 2.5. Finalizar la carga inicial
       this.STATE.initialRenderComplete = true; 
-      DEBUG.log('app', DEBUG.DEBUG_LEVELS.BASIC, "Carga inicial completada. Observer activo.");
+      log('app', DEBUG_LEVELS.BASIC, "Carga inicial completada. Observer activo.");
     }
   };
 
