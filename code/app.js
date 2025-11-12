@@ -68,7 +68,6 @@ import * as DEBUG from './debug.js';
       
       // 2.5. Finalizar la carga inicial
       this.STATE.initialRenderComplete = true; 
-      de
       DEBUG.log('app', DEBUG.DEBUG_LEVELS.BASIC, "Carga inicial completada. Observer activo.");
     }
   };
