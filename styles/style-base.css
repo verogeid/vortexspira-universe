@@ -89,7 +89,7 @@ header h1 {
     line-height: 1.2;
 }
 
-/* Enlaces del footer y debug console */
+/* Enlaces del footer */
 footer small {
     display: flex;
     align-items: center; 
@@ -105,8 +105,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     width: auto;
     vertical-align: middle;
 }
-#debug-console { color: #ffcc00; font-size: 10px; height: 16px; overflow: hidden; white-space: nowrap; }
-
 
 /* ⭐️ CONTENEDOR PRINCIPAL: GRID 1-3-1 (Desktop Default) ⭐️ */
 #app-container {

@@ -28,6 +28,7 @@
         
         <div id="columna-volver-relleno"></div>
     </div>
+
     <div id="vista-central">
         
         <div id="vista-navegacion-desktop" class="vista active">
@@ -66,12 +67,10 @@
   <footer>
     <small id="footer-content">
       </small>
-    <div id="debug-console"></div>
-  </footer>
+    </footer>
   
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   
-  <script src="code/debug.js"></script>
   <script src="code/data.js"></script>
   <script src="code/app.js"></script>
 
@@ -84,7 +83,6 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // La inyección del logo y footer se realiza en el DOMContentLoaded
         if (typeof injectHeaderLogo === 'function') {
             injectHeaderLogo(); 
         }
