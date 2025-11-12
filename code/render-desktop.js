@@ -74,15 +74,14 @@
             slidesPerGroup: 1, 
             loop: true, 
 
-            // Usar el índice calculado (slide de DATOS)
-            // Sumamos 1 porque el índice 0 es nuestro slide de relleno
-            initialSlide: initialSwiperSlide + 1,
+            initialSlide: initialSwiperSlide + 1, 
 
             touchRatio: 1, 
             
-            // ❗️❗️❗️ LA CORRECCIÓN ❗️❗️❗️
-            // Poner en 'false' para usar eventos táctiles reales
-            simulateTouch: false,
+            // ⭐️⭐️⭐️ LA CORRECCIÓN "SWIPE" (PARTE 1) ⭐️⭐️⭐️
+            // Volver a 'true'. Esto es necesario para que 
+            // el "modo escritorio" simule el drag con el ratón.
+            simulateTouch: true,
             
             centeredSlides: true,
             mousewheel: { 
