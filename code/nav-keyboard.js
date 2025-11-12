@@ -1,11 +1,11 @@
 // --- code/nav-keyboard.js ---
 
 (function() {
-    
+
     // ⭐️ 1. LISTENER CENTRAL DE TECLADO ⭐️
     document.addEventListener('keydown', (e) => {
-        
-        // Asume que App y App.DOM están definidos en render-base/nav-base
+
+        // Asume que App y App.DOM están definidos
         const isNavActive = App.DOM.vistaNav ? App.DOM.vistaNav.classList.contains('active') : false;
         const isDetailActive = App.DOM.vistaDetalle ? App.DOM.vistaDetalle.classList.contains('active') : false;
 
@@ -18,10 +18,10 @@
 
         // Caso 1: VISTA DE NAVEGACIÓN
         if (isNavActive) {
-            // Flechas, Enter y Space para el carrusel (requiere preventDefault)
+            // Flechas, Enter y Space para el carrusel
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
 
-                // Si el foco está en la tarjeta "Volver" fija (ya manejado en nav-base), ignoramos aquí.
+                // Si el foco está en la tarjeta "Volver" fija, no hacer nada aquí
                 if (document.activeElement === App.DOM.cardVolverFija) {
                      return;
                 }
@@ -50,102 +50,123 @@
         }
     });
 
-    // ⭐️ 2. NAVEGACIÓN POR TECLADO (FLECHAS) - VISTA NAV ⭐️
+    // ⭐️ 2. NAVEGACIÓN POR TECLADO (FLECHAS) - VISTA NAV (CORREGIDO) ⭐️
     App._handleKeyNavigation = function(key) {
-      
-      const activeElement = document.activeElement;
-      // Verificar si el foco está DENTRO del track correcto
-      if (!activeElement || !activeElement.closest('#track-desktop, #track-mobile')) {
-          return; 
-      }
+        
+        const isMobile = window.innerWidth <= 768;
+        const { carouselInstance } = App.STATE;
 
-      const isMobile = window.innerWidth <= 768;
-      const { itemsPorColumna } = App.STATE;
+        // ❗️ FIX: LEER DESDE EL ESTADO, NO DESDE EL DOM
+        let currentIndex = App.STATE.currentFocusIndex;
+        let newIndex = currentIndex;
+        let shouldSlide = true; // Controla si llamamos a _updateFocus
 
-      // Solo consideramos las tarjetas que tienen un data-id real (excluye relleno)
-      const allCards = Array.from(App.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
-      const totalCards = allCards.length;
+        switch (key) {
+            case 'ArrowUp':
+                // ❗️ FIX: Lógica vertical correcta
+                App._changeFocusVertical(-1); // Usar el helper dedicado
+                shouldSlide = false; // El helper ya llama a _updateFocus
+                break;
 
-      // Buscar el índice de la tarjeta activa dentro de la lista filtrada (allCards)
-      let currentIndex = allCards.findIndex(card => card.classList.contains('focus-visible'));
+            case 'ArrowDown':
+                // ❗️ FIX: Lógica vertical correcta
+                App._changeFocusVertical(1); // Usar el helper dedicado
+                shouldSlide = false; // El helper ya llama a _updateFocus
+                break;
 
-      if (currentIndex === -1 || totalCards === 0) return;
+            case 'ArrowLeft':
+                // ❗️ FIX: Delegar a Swiper (para que nav-tactil.js funcione)
+                if (!isMobile && carouselInstance) {
+                    carouselInstance.slidePrev();
+                    shouldSlide = false; // El swipe se encargará del foco
+                } else {
+                    // Lógica móvil (lineal)
+                    newIndex = (currentIndex > 0) ? currentIndex - 1 : currentIndex;
+                }
+                break;
 
-      let newIndex = currentIndex;
-      let nextElementToClick = allCards[currentIndex]; 
+            case 'ArrowRight':
+                // ❗️ FIX: Delegar a Swiper (para que nav-tactil.js funcione)
+                if (!isMobile && carouselInstance) {
+                    carouselInstance.slideNext();
+                    shouldSlide = false; // El swipe se encargará del foco
+                } else {
+                    // Lógica móvil (lineal)
+                    const totalCards = App.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])').length;
+                    newIndex = (currentIndex < totalCards - 1) ? currentIndex + 1 : currentIndex;
+                }
+                break;
 
-      switch (key) {
-        case 'ArrowUp':
-            // Navegación secuencial vertical: sube 1 (Móvil) o salta a la tarjeta anterior de la columna (Desktop)
-            newIndex = (currentIndex > 0) ? currentIndex - 1 : (isMobile ? currentIndex : totalCards - 1);
-            break;
-        case 'ArrowDown':
-            // Navegación secuencial vertical: baja 1 (Móvil) o salta a la tarjeta siguiente de la columna (Desktop)
-            newIndex = (currentIndex < totalCards - 1) ? currentIndex + 1 : (isMobile ? currentIndex : 0);
-            break;
-        case 'ArrowLeft':
-            // Navegación horizontal: salta una columna (3 tarjetas) hacia la izquierda
-            if (!isMobile) {
-                newIndex = currentIndex - itemsPorColumna;
-                // Si salta más allá del inicio, loop al final
-                newIndex = (newIndex < 0) ? totalCards + newIndex : newIndex; // Ajuste de loop 
-                if (newIndex >= totalCards) newIndex = totalCards - 1; // Si el final no es un múltiplo
-            } else {
-                // En móvil, izquierda actúa como arriba
-                newIndex = (currentIndex > 0) ? currentIndex - 1 : currentIndex;
-            }
-            break;
-        case 'ArrowRight':
-            // Navegación horizontal: salta una columna (3 tarjetas) hacia la derecha
-            if (!isMobile) {
-                newIndex = currentIndex + itemsPorColumna;
-                // Si salta más allá del final, loop al inicio
-                newIndex = (newIndex >= totalCards) ? newIndex % totalCards : newIndex;
-            } else {
-                // En móvil, derecha actúa como abajo
-                newIndex = (currentIndex < totalCards - 1) ? currentIndex + 1 : currentIndex;
-            }
-            break;
-        case 'Enter':
-        case ' ':
-          // ACTIVACIÓN: Activar click sobre el elemento enfocado
-          nextElementToClick.click();
-          return;
-      }
+            case 'Enter':
+            case ' ':
+                const allCards = Array.from(App.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+                const activeCard = allCards[currentIndex];
+                if (activeCard) {
+                    activeCard.click(); // Simular clic en la tarjeta activa
+                }
+                return; // No necesita _updateFocus
+        }
 
-      // Si el índice cambia, actualizamos el foco
-      if (newIndex !== currentIndex) {
-          App.STATE.currentFocusIndex = newIndex;
-          // true indica que debe deslizar/scroll (Swiper/ScrollIntoView)
-          App._updateFocus(true); 
-      }
+        // Si el índice cambia (y no es un helper), actualizamos el foco
+        if (shouldSlide && newIndex !== currentIndex) {
+            App.STATE.currentFocusIndex = newIndex;
+            App._updateFocus(true); 
+        }
     };
 
-    // ⭐️ 3. FUNCIÓN HELPER: _handleFocusTrap (TAB) - DOBLE HALO FIX ⭐️
+    // ⭐️ 3. HELPER DE FOCO VERTICAL (NUEVO) ⭐️
+    // Esta lógica asegura que Arriba/Abajo no cambien de columna en Desktop
+    App._changeFocusVertical = function(direction) { // -1 Arriba, 1 Abajo
+        const { currentFocusIndex, itemsPorColumna } = App.STATE;
+        const allCards = Array.from(App.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+        if (allCards.length === 0) return;
+
+        let newIndex = currentFocusIndex + direction;
+
+        // Lógica de Límite de Columna (Desktop)
+        const isMobile = window.innerWidth <= 768;
+        if (!isMobile) {
+            const currentCol = Math.floor(currentFocusIndex / itemsPorColumna);
+            const newCol = Math.floor(newIndex / itemsPorColumna);
+
+            // Si se sale de la columna (y no es un loop), no hacer nada
+            if (newCol !== currentCol && (newIndex >= 0 && newIndex < allCards.length)) {
+                return; 
+            }
+        }
+
+        // Permitir loop (si -1 -> se va a (total-1), si (total) -> se va a 0)
+        if (newIndex < 0) newIndex = allCards.length - 1;
+        if (newIndex >= allCards.length) newIndex = 0;
+
+        App.STATE.currentFocusIndex = newIndex;
+        App._updateFocus(true); // true = deslizar/scroll
+    };
+
+
+    // ⭐️ 4. _handleFocusTrap (CORREGIDO) ⭐️
+    // Corregido para que también lea el estado, no el DOM.
     App._handleFocusTrap = function(e, viewType) {
         const isMobile = window.innerWidth <= 768;
         let focusableElements = [];
 
         const footerLinks = Array.from(document.querySelectorAll('footer a'));
-        // Buscar la tarjeta activa por el tabindex="0" en el track correcto
-        const activeCard = App.DOM.track ? App.DOM.track.querySelector('[tabindex="0"]') : null;
+        
+        // ❗️ FIX: Leer la tarjeta activa desde el ESTADO
+        const allCards = App.DOM.track ? Array.from(App.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])')) : [];
+        const activeCard = allCards[App.STATE.currentFocusIndex] || null;
 
         if (viewType === 'nav') {
             if (isMobile) {
                 const btnVolver = App.DOM.btnVolverNav.style.display === 'block' ? App.DOM.btnVolverNav : null;
-                // En móvil, la tarjeta "Volver" vertical está dentro del track
-                // En móvil, la trampa debe incluir el botón de volver fijo (si está) + tarjetas del track + footer
                 focusableElements = [btnVolver, activeCard, ...footerLinks].filter(Boolean);
             } else {
                 const cardVolver = App.DOM.cardVolverFija.tabIndex === 0 ? App.DOM.cardVolverFija : null;
-                // Desktop: Volver Fijo (si activo) -> Tarjeta Activa -> Footer Links
                 focusableElements = [cardVolver, activeCard, ...footerLinks].filter(Boolean);
             }
         } 
         else if (viewType === 'detail') {
-            // Usa la función helper de nav-base.js
             const detailInteractive = App._getFocusableDetailElements();
-            // Detalle: Volver (tarjeta/botón) -> Links de Curso -> Footer Links
             focusableElements = [...detailInteractive, ...footerLinks].filter(Boolean);
         }
 
@@ -155,42 +176,33 @@
         let nextIndex = 0;
 
         if (e.shiftKey) { // Shift + Tab (hacia atrás)
-            if (currentIndex <= 0) {
-                nextIndex = focusableElements.length - 1;
-            } else {
-                nextIndex = currentIndex - 1;
-            }
+            nextIndex = (currentIndex <= 0) ? focusableElements.length - 1 : currentIndex - 1;
         } else { // Tab (hacia adelante)
-            if (currentIndex >= focusableElements.length - 1) {
-                nextIndex = 0;
-            } else {
-                nextIndex = currentIndex + 1;
-            }
+            nextIndex = (currentIndex >= focusableElements.length - 1) ? 0 : currentIndex + 1;
         }
 
-        // FIX CRÍTICO DOBLE HALO: Quitar la clase de foco visual del elemento anterior
+        // --- FIX DOBLE HALO ---
         if (activeCard && activeCard.classList.contains('focus-visible')) {
-            // Solo quitar el foco visual si estamos saliendo de la tarjeta navegable
             if (focusableElements[currentIndex] === activeCard && focusableElements[nextIndex] !== activeCard) {
                 activeCard.classList.remove('focus-visible');
             }
         }
+        if (focusableElements[nextIndex] === activeCard) {
+            activeCard.classList.add('focus-visible');
+        }
+        // --- Fin FIX ---
 
         focusableElements[nextIndex].focus();
     };
 
-    // ⭐️ 4. NAVEGACIÓN POR FLECHAS EN DETALLES (VISTA DETALLE) ⭐️
+
+    // ⭐️ 5. NAVEGACIÓN POR FLECHAS EN DETALLES (Tu código original) ⭐️
     App._handleDetailNavigation = function(key) {
-        const activeElement = document.activeElement;
-
-        // Obtener todos los elementos navegables (Volver + Links)
+         const activeElement = document.activeElement;
         const focusableDetailElements = App._getFocusableDetailElements();
-
         let currentIndex = focusableDetailElements.indexOf(activeElement);
-        if (currentIndex === -1) return; // Foco no está en un elemento navegable del detalle
-
+        if (currentIndex === -1) return;
         let newIndex = currentIndex;
-
         switch (key) {
             case 'ArrowLeft':
             case 'ArrowUp':
@@ -205,7 +217,6 @@
                 activeElement.click(); 
                 return;
         }
-
         if (newIndex !== currentIndex) {
             focusableDetailElements[newIndex].focus();
         }
