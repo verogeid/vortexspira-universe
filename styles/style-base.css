@@ -266,11 +266,11 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     width: 100%;
     
     /* Simular el padding/gap del carrusel */
-    padding-top: var(--nav-carousel-top-offset); 
+    padding-top: 3vh; /*var(--nav-carousel-top-offset); */
     padding-left: 15px; 
     padding-right: 15px; 
     /* FIX: Simular padding-bottom simétrico al padding-top */
-    padding-bottom: var(--nav-carousel-top-offset); 
+    padding-bottom: 5vh; /*var(--nav-carousel-top-offset); */
     
     /* 🚨 FIX CRÍTICO: Simular el gap con la columna central 🚨 */
     margin-right: var(--card-gap); 
@@ -293,7 +293,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 #card-volver-fija-elemento {
     /* CRÍTICO: Dimensionamiento de tarjeta */
     /*width: var(--card-width, 100%);*/
-    height: var(--card-height-calc); 
+    height: 16vh; /*var(--card-height-calc); */
     flex: 0 0 auto;
     
     /* Estilos visuales de tarjeta (Restaurados) */
