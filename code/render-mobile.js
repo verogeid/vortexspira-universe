@@ -1,4 +1,5 @@
 // --- code/render-mobile.js ---
+/* (Sin cambios, tal como lo proporcionaste) */
 (function() {
 
     // ⭐️ 1. FUNCIÓN DE GENERACIÓN DE HTML ESPECÍFICA PARA MÓVIL ⭐️

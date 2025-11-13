@@ -1,4 +1,5 @@
 // --- code/render-base.js ---
+/* (Sin cambios, tal como lo proporcionaste) */
 (function() {
 
     // Almacena el modo actual (móvil, tablet, escritorio)

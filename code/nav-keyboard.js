@@ -1,25 +1,21 @@
 // --- code/nav-keyboard.js ---
+/* (⭐️ CORREGIDO: Reordenado el listener 'keydown' para la lógica de Tab) */
 (function() {
 
-    // ⭐️ 1. LISTENER CENTRAL DE TECLADO (CORREGIDO) ⭐️
+    // ⭐️ 1. LISTENER CENTRAL DE TECLADO (CORREGIDO Y REORDENADO) ⭐️
     document.addEventListener('keydown', (e) => {
         if (!App || !App.DOM || !App.DOM.vistaNav) return; // App no está lista
 
+        // ⭐️ 1. DEFINIR VISTAS ACTIVAS AL INICIO ⭐️
+        const isNavActive = App.DOM.vistaNav.classList.contains('active');
+        const isDetailActive = App.DOM.vistaDetalle.classList.contains('active');
+
+
         // --- MANEJO DE TECLAS GLOBALES ---
 
-        // 1. Escape siempre vuelve
-        if (e.key === 'Escape') {
-            e.preventDefault();
-            App._handleVolverClick(); 
-            return;
-        }
-
-        // 2. ⭐️ Tab (Focus Trap) siempre se maneja ⭐️
+        // 2. ⭐️ Tab (Focus Trap) siempre se maneja PRIMERO ⭐️
         if (e.key === 'Tab') {
             e.preventDefault();
-            // Determinar en qué vista estamos para pasarla a la trampa
-            const isNavActive = App.DOM.vistaNav.classList.contains('active');
-            const isDetailActive = App.DOM.vistaDetalle.classList.contains('active');
             
             if (isNavActive) {
                 App._handleFocusTrap(e, 'nav');
@@ -29,9 +25,26 @@
             return; // No hacer nada más
         }
         
+        // 3. Escape siempre vuelve
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            App._handleVolverClick(); 
+            return;
+        }
+
         // --- MANEJO DE TECLAS CONTEXTUALES (FLECHAS, ENTER, ESPACIO) ---
 
-        // 3. Comprobar si el foco está en la tarjeta "Volver" (Desktop)
+        // 4. Comprobar si el foco está en el footer (SOLO FLECHAS)
+        const isFooterActive = document.activeElement.closest('footer');
+        if (isFooterActive) {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+                App._handleFooterNavigation(e.key);
+            }
+            return; // Ignora Tab (ya manejado), Enter, Espacio
+        }
+
+        // 5. Comprobar si el foco está en la tarjeta "Volver" (Desktop)
         if (document.activeElement === App.DOM.cardVolverFija) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -40,20 +53,7 @@
             return; 
         }
 
-        // 4. Comprobar si el foco está en el footer
-        const isFooterActive = document.activeElement.closest('footer');
-        if (isFooterActive) {
-            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-                e.preventDefault();
-                App._handleFooterNavigation(e.key);
-            }
-            return; 
-        }
-
-        // 5. Comprobar Vistas (para flechas/enter/espacio)
-        const isNavActive = App.DOM.vistaNav.classList.contains('active');
-        const isDetailActive = App.DOM.vistaDetalle.classList.contains('active');
-
+        // 6. Comprobar Vistas (para flechas/enter/espacio en el contenido principal)
         if (isNavActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault(); 

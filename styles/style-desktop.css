@@ -1,107 +1,109 @@
 /* --- styles/style-desktop.css --- */
+/* ⭐️ CORRECCIÓN: Envuelto en @media query ⭐️ */
+@media (min-width: 769px) {
 
-/* ⭐️ 0. Variable de altura específica ⭐️ */
-:root {
-    /* ❗️ Fórmula para 3 filas: (100% - 2 gaps) / 3 ❗️ */
-    --card-height-calc: calc( (100% - (2 * var(--card-gap))) / 3 );
-}
+    /* ⭐️ 0. Variable de altura específica ⭐️ */
+    :root {
+        /* ❗️ Fórmula para 3 filas: (100% - 2 gaps) / 3 ❗️ */
+        --card-height-calc: calc( (100% - (2 * var(--card-gap))) / 3 );
+    }
 
-/* ⭐️ 1. VISIBILIDAD DE VISTAS ⭐️ */
-/* (JS controla la visibilidad) */
+    /* ⭐️ 1. VISIBILIDAD DE VISTAS ⭐️ */
+    /* (JS controla la visibilidad) */
 
-/* ⭐️ 2. LAYOUT DEL CARRUSEL (Swiper) ⭐️ */
-#nav-swiper {
-    height: 100%; 
-    width: 100%; 
-    overflow: hidden; 
-    position: relative; 
-    z-index: 1; 
-    touch-action: pan-y;
-}
+    /* ⭐️ 2. LAYOUT DEL CARRUSEL (Swiper) ⭐️ */
+    #nav-swiper {
+        height: 100%; 
+        width: 100%; 
+        overflow: hidden; 
+        position: relative; 
+        z-index: 1; 
+        touch-action: pan-y;
+    }
 
-#nav-swiper .swiper-wrapper {
-  display: flex !important; 
-  height: 100% !important; 
-  gap: 0; 
-  align-items: start;
-}
+    #nav-swiper .swiper-wrapper {
+      display: flex !important; 
+      height: 100% !important; 
+      gap: 0; 
+      align-items: start;
+    }
 
-#nav-swiper .swiper-slide {
-  width: calc(100% / 3) !important; /* 3 columnas */
-  height: 100% !important; 
-  margin: 0 !important;
-  border: none !important; 
-  background: transparent !important; 
-  padding: 0 !important; 
-}
-
-
-/* ⭐️ 3. AGRUPACIÓN 3x3 ⭐️ */
-#nav-swiper .cards-column-group {
-    display: flex;
-    flex-direction: column; 
-    justify-content: flex-start; 
-    height: calc(100% - var(--nav-carousel-top-offset)); 
-    gap: var(--card-gap); 
-    padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
-    box-sizing: border-box;
-    width: 100%;
-}
-
-/* ⭐️ 4. AJUSTES DE ALTURA (3 Filas) ⭐️ */
-#nav-swiper .cards-column-group .card {
-    flex: none; 
-    height: var(--card-height-calc); 
-    min-height: var(--card-height-calc);
-    margin-bottom: 0; 
-}
-
-/* ⭐️ 5. APLICAR ALTURA A LA COLUMNA IZQUIERDA ⭐️ */
-/* (Solo cuando la vista desktop esté activa) */
-.vista.active#vista-navegacion-desktop ~ #card-volver-fija #card-nivel-actual,
-.vista.active#vista-navegacion-desktop ~ #card-volver-fija #card-volver-fija-elemento {
-    height: var(--card-height-calc);
-    min-height: var(--card-height-calc);
-}
+    #nav-swiper .swiper-slide {
+      width: calc(100% / 3) !important; /* 3 columnas */
+      height: 100% !important; 
+      margin: 0 !important;
+      border: none !important; 
+      background: transparent !important; 
+      padding: 0 !important; 
+    }
 
 
-/* --- 6. Estilos de Máscara --- */
-#vista-navegacion-desktop .carousel-mask {
-  position: absolute;
-  width: 100%; 
-  height: 100%; 
-  top: 0;
-  left: 0;
-  z-index: 10; 
-  pointer-events: none;
-  overflow: hidden; 
-}
-#vista-navegacion-desktop .mask-left, 
-#vista-navegacion-desktop .mask-right {
-  position: absolute; 
-  top: 0;
-  width: 25%;
-  height: 100%;
-  -webkit-backdrop-filter: blur(2px);
-  backdrop-filter: blur(2px); 
-  background: linear-gradient(to right, 
-    var(--color-mask-gradient) 0%, transparent 60%
-  );
-  z-index: 10;
-}
-#vista-navegacion-desktop .mask-left { left: 0; }
-#vista-navegacion-desktop .mask-right {
-  right: 0;
-  background: linear-gradient(to left, 
-    var(--color-mask-gradient) 0%, transparent 60%
-  );
-}
+    /* ⭐️ 3. AGRUPACIÓN 3x3 ⭐️ */
+    #nav-swiper .cards-column-group {
+        display: flex;
+        flex-direction: column; 
+        justify-content: flex-start; 
+        height: calc(100% - var(--nav-carousel-top-offset)); 
+        gap: var(--card-gap); 
+        padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
+        box-sizing: border-box;
+        width: 100%;
+    }
 
-/* Reducción de Movimiento */
-@media (prefers-reduced-motion: reduce) {
-  #vista-navegacion-desktop .mask-left,
-  #vista-navegacion-desktop .mask-right {
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-  }
-}
+    /* ⭐️ 4. AJUSTES DE ALTURA (3 Filas) ⭐️ */
+    #nav-swiper .cards-column-group .card {
+        flex: none; 
+        height: var(--card-height-calc); 
+        min-height: var(--card-height-calc);
+        margin-bottom: 0; 
+    }
+
+    /* ⭐️ 5. APLICAR ALTURA A LA COLUMNA IZQUIERDA (SIMPLIFICADO) ⭐️ */
+    #card-volver-fija #card-nivel-actual,
+    #card-volver-fija #card-volver-fija-elemento {
+        height: var(--card-height-calc);
+        min-height: var(--card-height-calc);
+    }
+
+
+    /* --- 6. Estilos de Máscara --- */
+    #vista-navegacion-desktop .carousel-mask {
+      position: absolute;
+      width: 100%; 
+      height: 100%; 
+      top: 0;
+      left: 0;
+      z-index: 10; 
+      pointer-events: none;
+      overflow: hidden; 
+    }
+    #vista-navegacion-desktop .mask-left, 
+    #vista-navegacion-desktop .mask-right {
+      position: absolute; 
+      top: 0;
+      width: 25%;
+      height: 100%;
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(2px); 
+      background: linear-gradient(to right, 
+        var(--color-mask-gradient) 0%, transparent 60%
+      );
+      z-index: 10;
+    }
+    #vista-navegacion-desktop .mask-left { left: 0; }
+    #vista-navegacion-desktop .mask-right {
+      right: 0;
+      background: linear-gradient(to left, 
+        var(--color-mask-gradient) 0%, transparent 60%
+      );
+    }
+
+    /* Reducción de Movimiento */
+    @media (prefers-reduced-motion: reduce) {
+      #vista-navegacion-desktop .mask-left,
+      #vista-navegacion-desktop .mask-right {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+      }
+    }
+} /* ⭐️ FIN DEL @media ⭐️ */

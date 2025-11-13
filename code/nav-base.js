@@ -1,4 +1,5 @@
 // --- code/nav-base.js ---
+/* (⭐️ CORREGIDO: Eliminado keydown de cardVolverFija, añadido breadcrumb en _mostrarDetalle) */
 (function() {
 
     // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS (Estáticos) ⭐️
@@ -16,13 +17,8 @@
 
       // 2. Listener para la Tarjeta Volver Fija (DESKTOP)
       if (this.DOM.cardVolverFija) {
+          // ⭐️ CORRECCIÓN: Solo click. Keydown se maneja en nav-keyboard.js
           this.DOM.cardVolverFija.addEventListener('click', this._handleVolverClick.bind(this));
-          this.DOM.cardVolverFija.addEventListener('keydown', (e) => {
-              if ((e.key === 'Enter' || e.key === ' ') && this.DOM.cardVolverFija.tabIndex === 0) {
-                  e.preventDefault();
-                  this._handleVolverClick();
-              }
-          });
       }
     };
 
@@ -158,6 +154,13 @@
           this.DOM.cardVolverFija.tabIndex = 0;
           primerElementoFocuseable = this.DOM.cardVolverFija;
           this.DOM.infoAdicional.style.display = 'block'; 
+
+          // ⭐️ CORRECCIÓN: Actualizar el Breadcrumb (Nivel Actual) ⭐️
+          if (this.DOM.cardNivelActual) {
+              this.DOM.cardNivelActual.style.display = 'flex';
+              this.DOM.cardNivelActual.innerHTML = `<h3>${curso.titulo}</h3>`; 
+          }
+
       } else { // Móvil O Tablet
           this.DOM.btnVolverNav.style.display = 'block';
           this.DOM.btnVolverNav.tabIndex = 0; 
