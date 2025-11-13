@@ -1,26 +1,43 @@
 // --- code/nav-keyboard.js ---
 (function() {
 
-    // ⭐️ 1. LISTENER CENTRAL DE TECLADO ⭐️
+    // ⭐️ 1. LISTENER CENTRAL DE TECLADO (CORREGIDO) ⭐️
     document.addEventListener('keydown', (e) => {
-        if (!App || !App.DOM || !App.DOM.vistaNav) return; // App no está lista
+        if (!App || !App.DOM || !App.DOM.vistaNav) return; 
 
-        const isNavActive = App.DOM.vistaNav.classList.contains('active');
-        const isDetailActive = App.DOM.vistaDetalle.classList.contains('active');
-        // ⭐️ Comprobar si el foco está en el footer
-        const isFooterActive = document.activeElement.closest('footer');
-
+        // 1. Manejar Escape siempre
         if (e.key === 'Escape') {
             e.preventDefault();
             App._handleVolverClick(); 
             return;
         }
 
+        // 2. Comprobar si el foco está en la tarjeta "Volver" (Desktop)
+        if (document.activeElement === App.DOM.cardVolverFija) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                App._handleVolverClick();
+            }
+            return; // No hacer nada más si el foco está aquí
+        }
+
+        // 3. Comprobar si el foco está en el footer
+        const isFooterActive = document.activeElement.closest('footer');
+        if (isFooterActive) {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+                App._handleFooterNavigation(e.key);
+            }
+            // Tab es manejado por _handleFocusTrap
+            return; 
+        }
+
+        // 4. Comprobar Vistas
+        const isNavActive = App.DOM.vistaNav.classList.contains('active');
+        const isDetailActive = App.DOM.vistaDetalle.classList.contains('active');
+
         if (isNavActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
-                if (document.activeElement === App.DOM.cardVolverFija) {
-                     return; // Dejar que el handler de nav-base se ocupe
-                }
                 e.preventDefault(); 
                 App._handleKeyNavigation(e.key);
             } 
@@ -39,19 +56,11 @@
                 App._handleFocusTrap(e, 'detail');
             }
         }
-        // ⭐️ Nuevo bloque para el footer
-        else if (isFooterActive) {
-            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-                e.preventDefault();
-                App._handleFooterNavigation(e.key);
-            }
-        }
     });
 
-    // ⭐️ 2. NAVEGACIÓN POR TECLADO (FLECHAS) - VISTA NAV ⭐️
+    // ⭐️ 2. NAVEGACIÓN EN VISTA NAV (Sin cambios) ⭐️
     App._handleKeyNavigation = function(key) {
         
-        // Lee el número de filas/columnas (1, 2, o 3) desde el estado
         const { itemsPorColumna } = App.STATE; 
         let currentIndex = App.STATE.currentFocusIndex;
         let newIndex = currentIndex;
@@ -61,57 +70,45 @@
         if (totalCards === 0) return;
 
         switch (key) {
-            // Lógica Vertical: Lineal (+1 / -1)
             case 'ArrowUp':
                 newIndex = currentIndex - 1;
-                if (newIndex < 0) {
-                    newIndex = totalCards - 1; // Loop al final
-                }
+                if (newIndex < 0) newIndex = totalCards - 1;
                 break;
             case 'ArrowDown':
                 newIndex = currentIndex + 1;
-                if (newIndex >= totalCards) {
-                    newIndex = 0; // Loop al inicio
-                }
+                if (newIndex >= totalCards) newIndex = 0;
                 break;
-            
-            // Lógica Horizontal: Salto por Columna
             case 'ArrowLeft':
                 newIndex = currentIndex - itemsPorColumna;
-                if (newIndex < 0) {
-                    newIndex = totalCards - 1; // Loop al final
-                }
+                if (newIndex < 0) newIndex = totalCards - 1; 
                 break;
             case 'ArrowRight':
                 newIndex = currentIndex + itemsPorColumna;
-                if (newIndex >= totalCards) {
-                     newIndex = 0; // Loop al inicio
-                }
+                if (newIndex >= totalCards) newIndex = 0;
                 break;
-
             case 'Enter':
             case ' ':
-                if (allCards[currentIndex]) {
-                    allCards[currentIndex].click(); // Simular clic
-                }
+                if (allCards[currentIndex]) allCards[currentIndex].click();
                 return; 
         }
 
         if (newIndex !== currentIndex) {
-            // ❗️ FIJAR LA BANDERA: Informar a nav-tactil que ignore este slide
             App.STATE.keyboardNavInProgress = true; 
-            
             App.STATE.currentFocusIndex = newIndex;
-            App._updateFocus(true); // Deslizar y enfocar
+            App._updateFocus(true);
         }
     };
 
-    // ⭐️ 3. NAVEGACIÓN EN DETALLES (VISTA DETALLE) ⭐️
+    // ⭐️ 3. NAVEGACIÓN EN DETALLES (Sin cambios) ⭐️
     App._handleDetailNavigation = function(key) {
          const activeElement = document.activeElement;
         const focusableDetailElements = App._getFocusableDetailElements();
         let currentIndex = focusableDetailElements.indexOf(activeElement);
-        if (currentIndex === -1) return;
+        if (currentIndex === -1) {
+            // Foco no está en un elemento, enfocar el primero
+            if (focusableDetailElements.length > 0) focusableDetailElements[0].focus();
+            return;
+        }
         
         let newIndex = currentIndex;
         switch (key) {
@@ -133,7 +130,7 @@
         }
     };
 
-    // ⭐️ 4. MANEJO DE FOCO (TAB) ⭐️
+    // ⭐️ 4. MANEJO DE FOCO (TAB) (Sin cambios) ⭐️
     App._handleFocusTrap = function(e, viewType) {
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= 600;
@@ -169,7 +166,7 @@
             nextIndex = (currentIndex >= focusableElements.length - 1) ? 0 : currentIndex + 1;
         }
 
-        // Gestionar clases 'focus-visible' para el "doble foco"
+        // ... (resto de la lógica de focus-visible sin cambios) ...
         if (activeCard && activeCard.classList.contains('focus-visible')) {
             if (focusableElements[currentIndex] === activeCard && focusableElements[nextIndex] !== activeCard) {
                 activeCard.classList.remove('focus-visible');
@@ -188,7 +185,7 @@
         focusableElements[nextIndex].focus();
     };
 
-    // ⭐️ 5. NUEVA FUNCIÓN: NAVEGACIÓN EN FOOTER ⭐️
+    // ⭐️ 5. NAVEGACIÓN EN FOOTER (Sin cambios) ⭐️
     App._handleFooterNavigation = function(key) {
         const focusableElements = Array.from(document.querySelectorAll('footer a'));
         if (focusableElements.length === 0) return;
@@ -205,16 +202,12 @@
             case 'ArrowLeft':
             case 'ArrowUp':
                 newIndex = currentIndex - 1;
-                if (newIndex < 0) {
-                    newIndex = focusableElements.length - 1; // Loop al final
-                }
+                if (newIndex < 0) newIndex = focusableElements.length - 1;
                 break;
             case 'ArrowRight':
             case 'ArrowDown':
                 newIndex = currentIndex + 1;
-                if (newIndex >= focusableElements.length) {
-                    newIndex = 0; // Loop al inicio
-                }
+                if (newIndex >= focusableElements.length) newIndex = 0;
                 break;
         }
 

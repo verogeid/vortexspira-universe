@@ -1,7 +1,14 @@
 /* --- styles/style-tablet.css --- */
 
+/* ⭐️ 0. Variable de altura específica ⭐️ */
+:root {
+    /* ❗️ Fórmula para 2 filas: (100% - 1 gap) / 2 ❗️ */
+    --card-height-calc: calc( (100% - var(--card-gap)) / 2 );
+}
+
 /* ⭐️ 1. VISIBILIDAD DE VISTAS ⭐️ */
-/* (ELIMINADA LA MEDIA QUERY - AHORA JS CONTROLA LA VISIBILIDAD) */
+/* (JS controla la visibilidad) */
+
 
 /* ⭐️ 2. LAYOUT DEL CARRUSEL (Swiper) ⭐️ */
 #nav-swiper-tablet {
@@ -10,7 +17,7 @@
     overflow: hidden; 
     position: relative; 
     z-index: 1; 
-    touch-action: pan-y; /* Para el swipe táctil */
+    touch-action: pan-y; 
 }
 
 #nav-swiper-tablet .swiper-wrapper {
@@ -42,19 +49,24 @@
     width: 100%;
 }
 
-/* ⭐️ 4. AJUSTES DE TARJETAS (2 Filas) ⭐️ */
+/* ⭐️ 4. AJUSTES DE ALTURA (2 Filas) ⭐️ */
 #nav-swiper-tablet .cards-column-group .card {
     flex: none; 
-    
-    /* ❗️ Fórmula para 2 filas: (100% - 1 gap) / 2 ❗️ */
-    height: calc( (100% - var(--card-gap)) / 2 ); 
-    min-height: calc( (100% - var(--card-gap)) / 2 );
-
+    height: var(--card-height-calc); 
+    min-height: var(--card-height-calc);
     margin-bottom: 0; 
 }
 
+/* ⭐️ 5. APLICAR ALTURA A LA COLUMNA IZQUIERDA ⭐️ */
+/* (Solo cuando la vista tablet esté activa) */
+.vista.active#vista-navegacion-tablet ~ #card-volver-fija #card-nivel-actual,
+.vista.active#vista-navegacion-tablet ~ #card-volver-fija #card-volver-fija-elemento {
+    height: var(--card-height-calc);
+    min-height: var(--card-height-calc);
+}
 
-/* --- 5. Estilos de Máscara --- */
+
+/* --- 6. Estilos de Máscara --- */
 #vista-navegacion-tablet .carousel-mask {
   position: absolute;
   width: 100%; 

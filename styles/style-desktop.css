@@ -1,7 +1,13 @@
 /* --- styles/style-desktop.css --- */
 
+/* ⭐️ 0. Variable de altura específica ⭐️ */
+:root {
+    /* ❗️ Fórmula para 3 filas: (100% - 2 gaps) / 3 ❗️ */
+    --card-height-calc: calc( (100% - (2 * var(--card-gap))) / 3 );
+}
+
 /* ⭐️ 1. VISIBILIDAD DE VISTAS ⭐️ */
-/* (ELIMINADA LA MEDIA QUERY - AHORA JS CONTROLA LA VISIBILIDAD) */
+/* (JS controla la visibilidad) */
 
 /* ⭐️ 2. LAYOUT DEL CARRUSEL (Swiper) ⭐️ */
 #nav-swiper {
@@ -10,7 +16,7 @@
     overflow: hidden; 
     position: relative; 
     z-index: 1; 
-    touch-action: pan-y; /* Para el swipe táctil */
+    touch-action: pan-y;
 }
 
 #nav-swiper .swiper-wrapper {
@@ -42,19 +48,24 @@
     width: 100%;
 }
 
-/* ⭐️ 4. AJUSTES DE TARJETAS (3 Filas) ⭐️ */
+/* ⭐️ 4. AJUSTES DE ALTURA (3 Filas) ⭐️ */
 #nav-swiper .cards-column-group .card {
     flex: none; 
-    
-    /* ❗️ Fórmula para 3 filas: (100% - 2 gaps) / 3 ❗️ */
-    height: calc( (100% - (2 * var(--card-gap))) / 3 ); 
-    min-height: calc( (100% - (2 * var(--card-gap))) / 3 );
-
+    height: var(--card-height-calc); 
+    min-height: var(--card-height-calc);
     margin-bottom: 0; 
 }
 
+/* ⭐️ 5. APLICAR ALTURA A LA COLUMNA IZQUIERDA ⭐️ */
+/* (Solo cuando la vista desktop esté activa) */
+.vista.active#vista-navegacion-desktop ~ #card-volver-fija #card-nivel-actual,
+.vista.active#vista-navegacion-desktop ~ #card-volver-fija #card-volver-fija-elemento {
+    height: var(--card-height-calc);
+    min-height: var(--card-height-calc);
+}
 
-/* --- 5. Estilos de Máscara --- */
+
+/* --- 6. Estilos de Máscara --- */
 #vista-navegacion-desktop .carousel-mask {
   position: absolute;
   width: 100%; 
