@@ -1,5 +1,4 @@
 // --- code/nav-keyboard.js ---
-/* (⭐️ CORREGIDO: Reordenado el listener 'keydown' para la lógica de Tab) */
 (function() {
 
     // ⭐️ 1. LISTENER CENTRAL DE TECLADO (CORREGIDO Y REORDENADO) ⭐️
@@ -139,59 +138,93 @@
         }
     };
 
-    // ⭐️ 4. MANEJO DE FOCO (TAB) (Sin cambios en su lógica interna) ⭐️
+    // ⭐️ 4. MANEJO DE FOCO (TAB) (CORREGIDO CON LÓGICA DE GRUPOS) ⭐️
     App._handleFocusTrap = function(e, viewType) {
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= 600;
         const isTablet = screenWidth > 600 && screenWidth <= 768;
         
-        let focusableElements = [];
         const footerLinks = Array.from(document.querySelectorAll('footer a'));
-        const allCards = App.DOM.track ? Array.from(App.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])')) : [];
-        const activeCard = allCards[App.STATE.currentFocusIndex] || null;
+        let groups = [];
 
+        // --- 1. Definir los grupos de foco ---
         if (viewType === 'nav') {
+            const allCards = App.DOM.track ? Array.from(App.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])')) : [];
+            const activeCard = allCards[App.STATE.currentFocusIndex] || null;
+
             if (isMobile || isTablet) {
                 const btnVolver = App.DOM.btnVolverNav.style.display === 'block' ? App.DOM.btnVolverNav : null;
-                focusableElements = [btnVolver, activeCard, ...footerLinks].filter(Boolean);
+                groups = [
+                    [btnVolver].filter(Boolean), // Grupo 1: Botón Volver (si existe)
+                    [activeCard].filter(Boolean), // Grupo 2: Tarjeta activa
+                    footerLinks                   // Grupo 3: Footer
+                ];
             } else { 
                 const cardVolver = App.DOM.cardVolverFija.tabIndex === 0 ? App.DOM.cardVolverFija : null;
-                focusableElements = [cardVolver, activeCard, ...footerLinks].filter(Boolean);
+                groups = [
+                    [cardVolver].filter(Boolean), // Grupo 1: Tarjeta Volver (si existe)
+                    [activeCard].filter(Boolean), // Grupo 2: Tarjeta activa
+                    footerLinks                   // Grupo 3: Footer
+                ];
             }
         } 
         else if (viewType === 'detail') {
-            const detailInteractive = App._getFocusableDetailElements();
-            focusableElements = [...detailInteractive, ...footerLinks].filter(Boolean);
+            const detailInteractive = App._getFocusableDetailElements(); // Esto incluye el botón "Volver" Y los enlaces
+            groups = [
+                detailInteractive, // Grupo 1: Volver + Enlaces del curso
+                footerLinks        // Grupo 2: Footer
+            ];
         }
 
-        if (focusableElements.length === 0) return;
+        // Filtrar grupos vacíos
+        groups = groups.filter(g => g.length > 0);
+        if (groups.length === 0) return;
 
-        const currentIndex = focusableElements.indexOf(document.activeElement);
-        let nextIndex = 0;
-
-        if (e.shiftKey) { 
-            nextIndex = (currentIndex <= 0) ? focusableElements.length - 1 : currentIndex - 1;
-        } else { 
-            nextIndex = (currentIndex >= focusableElements.length - 1) ? 0 : currentIndex + 1;
-        }
-
-        if (activeCard && activeCard.classList.contains('focus-visible')) {
-            if (focusableElements[currentIndex] === activeCard && focusableElements[nextIndex] !== activeCard) {
-                activeCard.classList.remove('focus-visible');
+        // --- 2. Encontrar el grupo actual ---
+        let currentGroupIndex = -1;
+        for (let i = 0; i < groups.length; i++) {
+            if (groups[i].includes(document.activeElement)) {
+                currentGroupIndex = i;
+                break;
             }
         }
-        if (focusableElements[nextIndex] === activeCard) {
-            activeCard.classList.add('focus-visible');
-        }
-        if (App.DOM.cardVolverFija && document.activeElement === App.DOM.cardVolverFija) {
-             App.DOM.cardVolverFija.classList.remove('focus-visible');
-        }
-        if (focusableElements[nextIndex] === App.DOM.cardVolverFija) {
-             focusableElements[nextIndex].classList.add('focus-visible');
+        // Si no estamos en ningún grupo (p.ej. click en el body), empezamos por el primero
+        if (currentGroupIndex === -1) currentGroupIndex = 0; 
+
+        // --- 3. Calcular el siguiente grupo ---
+        let nextGroupIndex;
+        if (e.shiftKey) { // Moviéndose hacia atrás
+            nextGroupIndex = (currentGroupIndex <= 0) ? groups.length - 1 : currentGroupIndex - 1;
+        } else { // Moviéndose hacia adelante
+            nextGroupIndex = (currentGroupIndex >= groups.length - 1) ? 0 : currentGroupIndex + 1;
         }
 
-        focusableElements[nextIndex].focus();
+        // --- 4. Enfocar el elemento correcto en el siguiente grupo ---
+        const nextGroup = groups[nextGroupIndex];
+        let elementToFocus;
+
+        if (e.shiftKey) {
+            // Ir al ÚLTIMO elemento del grupo anterior
+            elementToFocus = nextGroup[nextGroup.length - 1];
+        } else {
+            // Ir al PRIMER elemento del grupo siguiente
+            elementToFocus = nextGroup[0];
+        }
+
+        // --- 5. Limpiar/Añadir clases de foco ---
+        const activeCard = App.DOM.track ? App.DOM.track.querySelector('[data-id].focus-visible') : null;
+        if (activeCard && activeCard !== elementToFocus) {
+            activeCard.classList.remove('focus-visible');
+        }
+        if (elementToFocus === App.DOM.cardVolverFija) {
+             elementToFocus.classList.add('focus-visible');
+        }
+
+        if (elementToFocus) {
+            elementToFocus.focus();
+        }
     };
+
 
     // ⭐️ 5. NAVEGACIÓN EN FOOTER (Sin cambios) ⭐️
     App._handleFooterNavigation = function(key) {

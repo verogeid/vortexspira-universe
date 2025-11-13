@@ -42,7 +42,7 @@
         _swipeDirection = swiper.activeIndex > swiper.previousIndex ? 'next' : 'prev';
 
         // Manejar el salto del loop
-        if (swiper.previousIndex === swiper.slides.length - 1 && swiper.activeIndex === 0) {
+        if (swiper.previousIndex === swswiper.slides.length - 1 && swiper.activeIndex === 0) {
             _swipeDirection = 'next';
         }
         if (swiper.previousIndex === 0 && swiper.activeIndex === swiper.slides.length - 1) {
@@ -62,7 +62,7 @@
             return;
         }
 
-        // --- El resto es la lógica de SWIPE TÁCTIL ---
+        // --- El resto es la lógica de SWIPE TÁCTIL (o Rueda de Ratón) ---
         
         const { currentFocusIndex, itemsPorColumna } = this.STATE;
         const targetRow = currentFocusIndex % itemsPorColumna;
@@ -94,7 +94,11 @@
         if (newGlobalIndex > -1) {
             // 4. Actualizar el estado y el foco
             this.STATE.currentFocusIndex = newGlobalIndex;
-            this._updateFocus(true); 
+            
+            // ⭐️⭐️⭐️ LA CORRECCIÓN ⭐️⭐️⭐️
+            // El deslizamiento YA ocurrió (drag o rueda).
+            // Solo queremos sincronizar el foco, no provocar otro slide.
+            this._updateFocus(false); 
         }
     };
 

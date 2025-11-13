@@ -1,5 +1,4 @@
-/* --- styles/style-base.css --- */
-/* (Sin cambios, tal como lo proporcionaste) */
+/* --- MODIFICADO: styles/style-base.css --- */
 :root {
   /* Fondos */
   --color-bg: #f4f4f4;
@@ -19,6 +18,11 @@
   --color-success: #28a745;
   --color-success-bg: rgba(40, 167, 69, 0.1);
 
+  --color-card-shadow-disabled: rgba(150, 150, 150, 0.2);
+  
+  /* ⭐️ NUEVA VARIABLE: Borde más sutil para placeholders ⭐️ */
+  --color-border-placeholder: #ddd; 
+
   /* VARIABLES DE LAYOUT */
   --header-height: 9vh;
   --footer-height: 6vh;
@@ -34,6 +38,11 @@
     --color-text: #eee;
     --color-card-border: #aaa; 
     --color-card-border-disabled: #666; 
+    
+    --color-card-shadow-disabled: rgba(170, 170, 170, 0.3);
+    
+    /* ⭐️ CORRECCIÓN (Dark): Borde más sutil (oscuro) ⭐️ */
+    --color-border-placeholder: #555; 
   }
 }
 
@@ -93,6 +102,7 @@ footer small {
 }
 footer a { 
     color: #888; 
+    fill: #888; /* Color base para SVG */
     text-decoration: none; 
     transition: all 0.2s ease;
     display: inline-block;
@@ -176,7 +186,7 @@ footer a:focus {
   font-size: 1.5rem;
 }
 
-/* Ghost Azul: Tarjetas */
+/* Borde/Sombra para Hover Y Foco (Activas) */
 .card.focus-visible:not(.disabled):not([data-tipo="relleno"]),
 .card:not(.disabled):not([data-tipo="relleno"]):hover,
 .card:not(.disabled):not([data-tipo="relleno"]):focus-visible {
@@ -186,6 +196,12 @@ footer a:focus {
   transform: scale(1.03);
   box-shadow: 0 0 25px rgba(0, 123, 255, 0.4); 
 }
+/* Color de texto SOLO en foco (Activas) */
+.card.focus-visible:not(.disabled):not([data-tipo="relleno"]),
+.card:not(.disabled):not([data-tipo="relleno"]):focus-visible {
+    color: var(--color-primary);
+}
+
 
 /* Tarjeta deshabilitada */
 .card.disabled {
@@ -203,12 +219,13 @@ footer a:focus {
   border-color: var(--color-card-border); 
   background: var(--color-card-bg);
   transform: scale(1.03);
-  box-shadow: 0 0 20px rgba(150, 150, 150, 0.2); 
+  box-shadow: 0 0 15px var(--color-card-shadow-disabled); 
 }
 
 /* Tarjetas de relleno */
 .card[data-tipo="relleno"] {
-    border: 2px dashed var(--color-card-border); 
+    /* ⭐️ CORRECCIÓN: Usar variable placeholder ⭐️ */
+    border: 2px dashed var(--color-border-placeholder); 
     background: transparent;
     pointer-events: none;
     cursor: default;
@@ -218,7 +235,8 @@ footer a:focus {
 .card[data-tipo="relleno"]:hover,
 .card[data-tipo="relleno"]:focus-visible {
     background: transparent;
-    border-color: var(--color-card-border);
+    /* ⭐️ CORRECCIÓN: Usar variable placeholder ⭐️ */
+    border-color: var(--color-border-placeholder);
     transform: none;
     box-shadow: none;
 }
@@ -240,15 +258,24 @@ footer a:focus {
     outline: none;
 }
 
-/* ⭐️ REGLA GHOST COMPARTIDA (ENLACES DE CURSO + FOOTER) ⭐️ */
+/* Borde/Sombra para Hover Y Foco (Enlaces) */
 .enlace-curso:hover, .enlace-curso:focus-visible,
 footer a:hover, footer a:focus-visible {
-    color: var(--color-primary); 
     border-color: var(--color-primary);
     background: var(--color-card-bg);
     transform: scale(1.03);
     box-shadow: 0 0 25px rgba(0, 123, 255, 0.4);
     outline: none;
+}
+/* Color de texto SOLO en foco (Enlaces) */
+.enlace-curso:focus-visible,
+footer a:focus-visible {
+    color: var(--color-primary); 
+    fill: var(--color-primary); /* Color SVG en foco */
+}
+/* Color SVG en hover (para que coincida) */
+footer a:hover .linkedin-icon {
+    fill: var(--color-primary);
 }
 
 
@@ -258,17 +285,12 @@ footer a:hover, footer a:focus-visible {
     grid-column: 1 / 2;
     position: relative; 
     z-index: 50; 
-    
-    /* ⭐️ 1. Lógica de layout: imita a .cards-column-group ⭐️ */
     display: flex; 
     flex-direction: column;
-    justify-content: flex-start; /* Alinear arriba */
-    height: 100%; /* ⭐️ CORREGIDO: Ocupar el 100% de la celda */
+    justify-content: flex-start; 
+    height: 100%; 
     gap: var(--card-gap); 
-    
-    /* ⭐️ 2. Padding: imita a .cards-column-group ⭐️ */
     padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
-    
     margin-right: var(--card-gap); 
     border: none;
     background: transparent;
@@ -278,8 +300,9 @@ footer a:hover, footer a:focus-visible {
 
 /* ⭐️ 3. Nivel Actual (Breadcrumb) ⭐️ */
 #card-nivel-actual {
-    flex: 0 0 auto; /* No crecer, no encogerse */
-    border: 2px dashed var(--color-card-border);
+    flex: 0 0 auto; 
+    /* ⭐️ CORRECCIÓN: Usar variable placeholder ⭐️ */
+    border: 2px dashed var(--color-border-placeholder);
     background: transparent;
     padding: 1.5rem;
     border-radius: 12px;
@@ -289,13 +312,11 @@ footer a:hover, footer a:focus-visible {
     box-sizing: border-box;
     overflow: hidden;
 }
-/* ⭐️ Estilo para el texto del breadcrumb (cortar con '...') ⭐️ */
 #card-nivel-actual h3 {
     margin: 0;
     font-size: 1.5rem;
     color: var(--color-text);
     opacity: 0.7;
-    
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -314,6 +335,7 @@ footer a:hover, footer a:focus-visible {
     overflow: hidden; 
     box-sizing: border-box; 
     transition: all 0.2s ease;
+    color: var(--color-text); 
 }
 #card-volver-fija-elemento h3 {
     margin: 0;
@@ -324,14 +346,15 @@ footer a:hover, footer a:focus-visible {
 
 /* ⭐️ 5. Relleno Izquierdo ⭐️ */
 #columna-volver-relleno {
-    flex-grow: 1; /* ⭐️ Ocupa el resto del espacio */
+    flex-grow: 1; 
     width: 100%;
     border: none;
 }
 
 /* --- LÓGICA DE FOCO PARA "VOLVER" --- */
 #card-volver-fija-elemento[tabindex="-1"] {
-    border: 2px dashed var(--color-card-border);
+    /* ⭐️ CORRECCIÓN: Usar variable placeholder ⭐️ */
+    border: 2px dashed var(--color-border-placeholder);
     background: transparent;
     cursor: default;
 }
@@ -346,6 +369,8 @@ footer a:hover, footer a:focus-visible {
 #card-volver-fija-elemento[tabindex="0"] > * {
     display: block; 
 }
+
+/* Borde/Sombra para Hover Y Foco (Volver) */
 #card-volver-fija-elemento[tabindex="0"].focus-visible,
 #card-volver-fija-elemento[tabindex="0"]:hover,
 #card-volver-fija-elemento[tabindex="0"]:focus-visible {
@@ -354,6 +379,11 @@ footer a:hover, footer a:focus-visible {
     transform: scale(1.03);
     box-shadow: 0 0 25px rgba(0, 123, 255, 0.4); 
 }
+/* Color de texto SOLO en foco (Volver) */
+#card-volver-fija-elemento[tabindex="0"].focus-visible,
+#card-volver-fija-elemento[tabindex="0"]:focus-visible {
+    color: var(--color-primary);
+}
 
 
 /* ZONA DE INFORMACIÓN ADICIONAL (Sidebar Derecho) */
@@ -361,20 +391,16 @@ footer a:hover, footer a:focus-visible {
     grid-column: 3 / 4;
     width: 100%; 
     border-radius: 12px;
-    border: 2px dashed var(--color-card-border); 
+    /* ⭐️ CORRECCIÓN: Usar variable placeholder ⭐️ */
+    border: 2px dashed var(--color-border-placeholder); 
     background: var(--color-card-bg);
     display: block !important; 
     text-align: left;
     box-sizing: border-box;
     margin-left: 0; 
-    
-    /* ⭐️ Alineación: Mismo padding que la columna izquierda ⭐️ */
     padding: var(--nav-carousel-top-offset) 15px 15px 15px;
-    
-    /* ⭐️ Altura: 100% de la celda del grid ⭐️ */
     height: 100%; 
 }
-/* Estilos del contenido de 'Info' */
 #info-adicional > * {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
