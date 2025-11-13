@@ -17,8 +17,12 @@
         const totalItems = items.length;
         let totalSlotsDeseados = Math.ceil(totalItems / itemsPerSlide) * itemsPerSlide; 
 
-        // Asegurar un mínimo de 2 slides de datos/relleno
-        const minDataSlides = 2;
+        // ⭐️⭐️⭐️ LA CORRECCIÓN ESTÁ AQUÍ ⭐️⭐️⭐️
+        // Asegurar un mínimo de 3 slides de datos/relleno
+        // (slidesPerView es 3, necesitamos al menos 1 extra para el loop)
+        const minDataSlides = 3; 
+        // ⭐️⭐️⭐️ (Antes era 2) ⭐️⭐️⭐️
+
         if (totalSlotsDeseados < (minDataSlides * itemsPerSlide)) {
             totalSlotsDeseados = (minDataSlides * itemsPerSlide);
         }
@@ -35,7 +39,6 @@
             // Generar el contenido de la columna (2 o 3 tarjetas)
             for (let j = 0; j < itemsPerSlide; j++) {
                 const item = itemsConRelleno[i + j];
-                // Comprobar si el item existe antes de procesarlo
                 if (item) {
                      if (item.tipo === 'relleno') {
                         slideContent += App._generarTarjetaHTML(item, false, true); 
@@ -44,7 +47,6 @@
                         slideContent += App._generarTarjetaHTML(item, estaActivo, false);
                     }
                 } else {
-                    // Añadir una tarjeta de relleno si el item no existe (para completar la columna)
                     slideContent += App._generarTarjetaHTML({ tipo: 'relleno' }, false, true);
                 }
             }
@@ -59,13 +61,11 @@
     // ⭐️ 2. INICIALIZACIÓN DE SWIPER (genérico) ⭐️
     App._initCarousel_Swipe = function(initialSwiperSlide, itemsPorColumna, isMobile, swiperId) {
         
-        // No hacer nada si es móvil (doble chequeo)
         if (isMobile) {
             App._destroyCarousel();
             return;
         }
 
-        // Destruir si ya existe una instancia (manejado en render-base, pero bueno tenerlo)
         if (App.STATE.carouselInstance) {
             App._destroyCarousel();
         }
@@ -77,14 +77,13 @@
             loop: true, 
             initialSlide: initialSwiperSlide + 1, // +1 por el relleno
             touchRatio: 1, 
-            simulateTouch: true, // Para el modo escritorio en móvil
+            simulateTouch: true, 
             centeredSlides: true,
             mousewheel: { sensitivity: 1 }, 
-            keyboard: { enabled: false }, // Lo manejamos nosotros
+            keyboard: { enabled: false }, 
             speed: 400,
         };
 
-        // ⭐️ Usa el ID dinámico que le pasa render-base.js
         App.STATE.carouselInstance = new Swiper(document.querySelector(swiperId), swiperConfig);
 
         if (App.STATE.carouselInstance) {
