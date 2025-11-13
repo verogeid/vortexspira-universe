@@ -17,11 +17,11 @@
         const totalItems = items.length;
         let totalSlotsDeseados = Math.ceil(totalItems / itemsPerSlide) * itemsPerSlide; 
 
-        // ⭐️⭐️⭐️ LA CORRECCIÓN ESTÁ AQUÍ ⭐️⭐️⭐️
-        // Asegurar un mínimo de 3 slides de datos/relleno
-        // (slidesPerView es 3, necesitamos al menos 1 extra para el loop)
-        const minDataSlides = 3; 
-        // ⭐️⭐️⭐️ (Antes era 2) ⭐️⭐️⭐️
+        // ⭐️⭐️⭐️ LA CORRECCIÓN ⭐️⭐️⭐️
+        // Swiper (con loop:true y slidesPerView:3) necesita 
+        // al menos (3 * 2 = 6) slides para funcionar sin warnings.
+        // 5 slides de datos + 1 de relleno = 6.
+        const minDataSlides = 5; 
 
         if (totalSlotsDeseados < (minDataSlides * itemsPerSlide)) {
             totalSlotsDeseados = (minDataSlides * itemsPerSlide);
