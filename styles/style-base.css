@@ -88,35 +88,29 @@ header h1 {
 footer small {
     display: flex;
     align-items: center; 
-    gap: 15px; /* Gap aumentado */
+    gap: 15px; 
 }
-
-/* ⭐️ ESTILOS BASE PARA ENLACES DE FOOTER ⭐️ */
 footer a { 
     color: #888; 
     text-decoration: none; 
     transition: all 0.2s ease;
-    
-    /* Estilos base para el ghost effect */
     display: inline-block;
     padding: 0.2rem 0.5rem;
     border-radius: 8px;
-    border: 2px solid transparent; /* Borde transparente por defecto */
+    border: 2px solid transparent;
 }
 footer a:focus {
-    /* Quitar el outline feo por defecto al usar Tab */
     outline: none;
 }
-
-.footer-social-link { /* Mantenido */ }
-.linkedin-icon { /* Mantenido */ }
+.footer-social-link { }
+.linkedin-icon { }
 .footer-license-link img {
     height: 16px; 
     width: auto;
     vertical-align: middle;
 }
 
-/* ⭐️ CONTENEDOR PRINCIPAL: GRID 1-3-1 (Desktop Default) ⭐️ */
+/* ⭐️ CONTENEDOR PRINCIPAL ⭐️ */
 #app-container {
   height: calc(100vh - var(--header-height) - var(--footer-height)); 
   width: 100%;
@@ -131,7 +125,7 @@ footer a:focus {
   background: var(--color-bg);
 }
 
-/* VISTA CENTRAL (Columna 2) y VISTAS ACTIVAS */
+/* VISTA CENTRAL Y VISTAS ACTIVAS */
 #vista-central {
   grid-column: 2 / 3;
   width: 100%;
@@ -161,7 +155,6 @@ footer a:focus {
 
 
 /* --- 3. Estilos Base de las Tarjetas (<article class="card">) --- */
-
 .card {
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
@@ -230,7 +223,6 @@ footer a:focus {
 }
 
 /* --- 4. Elementos de la Vista Detalle y Adicional --- */
-
 .enlace-curso {
     display: inline-block;
     padding: 1rem; 
@@ -267,7 +259,8 @@ footer a:hover, footer a:focus-visible {
     z-index: 50; 
     display: flex; 
     flex-direction: column;
-    justify-content: space-between;
+    /* ⭐️ CORREGIDO: Alinear al inicio, no "space-between" */
+    justify-content: flex-start;
     height: 100%; 
     width: 100%;
     padding-top: 3vh;
@@ -282,28 +275,56 @@ footer a:hover, footer a:focus-visible {
     box-sizing: border-box;
 }
 
-/* Elemento Interactivo Real */
+/* ⭐️ AÑADIDO: Estilo para el Nivel Actual (Breadcrumb) ⭐️ */
+#card-nivel-actual {
+    height: 16vh; /* Misma altura que la tarjeta de volver */
+    flex: 0 0 auto;
+    
+    /* Estilo de "tarjeta no navegable" */
+    border: 2px dashed var(--color-card-border);
+    background: transparent;
+    
+    padding: 1.5rem; /* Padding igual al de una tarjeta normal */
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+#card-nivel-actual h3 {
+    margin: 0;
+    font-size: 1.5rem; /* Mismo tamaño que una tarjeta */
+    color: var(--color-text);
+    opacity: 0.7; /* Ligeramente atenuado */
+}
+
+/* ⭐️ MODIFICADO: Estilo para el Elemento Interactivo "Volver" ⭐️ */
 #card-volver-fija-elemento {
     height: 16vh; 
     flex: 0 0 auto;
-    padding: 0.5rem;
+    padding: 1.5rem; /* Padding igual */
     border-radius: 12px;
     display: flex !important; 
     flex-direction: column;
     justify-content: center;
-    align-items: center;
     margin-bottom: 0; 
     overflow: hidden; 
     box-sizing: border-box; 
     transition: all 0.2s ease;
 }
-
-/* Fuerza al contenido (botón "BACK") a encogerse */
-#card-volver-fija-elemento > * {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+/* Estilo para el texto "↩️" */
+#card-volver-fija-elemento h3 {
     margin: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Relleno (ahora solo ocupa el espacio restante) */
+#columna-volver-relleno {
+    flex-grow: 1; /* ⭐️ CORREGIDO: Esto empuja todo hacia arriba */
+    width: 100%;
+    border: none;
 }
 
 /* --- LÓGICA DE FOCO PARA "VOLVER" --- */
@@ -318,7 +339,6 @@ footer a:hover, footer a:focus-visible {
     display: none;
 }
 
-
 /* Regla 2: Sub-nivel (Habilitado, sin foco) */
 #card-volver-fija-elemento[tabindex="0"] {
     border: 2px solid var(--color-card-border); 
@@ -328,7 +348,6 @@ footer a:hover, footer a:focus-visible {
 #card-volver-fija-elemento[tabindex="0"] > * {
     display: block; 
 }
-
 
 /* Regla 3: Sub-nivel (CON Foco Real) */
 #card-volver-fija-elemento[tabindex="0"].focus-visible,

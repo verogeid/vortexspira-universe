@@ -25,7 +25,6 @@
         let calculatedItemsPerColumn;
         let swiperId = null;
         
-        // Actualizar el modo actual para el ResizeObserver
         if (isMobile) _lastMode = 'mobile';
         else if (isTablet) _lastMode = 'tablet';
         else _lastMode = 'desktop';
@@ -33,13 +32,12 @@
 
         if (isMobile) {
             renderHtmlFn = App._generateCardHTML_Mobile;
-            initCarouselFn = App._initCarousel_Mobile; // Apunta a la función móvil
+            initCarouselFn = App._initCarousel_Mobile; 
             calculatedItemsPerColumn = 1;
             
         } else {
-            // Tablet y Desktop USAN EL MISMO MOTOR
             renderHtmlFn = App._generateCardHTML_Carousel;
-            initCarouselFn = App._initCarousel_Swipe; // Apunta a la función del carrusel
+            initCarouselFn = App._initCarousel_Swipe; 
             
             if (isTablet) {
                 calculatedItemsPerColumn = 2; // 2 filas
@@ -91,7 +89,7 @@
 
         // ⭐️ 5. GESTIÓN DE VISTAS (FLUJO "ANTI-PARPADEO") ⭐️
 
-        // 1. Destruir carrusel antiguo (no afecta a lo visual)
+        // 1. Destruir carrusel antiguo
         App._destroyCarousel(); 
 
         // 2. Generar el HTML
@@ -111,11 +109,13 @@
         if (typeof this.setupTouchListeners === 'function') {
             this.setupTouchListeners();
         }
-        this._updateNavViews(isSubLevel, isMobile || isTablet); 
+        
+        // ⭐️ LLAMADA A _updateNavViews (CON LÓGICA DE BREADCRUMB) ⭐️
+        this._updateNavViews(isSubLevel, isMobile || isTablet, nodoActual); 
+        
         this._updateFocus(false); // Foco inicial sin scroll
 
         // 6. ⭐️ EL "SWAP" ⭐️
-        // Ocultamos las otras vistas y mostramos la nueva en un solo paso.
         desktopView.classList.remove('active');
         tabletView.classList.remove('active');
         mobileView.classList.remove('active');
@@ -130,35 +130,42 @@
     };
 
 
-    // ⭐️ 2. FUNCIÓN DE PINTADO DE TARJETA INDIVIDUAL (Común) ⭐️
+    // ⭐️ 2. FUNCIÓN DE PINTADO DE TARJETA INDIVIDUAL (Modificado) ⭐️
     App._generarTarjetaHTML = function(nodo, estaActivo, esRelleno = false, tipoEspecial = null) {
 
         const wrapperTag = 'article';
 
         if (esRelleno) {
-            return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1"></article>`;
+            // ⭐️ ARIA: Ocultar relleno a lectores de pantalla
+            return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1" aria-hidden="true"></article>`;
         }
 
         if (tipoEspecial === 'volver-vertical') {
+            // ⭐️ ARIA: Añadido aria-label y texto
             return `
                 <${wrapperTag} class="card card-volver-vertical" 
                     data-id="volver-nav" 
                     data-tipo="volver-vertical" 
                     role="button" 
-                    tabindex="-1">
-                    <h3>↩️&#xFE0E;</h3>
+                    tabindex="-1"
+                    aria-label="Volver al nivel anterior">
+                    <h3>↩</h3>
                 </${wrapperTag}>
             `;
         }
 
         const isCourse = !!nodo.titulo;
-        const tipoData = isCourse ? 'data-tipo="curso"' : 'data-tipo="categoria"';
+        const tipo = isCourse ? 'curso' : 'categoria';
+        const tipoData = `data-tipo="${tipo}"`;
         const claseDisabled = estaActivo ? '' : 'disabled';
-        const tagAria = estaActivo ? '' : 'aria-disabled="true"';
+        const tagAriaDisabled = estaActivo ? '' : 'aria-disabled="true"';
         const tabindex = '-1'; 
         let hint = '';
         if (!estaActivo) hint = '<span>🚧</span>';
         const displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
+        
+        // ⭐️ ARIA: Etiqueta descriptiva
+        const ariaLabel = `${tipo === 'curso' ? 'Curso' : 'Categoría'}: ${displayTitle}. ${estaActivo ? 'Seleccionar para entrar.' : 'Contenido no disponible.'}`;
 
         return `
             <${wrapperTag} class="card ${claseDisabled}" 
@@ -166,7 +173,8 @@
                 ${tipoData}
                 role="button" 
                 tabindex="${tabindex}" 
-                ${tagAria}>
+                ${tagAriaDisabled}
+                aria-label="${ariaLabel}">
                 <h3>${displayTitle}</h3>
                 ${hint}
             </${wrapperTag}>
@@ -174,42 +182,42 @@
     };
 
 
-    // ⭐️ 3. LÓGICA DE FOCO Y NAVEGACIÓN (Unificado) ⭐️
+    // ⭐️ 3. LÓGICA DE FOCO Y NAVEGACIÓN (Modificado) ⭐️
     App._updateFocus = function(shouldSlide = true) {
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= 600;
 
-        // 1. Limpiar focos anteriores
+        // 1. Limpiar focos y aria-current anteriores
         const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
         allCardsInTrack.forEach(card => {
             card.classList.remove('focus-visible');
             card.tabIndex = -1;
+            card.removeAttribute('aria-current'); // ⭐️ Limpiar ARIA
         });
-        // Limpiar el foco visual de la tarjeta "Volver"
         if (App.DOM.cardVolverFija) {
             App.DOM.cardVolverFija.classList.remove('focus-visible');
+            App.DOM.cardVolverFija.removeAttribute('aria-current'); // ⭐️ Limpiar ARIA
         }
 
-        // 2. Obtener la nueva tarjeta REAL (excluyendo rellenos)
+        // 2. Obtener la nueva tarjeta REAL
         const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
         if (allCards.length === 0) return;
 
-        // 3. Normalizar el índice para el loop y los límites
+        // 3. Normalizar el índice
         let normalizedIndex = currentFocusIndex;
         if (normalizedIndex < 0) normalizedIndex = 0;
         if (normalizedIndex >= allCards.length) normalizedIndex = allCards.length - 1;
         
         const nextFocusedCard = allCards[normalizedIndex];
-        
-        // Sincronizar estado con el índice normalizado
         this.STATE.currentFocusIndex = normalizedIndex;
 
-        // 4. Aplicar nuevo foco y mover
+        // 4. Aplicar nuevo foco y aria-current
         if (nextFocusedCard) {
             nextFocusedCard.classList.add('focus-visible');
             nextFocusedCard.tabIndex = 0;
+            nextFocusedCard.setAttribute('aria-current', 'true'); // ⭐️ AÑADIDO
 
             if (shouldSlide) {
                 nextFocusedCard.focus(); 
@@ -229,7 +237,6 @@
 
 
     // ⭐️ 4. LÓGICA DE CONTROL DEL CARRUSEL (Stubs/Fallbacks) ⭐️
-    // Estas funciones serán sobreescritas por render-swipe.js y render-mobile.js
     App._generateCardHTML_Carousel = App._generateCardHTML_Carousel || function() { console.error("render-swipe.js no cargado"); return ""; };
     App._generateCardHTML_Mobile = App._generateCardHTML_Mobile || function() { console.error("render-mobile.js no cargado"); return ""; };
     App._initCarousel_Swipe = App._initCarousel_Swipe || function() { console.error("render-swipe.js no cargado"); };
@@ -237,23 +244,37 @@
     App._destroyCarousel = App._destroyCarousel || function() { /* El destructor real está en render-swipe.js */ };
 
 
-    // ⭐️ 5. UTILIDADES DE VISTAS LATERALES Y DATOS (Común) ⭐️
-    App._updateNavViews = function(isSubLevel, isMobileOrTablet) {
+    // ⭐️ 5. UTILIDADES DE VISTAS LATERALES Y DATOS (Modificado) ⭐️
+    App._updateNavViews = function(isSubLevel, isMobileOrTablet, nodoActual) {
         
-        if (!isMobileOrTablet) { // Solo desktop
+        if (!isMobileOrTablet) { // --- Solo Desktop ---
             this.DOM.cardVolverFija.style.display = 'flex';
+            this.DOM.cardNivelActual.style.display = 'flex'; // ⭐️ Mostrar Breadcrumb
             this.DOM.infoAdicional.style.display = 'block'; 
             this.DOM.btnVolverNav.style.display = 'none'; 
+            
             if (isSubLevel) {
                 this.DOM.cardVolverFija.tabIndex = 0; 
+                // ⭐️ AÑADIDO: Actualizar textos
+                const nombreNivel = nodoActual.nombre || nodoActual.titulo || 'Nivel';
+                this.DOM.cardNivelActual.innerHTML = `<h3>${nombreNivel}</h3>`;
+                this.DOM.cardVolverFija.innerHTML = `<h3>↩</h3>`;
+                this.DOM.cardVolverFija.setAttribute('aria-label', `Volver de ${nombreNivel}`);
             } else {
                 this.DOM.cardVolverFija.tabIndex = -1;
+                // ⭐️ AÑADIDO: Textos de Nivel Raíz
+                this.DOM.cardNivelActual.innerHTML = `<h3>..</h3>`; // ".." para Raíz
+                this.DOM.cardVolverFija.innerHTML = '';
+                this.DOM.cardVolverFija.setAttribute('aria-label', 'Volver (deshabilitado)');
             }
-        } else { // Móvil O Tablet
+        } else { // --- Móvil O Tablet ---
             this.DOM.cardVolverFija.style.display = 'none'; 
+            this.DOM.cardNivelActual.style.display = 'none'; // ⭐️ Ocultar Breadcrumb
             this.DOM.infoAdicional.style.display = 'none';
+            
             if (isSubLevel) {
                 this.DOM.btnVolverNav.style.display = 'block'; 
+                this.DOM.btnVolverNav.innerHTML = `↩️ Volver`; // ⭐️ Texto del Botón
             } else {
                 this.DOM.btnVolverNav.style.display = 'none';
             }
@@ -278,18 +299,15 @@
             if (newMode !== _lastMode && this.STATE.initialRenderComplete) {
                 console.log(`Cambiando de vista: ${_lastMode} -> ${newMode}`);
                 
-                // Lógica de ajuste de foco
                 const isSubLevel = this.STATE.navStack.length > 0;
                 if (isSubLevel) {
                     const lastWasCarousel = (_lastMode === 'tablet' || _lastMode === 'desktop');
                     const newIsMobile = (newMode === 'mobile');
                     
                     if (lastWasCarousel && newIsMobile) {
-                        // De Desktop/Tablet -> Móvil: Añadimos "Volver", así que +1
                         this.STATE.currentFocusIndex++;
                         console.log("Ajuste de foco: +1 (Volver añadido)");
                     } else if (!lastWasCarousel && !newIsMobile) {
-                        // De Móvil -> Desktop/Tablet: Quitamos "Volver", así que -1
                         this.STATE.currentFocusIndex = Math.max(0, this.STATE.currentFocusIndex - 1);
                         console.log("Ajuste de foco: -1 (Volver quitado)");
                     }
@@ -308,7 +326,6 @@
         if (!nodos || !id) return null;
         for (const n of nodos) {
             if (n.id === id) return n;
-
             if (n.subsecciones && n.subsecciones.length > 0) {
                 const encontrado = this._findNodoById(id, n.subsecciones);
                 if (encontrado) return encontrado;
