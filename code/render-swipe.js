@@ -17,7 +17,6 @@
         const totalItems = items.length;
         let totalSlotsDeseados = Math.ceil(totalItems / itemsPerSlide) * itemsPerSlide; 
 
-        // ⭐️⭐️⭐️ LA CORRECCIÓN ⭐️⭐️⭐️
         // Swiper (con loop:true y slidesPerView:3) necesita 
         // al menos (3 * 2 = 6) slides para funcionar sin warnings.
         // 5 slides de datos + 1 de relleno = 6.
@@ -75,7 +74,12 @@
             slidesPerView: 3, 
             slidesPerGroup: 1, 
             loop: true, 
-            initialSlide: initialSlideIndex + 1, // +1 por el relleno
+            
+            // ⭐️⭐️⭐️ LA CORRECCIÓN ⭐️⭐️⭐️
+            // Usar el nombre del parámetro 'initialSwiperSlide'
+            initialSlide: initialSwiperSlide + 1, 
+            // ⭐️⭐️⭐️ (Antes decía initialSlideIndex) ⭐️⭐️⭐️
+
             touchRatio: 1, 
             simulateTouch: true, 
             centeredSlides: true,
