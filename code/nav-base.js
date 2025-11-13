@@ -1,5 +1,4 @@
-// --- code/nav-base.js ---
-/* (⭐️ CORREGIDO: Eliminado keydown de cardVolverFija, añadido breadcrumb en _mostrarDetalle) */
+// --- MODIFICADO: code/nav-base.js ---
 (function() {
 
     // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS (Estáticos) ⭐️
@@ -17,7 +16,7 @@
 
       // 2. Listener para la Tarjeta Volver Fija (DESKTOP)
       if (this.DOM.cardVolverFija) {
-          // ⭐️ CORRECCIÓN: Solo click. Keydown se maneja en nav-keyboard.js
+          // 'keydown' se maneja globalmente en nav-keyboard.js
           this.DOM.cardVolverFija.addEventListener('click', this._handleVolverClick.bind(this));
       }
     };
@@ -90,13 +89,10 @@
             // Re-renderizar la vista de navegación (para el modo correcto)
             this.renderNavegacion(); 
 
-            // Forzar el foco de vuelta a la tarjeta que nos llevó al detalle
-            const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
-            const activeCard = allCards[this.STATE.currentFocusIndex] || this.DOM.track.querySelector('[tabindex="0"]');
-
-            if (activeCard) {
-                activeCard.focus();
-            }
+            // ⭐️⭐️⭐️ CORRECCIÓN ⭐️⭐️⭐️
+            // La lógica de foco que estaba aquí era redundante.
+            // renderNavegacion() ya llama a _updateFocus() internamente.
+            // Añadir una segunda llamada a .focus() estaba causando el error.
         } 
         // 2. Caso Sub-sección -> Nivel anterior
         else if (this.STATE.navStack.length > 0) {
@@ -154,8 +150,7 @@
           this.DOM.cardVolverFija.tabIndex = 0;
           primerElementoFocuseable = this.DOM.cardVolverFija;
           this.DOM.infoAdicional.style.display = 'block'; 
-
-          // ⭐️ CORRECCIÓN: Actualizar el Breadcrumb (Nivel Actual) ⭐️
+          
           if (this.DOM.cardNivelActual) {
               this.DOM.cardNivelActual.style.display = 'flex';
               this.DOM.cardNivelActual.innerHTML = `<h3>${curso.titulo}</h3>`; 

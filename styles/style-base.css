@@ -20,7 +20,7 @@
 
   --color-card-shadow-disabled: rgba(150, 150, 150, 0.2);
   
-  /* ⭐️ NUEVA VARIABLE: Borde más sutil para placeholders ⭐️ */
+  /* Borde más sutil para placeholders */
   --color-border-placeholder: #ddd; 
 
   /* VARIABLES DE LAYOUT */
@@ -41,7 +41,7 @@
     
     --color-card-shadow-disabled: rgba(170, 170, 170, 0.3);
     
-    /* ⭐️ CORRECCIÓN (Dark): Borde más sutil (oscuro) ⭐️ */
+    /* Borde más sutil (oscuro) */
     --color-border-placeholder: #555; 
   }
 }
@@ -224,7 +224,6 @@ footer a:focus {
 
 /* Tarjetas de relleno */
 .card[data-tipo="relleno"] {
-    /* ⭐️ CORRECCIÓN: Usar variable placeholder ⭐️ */
     border: 2px dashed var(--color-border-placeholder); 
     background: transparent;
     pointer-events: none;
@@ -235,7 +234,6 @@ footer a:focus {
 .card[data-tipo="relleno"]:hover,
 .card[data-tipo="relleno"]:focus-visible {
     background: transparent;
-    /* ⭐️ CORRECCIÓN: Usar variable placeholder ⭐️ */
     border-color: var(--color-border-placeholder);
     transform: none;
     box-shadow: none;
@@ -301,7 +299,6 @@ footer a:hover .linkedin-icon {
 /* ⭐️ 3. Nivel Actual (Breadcrumb) ⭐️ */
 #card-nivel-actual {
     flex: 0 0 auto; 
-    /* ⭐️ CORRECCIÓN: Usar variable placeholder ⭐️ */
     border: 2px dashed var(--color-border-placeholder);
     background: transparent;
     padding: 1.5rem;
@@ -311,12 +308,18 @@ footer a:hover .linkedin-icon {
     justify-content: center;
     box-sizing: border-box;
     overflow: hidden;
+    
+    /* ⭐️⭐️⭐️ LA CORRECCIÓN ⭐️⭐️⭐️ */
+    /* Previene que el item flex crezca más allá de su contenedor */
+    min-width: 0; 
 }
 #card-nivel-actual h3 {
     margin: 0;
     font-size: 1.5rem;
     color: var(--color-text);
     opacity: 0.7;
+    
+    /* Estos ya estaban y son correctos para "cortar" */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -353,7 +356,6 @@ footer a:hover .linkedin-icon {
 
 /* --- LÓGICA DE FOCO PARA "VOLVER" --- */
 #card-volver-fija-elemento[tabindex="-1"] {
-    /* ⭐️ CORRECCIÓN: Usar variable placeholder ⭐️ */
     border: 2px dashed var(--color-border-placeholder);
     background: transparent;
     cursor: default;
@@ -391,7 +393,6 @@ footer a:hover .linkedin-icon {
     grid-column: 3 / 4;
     width: 100%; 
     border-radius: 12px;
-    /* ⭐️ CORRECCIÓN: Usar variable placeholder ⭐️ */
     border: 2px dashed var(--color-border-placeholder); 
     background: var(--color-card-bg);
     display: block !important; 

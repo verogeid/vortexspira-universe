@@ -1,18 +1,18 @@
-// --- code/nav-keyboard.js ---
+// --- MODIFICADO: code/nav-keyboard.js ---
 (function() {
 
-    // ⭐️ 1. LISTENER CENTRAL DE TECLADO (CORREGIDO Y REORDENADO) ⭐️
+    // ⭐️ 1. LISTENER CENTRAL DE TECLADO (Sin cambios) ⭐️
     document.addEventListener('keydown', (e) => {
         if (!App || !App.DOM || !App.DOM.vistaNav) return; // App no está lista
 
-        // ⭐️ 1. DEFINIR VISTAS ACTIVAS AL INICIO ⭐️
+        // 1. DEFINIR VISTAS ACTIVAS AL INICIO
         const isNavActive = App.DOM.vistaNav.classList.contains('active');
         const isDetailActive = App.DOM.vistaDetalle.classList.contains('active');
 
 
         // --- MANEJO DE TECLAS GLOBALES ---
 
-        // 2. ⭐️ Tab (Focus Trap) siempre se maneja PRIMERO ⭐️
+        // 2. Tab (Focus Trap) siempre se maneja PRIMERO
         if (e.key === 'Tab') {
             e.preventDefault();
             
@@ -169,10 +169,20 @@
             }
         } 
         else if (viewType === 'detail') {
-            const detailInteractive = App._getFocusableDetailElements(); // Esto incluye el botón "Volver" Y los enlaces
+            // ⭐️⭐️⭐️ CORRECCIÓN BUG 2: Separar los grupos ⭐️⭐️⭐️
+            const detailLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('a.enlace-curso[tabindex="0"]'));
+            let volverElement = null;
+
+            if ((isMobile || isTablet) && App.DOM.btnVolverNav.style.display === 'block') {
+                volverElement = App.DOM.btnVolverNav;
+            } else if (!isMobile && !isTablet && App.DOM.cardVolverFija.tabIndex === 0) {
+                volverElement = App.DOM.cardVolverFija;
+            }
+
             groups = [
-                detailInteractive, // Grupo 1: Volver + Enlaces del curso
-                footerLinks        // Grupo 2: Footer
+                [volverElement].filter(Boolean), // Grupo 1: Botón/Tarjeta Volver
+                detailLinks,                     // Grupo 2: Enlaces del curso
+                footerLinks                      // Grupo 3: Footer
             ];
         }
 
@@ -212,12 +222,27 @@
         }
 
         // --- 5. Limpiar/Añadir clases de foco ---
+
+        // Limpiar foco de tarjeta de swipe si salimos
         const activeCard = App.DOM.track ? App.DOM.track.querySelector('[data-id].focus-visible') : null;
         if (activeCard && activeCard !== elementToFocus) {
             activeCard.classList.remove('focus-visible');
         }
+
+        // ⭐️⭐️⭐️ CORRECCIÓN BUG 1: Limpiar 'Volver' si salimos de él ⭐️⭐️⭐️
+        if (document.activeElement === App.DOM.cardVolverFija && elementToFocus !== App.DOM.cardVolverFija) {
+            App.DOM.cardVolverFija.classList.remove('focus-visible');
+        }
+
+        // Añadir foco a 'Volver' si entramos
         if (elementToFocus === App.DOM.cardVolverFija) {
              elementToFocus.classList.add('focus-visible');
+        }
+        
+        // Añadir foco a tarjeta de swipe si entramos (el caso de Tab)
+        const allCards = App.DOM.track ? Array.from(App.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])')) : [];
+        if (allCards.length > 0 && allCards.includes(elementToFocus)) {
+            elementToFocus.classList.add('focus-visible');
         }
 
         if (elementToFocus) {
