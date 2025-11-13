@@ -3,7 +3,6 @@
 
     // Almacena la dirección del swipe
     let _swipeDirection = 'next';
-    let _lastIndex = 0;
 
     // ⭐️ 1. CONFIGURACIÓN DE LISTENERS TÁCTILES (SWIPER) ⭐️
     App.setupTouchListeners = function() {
@@ -13,6 +12,7 @@
         if (!isMobile && this.STATE.carouselInstance) {
             const swiper = this.STATE.carouselInstance;
 
+            // --- Limpiar listeners antiguos ---
             if (swiper._slideChangeStartHandler) {
                  swiper.off('slideChangeTransitionStart', swiper._slideChangeStartHandler);
             }
@@ -20,9 +20,11 @@
                  swiper.off('slideChangeTransitionEnd', swiper._slideChangeEndHandler);
             }
             
+            // --- Guardar handlers para poder limpiarlos ---
             swiper._slideChangeStartHandler = this.handleSlideChangeStart.bind(this);
             swiper._slideChangeEndHandler = this.handleSlideChangeEnd.bind(this);
             
+            // ⭐️ Escuchar DOS eventos ⭐️
             swiper.on('slideChangeTransitionStart', swiper._slideChangeStartHandler);
             swiper.on('slideChangeTransitionEnd', swiper._slideChangeEndHandler);
             

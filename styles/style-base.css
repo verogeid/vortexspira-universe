@@ -331,7 +331,6 @@ footer a:hover, footer a:focus-visible {
 
 
 /* Regla 3: Sub-nivel (CON Foco Real) */
-/* (Se aplica el estilo "ghost" de las tarjetas) */
 #card-volver-fija-elemento[tabindex="0"].focus-visible,
 #card-volver-fija-elemento[tabindex="0"]:hover,
 #card-volver-fija-elemento[tabindex="0"]:focus-visible {

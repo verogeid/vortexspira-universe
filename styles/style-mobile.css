@@ -2,19 +2,14 @@
 
 /* ⭐️ 1. VISIBILIDAD DE VISTAS ⭐️ */
 @media (max-width: 600px) {
-    #vista-navegacion-mobile {
-        display: flex !important; 
-    }
-    #vista-navegacion-desktop, #vista-navegacion-tablet { 
-        display: none !important; 
-    }
+    /* ❗️ REGLAS DE DISPLAY ELIMINADAS (JS lo controla) ❗️ */
     
-    /* Ocultar sidebars en móvil */
+    /* Ocultar sidebars en móvil (Esto SÍ es correcto) */
     #card-volver-fija, #info-adicional {
         display: none !important;
     }
     
-    /* Ajustar grid para que la vista central ocupe todo */
+    /* Ajustar grid para que la vista central ocupe todo (Correcto) */
     #app-container {
         grid-template-columns: 1fr;
         padding: 10px;

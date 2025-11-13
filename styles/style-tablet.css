@@ -1,14 +1,7 @@
 /* --- styles/style-tablet.css --- */
 
 /* ⭐️ 1. VISIBILIDAD DE VISTAS ⭐️ */
-@media (min-width: 601px) and (max-width: 768px) {
-    #vista-navegacion-tablet {
-        display: flex !important; 
-    }
-    #vista-navegacion-desktop, #vista-navegacion-mobile { 
-        display: none !important; 
-    }
-}
+/* (ELIMINADA LA MEDIA QUERY - AHORA JS CONTROLA LA VISIBILIDAD) */
 
 /* ⭐️ 2. LAYOUT DEL CARRUSEL (Swiper) ⭐️ */
 #nav-swiper-tablet {

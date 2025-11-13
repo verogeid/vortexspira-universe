@@ -75,7 +75,7 @@
             slidesPerView: 3, 
             slidesPerGroup: 1, 
             loop: true, 
-            initialSlide: initialSwiperSlide + 1, // +1 por el relleno
+            initialSlide: initialSlideIndex + 1, // +1 por el relleno
             touchRatio: 1, 
             simulateTouch: true, 
             centeredSlides: true,

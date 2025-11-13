@@ -1,15 +1,7 @@
 /* --- styles/style-desktop.css --- */
 
 /* ⭐️ 1. VISIBILIDAD DE VISTAS ⭐️ */
-/* (Controlado por la clase 'active' de JS, pero esto es un fallback) */
-@media (min-width: 769px) {
-    #vista-navegacion-desktop {
-        display: flex !important; 
-    }
-    #vista-navegacion-tablet, #vista-navegacion-mobile { 
-        display: none !important; 
-    }
-}
+/* (ELIMINADA LA MEDIA QUERY - AHORA JS CONTROLA LA VISIBILIDAD) */
 
 /* ⭐️ 2. LAYOUT DEL CARRUSEL (Swiper) ⭐️ */
 #nav-swiper {

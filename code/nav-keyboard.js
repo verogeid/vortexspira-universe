@@ -41,18 +41,17 @@
         }
         // ⭐️ Nuevo bloque para el footer
         else if (isFooterActive) {
-            // Permitir navegación con todas las flechas
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
                 e.preventDefault();
                 App._handleFooterNavigation(e.key);
             }
-            // (Enter/Space funcionan de forma nativa en enlaces)
         }
     });
 
     // ⭐️ 2. NAVEGACIÓN POR TECLADO (FLECHAS) - VISTA NAV ⭐️
     App._handleKeyNavigation = function(key) {
         
+        // Lee el número de filas/columnas (1, 2, o 3) desde el estado
         const { itemsPorColumna } = App.STATE; 
         let currentIndex = App.STATE.currentFocusIndex;
         let newIndex = currentIndex;
@@ -99,9 +98,11 @@
         }
 
         if (newIndex !== currentIndex) {
+            // ❗️ FIJAR LA BANDERA: Informar a nav-tactil que ignore este slide
             App.STATE.keyboardNavInProgress = true; 
+            
             App.STATE.currentFocusIndex = newIndex;
-            App._updateFocus(true);
+            App._updateFocus(true); // Deslizar y enfocar
         }
     };
 
@@ -168,6 +169,7 @@
             nextIndex = (currentIndex >= focusableElements.length - 1) ? 0 : currentIndex + 1;
         }
 
+        // Gestionar clases 'focus-visible' para el "doble foco"
         if (activeCard && activeCard.classList.contains('focus-visible')) {
             if (focusableElements[currentIndex] === activeCard && focusableElements[nextIndex] !== activeCard) {
                 activeCard.classList.remove('focus-visible');
@@ -193,7 +195,6 @@
 
         const currentIndex = focusableElements.indexOf(document.activeElement);
         if (currentIndex === -1) {
-            // El foco estaba en el footer pero no en un enlace, enfocar el primero
             focusableElements[0].focus();
             return;
         }

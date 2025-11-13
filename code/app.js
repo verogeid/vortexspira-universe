@@ -14,7 +14,8 @@
       carouselInstance: null,  // La instancia activa de Swiper
       resizeObserver: null,    // El observador de cambio de tamaño
       currentFocusIndex: 0,    // El índice del elemento enfocado
-      initialRenderComplete: false // Flag para el ResizeObserver
+      initialRenderComplete: false, // Flag para el ResizeObserver
+      keyboardNavInProgress: false // Flag para nav-tactil.js
     },
 
     // --- 2. INICIALIZACIÓN ---
@@ -40,6 +41,9 @@
       this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); 
       this.DOM.cardVolverFija = document.getElementById('card-volver-fija-elemento'); 
       this.DOM.infoAdicional = document.getElementById('info-adicional'); 
+
+      // ⭐️ Cachear el nuevo div de nivel actual
+      this.DOM.cardNivelActual = document.getElementById('card-nivel-actual');
 
       // 2.1. Cargar los datos (definido en data.js)
       try {
