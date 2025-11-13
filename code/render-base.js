@@ -111,14 +111,14 @@
         }
 
         if (tipoEspecial === 'volver-vertical') {
-            // (El <span> es para el emoji 🔙)
+            // (El <span> es para el emoji ↩️)
             return `
                 <${wrapperTag} class="card card-volver-vertical" 
                     data-id="volver-nav" 
                     data-tipo="volver-vertical" 
                     role="button" 
                     tabindex="-1">
-                    <h3><span>🔙&#xFE0E;</span></h3>
+                    <h3><span>↩️&#xFE0E;</span></h3>
                 </${wrapperTag}>
             `;
         }
