@@ -3,10 +3,12 @@
 
     // ⭐️ 1. LISTENER CENTRAL DE TECLADO ⭐️
     document.addEventListener('keydown', (e) => {
-        if (!App || !App.DOM || !App.DOM.vistaNav) return; 
+        if (!App || !App.DOM || !App.DOM.vistaNav) return; // App no está lista
 
         const isNavActive = App.DOM.vistaNav.classList.contains('active');
         const isDetailActive = App.DOM.vistaDetalle.classList.contains('active');
+        // ⭐️ Comprobar si el foco está en el footer
+        const isFooterActive = document.activeElement.closest('footer');
 
         if (e.key === 'Escape') {
             e.preventDefault();
@@ -17,7 +19,7 @@
         if (isNavActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 if (document.activeElement === App.DOM.cardVolverFija) {
-                     return; 
+                     return; // Dejar que el handler de nav-base se ocupe
                 }
                 e.preventDefault(); 
                 App._handleKeyNavigation(e.key);
@@ -37,12 +39,20 @@
                 App._handleFocusTrap(e, 'detail');
             }
         }
+        // ⭐️ Nuevo bloque para el footer
+        else if (isFooterActive) {
+            // Permitir navegación con todas las flechas
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+                App._handleFooterNavigation(e.key);
+            }
+            // (Enter/Space funcionan de forma nativa en enlaces)
+        }
     });
 
-    // ⭐️ 2. NAVEGACIÓN POR TECLADO (FLECHAS) - VISTA NAV (CORREGIDO) ⭐️
+    // ⭐️ 2. NAVEGACIÓN POR TECLADO (FLECHAS) - VISTA NAV ⭐️
     App._handleKeyNavigation = function(key) {
         
-        // Lee el número de filas/columnas (1, 2, o 3) desde el estado
         const { itemsPorColumna } = App.STATE; 
         let currentIndex = App.STATE.currentFocusIndex;
         let newIndex = currentIndex;
@@ -52,14 +62,13 @@
         if (totalCards === 0) return;
 
         switch (key) {
-            // ⭐️ Lógica Vertical: Lineal (+1 / -1)
+            // Lógica Vertical: Lineal (+1 / -1)
             case 'ArrowUp':
                 newIndex = currentIndex - 1;
                 if (newIndex < 0) {
                     newIndex = totalCards - 1; // Loop al final
                 }
                 break;
-
             case 'ArrowDown':
                 newIndex = currentIndex + 1;
                 if (newIndex >= totalCards) {
@@ -67,20 +76,17 @@
                 }
                 break;
             
-            // ⭐️ Lógica Horizontal: Salto por Columna
+            // Lógica Horizontal: Salto por Columna
             case 'ArrowLeft':
                 newIndex = currentIndex - itemsPorColumna;
                 if (newIndex < 0) {
-                    // Da la vuelta (ej. índice 1 en col 0 -> va al final)
-                    newIndex = totalCards - 1; 
+                    newIndex = totalCards - 1; // Loop al final
                 }
                 break;
-
             case 'ArrowRight':
                 newIndex = currentIndex + itemsPorColumna;
                 if (newIndex >= totalCards) {
-                     // Da la vuelta (ej. índice 8 en col 2 -> va al inicio)
-                    newIndex = 0;
+                     newIndex = 0; // Loop al inicio
                 }
                 break;
 
@@ -89,15 +95,13 @@
                 if (allCards[currentIndex]) {
                     allCards[currentIndex].click(); // Simular clic
                 }
-                return; // No necesita actualizar foco
+                return; 
         }
 
         if (newIndex !== currentIndex) {
-            // ❗️ FIJAR LA BANDERA: Informar a nav-tactil que ignore este slide
             App.STATE.keyboardNavInProgress = true; 
-            
             App.STATE.currentFocusIndex = newIndex;
-            App._updateFocus(true); // Deslizar y enfocar
+            App._updateFocus(true);
         }
     };
 
@@ -154,13 +158,16 @@
         }
 
         if (focusableElements.length === 0) return;
+
         const currentIndex = focusableElements.indexOf(document.activeElement);
         let nextIndex = 0;
+
         if (e.shiftKey) { 
             nextIndex = (currentIndex <= 0) ? focusableElements.length - 1 : currentIndex - 1;
         } else { 
             nextIndex = (currentIndex >= focusableElements.length - 1) ? 0 : currentIndex + 1;
         }
+
         if (activeCard && activeCard.classList.contains('focus-visible')) {
             if (focusableElements[currentIndex] === activeCard && focusableElements[nextIndex] !== activeCard) {
                 activeCard.classList.remove('focus-visible');
@@ -175,7 +182,44 @@
         if (focusableElements[nextIndex] === App.DOM.cardVolverFija) {
              focusableElements[nextIndex].classList.add('focus-visible');
         }
+
         focusableElements[nextIndex].focus();
+    };
+
+    // ⭐️ 5. NUEVA FUNCIÓN: NAVEGACIÓN EN FOOTER ⭐️
+    App._handleFooterNavigation = function(key) {
+        const focusableElements = Array.from(document.querySelectorAll('footer a'));
+        if (focusableElements.length === 0) return;
+
+        const currentIndex = focusableElements.indexOf(document.activeElement);
+        if (currentIndex === -1) {
+            // El foco estaba en el footer pero no en un enlace, enfocar el primero
+            focusableElements[0].focus();
+            return;
+        }
+
+        let newIndex = currentIndex;
+        
+        switch (key) {
+            case 'ArrowLeft':
+            case 'ArrowUp':
+                newIndex = currentIndex - 1;
+                if (newIndex < 0) {
+                    newIndex = focusableElements.length - 1; // Loop al final
+                }
+                break;
+            case 'ArrowRight':
+            case 'ArrowDown':
+                newIndex = currentIndex + 1;
+                if (newIndex >= focusableElements.length) {
+                    newIndex = 0; // Loop al inicio
+                }
+                break;
+        }
+
+        if (newIndex !== currentIndex) {
+            focusableElements[newIndex].focus();
+        }
     };
 
 })();

@@ -146,7 +146,7 @@
                     data-tipo="volver-vertical" 
                     role="button" 
                     tabindex="-1">
-                    <h3><span>↩️&#xFE0E;</span></h3>
+                    <h3>↩️&#xFE0E;</h3>
                 </${wrapperTag}>
             `;
         }
