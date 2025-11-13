@@ -1,121 +1,53 @@
-/* --- mobile-nav.css --- */
+/* --- styles/style-mobile.css --- */
 
-/* ---------------------------------------------------------------------- */
-/* ⭐️ MEDIA QUERY: ADAPTACIÓN PARA MÓVILES (< 768px) ⭐️ */
-/* ---------------------------------------------------------------------- */
-@media screen and (max-width: 768px) {
-
-    /* ⭐️ 1. LIMPIEZA GENERAL Y LAYOUT PRINCIPAL ⭐️ */
-    
-    /* Body: Debe permitir el scroll completo en móvil */
-    body {
-        overflow: auto; 
-        padding-top: 40px; /* Ajuste para el header más pequeño */
-        padding-bottom: 5px; 
+/* ⭐️ 1. VISIBILIDAD DE VISTAS ⭐️ */
+@media (max-width: 600px) {
+    #vista-navegacion-mobile {
+        display: flex !important; 
     }
-
-    /* Header/Footer: Ajuste de posición y tamaño */
-    header {
-        position: fixed;
-        padding: 5px; 
-    }
-    footer {
-        position: static; /* Fluye con el contenido */
-        padding: 5px;
-    }
-
-    /* Layout principal: Altura automática, una sola columna */
-    #app-container {
-        grid-template-columns: 1fr; 
-        padding: 0; 
-        gap: 0;
-        height: auto; 
-        min-height: calc(100vh - 45px); 
-        box-shadow: none; /* Eliminar sombra grande del escritorio */
-    }
-
-    /* ⭐️ 2. VISIBILIDAD DE VISTAS ⭐️ */
-
-    /* OCULTAR ELEMENTOS DE ESCRITORIO */
-    #card-volver-fija,
-    #info-adicional,
-    #vista-navegacion-desktop { 
+    #vista-navegacion-desktop, #vista-navegacion-tablet { 
         display: none !important; 
     }
     
-    /* MOSTRAR VISTA MÓVIL Y ELIMINAR POSICIONAMIENTO ABSOLUTO */
-    #vista-navegacion-mobile { 
-        display: flex !important; 
-        height: auto;
-        position: relative; /* Elimina 'absolute' para que fluya */
-        width: 100%; 
-        padding: 0 5%;
+    /* Ocultar sidebars en móvil */
+    #card-volver-fija, #info-adicional {
+        display: none !important;
+    }
+    
+    /* Ajustar grid para que la vista central ocupe todo */
+    #app-container {
+        grid-template-columns: 1fr;
+        padding: 10px;
+        gap: 10px;
     }
     #vista-central {
-        grid-column: 1 / 2; /* Ocupa el 100% del ancho */
-        height: auto !important;
-        position: relative;
+        grid-column: 1 / -1;
     }
-    .vista, 
-    .vista.active {
-        height: auto; 
-        position: relative;
-    }
+}
 
-    /* ⭐️ 3. LAYOUT DEL TRACK MÓVIL (LISTA VERTICAL) ⭐️ */
-    
-    .mobile-track {
-        display: flex; 
-        flex-direction: column; /* Lista vertical */
-        width: 100%;
-        overflow-y: auto; 
-        height: auto;
-        padding-top: 10px;
-    }
+/* ⭐️ 2. LAYOUT DEL TRACK MÓVIL ⭐️ */
+.mobile-track {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espacio entre tarjetas */
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Scroll vertical */
+}
 
-    /* ⭐️ 4. AJUSTES DE TARJETAS Y BOTONES ⭐️ */
+/* ⭐️ 3. TARJETAS EN MÓVIL ⭐️ */
+.mobile-track .card {
+    width: 100%;
+    min-height: 120px; /* Una altura mínima fija */
+    height: auto;
+    font-size: 1.2rem;
+}
 
-    /* Tarjeta individual: Ocupa todo el ancho */
-    .card {
-        width: 100% !important; 
-        margin-bottom: var(--card-gap); 
-        height: auto !important;
-        min-height: 100px; /* Altura mínima en móvil */
-    }
-    
-    /* Botón Volver Fijo (el que aparece en la parte superior izquierda de la pantalla) */
-    #btn-volver-navegacion {
-        display: block; 
-        position: fixed; /* Lo fijamos en la pantalla */
-        top: 50px; /* Debajo del header */
-        left: 10px;
-        z-index: 1000; 
-        background: var(--color-card-bg);
-        border: 2px solid var(--color-primary);
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    #btn-volver-navegacion:hover {
-        background: var(--color-primary-bg);
-    }
-    
-    /* Estilo para la tarjeta 'Volver' dentro de la lista móvil */
-    .card-volver-vertical {
-        width: 100%; 
-        margin-bottom: var(--card-gap);
-    }
-
-    /* ⭐️ 5. OTROS AJUSTES DE CONTENIDO ⭐️ */
-    .contenido-curso { 
-        width: 100% !important; 
-        padding: 1rem 5%; 
-        box-sizing: border-box;
-    }
-    
-    header h1 {
-        white-space: normal; /* Permite que el título se envuelva */
-    }
+.mobile-track .card-volver-vertical {
+    min-height: 80px;
+    background: var(--color-card-bg);
+    border-style: solid;
+    text-align: center;
 }

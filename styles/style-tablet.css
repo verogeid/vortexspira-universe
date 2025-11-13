@@ -1,18 +1,17 @@
-/* --- styles/style-desktop.css --- */
+/* --- styles/style-tablet.css --- */
 
 /* ⭐️ 1. VISIBILIDAD DE VISTAS ⭐️ */
-/* (Controlado por la clase 'active' de JS, pero esto es un fallback) */
-@media (min-width: 769px) {
-    #vista-navegacion-desktop {
+@media (min-width: 601px) and (max-width: 768px) {
+    #vista-navegacion-tablet {
         display: flex !important; 
     }
-    #vista-navegacion-tablet, #vista-navegacion-mobile { 
+    #vista-navegacion-desktop, #vista-navegacion-mobile { 
         display: none !important; 
     }
 }
 
 /* ⭐️ 2. LAYOUT DEL CARRUSEL (Swiper) ⭐️ */
-#nav-swiper {
+#nav-swiper-tablet {
     height: 100%; 
     width: 100%; 
     overflow: hidden; 
@@ -21,14 +20,14 @@
     touch-action: pan-y; /* Para el swipe táctil */
 }
 
-#nav-swiper .swiper-wrapper {
+#nav-swiper-tablet .swiper-wrapper {
   display: flex !important; 
   height: 100% !important; 
   gap: 0; 
   align-items: start;
 }
 
-#nav-swiper .swiper-slide {
+#nav-swiper-tablet .swiper-slide {
   width: calc(100% / 3) !important; /* 3 columnas */
   height: 100% !important; 
   margin: 0 !important;
@@ -38,8 +37,8 @@
 }
 
 
-/* ⭐️ 3. AGRUPACIÓN 3x3 ⭐️ */
-#nav-swiper .cards-column-group {
+/* ⭐️ 3. AGRUPACIÓN 3x2 ⭐️ */
+#nav-swiper-tablet .cards-column-group {
     display: flex;
     flex-direction: column; 
     justify-content: flex-start; 
@@ -50,20 +49,20 @@
     width: 100%;
 }
 
-/* ⭐️ 4. AJUSTES DE TARJETAS (3 Filas) ⭐️ */
-#nav-swiper .cards-column-group .card {
+/* ⭐️ 4. AJUSTES DE TARJETAS (2 Filas) ⭐️ */
+#nav-swiper-tablet .cards-column-group .card {
     flex: none; 
     
-    /* ❗️ Fórmula para 3 filas: (100% - 2 gaps) / 3 ❗️ */
-    height: calc( (100% - (2 * var(--card-gap))) / 3 ); 
-    min-height: calc( (100% - (2 * var(--card-gap))) / 3 );
+    /* ❗️ Fórmula para 2 filas: (100% - 1 gap) / 2 ❗️ */
+    height: calc( (100% - var(--card-gap)) / 2 ); 
+    min-height: calc( (100% - var(--card-gap)) / 2 );
 
     margin-bottom: 0; 
 }
 
 
 /* --- 5. Estilos de Máscara --- */
-#vista-navegacion-desktop .carousel-mask {
+#vista-navegacion-tablet .carousel-mask {
   position: absolute;
   width: 100%; 
   height: 100%; 
@@ -73,8 +72,8 @@
   pointer-events: none;
   overflow: hidden; 
 }
-#vista-navegacion-desktop .mask-left, 
-#vista-navegacion-desktop .mask-right {
+#vista-navegacion-tablet .mask-left, 
+#vista-navegacion-tablet .mask-right {
   position: absolute; 
   top: 0;
   width: 25%;
@@ -86,8 +85,8 @@
   );
   z-index: 10;
 }
-#vista-navegacion-desktop .mask-left { left: 0; }
-#vista-navegacion-desktop .mask-right {
+#vista-navegacion-tablet .mask-left { left: 0; }
+#vista-navegacion-tablet .mask-right {
   right: 0;
   background: linear-gradient(to left, 
     var(--color-mask-gradient) 0%, transparent 60%
@@ -96,8 +95,8 @@
 
 /* Reducción de Movimiento */
 @media (prefers-reduced-motion: reduce) {
-  #vista-navegacion-desktop .mask-left,
-  #vista-navegacion-desktop .mask-right {
+  #vista-navegacion-tablet .mask-left,
+  #vista-navegacion-tablet .mask-right {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }

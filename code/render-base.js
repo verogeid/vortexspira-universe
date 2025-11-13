@@ -1,8 +1,8 @@
 // --- code/render-base.js ---
 (function() {
 
-    // Almacena el estado de la última comprobación de móvil para el ResizeObserver
-    let _lastIsMobile = window.innerWidth <= 768; 
+    // Almacena el modo actual (móvil, tablet, escritorio)
+    let _lastMode = 'desktop'; 
 
     // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL (ROUTER) ⭐️
     App.renderNavegacion = function() {
@@ -11,26 +11,63 @@
             return;
         }
 
-        console.log(`Renderizando nivel: ${this.STATE.navStack.length > 0 ? this.STATE.navStack[this.STATE.navStack.length - 1] : 'Raíz'}`);
-
         const isSubLevel = this.STATE.navStack.length > 0;
-        const isMobile = window.innerWidth <= 768; 
 
-        // CRÍTICO: Definir las funciones de renderizado y control. 
-        const renderHtmlFn = isMobile ? App._generateCardHTML_Mobile : App._generateCardHTML_Desktop;
-        const initCarouselFn = isMobile ? App._destroyCarousel : App._initCarousel; // Destruimos en móvil
+        // ⭐️ 1. DEFINIR LOS 3 MODOS ⭐️
+        const screenWidth = window.innerWidth;
+        const isMobile = screenWidth <= 600;
+        const isTablet = screenWidth > 600 && screenWidth <= 768;
+        const isDesktop = screenWidth > 768;
 
-        // --- Configuración de Parámetros ---
-        let calculatedItemsPerColumn = isMobile ? 1 : 3; 
+        // ⭐️ 2. ELEGIR LAS FUNCIONES Y VARIABLES ⭐️
+        let renderHtmlFn;
+        let initCarouselFn;
+        let calculatedItemsPerColumn;
+        let swiperId = null;
+        
+        // Actualizar el modo actual para el ResizeObserver
+        if (isMobile) _lastMode = 'mobile';
+        else if (isTablet) _lastMode = 'tablet';
+        else _lastMode = 'desktop';
+
+
+        if (isMobile) {
+            renderHtmlFn = App._generateCardHTML_Mobile;
+            initCarouselFn = App._initCarousel_Mobile; // Apunta a la función móvil
+            calculatedItemsPerColumn = 1;
+            
+        } else {
+            // Tablet y Desktop USAN EL MISMO MOTOR
+            renderHtmlFn = App._generateCardHTML_Carousel;
+            initCarouselFn = App._initCarousel_Swipe; // Apunta a la función del carrusel
+            
+            if (isTablet) {
+                calculatedItemsPerColumn = 2; // 2 filas
+                swiperId = '#nav-swiper-tablet';
+            } else {
+                calculatedItemsPerColumn = 3; // 3 filas
+                swiperId = '#nav-swiper';
+            }
+        }
+        
         this.STATE.itemsPorColumna = calculatedItemsPerColumn;
 
-        // 🚨 1. SELECCIÓN DINÁMICA DE ELEMENTOS DEL DOM 🚨
+        // ⭐️ 3. SELECCIÓN DINÁMICA DE 3 VISTAS ⭐️
         const desktopView = document.getElementById('vista-navegacion-desktop');
+        const tabletView = document.getElementById('vista-navegacion-tablet');
         const mobileView = document.getElementById('vista-navegacion-mobile');
-
-        // CRÍTICO: Actualizar la referencia DOM.track y vistaNav en App 
-        this.DOM.vistaNav = isMobile ? mobileView : desktopView; 
-        this.DOM.track = isMobile ? document.getElementById('track-mobile') : document.getElementById('track-desktop');
+        
+        // ⭐️ 4. ELEGIR EL DIV Y TRACK (A DÓNDE VAMOS) ⭐️
+        if (isMobile) {
+            this.DOM.vistaNav = mobileView;
+            this.DOM.track = document.getElementById('track-mobile');
+        } else if (isTablet) {
+            this.DOM.vistaNav = tabletView;
+            this.DOM.track = document.getElementById('track-tablet');
+        } else {
+            this.DOM.vistaNav = desktopView;
+            this.DOM.track = document.getElementById('track-desktop');
+        }
 
         // 2. OBTENER DATOS ACTUALES
         const nodoActual = this._findNodoById(this.STATE.navStack[this.STATE.navStack.length - 1], this.STATE.fullData.navegacion);
@@ -43,57 +80,50 @@
             const cursos = nodoActual.cursos || [];
             itemsDelNivel = subsecciones.concat(cursos);
         } else {
-            console.warn(`Nodo no encontrado para el ID: ${this.STATE.navStack[this.STATE.navStack.length - 1]}. Volviendo a la raíz.`);
+            console.warn(`Nodo no encontrado. Volviendo a la raíz.`);
             this.STATE.navStack.pop(); 
             this.renderNavegacion();
             return;
         }
-
-        // Si es un subnivel, añadir la tarjeta "Volver" al inicio de la lista móvil
         if (isSubLevel && isMobile) {
-             itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
+            itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
         }
 
-        // 3. Destruir e Inicializar Vistas
-        App._destroyCarousel(); // Aseguramos que se destruya antes de renderizar
+        // ⭐️ 5. GESTIÓN DE VISTAS (FLUJO "ANTI-PARPADEO") ⭐️
 
-        // 4. GENERAR HTML DE LAS TARJETAS (delegado a los archivos específicos)
+        // 1. Destruir carrusel antiguo (no afecta a lo visual)
+        App._destroyCarousel(); 
+
+        // 2. Generar el HTML
         let htmlContent = renderHtmlFn(itemsDelNivel, this.STATE.itemsPorColumna);
 
-        // 5. INYECTAR Y GESTIONAR VISTAS
+        // 3. Inyectar HTML en la vista de destino (aún oculta)
         this.DOM.track.innerHTML = htmlContent;
 
-        if (isMobile) {
-            desktopView.classList.remove('active');
-            mobileView.classList.add('active');
-        } else {
-            mobileView.classList.remove('active');
-            desktopView.classList.add('active');
-        }
+        // 4. INICIALIZAR EL CARRUSEL (sobre la vista oculta)
+        let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
+        initCarouselFn(initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId);
 
-        // 6. INICIALIZAR EL CARRUSEL (delegado, solo se inicializará si es desktop)
-        let initialSlideIndex = 0;
-        if (this.STATE.currentFocusIndex >= 0 && !isMobile) {
-             // Calcula qué columna contiene la tarjeta enfocada
-            initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
-        }
-        initCarouselFn(initialSlideIndex, this.STATE.itemsPorColumna, isMobile);
-
-
-        // ⭐️ Llamar a los listeners de navegación ⭐️
+        // 5. LISTENERS Y FOCO INICIAL (sobre la vista oculta)
         if (typeof this.setupTrackClickListener === 'function') {
-             this.setupTrackClickListener();
+            this.setupTrackClickListener();
         }
-        // Llamar al setup táctil DESPUÉS de initCarousel
         if (typeof this.setupTouchListeners === 'function') {
             this.setupTouchListeners();
         }
+        this._updateNavViews(isSubLevel, isMobile || isTablet); 
+        this._updateFocus(false); // Foco inicial sin scroll
 
-        // 7. GESTIÓN DE FOCO INICIAL Y VISTAS LATERALES
-        this._updateNavViews(isSubLevel, isMobile);
-        this._updateFocus(false); // false = no deslizar
+        // 6. ⭐️ EL "SWAP" ⭐️
+        // Ocultamos las otras vistas y mostramos la nueva en un solo paso.
+        desktopView.classList.remove('active');
+        tabletView.classList.remove('active');
+        mobileView.classList.remove('active');
+        
+        this.DOM.vistaNav.classList.add('active'); // ¡Mostrar!
 
-        // 8. Configurar el ResizeObserver la primera vez
+
+        // 7. RESIZE OBSERVER
         if (!this.STATE.resizeObserver) {
             this._setupResizeObserver();
         }
@@ -103,15 +133,13 @@
     // ⭐️ 2. FUNCIÓN DE PINTADO DE TARJETA INDIVIDUAL (Común) ⭐️
     App._generarTarjetaHTML = function(nodo, estaActivo, esRelleno = false, tipoEspecial = null) {
 
-        const wrapperTag = 'article'; // Siempre <article>
+        const wrapperTag = 'article';
 
         if (esRelleno) {
-            // Tarjetas de Relleno 
             return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1"></article>`;
         }
 
         if (tipoEspecial === 'volver-vertical') {
-            // (El <span> es para el emoji ↩️)
             return `
                 <${wrapperTag} class="card card-volver-vertical" 
                     data-id="volver-nav" 
@@ -149,43 +177,40 @@
     // ⭐️ 3. LÓGICA DE FOCO Y NAVEGACIÓN (Unificado) ⭐️
     App._updateFocus = function(shouldSlide = true) {
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
-        const isMobile = window.innerWidth <= 768; 
+        
+        const screenWidth = window.innerWidth;
+        const isMobile = screenWidth <= 600;
 
         // 1. Limpiar focos anteriores
         const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
         allCardsInTrack.forEach(card => {
-             card.classList.remove('focus-visible');
-             card.tabIndex = -1;
+            card.classList.remove('focus-visible');
+            card.tabIndex = -1;
         });
-
-        // ⭐️⭐️⭐️ LA CORRECCIÓN "DOBLE FOCO" ⭐️⭐️⭐️
-        // Limpiar también el foco visual de la tarjeta "Volver"
+        // Limpiar el foco visual de la tarjeta "Volver"
         if (App.DOM.cardVolverFija) {
-             App.DOM.cardVolverFija.classList.remove('focus-visible');
-             // No tocamos su tabindex, eso lo maneja _updateNavViews
+            App.DOM.cardVolverFija.classList.remove('focus-visible');
         }
-        // ⭐️⭐️⭐️ FIN DE LA CORRECCIÓN ⭐️⭐️⭐️
 
         // 2. Obtener la nueva tarjeta REAL (excluyendo rellenos)
         const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
         if (allCards.length === 0) return;
 
-        // Normalizar el índice para el loop
-        let normalizedIndex = currentFocusIndex % allCards.length;
-        if (normalizedIndex < 0) normalizedIndex += allCards.length;
-
+        // 3. Normalizar el índice para el loop y los límites
+        let normalizedIndex = currentFocusIndex;
+        if (normalizedIndex < 0) normalizedIndex = 0;
+        if (normalizedIndex >= allCards.length) normalizedIndex = allCards.length - 1;
+        
         const nextFocusedCard = allCards[normalizedIndex];
-
-        // 3. Actualizar el estado con el índice normalizado
+        
+        // Sincronizar estado con el índice normalizado
         this.STATE.currentFocusIndex = normalizedIndex;
-
 
         // 4. Aplicar nuevo foco y mover
         if (nextFocusedCard) {
             nextFocusedCard.classList.add('focus-visible');
             nextFocusedCard.tabIndex = 0;
 
-            // Mover el foco real del navegador
             if (shouldSlide) {
                 nextFocusedCard.focus(); 
             } else {
@@ -194,45 +219,39 @@
 
             // 5. DELEGAR LA ACCIÓN DE DESLIZAMIENTO/SCROLL
             if (!isMobile && carouselInstance && shouldSlide) {
-                // Lógica de DESKOP: Swiper
                 const targetSwiperSlide = Math.floor(normalizedIndex / itemsPorColumna); 
-                // El índice real de swiper es +1 por el slide de relleno inicial
                 carouselInstance.slideToLoop(targetSwiperSlide + 1, 400); 
             } else if (isMobile && shouldSlide) {
-                // Lógica de MOBILE: Scroll (solo si shouldSlide es true)
                 nextFocusedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         }
     };
 
 
-    // ⭐️ 4. LÓGICA DE CONTROL DEL CARRUSEL (DELEGACIÓN) ⭐️
-    App._initCarousel = App._initCarousel || function() { console.error("App._initCarousel no está definido."); };
-    App._destroyCarousel = App._destroyCarousel || function() { 
-        if (this.STATE.carouselInstance) {
-            this.STATE.carouselInstance.destroy(true, true);
-            this.STATE.carouselInstance = null;
-        }
-    };
+    // ⭐️ 4. LÓGICA DE CONTROL DEL CARRUSEL (Stubs/Fallbacks) ⭐️
+    // Estas funciones serán sobreescritas por render-swipe.js y render-mobile.js
+    App._generateCardHTML_Carousel = App._generateCardHTML_Carousel || function() { console.error("render-swipe.js no cargado"); return ""; };
+    App._generateCardHTML_Mobile = App._generateCardHTML_Mobile || function() { console.error("render-mobile.js no cargado"); return ""; };
+    App._initCarousel_Swipe = App._initCarousel_Swipe || function() { console.error("render-swipe.js no cargado"); };
+    App._initCarousel_Mobile = App._initCarousel_Mobile || function() { console.error("render-mobile.js no cargado"); };
+    App._destroyCarousel = App._destroyCarousel || function() { /* El destructor real está en render-swipe.js */ };
 
 
     // ⭐️ 5. UTILIDADES DE VISTAS LATERALES Y DATOS (Común) ⭐️
-    App._updateNavViews = function(isSubLevel, isMobile) {
-        // Lógica de visibilidad de cardVolverFija, infoAdicional, btnVolverNav
-        if (!isMobile) {
+    App._updateNavViews = function(isSubLevel, isMobileOrTablet) {
+        
+        if (!isMobileOrTablet) { // Solo desktop
             this.DOM.cardVolverFija.style.display = 'flex';
             this.DOM.infoAdicional.style.display = 'block'; 
             this.DOM.btnVolverNav.style.display = 'none'; 
-
             if (isSubLevel) {
                 this.DOM.cardVolverFija.tabIndex = 0; 
             } else {
                 this.DOM.cardVolverFija.tabIndex = -1;
             }
-        } else {
+        } else { // Móvil O Tablet
             this.DOM.cardVolverFija.style.display = 'none'; 
             this.DOM.infoAdicional.style.display = 'none';
-
             if (isSubLevel) {
                 this.DOM.btnVolverNav.style.display = 'block'; 
             } else {
@@ -241,14 +260,42 @@
         }
     };
 
+    // ⭐️ 6. RESIZE OBSERVER (Con ajuste de foco) ⭐️
     App._setupResizeObserver = function() {
-        console.log("ResizeObserver configurado.");
-        this.STATE.resizeObserver = new ResizeObserver(() => {
-            const currentIsMobile = window.innerWidth <= 768;
+        console.log("ResizeObserver (3 modos) configurado.");
+        
+        const getMode = (width) => {
+            if (width <= 600) return 'mobile';
+            if (width <= 768) return 'tablet';
+            return 'desktop';
+        };
 
-            if (currentIsMobile !== _lastIsMobile && this.STATE.initialRenderComplete) {
-                console.log(`Cambiando de vista: ${currentIsMobile ? 'Móvil' : 'Escritorio'}`);
-                _lastIsMobile = currentIsMobile;
+        _lastMode = getMode(window.innerWidth);
+
+        this.STATE.resizeObserver = new ResizeObserver(() => {
+            const newMode = getMode(window.innerWidth);
+
+            if (newMode !== _lastMode && this.STATE.initialRenderComplete) {
+                console.log(`Cambiando de vista: ${_lastMode} -> ${newMode}`);
+                
+                // Lógica de ajuste de foco
+                const isSubLevel = this.STATE.navStack.length > 0;
+                if (isSubLevel) {
+                    const lastWasCarousel = (_lastMode === 'tablet' || _lastMode === 'desktop');
+                    const newIsMobile = (newMode === 'mobile');
+                    
+                    if (lastWasCarousel && newIsMobile) {
+                        // De Desktop/Tablet -> Móvil: Añadimos "Volver", así que +1
+                        this.STATE.currentFocusIndex++;
+                        console.log("Ajuste de foco: +1 (Volver añadido)");
+                    } else if (!lastWasCarousel && !newIsMobile) {
+                        // De Móvil -> Desktop/Tablet: Quitamos "Volver", así que -1
+                        this.STATE.currentFocusIndex = Math.max(0, this.STATE.currentFocusIndex - 1);
+                        console.log("Ajuste de foco: -1 (Volver quitado)");
+                    }
+                }
+
+                _lastMode = newMode;
                 this.renderNavegacion(); 
             }
         });
@@ -256,6 +303,7 @@
         this.STATE.resizeObserver.observe(document.body);
     };
 
+    // ⭐️ 7. HELPERS _findNodoById y _tieneContenidoActivo (sin cambios) ⭐️
     App._findNodoById = function(id, nodos) {
         if (!nodos || !id) return null;
         for (const n of nodos) {
@@ -276,7 +324,6 @@
     App._tieneContenidoActivo = function(nodoId) {
         const nodo = this._findNodoById(nodoId, this.STATE.fullData.navegacion);
         if (!nodo) return false;
-        
         if (nodo.titulo) return true; 
 
         if (nodo.cursos && nodo.cursos.length > 0) {

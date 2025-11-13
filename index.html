@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="styles/style-base.css">
     <link rel="stylesheet" href="styles/style-desktop.css">
+    <link rel="stylesheet" href="styles/style-tablet.css">
     <link rel="stylesheet" href="styles/style-mobile.css">
 
 </head>
@@ -20,10 +21,7 @@
   <main id="app-container">
 
     <div id="card-volver-fija"> 
-        <div id="card-volver-fija-elemento" 
-            role="button" tabindex="-1">
-            <h3><span>↩️&#xFE0E;</span></h3>
-        </div>
+        <div id="card-volver-fija-elemento" role="button" tabindex="-1"></div>
         <div id="columna-volver-relleno"></div>
     </div>
 
@@ -35,28 +33,50 @@
                 <div class="mask-right"></div>
             </div>
             <div id="nav-swiper" class="swiper carousel-viewport">
-                <div class="swiper-wrapper grid-track" id="track-desktop">
-                    </div>
+                <div class="swiper-wrapper grid-track" id="track-desktop"></div>
+            </div>
+        </div>
+
+        <div id="vista-navegacion-tablet" class="vista">
+            <div class="carousel-mask">
+                <div class="mask-left"></div>
+                <div class="mask-right"></div>
+            </div>
+            <div id="nav-swiper-tablet" class="swiper carousel-viewport">
+                <div class="swiper-wrapper grid-track" id="track-tablet"></div>
             </div>
         </div>
 
         <div id="vista-navegacion-mobile" class="vista">
-            <div class="mobile-track" id="track-mobile">
-                </div>
+            <div class="mobile-track" id="track-mobile"></div>
         </div>
 
         <div id="vista-detalle" class="vista">
-            <div class="contenido-curso" id="detalle-contenido">
-                </div>
+            <div class="contenido-curso" id="detalle-contenido"></div>
         </div>
     </div>
 
     <div id="info-adicional" style="display: none;">
+        <p>🚧</p>
         <p>Ayuda Rápida:</p>
         <small>
           <ul>
             <li><b>Gira</b>: Arrastra, usa la rueda del ratón o las flechas del teclado.</li>
             <li><b>Vuelve</b>: Pulsa [Esc] o el botón "Volver".</li>
+          </ul>
+        </small>
+        <p>Info:</p>
+        <small>
+          <ul>
+            <li><b>Prueba</b>: Descarga el PWA y prueba el modo freemium. Dos capitulos gratis por módulo.</li>
+            <li><b>Compra</b>: Sólo si estas convencido, adquiere tu licencia <strong>vitalicia</strong>.</li>
+          </ul>
+        </small>
+        <p>Voces:</p>
+        <small>
+          <ul>
+            <li><b>TTS nativas</b>: la app usa las voces nativas de tu navegador. Recomendamos Google Chrome.</li>
+            <li><b>Voces TTS Premium</b>(🚧): Gratis tendrás un motor TTS con voces premium offline. En desarrollo.</li>
           </ul>
         </small>
     </div>
@@ -79,7 +99,7 @@
   <script src="code/app.js"></script>
 
   <script src="code/render-base.js"></script>
-  <script src="code/render-desktop.js"></script> 
+  <script src="code/render-swipe.js"></script> 
   <script src="code/render-mobile.js"></script>
 
   <script src="code/nav-base.js"></script>
@@ -88,15 +108,12 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // La inyección del logo y footer se realiza en el DOMContentLoaded
         if (typeof injectHeaderLogo === 'function') {
             injectHeaderLogo(); 
         }
         if (typeof injectFooterContent === 'function') {
             injectFooterContent(); 
         }
-
-        // Iniciar la aplicación
         if (window.App && window.App.init) {
             App.init();
         }

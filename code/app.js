@@ -4,73 +4,92 @@
 
   // ⭐️ DEFINICIÓN DEL OBJETO GLOBAL DE LA APLICACIÓN ⭐️
   window.App = {
+    
     // --- 1. PROPIEDADES ---
-    DOM: {}, 
+    DOM: {}, // Se llena durante la inicialización
     STATE: {
-      fullData: null,
-      navStack: [],
-      itemsPorColumna: 3, 
-      carouselInstance: null,
-      resizeObserver: null,
-      currentFocusIndex: 0,
-      initialRenderComplete: false 
+      fullData: null,          // Contendrá el JSON cargado
+      navStack: [],            // Pila de navegación (IDs de categorías)
+      itemsPorColumna: 3,      // Nº de filas (se actualiza en render-base)
+      carouselInstance: null,  // La instancia activa de Swiper
+      resizeObserver: null,    // El observador de cambio de tamaño
+      currentFocusIndex: 0,    // El índice del elemento enfocado
+      initialRenderComplete: false // Flag para el ResizeObserver
     },
 
     // --- 2. INICIALIZACIÓN ---
     async init() {
-      log('app', DEBUG_LEVELS.BASIC, "App: Iniciando orquestación...");
-      
-      // Cachear el DOM (Solo elementos estables y necesarios)
-      this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); 
+      // Usar 'log' si debug.js está cargado
+      if (typeof log === 'function') {
+         log('app', DEBUG_LEVELS.BASIC, "App: Iniciando orquestación...");
+      } else {
+         console.log("App: Iniciando orquestación...");
+      }
+
+
+      // --- Cachear el DOM (Solo elementos estables y necesarios) ---
+      // Vistas
       this.DOM.vistaDetalle = document.getElementById('vista-detalle');
       this.DOM.detalleContenido = document.getElementById('detalle-contenido');
-      this.DOM.swiperContainer = document.getElementById('nav-swiper'); 
       
-      // Columnas laterales persistentes
-      // 🚨 FIX: La tarjeta interactiva es ahora el elemento anidado dentro del contenedor 🚨
+      // Contenedores de Carrusel (Swiper se engancha a estos)
+      this.DOM.swiperContainerDesktop = document.getElementById('nav-swiper');
+      this.DOM.swiperContainerTablet = document.getElementById('nav-swiper-tablet');
+
+      // Elementos de UI persistentes
+      this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); 
       this.DOM.cardVolverFija = document.getElementById('card-volver-fija-elemento'); 
       this.DOM.infoAdicional = document.getElementById('info-adicional'); 
 
-      
-      // 2.1. Configurar el observador (definido en render-base.js)
-      if (typeof this._setupResizeObserver === 'function') {
-        this._setupResizeObserver();
-      }
-      
-      // 2.2. Cargar los datos (definido en data.js)
+      // 2.1. Cargar los datos (definido en data.js)
       try {
-        log('app', DEBUG_LEVELS.BASIC, "Iniciando carga de datos.");
         if (typeof loadData === 'function') {
             await loadData(this); 
+        } else {
+            console.error("ERROR: loadData no está definido.");
+            return;
         }
       } catch (error) {
-        logError('app', `ERROR: Carga de datos fallida. ${error.message}`);
-
-        // Intentar usar un track existente para mostrar el error
+        console.error(`ERROR: Carga de datos fallida. ${error.message}`);
+        // Mostrar error si es posible
         const track = document.getElementById('track-desktop') || document.getElementById('track-mobile');
         if (track) {
             track.innerHTML = "<p>Error al cargar el contenido.</p>";
         }
         return;
       }
-      
-      // 2.3. Configurar listeners (definido en nav-base.js)
+
+      // 2.2. Configurar listeners estáticos (definido en nav-base.js y nav-keyboard.js)
+      // (Los listeners dinámicos como setupTrackClickListener se llaman desde render-base.js)
       if (typeof this.setupListeners === 'function') {
-          this.setupListeners();
+          this.setupListeners(); // Botones estáticos (Volver)
+      }
+      if (typeof this.setupKeyboardListeners === 'function') {
+          this.setupKeyboardListeners(); // Teclado global
+      }
+
+      // 2.3. Configurar el observador (definido en render-base.js)
+      // Se configura antes del primer render para que _lastMode se establezca
+      if (typeof this._setupResizeObserver === 'function') {
+        this._setupResizeObserver();
       }
 
       // 2.4. Renderizar el estado inicial (definido en render-base.js)
       if (typeof this.renderNavegacion === 'function') {
         this.renderNavegacion(); 
       }
-      
+
       // 2.5. Finalizar la carga inicial
       this.STATE.initialRenderComplete = true; 
-      log('app', DEBUG_LEVELS.BASIC, "Carga inicial completada. Observer activo.");
+      if (typeof log === 'function') {
+        log('app', DEBUG_LEVELS.BASIC, "Carga inicial completada. Observer activo.");
+      } else {
+        console.log("Carga inicial completada. Observer activo.");
+      }
     }
   };
 
   // ⭐️ PUNTO DE ENTRADA ⭐️
-  // La llamada a App.init() se ha movido al final del index.html para asegurar la carga completa de módulos.
-  
+  // La llamada a App.init() se mueve al script de 'DOMContentLoaded' en index.html
+
 })();

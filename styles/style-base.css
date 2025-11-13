@@ -11,9 +11,6 @@
   --color-card-border: #bbb;
   --color-card-border-disabled: #ccc;
 
-  /* Color para el emoji (si se usara) */
-  --color-emoji-default: #fff;
-
   /* Acentos (Ghost) */
   --color-primary: #007bff;
   --color-primary-bg: rgba(0, 123, 255, 0.1);
@@ -27,8 +24,10 @@
   --footer-height: 6vh;
   --card-gap: 3vh; /* Espacio entre tarjetas en el centro */
 
-  /* Altura individual de una tarjeta = (100% de la columna - 2 * gaps) / 3 */
+  /* DEPRECADO: La altura se calcula en los archivos desktop/tablet
   --card-height-calc: calc((100% - (2 * var(--card-gap))) / 3); 
+  */
+  
   --nav-desktop-height: calc(100% - 0px); 
 
   /* Offset superior para alinear la tarjeta "Volver" con el carrusel */
@@ -42,8 +41,6 @@
     --color-text: #eee;
     --color-card-border: #aaa; 
     --color-card-border-disabled: #666; 
-    
-    --color-emoji-default: #eee;
   }
 }
 
@@ -273,10 +270,9 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
 
 /* Elemento Interactivo Real */
 #card-volver-fija-elemento {
-    height: 16vh; /* Mantenemos la altura proporcional original */
+    height: 16vh; /* Altura proporcional fija */
     flex: 0 0 auto;
     
-    /* Propiedades base para layout */
     padding: 0.5rem;
     border-radius: 12px;
     display: flex !important; 
@@ -286,14 +282,10 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     margin-bottom: 0; 
     overflow: hidden; /* Evita que el botón "BACK" desborde */
     box-sizing: border-box; 
-    
-    /* Transición para el efecto "Ghost" */
     transition: all 0.2s ease;
 }
 
-/* ⭐️ SOLUCIÓN AL DESBORDAMIENTO ⭐️
-   Fuerza a tu botón "BACK" a encogerse
-*/
+/* Fuerza al contenido (botón "BACK") a encogerse */
 #card-volver-fija-elemento > * {
     max-width: 100%;
     max-height: 100%;
@@ -301,7 +293,7 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     margin: 0;
 }
 
-/* --- ⭐️ LÓGICA DE FOCO PARA "VOLVER" (CORREGIDA) ⭐️ --- */
+/* --- LÓGICA DE FOCO PARA "VOLVER" (CORREGIDA) --- */
 
 /* Regla 1: Nivel Raíz (Deshabilitado) */
 #card-volver-fija-elemento[tabindex="-1"] {
@@ -309,7 +301,6 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     background: transparent;
     cursor: default;
 }
-/* Ocultar contenido si está inactivo */
 #card-volver-fija-elemento[tabindex="-1"] > * {
     display: none;
 }
@@ -321,13 +312,13 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
     background: var(--color-card-bg); /* Fondo de tarjeta normal */
     cursor: pointer;
 }
-/* Mostrar contenido si está disponible */
 #card-volver-fija-elemento[tabindex="0"] > * {
     display: block; /* O 'flex', lo que necesite tu botón */
 }
 
 
 /* Regla 3: Sub-nivel (CON Foco Real) */
+#card-volver-fija-elemento[tabindex="0"].focus-visible,
 #card-volver-fija-elemento[tabindex="0"]:hover,
 #card-volver-fija-elemento[tabindex="0"]:focus-visible {
     outline: none;
@@ -381,55 +372,4 @@ footer a { color: #888; text-decoration: none; transition: color 0.2s ease; }
   .card:hover, .card:focus-visible, #card-volver-fija:hover, #card-volver-fija:focus-visible {
     transform: none; box-shadow: none;
   }
-}
-
-/*
- * ⭐️ 5. ESTILOS DEL EMOJI "VOLVER" (Si se usara) ⭐️
- * (Se mantiene por si vuelves a usar el emoji)
- */
-
-/* Reglas comunes para el h3 que contiene el emoji */
-#card-volver-fija-elemento h3,
-.card-volver-vertical h3 {
-    text-align: center;
-    margin: 0;
-    line-height: 1; 
-    transition: color 0.2s ease, transform 0.2s ease;
-    width: 100%;
-    
-    text-rendering: optimizeLegibility;
-    font-feature-settings: "cv01";
-    -webkit-font-feature-settings: "cv01";
-}
-
-/* El <span> dentro del h3 es el que tiene el emoji y el color */
-#card-volver-fija-elemento h3 span,
-.card-volver-vertical h3 span {
-    display: inline-block;
-    color: var(--color-emoji-default); 
-    transition: color 0.2s ease, transform 0.2s ease;
-}
-
-/* Tamaño del emoji en DESKTOP */
-#card-volver-fija-elemento h3 {
-    line-height: 16vh; 
-    font-size: 10vh; 
-}
-
-/* Tamaño del emoji en MÓVIL */
-.card-volver-vertical h3 {
-    font-size: 5rem; 
-    padding: 1rem 0;
-}
-.card-volver-vertical h3 span {
-    color: var(--color-text); 
-}
-
-/* Color al estar ACTIVO (hover/focus) */
-#card-volver-fija-elemento[tabindex="0"]:hover h3 span,
-#card-volver-fija-elemento[tabindex="0"]:focus-visible h3 span,
-.card-volver-vertical:hover h3 span,
-.card-volver-vertical:focus-visible h3 span {
-    color: var(--color-primary); 
-    transform: scale(1.1);
 }
