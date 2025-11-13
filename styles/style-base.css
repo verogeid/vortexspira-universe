@@ -262,8 +262,7 @@ footer a:hover, footer a:focus-visible {
     display: flex; 
     flex-direction: column;
     justify-content: flex-start; /* Alinear arriba */
-    /* ⭐️ Ajuste de altura para coincidir con la altura total del carrusel */
-    height: calc(100% - var(--nav-carousel-top-offset)); 
+    height: 100%; /* ⭐️ CORREGIDO: Ocupar el 100% de la celda */
     gap: var(--card-gap); 
     
     /* ⭐️ 2. Padding: imita a .cards-column-group ⭐️ */
@@ -296,7 +295,6 @@ footer a:hover, footer a:focus-visible {
     color: var(--color-text);
     opacity: 0.7;
     
-    /* Reglas para cortar texto */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -304,24 +302,23 @@ footer a:hover, footer a:focus-visible {
 
 /* ⭐️ 4. Elemento Interactivo "Volver" ⭐️ */
 #card-volver-fija-elemento {
-    flex: 0 0 auto; /* No crecer, no encogerse */
+    flex: 0 0 auto;
     padding: 1.5rem;
     border-radius: 12px;
     display: flex !important; 
     flex-direction: column;
-    justify-content: center; /* Centrado vertical */
-    align-items: center; /* Centrado horizontal */
+    justify-content: center; 
+    align-items: center; 
     margin-bottom: 0; 
     overflow: hidden; 
     box-sizing: border-box; 
     transition: all 0.2s ease;
 }
-/* Estilo para el texto "↩️" */
 #card-volver-fija-elemento h3 {
     margin: 0;
     font-size: 1.5rem;
     font-weight: bold;
-    text-align: center; /* Asegura centrado */
+    text-align: center;
 }
 
 /* ⭐️ 5. Relleno Izquierdo ⭐️ */
@@ -329,10 +326,6 @@ footer a:hover, footer a:focus-visible {
     flex-grow: 1; /* ⭐️ Ocupa el resto del espacio */
     width: 100%;
     border: none;
-    /* (Opcional) si quieres que también sea discontinuo: */
-    border: 2px dashed var(--color-card-border);
-    border-radius: 12px;
-    background: transparent;
 }
 
 /* --- LÓGICA DE FOCO PARA "VOLVER" --- */
@@ -366,7 +359,6 @@ footer a:hover, footer a:focus-visible {
 #info-adicional {
     grid-column: 3 / 4;
     width: 100%; 
-    height: 100%; 
     border-radius: 12px;
     border: 2px dashed var(--color-card-border); 
     background: var(--color-card-bg);
@@ -378,12 +370,12 @@ footer a:hover, footer a:focus-visible {
     /* ⭐️ Alineación: Mismo padding que la columna izquierda ⭐️ */
     padding: var(--nav-carousel-top-offset) 15px 15px 15px;
     
-    /* ⭐️ Altura: Misma altura que la columna izquierda ⭐️ */
-    height: calc(100% - var(--nav-carousel-top-offset)); 
+    /* ⭐️ Altura: 100% de la celda del grid ⭐️ */
+    height: 100%; 
 }
 /* Estilos del contenido de 'Info' */
 #info-adicional > * {
-    padding-left: 1.5rem; /* Padding interno del texto */
+    padding-left: 1.5rem;
     padding-right: 1.5rem;
 }
 #info-adicional p, #info-adicional small {

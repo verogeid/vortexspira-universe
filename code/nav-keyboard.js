@@ -3,36 +3,54 @@
 
     // ⭐️ 1. LISTENER CENTRAL DE TECLADO (CORREGIDO) ⭐️
     document.addEventListener('keydown', (e) => {
-        if (!App || !App.DOM || !App.DOM.vistaNav) return; 
+        if (!App || !App.DOM || !App.DOM.vistaNav) return; // App no está lista
 
-        // 1. Manejar Escape siempre
+        // --- MANEJO DE TECLAS GLOBALES ---
+
+        // 1. Escape siempre vuelve
         if (e.key === 'Escape') {
             e.preventDefault();
             App._handleVolverClick(); 
             return;
         }
 
-        // 2. Comprobar si el foco está en la tarjeta "Volver" (Desktop)
+        // 2. ⭐️ Tab (Focus Trap) siempre se maneja ⭐️
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            // Determinar en qué vista estamos para pasarla a la trampa
+            const isNavActive = App.DOM.vistaNav.classList.contains('active');
+            const isDetailActive = App.DOM.vistaDetalle.classList.contains('active');
+            
+            if (isNavActive) {
+                App._handleFocusTrap(e, 'nav');
+            } else if (isDetailActive) {
+                App._handleFocusTrap(e, 'detail');
+            }
+            return; // No hacer nada más
+        }
+        
+        // --- MANEJO DE TECLAS CONTEXTUALES (FLECHAS, ENTER, ESPACIO) ---
+
+        // 3. Comprobar si el foco está en la tarjeta "Volver" (Desktop)
         if (document.activeElement === App.DOM.cardVolverFija) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 App._handleVolverClick();
             }
-            return; // No hacer nada más si el foco está aquí
+            return; 
         }
 
-        // 3. Comprobar si el foco está en el footer
+        // 4. Comprobar si el foco está en el footer
         const isFooterActive = document.activeElement.closest('footer');
         if (isFooterActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
                 e.preventDefault();
                 App._handleFooterNavigation(e.key);
             }
-            // Tab es manejado por _handleFocusTrap
             return; 
         }
 
-        // 4. Comprobar Vistas
+        // 5. Comprobar Vistas (para flechas/enter/espacio)
         const isNavActive = App.DOM.vistaNav.classList.contains('active');
         const isDetailActive = App.DOM.vistaDetalle.classList.contains('active');
 
@@ -40,20 +58,12 @@
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault(); 
                 App._handleKeyNavigation(e.key);
-            } 
-            else if (e.key === 'Tab') {
-                e.preventDefault();
-                App._handleFocusTrap(e, 'nav');
             }
         } 
         else if (isDetailActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault();
                 App._handleDetailNavigation(e.key);
-            }
-            else if (e.key === 'Tab') {
-                e.preventDefault();
-                App._handleFocusTrap(e, 'detail');
             }
         }
     });
@@ -105,7 +115,6 @@
         const focusableDetailElements = App._getFocusableDetailElements();
         let currentIndex = focusableDetailElements.indexOf(activeElement);
         if (currentIndex === -1) {
-            // Foco no está en un elemento, enfocar el primero
             if (focusableDetailElements.length > 0) focusableDetailElements[0].focus();
             return;
         }
@@ -130,7 +139,7 @@
         }
     };
 
-    // ⭐️ 4. MANEJO DE FOCO (TAB) (Sin cambios) ⭐️
+    // ⭐️ 4. MANEJO DE FOCO (TAB) (Sin cambios en su lógica interna) ⭐️
     App._handleFocusTrap = function(e, viewType) {
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= 600;
@@ -166,7 +175,6 @@
             nextIndex = (currentIndex >= focusableElements.length - 1) ? 0 : currentIndex + 1;
         }
 
-        // ... (resto de la lógica de focus-visible sin cambios) ...
         if (activeCard && activeCard.classList.contains('focus-visible')) {
             if (focusableElements[currentIndex] === activeCard && focusableElements[nextIndex] !== activeCard) {
                 activeCard.classList.remove('focus-visible');
