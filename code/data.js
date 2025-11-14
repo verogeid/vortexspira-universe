@@ -8,6 +8,11 @@ const LINKEDIN_URL = "https://www.linkedin.com/in/diego-gonzalez-fernandez";
 const LICENSE_URL = "http://creativecommons.org/licenses/by-nc-nd/4.0/";
 const LICENSE_IMG_SRC = "https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png";
 
+const MOBILE_MAX_WIDTH = 600;
+const TABLET_MIN_WIDTH = 601;
+const TABLET_MAX_WIDTH = 1024;
+const DESKTOP_MIN_WIDTH = 1025;
+
 // ⭐️ 2. FUNCIÓN DE UTILIDAD SVG (VortexSpira) ⭐️
 function createVortexSpiraSVG(primaryColor, accentColor = SECONDARY_COLOR, className = '') {
     return `<svg class="${className}" xmlns="http://www.w3.org/2000/svg" viewBox="-331 132.8 296.2 296.2" height="40" style="vertical-align: middle; margin-right: 10px;">

@@ -101,8 +101,8 @@
             this.renderNavegacion();
 
             // Forzar el foco de vuelta al slider o tarjeta "Volver"
-             const isMobile = window.innerWidth <= 600;
-             const isTablet = window.innerWidth > 600 && window.innerWidth <= 768;
+             const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
+             const isTablet = window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth <= TABLET_MAX_WIDTH;
              
              if (!isMobile && !isTablet && this.DOM.cardVolverFija.tabIndex === 0) {
                  // Modo Desktop: Foco en la tarjeta Volver Fija
@@ -136,8 +136,8 @@
 
       // Determinar modo
       const screenWidth = window.innerWidth;
-      const isMobile = screenWidth <= 600;
-      const isTablet = screenWidth > 600 && screenWidth <= 768;
+      const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
+      const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
 
       // Ocultar la vista de navegación activa
       this.DOM.vistaNav.classList.remove('active');
@@ -174,8 +174,8 @@
      */
     App._getFocusableDetailElements = function() {
         const screenWidth = window.innerWidth;
-        const isMobile = screenWidth <= 600;
-        const isTablet = screenWidth > 600 && screenWidth <= 768;
+        const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
+        const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
         
         const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('a.enlace-curso[tabindex="0"]'));
         let elements = [];

@@ -15,9 +15,9 @@
 
         // ⭐️ 1. DEFINIR LOS 3 MODOS ⭐️
         const screenWidth = window.innerWidth;
-        const isMobile = screenWidth <= 600;
-        const isTablet = screenWidth > 600 && screenWidth <= 768;
-        const isDesktop = screenWidth > 768;
+        const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
+        const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
+        const isDesktop = screenWidth >= DESKTOP_MIN_WIDTH;
 
         // ⭐️ 2. ELEGIR LAS FUNCIONES Y VARIABLES ⭐️
         let renderHtmlFn;
@@ -187,7 +187,7 @@
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         
         const screenWidth = window.innerWidth;
-        const isMobile = screenWidth <= 600;
+        const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
 
         // 1. Limpiar focos y aria-current anteriores
         const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
@@ -286,8 +286,8 @@
         console.log("ResizeObserver (3 modos) configurado.");
         
         const getMode = (width) => {
-            if (width <= 600) return 'mobile';
-            if (width <= 768) return 'tablet';
+            if (width <= MOBILE_MAX_WIDTH) return 'mobile';
+            if (width <= TABLET_MAX_WIDTH) return 'tablet';
             return 'desktop';
         };
 

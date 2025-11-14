@@ -141,8 +141,8 @@
     // ⭐️ 4. MANEJO DE FOCO (TAB) (CORREGIDO CON LÓGICA DE GRUPOS) ⭐️
     App._handleFocusTrap = function(e, viewType) {
         const screenWidth = window.innerWidth;
-        const isMobile = screenWidth <= 600;
-        const isTablet = screenWidth > 600 && screenWidth <= 768;
+        const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
+        const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
         
         const footerLinks = Array.from(document.querySelectorAll('footer a'));
         let groups = [];
