@@ -185,11 +185,11 @@ function injectHeaderLogo() {
     if (header) {
         const logoSVG = createVortexSpiraSVG(PRIMARY_COLOR, SECONDARY_COLOR, 'header-logo');
         const h1 = header.querySelector('h1');
-        
+
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = logoSVG;
         const svgElement = tempDiv.firstChild;
-        
+
         if (h1) {
             h1.insertBefore(svgElement, h1.firstChild);
         }
@@ -208,22 +208,26 @@ function createLinkedInSVG(color = FOOTER_ICON_COLOR) {
 
 /**
  * Inyecta el contenido HTML dinámico en el footer.
+ * ⭐️ MODIFICADO: Ahora usa App.getString() del módulo i18n.
  */
 function injectFooterContent() {
     const footerContent = document.getElementById('footer-content');
     const linkedInSvg = createLinkedInSVG();
-    
+
     if (footerContent) {
+        // Construir el HTML usando las claves del módulo i18n
         footerContent.innerHTML = `
-            &copy;2025 VortexSpira® | 
+            ${App.getString('footerCopyright')} 
             
-            <a href="${LICENSE_URL}" target="_top" aria-label="License CC BY-NC-ND 4.0 description" class="footer-license-link">
+            <a href="${LICENSE_URL}" target="_top" 
+               aria-label="${App.getString('ariaLicense')}" class="footer-license-link">
                 <img src="${LICENSE_IMG_SRC}" width=88 height=31 alt="Creative Commons License"/>
             </a>
             
-            | Desarrollado por Diego González Fernández | 
+            | ${App.getString('footerAuthor')} | 
             
-            <a href="${LINKEDIN_URL}" target="_top" aria-label="Perfil de LinkedIn" class="footer-social-link">
+            <a href="${LINKEDIN_URL}" target="_top" 
+               aria-label="${App.getString('ariaLinkedIn')}" class="footer-social-link">
                 ${linkedInSvg}
             </a>
         `;
