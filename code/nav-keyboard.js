@@ -36,7 +36,7 @@
         // 4. Comprobar si el foco está en el footer (SOLO FLECHAS)
         const isFooterActive = document.activeElement.closest('footer');
         if (isFooterActive) {
-            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+            if (['ArrowLeft', 'ArrowRight'].includes(e.key)) {
                 e.preventDefault();
                 App._handleFooterNavigation(e.key);
             }
@@ -110,7 +110,7 @@
 
     // ⭐️ 3. NAVEGACIÓN EN DETALLES (Sin cambios) ⭐️
     App._handleDetailNavigation = function(key) {
-         const activeElement = document.activeElement;
+        const activeElement = document.activeElement;
         const focusableDetailElements = App._getFocusableDetailElements();
         let currentIndex = focusableDetailElements.indexOf(activeElement);
         if (currentIndex === -1) {
