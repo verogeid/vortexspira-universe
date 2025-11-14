@@ -1,5 +1,4 @@
 // --- code/render-swipe.js ---
-/* (Sin cambios, tal como lo proporcionaste) */
 (function() {
 
     // ⭐️ 1. FUNCIÓN DE GENERACIÓN DE HTML (Nombre genérico) ⭐️
@@ -76,10 +75,8 @@
             slidesPerGroup: 1, 
             loop: true, 
             
-            // ⭐️⭐️⭐️ LA CORRECCIÓN ⭐️⭐️⭐️
             // Usar el nombre del parámetro 'initialSwiperSlide'
             initialSlide: initialSwiperSlide + 1, 
-            // ⭐️⭐️⭐️ (Antes decía initialSlideIndex) ⭐️⭐️⭐️
 
             touchRatio: 1, 
             simulateTouch: true, 
@@ -94,6 +91,12 @@
         if (App.STATE.carouselInstance) {
             App.STATE.carouselInstance.update(); 
             console.log(`Swiper inicializado en ${swiperId}. Slide inicial: ${initialSwiperSlide + 1}`);
+
+            // ⭐️⭐️⭐️ CORRECCIÓN ⭐️⭐️⭐️
+            // Enganchar los listeners táctiles AQUI, justo después de crear la instancia.
+            if (typeof App.setupTouchListeners === 'function') {
+                App.setupTouchListeners();
+            }
         }
     };
 

@@ -1,5 +1,4 @@
 // --- code/render-base.js ---
-/* (Sin cambios, tal como lo proporcionaste) */
 (function() {
 
     // Almacena el modo actual (móvil, tablet, escritorio)
@@ -101,15 +100,15 @@
 
         // 4. INICIALIZAR EL CARRUSEL (sobre la vista oculta)
         let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
+        // (Esta función ahora también llama a setupTouchListeners internamente)
         initCarouselFn(initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId);
 
         // 5. LISTENERS Y FOCO INICIAL (sobre la vista oculta)
         if (typeof this.setupTrackClickListener === 'function') {
             this.setupTrackClickListener();
         }
-        if (typeof this.setupTouchListeners === 'function') {
-            this.setupTouchListeners();
-        }
+        
+        // ⭐️⭐️⭐️ CORRECCIÓN: La llamada a setupTouchListeners() se ha eliminado de aquí ⭐️⭐️⭐️
         
         // ⭐️ LLAMADA A _updateNavViews (CON LÓGICA DE BREADCRUMB) ⭐️
         this._updateNavViews(isSubLevel, isMobile || isTablet, nodoActual); 
