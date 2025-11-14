@@ -13,7 +13,7 @@
               "nombre": "API",
               "subsecciones": [],
               "cursos": [
-                {
+               /* {
                   "id": "c-01-01-01-01",
                   "titulo": "FastAPI",
                   "descripcion": "Creación de APIs de alto rendimiento con Python y FastAPI.",
@@ -30,7 +30,7 @@
                     { "texto": "Instalar la PWA", "url": "#" },
                     { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
                   ]
-                }
+                } */
               ]
             },
             {
@@ -49,8 +49,8 @@
           "cursos": [
             {
               "id": "c-01-02-01",
-              "titulo": "Arquitecto Web (HTML5, CSS3, JS)",
-              "descripcion": "Shift left del lado de desarrollo. Proyecto integral para ser arquitecto web. Cada módulo (HTML5, CSS3, JavaScript) es un sprint.",
+              "titulo": "Arquitecto Web",
+              "descripcion": "Shift left del lado de desarrollo. Proyecto integral para ser arquitecto web. Cada módulo (HTML5, CSS3, JavaScript) es un sprint en esta simulación guiada.",
               "enlaces": [
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir Módulo HTML5", "url": "#" },
@@ -58,7 +58,7 @@
                 { "texto": "Adquirir Módulo JavaScript", "url": "#" },
                 { "texto": "Adquirir Paquete Completo", "url": "#" }
               ]
-            },
+            } /* ,
             {
               "id": "c-01-02-02",
               "titulo": "React con TypeScript",
@@ -67,14 +67,14 @@
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            }
+            } */
           ]
         },
         {
           "id": "ss-01-03",
           "nombre": "Fundamentos y Lenguajes",
           "subsecciones": [],
-          "cursos": [
+          "cursos": [ /*
             {
               "id": "c-01-03-01",
               "titulo": "Go Language (GoLang)",
@@ -101,14 +101,14 @@
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            }
+            } */
           ]
         },
         {
           "id": "ss-01-04",
           "nombre": "Inteligencia Artificial",
           "subsecciones": [],
-          "cursos": [
+          "cursos": [ /*
             {
               "id": "c-01-04-01",
               "titulo": "IA Developer con Python",
@@ -126,7 +126,7 @@
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            }
+            } */
           ]
         }
       ],
@@ -140,7 +140,7 @@
           "id": "ss-02-01",
           "nombre": "Contenedores y Orquestación",
           "subsecciones": [],
-          "cursos": [
+          "cursos": [ /*
             {
               "id": "c-02-01-01",
               "titulo": "Docker para testers",
@@ -158,14 +158,14 @@
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            }
+            } */
           ]
         },
         {
           "id": "ss-02-02",
           "nombre": "Control de Versiones",
           "subsecciones": [],
-          "cursos": [
+          "cursos": [ /*
             {
               "id": "c-02-02-01",
               "titulo": "Git",
@@ -174,14 +174,14 @@
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            }
+            } */
           ]
         },
         {
           "id": "ss-02-03",
           "nombre": "Integración Continua (CI/CD)",
           "subsecciones": [],
-          "cursos": [
+          "cursos": [ /*
             {
               "id": "c-02-03-01",
               "titulo": "Bamboo",
@@ -208,7 +208,7 @@
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            }
+            } */
           ]
         }
       ],
@@ -222,7 +222,7 @@
           "id": "ss-03-01",
           "nombre": "Diagramas y Modelado",
           "subsecciones": [],
-          "cursos": [
+          "cursos": [ /*
             {
               "id": "c-03-01-01",
               "titulo": "Árboles de decisión",
@@ -267,14 +267,14 @@
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            }
+            } */
           ]
         },
         {
           "id": "ss-03-02",
           "nombre": "Herramientas y Lenguajes",
           "subsecciones": [],
-          "cursos": [
+          "cursos": [ /*
             {
               "id": "c-03-02-01",
               "titulo": "Confluence",
@@ -301,7 +301,7 @@
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            }
+            } */
           ]
         }
       ],
@@ -315,10 +315,10 @@
           "id": "ss-04-01",
           "nombre": "Accesibilidad (A11y)",
           "subsecciones": [],
-          "cursos": [
+          "cursos": [ /*
             {
               "id": "c-04-01-01",
-              "titulo": "Accesibilidad Avanzada y Automatización",
+              "titulo": "Accesibilidad Avanzada",
               "descripcion": "Más allá del WCAG. Aprende a crear automatizaciones para cualquier web o deficiencia, obteniendo métricas realistas.",
               "enlaces": [
                 { "texto": "Instalar la PWA", "url": "#" },
@@ -342,14 +342,14 @@
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            }
+            } */
           ]
         },
         {
           "id": "ss-04-02",
-          "nombre": "Automatización (Funcional)",
+          "nombre": "Automatización",
           "subsecciones": [],
-          "cursos": [
+          "cursos": [ /*
             {
               "id": "c-04-02-01",
               "titulo": "Katalon Studio: Pruebas Mobile",
@@ -376,14 +376,14 @@
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            }
+            } */
           ]
         },
         {
           "id": "ss-04-03",
           "nombre": "Fundamentos y Gestión",
           "subsecciones": [],
-          "cursos": [
+          "cursos": [ /*
             {
               "id": "c-04-03-01",
               "titulo": "Jira",
@@ -401,14 +401,14 @@
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            }
+            } */
           ]
         },
         {
           "id": "ss-04-04",
           "nombre": "Performance",
           "subsecciones": [],
-          "cursos": [
+          "cursos": [ /*
             {
               "id": "c-04-04-01",
               "titulo": "JMeter",
@@ -426,14 +426,14 @@
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            }
+            } */
           ]
         },
         {
           "id": "ss-04-05",
           "nombre": "Seguridad",
           "subsecciones": [],
-          "cursos": [
+          "cursos": [ /*
             {
               "id": "c-04-05-01",
               "titulo": "OWASP",
@@ -442,7 +442,7 @@
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            },
+            }, */
             {
               "id": "c-04-05-02",
               "titulo": "Cyberseguridad para QA",
@@ -461,11 +461,11 @@
       "id": "s-05",
       "nombre": "Recursos Adicionales (Bonus)",
       "subsecciones": [],
-      "cursos": [
+      "cursos": [ /*
         {
           "id": "c-05-01",
           "titulo": "Inglés: De A2 a C1",
-          "descripcion": "Aprendizaje inmersivo. Aprende a leer el código IPA fácilmente. Aprenderás a verbalizar correctamente mientras escuchas una voz nativa diciendo exactamente lo mismo, mientras tu visión periférica aprenderá cómo se escribe.",
+          "descripcion": "Aprendizaje inmersivo. Aprende a leer el código IPA fácilmente. Aprenderás a verbalizar correctamente mientras escuchas una voz nativa diciendo exactamente lo mismo. Mientras, tu visión periférica aprenderá cómo se escribe. La ciencia cognitiva a tu disposición para aprender idiomas.",
           "enlaces": [
             { "texto": "Instalar la PWA", "url": "#" },
             { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
@@ -479,7 +479,7 @@
             { "texto": "Instalar la PWA", "url": "#" },
             { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
           ]
-        }
+        }*/
       ]
     }
   ]
