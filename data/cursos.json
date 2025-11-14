@@ -297,11 +297,36 @@
       "subsecciones": [
         {
           "id": "ss-04-01",
-          "nombre": "Automatización (Funcional)",
+          "nombre": "Accesibilidad (A11y)",
           "subsecciones": [],
           "cursos": [
             {
               "id": "c-04-01-01",
+              "titulo": "Axe-Core",
+              "descripcion": "🚧 En construcción. Pruebas de accesibilidad.",
+              "enlaces": [
+                { "texto": "Instalar la PWA", "url": "#" },
+                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
+              ]
+            },
+            {
+              "id": "c-04-01-02",
+              "titulo": "LightHouse",
+              "descripcion": "🚧 En construcción. Análisis de accesibilidad y WPO con LightHouse.",
+              "enlaces": [
+                { "texto": "Instalar la PWA", "url": "#" },
+                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ss-04-02",
+          "nombre": "Automatización (Funcional)",
+          "subsecciones": [],
+          "cursos": [
+            {
+              "id": "c-04-02-01",
               "titulo": "Katalon Studio: Pruebas Mobile",
               "descripcion": "🚧 En construcción. Automatización de pruebas en dispositivos móviles.",
               "enlaces": [
@@ -310,7 +335,7 @@
               ]
             },
             {
-              "id": "c-04-01-02",
+              "id": "c-04-02-02",
               "titulo": "Playwright con C#: QA industrial",
               "descripcion": "🚧 En construcción. Automatización web moderna con Playwright y C#.",
               "enlaces": [
@@ -319,7 +344,7 @@
               ]
             },
             {
-              "id": "c-04-01-03",
+              "id": "c-04-02-03",
               "titulo": "Postman y Newman: Pruebas API",
               "descripcion": "Testing de APIs REST y automatización con Newman.",
               "enlaces": [
@@ -330,12 +355,12 @@
           ]
         },
         {
-          "id": "ss-04-02",
+          "id": "ss-04-03",
           "nombre": "Fundamentos y Gestión",
           "subsecciones": [],
           "cursos": [
             {
-              "id": "c-04-02-01",
+              "id": "c-04-03-01",
               "titulo": "Jira",
               "descripcion": "🚧 En construcción. Gestión de tickets y proyectos con Jira.",
               "enlaces": [
@@ -344,7 +369,7 @@
               ]
             },
             {
-              "id": "c-04-02-02",
+              "id": "c-04-03-02",
               "titulo": "SSTQB Foundation Level 4",
               "descripcion": "Fundamentos de testing bajo el estándar SSTQB.",
               "enlaces": [
@@ -355,22 +380,13 @@
           ]
         },
         {
-          "id": "ss-04-03",
-          "nombre": "Pruebas No Funcionales",
+          "id": "ss-04-04",
+          "nombre": "Performance",
           "subsecciones": [],
           "cursos": [
             {
-              "id": "c-04-03-01",
-              "titulo": "Axe-Core (Accesibilidad)",
-              "descripcion": "🚧 En construcción. Pruebas de accesibilidad.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-04-03-02",
-              "titulo": "JMeter (Performance)",
+              "id": "c-04-04-01",
+              "titulo": "JMeter",
               "descripcion": "🚧 En construcción. Pruebas de carga y estrés con Apache JMeter.",
               "enlaces": [
                 { "texto": "Instalar la PWA", "url": "#" },
@@ -378,26 +394,24 @@
               ]
             },
             {
-              "id": "c-04-03-03",
-              "titulo": "K6 (Performance)",
+              "id": "c-04-04-02",
+              "titulo": "K6",
               "descripcion": "🚧 En construcción. Pruebas de carga modernas con K6.",
               "enlaces": [
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
-            },
+            }
+          ]
+        },
+        {
+          "id": "ss-04-05",
+          "nombre": "Seguridad",
+          "subsecciones": [],
+          "cursos": [
             {
-              "id": "c-04-03-04",
-              "titulo": "LightHouse (Performance)",
-              "descripcion": "🚧 En construcción. Análisis de performance web (WPO) con LightHouse.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-04-03-05",
-              "titulo": "OWASP (Seguridad)",
+              "id": "c-04-05-01",
+              "titulo": "OWASP",
               "descripcion": "🚧 En construcción. Top 10 de vulnerabilidades web (OWASP).",
               "enlaces": [
                 { "texto": "Instalar la PWA", "url": "#" },
@@ -405,8 +419,8 @@
               ]
             },
             {
-              "id": "c-04-03-06",
-              "titulo": "Seguridad para testers (Seguridad)",
+              "id": "c-04-05-02",
+              "titulo": "Seguridad para testers",
               "descripcion": "🚧 En construcción. Conceptos de seguridad aplicados a QA.",
               "enlaces": [
                 { "texto": "Instalar la PWA", "url": "#" },
@@ -419,7 +433,7 @@
       "cursos": []
     },
     {
-      "id": "s-05",
+      "id":s-05",
       "nombre": "Recursos Adicionales (Bonus)",
       "subsecciones": [],
       "cursos": [
