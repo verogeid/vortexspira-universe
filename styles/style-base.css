@@ -39,7 +39,7 @@
     --color-card-border: #aaa; 
     --color-card-border-disabled: #666; 
     
-    --color-card-shadow-disabled: rgba(170, 170, 170, 0.3);
+    --color-card-shadow-disabled: rgba(170, 170, 170, 0.8);
     
     /* Borde más sutil (oscuro) */
     --color-border-placeholder: #555; 
