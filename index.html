@@ -58,8 +58,14 @@
     </div>
 
     <div id="info-adicional" style="display: none;">
-        <p id="info-adicional-titulo"></p> <small>
-          <ul>
+        
+        <p id="info-adicional-titulo-ayuda"></p> <small>
+          <ul id="info-adicional-lista-ayuda">
+            <li id="info-adicional-ayuda-gira"></li> <li id="info-adicional-ayuda-vuelve"></li> </ul>
+        </small>
+    
+        <p id="info-adicional-titulo-acerca"></p> <small>
+          <p id="info-adicional-summary"></p> <ul id="info-adicional-lista-acerca">
             <li><a id="info-adicional-link-landing" href="https://subscribepage.io/vortexspira" target="_blank"></a></li>
             <li><a id="info-adicional-link-diary" href="https://github.com/dgo-fer/VortexSpira-DevDiary" target="_blank"></a></li>
           </ul>
@@ -94,7 +100,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
         
-        // ⭐️ AÑADIDO: Aplicar textos primero
+        // Aplicar textos primero
         if (window.App && App.applyStrings) {
             App.applyStrings();
         }
