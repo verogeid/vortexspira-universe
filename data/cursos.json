@@ -49,6 +49,18 @@
           "cursos": [
             {
               "id": "c-01-02-01",
+              "titulo": "Arquitecto Web (HTML5, CSS3, JS)",
+              "descripcion": "Shift left del lado de desarrollo. Proyecto integral para ser arquitecto web. Cada módulo (HTML5, CSS3, JavaScript) es un sprint.",
+              "enlaces": [
+                { "texto": "Instalar la PWA", "url": "#" },
+                { "texto": "Adquirir Módulo HTML5", "url": "#" },
+                { "texto": "Adquirir Módulo CSS3", "url": "#" },
+                { "texto": "Adquirir Módulo JavaScript", "url": "#" },
+                { "texto": "Adquirir Paquete Completo", "url": "#" }
+              ]
+            },
+            {
+              "id": "c-01-02-02",
               "titulo": "React con TypeScript",
               "descripcion": "🚧 En construcción. Desarrollo de SPAs con React y TypeScript.",
               "enlaces": [
@@ -67,15 +79,6 @@
               "id": "c-01-03-01",
               "titulo": "Go Language (GoLang)",
               "descripcion": "🚧 En construcción. Introducción al lenguaje Go.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-01-03-02",
-              "titulo": "HTML5 y CSS3",
-              "descripcion": "Fundamentos del desarrollo web: maquetación y estilos.",
               "enlaces": [
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
@@ -315,6 +318,15 @@
           "cursos": [
             {
               "id": "c-04-01-01",
+              "titulo": "Accesibilidad Avanzada y Automatización",
+              "descripcion": "Más allá del WCAG. Aprende a crear automatizaciones para cualquier web o deficiencia, obteniendo métricas realistas.",
+              "enlaces": [
+                { "texto": "Instalar la PWA", "url": "#" },
+                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
+              ]
+            },
+            {
+              "id": "c-04-01-02",
               "titulo": "Axe-Core",
               "descripcion": "🚧 En construcción. Pruebas de accesibilidad.",
               "enlaces": [
@@ -323,7 +335,7 @@
               ]
             },
             {
-              "id": "c-04-01-02",
+              "id": "c-04-01-03",
               "titulo": "LightHouse",
               "descripcion": "🚧 En construcción. Análisis de accesibilidad y WPO con LightHouse.",
               "enlaces": [
@@ -412,7 +424,7 @@
               "descripcion": "🚧 En construcción. Pruebas de carga modernas con K6.",
               "enlaces": [
                 { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "url" }
+                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
               ]
             }
           ]
@@ -433,8 +445,8 @@
             },
             {
               "id": "c-04-05-02",
-              "titulo": "Seguridad para testers",
-              "descripcion": "🚧 En construcción. Conceptos de seguridad aplicados a QA.",
+              "titulo": "Cyberseguridad para QA",
+              "descripcion": "Aprende a auditar una web. No solo el qué y el cómo, sino el porqué. Ve más allá del típico libro de texto. Anticípate al hacker o al desastre natural o digital.",
               "enlaces": [
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
@@ -452,8 +464,8 @@
       "cursos": [
         {
           "id": "c-05-01",
-          "titulo": "English for Tech: A2 to C1",
-          "descripcion": "🚧 En construcción. Mejora de inglés técnico.",
+          "titulo": "Inglés: De A2 a C1",
+          "descripcion": "Aprendizaje inmersivo. Aprende a leer el código IPA fácilmente. Aprenderás a verbalizar correctamente mientras escuchas una voz nativa diciendo exactamente lo mismo, mientras tu visión periférica aprenderá cómo se escribe.",
           "enlaces": [
             { "texto": "Instalar la PWA", "url": "#" },
             { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
