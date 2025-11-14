@@ -17,12 +17,12 @@
             'ariaLicense': 'Descripción de la licencia CC BY-NC-ND 4.0',
             'ariaLinkedIn': 'Perfil de LinkedIn de Diego González Fernández',
 
-            // ⭐️ AÑADIDO: Ayuda Rápida ⭐️
+            // Ayuda Rápida
             'helpTitle': 'Ayuda Rápida:',
             'helpRotate': '<b>Gira</b>: Arrastra, usa la rueda del ratón o las flechas del teclado.',
             'helpBack': '<b>Vuelve</b>: Pulsa [Esc] o el botón "Volver".',
             
-            // ⭐️ MODIFICADO: Columna "Acerca de" ⭐️
+            // Columna "Acerca de"
             'aboutTitle': 'Acerca de VortexSpira®',
             'aboutSummary': 'Plataforma de audio-aprendizaje inmersivo diseñada para ingenieros, con foco en la accesibilidad cognitiva y cero ansiedad.',
             'aboutLinkLanding': 'Visita la Landing Page',
@@ -55,17 +55,15 @@
         document.title = App.getString('pageTitle');
 
         // 2. Textos que se inyectan por ID
-        // ⭐️ MODIFICADO: Apunta a los nuevos IDs de la columna derecha
+        // ⭐️ CORREGIDO: Apunta al ID del H1, no a un selector CSS
         const elementsById = {
-            'app-header h1': 'headerTitle',
+            'main-header-title': 'headerTitle', // <-- Corregido
             'btn-volver-navegacion': 'btnBack',
             
-            // IDs para #info-adicional (Ayuda)
             'info-adicional-titulo-ayuda': 'helpTitle',
             'info-adicional-ayuda-gira': 'helpRotate',
             'info-adicional-ayuda-vuelve': 'helpBack',
             
-            // IDs para #info-adicional (Acerca de)
             'info-adicional-titulo-acerca': 'aboutTitle',
             'info-adicional-summary': 'aboutSummary',
             'info-adicional-link-landing': 'aboutLinkLanding',
@@ -76,6 +74,9 @@
             const el = document.getElementById(id);
             if (el) {
                 el.innerHTML = App.getString(elementsById[id]);
+            } else {
+                // Añadimos un log de advertencia por si un ID está mal escrito
+                logWarn('i18n', `Elemento no encontrado por ID: #${id}`);
             }
         }
 
