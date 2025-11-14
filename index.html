@@ -15,7 +15,7 @@
 <body>
 
   <header id="app-header">
-    <h1></h1> 
+    <h1 id="main-header-title"></h1> 
   </header>
 
   <main id="app-container">
@@ -27,7 +27,6 @@
     </div>
 
     <div id="vista-central" role="region">
-
         <div id="vista-navegacion-desktop" class="vista active">
             <div class="carousel-mask">
                 <div class="mask-left"></div>
@@ -37,7 +36,6 @@
                 <div class="swiper-wrapper grid-track" id="track-desktop"></div>
             </div>
         </div>
-
         <div id="vista-navegacion-tablet" class="vista">
             <div class="carousel-mask">
                 <div class="mask-left"></div>
@@ -47,25 +45,26 @@
                 <div class="swiper-wrapper grid-track" id="track-tablet"></div>
             </div>
         </div>
-
         <div id="vista-navegacion-mobile" class="vista">
             <div class="mobile-track" id="track-mobile"></div>
         </div>
-
         <div id="vista-detalle" class="vista">
             <div class="contenido-curso" id="detalle-contenido"></div>
         </div>
     </div>
 
     <div id="info-adicional" style="display: none;">
-        
-        <p id="info-adicional-titulo-ayuda"></p> <small>
+        <p id="info-adicional-titulo-ayuda"></p>
+        <small>
           <ul id="info-adicional-lista-ayuda">
-            <li id="info-adicional-ayuda-gira"></li> <li id="info-adicional-ayuda-vuelve"></li> </ul>
+            <li id="info-adicional-ayuda-gira"></li>
+            <li id="info-adicional-ayuda-vuelve"></li>
+          </ul>
         </small>
-    
-        <p id="info-adicional-titulo-acerca"></p> <small>
-          <p id="info-adicional-summary"></p> <ul id="info-adicional-lista-acerca">
+        <p id="info-adicional-titulo-acerca"></p>
+        <small>
+          <p id="info-adicional-summary"></p>
+          <ul id="info-adicional-lista-acerca">
             <li><a id="info-adicional-link-landing" href="https://subscribepage.io/vortexspira" target="_blank"></a></li>
             <li><a id="info-adicional-link-diary" href="https://github.com/dgo-fer/VortexSpira-DevDiary" target="_blank"></a></li>
           </ul>
@@ -83,24 +82,18 @@
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
   <script src="code/debug.js"></script>
-  
-  <script src="code/i18n.js"></script>
-
-  <script src="code/data.js"></script>
-  <script src="code/app.js"></script>
-
-  <script src="code/render-base.js"></script>
+  <script src="code/app.js"></script> <script src="code/i18n.js"></script> <script src="code/data.js"></script> <script src="code/render-base.js"></script>
   <script src="code/render-swipe.js"></script> 
   <script src="code/render-mobile.js"></script>
 
-  <script src="code/nav-base.js"></script>
+  <script src="code/nav-stack.js"></script> <script src="code/nav-base.js"></script>
   <script src="code/nav-keyboard.js"></script>
   <script src="code/nav-tactil.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
         
-        // Aplicar textos primero
+        // Esta secuencia ahora es segura
         if (window.App && App.applyStrings) {
             App.applyStrings();
         }
