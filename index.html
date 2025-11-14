@@ -54,21 +54,22 @@
     </div>
 
     <div id="info-adicional" style="display: none;">
-        <p id="info-adicional-titulo-ayuda"></p>
-        <small>
-          <ul id="info-adicional-lista-ayuda">
-            <li id="info-adicional-ayuda-gira"></li>
-            <li id="info-adicional-ayuda-vuelve"></li>
-          </ul>
-        </small>
-        <p id="info-adicional-titulo-acerca"></p>
-        <small>
-          <p id="info-adicional-summary"></p>
-          <ul id="info-adicional-lista-acerca">
-            <li><a id="info-adicional-link-landing" href="https://subscribepage.io/vortexspira" target="_blank"></a></li>
-            <li><a id="info-adicional-link-diary" href="https://github.com/dgo-fer/VortexSpira-DevDiary" target="_blank"></a></li>
-          </ul>
-        </small>
+        
+        <details>
+            <summary id="info-adicional-titulo-ayuda"></summary> <small>
+              <ul id="info-adicional-lista-ayuda">
+                <li id="info-adicional-ayuda-gira"></li> <li id="info-adicional-ayuda-vuelve"></li> </ul>
+            </small>
+        </details>
+    
+        <details open>
+            <summary id="info-adicional-titulo-acerca"></summary> <small>
+              <p id="info-adicional-summary"></p> <ul id="info-adicional-lista-acerca">
+                <li><a id="info-adicional-link-landing" href="https://subscribepage.io/vortexspira" target="_blank"></a></li>
+                <li><a id="info-adicional-link-diary" href="https://github.com/dgo-fer/VortexSpira-DevDiary" target="_blank"></a></li>
+              </ul>
+            </small>
+        </details>
     </div>
 
   </main>
@@ -82,22 +83,25 @@
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
   <script src="code/debug.js"></script>
-  <script src="code/app.js"></script> <script src="code/i18n.js"></script> <script src="code/data.js"></script> <script src="code/render-base.js"></script>
+  <script src="code/app.js"></script> 
+  <script src="code/i18n.js"></script> 
+  <script src="code/data.js"></script>
+
+  <script src="code/render-base.js"></script>
   <script src="code/render-swipe.js"></script> 
   <script src="code/render-mobile.js"></script>
 
-  <script src="code/nav-stack.js"></script> <script src="code/nav-base.js"></script>
+  <script src="code/nav-stack.js"></script>
+  <script src="code/nav-base.js"></script>
   <script src="code/nav-keyboard.js"></script>
   <script src="code/nav-tactil.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
         
-        // Esta secuencia ahora es segura
         if (window.App && App.applyStrings) {
             App.applyStrings();
         }
-
         if (typeof injectHeaderLogo === 'function') {
             injectHeaderLogo(); 
         }
