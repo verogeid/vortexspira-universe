@@ -24,14 +24,14 @@
     // ⭐️ 2. LISTENER DE CLIC Y HOVER DEL TRACK (Dinámico) ⭐️
     App.setupTrackPointerListeners = function() { 
         if (this.DOM.track) {
-            // --- Clic (Existente) ---
+            // --- Clic ---
             if (this.DOM.track._clickListener) {
                 this.DOM.track.removeEventListener('click', this.DOM.track._clickListener);
             }
             this.DOM.track._clickListener = this._handleTrackClick.bind(this);
             this.DOM.track.addEventListener('click', this.DOM.track._clickListener);
 
-            // --- MouseOver (Nuevo) ---
+            // --- MouseOver ---
             if (this.DOM.track._mouseoverListener) {
                 this.DOM.track.removeEventListener('mouseover', this.DOM.track._mouseoverListener);
             }
@@ -42,16 +42,16 @@
 
 
     // ⭐️ 3. MANEJADORES DE EVENTOS (CORREGIDO) ⭐️
+    
+    /**
+     * Al hacer CLIC: Mueve el foco real y desliza el carrusel.
+     */
     App._handleTrackClick = function(e) {
       const tarjeta = e.target.closest('[data-id]'); 
       if (!tarjeta) return;
 
-      // 1. Ignorar clics en relleno
-      if (tarjeta.dataset.tipo === 'relleno') {
-        return;
-      }
+      if (tarjeta.dataset.tipo === 'relleno') return;
 
-      // ⭐️⭐️⭐️ CORRECCIÓN (Romper Bucle de Clic) ⭐️⭐️⭐️
       const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
       const newIndex = allCards.findIndex(c => c === tarjeta);
       
@@ -61,25 +61,16 @@
           this._updateFocus(true); // Deslizar Y enfocar
           focusChangedByClick = true;
       } else if (newIndex > -1) {
-          // El clic fue en la tarjeta ya activa, forzar el deslizamiento/foco
-          // (Esta es la lógica de "clic para centrar" que querías)
-          this._updateFocus(true); 
+          this._updateFocus(true); // Clic para centrar (mueve foco y desliza si es necesario)
       }
-      // ⭐️⭐️⭐️ FIN DE LA CORRECCIÓN ⭐️⭐️⭐️
 
-      // 3. Si está deshabilitada, no hacer nada más
-      if (tarjeta.classList.contains('disabled')) {
-          return;
-      }
-      
-      // 4. Si es la tarjeta "volver" (móvil), actuar
+      if (tarjeta.classList.contains('disabled')) return;
       if (tarjeta.dataset.tipo === 'volver-vertical') {
           this._handleVolverClick();
           return;
       }
 
-      // 5. Si está habilitada y no es "volver", ejecutar la acción principal
-      // (Solo si el clic no estaba ya ocupado cambiando el foco)
+      // Solo navega si el clic no estaba ocupado cambiando el foco
       if (!focusChangedByClick) {
           const id = tarjeta.dataset.id;
           const tipo = tarjeta.dataset.tipo;
@@ -87,25 +78,59 @@
       }
     };
 
-    // Sincronizar foco con Hover
+    /**
+     * Al hacer HOVER: Mueve el foco VISUAL, pero NO el foco del navegador.
+     */
     App._handleTrackMouseOver = function(e) {
         const tarjeta = e.target.closest('[data-id]');
         
-        // Ignorar si es relleno o si no es una tarjeta
-        if (!tarjeta || tarjeta.dataset.tipo === 'relleno') {
-            return;
-        }
+        if (!tarjeta || tarjeta.dataset.tipo === 'relleno') return;
 
         const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
         const newIndex = allCards.findIndex(c => c === tarjeta);
 
-        // Si el ratón se mueve a una tarjeta que no es la activa,
-        // actualizar el foco para que coincida.
         if (newIndex > -1 && newIndex !== this.STATE.currentFocusIndex) {
-            this.STATE.currentFocusIndex = newIndex;
-            this._updateFocus(false); // Sincronizar foco visual sin deslizar el carrusel
+            // ⭐️⭐️⭐️ CORRECCIÓN ⭐️⭐️⭐️
+            // No llamar a _updateFocus(). Llamar a la nueva función ligera.
+            this._updateVisualFocus(newIndex);
         }
     };
+
+    /**
+     * ⭐️⭐️⭐️ NUEVA FUNCIÓN LIGERA (Solo para Hover) ⭐️⭐️⭐️
+     * Actualiza el .focus-visible y el STATE, pero NO llama a .focus()
+     */
+    App._updateVisualFocus = function(newIndex) {
+        // 1. Limpiar focos visuales anteriores
+        const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
+        allCardsInTrack.forEach(card => {
+            card.classList.remove('focus-visible');
+            card.removeAttribute('aria-current');
+        });
+        if (App.DOM.cardVolverFija) {
+            App.DOM.cardVolverFija.classList.remove('focus-visible');
+            App.DOM.cardVolverFija.removeAttribute('aria-current');
+        }
+
+        // 2. Obtener la nueva tarjeta REAL
+        const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+        if (allCards.length === 0) return;
+
+        // 3. Normalizar y establecer estado
+        let normalizedIndex = newIndex;
+        if (normalizedIndex < 0) normalizedIndex = 0;
+        if (normalizedIndex >= allCards.length) normalizedIndex = allCards.length - 1;
+        
+        const nextFocusedCard = allCards[normalizedIndex];
+        this.STATE.currentFocusIndex = normalizedIndex;
+
+        // 4. Aplicar nuevo foco VISUAL (sin .focus())
+        if (nextFocusedCard) {
+            nextFocusedCard.classList.add('focus-visible');
+            nextFocusedCard.setAttribute('aria-current', 'true');
+        }
+    };
+
 
     /**
      * Manejador centralizado para la activación de tarjetas (clic, Enter, Espacio)
@@ -140,7 +165,6 @@
             this.renderNavegacion();
 
             // Forzar el foco de vuelta al slider o tarjeta "Volver"
-             // (Ahora usa las constantes globales definidas en debug.js)
              const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
              const isTablet = window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth <= TABLET_MAX_WIDTH;
              
@@ -174,7 +198,7 @@
         </div>
       `;
 
-      // Determinar modo (Ahora usa las constantes globales)
+      // Determinar modo
       const screenWidth = window.innerWidth;
       const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
       const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
@@ -213,7 +237,6 @@
      * Helper para nav-keyboard.js (Vista Detalle)
      */
     App._getFocusableDetailElements = function() {
-        // (Ahora usa las constantes globales)
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
         const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
@@ -236,7 +259,6 @@
      */
     App.findBestFocusInColumn = function(columnCards, targetRow) {
         const isFocusable = (card) => {
-            // (Permite que el foco aterrice en tarjetas deshabilitadas)
             return card && card.dataset.id && card.dataset.tipo !== 'relleno';
         };
 

@@ -2,7 +2,6 @@
 (function() {
 
     // Almacena el modo actual (móvil, tablet, escritorio)
-    // SÓLO el observador debe escribir en esta variable después de la configuración inicial.
     let _lastMode = 'desktop'; 
 
     // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL (ROUTER) ⭐️
@@ -26,8 +25,7 @@
         let calculatedItemsPerColumn;
         let swiperId = null;
         
-        // ⭐️⭐️⭐️ CORRECCIÓN: NO modificar _lastMode aquí ⭐️⭐️⭐️
-        // (Esta función SÓLO LEE el modo, no lo establece. El observer lo establece.)
+        // (No modificar _lastMode aquí)
 
         if (isMobile) {
             renderHtmlFn = App._generateCardHTML_Mobile;
@@ -99,7 +97,6 @@
 
         // 4. INICIALIZAR EL CARRUSEL (sobre la vista oculta)
         let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
-        // (Esta función ahora también llama a setupTouchListeners internamente)
         initCarouselFn(initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId);
 
         // 5. LISTENERS Y FOCO INICIAL (sobre la vista oculta)
@@ -110,7 +107,15 @@
         // ⭐️ LLAMADA A _updateNavViews (CON LÓGICA DE BREADCRUMB) ⭐️
         this._updateNavViews(isSubLevel, isMobile || isTablet, nodoActual); 
         
-        this._updateFocus(false); // Foco inicial sin scroll
+        // ⭐️⭐️⭐️ CORRECCIÓN ⭐️⭐️⭐️
+        // Llamar a la nueva función ligera de "hover" para el render inicial
+        // en lugar de _updateFocus(false), que mueve el foco real (no deseado al cargar).
+        if (typeof this._updateVisualFocus === 'function') {
+             this._updateVisualFocus(this.STATE.currentFocusIndex);
+        } else {
+            this._updateFocus(false); // Fallback
+        }
+
 
         // 6. ⭐️ EL "SWAP" ⭐️
         desktopView.classList.remove('active');
@@ -179,7 +184,9 @@
     };
 
 
-    // ⭐️ 3. LÓGICA DE FOCO Y NAVEGACIÓN (Modificado) ⭐️
+    // ⭐️ 3. LÓGICA DE FOCO Y NAVEGACIÓN (CORREGIDO) ⭐️
+    // Esta función AHORA SÍ mueve el foco real del navegador.
+    // NUNCA debe ser llamada por 'mouseover'.
     App._updateFocus = function(shouldSlide = true) {
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         
@@ -216,24 +223,27 @@
             nextFocusedCard.tabIndex = 0;
             nextFocusedCard.setAttribute('aria-current', 'true'); // ⭐️ AÑADIDO
 
+            // ⭐️⭐️⭐️ CORRECCIÓN ⭐️⭐️⭐️
+            // Mover el foco real del navegador.
+            // Si shouldSlide es true (clic, teclado), enfoca normal.
+            // Si es false (tactil, carga inicial), enfoca con preventScroll.
             if (shouldSlide) {
                 nextFocusedCard.focus(); 
             } else {
                 nextFocusedCard.focus({ preventScroll: true }); 
             }
+            // ⭐️⭐️⭐️ FIN CORRECCIÓN ⭐️⭐️⭐️
+
 
             // 5. DELEGAR LA ACCIÓN DE DESLIZAMIENTO/SCROLL
             if (!isMobile && carouselInstance && shouldSlide) {
                 
-                // ⭐️⭐️⭐️ CORRECCIÓN (Romper Bucle de Clic) ⭐️⭐️⭐️
-                // Calcular a dónde queremos ir
                 const targetSwiperSlide = Math.floor(normalizedIndex / itemsPorColumna) + 1; 
                 
                 // Solo deslizar si NO estamos ya en esa diapositiva
                 if (targetSwiperSlide !== carouselInstance.realIndex) {
                     carouselInstance.slideToLoop(targetSwiperSlide, 400); 
                 }
-                // ⭐️⭐️⭐️ FIN DE LA CORRECCIÓN ⭐️⭐️⭐️
 
             } else if (isMobile && shouldSlide) {
                 nextFocusedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
