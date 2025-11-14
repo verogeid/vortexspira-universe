@@ -19,7 +19,7 @@
     --color-success-bg: rgba(40, 167, 69, 0.1);
 
     --color-card-shadow-disabled: rgba(150, 150, 150, 0.2);
-    
+
     /* Borde más sutil para placeholders */
     --color-border-placeholder: #ddd; 
 
@@ -39,9 +39,9 @@
         --color-text: #eee;
         --color-card-border: #aaa; 
         --color-card-border-disabled: #666; 
-        
+
         --color-card-shadow-disabled: rgba(170, 170, 170, 0.8);
-        
+
         /* Borde más sutil (oscuro) */
         --color-border-placeholder: #555; 
     }
@@ -308,9 +308,6 @@ footer a:hover .linkedin-icon {
     justify-content: center;
     box-sizing: border-box;
     overflow: hidden;
-    
-    /* ⭐️⭐️⭐️ LA CORRECCIÓN ⭐️⭐️⭐️ */
-    /* Previene que el item flex crezca más allá de su contenedor */
     min-width: 0; 
 }
 #card-nivel-actual h3 {
@@ -318,8 +315,6 @@ footer a:hover .linkedin-icon {
     font-size: 1.5rem;
     color: var(--color-text);
     opacity: 0.7;
-    
-    /* Estos ya estaban y son correctos para "cortar" */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -388,7 +383,7 @@ footer a:hover .linkedin-icon {
 }
 
 
-/* ZONA DE INFORMACIÓN ADICIONAL (Sidebar Derecho) */
+/* ⭐️ ZONA DE INFORMACIÓN ADICIONAL (Sidebar Derecho) ⭐️ */
 #info-adicional {
     grid-column: 3 / 4;
     width: 100%; 
@@ -396,32 +391,127 @@ footer a:hover .linkedin-icon {
     border: 2px dashed var(--color-border-placeholder); 
     background: var(--color-card-bg);
     display: block !important; 
-    text-align: left;
     box-sizing: border-box;
     margin-left: 0; 
     padding: var(--nav-carousel-top-offset) 15px 15px 15px;
     height: 100%; 
+    overflow-y: auto; /* Permite scroll si el contenido crece */
 }
-#info-adicional > * {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+
+/* Estilos para <details> y <summary> */
+#info-adicional details {
+    margin-bottom: 1.2rem;
 }
-#info-adicional p, #info-adicional small {
-    width: 100%; 
-    text-align: left;
+#info-adicional details:last-of-type {
+    margin-bottom: 0.5rem;
+}
+
+#info-adicional summary {
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    list-style: none; /* Elimina el marcador por defecto */
+    padding: 0.2rem;
+    color: var(--color-text);
+    opacity: 0.9;
+}
+#info-adicional summary:hover {
+    opacity: 1;
+    color: var(--color-primary);
+}
+#info-adicional summary::-webkit-details-marker {
+    display: none; /* Oculta marcador en Chrome/Safari */
+}
+
+/* Indicador de flecha (Chevron) */
+#info-adicional summary::before {
+    content: '▶';
+    font-size: 0.8em;
+    margin-right: 8px;
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+#info-adicional details[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+/* Contenido dentro de <details> */
+#info-adicional details > small {
     display: block;
-    box-sizing: border-box;
+    padding: 0.5rem 0.5rem 0.5rem 1.5rem; /* Indentación para el contenido */
+    color: #999;
+    font-size: 0.9rem;
+    line-height: 1.5;
 }
-#info-adicional ul {
+#info-adicional details p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+    opacity: 0.9;
+}
+#info-adicional details ul {
     padding-left: 15px;
     margin-top: 0.5rem;
-    font-size: 0.9rem;
 }
-#info-adicional ul li {
-    margin-bottom: 0.2rem;
+#info-adicional details ul li {
+    margin-bottom: 0.8rem;
+    list-style-type: none; /* Quitar viñetas de la lista de ayuda */
 }
-#info-adicional p { margin-bottom: 0.5rem; }
-#info-adicional small { color: #999; font-size: 0.8rem; }
+#info-adicional-lista-ayuda li {
+    list-style-type: disc; /* Mantener viñetas solo para la ayuda */
+    margin-bottom: 0.5rem;
+}
+
+
+/* ⭐️ Estilos para enlaces con Iconos (GitHub / Landing) ⭐️ */
+#info-adicional-lista-acerca a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--color-text);
+    opacity: 0.8;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+}
+/* Hover para enlaces de "Acerca de" */
+#info-adicional-lista-acerca a:hover,
+#info-adicional-lista-acerca a:focus-visible {
+    opacity: 1;
+    color: var(--color-primary);
+    outline: none;
+    transform: translateX(3px);
+}
+
+/* Icono base (placeholder) */
+#info-adicional-lista-acerca a::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    flex-shrink: 0;
+    /* Usamos 'mask-image' para poder colorear el SVG */
+    background-color: var(--color-text);
+    transition: background-color 0.2s ease;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+}
+/* Color del icono en hover/foco */
+#info-adicional-lista-acerca a:hover::before,
+#info-adicional-lista-acerca a:focus-visible::before {
+    background-color: var(--color-primary);
+}
+
+/* Icono de GitHub */
+#info-adicional-link-diary::before {
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>');
+}
+
+/* Icono de Landing Page (Enlace Externo) */
+#info-adicional-link-landing::before {
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>');
+}
 
 
 /* Botón Volver (Móvil) */
