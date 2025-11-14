@@ -7,7 +7,7 @@
     // ⭐️ 1. CONFIGURACIÓN DE LISTENERS TÁCTILES (SWIPER) ⭐️
     App.setupTouchListeners = function() {
         const screenWidth = window.innerWidth;
-        const isMobile = screenWidth <= mob;
+        const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
 
         if (!isMobile && this.STATE.carouselInstance) {
             const swiper = this.STATE.carouselInstance;
