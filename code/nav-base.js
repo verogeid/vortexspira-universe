@@ -195,7 +195,7 @@
      */
     App.findBestFocusInColumn = function(columnCards, targetRow) {
         const isFocusable = (card) => {
-            return card && card.dataset.id && card.dataset.tipo !== 'relleno' && !card.classList.contains('disabled');
+            return card && card.dataset.id && card.dataset.tipo !== 'relleno';// && !card.classList.contains('disabled');
         };
 
         // 1. Intentar la misma fila
