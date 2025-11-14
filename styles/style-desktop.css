@@ -1,6 +1,6 @@
 /* --- styles/style-desktop.css --- */
 /* ⭐️ CORRECCIÓN: Envuelto en @media query ⭐️ */
-@media (min-width: 1025px) {
+@media (min-width: var(--desktop-min-width)) {
 
     /* ⭐️ 0. Variable de altura específica ⭐️ */
     :root {

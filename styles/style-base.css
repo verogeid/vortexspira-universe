@@ -1,62 +1,68 @@
 /* --- MODIFICADO: styles/style-base.css --- */
 :root {
-  /* Fondos */
-  --color-bg: #f4f4f4;
-  --color-card-bg: rgba(255, 255, 255, 0.7);
-  --color-mask-gradient: rgba(244, 244, 244, 0.4);
+    /* Fondos */
+    --color-bg: #f4f4f4;
+    --color-card-bg: rgba(255, 255, 255, 0.7);
+    --color-mask-gradient: rgba(244, 244, 244, 0.4);
 
-  /* Texto y Bordes */
-  --color-text: #111;
-  --color-card-border: #bbb;
-  --color-card-border-disabled: #ccc;
+    /* Texto y Bordes */
+    --color-text: #111;
+    --color-card-border: #bbb;
+    --color-card-border-disabled: #ccc;
 
-  /* Acentos (Ghost) */
-  --color-primary: #007bff;
-  --color-primary-bg: rgba(0, 123, 255, 0.1);
-  --color-danger: #dc3545;
-  --color-danger-bg: rgba(220, 53, 69, 0.1);
-  --color-success: #28a745;
-  --color-success-bg: rgba(40, 167, 69, 0.1);
+    /* Acentos (Ghost) */
+    --color-primary: #007bff;
+    --color-primary-bg: rgba(0, 123, 255, 0.1);
+    --color-danger: #dc3545;
+    --color-danger-bg: rgba(220, 53, 69, 0.1);
+    --color-success: #28a745;
+    --color-success-bg: rgba(40, 167, 69, 0.1);
 
-  --color-card-shadow-disabled: rgba(150, 150, 150, 0.2);
-  
-  /* Borde más sutil para placeholders */
-  --color-border-placeholder: #ddd; 
+    --color-card-shadow-disabled: rgba(150, 150, 150, 0.2);
+    
+    /* Borde más sutil para placeholders */
+    --color-border-placeholder: #ddd; 
 
-  /* VARIABLES DE LAYOUT */
-  --header-height: 9vh;
-  --footer-height: 6vh;
-  --card-gap: 3vh; 
-  --nav-desktop-height: calc(100% - 0px); 
-  --nav-carousel-top-offset: 2vh; 
+    /* VARIABLES DE LAYOUT */
+    --header-height: 9vh;
+    --footer-height: 6vh;
+    --card-gap: 3vh; 
+    --nav-desktop-height: calc(100% - 0px); 
+    --nav-carousel-top-offset: 2vh; 
+
+    --mobile-max-width: 600px;
+    --tablet-min-width: 601px;
+    --tablet-max-width: 1024px;
+    --desktop-min-width: 1025px;
 }
+
 @media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #111;
-    --color-card-bg: rgba(255, 255, 255, 0.02);
-    --color-mask-gradient: rgba(17, 17, 17, 0.4);
-    --color-text: #eee;
-    --color-card-border: #aaa; 
-    --color-card-border-disabled: #666; 
-    
-    --color-card-shadow-disabled: rgba(170, 170, 170, 0.8);
-    
-    /* Borde más sutil (oscuro) */
-    --color-border-placeholder: #555; 
-  }
+    :root {   
+        --color-bg: #111;
+        --color-card-bg: rgba(255, 255, 255, 0.02);
+        --color-mask-gradient: rgba(17, 17, 17, 0.4);
+        --color-text: #eee;
+        --color-card-border: #aaa; 
+        --color-card-border-disabled: #666; 
+        
+        --color-card-shadow-disabled: rgba(170, 170, 170, 0.8);
+        
+        /* Borde más sutil (oscuro) */
+        --color-border-placeholder: #555; 
+    }
 }
 
 /* --- 2. Configuración General y Vistas Base --- */
 body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  overflow: hidden; 
-  margin: 0;
-  box-sizing: border-box;
-  min-height: 100vh;
-  padding-top: var(--header-height);
-  padding-bottom: var(--footer-height);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden; 
+    margin: 0;
+    box-sizing: border-box;
+    min-height: 100vh;
+    padding-top: var(--header-height);
+    padding-bottom: var(--footer-height);
 }
 
 /* HEADER y FOOTER */

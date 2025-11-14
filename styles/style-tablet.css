@@ -1,6 +1,6 @@
 /* --- styles/style-tablet.css --- */
 /* ⭐️ CORRECCIÓN: Envuelto en @media query ⭐️ */
-@media (min-width: 601px) and (max-width: 1024px) {
+@media (min-width: var(--tablet-min-width)) and (max-width: var(--tablet-max-width)) {
 
     /* ⭐️ 0. Variable de altura específica ⭐️ */
     :root {

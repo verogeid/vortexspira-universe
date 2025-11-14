@@ -1,6 +1,6 @@
 /* --- styles/style-mobile.css --- */
 /* (Sin cambios, tal como lo proporcionaste) */
-@media (max-width: 600px) {
+@media (max-width: var(--mobile-max-width)) {
     /* ❗️ REGLAS DE DISPLAY ELIMINADAS (JS lo controla) ❗️ */
     
     /* Ocultar sidebars en móvil (Esto SÍ es correcto) */
