@@ -1,7 +1,8 @@
-// --- code/render-base.js ---
+// --- MODIFICADO: code/render-base.js ---
 (function() {
 
     // Almacena el modo actual (móvil, tablet, escritorio)
+    // SÓLO el observador debe escribir en esta variable después de la configuración inicial.
     let _lastMode = 'desktop'; 
 
     // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL (ROUTER) ⭐️
@@ -17,7 +18,7 @@
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
         const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
-        const isDesktop = screenWidth >= DESKTOP_MIN_WIDTH;
+        // const isDesktop = screenWidth >= DESKTOP_MIN_WIDTH; // No es necesaria
 
         // ⭐️ 2. ELEGIR LAS FUNCIONES Y VARIABLES ⭐️
         let renderHtmlFn;
@@ -25,10 +26,8 @@
         let calculatedItemsPerColumn;
         let swiperId = null;
         
-        if (isMobile) _lastMode = 'mobile';
-        else if (isTablet) _lastMode = 'tablet';
-        else _lastMode = 'desktop';
-
+        // ⭐️⭐️⭐️ CORRECCIÓN: NO modificar _lastMode aquí ⭐️⭐️⭐️
+        // (Esta función SÓLO LEE el modo, no lo establece. El observer lo establece.)
 
         if (isMobile) {
             renderHtmlFn = App._generateCardHTML_Mobile;
@@ -104,11 +103,9 @@
         initCarouselFn(initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId);
 
         // 5. LISTENERS Y FOCO INICIAL (sobre la vista oculta)
-        if (typeof this.setupTrackClickListener === 'function') {
-            this.setupTrackClickListener();
+        if (typeof this.setupTrackPointerListeners === 'function') {
+            this.setupTrackPointerListeners();
         }
-        
-        // ⭐️⭐️⭐️ CORRECCIÓN: La llamada a setupTouchListeners() se ha eliminado de aquí ⭐️⭐️⭐️
         
         // ⭐️ LLAMADA A _updateNavViews (CON LÓGICA DE BREADCRUMB) ⭐️
         this._updateNavViews(isSubLevel, isMobile || isTablet, nodoActual); 
@@ -227,8 +224,17 @@
 
             // 5. DELEGAR LA ACCIÓN DE DESLIZAMIENTO/SCROLL
             if (!isMobile && carouselInstance && shouldSlide) {
-                const targetSwiperSlide = Math.floor(normalizedIndex / itemsPorColumna); 
-                carouselInstance.slideToLoop(targetSwiperSlide + 1, 400); 
+                
+                // ⭐️⭐️⭐️ CORRECCIÓN (Romper Bucle de Clic) ⭐️⭐️⭐️
+                // Calcular a dónde queremos ir
+                const targetSwiperSlide = Math.floor(normalizedIndex / itemsPorColumna) + 1; 
+                
+                // Solo deslizar si NO estamos ya en esa diapositiva
+                if (targetSwiperSlide !== carouselInstance.realIndex) {
+                    carouselInstance.slideToLoop(targetSwiperSlide, 400); 
+                }
+                // ⭐️⭐️⭐️ FIN DE LA CORRECCIÓN ⭐️⭐️⭐️
+
             } else if (isMobile && shouldSlide) {
                 nextFocusedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
@@ -281,7 +287,7 @@
         }
     };
 
-    // ⭐️ 6. RESIZE OBSERVER (Con ajuste de foco) ⭐️
+    // ⭐️ 6. RESIZE OBSERVER (CORREGIDO) ⭐️
     App._setupResizeObserver = function() {
         log('renderBase', DEBUG_LEVELS.BASIC, "ResizeObserver (3 modos) configurado.");
         
@@ -290,8 +296,10 @@
             if (width <= TABLET_MAX_WIDTH) return 'tablet';
             return 'desktop';
         };
-
+        
+        // ⭐️ CORRECCIÓN: Establecer el _lastMode inicial UNA VEZ
         _lastMode = getMode(window.innerWidth);
+        log('renderBase', DEBUG_LEVELS.BASIC, `Modo inicial establecido en: ${_lastMode}`);
 
         this.STATE.resizeObserver = new ResizeObserver(() => {
             const newMode = getMode(window.innerWidth);
@@ -313,6 +321,7 @@
                     }
                 }
 
+                // ⭐️ CORRECCIÓN: Actualizar _lastMode ANTES de re-renderizar
                 _lastMode = newMode;
                 this.renderNavegacion(); 
             }

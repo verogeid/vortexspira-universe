@@ -1,4 +1,11 @@
 /* --- styles/style-desktop.css --- */
+:root {
+  --mobile-max-width: 600px;
+  --tablet-min-width: 601px;
+  --tablet-max-width: 1024px;
+  --desktop-min-width: 1025px;
+}
+
 /* ⭐️ CORRECCIÓN: Envuelto en @media query ⭐️ */
 @media (min-width: var(--desktop-min-width)) {
 
