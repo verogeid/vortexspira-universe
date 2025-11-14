@@ -34,24 +34,17 @@
     };
 
 
-    // ⭐️ 3. MANEJADORES DE EVENTOS ⭐️
+    // ⭐️ 3. MANEJADORES DE EVENTOS (CORREGIDO) ⭐️
     App._handleTrackClick = function(e) {
       const tarjeta = e.target.closest('[data-id]'); 
       if (!tarjeta) return;
 
-      if (tarjeta.dataset.tipo === 'relleno' || tarjeta.classList.contains('disabled')) {
+      // 1. Ignorar clics en relleno
+      if (tarjeta.dataset.tipo === 'relleno') {
         return;
       }
 
-      if (tarjeta.dataset.tipo === 'volver-vertical') {
-          this._handleVolverClick();
-          return;
-      }
-
-      const id = tarjeta.dataset.id;
-      const tipo = tarjeta.dataset.tipo;
-
-      // Sincronizar el foco al hacer clic
+      // 2. Sincronizar el foco para CUALQUIER tarjeta real (habilitada o deshabilitada)
       const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
       const newIndex = allCards.findIndex(c => c === tarjeta);
       if (newIndex > -1) {
@@ -59,7 +52,20 @@
           this._updateFocus(false); // Actualizar foco sin deslizar
       }
 
-      // Actuar sobre la tarjeta
+      // 3. Si está deshabilitada, no hacer nada más (ya tiene el foco)
+      if (tarjeta.classList.contains('disabled')) {
+        return;
+      }
+      
+      // 4. Si es la tarjeta "volver" (móvil), actuar
+      if (tarjeta.dataset.tipo === 'volver-vertical') {
+          this._handleVolverClick();
+          return;
+      }
+
+      // 5. Si está habilitada y no es "volver", ejecutar la acción principal
+      const id = tarjeta.dataset.id;
+      const tipo = tarjeta.dataset.tipo;
       this._handleCardClick(id, tipo);
     };
 
@@ -88,11 +94,6 @@
             
             // Re-renderizar la vista de navegación (para el modo correcto)
             this.renderNavegacion(); 
-
-            // ⭐️⭐️⭐️ CORRECCIÓN ⭐️⭐️⭐️
-            // La lógica de foco que estaba aquí era redundante.
-            // renderNavegacion() ya llama a _updateFocus() internamente.
-            // Añadir una segunda llamada a .focus() estaba causando el error.
         } 
         // 2. Caso Sub-sección -> Nivel anterior
         else if (this.STATE.navStack.length > 0) {
@@ -191,11 +192,13 @@
     };
     
     /**
-     * Helper para nav-tactil.js (Swipe)
+     * Helper para nav-tactil.js (Swipe) (CORREGIDO)
      */
     App.findBestFocusInColumn = function(columnCards, targetRow) {
         const isFocusable = (card) => {
-            return card && card.dataset.id && card.dataset.tipo !== 'relleno';// && !card.classList.contains('disabled');
+            // ⭐️ CORRECCIÓN: Permitir que el foco aterrice en tarjetas deshabilitadas.
+            // (Se elimina: !card.classList.contains('disabled'))
+            return card && card.dataset.id && card.dataset.tipo !== 'relleno';
         };
 
         // 1. Intentar la misma fila
