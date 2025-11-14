@@ -15,7 +15,7 @@ const DEBUG_CONFIG = {
     data: DEBUG_LEVELS.DISABLED,
     navBase: DEBUG_LEVELS.DISABLED,
     navKeyboard: DEBUG_LEVELS.DISABLED,
-    navTactil: DEBUG_LEVELS.BASIC,
+    navTactil: DEBUG_LEVELS.DISABLED,
     renderBase: DEBUG_LEVELS.DISABLED,
     renderSwipe: DEBUG_LEVELS.DISABLED,
     renderMobile: DEBUG_LEVELS.DISABLED
