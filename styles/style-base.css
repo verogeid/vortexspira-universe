@@ -1,4 +1,4 @@
-/* --- MODIFICADO: styles/style-base.css --- */
+/* --- styles/style-base.css --- */
 :root {
     /* Fondos */
     --color-bg: #f4f4f4;
@@ -414,6 +414,7 @@ footer a:hover .linkedin-icon {
     padding: 0.2rem;
     color: var(--color-text);
     opacity: 0.9;
+    transition: color 0.2s ease;
 }
 #info-adicional summary:hover {
     opacity: 1;
@@ -449,16 +450,26 @@ footer a:hover .linkedin-icon {
     color: var(--color-text);
     opacity: 0.9;
 }
+
+/* Estilos de Lista */
 #info-adicional details ul {
-    padding-left: 15px;
     margin-top: 0.5rem;
 }
 #info-adicional details ul li {
     margin-bottom: 0.8rem;
-    list-style-type: none; /* Quitar viñetas de la lista de ayuda */
+}
+
+/* CORREGIDO: Quitar viñetas de la lista de enlaces (Acerca de) */
+#info-adicional-lista-acerca {
+    list-style-type: none;
+    padding-left: 0; 
+}
+/* CORREGIDO: Mantener viñetas solo para la lista de Ayuda */
+#info-adicional-lista-ayuda {
+    list-style-type: disc;
+    padding-left: 15px;
 }
 #info-adicional-lista-ayuda li {
-    list-style-type: disc; /* Mantener viñetas solo para la ayuda */
     margin-bottom: 0.5rem;
 }
 
@@ -473,7 +484,6 @@ footer a:hover .linkedin-icon {
     transition: all 0.2s ease;
     font-size: 0.95rem;
 }
-/* Hover para enlaces de "Acerca de" */
 #info-adicional-lista-acerca a:hover,
 #info-adicional-lista-acerca a:focus-visible {
     opacity: 1;
@@ -490,12 +500,15 @@ footer a:hover .linkedin-icon {
     height: 20px;
     margin-right: 10px;
     flex-shrink: 0;
-    /* Usamos 'mask-image' para poder colorear el SVG */
-    background-color: var(--color-text);
+    background-color: var(--color-text); /* Color por defecto */
     transition: background-color 0.2s ease;
     mask-repeat: no-repeat;
     mask-position: center;
     mask-size: contain;
+    /* CORREGIDO: Vendor prefixes para mask-image (mejor compatibilidad) */
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
 }
 /* Color del icono en hover/foco */
 #info-adicional-lista-acerca a:hover::before,
@@ -503,14 +516,16 @@ footer a:hover .linkedin-icon {
     background-color: var(--color-primary);
 }
 
-/* Icono de GitHub */
+/* CORREGIDO: Icono de GitHub (SVG sin 'fill') */
 #info-adicional-link-diary::before {
-    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>');
+    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>');
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>');
 }
 
-/* Icono de Landing Page (Enlace Externo) */
+/* CORREGIDO: Icono de Landing Page (SVG con 'fill' en lugar de 'stroke') */
 #info-adicional-link-landing::before {
-    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>');
+    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6v2H5v11h11v-6h2z"/><path fill-rule="evenodd" d="M15 3h6v6l-2-2-4 4-2-2 4-4-2-2z"/></svg>');
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6v2H5v11h11v-6h2z"/><path fill-rule="evenodd" d="M15 3h6v6l-2-2-4 4-2-2 4-4-2-2z"/></svg>');
 }
 
 
