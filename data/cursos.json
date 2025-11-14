@@ -6,28 +6,41 @@
       "subsecciones": [
         {
           "id": "ss-01-01",
-          "nombre": "Back-End y API",
-          "subsecciones": [],
-          "cursos": [
+          "nombre": "Back-End",
+          "subsecciones": [
             {
-              "id": "c-01-01-01",
-              "titulo": "FastAPI",
-              "descripcion": "Creación de APIs de alto rendimiento con Python y FastAPI.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
+              "id": "ss-01-01-01",
+              "nombre": "API",
+              "subsecciones": [],
+              "cursos": [
+                {
+                  "id": "c-01-01-01-01",
+                  "titulo": "FastAPI",
+                  "descripcion": "Creación de APIs de alto rendimiento con Python y FastAPI.",
+                  "enlaces": [
+                    { "texto": "Instalar la PWA", "url": "#" },
+                    { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
+                  ]
+                },
+                {
+                  "id": "c-01-01-01-02",
+                  "titulo": "Flask",
+                  "descripcion": "Microframework de Python para desarrollo web y APIs.",
+                  "enlaces": [
+                    { "texto": "Instalar la PWA", "url": "#" },
+                    { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
+                  ]
+                }
               ]
             },
             {
-              "id": "c-01-01-02",
-              "titulo": "Flask",
-              "descripcion": "Microframework de Python para desarrollo web y APIs.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
+              "id": "ss-01-01-02",
+              "nombre": "Bases de Datos",
+              "subsecciones": [],
+              "cursos": []
             }
-          ]
+          ],
+          "cursos": []
         },
         {
           "id": "ss-01-02",
@@ -399,7 +412,7 @@
               "descripcion": "🚧 En construcción. Pruebas de carga modernas con K6.",
               "enlaces": [
                 { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
+                { "texto": "Adquirir la licencia en Hotmart", "url": "url" }
               ]
             }
           ]
@@ -433,7 +446,7 @@
       "cursos": []
     },
     {
-      "id":s-05",
+      "id": "s-05",
       "nombre": "Recursos Adicionales (Bonus)",
       "subsecciones": [],
       "cursos": [
