@@ -50,11 +50,11 @@
         if (typeof loadData === 'function') {
             await loadData(this); 
         } else {
-            console.error("ERROR: loadData no está definido.");
+            logError('app', "ERROR: loadData no está definido.");
             return;
         }
       } catch (error) {
-        console.error(`ERROR: Carga de datos fallida. ${error.message}`);
+        logError('app', `ERROR: Carga de datos fallida. ${error.message}`);
         // Mostrar error si es posible
         const track = document.getElementById('track-desktop') || document.getElementById('track-mobile');
         if (track) {

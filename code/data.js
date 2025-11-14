@@ -161,9 +161,9 @@ async function loadData(appInstance) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         appInstance.STATE.fullData = await response.json();
-        console.log("Datos cargados con éxito.");
+        log('data', DEBUG_LEVELS.BASIC, "Datos cargados con éxito.");
     } catch (e) {
-        console.error("No se pudo cargar 'cursos.json'", e);
+        logError('data', "No se pudo cargar 'cursos.json'", e);
         throw e;
     }
 }

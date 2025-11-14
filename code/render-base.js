@@ -7,7 +7,7 @@
     // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL (ROUTER) ⭐️
     App.renderNavegacion = function() {
         if (!this.STATE.fullData) {
-            console.error("No se puede renderizar: Datos no cargados.");
+            logError('navBase', "No se puede renderizar: Datos no cargados.");
             return;
         }
 
@@ -78,7 +78,7 @@
             const cursos = nodoActual.cursos || [];
             itemsDelNivel = subsecciones.concat(cursos);
         } else {
-            console.warn(`Nodo no encontrado. Volviendo a la raíz.`);
+            logWarn('navBase', `Nodo no encontrado. Volviendo a la raíz.`);
             this.STATE.navStack.pop(); 
             this.renderNavegacion();
             return;
@@ -237,10 +237,10 @@
 
 
     // ⭐️ 4. LÓGICA DE CONTROL DEL CARRUSEL (Stubs/Fallbacks) ⭐️
-    App._generateCardHTML_Carousel = App._generateCardHTML_Carousel || function() { console.error("render-swipe.js no cargado"); return ""; };
-    App._generateCardHTML_Mobile = App._generateCardHTML_Mobile || function() { console.error("render-mobile.js no cargado"); return ""; };
-    App._initCarousel_Swipe = App._initCarousel_Swipe || function() { console.error("render-swipe.js no cargado"); };
-    App._initCarousel_Mobile = App._initCarousel_Mobile || function() { console.error("render-mobile.js no cargado"); };
+    App._generateCardHTML_Carousel = App._generateCardHTML_Carousel || function() { logError('navBase', "render-swipe.js no cargado"); return ""; };
+    App._generateCardHTML_Mobile = App._generateCardHTML_Mobile || function() { logError('navBase', "render-mobile.js no cargado"); return ""; };
+    App._initCarousel_Swipe = App._initCarousel_Swipe || function() { logError('navBase', "render-swipe.js no cargado"); };
+    App._initCarousel_Mobile = App._initCarousel_Mobile || function() { logError('navBase', "render-mobile.js no cargado"); };
     App._destroyCarousel = App._destroyCarousel || function() { /* El destructor real está en render-swipe.js */ };
 
 
@@ -283,7 +283,7 @@
 
     // ⭐️ 6. RESIZE OBSERVER (Con ajuste de foco) ⭐️
     App._setupResizeObserver = function() {
-        console.log("ResizeObserver (3 modos) configurado.");
+        log('renderBase', DEBUG_LEVELS.BASIC, "ResizeObserver (3 modos) configurado.");
         
         const getMode = (width) => {
             if (width <= MOBILE_MAX_WIDTH) return 'mobile';
@@ -297,7 +297,7 @@
             const newMode = getMode(window.innerWidth);
 
             if (newMode !== _lastMode && this.STATE.initialRenderComplete) {
-                console.log(`Cambiando de vista: ${_lastMode} -> ${newMode}`);
+                log('renderBase', DEBUG_LEVELS.BASIC, `Cambiando de vista: ${_lastMode} -> ${newMode}`);
                 
                 const isSubLevel = this.STATE.navStack.length > 0;
                 if (isSubLevel) {
@@ -306,10 +306,10 @@
                     
                     if (lastWasCarousel && newIsMobile) {
                         this.STATE.currentFocusIndex++;
-                        console.log("Ajuste de foco: +1 (Volver añadido)");
+                        log('renderBase', DEBUG_LEVELS.BASIC, "Ajuste de foco: +1 (Volver añadido)");
                     } else if (!lastWasCarousel && !newIsMobile) {
                         this.STATE.currentFocusIndex = Math.max(0, this.STATE.currentFocusIndex - 1);
-                        console.log("Ajuste de foco: -1 (Volver quitado)");
+                        log('renderBase', DEBUG_LEVELS.BASIC, "Ajuste de foco: -1 (Volver quitado)");
                     }
                 }
 
