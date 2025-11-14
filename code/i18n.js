@@ -2,7 +2,6 @@
 (function() {
 
     // ⭐️ 1. ALMACÉN DE STRINGS (Textos)
-    // Estructurado por idioma ('es') para futura internacionalización
     App.STRINGS = {
         'es': {
             // Meta y Títulos
@@ -18,8 +17,14 @@
             'ariaLicense': 'Descripción de la licencia CC BY-NC-ND 4.0',
             'ariaLinkedIn': 'Perfil de LinkedIn de Diego González Fernández',
 
-            // Columna "Acerca de" (Nuevo)
+            // ⭐️ AÑADIDO: Ayuda Rápida ⭐️
+            'helpTitle': 'Ayuda Rápida:',
+            'helpRotate': '<b>Gira</b>: Arrastra, usa la rueda del ratón o las flechas del teclado.',
+            'helpBack': '<b>Vuelve</b>: Pulsa [Esc] o el botón "Volver".',
+            
+            // ⭐️ MODIFICADO: Columna "Acerca de" ⭐️
             'aboutTitle': 'Acerca de VortexSpira®',
+            'aboutSummary': 'Plataforma de audio-aprendizaje inmersivo diseñada para ingenieros, con foco en la accesibilidad cognitiva y cero ansiedad.',
             'aboutLinkLanding': 'Visita la Landing Page',
             'aboutLinkDiary': 'Lee el Dev Diary en GitHub',
 
@@ -31,43 +36,40 @@
 
     // ⭐️ 2. FUNCIÓN HELPER PARA OBTENER STRINGS
     
-    // Define el idioma actual (se podría expandir para leer el navegador)
     let currentLang = 'es'; 
 
-    /**
-     * Obtiene una cadena de texto del almacén por su clave.
-     * @param {string} key - La clave del string (ej: 'headerTitle').
-     * @returns {string} - El texto correspondiente.
-     */
     App.getString = function(key) {
         if (!App.STRINGS[currentLang] || !App.STRINGS[currentLang][key]) {
             logError('i18n', `Clave no encontrada: ${key}`);
-            return `[${key}]`; // Devuelve la clave como fallback
+            return `[${key}]`;
         }
         return App.STRINGS[currentLang][key];
     };
 
     // ⭐️ 3. FUNCIÓN DE INYECCIÓN DE TEXTOS
     
-    /**
-     * Aplica todos los textos al DOM al cargar la página.
-     */
     App.applyStrings = function() {
         log('i18n', DEBUG_LEVELS.BASIC, 'Aplicando textos (i18n)...');
 
-        // Establecer idioma del documento
         document.documentElement.lang = currentLang;
-
-        // 1. Título de la página
         document.title = App.getString('pageTitle');
 
         // 2. Textos que se inyectan por ID
+        // ⭐️ MODIFICADO: Apunta a los nuevos IDs de la columna derecha
         const elementsById = {
             'app-header h1': 'headerTitle',
             'btn-volver-navegacion': 'btnBack',
-            'info-adicional-titulo': 'aboutTitle', // ID del nuevo <p>
-            'info-adicional-link-landing': 'aboutLinkLanding', // ID del nuevo <a>
-            'info-adicional-link-diary': 'aboutLinkDiary' // ID del nuevo <a>
+            
+            // IDs para #info-adicional (Ayuda)
+            'info-adicional-titulo-ayuda': 'helpTitle',
+            'info-adicional-ayuda-gira': 'helpRotate',
+            'info-adicional-ayuda-vuelve': 'helpBack',
+            
+            // IDs para #info-adicional (Acerca de)
+            'info-adicional-titulo-acerca': 'aboutTitle',
+            'info-adicional-summary': 'aboutSummary',
+            'info-adicional-link-landing': 'aboutLinkLanding',
+            'info-adicional-link-diary': 'aboutLinkDiary'
         };
 
         for (const id in elementsById) {
@@ -77,13 +79,13 @@
             }
         }
 
-        // 3. Textos por Atributo [data-i18n-key]
+        // 3. Textos por Atributo [data-i18n-key] (Sin cambios)
         document.querySelectorAll('[data-i18n-key]').forEach(el => {
             const key = el.getAttribute('data-i18n-key');
             el.innerHTML = App.getString(key);
         });
 
-        // 4. Atributos (ej: aria-label)
+        // 4. Atributos (ej: aria-label) (Sin cambios)
         const attributes = {
             'vista-central': { 'aria-label': 'ariaNavRegion' },
             'card-volver-fija-elemento': { 'aria-label': 'ariaBackLevel' }
