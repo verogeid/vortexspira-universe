@@ -3,70 +3,103 @@
 
     // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS (Estáticos) ⭐️
     App.setupListeners = function() {
-      // 1. Listener para "Volver" (MÓVIL / TABLET)
-      if (this.DOM.btnVolverNav) {
-          this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
-          this.DOM.btnVolverNav.addEventListener('keydown', (e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  this._handleVolverClick();
-              }
-          });
-      }
+        // 1. Listener para "Volver" (MÓVIL / TABLET)
+        if (this.DOM.btnVolverNav) {
+            this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
+            this.DOM.btnVolverNav.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this._handleVolverClick();
+                }
+            });
+        }
 
-      // 2. Listener para la Tarjeta Volver Fija (DESKTOP)
-      if (this.DOM.cardVolverFija) {
-          // 'keydown' se maneja globalmente en nav-keyboard.js
-          this.DOM.cardVolverFija.addEventListener('click', this._handleVolverClick.bind(this));
-      }
+        // 2. Listener para la Tarjeta Volver Fija (DESKTOP)
+        if (this.DOM.cardVolverFija) {
+            // 'keydown' se maneja globalmente en nav-keyboard.js
+            this.DOM.cardVolverFija.addEventListener('click', this._handleVolverClick.bind(this));
+        }
     };
 
-    // ⭐️ 2. LISTENER DE CLIC DEL TRACK (Dinámico) ⭐️
-    App.setupTrackClickListener = function() {
+    // ⭐️ 2. LISTENER DE CLIC Y HOVER DEL TRACK (Dinámico) ⭐️
+    App.setupTrackPointerListeners = function() { 
         if (this.DOM.track) {
-            // Limpiar listener anterior para evitar duplicados
+            // --- Clic (Existente) ---
             if (this.DOM.track._clickListener) {
                 this.DOM.track.removeEventListener('click', this.DOM.track._clickListener);
             }
             this.DOM.track._clickListener = this._handleTrackClick.bind(this);
             this.DOM.track.addEventListener('click', this.DOM.track._clickListener);
+
+            // --- MouseOver (Nuevo) ---
+            if (this.DOM.track._mouseoverListener) {
+                this.DOM.track.removeEventListener('mouseover', this.DOM.track._mouseoverListener);
+            }
+            this.DOM.track._mouseoverListener = this._handleTrackMouseOver.bind(this);
+            this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
         }
     };
 
 
     // ⭐️ 3. MANEJADORES DE EVENTOS (CORREGIDO) ⭐️
     App._handleTrackClick = function(e) {
-      const tarjeta = e.target.closest('[data-id]'); 
-      if (!tarjeta) return;
+        const tarjeta = e.target.closest('[data-id]'); 
+        if (!tarjeta) return;
 
-      // 1. Ignorar clics en relleno
-      if (tarjeta.dataset.tipo === 'relleno') {
-        return;
-      }
+        // 1. Ignorar clics en relleno
+        if (tarjeta.dataset.tipo === 'relleno') {
+            return;
+        }
 
-      // 2. Sincronizar el foco para CUALQUIER tarjeta real (habilitada o deshabilitada)
-      const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
-      const newIndex = allCards.findIndex(c => c === tarjeta);
-      if (newIndex > -1) {
-          this.STATE.currentFocusIndex = newIndex;
-          this._updateFocus(false); // Actualizar foco sin deslizar
-      }
+        // ⭐️⭐️⭐️ CORRECCIÓN (Clic para Centrar) ⭐️⭐️⭐️
+        const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+        const newIndex = allCards.findIndex(c => c === tarjeta);
+        
+        if (newIndex > -1) {
+            this.STATE.currentFocusIndex = newIndex;
+            
+            // Siempre llama a _updateFocus(true) al hacer clic.
+            // - En Desktop/Tablet, esto fuerza el deslizamiento del carrusel.
+            // - En Móvil, esto fuerza el scroll de la lista.
+            this._updateFocus(true); 
+        }
+        // ⭐️⭐️⭐️ FIN DE LA CORRECCIÓN ⭐️⭐️⭐️
 
-      // 3. Si está deshabilitada, no hacer nada más (ya tiene el foco)
-      if (tarjeta.classList.contains('disabled')) {
-        return;
-      }
-      
-      // 4. Si es la tarjeta "volver" (móvil), actuar
-      if (tarjeta.dataset.tipo === 'volver-vertical') {
-          this._handleVolverClick();
-          return;
-      }
+        // 3. Si está deshabilitada, no hacer nada más (ya tiene el foco y está centrada)
+        if (tarjeta.classList.contains('disabled')) {
+            return;
+        }
+        
+        // 4. Si es la tarjeta "volver" (móvil), actuar
+        if (tarjeta.dataset.tipo === 'volver-vertical') {
+            this._handleVolverClick();
+            return;
+        }
 
-      // 5. Si está habilitada y no es "volver", ejecutar la acción principal
-      const id = tarjeta.dataset.id;
-      const tipo = tarjeta.dataset.tipo;
-      this._handleCardClick(id, tipo);
+        // 5. Si está habilitada y no es "volver", ejecutar la acción principal
+        const id = tarjeta.dataset.id;
+        const tipo = tarjeta.dataset.tipo;
+        this._handleCardClick(id, tipo);
+    };
+
+    // Sincronizar foco con Hover
+    App._handleTrackMouseOver = function(e) {
+        const tarjeta = e.target.closest('[data-id]');
+        
+        // Ignorar si es relleno o si no es una tarjeta
+        if (!tarjeta || tarjeta.dataset.tipo === 'relleno') {
+            return;
+        }
+
+        const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+        const newIndex = allCards.findIndex(c => c === tarjeta);
+
+        // Si el ratón se mueve a una tarjeta que no es la activa,
+        // actualizar el foco para que coincida.
+        if (newIndex > -1 && newIndex !== this.STATE.currentFocusIndex) {
+            this.STATE.currentFocusIndex = newIndex;
+            this._updateFocus(false); // Sincronizar foco visual sin deslizar el carrusel
+        }
     };
 
     /**
@@ -102,17 +135,18 @@
             this.renderNavegacion();
 
             // Forzar el foco de vuelta al slider o tarjeta "Volver"
-             const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
-             const isTablet = window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth <= TABLET_MAX_WIDTH;
-             
-             if (!isMobile && !isTablet && this.DOM.cardVolverFija.tabIndex === 0) {
-                 // Modo Desktop: Foco en la tarjeta Volver Fija
-                 this.DOM.cardVolverFija.focus();
-             } else {
-                 // Modo Móvil/Tablet: Foco en el primer elemento del track
-                 const activeCard = this.DOM.track.querySelector('[tabindex="0"]');
-                 if (activeCard) activeCard.focus();
-             }
+            // (Ahora usa las constantes globales definidas en debug.js)
+            const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
+            const isTablet = window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth <= TABLET_MAX_WIDTH;
+            
+            if (!isMobile && !isTablet && this.DOM.cardVolverFija.tabIndex === 0) {
+                // Modo Desktop: Foco en la tarjeta Volver Fija
+                this.DOM.cardVolverFija.focus();
+            } else {
+                // Modo Móvil/Tablet: Foco en el primer elemento del track
+                const activeCard = this.DOM.track.querySelector('[tabindex="0"]');
+                if (activeCard) activeCard.focus();
+            }
         }
     };
 
@@ -120,52 +154,52 @@
      * Muestra la vista de detalle del curso.
      */
     App._mostrarDetalle = function(cursoId) {
-      const curso = App._findNodoById(cursoId, App.STATE.fullData.navegacion);
-      if (!curso) return;
+        const curso = App._findNodoById(cursoId, App.STATE.fullData.navegacion);
+        if (!curso) return;
 
-      let enlacesHtml = (curso.enlaces || []).map(enlace => 
-        `<a href="${enlace.url || '#'}" class="enlace-curso" target="_blank" tabindex="0">${enlace.texto}</a>`
-      ).join('');
+        let enlacesHtml = (curso.enlaces || []).map(enlace => 
+            `<a href="${enlace.url || '#'}" class="enlace-curso" target="_blank" tabindex="0">${enlace.texto}</a>`
+        ).join('');
 
-      this.DOM.detalleContenido.innerHTML = `
-        <h2>${curso.titulo}</h2>
-        <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
-        <div class="enlaces-curso">
-          ${enlacesHtml || 'No hay enlaces para este curso.'}
-        </div>
-      `;
+        this.DOM.detalleContenido.innerHTML = `
+            <h2>${curso.titulo}</h2>
+            <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
+            <div class="enlaces-curso">
+            ${enlacesHtml || 'No hay enlaces para este curso.'}
+            </div>
+        `;
 
-      // Determinar modo
-      const screenWidth = window.innerWidth;
-      const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
-      const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
+        // Determinar modo (Ahora usa las constantes globales)
+        const screenWidth = window.innerWidth;
+        const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
+        const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
 
-      // Ocultar la vista de navegación activa
-      this.DOM.vistaNav.classList.remove('active');
-      this.DOM.vistaDetalle.classList.add('active');
+        // Ocultar la vista de navegación activa
+        this.DOM.vistaNav.classList.remove('active');
+        this.DOM.vistaDetalle.classList.add('active');
 
-      let primerElementoFocuseable = null;
+        let primerElementoFocuseable = null;
 
-      if (!isMobile && !isTablet) { // Solo Desktop
-          this.DOM.cardVolverFija.style.display = 'flex';
-          this.DOM.cardVolverFija.tabIndex = 0;
-          primerElementoFocuseable = this.DOM.cardVolverFija;
-          this.DOM.infoAdicional.style.display = 'block'; 
-          
-          if (this.DOM.cardNivelActual) {
-              this.DOM.cardNivelActual.style.display = 'flex';
-              this.DOM.cardNivelActual.innerHTML = `<h3>${curso.titulo}</h3>`; 
-          }
+        if (!isMobile && !isTablet) { // Solo Desktop
+            this.DOM.cardVolverFija.style.display = 'flex';
+            this.DOM.cardVolverFija.tabIndex = 0;
+            primerElementoFocuseable = this.DOM.cardVolverFija;
+            this.DOM.infoAdicional.style.display = 'block'; 
+            
+            if (this.DOM.cardNivelActual) {
+                this.DOM.cardNivelActual.style.display = 'flex';
+                this.DOM.cardNivelActual.innerHTML = `<h3>${curso.titulo}</h3>`; 
+            }
 
-      } else { // Móvil O Tablet
-          this.DOM.btnVolverNav.style.display = 'block';
-          this.DOM.btnVolverNav.tabIndex = 0; 
-          primerElementoFocuseable = this.DOM.btnVolverNav;
-      }
+        } else { // Móvil O Tablet
+            this.DOM.btnVolverNav.style.display = 'block';
+            this.DOM.btnVolverNav.tabIndex = 0; 
+            primerElementoFocuseable = this.DOM.btnVolverNav;
+        }
 
-      if (primerElementoFocuseable) {
-          primerElementoFocuseable.focus();
-      }
+        if (primerElementoFocuseable) {
+            primerElementoFocuseable.focus();
+        }
     };
 
     // ⭐️ 5. FUNCIONES DE AYUDA (Helpers) ⭐️
@@ -174,6 +208,7 @@
      * Helper para nav-keyboard.js (Vista Detalle)
      */
     App._getFocusableDetailElements = function() {
+        // (Ahora usa las constantes globales)
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
         const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
@@ -192,12 +227,11 @@
     };
     
     /**
-     * Helper para nav-tactil.js (Swipe) (CORREGIDO)
+     * Helper para nav-tactil.js (Swipe)
      */
     App.findBestFocusInColumn = function(columnCards, targetRow) {
         const isFocusable = (card) => {
-            // ⭐️ CORRECCIÓN: Permitir que el foco aterrice en tarjetas deshabilitadas.
-            // (Se elimina: !card.classList.contains('disabled'))
+            // (Permite que el foco aterrice en tarjetas deshabilitadas)
             return card && card.dataset.id && card.dataset.tipo !== 'relleno';
         };
 

@@ -207,7 +207,6 @@ footer a:focus {
 .card.disabled {
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);
-  cursor: default;
 }
 .card.disabled span {
   font-size: 0.9rem;
