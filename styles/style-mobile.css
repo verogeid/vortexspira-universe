@@ -1,13 +1,7 @@
 /* --- styles/style-mobile.css --- */
-:root {
-  --mobile-max-width: 600px;
-  --tablet-min-width: 601px;
-  --tablet-max-width: 1024px;
-  --desktop-min-width: 1025px;
-}
 
 /* (Sin cambios, tal como lo proporcionaste) */
-@media (max-width: var(--mobile-max-width)) {
+@media (max-width: 600px) {
     /* ❗️ REGLAS DE DISPLAY ELIMINADAS (JS lo controla) ❗️ */
     
     /* Ocultar sidebars en móvil (Esto SÍ es correcto) */

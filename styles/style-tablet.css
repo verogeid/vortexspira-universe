@@ -1,13 +1,7 @@
 /* --- styles/style-tablet.css --- */
-:root {
-  --mobile-max-width: 600px;
-  --tablet-min-width: 601px;
-  --tablet-max-width: 1024px;
-  --desktop-min-width: 1025px;
-}
 
 /* ⭐️ CORRECCIÓN: Envuelto en @media query ⭐️ */
-@media (min-width: var(--tablet-min-width)) and (max-width: var(--tablet-max-width)) {
+@media ((min-width: 601px) and (max-width: 1024px)) {
 
     /* ⭐️ 0. Variable de altura específica ⭐️ */
     :root {

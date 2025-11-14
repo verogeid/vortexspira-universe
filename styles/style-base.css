@@ -29,11 +29,6 @@
     --card-gap: 3vh; 
     --nav-desktop-height: calc(100% - 0px); 
     --nav-carousel-top-offset: 2vh; 
-
-    --mobile-max-width: 600px;
-    --tablet-min-width: 601px;
-    --tablet-max-width: 1024px;
-    --desktop-min-width: 1025px;
 }
 
 @media (prefers-color-scheme: dark) {
