@@ -12,26 +12,7 @@
               "id": "ss-01-01-01",
               "nombre": "API",
               "subsecciones": [],
-              "cursos": [
-               /* {
-                  "id": "c-01-01-01-01",
-                  "titulo": "FastAPI",
-                  "descripcion": "Creación de APIs de alto rendimiento con Python y FastAPI.",
-                  "enlaces": [
-                    { "texto": "Instalar la PWA", "url": "#" },
-                    { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-                  ]
-                },
-                {
-                  "id": "c-01-01-01-02",
-                  "titulo": "Flask",
-                  "descripcion": "Microframework de Python para desarrollo web y APIs.",
-                  "enlaces": [
-                    { "texto": "Instalar la PWA", "url": "#" },
-                    { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-                  ]
-                } */
-              ]
+              "cursos": []
             },
             {
               "id": "ss-01-01-02",
@@ -58,76 +39,20 @@
                 { "texto": "Adquirir Módulo JavaScript", "url": "#" },
                 { "texto": "Adquirir Paquete Completo", "url": "#" }
               ]
-            } /* ,
-            {
-              "id": "c-01-02-02",
-              "titulo": "React con TypeScript",
-              "descripcion": "🚧 En construcción. Desarrollo de SPAs con React y TypeScript.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            } */
+            }
           ]
         },
         {
           "id": "ss-01-03",
           "nombre": "Fundamentos y Lenguajes",
           "subsecciones": [],
-          "cursos": [ /*
-            {
-              "id": "c-01-03-01",
-              "titulo": "Go Language (GoLang)",
-              "descripcion": "🚧 En construcción. Introducción al lenguaje Go.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-01-03-03",
-              "titulo": "Python",
-              "descripcion": "🚧 En construcción. Fundamentos del lenguaje Python.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-01-03-04",
-              "titulo": "TypeScript",
-              "descripcion": "🚧 En construcción. JavaScript con tipado estático.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            } */
-          ]
+          "cursos": []
         },
         {
           "id": "ss-01-04",
           "nombre": "Inteligencia Artificial",
           "subsecciones": [],
-          "cursos": [ /*
-            {
-              "id": "c-01-04-01",
-              "titulo": "IA Developer con Python",
-              "descripcion": "🚧 En construcción. Desarrollo de aplicaciones con IA usando Python.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-01-04-02",
-              "titulo": "n8n: automatización de flujos",
-              "descripcion": "Automatización de flujos de trabajo y tareas (low-code).",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            } */
-          ]
+          "cursos": []
         }
       ],
       "cursos": []
@@ -140,76 +65,19 @@
           "id": "ss-02-01",
           "nombre": "Contenedores y Orquestación",
           "subsecciones": [],
-          "cursos": [ /*
-            {
-              "id": "c-02-01-01",
-              "titulo": "Docker para testers",
-              "descripcion": "🚧 En construcción. Aprende a usar Docker en el contexto de QA.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-02-01-02",
-              "titulo": "Kubernetes",
-              "descripcion": "🚧 En construcción. Orquestación de contenedores.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            } */
-          ]
+          "cursos": []
         },
         {
           "id": "ss-02-02",
           "nombre": "Control de Versiones",
           "subsecciones": [],
-          "cursos": [ /*
-            {
-              "id": "c-02-02-01",
-              "titulo": "Git",
-              "descripcion": "🚧 En construcción. Control de versiones con Git.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            } */
-          ]
+          "cursos": []
         },
         {
           "id": "ss-02-03",
           "nombre": "Integración Continua (CI/CD)",
           "subsecciones": [],
-          "cursos": [ /*
-            {
-              "id": "c-02-03-01",
-              "titulo": "Bamboo",
-              "descripcion": "🚧 En construcción. CI/CD con Atlassian Bamboo.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-02-03-02",
-              "titulo": "GitHub Actions",
-              "descripcion": "🚧 En construcción. CI/CD nativo en GitHub.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-02-03-03",
-              "titulo": "Jenkins",
-              "descripcion": "🚧 En construcción. El estándar de CI/CD para automatización.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            } */
-          ]
+          "cursos": []
         }
       ],
       "cursos": []
@@ -222,87 +90,13 @@
           "id": "ss-03-01",
           "nombre": "Diagramas y Modelado",
           "subsecciones": [],
-          "cursos": [ /*
-            {
-              "id": "c-03-01-01",
-              "titulo": "Árboles de decisión",
-              "descripcion": "🚧 En construcción. Modelado de lógica de negocio.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-03-01-02",
-              "titulo": "DFD: Diagramas de Flujo de Datos",
-              "descripcion": "🚧 En construcción. Modelado de flujo de datos.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-03-01-03",
-              "titulo": "EDR: Diagramas Entidad Relación",
-              "descripcion": "🚧 En construcción. Modelado de bases de datos.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-03-01-04",
-              "titulo": "Grafos de Gantt: Planificación",
-              "descripcion": "🚧 En construcción. Planificación de proyectos y paralelismo.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-03-01-05",
-              "titulo": "UML: Diagramas de Clases",
-              "descripcion": "🚧 En construcción. Modelado orientado a objetos.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            } */
-          ]
+          "cursos": []
         },
         {
           "id": "ss-03-02",
           "nombre": "Herramientas y Lenguajes",
           "subsecciones": [],
-          "cursos": [ /*
-            {
-              "id": "c-03-02-01",
-              "titulo": "Confluence",
-              "descripcion": "🚧 En construcción. Herramienta de documentación colaborativa.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-03-02-02",
-              "titulo": "Markdown",
-              "descripcion": "🚧 En construcción. Lenguaje de marcado ligero.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-03-02-03",
-              "titulo": "XML",
-              "descripcion": "🚧 En construcción. Lenguaje de marcado extensible.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            } */
-          ]
+          "cursos": []
         }
       ],
       "cursos": []
@@ -315,134 +109,31 @@
           "id": "ss-04-01",
           "nombre": "Accesibilidad (A11y)",
           "subsecciones": [],
-          "cursos": [ /*
-            {
-              "id": "c-04-01-01",
-              "titulo": "Accesibilidad Avanzada",
-              "descripcion": "Más allá del WCAG. Aprende a crear automatizaciones para cualquier web o deficiencia, obteniendo métricas realistas.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-04-01-02",
-              "titulo": "Axe-Core",
-              "descripcion": "🚧 En construcción. Pruebas de accesibilidad.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-04-01-03",
-              "titulo": "LightHouse",
-              "descripcion": "🚧 En construcción. Análisis de accesibilidad y WPO con LightHouse.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            } */
-          ]
+          "cursos": []
         },
         {
           "id": "ss-04-02",
           "nombre": "Automatización",
           "subsecciones": [],
-          "cursos": [ /*
-            {
-              "id": "c-04-02-01",
-              "titulo": "Katalon Studio: Pruebas Mobile",
-              "descripcion": "🚧 En construcción. Automatización de pruebas en dispositivos móviles.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-04-02-02",
-              "titulo": "Playwright con C#: QA industrial",
-              "descripcion": "🚧 En construcción. Automatización web moderna con Playwright y C#.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-04-02-03",
-              "titulo": "Postman y Newman: Pruebas API",
-              "descripcion": "Testing de APIs REST y automatización con Newman.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            } */
-          ]
+          "cursos": []
         },
         {
           "id": "ss-04-03",
           "nombre": "Fundamentos y Gestión",
           "subsecciones": [],
-          "cursos": [ /*
-            {
-              "id": "c-04-03-01",
-              "titulo": "Jira",
-              "descripcion": "🚧 En construcción. Gestión de tickets y proyectos con Jira.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-04-03-02",
-              "titulo": "SSTQB Foundation Level 4",
-              "descripcion": "Fundamentos de testing bajo el estándar SSTQB.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            } */
-          ]
+          "cursos": []
         },
         {
           "id": "ss-04-04",
           "nombre": "Performance",
           "subsecciones": [],
-          "cursos": [ /*
-            {
-              "id": "c-04-04-01",
-              "titulo": "JMeter",
-              "descripcion": "🚧 En construcción. Pruebas de carga y estrés con Apache JMeter.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            },
-            {
-              "id": "c-04-04-02",
-              "titulo": "K6",
-              "descripcion": "🚧 En construcción. Pruebas de carga modernas con K6.",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            } */
-          ]
+          "cursos": []
         },
         {
           "id": "ss-04-05",
           "nombre": "Seguridad",
           "subsecciones": [],
-          "cursos": [ /*
-            {
-              "id": "c-04-05-01",
-              "titulo": "OWASP",
-              "descripcion": "🚧 En construcción. Top 10 de vulnerabilidades web (OWASP).",
-              "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-              ]
-            }, */
+          "cursos": [
             {
               "id": "c-04-05-02",
               "titulo": "Cyberseguridad para QA",
@@ -459,9 +150,9 @@
     },
     {
       "id": "s-05",
-      "nombre": "Recursos Adicionales (Bonus)",
+      "nombre": "Recursos Adicionales",
       "subsecciones": [],
-      "cursos": [ /*
+      "cursos": [
         {
           "id": "c-05-01",
           "titulo": "Inglés: De A2 a C1",
@@ -471,15 +162,6 @@
             { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
           ]
         },
-        {
-          "id": "c-05-02",
-          "titulo": "Trinity: \"Operator, I need a pilot...\"",
-          "descripcion": "🚧 En construcción. Programa piloto para un B-212.",
-          "enlaces": [
-            { "texto": "Instalar la PWA", "url": "#" },
-            { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
-          ]
-        }*/
       ]
     }
   ]
