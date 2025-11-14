@@ -42,7 +42,7 @@
         _swipeDirection = swiper.activeIndex > swiper.previousIndex ? 'next' : 'prev';
 
         // Manejar el salto del loop
-        if (swiper.previousIndex === swswiper.slides.length - 1 && swiper.activeIndex === 0) {
+        if (swiper.previousIndex === swiper.slides.length - 1 && swiper.activeIndex === 0) {
             _swipeDirection = 'next';
         }
         if (swiper.previousIndex === 0 && swiper.activeIndex === swiper.slides.length - 1) {
