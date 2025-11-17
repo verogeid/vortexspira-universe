@@ -18,10 +18,27 @@
     --color-success: #28a745;
     --color-success-bg: rgba(40, 167, 69, 0.1);
 
-    --color-card-shadow-disabled: rgba(150, 150, 150, 0.2);
-
     /* Borde más sutil para placeholders */
     --color-border-placeholder: #ddd; 
+
+    /* ⭐️ NUEVAS VARIABLES DE COLOR ⭐️ */
+    
+    /* Header/Footer (Generalmente oscuros) */
+    --color-header-bg: #222;
+    --color-header-text: #fff;
+    --color-footer-text: #888;
+
+    /* Texto Muted (para hints, etc) */
+    --color-text-muted: #999;
+
+    /* Sombras */
+    --color-shadow-primary: rgba(0, 123, 255, 0.4);
+    --color-shadow-disabled: rgba(150, 150, 150, 0.2);
+    --color-shadow-modal: rgba(0, 0, 0, 0.5);
+
+    /* Toast */
+    --color-toast-bg: #222;
+    --color-toast-text: #fff;
 
     /* VARIABLES DE LAYOUT */
     --header-height: 9vh;
@@ -33,17 +50,37 @@
 
 @media (prefers-color-scheme: dark) {
     :root {   
+        /* Fondos */
         --color-bg: #111;
         --color-card-bg: rgba(255, 255, 255, 0.02);
         --color-mask-gradient: rgba(17, 17, 17, 0.4);
+        
+        /* Texto y Bordes */
         --color-text: #eee;
         --color-card-border: #aaa; 
         --color-card-border-disabled: #666; 
 
-        --color-card-shadow-disabled: rgba(170, 170, 170, 0.8);
-
         /* Borde más sutil (oscuro) */
         --color-border-placeholder: #555; 
+
+        /* ⭐️ NUEVAS VARIABLES (MODO OSCURO) ⭐️ */
+
+        /* Header/Footer (Sin cambios, ya son oscuros) */
+        --color-header-bg: #222;
+        --color-header-text: #fff;
+        --color-footer-text: #888;
+        
+        /* Texto Muted (Más claro que el fondo, más oscuro que el texto) */
+        --color-text-muted: #666;
+
+        /* Sombras */
+        --color-shadow-primary: rgba(0, 123, 255, 0.4); /* El glow azul funciona bien en ambos */
+        --color-shadow-disabled: rgba(170, 170, 170, 0.8);
+        --color-shadow-modal: rgba(0, 0, 0, 0.7); /* Sombra más oscura para el toast */
+
+        /* Toast (Sin cambios, es un modal oscuro) */
+        --color-toast-bg: #222;
+        --color-toast-text: #fff;
     }
 }
 
@@ -64,8 +101,9 @@ body {
 header, footer {
     width: 100%;
     text-align: center;
-    background: #222;
-    color: #fff;
+    /* ⭐️ MODIFICADO: Usando variables */
+    background: var(--color-header-bg);
+    color: var(--color-header-text);
     z-index: 100;
     box-sizing: border-box;
     font-size: 1.5rem; 
@@ -80,7 +118,8 @@ footer {
     position: fixed; 
     bottom: 0;
     padding: 5px;
-    color: #888;
+    /* ⭐️ MODIFICADO: Usando variables */
+    color: var(--color-footer-text);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -102,8 +141,8 @@ footer small {
     gap: 15px; 
 }
 footer a { 
-    color: #888; 
-    fill: #888; /* Color base para SVG */
+    /* ⭐️ MODIFICADO: Usando variables */
+    color: var(--color-footer-text); 
     text-decoration: none; 
     transition: all 0.2s ease;
     display: inline-block;
@@ -114,50 +153,72 @@ footer a {
 footer a:focus {
     outline: none;
 }
-.footer-social-link { }
-.linkedin-icon { }
+
 .footer-license-link img {
     height: 16px; 
     width: auto;
     vertical-align: middle;
 }
 
+/* Estilo del icono de LinkedIn */
+.footer-social-link {
+    font-size: 0; 
+}
+.footer-social-link::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    /* ⭐️ MODIFICADO: Usando variables */
+    background-color: var(--color-footer-text);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+    transition: background-color 0.2s ease;
+    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3.5v-11h3.5v11zm-1.75-12.25c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.75 12.25h-3.5v-5.603c0-3.368-4-3.535-4 0v5.603h-3.5v-11h3.5v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>');
+    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3.5v-11h3.5v11zm-1.75-12.25c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.75 12.25h-3.5v-5.603c0-3.368-4-3.535-4 0v5.603h-3.5v-11h3.5v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>');
+}
+
+
 /* ⭐️ CONTENEDOR PRINCIPAL: GRID 1-3-1 (Desktop Default) ⭐️ */
 #app-container {
-  height: calc(100vh - var(--header-height) - var(--footer-height)); 
-  width: 100%;
-  max-width: 1600px; 
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 3fr 1fr; 
-  gap: 20px; 
-  padding: 20px;
-  box-sizing: border-box;
-  align-items: start;
-  background: var(--color-bg);
+    height: calc(100vh - var(--header-height) - var(--footer-height)); 
+    width: 100%;
+    max-width: 1600px; 
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr; 
+    gap: 20px; 
+    padding: 20px;
+    box-sizing: border-box;
+    align-items: start;
+    background: var(--color-bg);
 }
 
 /* VISTA CENTRAL (Columna 2) y VISTAS ACTIVAS */
 #vista-central {
-  grid-column: 2 / 3;
-  width: 100%;
-  height: 100%; 
-  position: relative; 
-  overflow: hidden; 
-  display: flex; 
+    grid-column: 2 / 3;
+    width: 100%;
+    height: 100%; 
+    position: relative; 
+    overflow: hidden; 
+    display: flex; 
 }
 .vista {
-  position: absolute; 
-  width: 100%; 
-  height: 100%;
-  top: 0;
-  left: 0;
-  display: flex; 
-  flex-direction: column;
-  justify-content: start; 
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  visibility: hidden;
+    position: absolute; 
+    width: 100%; 
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex; 
+    flex-direction: column;
+    justify-content: start; 
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    visibility: hidden;
 }
 .vista.active { 
     opacity: 1; visibility: visible; 
@@ -168,34 +229,35 @@ footer a:focus {
 
 /* --- 3. Estilos Base de las Tarjetas (<article class="card">) --- */
 .card {
-  border: 2px solid var(--color-card-border);
-  background: var(--color-card-bg);
-  padding: 1.5rem;
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  box-sizing: border-box;
-  height: auto; 
-  min-height: 150px; 
+    border: 2px solid var(--color-card-border);
+    background: var(--color-card-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    height: auto; 
+    min-height: 150px; 
 }
 
 .card h3 {
-  margin: 0;
-  font-size: 1.5rem;
+    margin: 0;
+    font-size: 1.5rem;
 }
 
 /* Borde/Sombra para Hover Y Foco (Activas) */
 .card.focus-visible:not(.disabled):not([data-tipo="relleno"]),
 .card:not(.disabled):not([data-tipo="relleno"]):hover,
 .card:not(.disabled):not([data-tipo="relleno"]):focus-visible {
-  outline: none;
-  border-color: var(--color-primary);
-  background: var(--color-card-bg); 
-  transform: scale(1.03);
-  box-shadow: 0 0 25px rgba(0, 123, 255, 0.4); 
+    outline: none;
+    border-color: var(--color-primary);
+    background: var(--color-card-bg); 
+    transform: scale(1.03);
+    /* ⭐️ MODIFICADO: Usando variables */
+    box-shadow: 0 0 25px var(--color-shadow-primary); 
 }
 /* Color de texto SOLO en foco (Activas) */
 .card.focus-visible:not(.disabled):not([data-tipo="relleno"]),
@@ -206,20 +268,22 @@ footer a:focus {
 
 /* Tarjeta deshabilitada */
 .card.disabled {
-  border: 2px solid var(--color-card-border-disabled); 
-  background: var(--color-card-bg);
+    border: 2px solid var(--color-card-border-disabled); 
+    background: var(--color-card-bg);
 }
 .card.disabled span {
-  font-size: 0.9rem;
-  color: #999;
+    font-size: 0.9rem;
+    /* ⭐️ MODIFICADO: Usando variables */
+    color: var(--color-text-muted);
 }
 .card.disabled:hover,
 .card.disabled:focus-visible {
-  outline: none;
-  border-color: var(--color-card-border); 
-  background: var(--color-card-bg);
-  transform: scale(1.03);
-  box-shadow: 0 0 15px var(--color-card-shadow-disabled); 
+    outline: none;
+    border-color: var(--color-card-border); 
+    background: var(--color-card-bg);
+    transform: scale(1.03);
+    /* ⭐️ MODIFICADO: Usando variables */
+    box-shadow: 0 0 15px var(--color-shadow-disabled); 
 }
 
 /* Tarjetas de relleno */
@@ -262,18 +326,22 @@ footer a:hover, footer a:focus-visible {
     border-color: var(--color-primary);
     background: var(--color-card-bg);
     transform: scale(1.03);
-    box-shadow: 0 0 25px rgba(0, 123, 255, 0.4);
+    /* ⭐️ MODIFICADO: Usando variables */
+    box-shadow: 0 0 25px var(--color-shadow-primary);
     outline: none;
 }
 /* Color de texto SOLO en foco (Enlaces) */
 .enlace-curso:focus-visible,
 footer a:focus-visible {
     color: var(--color-primary); 
-    fill: var(--color-primary); /* Color SVG en foco */
 }
-/* Color SVG en hover (para que coincida) */
-footer a:hover .linkedin-icon {
-    fill: var(--color-primary);
+/* Color de icono en foco (para LinkedIn) */
+footer a.footer-social-link:focus-visible::before {
+    background-color: var(--color-primary);
+}
+/* Color de icono en hover (para LinkedIn) */
+footer a.footer-social-link:hover::before {
+    background-color: var(--color-primary);
 }
 
 
@@ -296,7 +364,7 @@ footer a:hover .linkedin-icon {
     box-sizing: border-box;
 }
 
-/* ⭐️ 3. Nivel Actual (Breadcrumb) ⭐️ */
+/* Nivel Actual (Breadcrumb) */
 #card-nivel-actual {
     flex: 0 0 auto; 
     border: 2px dashed var(--color-border-placeholder);
@@ -320,7 +388,7 @@ footer a:hover .linkedin-icon {
     text-overflow: ellipsis;
 }
 
-/* ⭐️ 4. Elemento Interactivo "Volver" ⭐️ */
+/* Elemento Interactivo "Volver" */
 #card-volver-fija-elemento {
     flex: 0 0 auto;
     padding: 1.5rem;
@@ -342,7 +410,7 @@ footer a:hover .linkedin-icon {
     text-align: center;
 }
 
-/* ⭐️ 5. Relleno Izquierdo ⭐️ */
+/* Relleno Izquierdo */
 #columna-volver-relleno {
     flex-grow: 1; 
     width: 100%;
@@ -374,7 +442,8 @@ footer a:hover .linkedin-icon {
     outline: none;
     border-color: var(--color-primary); 
     transform: scale(1.03);
-    box-shadow: 0 0 25px rgba(0, 123, 255, 0.4); 
+    /* ⭐️ MODIFICADO: Usando variables */
+    box-shadow: 0 0 25px var(--color-shadow-primary); 
 }
 /* Color de texto SOLO en foco (Volver) */
 #card-volver-fija-elemento[tabindex="0"].focus-visible,
@@ -395,7 +464,7 @@ footer a:hover .linkedin-icon {
     margin-left: 0; 
     padding: var(--nav-carousel-top-offset) 15px 15px 15px;
     height: 100%; 
-    overflow-y: auto; /* Permite scroll si el contenido crece */
+    overflow-y: auto; 
 }
 
 /* Estilos para <details> y <summary> */
@@ -410,7 +479,7 @@ footer a:hover .linkedin-icon {
     font-size: 1.2rem;
     font-weight: bold;
     cursor: pointer;
-    list-style: none; /* Elimina el marcador por defecto */
+    list-style: none; 
     padding: 0.2rem;
     color: var(--color-text);
     opacity: 0.9;
@@ -421,7 +490,7 @@ footer a:hover .linkedin-icon {
     color: var(--color-primary);
 }
 #info-adicional summary::-webkit-details-marker {
-    display: none; /* Oculta marcador en Chrome/Safari */
+    display: none; 
 }
 
 /* Indicador de flecha (Chevron) */
@@ -439,8 +508,9 @@ footer a:hover .linkedin-icon {
 /* Contenido dentro de <details> */
 #info-adicional details > small {
     display: block;
-    padding: 0.5rem 0.5rem 0.5rem 1.5rem; /* Indentación para el contenido */
-    color: #999;
+    padding: 0.5rem 0.5rem 0.5rem 1.5rem; 
+    /* ⭐️ MODIFICADO: Usando variables */
+    color: var(--color-text-muted);
     font-size: 0.9rem;
     line-height: 1.5;
 }
@@ -459,12 +529,12 @@ footer a:hover .linkedin-icon {
     margin-bottom: 0.8rem;
 }
 
-/* CORREGIDO: Quitar viñetas de la lista de enlaces (Acerca de) */
+/* Quitar viñetas de la lista de enlaces (Acerca de) */
 #info-adicional-lista-acerca {
     list-style-type: none;
     padding-left: 0; 
 }
-/* CORREGIDO: Mantener viñetas solo para la lista de Ayuda */
+/* Mantener viñetas solo para la lista de Ayuda */
 #info-adicional-lista-ayuda {
     list-style-type: disc;
     padding-left: 15px;
@@ -474,7 +544,7 @@ footer a:hover .linkedin-icon {
 }
 
 
-/* ⭐️ Estilos para enlaces con Iconos (GitHub / Landing) ⭐️ */
+/* Estilos para enlaces con Iconos (GitHub / Landing) */
 #info-adicional-lista-acerca a {
     display: flex;
     align-items: center;
@@ -500,15 +570,14 @@ footer a:hover .linkedin-icon {
     height: 20px;
     margin-right: 10px;
     flex-shrink: 0;
-    background-color: var(--color-text); /* Color por defecto */
+    background-color: var(--color-text); 
     transition: background-color 0.2s ease;
-    mask-repeat: no-repeat;
-    mask-position: center;
-    mask-size: contain;
-    /* CORREGIDO: Vendor prefixes para mask-image (mejor compatibilidad) */
     -webkit-mask-repeat: no-repeat;
     -webkit-mask-position: center;
     -webkit-mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
 }
 /* Color del icono en hover/foco */
 #info-adicional-lista-acerca a:hover::before,
@@ -516,13 +585,13 @@ footer a:hover .linkedin-icon {
     background-color: var(--color-primary);
 }
 
-/* CORREGIDO: Icono de GitHub (SVG sin 'fill') */
+/* Icono de GitHub (SVG sin 'fill') */
 #info-adicional-link-diary::before {
     -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>');
     mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>');
 }
 
-/* CORREGIDO: Icono de Landing Page (SVG con 'fill' en lugar de 'stroke') */
+/* Icono de Landing Page (Enlace Externo) */
 #info-adicional-link-landing::before {
     -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6v2H5v11h11v-6h2z"/><path fill-rule="evenodd" d="M15 3h6v6l-2-2-4 4-2-2 4-4-2-2z"/></svg>');
     mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6v2H5v11h11v-6h2z"/><path fill-rule="evenodd" d="M15 3h6v6l-2-2-4 4-2-2 4-4-2-2z"/></svg>');
@@ -530,34 +599,32 @@ footer a:hover .linkedin-icon {
 
 /* ⭐️ ESTILOS PARA LA NOTIFICACIÓN TOAST (Modal) ⭐️ */
 .toast {
-  position: fixed;
-  /* Centrado como un modal */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  
-  background-color: #222; /* Fondo oscuro */
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 12px;
-  border: 2px solid var(--color-card-border);
-  box-shadow: 0 5px 25px rgba(0,0,0,0.5);
-  
-  z-index: 9999;
-  text-align: center;
-  max-width: 80%;
-  
-  /* Oculto por defecto */
-  opacity: 0;
-  visibility: hidden;
-  
-  /* Transición para el fundido (gradualmente transparente) */
-  transition: opacity 0.5s ease, visibility 0.5s ease;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    /* ⭐️ MODIFICADO: Usando variables */
+    background-color: var(--color-toast-bg); 
+    color: var(--color-toast-text);
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    border: 2px solid var(--color-card-border);
+    box-shadow: 0 5px 25px var(--color-shadow-modal);
+    
+    z-index: 9999;
+    text-align: center;
+    max-width: 80%;
+    
+    opacity: 0;
+    visibility: hidden;
+    
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
 .toast.active {
-  opacity: 1;
-  visibility: visible;
+    opacity: 1;
+    visibility: visible;
 }
 
 
@@ -566,14 +633,13 @@ footer a:hover .linkedin-icon {
 
 /* Lógica de Reducción de Movimiento */
 @media (prefers-reduced-motion: reduce) {
-  .mask-left, .mask-right { -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .card, #card-volver-fija { transition: none !important; }
-  .card:hover, .card:focus-visible, #card-volver-fija:hover, #card-volver-fija:focus-visible {
-    transform: none; box-shadow: none;
-  }
-  
-  /* Desactivar transición del toast */
-  .toast {
-    transition: none;
-  }
+    .mask-left, .mask-right { -webkit-backdrop-filter: none; backdrop-filter: none; }
+    .card, #card-volver-fija { transition: none !important; }
+    .card:hover, .card:focus-visible, #card-volver-fija:hover, #card-volver-fija:focus-visible {
+        transform: none; box-shadow: none;
+    }
+    
+    .toast {
+        transition: none;
+    }
 }
