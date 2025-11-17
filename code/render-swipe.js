@@ -71,10 +71,9 @@
 
         const swiperConfig = {
             direction: 'horizontal', 
-            
-            // ⭐️⭐️⭐️ CORRECCIÓN (Problema Tablet) ⭐️⭐️⭐️
-            // slidesPerView: 3, (Viejo)
-            slidesPerView: 1, // (Nuevo) Muestra 1 slide centrado, el CSS hace el efecto "peek"
+
+            // ⭐️⭐️⭐️ CORRECCIÓN (Revertido al valor original) ⭐️⭐️⭐️
+            slidesPerView: 3, // Este es el valor correcto para tu layout
             
             slidesPerGroup: 1, 
             loop: true, 
@@ -96,7 +95,6 @@
             App.STATE.carouselInstance.update(); 
             log('renderSwipe', DEBUG_LEVELS.BASIC, `Swiper inicializado en ${swiperId}. Slide inicial: ${initialSwiperSlide + 1}`);
 
-            // ⭐️⭐️⭐️ CORRECCIÓN ⭐️⭐️⭐️
             // Enganchar los listeners táctiles AQUI, justo después de crear la instancia.
             if (typeof App.setupTouchListeners === 'function') {
                 App.setupTouchListeners();
