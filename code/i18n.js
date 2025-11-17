@@ -1,28 +1,42 @@
-// --- MODIFICADO: code/i18n.js ---
+// --- code/i18n.js ---
 (function() {
     // 'App' debe estar definido por app.js antes de que esto se ejecute
 
     // ⭐️ 1. ALMACÉN DE STRINGS (Textos)
     App.STRINGS = {
         'es': {
+            // Meta y Títulos
             'pageTitle': 'VortexSpira®: Selector de Cursos',
             'headerTitle': 'VortexSpira®: Tu Mentor de Audio-Aprendizaje Técnico',
-            'btnBack': '&larr; Volver',
+
+            // Botones y Controles
+            'btnBack': '↩ Volver', // Botón móvil
+
+            // Labels de Accesibilidad (ARIA)
             'ariaNavRegion': 'Navegación principal de cursos',
-            'ariaBackLevel': 'Volver al nivel anterior',
+            'ariaBackLevel': 'Volver al nivel anterior', // Para el botón desktop
             'ariaLicense': 'Descripción de la licencia CC BY-NC-ND 4.0',
             'ariaLinkedIn': 'Perfil de LinkedIn de Diego González Fernández',
+
+            // Breadcrumb
+            'breadcrumbRoot': 'Nivel Raíz',
+
+            // Ayuda Rápida
             'helpTitle': 'Ayuda Rápida:',
             'helpRotate': '<b>Gira</b>: Arrastra, usa la rueda del ratón o las flechas del teclado.',
             'helpBack': '<b>Vuelve</b>: Pulsa [Esc] o el botón "Volver".',
+            
+            // "Acerca de"
             'aboutTitle': 'Acerca de VortexSpira®',
             'aboutSummary': 'Plataforma de audio-aprendizaje inmersivo diseñada para ingenieros, con foco en la accesibilidad cognitiva y cero ansiedad.',
             'aboutLinkLanding': 'Visita la Landing Page',
             'aboutLinkDiary': 'Lee el Dev Diary en GitHub',
+
+            // Footer
             'footerCopyright': '&copy;2025 VortexSpira®',
             'footerAuthor': 'Desarrollado por Diego González Fernández',
 
-            // ⭐️ AÑADIDO: Texto del Toast de Error ⭐️
+            // Notificaciones (Toast)
             'toastErrorId': 'Curso no encontrado. Pruebe a buscarlo manualmente.'
         }
     };
@@ -42,12 +56,13 @@
     // ⭐️ 3. FUNCIÓN DE INYECCIÓN DE TEXTOS Y ENLACES
     
     App.applyStrings = function() {
-        // ... (resto de la función sin cambios) ...
         log('i18n', DEBUG_LEVELS.BASIC, 'Aplicando textos (i18n)...');
 
         document.documentElement.lang = currentLang;
-        document.title = App.getString('pageTitle');
+        // El título en index.html sirve de fallback, JS lo hidrata
+        document.title = App.getString('pageTitle'); 
 
+        // 2. Textos que se inyectan por ID (elementos simples)
         const elementsById = {
             'main-header-title': 'headerTitle',
             'btn-volver-navegacion': 'btnBack',
@@ -66,7 +81,9 @@
                 logWarn('i18n', `Elemento no encontrado por ID: #${id}`);
             }
         }
-        
+
+        // 3. Enlaces (Texto Y Href)
+        // (Lee las constantes globales definidas en data.js)
         const linksById = {
             'info-adicional-link-landing': { 
                 key: 'aboutLinkLanding', 
@@ -88,6 +105,7 @@
             }
         }
 
+        // 4. Atributos (ej: aria-label)
         const attributes = {
             'vista-central': { 'aria-label': 'ariaNavRegion' },
             'card-volver-fija-elemento': { 'aria-label': 'ariaBackLevel' }

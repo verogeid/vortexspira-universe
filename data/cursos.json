@@ -25,12 +25,12 @@
         },
         {
           "id": "ss-01-02",
-          "nombre": "📁 Front-End",
+          "nombre": "Front-End",
           "subsecciones": [],
           "cursos": [
             {
               "id": "c-01-02-01",
-              "titulo": "📚 Arquitecto Web",
+              "titulo": "Arquitecto Web",
               "descripcion": "Shift left del lado de desarrollo. Proyecto integral para ser arquitecto web. Cada módulo (HTML5, CSS3, JavaScript) es un sprint en esta simulación guiada.",
               "enlaces": [
                 { "texto": "Instalar la PWA", "url": "#" },
@@ -44,13 +44,13 @@
         },
         {
           "id": "ss-01-03",
-          "nombre": "📁 Fundamentos y Lenguajes",
+          "nombre": "Fundamentos y Lenguajes",
           "subsecciones": [],
           "cursos": []
         },
         {
           "id": "ss-01-04",
-          "nombre": "📁 Inteligencia Artificial",
+          "nombre": "Inteligencia Artificial",
           "subsecciones": [],
           "cursos": []
         }
@@ -59,23 +59,23 @@
     },
     {
       "id": "s-02",
-      "nombre": "📁 DevOps y CI/CD",
+      "nombre": "DevOps y CI/CD",
       "subsecciones": [
         {
           "id": "ss-02-01",
-          "nombre": "📁 Contenedores y Orquestación",
+          "nombre": "Contenedores y Orquestación",
           "subsecciones": [],
           "cursos": []
         },
         {
           "id": "ss-02-02",
-          "nombre": "📁 Control de Versiones",
+          "nombre": "Control de Versiones",
           "subsecciones": [],
           "cursos": []
         },
         {
           "id": "ss-02-03",
-          "nombre": "📁 Integración Continua (CI/CD)",
+          "nombre": "Integración Continua (CI/CD)",
           "subsecciones": [],
           "cursos": []
         }
@@ -84,17 +84,17 @@
     },
     {
       "id": "s-03",
-      "nombre": "📁 Documentación y Modelado",
+      "nombre": "Documentación y Modelado",
       "subsecciones": [
         {
           "id": "ss-03-01",
-          "nombre": "📁 Diagramas y Modelado",
+          "nombre": "Diagramas y Modelado",
           "subsecciones": [],
           "cursos": []
         },
         {
           "id": "ss-03-02",
-          "nombre": "📁 Herramientas y Lenguajes",
+          "nombre": "Herramientas y Lenguajes",
           "subsecciones": [],
           "cursos": []
         }
@@ -103,40 +103,40 @@
     },
     {
       "id": "s-04",
-      "nombre": "📁 Pruebas de Software (QA)",
+      "nombre": "Pruebas de Software (QA)",
       "subsecciones": [
         {
           "id": "ss-04-01",
-          "nombre": "📁 Accesibilidad (A11y)",
+          "nombre": "Accesibilidad (A11y)",
           "subsecciones": [],
           "cursos": []
         },
         {
           "id": "ss-04-02",
-          "nombre": "📁 Automatización",
+          "nombre": "Automatización",
           "subsecciones": [],
           "cursos": []
         },
         {
           "id": "ss-04-03",
-          "nombre": "📁 Fundamentos y Gestión",
+          "nombre": "Fundamentos y Gestión",
           "subsecciones": [],
           "cursos": []
         },
         {
           "id": "ss-04-04",
-          "nombre": "📁 Performance",
+          "nombre": "Performance",
           "subsecciones": [],
           "cursos": []
         },
         {
           "id": "ss-04-05",
-          "nombre": "📁 Seguridad",
+          "nombre": "Seguridad",
           "subsecciones": [],
           "cursos": [
             {
               "id": "c-04-05-02",
-              "titulo": "📚 Cyberseguridad para QA",
+              "titulo": "Cyberseguridad para QA",
               "descripcion": "Aprende a auditar una web. No solo el qué y el cómo, sino el porqué. Ve más allá del típico libro de texto. Anticípate al hacker o al desastre natural o digital.",
               "enlaces": [
                 { "texto": "Instalar la PWA", "url": "#" },
@@ -150,12 +150,12 @@
     },
     {
       "id": "s-05",
-      "nombre": "📁 Recursos Adicionales",
+      "nombre": "Recursos Adicionales",
       "subsecciones": [],
       "cursos": [
         {
           "id": "c-05-01",
-          "titulo": "📚 Inglés: De A2 a C1",
+          "titulo": "Inglés: De A2 a C1",
           "descripcion": "Aprendizaje inmersivo. Aprende a leer el código IPA fácilmente. Aprenderás a verbalizar correctamente mientras escuchas una voz nativa diciendo exactamente lo mismo. Mientras, tu visión periférica aprenderá cómo se escribe. La ciencia cognitiva a tu disposición para aprender idiomas.",
           "enlaces": [
             { "texto": "Instalar la PWA", "url": "#" },

@@ -21,8 +21,6 @@
     /* Borde más sutil para placeholders */
     --color-border-placeholder: #ddd; 
 
-    /* ⭐️ NUEVAS VARIABLES DE COLOR ⭐️ */
-    
     /* Header/Footer (Generalmente oscuros) */
     --color-header-bg: #222;
     --color-header-text: #fff;
@@ -63,8 +61,6 @@
         /* Borde más sutil (oscuro) */
         --color-border-placeholder: #555; 
 
-        /* ⭐️ NUEVAS VARIABLES (MODO OSCURO) ⭐️ */
-
         /* Header/Footer (Sin cambios, ya son oscuros) */
         --color-header-bg: #222;
         --color-header-text: #fff;
@@ -74,9 +70,9 @@
         --color-text-muted: #666;
 
         /* Sombras */
-        --color-shadow-primary: rgba(0, 123, 255, 0.4); /* El glow azul funciona bien en ambos */
+        --color-shadow-primary: rgba(0, 123, 255, 0.4); 
         --color-shadow-disabled: rgba(170, 170, 170, 0.8);
-        --color-shadow-modal: rgba(0, 0, 0, 0.7); /* Sombra más oscura para el toast */
+        --color-shadow-modal: rgba(0, 0, 0, 0.7); 
 
         /* Toast (Sin cambios, es un modal oscuro) */
         --color-toast-bg: #222;
@@ -101,7 +97,6 @@ body {
 header, footer {
     width: 100%;
     text-align: center;
-    /* ⭐️ MODIFICADO: Usando variables */
     background: var(--color-header-bg);
     color: var(--color-header-text);
     z-index: 100;
@@ -118,7 +113,6 @@ footer {
     position: fixed; 
     bottom: 0;
     padding: 5px;
-    /* ⭐️ MODIFICADO: Usando variables */
     color: var(--color-footer-text);
     display: flex;
     justify-content: center;
@@ -141,7 +135,6 @@ footer small {
     gap: 15px; 
 }
 footer a { 
-    /* ⭐️ MODIFICADO: Usando variables */
     color: var(--color-footer-text); 
     text-decoration: none; 
     transition: all 0.2s ease;
@@ -153,7 +146,6 @@ footer a {
 footer a:focus {
     outline: none;
 }
-
 .footer-license-link img {
     height: 16px; 
     width: auto;
@@ -169,7 +161,6 @@ footer a:focus {
     display: inline-block;
     width: 16px;
     height: 16px;
-    /* ⭐️ MODIFICADO: Usando variables */
     background-color: var(--color-footer-text);
     -webkit-mask-repeat: no-repeat;
     -webkit-mask-position: center;
@@ -198,11 +189,53 @@ footer a:focus {
     background: var(--color-bg);
 }
 
-/* VISTA CENTRAL (Columna 2) y VISTAS ACTIVAS */
-#vista-central {
+/* ⭐️ MODIFICADO: Columna 2 - Wrapper ⭐️ */
+#columna-central-wrapper {
     grid-column: 2 / 3;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-width: 0; /* Para que el flex-item no se desborde */
+}
+
+/* ⭐️ NUEVO: Header de Navegación (Breadcrumb + Botón Volver Móvil) ⭐️ */
+#header-navegacion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     width: 100%;
-    height: 100%; 
+    margin-bottom: 15px; /* Espacio entre header-nav y vista-central */
+    flex-shrink: 0;
+}
+
+/* ⭐️ MODIFICADO: Breadcrumb ahora en el flujo principal ⭐️ */
+#card-nivel-actual {
+    flex-grow: 1; /* Ocupa el espacio sobrante */
+    border: 2px dashed var(--color-border-placeholder);
+    background: var(--color-card-bg);
+    padding: 0.75rem 1.5rem; /* Menos padding vertical */
+    border-radius: 12px;
+    box-sizing: border-box;
+    overflow: hidden;
+    min-width: 0; /* Previene desbordamiento de flex */
+    height: auto;
+    min-height: 0; 
+}
+#card-nivel-actual h3 {
+    margin: 0;
+    font-size: 1.1rem; /* Texto más pequeño */
+    color: var(--color-text);
+    opacity: 0.9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4; /* Para 1-2 líneas */
+}
+
+/* VISTA CENTRAL (Columna 2) */
+#vista-central {
+    width: 100%;
+    flex-grow: 1; /* Ocupa todo el alto restante */
     position: relative; 
     overflow: hidden; 
     display: flex; 
@@ -256,7 +289,6 @@ footer a:focus {
     border-color: var(--color-primary);
     background: var(--color-card-bg); 
     transform: scale(1.03);
-    /* ⭐️ MODIFICADO: Usando variables */
     box-shadow: 0 0 25px var(--color-shadow-primary); 
 }
 /* Color de texto SOLO en foco (Activas) */
@@ -273,7 +305,6 @@ footer a:focus {
 }
 .card.disabled span {
     font-size: 0.9rem;
-    /* ⭐️ MODIFICADO: Usando variables */
     color: var(--color-text-muted);
 }
 .card.disabled:hover,
@@ -282,7 +313,6 @@ footer a:focus {
     border-color: var(--color-card-border); 
     background: var(--color-card-bg);
     transform: scale(1.03);
-    /* ⭐️ MODIFICADO: Usando variables */
     box-shadow: 0 0 15px var(--color-shadow-disabled); 
 }
 
@@ -326,7 +356,6 @@ footer a:hover, footer a:focus-visible {
     border-color: var(--color-primary);
     background: var(--color-card-bg);
     transform: scale(1.03);
-    /* ⭐️ MODIFICADO: Usando variables */
     box-shadow: 0 0 25px var(--color-shadow-primary);
     outline: none;
 }
@@ -345,13 +374,13 @@ footer a.footer-social-link:hover::before {
 }
 
 
-/* 🛑 INICIO: ESTILOS COLUMNA IZQUIERDA (CORREGIDO) 🛑 */
+/* 🛑 INICIO: ESTILOS COLUMNA IZQUIERDA (SIMPLIFICADO) 🛑 */
 
 #card-volver-fija {
     grid-column: 1 / 2;
     position: relative; 
     z-index: 50; 
-    display: flex; 
+    display: none; /* JS controla el display */
     flex-direction: column;
     justify-content: flex-start; 
     height: 100%; 
@@ -363,32 +392,12 @@ footer a.footer-social-link:hover::before {
     box-shadow: none;
     box-sizing: border-box;
 }
-
-/* Nivel Actual (Breadcrumb) */
-#card-nivel-actual {
-    flex: 0 0 auto; 
-    border: 2px dashed var(--color-border-placeholder);
-    background: transparent;
-    padding: 1.5rem;
-    border-radius: 12px;
+/* Clase para mostrar la columna izquierda */
+#card-volver-fija.visible {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    box-sizing: border-box;
-    overflow: hidden;
-    min-width: 0; 
-}
-#card-nivel-actual h3 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: var(--color-text);
-    opacity: 0.7;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
-/* Elemento Interactivo "Volver" */
+/* ⭐️ MODIFICADO: Elemento Interactivo "Volver" (Sin lógica de tabindex) ⭐️ */
 #card-volver-fija-elemento {
     flex: 0 0 auto;
     padding: 1.5rem;
@@ -402,12 +411,20 @@ footer a.footer-social-link:hover::before {
     box-sizing: border-box; 
     transition: all 0.2s ease;
     color: var(--color-text); 
+    border: 2px solid var(--color-card-border); 
+    background: var(--color-card-bg); 
+    cursor: pointer;
+    
+    /* ⭐️ Altura responsive ⭐️ */
+    height: calc( (100% - (2 * var(--card-gap))) / 3 ); /* Default Desktop (3 filas) */
+    min-height: 0;
 }
 #card-volver-fija-elemento h3 {
     margin: 0;
     font-size: 1.5rem;
     font-weight: bold;
     text-align: center;
+    display: block; 
 }
 
 /* Relleno Izquierdo */
@@ -417,37 +434,18 @@ footer a.footer-social-link:hover::before {
     border: none;
 }
 
-/* --- LÓGICA DE FOCO PARA "VOLVER" --- */
-#card-volver-fija-elemento[tabindex="-1"] {
-    border: 2px dashed var(--color-border-placeholder);
-    background: transparent;
-    cursor: default;
-}
-#card-volver-fija-elemento[tabindex="-1"] > * {
-    display: none;
-}
-#card-volver-fija-elemento[tabindex="0"] {
-    border: 2px solid var(--color-card-border); 
-    background: var(--color-card-bg); 
-    cursor: pointer;
-}
-#card-volver-fija-elemento[tabindex="0"] > * {
-    display: block; 
-}
-
 /* Borde/Sombra para Hover Y Foco (Volver) */
-#card-volver-fija-elemento[tabindex="0"].focus-visible,
-#card-volver-fija-elemento[tabindex="0"]:hover,
-#card-volver-fija-elemento[tabindex="0"]:focus-visible {
+#card-volver-fija-elemento.focus-visible,
+#card-volver-fija-elemento:hover,
+#card-volver-fija-elemento:focus-visible {
     outline: none;
     border-color: var(--color-primary); 
     transform: scale(1.03);
-    /* ⭐️ MODIFICADO: Usando variables */
     box-shadow: 0 0 25px var(--color-shadow-primary); 
 }
 /* Color de texto SOLO en foco (Volver) */
-#card-volver-fija-elemento[tabindex="0"].focus-visible,
-#card-volver-fija-elemento[tabindex="0"]:focus-visible {
+#card-volver-fija-elemento.focus-visible,
+#card-volver-fija-elemento:focus-visible {
     color: var(--color-primary);
 }
 
@@ -459,12 +457,16 @@ footer a.footer-social-link:hover::before {
     border-radius: 12px;
     border: 2px dashed var(--color-border-placeholder); 
     background: var(--color-card-bg);
-    display: block !important; 
+    display: none; /* JS controla el display */
     box-sizing: border-box;
     margin-left: 0; 
     padding: var(--nav-carousel-top-offset) 15px 15px 15px;
     height: 100%; 
     overflow-y: auto; 
+}
+/* Clase para mostrar la columna derecha */
+#info-adicional.visible {
+    display: block !important; 
 }
 
 /* Estilos para <details> y <summary> */
@@ -509,7 +511,6 @@ footer a.footer-social-link:hover::before {
 #info-adicional details > small {
     display: block;
     padding: 0.5rem 0.5rem 0.5rem 1.5rem; 
-    /* ⭐️ MODIFICADO: Usando variables */
     color: var(--color-text-muted);
     font-size: 0.9rem;
     line-height: 1.5;
@@ -604,7 +605,6 @@ footer a.footer-social-link:hover::before {
     left: 50%;
     transform: translate(-50%, -50%);
     
-    /* ⭐️ MODIFICADO: Usando variables */
     background-color: var(--color-toast-bg); 
     color: var(--color-toast-text);
     padding: 1rem 2rem;
@@ -628,14 +628,40 @@ footer a.footer-social-link:hover::before {
 }
 
 
-/* Botón Volver (Móvil) */
-#btn-volver-navegacion { display: none; } 
+/* ⭐️ MODIFICADO: Botón Volver (Móvil) ⭐️ */
+#btn-volver-navegacion { 
+    display: none; /* JS controla la visibilidad */
+    flex-shrink: 0; /* No encoger */
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    border: 2px solid var(--color-card-border);
+    background: var(--color-card-bg);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+} 
+/* Clase para mostrar el botón móvil */
+#btn-volver-navegacion.visible {
+    display: block;
+}
+/* Foco y Hover para el botón móvil */
+#btn-volver-navegacion:hover,
+#btn-volver-navegacion:focus-visible {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: scale(1.03);
+    box-shadow: 0 0 15px var(--color-shadow-primary);
+    outline: none;
+}
+
 
 /* Lógica de Reducción de Movimiento */
 @media (prefers-reduced-motion: reduce) {
     .mask-left, .mask-right { -webkit-backdrop-filter: none; backdrop-filter: none; }
-    .card, #card-volver-fija { transition: none !important; }
-    .card:hover, .card:focus-visible, #card-volver-fija:hover, #card-volver-fija:focus-visible {
+    .card, #card-volver-fija-elemento { transition: none !important; }
+    .card:hover, .card:focus-visible, #card-volver-fija-elemento:hover, #card-volver-fija-elemento:focus-visible {
         transform: none; box-shadow: none;
     }
     
