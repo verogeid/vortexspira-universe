@@ -2,21 +2,21 @@
   "navegacion": [
     {
       "id": "s-01",
-      "nombre": "📁 Desarrollo de Software",
+      "nombre": "Desarrollo de Software",
       "subsecciones": [
         {
           "id": "ss-01-01",
-          "nombre": "📁 Back-End",
+          "nombre": "Back-End",
           "subsecciones": [
             {
               "id": "ss-01-01-01",
-              "nombre": "📁 API",
+              "nombre": "API",
               "subsecciones": [],
               "cursos": []
             },
             {
               "id": "ss-01-01-02",
-              "nombre": "📁 Bases de Datos",
+              "nombre": "Bases de Datos",
               "subsecciones": [],
               "cursos": []
             }
