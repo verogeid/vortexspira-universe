@@ -528,6 +528,38 @@ footer a:hover .linkedin-icon {
     mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6v2H5v11h11v-6h2z"/><path fill-rule="evenodd" d="M15 3h6v6l-2-2-4 4-2-2 4-4-2-2z"/></svg>');
 }
 
+/* ⭐️ ESTILOS PARA LA NOTIFICACIÓN TOAST (Modal) ⭐️ */
+.toast {
+  position: fixed;
+  /* Centrado como un modal */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  background-color: #222; /* Fondo oscuro */
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  border: 2px solid var(--color-card-border);
+  box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+  
+  z-index: 9999;
+  text-align: center;
+  max-width: 80%;
+  
+  /* Oculto por defecto */
+  opacity: 0;
+  visibility: hidden;
+  
+  /* Transición para el fundido (gradualmente transparente) */
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.toast.active {
+  opacity: 1;
+  visibility: visible;
+}
+
 
 /* Botón Volver (Móvil) */
 #btn-volver-navegacion { display: none; } 
@@ -538,5 +570,10 @@ footer a:hover .linkedin-icon {
   .card, #card-volver-fija { transition: none !important; }
   .card:hover, .card:focus-visible, #card-volver-fija:hover, #card-volver-fija:focus-visible {
     transform: none; box-shadow: none;
+  }
+  
+  /* Desactivar transición del toast */
+  .toast {
+    transition: none;
   }
 }

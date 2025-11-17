@@ -1,23 +1,33 @@
 // --- MODIFICADO: code/render-base.js ---
 (function() {
 
-    // Almacena el modo actual (móvil, tablet, escritorio)
     let _lastMode = 'desktop'; 
 
-    // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL (ROUTER) ⭐️
-    App.renderNavegacion = function() {
+    // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL (CORREGIDA CON NAV-STACK) ⭐️
+    App.renderNavegacion = function() { //
         if (!this.STATE.fullData) {
             logError('navBase', "No se puede renderizar: Datos no cargados.");
             return;
         }
 
-        const isSubLevel = this.STATE.navStack.length > 0;
+        // ⭐️ MODIFICACIÓN: Leer desde App.stackGetCurrent()
+        const currentLevelState = App.stackGetCurrent();
+        if (!currentLevelState) {
+            logError('renderBase', "Pila de navegación no inicializada. Abortando render.");
+            return;
+        }
+
+        const currentLevelId = currentLevelState.levelId;
+        const isSubLevel = !!currentLevelId; // true si levelId no es null
+        
+        // ⭐️ IMPORTANTE: Actualizar el STATE global con el foco guardado de la pila
+        this.STATE.currentFocusIndex = currentLevelState.focusIndex;
+
 
         // ⭐️ 1. DEFINIR LOS 3 MODOS ⭐️
         const screenWidth = window.innerWidth;
-        const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
-        const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
-        // const isDesktop = screenWidth >= DESKTOP_MIN_WIDTH; // No es necesaria
+        const isMobile = screenWidth <= MOBILE_MAX_WIDTH; //
+        const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH; //
 
         // ⭐️ 2. ELEGIR LAS FUNCIONES Y VARIABLES ⭐️
         let renderHtmlFn;
@@ -25,26 +35,21 @@
         let calculatedItemsPerColumn;
         let swiperId = null;
         
-        // (No modificar _lastMode aquí)
-
         if (isMobile) {
-            renderHtmlFn = App._generateCardHTML_Mobile;
-            initCarouselFn = App._initCarousel_Mobile; 
+            renderHtmlFn = App._generateCardHTML_Mobile; //
+            initCarouselFn = App._initCarousel_Mobile; //
             calculatedItemsPerColumn = 1;
-            
         } else {
-            renderHtmlFn = App._generateCardHTML_Carousel;
-            initCarouselFn = App._initCarousel_Swipe; 
-            
+            renderHtmlFn = App._generateCardHTML_Carousel; //
+            initCarouselFn = App._initCarousel_Swipe; //
             if (isTablet) {
-                calculatedItemsPerColumn = 2; // 2 filas
+                calculatedItemsPerColumn = 2; 
                 swiperId = '#nav-swiper-tablet';
             } else {
-                calculatedItemsPerColumn = 3; // 3 filas
+                calculatedItemsPerColumn = 3; 
                 swiperId = '#nav-swiper';
             }
         }
-        
         this.STATE.itemsPorColumna = calculatedItemsPerColumn;
 
         // ⭐️ 3. SELECCIÓN DINÁMICA DE 3 VISTAS ⭐️
@@ -65,18 +70,19 @@
         }
 
         // 2. OBTENER DATOS ACTUALES
-        const nodoActual = this._findNodoById(this.STATE.navStack[this.STATE.navStack.length - 1], this.STATE.fullData.navegacion);
+        // ⭐️ MODIFICACIÓN: Usar currentLevelId
+        const nodoActual = this._findNodoById(currentLevelId, this.STATE.fullData.navegacion);
         let itemsDelNivel = [];
 
-        if (!isSubLevel) {
+        if (!isSubLevel) { // Estamos en la raíz
             itemsDelNivel = this.STATE.fullData.navegacion;
-        } else if (nodoActual) {
+        } else if (nodoActual) { // Estamos en subnivel
             const subsecciones = nodoActual.subsecciones || [];
             const cursos = nodoActual.cursos || [];
             itemsDelNivel = subsecciones.concat(cursos);
-        } else {
-            logWarn('navBase', `Nodo no encontrado. Volviendo a la raíz.`);
-            this.STATE.navStack.pop(); 
+        } else { // Error, nodo no encontrado
+            logWarn('navBase', `Nodo ${currentLevelId} no encontrado. Volviendo al nivel anterior.`);
+            App.stackPop(); //
             this.renderNavegacion();
             return;
         }
@@ -86,44 +92,31 @@
 
         // ⭐️ 5. GESTIÓN DE VISTAS (FLUJO "ANTI-PARPADEO") ⭐️
 
-        // 1. Destruir carrusel antiguo
-        App._destroyCarousel(); 
-
-        // 2. Generar el HTML
+        App._destroyCarousel(); //
         let htmlContent = renderHtmlFn(itemsDelNivel, this.STATE.itemsPorColumna);
-
-        // 3. Inyectar HTML en la vista de destino (aún oculta)
         this.DOM.track.innerHTML = htmlContent;
 
-        // 4. INICIALIZAR EL CARRUSEL (sobre la vista oculta)
+        // 4. INICIALIZAR EL CARRUSEL
         let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
         initCarouselFn(initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId);
 
-        // 5. LISTENERS Y FOCO INICIAL (sobre la vista oculta)
         if (typeof this.setupTrackPointerListeners === 'function') {
-            this.setupTrackPointerListeners();
+            this.setupTrackPointerListeners(); //
         }
         
-        // ⭐️ LLAMADA A _updateNavViews (CON LÓGICA DE BREADCRUMB) ⭐️
         this._updateNavViews(isSubLevel, isMobile || isTablet, nodoActual); 
         
-        // ⭐️⭐️⭐️ CORRECCIÓN ⭐️⭐️⭐️
-        // Llamar a la nueva función ligera de "hover" para el render inicial
-        // en lugar de _updateFocus(false), que mueve el foco real (no deseado al cargar).
         if (typeof this._updateVisualFocus === 'function') {
-             this._updateVisualFocus(this.STATE.currentFocusIndex);
+             this._updateVisualFocus(this.STATE.currentFocusIndex); //
         } else {
-            this._updateFocus(false); // Fallback
+            this._updateFocus(false);
         }
-
 
         // 6. ⭐️ EL "SWAP" ⭐️
         desktopView.classList.remove('active');
         tabletView.classList.remove('active');
         mobileView.classList.remove('active');
-        
-        this.DOM.vistaNav.classList.add('active'); // ¡Mostrar!
-
+        this.DOM.vistaNav.classList.add('active'); 
 
         // 7. RESIZE OBSERVER
         if (!this.STATE.resizeObserver) {
@@ -132,18 +125,13 @@
     };
 
 
-    // ⭐️ 2. FUNCIÓN DE PINTADO DE TARJETA INDIVIDUAL (Modificado) ⭐️
-    App._generarTarjetaHTML = function(nodo, estaActivo, esRelleno = false, tipoEspecial = null) {
-
+    // ⭐️ 2. FUNCIÓN DE PINTADO DE TARJETA INDIVIDUAL (Sin cambios) ⭐️
+    App._generarTarjetaHTML = function(nodo, estaActivo, esRelleno = false, tipoEspecial = null) { //
         const wrapperTag = 'article';
-
         if (esRelleno) {
-            // ⭐️ ARIA: Ocultar relleno a lectores de pantalla
             return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1" aria-hidden="true"></article>`;
         }
-
         if (tipoEspecial === 'volver-vertical') {
-            // ⭐️ ARIA: Añadido aria-label y texto
             return `
                 <${wrapperTag} class="card card-volver-vertical" 
                     data-id="volver-nav" 
@@ -155,7 +143,6 @@
                 </${wrapperTag}>
             `;
         }
-
         const isCourse = !!nodo.titulo;
         const tipo = isCourse ? 'curso' : 'categoria';
         const tipoData = `data-tipo="${tipo}"`;
@@ -165,8 +152,6 @@
         let hint = '';
         if (!estaActivo) hint = '<span>🚧</span>';
         const displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
-        
-        // ⭐️ ARIA: Etiqueta descriptiva
         const ariaLabel = `${tipo === 'curso' ? 'Curso' : 'Categoría'}: ${displayTitle}. ${estaActivo ? 'Seleccionar para entrar.' : 'Contenido no disponible.'}`;
 
         return `
@@ -184,25 +169,22 @@
     };
 
 
-    // ⭐️ 3. LÓGICA DE FOCO Y NAVEGACIÓN (CORREGIDO) ⭐️
-    // Esta función AHORA SÍ mueve el foco real del navegador.
-    // NUNCA debe ser llamada por 'mouseover'.
-    App._updateFocus = function(shouldSlide = true) {
+    // ⭐️ 3. LÓGICA DE FOCO Y NAVEGACIÓN (CORREGIDA CON NAV-STACK) ⭐️
+    App._updateFocus = function(shouldSlide = true) { //
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
-        
         const screenWidth = window.innerWidth;
-        const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
+        const isMobile = screenWidth <= MOBILE_MAX_WIDTH; //
 
-        // 1. Limpiar focos y aria-current anteriores
+        // 1. Limpiar focos
         const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
         allCardsInTrack.forEach(card => {
             card.classList.remove('focus-visible');
             card.tabIndex = -1;
-            card.removeAttribute('aria-current'); // ⭐️ Limpiar ARIA
+            card.removeAttribute('aria-current'); 
         });
         if (App.DOM.cardVolverFija) {
             App.DOM.cardVolverFija.classList.remove('focus-visible');
-            App.DOM.cardVolverFija.removeAttribute('aria-current'); // ⭐️ Limpiar ARIA
+            App.DOM.cardVolverFija.removeAttribute('aria-current'); 
         }
 
         // 2. Obtener la nueva tarjeta REAL
@@ -217,34 +199,27 @@
         const nextFocusedCard = allCards[normalizedIndex];
         this.STATE.currentFocusIndex = normalizedIndex;
 
-        // 4. Aplicar nuevo foco y aria-current
+        // ⭐️ MODIFICACIÓN: Sincronizar foco con la pila
+        App.stackUpdateCurrentFocus(normalizedIndex);
+
+        // 4. Aplicar nuevo foco
         if (nextFocusedCard) {
             nextFocusedCard.classList.add('focus-visible');
             nextFocusedCard.tabIndex = 0;
-            nextFocusedCard.setAttribute('aria-current', 'true'); // ⭐️ AÑADIDO
+            nextFocusedCard.setAttribute('aria-current', 'true'); 
 
-            // ⭐️⭐️⭐️ CORRECCIÓN ⭐️⭐️⭐️
-            // Mover el foco real del navegador.
-            // Si shouldSlide es true (clic, teclado), enfoca normal.
-            // Si es false (tactil, carga inicial), enfoca con preventScroll.
             if (shouldSlide) {
                 nextFocusedCard.focus(); 
             } else {
                 nextFocusedCard.focus({ preventScroll: true }); 
             }
-            // ⭐️⭐️⭐️ FIN CORRECCIÓN ⭐️⭐️⭐️
 
-
-            // 5. DELEGAR LA ACCIÓN DE DESLIZAMIENTO/SCROLL
+            // 5. DELEGAR DESLIZAMIENTO
             if (!isMobile && carouselInstance && shouldSlide) {
-                
                 const targetSwiperSlide = Math.floor(normalizedIndex / itemsPorColumna) + 1; 
-                
-                // Solo deslizar si NO estamos ya en esa diapositiva
                 if (targetSwiperSlide !== carouselInstance.realIndex) {
                     carouselInstance.slideToLoop(targetSwiperSlide, 400); 
                 }
-
             } else if (isMobile && shouldSlide) {
                 nextFocusedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
@@ -253,61 +228,59 @@
 
 
     // ⭐️ 4. LÓGICA DE CONTROL DEL CARRUSEL (Stubs/Fallbacks) ⭐️
-    App._generateCardHTML_Carousel = App._generateCardHTML_Carousel || function() { logError('navBase', "render-swipe.js no cargado"); return ""; };
-    App._generateCardHTML_Mobile = App._generateCardHTML_Mobile || function() { logError('navBase', "render-mobile.js no cargado"); return ""; };
-    App._initCarousel_Swipe = App._initCarousel_Swipe || function() { logError('navBase', "render-swipe.js no cargado"); };
-    App._initCarousel_Mobile = App._initCarousel_Mobile || function() { logError('navBase', "render-mobile.js no cargado"); };
-    App._destroyCarousel = App._destroyCarousel || function() { /* El destructor real está en render-swipe.js */ };
+    App._generateCardHTML_Carousel = App._generateCardHTML_Carousel || function() { logError('navBase', "render-swipe.js no cargado"); return ""; }; //
+    App._generateCardHTML_Mobile = App._generateCardHTML_Mobile || function() { logError('navBase', "render-mobile.js no cargado"); return ""; }; //
+    App._initCarousel_Swipe = App._initCarousel_Swipe || function() { logError('navBase', "render-swipe.js no cargado"); }; //
+    App._initCarousel_Mobile = App._initCarousel_Mobile || function() { logError('navBase', "render-mobile.js no cargado"); }; //
+    App._destroyCarousel = App._destroyCarousel || function() { /* */ };
 
 
-    // ⭐️ 5. UTILIDADES DE VISTAS LATERALES Y DATOS (Modificado) ⭐️
-    App._updateNavViews = function(isSubLevel, isMobileOrTablet, nodoActual) {
+    // ⭐️ 5. UTILIDADES DE VISTAS LATERALES Y DATOS (Sin cambios) ⭐️
+    App._updateNavViews = function(isSubLevel, isMobileOrTablet, nodoActual) { //
         
         if (!isMobileOrTablet) { // --- Solo Desktop ---
             this.DOM.cardVolverFija.style.display = 'flex';
-            this.DOM.cardNivelActual.style.display = 'flex'; // ⭐️ Mostrar Breadcrumb
+            this.DOM.cardNivelActual.style.display = 'flex';
             this.DOM.infoAdicional.style.display = 'block'; 
             this.DOM.btnVolverNav.style.display = 'none'; 
             
             if (isSubLevel) {
                 this.DOM.cardVolverFija.tabIndex = 0; 
-                // ⭐️ AÑADIDO: Actualizar textos
                 const nombreNivel = nodoActual.nombre || nodoActual.titulo || 'Nivel';
                 this.DOM.cardNivelActual.innerHTML = `<h3>${nombreNivel}</h3>`;
                 this.DOM.cardVolverFija.innerHTML = `<h3>↩</h3>`;
                 this.DOM.cardVolverFija.setAttribute('aria-label', `Volver de ${nombreNivel}`);
             } else {
                 this.DOM.cardVolverFija.tabIndex = -1;
-                // ⭐️ AÑADIDO: Textos de Nivel Raíz
-                this.DOM.cardNivelActual.innerHTML = `<h3>..</h3>`; // ".." para Raíz
+                this.DOM.cardNivelActual.innerHTML = `<h3>..</h3>`; 
                 this.DOM.cardVolverFija.innerHTML = '';
                 this.DOM.cardVolverFija.setAttribute('aria-label', 'Volver (deshabilitado)');
             }
         } else { // --- Móvil O Tablet ---
             this.DOM.cardVolverFija.style.display = 'none'; 
-            this.DOM.cardNivelActual.style.display = 'none'; // ⭐️ Ocultar Breadcrumb
+            this.DOM.cardNivelActual.style.display = 'none';
             this.DOM.infoAdicional.style.display = 'none';
             
             if (isSubLevel) {
                 this.DOM.btnVolverNav.style.display = 'block'; 
-                this.DOM.btnVolverNav.innerHTML = `↩️ Volver`; // ⭐️ Texto del Botón
+                // ⭐️ MODIFICACIÓN: Texto del botón ahora viene de i18n.js
+                // this.DOM.btnVolverNav.innerHTML = `↩️ Volver`; 
             } else {
                 this.DOM.btnVolverNav.style.display = 'none';
             }
         }
     };
 
-    // ⭐️ 6. RESIZE OBSERVER (CORREGIDO) ⭐️
-    App._setupResizeObserver = function() {
+    // ⭐️ 6. RESIZE OBSERVER (CORREGIDO CON NAV-STACK) ⭐️
+    App._setupResizeObserver = function() { //
         log('renderBase', DEBUG_LEVELS.BASIC, "ResizeObserver (3 modos) configurado.");
         
         const getMode = (width) => {
-            if (width <= MOBILE_MAX_WIDTH) return 'mobile';
-            if (width <= TABLET_MAX_WIDTH) return 'tablet';
+            if (width <= MOBILE_MAX_WIDTH) return 'mobile'; //
+            if (width <= TABLET_MAX_WIDTH) return 'tablet'; //
             return 'desktop';
         };
         
-        // ⭐️ CORRECCIÓN: Establecer el _lastMode inicial UNA VEZ
         _lastMode = getMode(window.innerWidth);
         log('renderBase', DEBUG_LEVELS.BASIC, `Modo inicial establecido en: ${_lastMode}`);
 
@@ -317,7 +290,9 @@
             if (newMode !== _lastMode && this.STATE.initialRenderComplete) {
                 log('renderBase', DEBUG_LEVELS.BASIC, `Cambiando de vista: ${_lastMode} -> ${newMode}`);
                 
-                const isSubLevel = this.STATE.navStack.length > 0;
+                // ⭐️ MODIFICACIÓN: Leer desde App.stackGetCurrent()
+                const isSubLevel = (App.stackGetCurrent() && App.stackGetCurrent().levelId);
+                
                 if (isSubLevel) {
                     const lastWasCarousel = (_lastMode === 'tablet' || _lastMode === 'desktop');
                     const newIsMobile = (newMode === 'mobile');
@@ -329,9 +304,10 @@
                         this.STATE.currentFocusIndex = Math.max(0, this.STATE.currentFocusIndex - 1);
                         log('renderBase', DEBUG_LEVELS.BASIC, "Ajuste de foco: -1 (Volver quitado)");
                     }
+                    // ⭐️ MODIFICACIÓN: Sincronizar foco con la pila
+                    App.stackUpdateCurrentFocus(this.STATE.currentFocusIndex);
                 }
-
-                // ⭐️ CORRECCIÓN: Actualizar _lastMode ANTES de re-renderizar
+                
                 _lastMode = newMode;
                 this.renderNavegacion(); 
             }
@@ -341,7 +317,7 @@
     };
 
     // ⭐️ 7. HELPERS _findNodoById y _tieneContenidoActivo (sin cambios) ⭐️
-    App._findNodoById = function(id, nodos) {
+    App._findNodoById = function(id, nodos) { //
         if (!nodos || !id) return null;
         for (const n of nodos) {
             if (n.id === id) return n;
@@ -357,7 +333,7 @@
         return null;
     };
 
-    App._tieneContenidoActivo = function(nodoId) {
+    App._tieneContenidoActivo = function(nodoId) { //
         const nodo = this._findNodoById(nodoId, this.STATE.fullData.navegacion);
         if (!nodo) return false;
         if (nodo.titulo) return true; 
@@ -365,7 +341,6 @@
         if (nodo.cursos && nodo.cursos.length > 0) {
             return true;
         }
-
         if (nodo.subsecciones && nodo.subsecciones.length > 0) {
             for (const sub of nodo.subsecciones) {
                 if (this._tieneContenidoActivo(sub.id)) {
@@ -373,7 +348,6 @@
                 }
             }
         }
-        
         return false;
     };
 

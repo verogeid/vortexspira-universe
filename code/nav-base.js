@@ -2,7 +2,7 @@
 (function() {
 
     // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS (Estáticos) ⭐️
-    App.setupListeners = function() {
+    App.setupListeners = function() { //
       // 1. Listener para "Volver" (MÓVIL / TABLET)
       if (this.DOM.btnVolverNav) {
           this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
@@ -16,13 +16,12 @@
 
       // 2. Listener para la Tarjeta Volver Fija (DESKTOP)
       if (this.DOM.cardVolverFija) {
-          // 'keydown' se maneja globalmente en nav-keyboard.js
           this.DOM.cardVolverFija.addEventListener('click', this._handleVolverClick.bind(this));
       }
     };
 
     // ⭐️ 2. LISTENER DE CLIC Y HOVER DEL TRACK (Dinámico) ⭐️
-    App.setupTrackPointerListeners = function() { 
+    App.setupTrackPointerListeners = function() { //
         if (this.DOM.track) {
             // --- Clic ---
             if (this.DOM.track._clickListener) {
@@ -41,16 +40,14 @@
     };
 
 
-    // ⭐️ 3. MANEJADORES DE EVENTOS (CORREGIDO) ⭐️
+    // ⭐️ 3. MANEJADORES DE EVENTOS (CORREGIDO CON NAV-STACK) ⭐️
     
     /**
      * Al hacer CLIC: Mueve el foco real y desliza el carrusel.
      */
-    App._handleTrackClick = function(e) {
+    App._handleTrackClick = function(e) { //
       const tarjeta = e.target.closest('[data-id]'); 
-      if (!tarjeta) return;
-
-      if (tarjeta.dataset.tipo === 'relleno') return;
+      if (!tarjeta || tarjeta.dataset.tipo === 'relleno') return;
 
       const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
       const newIndex = allCards.findIndex(c => c === tarjeta);
@@ -58,10 +55,14 @@
       let focusChangedByClick = false; 
       if (newIndex > -1 && newIndex !== this.STATE.currentFocusIndex) {
           this.STATE.currentFocusIndex = newIndex;
+          // ⭐️ MODIFICACIÓN: Sincronizar foco con la pila
+          App.stackUpdateCurrentFocus(newIndex); 
           this._updateFocus(true); // Deslizar Y enfocar
           focusChangedByClick = true;
       } else if (newIndex > -1) {
-          this._updateFocus(true); // Clic para centrar (mueve foco y desliza si es necesario)
+          // ⭐️ MODIFICACIÓN: Sincronizar foco con la pila
+          App.stackUpdateCurrentFocus(newIndex);
+          this._updateFocus(true); // Clic para centrar
       }
 
       if (tarjeta.classList.contains('disabled')) return;
@@ -70,7 +71,6 @@
           return;
       }
 
-      // Solo navega si el clic no estaba ocupado cambiando el foco
       if (!focusChangedByClick) {
           const id = tarjeta.dataset.id;
           const tipo = tarjeta.dataset.tipo;
@@ -81,26 +81,22 @@
     /**
      * Al hacer HOVER: Mueve el foco VISUAL, pero NO el foco del navegador.
      */
-    App._handleTrackMouseOver = function(e) {
+    App._handleTrackMouseOver = function(e) { //
         const tarjeta = e.target.closest('[data-id]');
-        
         if (!tarjeta || tarjeta.dataset.tipo === 'relleno') return;
 
         const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
         const newIndex = allCards.findIndex(c => c === tarjeta);
 
         if (newIndex > -1 && newIndex !== this.STATE.currentFocusIndex) {
-            // ⭐️⭐️⭐️ CORRECCIÓN ⭐️⭐️⭐️
-            // No llamar a _updateFocus(). Llamar a la nueva función ligera.
             this._updateVisualFocus(newIndex);
         }
     };
 
     /**
-     * ⭐️⭐️⭐️ NUEVA FUNCIÓN LIGERA (Solo para Hover) ⭐️⭐️⭐️
-     * Actualiza el .focus-visible y el STATE, pero NO llama a .focus()
+     * ⭐️ NUEVA FUNCIÓN LIGERA (Solo para Hover) (CORREGIDA CON NAV-STACK) ⭐️
      */
-    App._updateVisualFocus = function(newIndex) {
+    App._updateVisualFocus = function(newIndex) { //
         // 1. Limpiar focos visuales anteriores
         const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
         allCardsInTrack.forEach(card => {
@@ -124,6 +120,9 @@
         const nextFocusedCard = allCards[normalizedIndex];
         this.STATE.currentFocusIndex = normalizedIndex;
 
+        // ⭐️ MODIFICACIÓN: Sincronizar foco con la pila
+        App.stackUpdateCurrentFocus(normalizedIndex);
+
         // 4. Aplicar nuevo foco VISUAL (sin .focus())
         if (nextFocusedCard) {
             nextFocusedCard.classList.add('focus-visible');
@@ -135,44 +134,43 @@
     /**
      * Manejador centralizado para la activación de tarjetas (clic, Enter, Espacio)
      */
-    App._handleCardClick = function(id, tipo) {
+    App._handleCardClick = function(id, tipo) { //
         if (tipo === 'categoria') {
-            this.STATE.navStack.push(id);
-            this.STATE.currentFocusIndex = 0; // Resetear foco al entrar
-            this.renderNavegacion();
+            // ⭐️ MODIFICACIÓN: Usar App.stackPush
+            App.stackPush(id, this.STATE.currentFocusIndex);
+            this.renderNavegacion(); //
         } else if (tipo === 'curso') {
             this._mostrarDetalle(id);
         }
     };
 
-    // ⭐️ 4. LÓGICA DE NAVEGACIÓN Y VISTAS ⭐️
+    // ⭐️ 4. LÓGICA DE NAVEGACIÓN Y VISTAS (CORREGIDA CON NAV-STACK) ⭐️
 
     /**
      * Handler unificado para CUALQUIER acción de "Volver" (Escape, Botón, Tarjeta)
      */
-    App._handleVolverClick = function() {
+    App._handleVolverClick = function() { //
         // 1. Caso Detalle -> Navegación
         if (this.DOM.vistaDetalle.classList.contains('active')) {
             this.DOM.vistaDetalle.classList.remove('active');
-            
-            // Re-renderizar la vista de navegación (para el modo correcto)
-            this.renderNavegacion(); 
+            this.renderNavegacion(); //
         } 
         // 2. Caso Sub-sección -> Nivel anterior
-        else if (this.STATE.navStack.length > 0) {
-            this.STATE.navStack.pop();
-            this.STATE.currentFocusIndex = 0; // Resetear foco
-            this.renderNavegacion();
+        // ⭐️ MODIFICACIÓN: Usar App.stackPop
+        else if (App.STATE.historyStack.length > 1) { // Solo si no estamos en la raíz
+            
+            App.stackPop(); // Sube un nivel
+            
+            // El foco guardado se leerá en renderNavegacion
+            this.renderNavegacion(); //
 
             // Forzar el foco de vuelta al slider o tarjeta "Volver"
-             const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
-             const isTablet = window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth <= TABLET_MAX_WIDTH;
+             const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH; //
+             const isTablet = window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth <= TABLET_MAX_WIDTH; //
              
              if (!isMobile && !isTablet && this.DOM.cardVolverFija.tabIndex === 0) {
-                 // Modo Desktop: Foco en la tarjeta Volver Fija
                  this.DOM.cardVolverFija.focus();
              } else {
-                 // Modo Móvil/Tablet: Foco en el primer elemento del track
                  const activeCard = this.DOM.track.querySelector('[tabindex="0"]');
                  if (activeCard) activeCard.focus();
              }
@@ -182,8 +180,8 @@
     /**
      * Muestra la vista de detalle del curso.
      */
-    App._mostrarDetalle = function(cursoId) {
-      const curso = App._findNodoById(cursoId, App.STATE.fullData.navegacion);
+    App._mostrarDetalle = function(cursoId) { //
+      const curso = App._findNodoById(cursoId, App.STATE.fullData.navegacion); //
       if (!curso) return;
 
       let enlacesHtml = (curso.enlaces || []).map(enlace => 
@@ -200,10 +198,9 @@
 
       // Determinar modo
       const screenWidth = window.innerWidth;
-      const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
-      const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
+      const isMobile = screenWidth <= MOBILE_MAX_WIDTH; //
+      const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH; //
 
-      // Ocultar la vista de navegación activa
       this.DOM.vistaNav.classList.remove('active');
       this.DOM.vistaDetalle.classList.add('active');
 
@@ -236,10 +233,10 @@
     /**
      * Helper para nav-keyboard.js (Vista Detalle)
      */
-    App._getFocusableDetailElements = function() {
+    App._getFocusableDetailElements = function() { //
         const screenWidth = window.innerWidth;
-        const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
-        const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
+        const isMobile = screenWidth <= MOBILE_MAX_WIDTH; //
+        const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH; //
         
         const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('a.enlace-curso[tabindex="0"]'));
         let elements = [];
@@ -257,7 +254,7 @@
     /**
      * Helper para nav-tactil.js (Swipe)
      */
-    App.findBestFocusInColumn = function(columnCards, targetRow) {
+    App.findBestFocusInColumn = function(columnCards, targetRow) { //
         const isFocusable = (card) => {
             return card && card.dataset.id && card.dataset.tipo !== 'relleno';
         };

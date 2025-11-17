@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title> 
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
     <link rel="stylesheet" href="styles/style-base.css">
     <link rel="stylesheet" href="styles/style-desktop.css">
     <link rel="stylesheet" href="styles/style-tablet.css">
@@ -14,105 +14,111 @@
 </head>
 <body>
 
-  <header id="app-header">
-    <h1 id="main-header-title"></h1> 
-  </header>
+    <header id="app-header">
+        <h1 id="main-header-title"></h1> 
+    </header>
 
-  <main id="app-container">
+    <main id="app-container">
 
-    <div id="card-volver-fija"> 
-        <div id="card-nivel-actual" aria-live="polite"></div>
-        <div id="card-volver-fija-elemento" role="button" tabindex="-1">↩</div>
-        <div id="columna-volver-relleno"></div>
-    </div>
+        <div id="card-volver-fija"> 
+            <div id="card-nivel-actual" aria-live="polite"></div>
+            <div id="card-volver-fija-elemento" role="button" tabindex="-1">↩</div>
+            <div id="columna-volver-relleno"></div>
+        </div>
 
-    <div id="vista-central" role="region">
-        <div id="vista-navegacion-desktop" class="vista active">
-            <div class="carousel-mask">
-                <div class="mask-left"></div>
-                <div class="mask-right"></div>
+        <div id="vista-central" role="region">
+            <div id="vista-navegacion-desktop" class="vista active">
+                <div class="carousel-mask">
+                    <div class="mask-left"></div>
+                    <div class="mask-right"></div>
+                </div>
+                <div id="nav-swiper" class="swiper carousel-viewport">
+                    <div class="swiper-wrapper grid-track" id="track-desktop"></div>
+                </div>
             </div>
-            <div id="nav-swiper" class="swiper carousel-viewport">
-                <div class="swiper-wrapper grid-track" id="track-desktop"></div>
+            <div id="vista-navegacion-tablet" class="vista">
+                <div class="carousel-mask">
+                    <div class="mask-left"></div>
+                    <div class="mask-right"></div>
+                </div>
+                <div id="nav-swiper-tablet" class="swiper carousel-viewport">
+                    <div class="swiper-wrapper grid-track" id="track-tablet"></div>
+                </div>
+            </div>
+            <div id="vista-navegacion-mobile" class="vista">
+                <div class="mobile-track" id="track-mobile"></div>
+            </div>
+            <div id="vista-detalle" class="vista">
+                <div class="contenido-curso" id="detalle-contenido"></div>
             </div>
         </div>
-        <div id="vista-navegacion-tablet" class="vista">
-            <div class="carousel-mask">
-                <div class="mask-left"></div>
-                <div class="mask-right"></div>
-            </div>
-            <div id="nav-swiper-tablet" class="swiper carousel-viewport">
-                <div class="swiper-wrapper grid-track" id="track-tablet"></div>
-            </div>
-        </div>
-        <div id="vista-navegacion-mobile" class="vista">
-            <div class="mobile-track" id="track-mobile"></div>
-        </div>
-        <div id="vista-detalle" class="vista">
-            <div class="contenido-curso" id="detalle-contenido"></div>
-        </div>
-    </div>
 
-    <div id="info-adicional" style="display: none;">
+        <div id="info-adicional" style="display: none;">
+            
+            <details>
+                <summary id="info-adicional-titulo-ayuda"></summary>
+                <small>
+                <ul id="info-adicional-lista-ayuda">
+                    <li id="info-adicional-ayuda-gira"></li>
+                    <li id="info-adicional-ayuda-vuelve"></li>
+                </ul>
+                </small>
+            </details>
         
-        <details>
-            <summary id="info-adicional-titulo-ayuda"></summary>
-            <small>
-              <ul id="info-adicional-lista-ayuda">
-                <li id="info-adicional-ayuda-gira"></li>
-                <li id="info-adicional-ayuda-vuelve"></li>
-              </ul>
-            </small>
-        </details>
+            <details open>
+                <summary id="info-adicional-titulo-acerca"></summary>
+                <small>
+                <p id="info-adicional-summary"></p>
+                <ul id="info-adicional-lista-acerca">
+                    <li><a id="info-adicional-link-landing" href="#" target="_blank"></a></li>
+                    <li><a id="info-adicional-link-diary" href="#" target="_blank"></a></li>
+                </ul>
+                </small>
+            </details>
+        </div>
+
+        <div id="toast-notification" class="toast" role="status" aria-live="polite"></div>
+
+    </main>
+
+    <button id="btn-volver-navegacion" style="display: none;" tabindex="-1"></button>
+
+    <footer>
+        <small id="footer-content"></small>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script src="code/debug.js"></script>
+    <script src="code/app.js"></script>     
+    <script src="code/data.js"></script>   
+    <script src="code/i18n.js"></script>    
     
-        <details open>
-            <summary id="info-adicional-titulo-acerca"></summary>
-            <small>
-              <p id="info-adicional-summary"></p>
-              <ul id="info-adicional-lista-acerca">
-                <li><a id="info-adicional-link-landing" href="#" target="_blank"></a></li>
-                <li><a id="info-adicional-link-diary" href="#" target="_blank"></a></li>
-              </ul>
-            </small>
-        </details>
-    </div>
+    <script src="code/render-base.js"></script>
+    <script src="code/render-swipe.js"></script> 
+    <script src="code/render-mobile.js"></script>
 
-  </main>
+    <script src="code/nav-stack.js"></script>
+    <script src="code/nav-base.js"></script>
+    <script src="code/nav-keyboard.js"></script>
+    <script src="code/nav-tactil.js"></script>
 
-  <button id="btn-volver-navegacion" style="display: none;" tabindex="-1"></button>
-
-  <footer>
-    <small id="footer-content"></small>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-  <script src="code/debug.js"></script>
-  <script src="code/app.js"></script>     <script src="code/data.js"></script>   <script src="code/i18n.js"></script>    <script src="code/render-base.js"></script>
-  <script src="code/render-swipe.js"></script> 
-  <script src="code/render-mobile.js"></script>
-
-  <script src="code/nav-stack.js"></script>
-  <script src="code/nav-base.js"></script>
-  <script src="code/nav-keyboard.js"></script>
-  <script src="code/nav-tactil.js"></script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        
-        if (window.App && App.applyStrings) {
-            App.applyStrings();
-        }
-        if (typeof injectHeaderLogo === 'function') {
-            injectHeaderLogo(); 
-        }
-        if (typeof injectFooterContent === 'function') {
-            injectFooterContent(); 
-        }
-        if (window.App && window.App.init) {
-            App.init();
-        }
-    });
-  </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            if (window.App && App.applyStrings) {
+                App.applyStrings();
+            }
+            if (typeof injectHeaderLogo === 'function') {
+                injectHeaderLogo(); 
+            }
+            if (typeof injectFooterContent === 'function') {
+                injectFooterContent(); 
+            }
+            if (window.App && window.App.init) {
+                App.init();
+            }
+        });
+    </script>
 </body>
 </html>

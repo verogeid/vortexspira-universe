@@ -20,7 +20,10 @@
             'aboutLinkLanding': 'Visita la Landing Page',
             'aboutLinkDiary': 'Lee el Dev Diary en GitHub',
             'footerCopyright': '&copy;2025 VortexSpira®',
-            'footerAuthor': 'Desarrollado por Diego González Fernández'
+            'footerAuthor': 'Desarrollado por Diego González Fernández',
+
+            // ⭐️ AÑADIDO: Texto del Toast de Error ⭐️
+            'toastErrorId': 'Curso no encontrado. Pruebe a buscarlo manualmente.'
         }
     };
 
@@ -39,12 +42,12 @@
     // ⭐️ 3. FUNCIÓN DE INYECCIÓN DE TEXTOS Y ENLACES
     
     App.applyStrings = function() {
+        // ... (resto de la función sin cambios) ...
         log('i18n', DEBUG_LEVELS.BASIC, 'Aplicando textos (i18n)...');
 
         document.documentElement.lang = currentLang;
         document.title = App.getString('pageTitle');
 
-        // 2. Textos que se inyectan por ID (elementos simples)
         const elementsById = {
             'main-header-title': 'headerTitle',
             'btn-volver-navegacion': 'btnBack',
@@ -63,9 +66,7 @@
                 logWarn('i18n', `Elemento no encontrado por ID: #${id}`);
             }
         }
-
-        // ⭐️ AÑADIDO: 3. Enlaces (Texto Y Href) ⭐️
-        // (Lee las constantes globales definidas en data.js)
+        
         const linksById = {
             'info-adicional-link-landing': { 
                 key: 'aboutLinkLanding', 
@@ -87,7 +88,6 @@
             }
         }
 
-        // 4. Atributos (ej: aria-label)
         const attributes = {
             'vista-central': { 'aria-label': 'ariaNavRegion' },
             'card-volver-fija-elemento': { 'aria-label': 'ariaBackLevel' }
