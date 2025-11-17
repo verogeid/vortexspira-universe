@@ -15,7 +15,7 @@
       }
 
       // 2. Listener para la Tarjeta Volver Fija (DESKTOP)
-      if (this.DOM.cardVolverFijaElemento) { // ⭐️ Corregido
+      if (this.DOM.cardVolverFijaElemento) { 
           this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
       }
     };
@@ -101,7 +101,7 @@
             card.classList.remove('focus-visible');
             card.removeAttribute('aria-current');
         });
-        if (App.DOM.cardVolverFijaElemento) { // ⭐️ Corregido
+        if (App.DOM.cardVolverFijaElemento) { 
             App.DOM.cardVolverFijaElemento.classList.remove('focus-visible');
             App.DOM.cardVolverFijaElemento.removeAttribute('aria-current');
         }
@@ -118,7 +118,6 @@
         const nextFocusedCard = allCards[normalizedIndex];
         this.STATE.currentFocusIndex = normalizedIndex;
 
-        // ⭐️ Sincronizar foco con la pila
         App.stackUpdateCurrentFocus(normalizedIndex);
 
         // 4. Aplicar nuevo foco VISUAL (sin .focus())
@@ -167,7 +166,7 @@
              const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
              const isTablet = window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth <= TABLET_MAX_WIDTH;
              
-             if (!isMobile && !isTablet && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { // ⭐️ Corregido
+             if (!isMobile && !isTablet && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
                  this.DOM.cardVolverFijaElemento.focus();
              } else if (isMobile || isTablet) {
                  // En móvil, el foco va a la tarjeta "Volver" (si existe) o "Breadcrumb"
@@ -253,7 +252,7 @@
         const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('a.enlace-curso[tabindex="0"]'));
         let elements = [];
 
-        if (!isMobile && !isTablet && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { // ⭐️ Corregido
+        if (!isMobile && !isTablet && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
             elements.push(this.DOM.cardVolverFijaElemento);
         } else if ((isMobile || isTablet) && this.DOM.btnVolverNav.classList.contains('visible')) {
             elements.push(this.DOM.btnVolverNav);

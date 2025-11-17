@@ -11,7 +11,6 @@
             return;
         }
 
-        // ⭐️ MODIFICACIÓN: Leer desde App.stackGetCurrent()
         const currentLevelState = App.stackGetCurrent();
         if (!currentLevelState) {
             logError('renderBase', "Pila de navegación no inicializada. Abortando render.");
@@ -19,17 +18,13 @@
         }
 
         const currentLevelId = currentLevelState.levelId;
-        const isSubLevel = !!currentLevelId; // true si levelId no es null
-        
-        // ⭐️ IMPORTANTE: Actualizar el STATE global con el foco guardado de la pila
+        const isSubLevel = !!currentLevelId;
         this.STATE.currentFocusIndex = currentLevelState.focusIndex;
 
-        // ⭐️ 1. DEFINIR LOS 3 MODOS ⭐️
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
         const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
 
-        // ⭐️ 2. ELEGIR LAS FUNCIONES Y VARIABLES ⭐️
         let renderHtmlFn;
         let initCarouselFn;
         let calculatedItemsPerColumn;
@@ -52,12 +47,10 @@
         }
         this.STATE.itemsPorColumna = calculatedItemsPerColumn;
 
-        // ⭐️ 3. SELECCIÓN DINÁMICA DE 3 VISTAS ⭐️
         const desktopView = document.getElementById('vista-navegacion-desktop');
         const tabletView = document.getElementById('vista-navegacion-tablet');
         const mobileView = document.getElementById('vista-navegacion-mobile');
         
-        // ⭐️ 4. ELEGIR EL DIV Y TRACK (A DÓNDE VAMOS) ⭐️
         if (isMobile) {
             this.DOM.vistaNav = mobileView;
             this.DOM.track = document.getElementById('track-mobile');
@@ -73,38 +66,33 @@
         const nodoActual = this._findNodoById(currentLevelId, this.STATE.fullData.navegacion);
         let itemsDelNivel = [];
 
-        if (!isSubLevel) { // Estamos en la raíz
+        if (!isSubLevel) {
             itemsDelNivel = this.STATE.fullData.navegacion;
-        } else if (nodoActual) { // Estamos en subnivel
-            const subsecciones = nodoActual.subsecciones || [];
-            const cursos = nodoActual.cursos || [];
-            itemsDelNivel = subsecciones.concat(cursos);
-        } else { // Error, nodo no encontrado
+        } else if (nodoActual) {
+            itemsDelNivel = (nodoActual.subsecciones || []).concat(nodoActual.cursos || []);
+        } else { 
             logWarn('navBase', `Nodo ${currentLevelId} no encontrado. Volviendo al nivel anterior.`);
             App.stackPop(); 
             this.renderNavegacion();
             return;
         }
         
-        // ⭐️ MODIFICADO: Lógica de inyección de tarjetas para MÓVIL ⭐️
-        if (isSubLevel && isMobile) {
-            // Inyecta "Volver"
-            itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
-        }
+        // ⭐️ Lógica de inyección de tarjetas para MÓVIL ⭐️
         if (isMobile) {
-             // Inyecta "Breadcrumb"
+            if (isSubLevel) {
+                // Inyecta "Volver"
+                itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
+            }
+            // Inyecta "Breadcrumb"
             const breadcrumbText = isSubLevel ? (nodoActual.nombre || 'Nivel') : App.getString('breadcrumbRoot');
             itemsDelNivel = [{ id: 'breadcrumb-nav', tipoEspecial: 'breadcrumb-vertical', texto: breadcrumbText }].concat(itemsDelNivel);
         }
 
-
-        // ⭐️ 5. GESTIÓN DE VISTAS (FLUJO "ANTI-PARPADEO") ⭐️
-
+        // 5. GESTIÓN DE VISTAS (FLUJO "ANTI-PARPADEO")
         App._destroyCarousel(); 
         let htmlContent = renderHtmlFn(itemsDelNivel, this.STATE.itemsPorColumna);
         this.DOM.track.innerHTML = htmlContent;
 
-        // 4. INICIALIZAR EL CARRUSEL
         let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
         initCarouselFn(initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId);
 
@@ -112,7 +100,6 @@
             this.setupTrackPointerListeners();
         }
         
-        // ⭐️ LLAMADA A _updateNavViews (CON LÓGICA DE BREADCRUMB) ⭐️
         this._updateNavViews(isSubLevel, isMobile || isTablet, nodoActual); 
         
         if (typeof this._updateVisualFocus === 'function') {
@@ -127,7 +114,6 @@
         mobileView.classList.remove('active');
         this.DOM.vistaNav.classList.add('active'); 
 
-        // 7. RESIZE OBSERVER
         if (!this.STATE.resizeObserver) {
             this._setupResizeObserver();
         }
@@ -216,7 +202,7 @@
             card.tabIndex = -1;
             card.removeAttribute('aria-current'); 
         });
-        if (App.DOM.cardVolverFijaElemento) { // ⭐️ Corregido
+        if (App.DOM.cardVolverFijaElemento) {
             App.DOM.cardVolverFijaElemento.classList.remove('focus-visible');
             App.DOM.cardVolverFijaElemento.removeAttribute('aria-current'); 
         }
@@ -249,13 +235,10 @@
 
             // 5. DELEGAR LA ACCIÓN DE DESLIZAMIENTO/SCROLL
             if (!isMobile && carouselInstance && shouldSlide) {
-                
                 const targetSwiperSlide = Math.floor(normalizedIndex / itemsPorColumna) + 1; 
-                
                 if (targetSwiperSlide !== carouselInstance.realIndex) {
                     carouselInstance.slideToLoop(targetSwiperSlide, 400); 
                 }
-
             } else if (isMobile && shouldSlide) {
                 nextFocusedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
@@ -280,10 +263,15 @@
             this.DOM.cardVolverFija.classList.remove('visible'); // Ocultar sidebar izq
             this.DOM.infoAdicional.classList.remove('visible'); // Ocultar sidebar der
             
-            // (El botón volver móvil es ahora una tarjeta inyectada en renderNavegacion)
-            // (El breadcrumb móvil es ahora una tarjeta inyectada en renderNavegacion)
-            this.DOM.btnVolverNav.classList.remove('visible');
-            this.DOM.btnVolverNav.tabIndex = -1;
+            // Breadcrumb y Volver se inyectan como tarjetas en el HTML (renderNavegacion)
+            // Pero el botón global (para vista detalle) debe gestionarse
+            if (isSubLevel) {
+                this.DOM.btnVolverNav.classList.add('visible');
+                this.DOM.btnVolverNav.tabIndex = 0;
+            } else {
+                this.DOM.btnVolverNav.classList.remove('visible');
+                this.DOM.btnVolverNav.tabIndex = -1;
+            }
 
         } else { 
             // --- Solo Desktop ---
@@ -335,35 +323,25 @@
                 log('renderBase', DEBUG_LEVELS.BASIC, `Cambiando de vista: ${_lastMode} -> ${newMode}`);
                 
                 const isSubLevel = (App.stackGetCurrent() && App.stackGetCurrent().levelId);
-                
+                const lastWasMobile = (_lastMode === 'mobile');
+                const newIsMobile = (newMode === 'mobile');
+
                 // ⭐️ MODIFICADO: Ajuste de foco al cambiar de modo
+                let focusDelta = 0;
                 if (isSubLevel) {
-                    const lastWasMobile = (_lastMode === 'mobile');
-                    const newIsMobile = (newMode === 'mobile');
-                    
-                    if (lastWasMobile && !newIsMobile) {
-                        // De Móvil (con 2 tarjetas extra) a Desktop (sin tarjetas extra)
-                        this.STATE.currentFocusIndex = Math.max(0, this.STATE.currentFocusIndex - 2);
-                        log('renderBase', DEBUG_LEVELS.BASIC, "Ajuste de foco: -2 (Volver y Breadcrumb quitados)");
-                    } else if (!lastWasMobile && newIsMobile) {
-                         // De Desktop (sin extra) a Móvil (con 2 tarjetas extra)
-                        this.STATE.currentFocusIndex += 2;
-                        log('renderBase', DEBUG_LEVELS.BASIC, "Ajuste de foco: +2 (Volver y Breadcrumb añadidos)");
-                    }
-                } else if (!isSubLevel) {
-                     const lastWasMobile = (_lastMode === 'mobile');
-                    const newIsMobile = (newMode === 'mobile');
-                    // Nivel Raíz: solo se añade/quita el breadcrumb
-                    if (lastWasMobile && !newIsMobile) {
-                         this.STATE.currentFocusIndex = Math.max(0, this.STATE.currentFocusIndex - 1);
-                         log('renderBase', DEBUG_LEVELS.BASIC, "Ajuste de foco: -1 (Breadcrumb quitado)");
-                    } else if (!lastWasMobile && newIsMobile) {
-                        this.STATE.currentFocusIndex += 1;
-                        log('renderBase', DEBUG_LEVELS.BASIC, "Ajuste de foco: +1 (Breadcrumb añadido)");
-                    }
+                    if (lastWasMobile && !newIsMobile) focusDelta = -2; // Quitados [breadcrumb, volver]
+                    else if (!lastWasMobile && newIsMobile) focusDelta = 2; // Añadidos [breadcrumb, volver]
+                } else {
+                    if (lastWasMobile && !newIsMobile) focusDelta = -1; // Quitado [breadcrumb]
+                    else if (!lastWasMobile && newIsMobile) focusDelta = 1; // Añadido [breadcrumb]
                 }
                 
-                App.stackUpdateCurrentFocus(this.STATE.currentFocusIndex);
+                if (focusDelta !== 0) {
+                    this.STATE.currentFocusIndex = Math.max(0, this.STATE.currentFocusIndex + focusDelta);
+                    log('renderBase', DEBUG_LEVELS.BASIC, `Ajuste de foco: ${focusDelta > 0 ? '+' : ''}${focusDelta}`);
+                    App.stackUpdateCurrentFocus(this.STATE.currentFocusIndex);
+                }
+                
                 _lastMode = newMode;
                 this.renderNavegacion(); 
             }
