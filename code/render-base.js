@@ -83,8 +83,15 @@
                 // Inyecta "Volver"
                 itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
             }
-            // Inyecta "Breadcrumb"
-            const breadcrumbText = isSubLevel ? (nodoActual.nombre || 'Nivel') : App.getString('breadcrumbRoot');
+            
+            // ⭐️⭐️⭐️ CORRECCIÓN (Problema "Sin Título" Móvil) ⭐️⭐️⭐️
+            // (Viejo)
+            // const breadcrumbText = isSubLevel ? (nodoActual.nombre || 'Nivel') : App.getString('breadcrumbRoot');
+            
+            // (Nuevo) Fallback robusto
+            const rootText = (typeof App.getString === 'function' ? App.getString('breadcrumbRoot') : 'Nivel Raíz') || 'Nivel Raíz';
+            const breadcrumbText = isSubLevel ? (nodoActual.nombre || 'Nivel') : rootText;
+            
             itemsDelNivel = [{ id: 'breadcrumb-nav', tipoEspecial: 'breadcrumb-vertical', texto: breadcrumbText }].concat(itemsDelNivel);
         }
 
@@ -266,6 +273,8 @@
             // Breadcrumb y Volver se inyectan como tarjetas en el HTML (renderNavegacion)
             // Pero el botón global (para vista detalle) debe gestionarse
             if (isSubLevel) {
+                // ⭐️ NOTA: Esta lógica es para la VISTA DE DETALLE,
+                // la corrección en style-base.css oculta este botón.
                 this.DOM.btnVolverNav.classList.add('visible');
                 this.DOM.btnVolverNav.tabIndex = 0;
             } else {

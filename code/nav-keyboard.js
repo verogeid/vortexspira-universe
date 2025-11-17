@@ -153,9 +153,10 @@
             const activeCard = allCards[App.STATE.currentFocusIndex] || null;
 
             if (isMobile || isTablet) {
-                const btnVolver = App.DOM.btnVolverNav.style.display === 'block' ? App.DOM.btnVolverNav : null;
+                // ⭐️⭐️⭐️ CORRECCIÓN (Botón flotante eliminado) ⭐️⭐️⭐️
+                // const btnVolver = App.DOM.btnVolverNav.style.display === 'block' ? App.DOM.btnVolverNav : null;
                 groups = [
-                    [btnVolver].filter(Boolean), // Grupo 1: Botón Volver (si existe)
+                    // [btnVolver].filter(Boolean), // Grupo 1: Botón Volver (si existe)
                     [activeCard].filter(Boolean), // Grupo 2: Tarjeta activa
                     footerLinks                   // Grupo 3: Footer
                 ];
@@ -173,8 +174,12 @@
             const detailLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('a.enlace-curso[tabindex="0"]'));
             let volverElement = null;
 
-            if ((isMobile || isTablet) && App.DOM.btnVolverNav.style.display === 'block') {
-                volverElement = App.DOM.btnVolverNav;
+            // ⭐️⭐️⭐️ CORRECCIÓN (Botón flotante eliminado) ⭐️⭐️⭐️
+            if ((isMobile || isTablet)) {
+                // if (App.DOM.btnVolverNav.style.display === 'block') {
+                //     volverElement = App.DOM.btnVolverNav;
+                // }
+                volverElement = null; // El botón flotante ya no existe
             } else if (!isMobile && !isTablet && App.DOM.cardVolverFija.tabIndex === 0) {
                 volverElement = App.DOM.cardVolverFija;
             }

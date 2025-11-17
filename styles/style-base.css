@@ -393,9 +393,28 @@ footer a.footer-social-link:hover::before {
     font-size: 1.5rem;
     color: var(--color-text);
     opacity: 0.7;
+
+    /* ⭐️⭐️⭐️ CORRECCIÓN 1 (Problema Desktop) ⭐️⭐️⭐️ */
+    
+    /* (Viejo)
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    */
+
+    /* (Nuevo) Muestra hasta 2 líneas */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; /* Límite de 2 líneas */
+    
+    /* Valores aproximados para asegurar la altura */
+    line-height: 1.3; 
+    max-height: calc(1.5rem * 1.3 * 2); /* font-size * line-height * 2 */
+
+    /* Fallback (aunque -webkit- es muy soportado) */
+    white-space: normal; 
+    text-overflow: ellipsis; 
 }
 
 /* Botón Volver (Columna Izquierda) */
@@ -636,7 +655,9 @@ footer a.footer-social-link:hover::before {
     left: 15px;
     z-index: 50;
 
-    display: none; /* Oculto por defecto, JS lo muestra */
+    /* ⭐️⭐️⭐️ CORRECCIÓN 2 (Botón Flotante) ⭐️⭐️⭐️ */
+    display: none !important; /* Oculto SIEMPRE */
+
     padding: 0.75rem 1rem;
     font-size: 1rem;
     font-weight: bold;
@@ -649,7 +670,8 @@ footer a.footer-social-link:hover::before {
 } 
 /* Clase para mostrar el botón móvil */
 #btn-volver-navegacion.visible {
-    display: block;
+    /* ⭐️⭐️⭐️ CORRECCIÓN 2 (Botón Flotante) ⭐️⭐️⭐️ */
+    display: none !important; /* Oculto SIEMPRE */
 }
 /* Foco y Hover para el botón móvil */
 #btn-volver-navegacion:hover,

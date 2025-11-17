@@ -71,7 +71,11 @@
 
         const swiperConfig = {
             direction: 'horizontal', 
-            slidesPerView: 3, 
+            
+            // ⭐️⭐️⭐️ CORRECCIÓN (Problema Tablet) ⭐️⭐️⭐️
+            // slidesPerView: 3, (Viejo)
+            slidesPerView: 1, // (Nuevo) Muestra 1 slide centrado, el CSS hace el efecto "peek"
+            
             slidesPerGroup: 1, 
             loop: true, 
             
