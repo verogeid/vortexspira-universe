@@ -1,44 +1,23 @@
 /* --- styles/style-base.css --- */
 :root {
-    /* Fondos */
+    /* ... (Variables sin cambios) ... */
     --color-bg: #f4f4f4;
     --color-card-bg: rgba(255, 255, 255, 0.7);
     --color-mask-gradient: rgba(244, 244, 244, 0.4);
-
-    /* Texto y Bordes */
     --color-text: #111;
     --color-card-border: #bbb;
     --color-card-border-disabled: #ccc;
-
-    /* Acentos (Ghost) */
     --color-primary: #007bff;
-    --color-primary-bg: rgba(0, 123, 255, 0.1);
-    --color-danger: #dc3545;
-    --color-danger-bg: rgba(220, 53, 69, 0.1);
-    --color-success: #28a745;
-    --color-success-bg: rgba(40, 167, 69, 0.1);
-
-    /* Borde más sutil para placeholders */
     --color-border-placeholder: #ddd; 
-
-    /* Header/Footer (Generalmente oscuros) */
     --color-header-bg: #222;
     --color-header-text: #fff;
     --color-footer-text: #888;
-
-    /* Texto Muted (para hints, etc) */
     --color-text-muted: #999;
-
-    /* Sombras */
     --color-shadow-primary: rgba(0, 123, 255, 0.4);
     --color-shadow-disabled: rgba(150, 150, 150, 0.2);
     --color-shadow-modal: rgba(0, 0, 0, 0.5);
-
-    /* Toast */
     --color-toast-bg: #222;
     --color-toast-text: #fff;
-
-    /* VARIABLES DE LAYOUT */
     --header-height: 9vh;
     --footer-height: 6vh;
     --card-gap: 3vh; 
@@ -48,33 +27,20 @@
 
 @media (prefers-color-scheme: dark) {
     :root {   
-        /* Fondos */
         --color-bg: #111;
         --color-card-bg: rgba(255, 255, 255, 0.02);
         --color-mask-gradient: rgba(17, 17, 17, 0.4);
-        
-        /* Texto y Bordes */
         --color-text: #eee;
         --color-card-border: #aaa; 
         --color-card-border-disabled: #666; 
-
-        /* Borde más sutil (oscuro) */
         --color-border-placeholder: #555; 
-
-        /* Header/Footer (Sin cambios, ya son oscuros) */
         --color-header-bg: #222;
         --color-header-text: #fff;
         --color-footer-text: #888;
-        
-        /* Texto Muted (Más claro que el fondo, más oscuro que el texto) */
         --color-text-muted: #666;
-
-        /* Sombras */
         --color-shadow-primary: rgba(0, 123, 255, 0.4); 
         --color-shadow-disabled: rgba(170, 170, 170, 0.8);
         --color-shadow-modal: rgba(0, 0, 0, 0.7); 
-
-        /* Toast (Sin cambios, es un modal oscuro) */
         --color-toast-bg: #222;
         --color-toast-text: #fff;
     }
@@ -120,15 +86,12 @@ footer {
     flex-wrap: wrap; 
     height: var(--footer-height); 
 }
-
 header h1 {
     font-size: clamp(1.4rem, 2.8vw, 2.2rem); 
     margin: 0;
     padding: 0;
     line-height: 1.2;
 }
-
-/* Enlaces del footer */
 footer small {
     display: flex;
     align-items: center; 
@@ -152,7 +115,7 @@ footer a:focus {
     vertical-align: middle;
 }
 
-/* Estilo del icono de LinkedIn */
+/* Icono LinkedIn */
 .footer-social-link {
     font-size: 0; 
 }
@@ -176,82 +139,40 @@ footer a:focus {
 
 /* ⭐️ CONTENEDOR PRINCIPAL: GRID 1-3-1 (Desktop Default) ⭐️ */
 #app-container {
-    height: calc(100vh - var(--header-height) - var(--footer-height)); 
-    width: 100%;
-    max-width: 1600px; 
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 3fr 1fr; 
-    gap: 20px; 
-    padding: 20px;
-    box-sizing: border-box;
-    align-items: start;
-    background: var(--color-bg);
-}
-
-/* ⭐️ MODIFICADO: Columna 2 - Wrapper ⭐️ */
-#columna-central-wrapper {
-    grid-column: 2 / 3;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-width: 0; /* Para que el flex-item no se desborde */
-}
-
-/* ⭐️ NUEVO: Header de Navegación (Breadcrumb + Botón Volver Móvil) ⭐️ */
-#header-navegacion {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    margin-bottom: 15px; /* Espacio entre header-nav y vista-central */
-    flex-shrink: 0;
-}
-
-/* ⭐️ MODIFICADO: Breadcrumb ahora en el flujo principal ⭐️ */
-#card-nivel-actual {
-    flex-grow: 1; /* Ocupa el espacio sobrante */
-    border: 2px dashed var(--color-border-placeholder);
-    background: var(--color-card-bg);
-    padding: 0.75rem 1.5rem; /* Menos padding vertical */
-    border-radius: 12px;
-    box-sizing: border-box;
-    overflow: hidden;
-    min-width: 0; /* Previene desbordamiento de flex */
-    height: auto;
-    min-height: 0; 
-}
-#card-nivel-actual h3 {
-    margin: 0;
-    font-size: 1.1rem; /* Texto más pequeño */
-    color: var(--color-text);
-    opacity: 0.9;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.4; /* Para 1-2 líneas */
+  height: calc(100vh - var(--header-height) - var(--footer-height)); 
+  width: 100%;
+  max-width: 1600px; 
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr; 
+  gap: 20px; 
+  padding: 20px;
+  box-sizing: border-box;
+  align-items: start;
+  background: var(--color-bg);
 }
 
 /* VISTA CENTRAL (Columna 2) */
 #vista-central {
-    width: 100%;
-    flex-grow: 1; /* Ocupa todo el alto restante */
-    position: relative; 
-    overflow: hidden; 
-    display: flex; 
+  grid-column: 2 / 3;
+  width: 100%;
+  height: 100%; 
+  position: relative; 
+  overflow: hidden; 
+  display: flex; 
 }
 .vista {
-    position: absolute; 
-    width: 100%; 
-    height: 100%;
-    top: 0;
-    left: 0;
-    display: flex; 
-    flex-direction: column;
-    justify-content: start; 
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    visibility: hidden;
+  position: absolute; 
+  width: 100%; 
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex; 
+  flex-direction: column;
+  justify-content: start; 
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  visibility: hidden;
 }
 .vista.active { 
     opacity: 1; visibility: visible; 
@@ -262,58 +183,53 @@ footer a:focus {
 
 /* --- 3. Estilos Base de las Tarjetas (<article class="card">) --- */
 .card {
-    border: 2px solid var(--color-card-border);
-    background: var(--color-card-bg);
-    padding: 1.5rem;
-    border-radius: 12px;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    box-sizing: border-box;
-    height: auto; 
-    min-height: 150px; 
+  border: 2px solid var(--color-card-border);
+  background: var(--color-card-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  height: auto; 
+  min-height: 150px; 
 }
-
 .card h3 {
-    margin: 0;
-    font-size: 1.5rem;
+  margin: 0;
+  font-size: 1.5rem;
 }
-
-/* Borde/Sombra para Hover Y Foco (Activas) */
 .card.focus-visible:not(.disabled):not([data-tipo="relleno"]),
 .card:not(.disabled):not([data-tipo="relleno"]):hover,
 .card:not(.disabled):not([data-tipo="relleno"]):focus-visible {
-    outline: none;
-    border-color: var(--color-primary);
-    background: var(--color-card-bg); 
-    transform: scale(1.03);
-    box-shadow: 0 0 25px var(--color-shadow-primary); 
+  outline: none;
+  border-color: var(--color-primary);
+  background: var(--color-card-bg); 
+  transform: scale(1.03);
+  box-shadow: 0 0 25px var(--color-shadow-primary); 
 }
-/* Color de texto SOLO en foco (Activas) */
 .card.focus-visible:not(.disabled):not([data-tipo="relleno"]),
 .card:not(.disabled):not([data-tipo="relleno"]):focus-visible {
     color: var(--color-primary);
 }
 
-
 /* Tarjeta deshabilitada */
 .card.disabled {
-    border: 2px solid var(--color-card-border-disabled); 
-    background: var(--color-card-bg);
+  border: 2px solid var(--color-card-border-disabled); 
+  background: var(--color-card-bg);
 }
 .card.disabled span {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
 }
 .card.disabled:hover,
 .card.disabled:focus-visible {
-    outline: none;
-    border-color: var(--color-card-border); 
-    background: var(--color-card-bg);
-    transform: scale(1.03);
-    box-shadow: 0 0 15px var(--color-shadow-disabled); 
+  outline: none;
+  border-color: var(--color-card-border); 
+  background: var(--color-card-bg);
+  transform: scale(1.03);
+  box-shadow: 0 0 15px var(--color-shadow-disabled); 
 }
 
 /* Tarjetas de relleno */
@@ -374,13 +290,13 @@ footer a.footer-social-link:hover::before {
 }
 
 
-/* 🛑 INICIO: ESTILOS COLUMNA IZQUIERDA (SIMPLIFICADO) 🛑 */
+/* 🛑 INICIO: ESTILOS COLUMNA IZQUIERDA (CON CLASES DE VISIBILIDAD) 🛑 */
 
 #card-volver-fija {
     grid-column: 1 / 2;
     position: relative; 
     z-index: 50; 
-    display: none; /* JS controla el display */
+    display: none; /* Oculto por defecto, JS lo muestra */
     flex-direction: column;
     justify-content: flex-start; 
     height: 100%; 
@@ -392,17 +308,47 @@ footer a.footer-social-link:hover::before {
     box-shadow: none;
     box-sizing: border-box;
 }
-/* Clase para mostrar la columna izquierda */
 #card-volver-fija.visible {
     display: flex;
 }
 
-/* ⭐️ MODIFICADO: Elemento Interactivo "Volver" (Sin lógica de tabindex) ⭐️ */
+/* Breadcrumb (Columna Izquierda) */
+#card-nivel-actual {
+    flex: 0 0 auto; 
+    border: 2px dashed var(--color-border-placeholder);
+    background: transparent;
+    padding: 1.5rem;
+    border-radius: 12px;
+    display: none; /* Oculto por defecto, JS lo muestra */
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    overflow: hidden;
+    min-width: 0; 
+    
+    /* ⭐️ Altura responsive ⭐️ */
+    height: calc( (100% - (2 * var(--card-gap))) / 3 ); /* Default Desktop (3 filas) */
+    min-height: 0;
+}
+#card-nivel-actual.visible {
+    display: flex;
+}
+#card-nivel-actual h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--color-text);
+    opacity: 0.7;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Botón Volver (Columna Izquierda) */
 #card-volver-fija-elemento {
     flex: 0 0 auto;
     padding: 1.5rem;
     border-radius: 12px;
-    display: flex !important; 
+    display: none; /* Oculto por defecto, JS lo muestra */
     flex-direction: column;
     justify-content: center; 
     align-items: center; 
@@ -418,6 +364,9 @@ footer a.footer-social-link:hover::before {
     /* ⭐️ Altura responsive ⭐️ */
     height: calc( (100% - (2 * var(--card-gap))) / 3 ); /* Default Desktop (3 filas) */
     min-height: 0;
+}
+#card-volver-fija-elemento.visible {
+    display: flex !important;
 }
 #card-volver-fija-elemento h3 {
     margin: 0;
@@ -443,7 +392,6 @@ footer a.footer-social-link:hover::before {
     transform: scale(1.03);
     box-shadow: 0 0 25px var(--color-shadow-primary); 
 }
-/* Color de texto SOLO en foco (Volver) */
 #card-volver-fija-elemento.focus-visible,
 #card-volver-fija-elemento:focus-visible {
     color: var(--color-primary);
@@ -457,14 +405,13 @@ footer a.footer-social-link:hover::before {
     border-radius: 12px;
     border: 2px dashed var(--color-border-placeholder); 
     background: var(--color-card-bg);
-    display: none; /* JS controla el display */
+    display: none; /* Oculto por defecto, JS lo muestra */
     box-sizing: border-box;
     margin-left: 0; 
     padding: var(--nav-carousel-top-offset) 15px 15px 15px;
     height: 100%; 
     overflow-y: auto; 
 }
-/* Clase para mostrar la columna derecha */
 #info-adicional.visible {
     display: block !important; 
 }
@@ -573,12 +520,12 @@ footer a.footer-social-link:hover::before {
     flex-shrink: 0;
     background-color: var(--color-text); 
     transition: background-color 0.2s ease;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    -webkit-mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: center;
     mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
 }
 /* Color del icono en hover/foco */
 #info-adicional-lista-acerca a:hover::before,
@@ -600,38 +547,41 @@ footer a.footer-social-link:hover::before {
 
 /* ⭐️ ESTILOS PARA LA NOTIFICACIÓN TOAST (Modal) ⭐️ */
 .toast {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    
-    background-color: var(--color-toast-bg); 
-    color: var(--color-toast-text);
-    padding: 1rem 2rem;
-    border-radius: 12px;
-    border: 2px solid var(--color-card-border);
-    box-shadow: 0 5px 25px var(--color-shadow-modal);
-    
-    z-index: 9999;
-    text-align: center;
-    max-width: 80%;
-    
-    opacity: 0;
-    visibility: hidden;
-    
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  background-color: var(--color-toast-bg); 
+  color: var(--color-toast-text);
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  border: 2px solid var(--color-card-border);
+  box-shadow: 0 5px 25px var(--color-shadow-modal);
+  
+  z-index: 9999;
+  text-align: center;
+  max-width: 80%;
+  
+  opacity: 0;
+  visibility: hidden;
+  
+  transition: opacity 0.5s ease, visibility 0.5s ease;
 }
-
 .toast.active {
-    opacity: 1;
-    visibility: visible;
+  opacity: 1;
+  visibility: visible;
 }
 
 
-/* ⭐️ MODIFICADO: Botón Volver (Móvil) ⭐️ */
+/* ⭐️ Botón Volver (Móvil) ⭐️ */
 #btn-volver-navegacion { 
-    display: none; /* JS controla la visibilidad */
-    flex-shrink: 0; /* No encoger */
+    position: fixed; /* Lo fijamos para que sea accesible */
+    bottom: calc(var(--footer-height) + 15px); /* Encima del footer */
+    left: 15px;
+    z-index: 50;
+
+    display: none; /* Oculto por defecto, JS lo muestra */
     padding: 0.75rem 1rem;
     font-size: 1rem;
     font-weight: bold;
@@ -659,13 +609,15 @@ footer a.footer-social-link:hover::before {
 
 /* Lógica de Reducción de Movimiento */
 @media (prefers-reduced-motion: reduce) {
-    .mask-left, .mask-right { -webkit-backdrop-filter: none; backdrop-filter: none; }
-    .card, #card-volver-fija-elemento { transition: none !important; }
-    .card:hover, .card:focus-visible, #card-volver-fija-elemento:hover, #card-volver-fija-elemento:focus-visible {
-        transform: none; box-shadow: none;
-    }
-    
-    .toast {
-        transition: none;
-    }
+  .mask-left, .mask-right { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .card, #card-volver-fija-elemento, #btn-volver-navegacion { transition: none !important; }
+  .card:hover, .card:focus-visible, 
+  #card-volver-fija-elemento:hover, #card-volver-fija-elemento:focus-visible,
+  #btn-volver-navegacion:hover, #btn-volver-navegacion:focus-visible {
+    transform: none; box-shadow: none;
+  }
+  
+  .toast {
+    transition: none;
+  }
 }

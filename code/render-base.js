@@ -85,9 +85,18 @@
             this.renderNavegacion();
             return;
         }
+        
+        // ⭐️ MODIFICADO: Lógica de inyección de tarjetas para MÓVIL ⭐️
         if (isSubLevel && isMobile) {
+            // Inyecta "Volver"
             itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
         }
+        if (isMobile) {
+             // Inyecta "Breadcrumb"
+            const breadcrumbText = isSubLevel ? (nodoActual.nombre || 'Nivel') : App.getString('breadcrumbRoot');
+            itemsDelNivel = [{ id: 'breadcrumb-nav', tipoEspecial: 'breadcrumb-vertical', texto: breadcrumbText }].concat(itemsDelNivel);
+        }
+
 
         // ⭐️ 5. GESTIÓN DE VISTAS (FLUJO "ANTI-PARPADEO") ⭐️
 
@@ -106,7 +115,6 @@
         // ⭐️ LLAMADA A _updateNavViews (CON LÓGICA DE BREADCRUMB) ⭐️
         this._updateNavViews(isSubLevel, isMobile || isTablet, nodoActual); 
         
-        // ⭐️ Llamar a la nueva función ligera de "hover" para el render inicial
         if (typeof this._updateVisualFocus === 'function') {
              this._updateVisualFocus(this.STATE.currentFocusIndex);
         } else {
@@ -135,6 +143,19 @@
             return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1" aria-hidden="true"></article>`;
         }
 
+        // ⭐️ NUEVO: Tarjeta Breadcrumb para Móvil ⭐️
+        if (tipoEspecial === 'breadcrumb-vertical') {
+             return `
+                <${wrapperTag} class="card card-breadcrumb-vertical" 
+                    data-id="breadcrumb-nav" 
+                    data-tipo="relleno" 
+                    tabindex="-1"
+                    aria-hidden="true">
+                    <h3>${nodo.texto}</h3>
+                </${wrapperTag}>
+            `;
+        }
+
         if (tipoEspecial === 'volver-vertical') {
             return `
                 <${wrapperTag} class="card card-volver-vertical" 
@@ -157,7 +178,6 @@
         let hint = '';
         if (!estaActivo) hint = '<span>🚧</span>';
         
-        // ⭐️ Lógica de Iconos para Subsecciones ⭐️
         let displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
         if (tipo === 'categoria') {
             displayTitle = '📁 ' + displayTitle;
@@ -196,9 +216,9 @@
             card.tabIndex = -1;
             card.removeAttribute('aria-current'); 
         });
-        if (App.DOM.cardVolverFija) {
-            App.DOM.cardVolverFija.classList.remove('focus-visible');
-            App.DOM.cardVolverFija.removeAttribute('aria-current'); 
+        if (App.DOM.cardVolverFijaElemento) { // ⭐️ Corregido
+            App.DOM.cardVolverFijaElemento.classList.remove('focus-visible');
+            App.DOM.cardVolverFijaElemento.removeAttribute('aria-current'); 
         }
 
         // 2. Obtener la nueva tarjeta REAL
@@ -213,7 +233,6 @@
         const nextFocusedCard = allCards[normalizedIndex];
         this.STATE.currentFocusIndex = normalizedIndex;
 
-        // ⭐️ Sincronizar foco con la pila
         App.stackUpdateCurrentFocus(normalizedIndex);
 
         // 4. Aplicar nuevo foco y aria-current
@@ -255,41 +274,43 @@
     // ⭐️ 5. UTILIDADES DE VISTAS LATERALES Y DATOS (REESCRITO CON CLASES) ⭐️
     App._updateNavViews = function(isSubLevel, isMobileOrTablet, nodoActual) {
         
-        // --- 1. Breadcrumb (Siempre visible) ---
-        if (isSubLevel) {
-            const nombreNivel = nodoActual.nombre || nodoActual.titulo || 'Nivel';
-            this.DOM.cardNivelActual.innerHTML = `<h3>${nombreNivel}</h3>`;
-        } else {
-            this.DOM.cardNivelActual.innerHTML = `<h3>${App.getString('breadcrumbRoot')}</h3>`;
-        }
-
-        // --- 2. Visibilidad de Botones "Volver" y Sidebars ---
+        // --- 1. Visibilidad de Sidebars y Botón Móvil ---
         if (isMobileOrTablet) { 
             // --- Móvil O Tablet ---
             this.DOM.cardVolverFija.classList.remove('visible'); // Ocultar sidebar izq
             this.DOM.infoAdicional.classList.remove('visible'); // Ocultar sidebar der
             
-            if (isSubLevel) {
-                this.DOM.btnVolverNav.classList.add('visible'); 
-                this.DOM.btnVolverNav.tabIndex = 0;
-            } else {
-                this.DOM.btnVolverNav.classList.remove('visible');
-                this.DOM.btnVolverNav.tabIndex = -1;
-            }
+            // (El botón volver móvil es ahora una tarjeta inyectada en renderNavegacion)
+            // (El breadcrumb móvil es ahora una tarjeta inyectada en renderNavegacion)
+            this.DOM.btnVolverNav.classList.remove('visible');
+            this.DOM.btnVolverNav.tabIndex = -1;
+
         } else { 
             // --- Solo Desktop ---
             this.DOM.infoAdicional.classList.add('visible'); // Mostrar sidebar der
             this.DOM.btnVolverNav.classList.remove('visible'); // Ocultar botón móvil
             this.DOM.btnVolverNav.tabIndex = -1;
+            
+            this.DOM.cardVolverFija.classList.add('visible'); // Mostrar sidebar izq
 
+            // 2. Breadcrumb (Solo Desktop)
+            this.DOM.cardNivelActual.classList.add('visible'); // Siempre visible en nav
             if (isSubLevel) {
-                this.DOM.cardVolverFija.classList.add('visible'); // Mostrar sidebar izq
-                this.DOM.cardVolverFija.innerHTML = `<h3>↩</h3>`; // Re-añade el contenido
-                this.DOM.cardVolverFija.tabIndex = 0;
+                const nombreNivel = nodoActual.nombre || nodoActual.titulo || 'Nivel';
+                this.DOM.cardNivelActual.innerHTML = `<h3>${nombreNivel}</h3>`;
             } else {
-                this.DOM.cardVolverFija.classList.remove('visible'); // Ocultar sidebar izq
-                this.DOM.cardVolverFija.innerHTML = ''; // Vaciar por si acaso
-                this.DOM.cardVolverFija.tabIndex = -1;
+                this.DOM.cardNivelActual.innerHTML = `<h3>${App.getString('breadcrumbRoot')}</h3>`;
+            }
+
+            // 3. Botón Volver (Solo Desktop)
+            if (isSubLevel) {
+                this.DOM.cardVolverFijaElemento.classList.add('visible'); 
+                this.DOM.cardVolverFijaElemento.innerHTML = `<h3>↩</h3>`; 
+                this.DOM.cardVolverFijaElemento.tabIndex = 0;
+            } else {
+                this.DOM.cardVolverFijaElemento.classList.remove('visible'); 
+                this.DOM.cardVolverFijaElemento.innerHTML = ''; 
+                this.DOM.cardVolverFijaElemento.tabIndex = -1;
             }
         }
     };
@@ -315,20 +336,34 @@
                 
                 const isSubLevel = (App.stackGetCurrent() && App.stackGetCurrent().levelId);
                 
+                // ⭐️ MODIFICADO: Ajuste de foco al cambiar de modo
                 if (isSubLevel) {
-                    const lastWasCarousel = (_lastMode === 'tablet' || _lastMode === 'desktop');
+                    const lastWasMobile = (_lastMode === 'mobile');
                     const newIsMobile = (newMode === 'mobile');
                     
-                    if (lastWasCarousel && newIsMobile) {
-                        this.STATE.currentFocusIndex++;
-                        log('renderBase', DEBUG_LEVELS.BASIC, "Ajuste de foco: +1 (Volver añadido)");
-                    } else if (!lastWasCarousel && !newIsMobile) {
-                        this.STATE.currentFocusIndex = Math.max(0, this.STATE.currentFocusIndex - 1);
-                        log('renderBase', DEBUG_LEVELS.BASIC, "Ajuste de foco: -1 (Volver quitado)");
+                    if (lastWasMobile && !newIsMobile) {
+                        // De Móvil (con 2 tarjetas extra) a Desktop (sin tarjetas extra)
+                        this.STATE.currentFocusIndex = Math.max(0, this.STATE.currentFocusIndex - 2);
+                        log('renderBase', DEBUG_LEVELS.BASIC, "Ajuste de foco: -2 (Volver y Breadcrumb quitados)");
+                    } else if (!lastWasMobile && newIsMobile) {
+                         // De Desktop (sin extra) a Móvil (con 2 tarjetas extra)
+                        this.STATE.currentFocusIndex += 2;
+                        log('renderBase', DEBUG_LEVELS.BASIC, "Ajuste de foco: +2 (Volver y Breadcrumb añadidos)");
                     }
-                    App.stackUpdateCurrentFocus(this.STATE.currentFocusIndex);
+                } else if (!isSubLevel) {
+                     const lastWasMobile = (_lastMode === 'mobile');
+                    const newIsMobile = (newMode === 'mobile');
+                    // Nivel Raíz: solo se añade/quita el breadcrumb
+                    if (lastWasMobile && !newIsMobile) {
+                         this.STATE.currentFocusIndex = Math.max(0, this.STATE.currentFocusIndex - 1);
+                         log('renderBase', DEBUG_LEVELS.BASIC, "Ajuste de foco: -1 (Breadcrumb quitado)");
+                    } else if (!lastWasMobile && newIsMobile) {
+                        this.STATE.currentFocusIndex += 1;
+                        log('renderBase', DEBUG_LEVELS.BASIC, "Ajuste de foco: +1 (Breadcrumb añadido)");
+                    }
                 }
                 
+                App.stackUpdateCurrentFocus(this.STATE.currentFocusIndex);
                 _lastMode = newMode;
                 this.renderNavegacion(); 
             }
