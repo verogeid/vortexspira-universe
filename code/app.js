@@ -1,4 +1,4 @@
-// --- MODIFICADO: code/app.js ---
+// --- code/app.js ---
 
 (function() {
 
@@ -9,7 +9,10 @@
     DOM: {}, 
     STATE: {
       fullData: null,          
+      
+      // ⭐️ MODIFICADO: Usa la nueva pila de nav-stack.js
       historyStack: [],        
+      
       itemsPorColumna: 3,      
       carouselInstance: null,  
       resizeObserver: null,    
@@ -24,17 +27,21 @@
          log('app', DEBUG_LEVELS.BASIC, "App: Iniciando orquestación...");
       }
 
-      // --- Cachear el DOM ---
+      // --- ⭐️ CACHEAR EL DOM (Corregido) ⭐️ ---
       this.DOM.vistaDetalle = document.getElementById('vista-detalle');
       this.DOM.detalleContenido = document.getElementById('detalle-contenido');
       this.DOM.swiperContainerDesktop = document.getElementById('nav-swiper');
       this.DOM.swiperContainerTablet = document.getElementById('nav-swiper-tablet');
       this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); 
-      this.DOM.cardVolverFija = document.getElementById('card-volver-fija-elemento'); 
+      
+      // ⭐️ CORREGIDO: IDs de la columna izquierda
+      this.DOM.cardVolverFija = document.getElementById('card-volver-fija'); 
+      this.DOM.cardVolverFijaElemento = document.getElementById('card-volver-fija-elemento'); 
+      
       this.DOM.infoAdicional = document.getElementById('info-adicional'); 
       this.DOM.cardNivelActual = document.getElementById('card-nivel-actual');
       
-      // ⭐️ AÑADIDO: Cachear el Toast ⭐️
+      // ⭐️ AÑADIDO: Cachear el Toast
       this.DOM.toast = document.getElementById('toast-notification');
 
       // 2.1. Cargar los datos
@@ -50,7 +57,8 @@
         return;
       }
 
-      // 2.2. GESTIÓN "DEEP LINKING" E INICIO DE LA PILA
+      // ⭐️ 2.2. GESTIÓN "DEEP LINKING" E INICIO DE LA PILA ⭐️
+      // (Depende de _findNodoById, _mostrarDetalle, y nav-stack.js)
       try {
         const urlParams = new URLSearchParams(window.location.search);
         const targetId = urlParams.get('id');
@@ -61,8 +69,8 @@
             if (nodo && nodo.titulo) { // Es un CURSO
                 log('app', DEBUG_LEVELS.BASIC, `Deep link a CURSO: ${targetId}`);
                 this.stackBuildFromId(targetId, this.STATE.fullData); 
-                this.renderNavegacion(); 
-                this._mostrarDetalle(targetId); 
+                this.renderNavegacion(); // Renderiza la nav (oculta)
+                this._mostrarDetalle(targetId); // Muestra el detalle
             
             } else if (nodo && nodo.nombre) { // Es una CATEGORÍA
                 log('app', DEBUG_LEVELS.BASIC, `Deep link a CATEGORÍA: ${targetId}`);
@@ -74,7 +82,6 @@
                 this.stackInitialize(); 
                 this.renderNavegacion();
                 if (typeof this.showToast === 'function') {
-                    // ⭐️ MODIFICADO: Usa la clave de i18n ⭐️
                     this.showToast(App.getString('toastErrorId'));
                 }
             }
@@ -85,7 +92,7 @@
         }
       } catch (error) {
          logError('app', `ERROR: Fallo al inicializar. ${error.message}`);
-         this.stackInitialize(); 
+         this.stackInitialize(); // Fallback a la raíz
          this.renderNavegacion();
       }
 
