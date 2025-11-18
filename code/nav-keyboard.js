@@ -1,14 +1,12 @@
 // --- MODIFICADO: code/nav-keyboard.js ---
 (function() {
 
-    // ⭐️ 1. LISTENER CENTRAL DE TECLADO (Sin cambios) ⭐️
+    // ⭐️ 1. LISTENER CENTRAL DE TECLADO ⭐️
     document.addEventListener('keydown', (e) => {
-        if (!App || !App.DOM || !App.DOM.vistaNav) return; // App no está lista
+        if (!App || !App.DOM || !App.DOM.vistaNav) return; 
 
-        // 1. DEFINIR VISTAS ACTIVAS AL INICIO
         const isNavActive = App.DOM.vistaNav.classList.contains('active');
         const isDetailActive = App.DOM.vistaDetalle.classList.contains('active');
-
 
         // --- MANEJO DE TECLAS GLOBALES ---
 
@@ -21,7 +19,7 @@
             } else if (isDetailActive) {
                 App._handleFocusTrap(e, 'detail');
             }
-            return; // No hacer nada más
+            return; 
         }
         
         // 3. Escape siempre vuelve
@@ -31,20 +29,21 @@
             return;
         }
 
-        // --- MANEJO DE TECLAS CONTEXTUALES (FLECHAS, ENTER, ESPACIO) ---
+        // --- MANEJO DE TECLAS CONTEXTUALES ---
 
-        // 4. Comprobar si el foco está en el footer (SOLO FLECHAS)
+        // 4. Comprobar si el foco está en el footer
         const isFooterActive = document.activeElement.closest('footer');
         if (isFooterActive) {
             if (['ArrowLeft', 'ArrowRight'].includes(e.key)) {
                 e.preventDefault();
                 App._handleFooterNavigation(e.key);
             }
-            return; // Ignora Tab (ya manejado), Enter, Espacio
+            return; 
         }
 
         // 5. Comprobar si el foco está en la tarjeta "Volver" (Desktop)
-        if (document.activeElement === App.DOM.cardVolverFija) {
+        // ⭐️ CORRECCIÓN: Usar cardVolverFijaElemento (el botón), no el contenedor
+        if (document.activeElement === App.DOM.cardVolverFijaElemento) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 App._handleVolverClick();
@@ -52,7 +51,7 @@
             return; 
         }
 
-        // 6. Comprobar Vistas (para flechas/enter/espacio en el contenido principal)
+        // 6. Comprobar Vistas
         if (isNavActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault(); 
@@ -67,9 +66,8 @@
         }
     });
 
-    // ⭐️ 2. NAVEGACIÓN EN VISTA NAV (MODIFICADO PARA LLAMAR A HANDLE DIRECTO) ⭐️
+    // ⭐️ 2. NAVEGACIÓN EN VISTA NAV ⭐️
     App._handleKeyNavigation = function(key) {
-        
         const { itemsPorColumna } = App.STATE; 
         let currentIndex = App.STATE.currentFocusIndex;
         let newIndex = currentIndex;
@@ -98,9 +96,7 @@
             case 'Enter':
             case ' ':
                 if (allCards[currentIndex]) {
-                    // ⭐️ CORRECCIÓN: Llamada directa para evitar el retardo de 300ms del clic
                     const tarjeta = allCards[currentIndex];
-                    
                     if (tarjeta.dataset.tipo === 'volver-vertical') {
                         App._handleVolverClick();
                         return;
@@ -110,9 +106,6 @@
                     const id = tarjeta.dataset.id;
                     const tipo = tarjeta.dataset.tipo;
                     
-                    // Llamamos al handler modificado.
-                    // Pasamos 'undefined' para parentFocusIndex,
-                    // y la función usará el STATE.currentFocusIndex actual (que es correcto aquí)
                     App._handleCardClick(id, tipo); 
                 }
                 return; 
@@ -125,7 +118,7 @@
         }
     };
 
-    // ⭐️ 3. NAVEGACIÓN EN DETALLES (Sin cambios) ⭐️
+    // ⭐️ 3. NAVEGACIÓN EN DETALLES ⭐️
     App._handleDetailNavigation = function(key) {
         const activeElement = document.activeElement;
         const focusableDetailElements = App._getFocusableDetailElements();
@@ -155,7 +148,7 @@
         }
     };
 
-    // ⭐️ 4. MANEJO DE FOCO (TAB) (CORREGIDO: SIN BOTÓN FLOTANTE) ⭐️
+    // ⭐️ 4. MANEJO DE FOCO (TAB) ⭐️
     App._handleFocusTrap = function(e, viewType) {
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
@@ -170,40 +163,40 @@
             const activeCard = allCards[App.STATE.currentFocusIndex] || null;
 
             if (isMobile || isTablet) {
-                // ⭐️ CORRECCIÓN: Botón Volver flotante eliminado
                 groups = [
-                    [activeCard].filter(Boolean), // Grupo 1: Tarjeta activa
-                    footerLinks                   // Grupo 2: Footer
+                    [activeCard].filter(Boolean), 
+                    footerLinks                   
                 ];
             } else { 
-                const cardVolver = App.DOM.cardVolverFija.tabIndex === 0 ? App.DOM.cardVolverFija : null;
+                // ⭐️ CORRECCIÓN CRÍTICA: Usar cardVolverFijaElemento
+                const cardVolver = App.DOM.cardVolverFijaElemento.tabIndex === 0 ? App.DOM.cardVolverFijaElemento : null;
+                
                 groups = [
-                    [cardVolver].filter(Boolean), // Grupo 1: Tarjeta Volver (si existe)
+                    [cardVolver].filter(Boolean), // Grupo 1: Botón Volver (si está visible/activo)
                     [activeCard].filter(Boolean), // Grupo 2: Tarjeta activa
                     footerLinks                   // Grupo 3: Footer
                 ];
             }
         } 
         else if (viewType === 'detail') {
-            // ⭐️⭐️⭐️ CORRECCIÓN BUG 2: Separar los grupos ⭐️⭐️⭐️
             const detailLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('a.enlace-curso[tabindex="0"]'));
             let volverElement = null;
 
             if ((isMobile || isTablet)) {
-                // ⭐️ CORRECCIÓN: El botón flotante no existe.
                 volverElement = null; 
-            } else if (!isMobile && !isTablet && App.DOM.cardVolverFija.tabIndex === 0) {
-                volverElement = App.DOM.cardVolverFija;
+            } 
+            // ⭐️ CORRECCIÓN CRÍTICA: Usar cardVolverFijaElemento
+            else if (!isMobile && !isTablet && App.DOM.cardVolverFijaElemento.tabIndex === 0) {
+                volverElement = App.DOM.cardVolverFijaElemento;
             }
 
             groups = [
-                [volverElement].filter(Boolean), // Grupo 1: Botón/Tarjeta Volver
-                detailLinks,                     // Grupo 2: Enlaces del curso
-                footerLinks                      // Grupo 3: Footer
+                [volverElement].filter(Boolean), 
+                detailLinks,                     
+                footerLinks                      
             ];
         }
 
-        // Filtrar grupos vacíos
         groups = groups.filter(g => g.length > 0);
         if (groups.length === 0) return;
 
@@ -215,48 +208,41 @@
                 break;
             }
         }
-        // Si no estamos en ningún grupo (p.ej. click en el body), empezamos por el primero
         if (currentGroupIndex === -1) currentGroupIndex = 0; 
 
         // --- 3. Calcular el siguiente grupo ---
         let nextGroupIndex;
-        if (e.shiftKey) { // Moviéndose hacia atrás
+        if (e.shiftKey) { 
             nextGroupIndex = (currentGroupIndex <= 0) ? groups.length - 1 : currentGroupIndex - 1;
-        } else { // Moviéndose hacia adelante
+        } else { 
             nextGroupIndex = (currentGroupIndex >= groups.length - 1) ? 0 : currentGroupIndex + 1;
         }
 
-        // --- 4. Enfocar el elemento correcto en el siguiente grupo ---
+        // --- 4. Enfocar ---
         const nextGroup = groups[nextGroupIndex];
         let elementToFocus;
 
         if (e.shiftKey) {
-            // Ir al ÚLTIMO elemento del grupo anterior
             elementToFocus = nextGroup[nextGroup.length - 1];
         } else {
-            // Ir al PRIMER elemento del grupo siguiente
             elementToFocus = nextGroup[0];
         }
 
         // --- 5. Limpiar/Añadir clases de foco ---
-
-        // Limpiar foco de tarjeta de swipe si salimos
         const activeCard = App.DOM.track ? App.DOM.track.querySelector('[data-id].focus-visible') : null;
         if (activeCard && activeCard !== elementToFocus) {
             activeCard.classList.remove('focus-visible');
         }
 
-        // ⭐️⭐️⭐️ CORRECCIÓN BUG 1: Limpiar 'Volver' si salimos de él ⭐️⭐️⭐️
-        if (document.activeElement === App.DOM.cardVolverFija && elementToFocus !== App.DOM.cardVolverFija) {
-            App.DOM.cardVolverFija.classList.remove('focus-visible');
+        // ⭐️ CORRECCIÓN: Usar cardVolverFijaElemento
+        if (document.activeElement === App.DOM.cardVolverFijaElemento && elementToFocus !== App.DOM.cardVolverFijaElemento) {
+            App.DOM.cardVolverFijaElemento.classList.remove('focus-visible');
         }
 
-        // Añadir foco a 'Volver' si entramos
-        if (elementToFocus === App.DOM.cardVolverFija) {
+        if (elementToFocus === App.DOM.cardVolverFijaElemento) {
              elementToFocus.classList.add('focus-visible');
         }
         
-        // Añadir foco a tarjeta de swipe si entramos (el caso de Tab)
         const allCards = App.DOM.track ? Array.from(App.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])')) : [];
         if (allCards.length > 0 && allCards.includes(elementToFocus)) {
             elementToFocus.classList.add('focus-visible');
@@ -267,8 +253,7 @@
         }
     };
 
-
-    // ⭐️ 5. NAVEGACIÓN EN FOOTER (Sin cambios) ⭐️
+    // ⭐️ 5. NAVEGACIÓN EN FOOTER ⭐️
     App._handleFooterNavigation = function(key) {
         const focusableElements = Array.from(document.querySelectorAll('footer a'));
         if (focusableElements.length === 0) return;
@@ -280,7 +265,6 @@
         }
 
         let newIndex = currentIndex;
-        
         switch (key) {
             case 'ArrowLeft':
             case 'ArrowUp':
