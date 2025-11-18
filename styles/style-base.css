@@ -231,7 +231,13 @@ footer a:focus {
   min-height: 150px; 
 }
 
-/* Tarjetas especiales de UI Móvil */
+.card h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  transition: color 0.2s ease; /* Suavizar cambio de color de texto */
+}
+
+/* Tarjetas especiales */
 .card.card-breadcrumb-vertical {
     border-style: dashed;
     border-color: var(--color-border-placeholder);
@@ -247,13 +253,14 @@ footer a:focus {
     text-align: center;
 }
 
-.card h3 {
-  margin: 0;
-  font-size: 1.5rem;
-}
+/* ============================================================
+   ⭐️ LÓGICA DE ESTADOS (ENABLED vs DISABLED vs RELLENO) ⭐️
+   ============================================================ */
 
-/* Borde/Sombra para Hover Y Foco (Activas) */
-.card.focus-visible:not(.disabled):not([data-tipo="relleno"]),
+/* --- A. TARJETAS HABILITADAS (Enabled) --- */
+/* Se iluminan en AZUL (Primary) */
+
+.card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]):hover,
 .card:not(.disabled):not([data-tipo="relleno"]):focus-visible {
   outline: none;
@@ -261,33 +268,53 @@ footer a:focus {
   background: var(--color-card-bg); 
   transform: scale(1.03);
   box-shadow: 0 0 25px var(--color-shadow-primary); 
-}
-/* Color de texto SOLO en foco (Activas) */
-.card.focus-visible:not(.disabled):not([data-tipo="relleno"]),
-.card:not(.disabled):not([data-tipo="relleno"]):focus-visible {
-    color: var(--color-primary);
+  
+  /* ⭐️ Texto Azul (solo para habilitadas) */
+  color: var(--color-primary); 
 }
 
 
-/* Tarjeta deshabilitada */
+/* --- B. TARJETAS DESHABILITADAS (Disabled) --- */
+/* Se iluminan en GRIS (Borde estándar) */
+
+/* Estado base (sin foco/hover) */
 .card.disabled {
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);
+  color: var(--color-text-muted); /* Texto apagado por defecto */
 }
+
 .card.disabled span {
   font-size: 0.9rem;
   color: var(--color-text-muted);
 }
+
+/* Estado activo (Foco/Hover) para Disabled */
+.card.disabled.focus-visible,
 .card.disabled:hover,
 .card.disabled:focus-visible {
   outline: none;
+  /* Vuelve al color de borde "normal" (más vivo que el disabled) */
   border-color: var(--color-card-border); 
   background: var(--color-card-bg);
   transform: scale(1.03);
   box-shadow: 0 0 15px var(--color-shadow-disabled); 
+
+  /* ⭐️ LO QUE FALTABA: El texto se ilumina (quita el muted) */
+  /* Usamos el color de texto normal para indicar foco, pero no navegación */
+  color: var(--color-text); 
+}
+/* Aseguramos que el span interno también se ilumine */
+.card.disabled.focus-visible span,
+.card.disabled:hover span,
+.card.disabled:focus-visible span {
+    color: var(--color-text);
 }
 
-/* Tarjetas de relleno */
+
+/* --- C. TARJETAS DE RELLENO (Relleno) --- */
+/* No interactuan */
+
 .card[data-tipo="relleno"] {
     border: 2px dashed var(--color-border-placeholder); 
     background: transparent;
@@ -303,6 +330,7 @@ footer a:focus {
     transform: none;
     box-shadow: none;
 }
+
 
 /* --- 4. Elementos de la Vista Detalle y Adicional --- */
 .enlace-curso {
@@ -395,14 +423,6 @@ footer a.footer-social-link:hover::before {
     opacity: 0.7;
 
     /* ⭐️⭐️⭐️ CORRECCIÓN 1 (Problema Desktop) ⭐️⭐️⭐️ */
-    
-    /* (Viejo)
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    */
-
-    /* (Nuevo) Muestra hasta 2 líneas */
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -411,9 +431,9 @@ footer a.footer-social-link:hover::before {
     
     /* Valores aproximados para asegurar la altura */
     line-height: 1.3; 
-    max-height: calc(1.5rem * 1.3 * 2); /* font-size * line-height * 2 */
+    max-height: calc(1.5rem * 1.3 * 2); 
 
-    /* Fallback (aunque -webkit- es muy soportado) */
+    /* Fallback */
     white-space: normal; 
     text-overflow: ellipsis; 
 }
@@ -612,12 +632,6 @@ footer a.footer-social-link:hover::before {
 #info-adicional-link-diary::before {
     -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>');
     mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.67.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>');
-}
-
-/* Icono de Landing Page (Enlace Externo) */
-#info-adicional-link-landing::before {
-    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6v2H5v11h11v-6h2z"/><path fill-rule="evenodd" d="M15 3h6v6l-2-2-4 4-2-2 4-4-2-2z"/></svg>');
-    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6v2H5v11h11v-6h2z"/><path fill-rule="evenodd" d="M15 3h6v6l-2-2-4 4-2-2 4-4-2-2z"/></svg>');
 }
 
 /* ⭐️ ESTILOS PARA LA NOTIFICACIÓN TOAST (Modal) ⭐️ */
