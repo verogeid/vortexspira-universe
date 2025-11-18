@@ -9,11 +9,8 @@
         const isDetailActive = App.DOM.vistaDetalle.classList.contains('active');
 
         // --- MANEJO DE TECLAS GLOBALES ---
-
-        // 2. Tab (Focus Trap) siempre se maneja PRIMERO
         if (e.key === 'Tab') {
             e.preventDefault();
-            
             if (isNavActive) {
                 App._handleFocusTrap(e, 'nav');
             } else if (isDetailActive) {
@@ -22,7 +19,6 @@
             return; 
         }
         
-        // 3. Escape siempre vuelve
         if (e.key === 'Escape') {
             e.preventDefault();
             App._handleVolverClick(); 
@@ -30,8 +26,6 @@
         }
 
         // --- MANEJO DE TECLAS CONTEXTUALES ---
-
-        // 4. Comprobar si el foco está en el footer
         const isFooterActive = document.activeElement.closest('footer');
         if (isFooterActive) {
             if (['ArrowLeft', 'ArrowRight'].includes(e.key)) {
@@ -41,8 +35,7 @@
             return; 
         }
 
-        // 5. Comprobar si el foco está en la tarjeta "Volver" (Desktop)
-        // ⭐️ CORRECCIÓN: Usar cardVolverFijaElemento (el botón), no el contenedor
+        // ⭐️ CORRECCIÓN: Usar cardVolverFijaElemento
         if (document.activeElement === App.DOM.cardVolverFijaElemento) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -51,7 +44,6 @@
             return; 
         }
 
-        // 6. Comprobar Vistas
         if (isNavActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault(); 
@@ -106,6 +98,7 @@
                     const id = tarjeta.dataset.id;
                     const tipo = tarjeta.dataset.tipo;
                     
+                    // Llamada directa para evitar retardo
                     App._handleCardClick(id, tipo); 
                 }
                 return; 
@@ -168,24 +161,24 @@
                     footerLinks                   
                 ];
             } else { 
-                // ⭐️ CORRECCIÓN CRÍTICA: Usar cardVolverFijaElemento
+                // ⭐️ CORRECCIÓN: Usar cardVolverFijaElemento
                 const cardVolver = App.DOM.cardVolverFijaElemento.tabIndex === 0 ? App.DOM.cardVolverFijaElemento : null;
-                
                 groups = [
-                    [cardVolver].filter(Boolean), // Grupo 1: Botón Volver (si está visible/activo)
-                    [activeCard].filter(Boolean), // Grupo 2: Tarjeta activa
-                    footerLinks                   // Grupo 3: Footer
+                    [cardVolver].filter(Boolean), 
+                    [activeCard].filter(Boolean), 
+                    footerLinks                   
                 ];
             }
         } 
         else if (viewType === 'detail') {
-            const detailLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('a.enlace-curso[tabindex="0"]'));
+            // ⭐️ CORRECCIÓN: Selector actualizado a .detail-action-btn
+            const detailLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('.detail-action-btn'));
+            
             let volverElement = null;
 
             if ((isMobile || isTablet)) {
                 volverElement = null; 
             } 
-            // ⭐️ CORRECCIÓN CRÍTICA: Usar cardVolverFijaElemento
             else if (!isMobile && !isTablet && App.DOM.cardVolverFijaElemento.tabIndex === 0) {
                 volverElement = App.DOM.cardVolverFijaElemento;
             }
@@ -234,7 +227,6 @@
             activeCard.classList.remove('focus-visible');
         }
 
-        // ⭐️ CORRECCIÓN: Usar cardVolverFijaElemento
         if (document.activeElement === App.DOM.cardVolverFijaElemento && elementToFocus !== App.DOM.cardVolverFijaElemento) {
             App.DOM.cardVolverFijaElemento.classList.remove('focus-visible');
         }

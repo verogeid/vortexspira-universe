@@ -282,14 +282,14 @@ footer a:focus {
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);
   
-  /* ⭐️ CORRECCIÓN: Texto blanco con opacidad para diferenciar del vecino activo */
+  /* Texto blanco con opacidad para diferenciar del vecino activo */
   color: var(--color-text); 
   opacity: 0.6; 
 }
 
 .card.disabled span {
   font-size: 0.9rem;
-  color: inherit; /* Hereda el blanco con opacidad */
+  color: inherit; 
 }
 
 /* Estado activo (Foco/Hover) para Disabled */
@@ -304,7 +304,7 @@ footer a:focus {
   transform: scale(1.03);
   box-shadow: 0 0 15px var(--color-shadow-disabled); 
 
-  /* ⭐️ CORRECCIÓN: Recupera opacidad total y color del borde iluminado */
+  /* Recupera opacidad total y color del borde iluminado */
   opacity: 1;
   color: var(--color-card-border); 
 }
@@ -331,41 +331,74 @@ footer a:focus {
 
 
 /* --- 4. Elementos de la Vista Detalle y Adicional --- */
-.enlace-curso {
-    display: inline-block;
-    padding: 1rem; 
-    margin: 10px 10px 0 0;
-    border-radius: 12px; 
-    background: var(--color-card-bg); 
-    color: var(--color-text);
-    border: 2px solid var(--color-card-border);
-    text-decoration: none;
-    transition: all 0.2s ease;
-    cursor: pointer;
-}
-.enlace-curso:focus {
-    outline: none;
+
+/* ⭐️ NUEVA ESTRUCTURA: LISTA DE ACCIONES (Texto Izq - Botón Der) ⭐️ */
+
+.detail-actions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Separación entre filas */
+    margin-top: 20px;
+    width: 100%;
+    max-width: 600px; 
 }
 
-/* Borde/Sombra para Hover Y Foco (Enlaces) */
-.enlace-curso:hover, .enlace-curso:focus-visible,
-footer a:hover, footer a:focus-visible {
-    border-color: var(--color-primary);
+.detail-action-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
     background: var(--color-card-bg);
-    transform: scale(1.03);
-    box-shadow: 0 0 25px var(--color-shadow-primary);
+    border: 1px solid var(--color-card-border);
+    border-radius: 12px; /* Borde redondeado suave */
+    transition: all 0.2s ease;
+}
+
+/* Efecto Hover en la fila completa */
+.detail-action-item:hover {
+    border-color: var(--color-primary);
+    transform: translateX(5px); /* Pequeño desplazamiento a la derecha */
+    box-shadow: 0 2px 10px var(--color-shadow-disabled);
+}
+
+.detail-action-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--color-text);
+    text-align: left;
+    margin-right: 15px; 
+    flex-grow: 1;
+}
+
+.detail-action-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45px;
+    height: 45px;
+    background: var(--color-bg); /* Fondo contraste */
+    border: 2px solid var(--color-primary);
+    border-radius: 50%; /* Botón redondo */
+    font-size: 1.2rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0; 
+}
+
+.detail-action-btn:hover,
+.detail-action-btn:focus-visible {
+    background: var(--color-primary);
+    color: #fff; 
+    box-shadow: 0 0 15px var(--color-shadow-primary);
     outline: none;
+    transform: scale(1.1);
 }
-/* Color de texto SOLO en foco (Enlaces) */
-.enlace-curso:focus-visible,
-footer a:focus-visible {
-    color: var(--color-primary); 
-}
-/* Color de icono en foco (para LinkedIn) */
+
+/* Icono de LinkedIn (Footer) */
 footer a.footer-social-link:focus-visible::before {
     background-color: var(--color-primary);
 }
-/* Color de icono en hover (para LinkedIn) */
 footer a.footer-social-link:hover::before {
     background-color: var(--color-primary);
 }
@@ -420,18 +453,16 @@ footer a.footer-social-link:hover::before {
     color: var(--color-text);
     opacity: 0.7;
 
-    /* ⭐️⭐️⭐️ CORRECCIÓN 1 (Problema Desktop) ⭐️⭐️⭐️ */
+    /* ⭐️ CORRECCIÓN: Muestra hasta 2 líneas */
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2; /* Límite de 2 líneas */
+    -webkit-line-clamp: 2; 
     line-clamp: 2;
     
-    /* Valores aproximados para asegurar la altura */
     line-height: 1.3; 
     max-height: calc(1.5rem * 1.3 * 2); 
 
-    /* Fallback */
     white-space: normal; 
     text-overflow: ellipsis; 
 }

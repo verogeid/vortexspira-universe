@@ -4,7 +4,6 @@
     // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS (Estáticos) ⭐️
     App.setupListeners = function() {
       // 1. Listener para "Volver" (MÓVIL / TABLET - BOTÓN GLOBAL)
-      // Aunque lo ocultamos por CSS, mantenemos el listener por si acaso se reactiva
       if (this.DOM.btnVolverNav) {
           this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
           this.DOM.btnVolverNav.addEventListener('keydown', (e) => {
@@ -41,7 +40,7 @@
     };
 
 
-    // ⭐️ 3. MANEJADORES DE EVENTOS (CORREGIDO CON NAV-STACK Y RACE CONDITION FIX) ⭐️
+    // ⭐️ 3. MANEJADORES DE EVENTOS ⭐️
     
     /**
      * Al hacer CLIC: Mueve el foco real y desliza el carrusel.
@@ -55,7 +54,7 @@
       
       if (newIndex === -1) return;
 
-      // ⭐️ CORRECCIÓN: Capturar el índice ANTES de actualizar, para saber desde dónde venimos
+      // ⭐️ CORRECCIÓN: Capturar el índice ANTES de actualizar
       const parentFocusIndex = this.STATE.currentFocusIndex;
       const indexChanged = newIndex !== parentFocusIndex;
 
@@ -63,10 +62,10 @@
       this.STATE.currentFocusIndex = newIndex;
       App.stackUpdateCurrentFocus(newIndex); 
       
-      // Centrar la tarjeta clicada (esto inicia la animación de 400ms)
+      // Centrar la tarjeta clicada
       this._updateFocus(true); 
 
-      // --- Manejar casos que NO navegan o tienen acción especial ---
+      // --- Manejar casos que NO navegan ---
       if (tarjeta.classList.contains('disabled')) return;
       if (tarjeta.dataset.tipo === 'volver-vertical') {
           this._handleVolverClick();
@@ -76,12 +75,8 @@
       const id = tarjeta.dataset.id;
       const tipo = tarjeta.dataset.tipo;
 
-      // ⭐️ CORRECCIÓN (RACE CONDITION FIX) ⭐️
-      // Esperar a que la animación de centrado (300-400ms) termine 
-      // ANTES de navegar. Si navegamos inmediatamente, el nuevo carrusel
-      // se inicializa con el offset de la animación antigua.
-      
-      const delay = indexChanged ? 300 : 0; // Solo esperar si hubo movimiento
+      // ⭐️ CORRECCIÓN (RACE CONDITION): Esperar a que la animación termine
+      const delay = indexChanged ? 300 : 0; 
 
       setTimeout(() => {
           this._handleCardClick(id, tipo, parentFocusIndex);
@@ -89,7 +84,7 @@
     };
 
     /**
-     * Al hacer HOVER: Mueve el foco VISUAL, pero NO el foco del navegador.
+     * Al hacer HOVER: Mueve el foco VISUAL.
      */
     App._handleTrackMouseOver = function(e) {
         const tarjeta = e.target.closest('[data-id]');
@@ -104,10 +99,9 @@
     };
 
     /**
-     * ⭐️ NUEVA FUNCIÓN LIGERA (Solo para Hover) (CORREGIDA CON NAV-STACK) ⭐️
+     * ⭐️ NUEVA FUNCIÓN LIGERA (Solo para Hover) ⭐️
      */
     App._updateVisualFocus = function(newIndex) {
-        // 1. Limpiar focos visuales anteriores
         const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
         allCardsInTrack.forEach(card => {
             card.classList.remove('focus-visible');
@@ -118,11 +112,9 @@
             App.DOM.cardVolverFijaElemento.removeAttribute('aria-current');
         }
 
-        // 2. Obtener la nueva tarjeta REAL
         const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
         if (allCards.length === 0) return;
 
-        // 3. Normalizar y establecer estado
         let normalizedIndex = newIndex;
         if (normalizedIndex < 0) normalizedIndex = 0;
         if (normalizedIndex >= allCards.length) normalizedIndex = allCards.length - 1;
@@ -132,7 +124,6 @@
 
         App.stackUpdateCurrentFocus(normalizedIndex);
 
-        // 4. Aplicar nuevo foco VISUAL (sin .focus())
         if (nextFocusedCard) {
             nextFocusedCard.classList.add('focus-visible');
             nextFocusedCard.setAttribute('aria-current', 'true');
@@ -141,16 +132,13 @@
 
 
     /**
-     * Manejador centralizado para la activación de tarjetas (clic, Enter, Espacio)
-     * ⭐️ MODIFICADO: Acepta parentFocusIndex para guardar el estado correcto
+     * Manejador centralizado para la activación de tarjetas.
      */
     App._handleCardClick = function(id, tipo, parentFocusIndex) {
-        
-        // ⭐️ CORRECCIÓN: Usar el índice pasado explícitamente o el actual por defecto
+        // ⭐️ CORRECCIÓN: Usar el índice pasado o el actual
         const focusParaGuardar = (parentFocusIndex !== undefined) ? parentFocusIndex : this.STATE.currentFocusIndex;
 
         if (tipo === 'categoria') {
-            // Guardamos en la pila el índice de la tarjeta que acabamos de dejar
             App.stackPush(id, focusParaGuardar);
             this.renderNavegacion();
         } else if (tipo === 'curso') {
@@ -158,36 +146,25 @@
         }
     };
 
-    // ⭐️ 4. LÓGICA DE NAVEGACIÓN Y VISTAS (CORREGIDA CON NAV-STACK) ⭐️
+    // ⭐️ 4. LÓGICA DE NAVEGACIÓN Y VISTAS ⭐️
 
-    /**
-     * Handler unificado para CUALQUIER acción de "Volver" (Escape, Botón, Tarjeta)
-     */
     App._handleVolverClick = function() {
-        // 1. Caso Detalle -> Navegación
         if (this.DOM.vistaDetalle.classList.contains('active')) {
             this.DOM.vistaDetalle.classList.remove('active');
-            
-            // ⭐️ Ocultar el botón global móvil al salir de detalle ⭐️
             this.DOM.btnVolverNav.classList.remove('visible');
             this.DOM.btnVolverNav.tabIndex = -1;
-            
             this.renderNavegacion(); 
         } 
-        // 2. Caso Sub-sección -> Nivel anterior
         else if (App.STATE.historyStack.length > 1) { 
-            
             App.stackPop(); 
             this.renderNavegacion();
 
-            // Forzar el foco de vuelta al slider o tarjeta "Volver"
              const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
              const isTablet = window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth <= TABLET_MAX_WIDTH;
              
              if (!isMobile && !isTablet && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
                  this.DOM.cardVolverFijaElemento.focus();
              } else if (isMobile || isTablet) {
-                 // En móvil, el foco va a la tarjeta "Volver" (si existe) o "Breadcrumb"
                  const firstCard = this.DOM.track.querySelector('[data-id]:not([data-tipo="relleno"])');
                  if (firstCard) firstCard.focus();
              }
@@ -196,22 +173,45 @@
 
     /**
      * Muestra la vista de detalle del curso.
-     * ⭐️ MODIFICADO: Lógica de visibilidad según las nuevas reglas ⭐️
+     * ⭐️ MODIFICADO: Renderizado de enlaces en formato Lista/Tabla con iconos ⭐️
      */
     App._mostrarDetalle = function(cursoId) {
       const curso = App._findNodoById(cursoId, App.STATE.fullData.navegacion);
       if (!curso) return;
 
-      let enlacesHtml = (curso.enlaces || []).map(enlace => 
-        `<a href="${enlace.url || '#'}" class="enlace-curso" target="_blank" tabindex="0">${enlace.texto}</a>`
-      ).join('');
+      // Helper para elegir el icono
+      const getIconForAction = (text) => {
+          const lower = text.toLowerCase();
+          if (lower.includes('instalar') || lower.includes('descargar')) return '⬇️';
+          if (lower.includes('adquirir') || lower.includes('comprar')) return '🛒';
+          return '🔗'; // Default
+      };
+
+      // Generar HTML de la nueva lista
+      let enlacesHtml = '';
+      if (curso.enlaces && curso.enlaces.length > 0) {
+          const itemsHtml = curso.enlaces.map(enlace => {
+              const icono = getIconForAction(enlace.texto);
+              return `
+                <div class="detail-action-item">
+                    <span class="detail-action-text">${enlace.texto}</span>
+                    <a href="${enlace.url || '#'}" 
+                       class="detail-action-btn" 
+                       target="_blank" 
+                       tabindex="0"
+                       aria-label="${enlace.texto}">
+                       ${icono}
+                    </a>
+                </div>`;
+          }).join('');
+          
+          enlacesHtml = `<div class="detail-actions-list">${itemsHtml}</div>`;
+      }
 
       this.DOM.detalleContenido.innerHTML = `
         <h2>${curso.titulo}</h2>
         <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
-        <div class="enlaces-curso">
-          ${enlacesHtml || 'No hay enlaces para este curso.'}
-        </div>
+        ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
       `;
 
       // Determinar modo
@@ -219,36 +219,27 @@
       const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
       const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
 
-      // Ocultar la vista de navegación activa
       this.DOM.vistaNav.classList.remove('active');
       this.DOM.vistaDetalle.classList.add('active');
 
       let primerElementoFocuseable = null;
 
       if (!isMobile && !isTablet) { // Solo Desktop
-          // Mostrar columna derecha
           this.DOM.infoAdicional.classList.add('visible'); 
-          // Mostrar columna izquierda
           this.DOM.cardVolverFija.classList.add('visible'); 
-
-          // ⭐️ REGLA: Ocultar breadcrumb en vista detalle ⭐️
           this.DOM.cardNivelActual.classList.remove('visible'); 
           
-          // ⭐️ REGLA: Mostrar botón volver ⭐️
           this.DOM.cardVolverFijaElemento.classList.add('visible');
           this.DOM.cardVolverFijaElemento.innerHTML = `<h3>↩</h3>`; 
           this.DOM.cardVolverFijaElemento.tabIndex = 0;
           primerElementoFocuseable = this.DOM.cardVolverFijaElemento;
 
       } else { // Móvil O Tablet
-          // Ocultar sidebars
           this.DOM.infoAdicional.classList.remove('visible');
           this.DOM.cardVolverFija.classList.remove('visible');
           
-          // ⭐️ REGLA: Mostrar botón volver inyectado en la vista (no el global flotante) ⭐️
-          // Buscamos si existe un botón 'volver' inyectado en el contenido (si lo hubiera)
-          // O simplemente usamos el primer enlace.
-          const firstLink = this.DOM.detalleContenido.querySelector('a, button');
+          // Buscar el primer botón de la nueva lista
+          const firstLink = this.DOM.detalleContenido.querySelector('.detail-action-btn');
           primerElementoFocuseable = firstLink; 
       }
 
@@ -261,20 +252,20 @@
     
     /**
      * Helper para nav-keyboard.js (Vista Detalle)
-     * ⭐️ MODIFICADO: Ahora usa .classList.contains('visible') ⭐️
+     * ⭐️ MODIFICADO: Busca la nueva clase .detail-action-btn ⭐️
      */
     App._getFocusableDetailElements = function() {
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
         const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
         
-        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('a.enlace-curso[tabindex="0"]'));
+        // CAMBIO AQUÍ: Selector actualizado
+        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.detail-action-btn'));
         let elements = [];
 
         if (!isMobile && !isTablet && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
             elements.push(this.DOM.cardVolverFijaElemento);
         } 
-        // Nota: El botón global flotante ya no se añade aquí porque se ha eliminado/ocultado
 
         elements.push(...detailLinks);
         return elements.filter(el => el && el.tabIndex !== -1);
@@ -287,24 +278,19 @@
         const isFocusable = (card) => {
             return card && card.dataset.id && card.dataset.tipo !== 'relleno';
         };
-
-        // 1. Intentar la misma fila
         if (isFocusable(columnCards[targetRow])) {
             return columnCards[targetRow];
         }
-        // 2. Buscar hacia ARRIBA
         for (let i = targetRow - 1; i >= 0; i--) {
             if (isFocusable(columnCards[i])) {
                 return columnCards[i];
             }
         }
-        // 3. Buscar hacia ABAJO
         for (let i = targetRow + 1; i < columnCards.length; i++) {
             if (isFocusable(columnCards[i])) {
                 return columnCards[i];
             }
         }
-        // 4. No se encontró nada
         return null;
     };
 
