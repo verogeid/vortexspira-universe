@@ -137,7 +137,7 @@
             {
               "id": "c-04-05-02",
               "titulo": "Cyberseguridad para QA",
-              "descripcion": "Aprende a auditar una web. No solo el qué y el cómo, sino el porqué. Ve más allá del típico libro de texto. Anticípate al hacker o al desastre natural o digital.",
+              "descripcion": "Hoy es tu primer día como becario en la empresa. El experto en ciberseguridad es tu mentor y te va a enseñar todo lo que sabe. Una simulación con la que entenderás no solo el qué y el cómo, sino el porqué. Aprenderás a auditar una web, y hasta tu propia red doméstica o empresarial. Porque la superficie de ataque está en todas partes. Una simulación que va más allá del típico libro de texto. Anticípate al hacker o al desastre natural o digital.",
               "enlaces": [
                 { "texto": "Instalar la PWA", "url": "#" },
                 { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
