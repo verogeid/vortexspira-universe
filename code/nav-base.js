@@ -4,6 +4,7 @@
     // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS (Estáticos) ⭐️
     App.setupListeners = function() {
       // 1. Listener para "Volver" (MÓVIL / TABLET - BOTÓN GLOBAL)
+      // Aunque lo ocultamos por CSS, mantenemos el listener por si acaso se reactiva
       if (this.DOM.btnVolverNav) {
           this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
           this.DOM.btnVolverNav.addEventListener('keydown', (e) => {
@@ -40,7 +41,7 @@
     };
 
 
-    // ⭐️ 3. MANEJADORES DE EVENTOS (CORREGIDO CON NAV-STACK) ⭐️
+    // ⭐️ 3. MANEJADORES DE EVENTOS (CORREGIDO CON NAV-STACK Y RACE CONDITION FIX) ⭐️
     
     /**
      * Al hacer CLIC: Mueve el foco real y desliza el carrusel.
@@ -52,28 +53,39 @@
       const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
       const newIndex = allCards.findIndex(c => c === tarjeta);
       
-      let focusChangedByClick = false; 
-      if (newIndex > -1 && newIndex !== this.STATE.currentFocusIndex) {
-          this.STATE.currentFocusIndex = newIndex;
-          App.stackUpdateCurrentFocus(newIndex); 
-          this._updateFocus(true); // Deslizar Y enfocar
-          focusChangedByClick = true;
-      } else if (newIndex > -1) {
-          App.stackUpdateCurrentFocus(newIndex);
-          this._updateFocus(true); // Clic para centrar
-      }
+      if (newIndex === -1) return;
 
+      // ⭐️ CORRECCIÓN: Capturar el índice ANTES de actualizar, para saber desde dónde venimos
+      const parentFocusIndex = this.STATE.currentFocusIndex;
+      const indexChanged = newIndex !== parentFocusIndex;
+
+      // Actualizar el estado al nuevo índice clicado
+      this.STATE.currentFocusIndex = newIndex;
+      App.stackUpdateCurrentFocus(newIndex); 
+      
+      // Centrar la tarjeta clicada (esto inicia la animación de 400ms)
+      this._updateFocus(true); 
+
+      // --- Manejar casos que NO navegan o tienen acción especial ---
       if (tarjeta.classList.contains('disabled')) return;
       if (tarjeta.dataset.tipo === 'volver-vertical') {
           this._handleVolverClick();
           return;
       }
+      
+      const id = tarjeta.dataset.id;
+      const tipo = tarjeta.dataset.tipo;
 
-      if (!focusChangedByClick) {
-          const id = tarjeta.dataset.id;
-          const tipo = tarjeta.dataset.tipo;
-          this._handleCardClick(id, tipo);
-      }
+      // ⭐️ CORRECCIÓN (RACE CONDITION FIX) ⭐️
+      // Esperar a que la animación de centrado (300-400ms) termine 
+      // ANTES de navegar. Si navegamos inmediatamente, el nuevo carrusel
+      // se inicializa con el offset de la animación antigua.
+      
+      const delay = indexChanged ? 300 : 0; // Solo esperar si hubo movimiento
+
+      setTimeout(() => {
+          this._handleCardClick(id, tipo, parentFocusIndex);
+      }, delay);
     };
 
     /**
@@ -130,10 +142,16 @@
 
     /**
      * Manejador centralizado para la activación de tarjetas (clic, Enter, Espacio)
+     * ⭐️ MODIFICADO: Acepta parentFocusIndex para guardar el estado correcto
      */
-    App._handleCardClick = function(id, tipo) {
+    App._handleCardClick = function(id, tipo, parentFocusIndex) {
+        
+        // ⭐️ CORRECCIÓN: Usar el índice pasado explícitamente o el actual por defecto
+        const focusParaGuardar = (parentFocusIndex !== undefined) ? parentFocusIndex : this.STATE.currentFocusIndex;
+
         if (tipo === 'categoria') {
-            App.stackPush(id, this.STATE.currentFocusIndex);
+            // Guardamos en la pila el índice de la tarjeta que acabamos de dejar
+            App.stackPush(id, focusParaGuardar);
             this.renderNavegacion();
         } else if (tipo === 'curso') {
             this._mostrarDetalle(id);
@@ -227,10 +245,11 @@
           this.DOM.infoAdicional.classList.remove('visible');
           this.DOM.cardVolverFija.classList.remove('visible');
           
-          // ⭐️ REGLA: Mostrar botón volver global ⭐️
-          this.DOM.btnVolverNav.classList.add('visible');
-          this.DOM.btnVolverNav.tabIndex = 0; 
-          primerElementoFocuseable = this.DOM.btnVolverNav;
+          // ⭐️ REGLA: Mostrar botón volver inyectado en la vista (no el global flotante) ⭐️
+          // Buscamos si existe un botón 'volver' inyectado en el contenido (si lo hubiera)
+          // O simplemente usamos el primer enlace.
+          const firstLink = this.DOM.detalleContenido.querySelector('a, button');
+          primerElementoFocuseable = firstLink; 
       }
 
       if (primerElementoFocuseable) {
@@ -254,9 +273,8 @@
 
         if (!isMobile && !isTablet && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
             elements.push(this.DOM.cardVolverFijaElemento);
-        } else if ((isMobile || isTablet) && this.DOM.btnVolverNav.classList.contains('visible')) {
-            elements.push(this.DOM.btnVolverNav);
-        }
+        } 
+        // Nota: El botón global flotante ya no se añade aquí porque se ha eliminado/ocultado
 
         elements.push(...detailLinks);
         return elements.filter(el => el && el.tabIndex !== -1);

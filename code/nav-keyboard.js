@@ -67,7 +67,7 @@
         }
     });
 
-    // ⭐️ 2. NAVEGACIÓN EN VISTA NAV (Sin cambios) ⭐️
+    // ⭐️ 2. NAVEGACIÓN EN VISTA NAV (MODIFICADO PARA LLAMAR A HANDLE DIRECTO) ⭐️
     App._handleKeyNavigation = function(key) {
         
         const { itemsPorColumna } = App.STATE; 
@@ -97,7 +97,24 @@
                 break;
             case 'Enter':
             case ' ':
-                if (allCards[currentIndex]) allCards[currentIndex].click();
+                if (allCards[currentIndex]) {
+                    // ⭐️ CORRECCIÓN: Llamada directa para evitar el retardo de 300ms del clic
+                    const tarjeta = allCards[currentIndex];
+                    
+                    if (tarjeta.dataset.tipo === 'volver-vertical') {
+                        App._handleVolverClick();
+                        return;
+                    }
+                    if (tarjeta.classList.contains('disabled')) return;
+
+                    const id = tarjeta.dataset.id;
+                    const tipo = tarjeta.dataset.tipo;
+                    
+                    // Llamamos al handler modificado.
+                    // Pasamos 'undefined' para parentFocusIndex,
+                    // y la función usará el STATE.currentFocusIndex actual (que es correcto aquí)
+                    App._handleCardClick(id, tipo); 
+                }
                 return; 
         }
 
@@ -138,7 +155,7 @@
         }
     };
 
-    // ⭐️ 4. MANEJO DE FOCO (TAB) (CORREGIDO CON LÓGICA DE GRUPOS) ⭐️
+    // ⭐️ 4. MANEJO DE FOCO (TAB) (CORREGIDO: SIN BOTÓN FLOTANTE) ⭐️
     App._handleFocusTrap = function(e, viewType) {
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
@@ -153,12 +170,10 @@
             const activeCard = allCards[App.STATE.currentFocusIndex] || null;
 
             if (isMobile || isTablet) {
-                // ⭐️⭐️⭐️ CORRECCIÓN (Botón flotante eliminado) ⭐️⭐️⭐️
-                // const btnVolver = App.DOM.btnVolverNav.style.display === 'block' ? App.DOM.btnVolverNav : null;
+                // ⭐️ CORRECCIÓN: Botón Volver flotante eliminado
                 groups = [
-                    // [btnVolver].filter(Boolean), // Grupo 1: Botón Volver (si existe)
-                    [activeCard].filter(Boolean), // Grupo 2: Tarjeta activa
-                    footerLinks                   // Grupo 3: Footer
+                    [activeCard].filter(Boolean), // Grupo 1: Tarjeta activa
+                    footerLinks                   // Grupo 2: Footer
                 ];
             } else { 
                 const cardVolver = App.DOM.cardVolverFija.tabIndex === 0 ? App.DOM.cardVolverFija : null;
@@ -174,12 +189,9 @@
             const detailLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('a.enlace-curso[tabindex="0"]'));
             let volverElement = null;
 
-            // ⭐️⭐️⭐️ CORRECCIÓN (Botón flotante eliminado) ⭐️⭐️⭐️
             if ((isMobile || isTablet)) {
-                // if (App.DOM.btnVolverNav.style.display === 'block') {
-                //     volverElement = App.DOM.btnVolverNav;
-                // }
-                volverElement = null; // El botón flotante ya no existe
+                // ⭐️ CORRECCIÓN: El botón flotante no existe.
+                volverElement = null; 
             } else if (!isMobile && !isTablet && App.DOM.cardVolverFija.tabIndex === 0) {
                 volverElement = App.DOM.cardVolverFija;
             }

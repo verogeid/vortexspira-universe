@@ -407,6 +407,7 @@ footer a.footer-social-link:hover::before {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2; /* Límite de 2 líneas */
+    line-clamp: 2;
     
     /* Valores aproximados para asegurar la altura */
     line-height: 1.3; 
