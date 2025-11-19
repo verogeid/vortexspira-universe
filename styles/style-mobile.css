@@ -22,6 +22,10 @@
         height: auto !important; overflow: visible !important;
         display: block; 
     }
+    /* En móvil (relative), las vistas inactivas deben dejar de ocupar espacio */
+    .vista:not(.active) {
+        display: none !important;
+    }
     .vista {
         position: relative; height: auto !important; overflow: visible !important;
     }
