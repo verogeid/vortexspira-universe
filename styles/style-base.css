@@ -346,7 +346,7 @@ footer a:focus {
 .detail-actions-list {
     display: flex;
     flex-direction: column;
-    gap: 0; /* Sin gap extra, usamos padding/border */
+    gap: 0; 
     margin-top: 15px;
     width: 100%;
     max-width: 100%; 
@@ -386,20 +386,20 @@ footer a:focus {
     height: 38px;
     background: transparent; 
     border: 2px solid var(--color-primary);
-    border-radius: 50%; /* Redondo */
+    border-radius: 50%; 
     font-size: 1.1rem;
     text-decoration: none;
     cursor: pointer;
     transition: all 0.2s ease;
     flex-shrink: 0; 
-    color: var(--color-primary); /* Icono color primario */
+    color: var(--color-primary); 
 }
 
 /* Hover/Focus en el botón */
 .detail-action-btn:hover,
 .detail-action-btn:focus-visible {
     background: var(--color-primary);
-    color: #fff; /* Icono blanco al iluminarse */
+    color: #fff; 
     box-shadow: 0 0 10px var(--color-shadow-primary);
     outline: none;
     transform: scale(1.1);
@@ -463,7 +463,7 @@ footer a.footer-social-link:hover::before {
     color: var(--color-text);
     opacity: 0.7;
 
-    /* ⭐️ CORRECCIÓN: Muestra hasta 2 líneas */
+    /* Muestra hasta 2 líneas */
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -709,8 +709,8 @@ footer a.footer-social-link:hover::before {
     left: 15px;
     z-index: 50;
 
-    /* ⭐️⭐️⭐️ CORRECCIÓN 2 (Botón Flotante) ⭐️⭐️⭐️ */
-    display: none !important; /* Oculto SIEMPRE */
+    /* ⭐️ Botón flotante oculto SIEMPRE ⭐️ */
+    display: none !important; 
 
     padding: 0.75rem 1rem;
     font-size: 1rem;
@@ -722,12 +722,9 @@ footer a.footer-social-link:hover::before {
     cursor: pointer;
     transition: all 0.2s ease;
 } 
-/* Clase para mostrar el botón móvil */
 #btn-volver-navegacion.visible {
-    /* ⭐️⭐️⭐️ CORRECCIÓN 2 (Botón Flotante) ⭐️⭐️⭐️ */
-    display: none !important; /* Oculto SIEMPRE */
+    display: none !important; 
 }
-/* Foco y Hover para el botón móvil */
 #btn-volver-navegacion:hover,
 #btn-volver-navegacion:focus-visible {
     border-color: var(--color-primary);
@@ -751,4 +748,52 @@ footer a.footer-social-link:hover::before {
   .toast {
     transition: none;
   }
+}
+
+/* ⭐️⭐️⭐️ AJUSTES ESPECÍFICOS PARA MÓVIL (Footer y Scroll) ⭐️⭐️⭐️ */
+@media (max-width: 600px) {
+    
+    /* 1. Permitir que el cuerpo haga scroll nativo */
+    body {
+        overflow-y: auto !important; /* Habilita el scroll vertical */
+        height: auto;
+        min-height: 100vh;
+        padding-bottom: 0; /* El footer ya dará el espacio */
+    }
+
+    /* 2. El contenedor principal fluye con el contenido */
+    #app-container {
+        height: auto !important;
+        min-height: calc(100vh - var(--header-height)); 
+        display: block; /* Quitar Grid */
+        overflow: visible;
+    }
+
+    /* 3. Las vistas también fluyen */
+    #vista-central, .vista {
+        position: relative; /* Ya no absolutas */
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    /* 4. El contenedor de detalle se expande (sin scroll interno) */
+    #vista-detalle .contenido-curso {
+        overflow-y: visible !important;
+        height: auto !important;
+        max-height: none !important;
+    }
+
+    /* 5. El Footer se coloca debajo de todo */
+    footer {
+        position: relative !important; /* Ya no fixed */
+        bottom: auto;
+        margin-top: 40px;
+        padding: 20px 5px;
+        background: var(--color-bg); 
+    }
+
+    /* 6. Ocultar scrollbars feas si aparecen dobles */
+    ::-webkit-scrollbar {
+        width: 4px;
+    }
 }

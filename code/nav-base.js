@@ -1,9 +1,8 @@
 // --- code/nav-base.js ---
 (function() {
 
-    // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS (Estáticos) ⭐️
+    // ⭐️ 1. FUNCIÓN DE SETUP DE LISTENERS ⭐️
     App.setupListeners = function() {
-      // 1. Listener para "Volver" (MÓVIL / TABLET - BOTÓN GLOBAL)
       if (this.DOM.btnVolverNav) {
           this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
           this.DOM.btnVolverNav.addEventListener('keydown', (e) => {
@@ -13,24 +12,20 @@
               }
           });
       }
-
-      // 2. Listener para la Tarjeta Volver Fija (DESKTOP)
       if (this.DOM.cardVolverFijaElemento) { 
           this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
       }
     };
 
-    // ⭐️ 2. LISTENER DE CLIC Y HOVER DEL TRACK (Dinámico) ⭐️
+    // ⭐️ 2. LISTENER DE CLIC Y HOVER DEL TRACK ⭐️
     App.setupTrackPointerListeners = function() { 
         if (this.DOM.track) {
-            // --- Clic ---
             if (this.DOM.track._clickListener) {
                 this.DOM.track.removeEventListener('click', this.DOM.track._clickListener);
             }
             this.DOM.track._clickListener = this._handleTrackClick.bind(this);
             this.DOM.track.addEventListener('click', this.DOM.track._clickListener);
 
-            // --- MouseOver ---
             if (this.DOM.track._mouseoverListener) {
                 this.DOM.track.removeEventListener('mouseover', this.DOM.track._mouseoverListener);
             }
@@ -39,12 +34,7 @@
         }
     };
 
-
     // ⭐️ 3. MANEJADORES DE EVENTOS ⭐️
-    
-    /**
-     * Al hacer CLIC: Mueve el foco real y desliza el carrusel.
-     */
     App._handleTrackClick = function(e) {
       const tarjeta = e.target.closest('[data-id]'); 
       if (!tarjeta || tarjeta.dataset.tipo === 'relleno') return;
@@ -54,18 +44,14 @@
       
       if (newIndex === -1) return;
 
-      // ⭐️ CORRECCIÓN: Capturar el índice ANTES de actualizar
       const parentFocusIndex = this.STATE.currentFocusIndex;
       const indexChanged = newIndex !== parentFocusIndex;
 
-      // Actualizar el estado al nuevo índice clicado
       this.STATE.currentFocusIndex = newIndex;
       App.stackUpdateCurrentFocus(newIndex); 
       
-      // Centrar la tarjeta clicada
       this._updateFocus(true); 
 
-      // --- Manejar casos que NO navegan ---
       if (tarjeta.classList.contains('disabled')) return;
       if (tarjeta.dataset.tipo === 'volver-vertical') {
           this._handleVolverClick();
@@ -75,7 +61,7 @@
       const id = tarjeta.dataset.id;
       const tipo = tarjeta.dataset.tipo;
 
-      // ⭐️ CORRECCIÓN (RACE CONDITION): Esperar a que la animación termine
+      // ⭐️ CORRECCIÓN (RACE CONDITION) ⭐️
       const delay = indexChanged ? 300 : 0; 
 
       setTimeout(() => {
@@ -83,9 +69,6 @@
       }, delay);
     };
 
-    /**
-     * Al hacer HOVER: Mueve el foco VISUAL.
-     */
     App._handleTrackMouseOver = function(e) {
         const tarjeta = e.target.closest('[data-id]');
         if (!tarjeta || tarjeta.dataset.tipo === 'relleno') return;
@@ -98,9 +81,6 @@
         }
     };
 
-    /**
-     * ⭐️ NUEVA FUNCIÓN LIGERA (Solo para Hover) ⭐️
-     */
     App._updateVisualFocus = function(newIndex) {
         const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
         allCardsInTrack.forEach(card => {
@@ -130,12 +110,7 @@
         }
     };
 
-
-    /**
-     * Manejador centralizado para la activación de tarjetas.
-     */
     App._handleCardClick = function(id, tipo, parentFocusIndex) {
-        // ⭐️ CORRECCIÓN: Usar el índice pasado o el actual
         const focusParaGuardar = (parentFocusIndex !== undefined) ? parentFocusIndex : this.STATE.currentFocusIndex;
 
         if (tipo === 'categoria') {
@@ -147,7 +122,6 @@
     };
 
     // ⭐️ 4. LÓGICA DE NAVEGACIÓN Y VISTAS ⭐️
-
     App._handleVolverClick = function() {
         if (this.DOM.vistaDetalle.classList.contains('active')) {
             this.DOM.vistaDetalle.classList.remove('active');
@@ -172,22 +146,20 @@
     };
 
     /**
-     * Muestra la vista de detalle del curso.
-     * ⭐️ MODIFICADO: Renderizado de enlaces en formato Lista/Tabla con iconos ⭐️
+     * ⭐️ MODIFICADO: Renderizado de enlaces como LISTA COMPACTA + Botón Volver en Móvil ⭐️
      */
     App._mostrarDetalle = function(cursoId) {
       const curso = App._findNodoById(cursoId, App.STATE.fullData.navegacion);
       if (!curso) return;
 
-      // Helper para elegir el icono
+      // Helper de iconos
       const getIconForAction = (text) => {
           const lower = text.toLowerCase();
           if (lower.includes('instalar') || lower.includes('descargar')) return '⬇️';
           if (lower.includes('adquirir') || lower.includes('comprar')) return '🛒';
-          return '🔗'; // Default
+          return '🔗'; 
       };
 
-      // Generar HTML de la nueva lista
       let enlacesHtml = '';
       if (curso.enlaces && curso.enlaces.length > 0) {
           const itemsHtml = curso.enlaces.map(enlace => {
@@ -208,15 +180,27 @@
           enlacesHtml = `<div class="detail-actions-list">${itemsHtml}</div>`;
       }
 
+      // ⭐️ Inyección de botón volver para MÓVIL
+      const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
+      let mobileBackHtml = '';
+      if (isMobile) {
+          mobileBackHtml = `
+            <div class="mobile-back-header" style="margin-bottom: 20px;">
+                <button class="detail-action-btn" style="width: auto; padding: 0 15px; border-radius: 20px;" onclick="App._handleVolverClick()">
+                    ↩ Volver
+                </button>
+            </div>
+          `;
+      }
+
       this.DOM.detalleContenido.innerHTML = `
+        ${mobileBackHtml}
         <h2>${curso.titulo}</h2>
         <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
         ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
       `;
 
-      // Determinar modo
       const screenWidth = window.innerWidth;
-      const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
       const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
 
       this.DOM.vistaNav.classList.remove('active');
@@ -238,9 +222,9 @@
           this.DOM.infoAdicional.classList.remove('visible');
           this.DOM.cardVolverFija.classList.remove('visible');
           
-          // Buscar el primer botón de la nueva lista
-          const firstLink = this.DOM.detalleContenido.querySelector('.detail-action-btn');
-          primerElementoFocuseable = firstLink; 
+          // En móvil, el primer elemento es el botón volver o el primer botón de acción
+          const firstBtn = this.DOM.detalleContenido.querySelector('button, .detail-action-btn');
+          primerElementoFocuseable = firstBtn; 
       }
 
       if (primerElementoFocuseable) {
@@ -248,19 +232,13 @@
       }
     };
 
-    // ⭐️ 5. FUNCIONES DE AYUDA (Helpers) ⭐️
-    
-    /**
-     * Helper para nav-keyboard.js (Vista Detalle)
-     * ⭐️ MODIFICADO: Busca la nueva clase .detail-action-btn ⭐️
-     */
+    // ⭐️ 5. FUNCIONES DE AYUDA ⭐️
     App._getFocusableDetailElements = function() {
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
         const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
         
-        // CAMBIO AQUÍ: Selector actualizado
-        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.detail-action-btn'));
+        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('button, .detail-action-btn'));
         let elements = [];
 
         if (!isMobile && !isTablet && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
@@ -271,26 +249,13 @@
         return elements.filter(el => el && el.tabIndex !== -1);
     };
     
-    /**
-     * Helper para nav-tactil.js (Swipe)
-     */
     App.findBestFocusInColumn = function(columnCards, targetRow) {
         const isFocusable = (card) => {
             return card && card.dataset.id && card.dataset.tipo !== 'relleno';
         };
-        if (isFocusable(columnCards[targetRow])) {
-            return columnCards[targetRow];
-        }
-        for (let i = targetRow - 1; i >= 0; i--) {
-            if (isFocusable(columnCards[i])) {
-                return columnCards[i];
-            }
-        }
-        for (let i = targetRow + 1; i < columnCards.length; i++) {
-            if (isFocusable(columnCards[i])) {
-                return columnCards[i];
-            }
-        }
+        if (isFocusable(columnCards[targetRow])) return columnCards[targetRow];
+        for (let i = targetRow - 1; i >= 0; i--) { if (isFocusable(columnCards[i])) return columnCards[i]; }
+        for (let i = targetRow + 1; i < columnCards.length; i++) { if (isFocusable(columnCards[i])) return columnCards[i]; }
         return null;
     };
 

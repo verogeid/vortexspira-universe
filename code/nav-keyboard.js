@@ -1,4 +1,4 @@
-// --- MODIFICADO: code/nav-keyboard.js ---
+// --- code/nav-keyboard.js ---
 (function() {
 
     // ⭐️ 1. LISTENER CENTRAL DE TECLADO ⭐️
@@ -8,7 +8,6 @@
         const isNavActive = App.DOM.vistaNav.classList.contains('active');
         const isDetailActive = App.DOM.vistaDetalle.classList.contains('active');
 
-        // --- MANEJO DE TECLAS GLOBALES ---
         if (e.key === 'Tab') {
             e.preventDefault();
             if (isNavActive) {
@@ -25,7 +24,6 @@
             return;
         }
 
-        // --- MANEJO DE TECLAS CONTEXTUALES ---
         const isFooterActive = document.activeElement.closest('footer');
         if (isFooterActive) {
             if (['ArrowLeft', 'ArrowRight'].includes(e.key)) {
@@ -98,7 +96,6 @@
                     const id = tarjeta.dataset.id;
                     const tipo = tarjeta.dataset.tipo;
                     
-                    // Llamada directa para evitar retardo
                     App._handleCardClick(id, tipo); 
                 }
                 return; 
@@ -150,7 +147,6 @@
         const footerLinks = Array.from(document.querySelectorAll('footer a'));
         let groups = [];
 
-        // --- 1. Definir los grupos de foco ---
         if (viewType === 'nav') {
             const allCards = App.DOM.track ? Array.from(App.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])')) : [];
             const activeCard = allCards[App.STATE.currentFocusIndex] || null;
@@ -161,7 +157,6 @@
                     footerLinks                   
                 ];
             } else { 
-                // ⭐️ CORRECCIÓN: Usar cardVolverFijaElemento
                 const cardVolver = App.DOM.cardVolverFijaElemento.tabIndex === 0 ? App.DOM.cardVolverFijaElemento : null;
                 groups = [
                     [cardVolver].filter(Boolean), 
@@ -193,7 +188,6 @@
         groups = groups.filter(g => g.length > 0);
         if (groups.length === 0) return;
 
-        // --- 2. Encontrar el grupo actual ---
         let currentGroupIndex = -1;
         for (let i = 0; i < groups.length; i++) {
             if (groups[i].includes(document.activeElement)) {
@@ -203,7 +197,6 @@
         }
         if (currentGroupIndex === -1) currentGroupIndex = 0; 
 
-        // --- 3. Calcular el siguiente grupo ---
         let nextGroupIndex;
         if (e.shiftKey) { 
             nextGroupIndex = (currentGroupIndex <= 0) ? groups.length - 1 : currentGroupIndex - 1;
@@ -211,7 +204,6 @@
             nextGroupIndex = (currentGroupIndex >= groups.length - 1) ? 0 : currentGroupIndex + 1;
         }
 
-        // --- 4. Enfocar ---
         const nextGroup = groups[nextGroupIndex];
         let elementToFocus;
 
@@ -221,7 +213,6 @@
             elementToFocus = nextGroup[0];
         }
 
-        // --- 5. Limpiar/Añadir clases de foco ---
         const activeCard = App.DOM.track ? App.DOM.track.querySelector('[data-id].focus-visible') : null;
         if (activeCard && activeCard !== elementToFocus) {
             activeCard.classList.remove('focus-visible');
