@@ -1,5 +1,8 @@
 // --- code/data.js ---
 
+const IS_PRODUCTION = false; // Cambiar a 'true' para producción
+const LOGO_OBRAS = '🚧';
+
 // ⭐️ 1. DEFINICIÓN DE COLORES Y CONSTANTES ⭐️
 const PRIMARY_COLOR = '#999';
 const SECONDARY_COLOR = '#F89707';
@@ -104,6 +107,7 @@ function injectHeaderLogo() {
 
         if (h1) {
             h1.insertBefore(svgElement, h1.firstChild);
+            if (!IS_PRODUCTION) h1.insertBefore(LOGO_OBRAS, h1.firstChild);
         }
     }
 }
