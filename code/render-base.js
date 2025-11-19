@@ -107,11 +107,8 @@ const LOGO_VOLVER = '↩';
             this.setupTrackPointerListeners();
         }
         
-        // ⭐️⭐️⭐️ CORRECCIÓN TABLET ⭐️⭐️⭐️
-        // Pasamos solo 'isMobile' como segundo argumento.
-        // Esto hace que Tablet entre en el bloque 'else' (modo escritorio) dentro de _updateNavViews,
-        // mostrando así las columnas laterales (Posición y Info).
-        this._updateNavViews(isSubLevel, isMobile, nodoActual); 
+        // ⭐️⭐️⭐️ CORRECCIÓN: Pasamos 'isTablet' también para gestionar la columna derecha ⭐️⭐️⭐️
+        this._updateNavViews(isSubLevel, isMobile, isTablet, nodoActual); 
         
         if (typeof this._updateVisualFocus === 'function') {
             this._updateVisualFocus(this.STATE.currentFocusIndex);
@@ -132,9 +129,14 @@ const LOGO_VOLVER = '↩';
 
 
     // ⭐️ 2. FUNCIÓN DE PINTADO DE TARJETA INDIVIDUAL ⭐️
-    App._generarTarjetaHTML = function(nodo, estaActivo, esRelleno = false, tipoEspecial = null) {
+    // ⭐️ CORRECCIÓN: Usamos 'tipoEspecialArg' para evitar conflictos y leemos del nodo si es null
+    App._generarTarjetaHTML = function(nodo, estaActivo, esRelleno = false, tipoEspecialArg = null) {
 
         const wrapperTag = 'article';
+        
+        // ⭐️ CORRECCIÓN CRÍTICA: Si no se pasa argumento, mirar si el nodo tiene la propiedad
+        // Esto arregla el problema de "Sin Título" en el Breadcrumb móvil
+        const tipoEspecial = tipoEspecialArg || nodo.tipoEspecial;
 
         if (esRelleno) {
             return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1" aria-hidden="true"></article>`;
@@ -265,10 +267,11 @@ const LOGO_VOLVER = '↩';
 
 
     // ⭐️ 5. UTILIDADES DE VISTAS LATERALES Y DATOS (REESCRITO CON CLASES) ⭐️
-    App._updateNavViews = function(isSubLevel, isHiddenSidebars, nodoActual) {
+    // ⭐️ CORRECCIÓN: Añadido parámetro 'isTablet'
+    App._updateNavViews = function(isSubLevel, isMobile, isTablet, nodoActual) {
         
         // --- 1. Visibilidad de Sidebars y Botón Móvil ---
-        if (isHiddenSidebars) { 
+        if (isMobile) { 
             // --- MÓVIL (Sin sidebars) ---
             this.DOM.cardVolverFija.classList.remove('visible'); 
             this.DOM.infoAdicional.classList.remove('visible'); 
@@ -278,8 +281,15 @@ const LOGO_VOLVER = '↩';
             this.DOM.btnVolverNav.tabIndex = -1;
 
         } else { 
-            // --- DESKTOP Y TABLET (Con sidebars) ---
-            this.DOM.infoAdicional.classList.add('visible'); 
+            // --- DESKTOP Y TABLET ---
+            
+            // ⭐️ Lógica Específica Tablet: Ocultar Info Adicional (derecha)
+            if (isTablet) {
+                this.DOM.infoAdicional.classList.remove('visible');
+            } else {
+                this.DOM.infoAdicional.classList.add('visible'); 
+            }
+
             this.DOM.btnVolverNav.classList.remove('visible'); 
             this.DOM.btnVolverNav.tabIndex = -1;
             

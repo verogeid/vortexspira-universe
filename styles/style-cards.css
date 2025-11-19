@@ -1,34 +1,55 @@
 /* --- styles/style-cards.css --- */
+
+/* Estilos Base */
 .card {
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
-  padding: 0.8rem; /* Padding reducido */
+  /* Padding reducido para dar más espacio al contenido */
+  padding: 0.5rem; 
   border-radius: 12px;
   transition: all 0.2s ease;
   cursor: pointer;
+  
   display: flex; flex-direction: column; justify-content: center; align-items: center;
+  
   box-sizing: border-box; height: auto; min-height: 150px; 
 }
 
-/* ⭐️ TEXTO AJUSTABLE ⭐️ */
+/* ⭐️ CORRECCIÓN: Texto fluido SIN romper palabras ⭐️ */
 .card h3 { 
     margin: 0; width: 100%;
-    font-size: clamp(0.95rem, 4.5vw, 1.4rem); 
-    line-height: 1.25;
+    
+    /* Fuente fluida: Mínimo pequeño (0.8rem) para encajar títulos largos */
+    font-size: clamp(0.8rem, 4vw, 1.4rem); 
+    
+    line-height: 1.2;
     transition: color 0.2s ease; 
-    -webkit-hyphens: auto;
-    white-space: normal; overflow-wrap: break-word; word-break: normal; hyphens: auto;
-    max-height: none; overflow: visible;
+    
+    /* REGLAS ESTRICTAS DE NO-RUPTURA */
+    white-space: normal;       /* Permitir saltos de línea naturales */
+    word-break: normal;        /* NUNCA romper una palabra por la mitad */
+    overflow-wrap: normal;     /* Comportamiento estándar */
+    -webkit-hyphens: none;    /* Sin guiones automáticos */
+    hyphens: none;             /* Sin guiones automáticos */
+    
+    /* Mostrar todo el texto posible */
+    max-height: 100%;
+    overflow: hidden;          /* Si aún así desborda, ocultar (mejor editar JSON) */
+    text-overflow: ellipsis; 
 }
 
+/* Tipos Especiales */
 .card.card-breadcrumb-vertical {
     border-style: dashed; border-color: var(--color-border-placeholder);
-    background: transparent; min-height: 60px; opacity: 0.7;
+    background: transparent; min-height: 60px; opacity: 0.8;
     font-size: 1rem; cursor: default; text-align: center;
+    justify-content: center; pointer-events: none;
 }
 .card.card-volver-vertical { min-height: 80px; text-align: center; }
 
-/* Habilitadas */
+/* --- ESTADOS DE FOCO Y COLOR --- */
+
+/* Habilitadas -> AZUL */
 .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]):hover,
 .card:not(.disabled):not([data-tipo="relleno"]):focus-visible {
@@ -38,7 +59,7 @@
   color: var(--color-primary); 
 }
 
-/* Deshabilitadas */
+/* Deshabilitadas -> GRIS */
 .card.disabled {
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);

@@ -3,6 +3,12 @@
     :root {
         --card-height-calc: calc( (100% - var(--card-gap)) / 2 );
     }
+    
+    /* ⭐️ OCULTAR COLUMNA DERECHA EN TABLET ⭐️ */
+    #info-adicional {
+        display: none !important;
+    }
+
     #nav-swiper-tablet {
         height: 100%; width: 100%; overflow: hidden; position: relative; z-index: 1; touch-action: pan-y; 
     }

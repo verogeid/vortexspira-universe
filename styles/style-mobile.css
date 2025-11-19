@@ -8,7 +8,7 @@
         height: auto; min-height: 100vh; padding-bottom: 0;
     }
 
-    /* 2. Layout fluido (Elimina las 3 columnas) */
+    /* 2. Layout fluido (1 Columna) */
     #app-container {
         height: auto !important;
         min-height: calc(100vh - var(--header-height)); 
@@ -49,6 +49,10 @@
 .mobile-track {
     display: flex; flex-direction: column; gap: 15px; 
     width: 100%; height: auto; padding: 5px; box-sizing: border-box;
+    
+    /* ⭐️ CORRECCIÓN: Eliminar margen superior fantasma ⭐️ */
+    margin-top: 0 !important;
+    justify-content: flex-start;
 }
 
 /* Estilo específico de tarjetas en móvil */
