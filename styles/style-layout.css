@@ -64,7 +64,8 @@ header h1 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); margin: 0; padding: 0; line
     display: none; flex-direction: column; justify-content: flex-start; 
     height: 100%; gap: var(--card-gap); 
     padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
-    margin-right: var(--card-gap); border: none; background: transparent;
+    /*margin-right: var(--card-gap); */
+    border: none; background: transparent;
     box-shadow: none; box-sizing: border-box;
 }
 #card-volver-fija.visible { display: flex; }
