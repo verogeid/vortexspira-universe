@@ -1,6 +1,5 @@
 // --- code/data.js ---
 
-const IS_PRODUCTION = false; // Cambiar a 'true' para producción
 const LOGO_OBRAS = '🚧';
 
 // ⭐️ 1. DEFINICIÓN DE COLORES Y CONSTANTES ⭐️
