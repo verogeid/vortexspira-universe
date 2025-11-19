@@ -27,7 +27,7 @@ header h1 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); margin: 0; padding: 0; line
         height: calc(100vh - var(--header-height) - var(--footer-height)); 
         width: 100%; max-width: 1600px; margin: 0 auto;
         display: grid; 
-        grid-template-columns: 1fr 4fr; /* ⭐️ 2 Columnas, más espacio para el centro */
+        grid-template-columns: 1fr 3fr; /* ⭐️ 2 Columnas, más espacio para el centro */
         gap: 20px; padding: 20px; box-sizing: border-box;
         align-items: start; background: var(--color-bg);
     }
