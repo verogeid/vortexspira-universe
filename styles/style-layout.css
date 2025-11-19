@@ -1,4 +1,6 @@
 /* --- styles/style-layout.css --- */
+
+/* Configuración Base */
 body {
     background: var(--color-bg);
     color: var(--color-text);
@@ -66,24 +68,4 @@ header h1 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); margin: 0; padding: 0; line
 @media (prefers-reduced-motion: reduce) {
   .mask-left, .mask-right { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .vista, .toast { transition: none !important; }
-}
-
-/* --- AJUSTES ESPECÍFICOS PARA MÓVIL --- */
-@media (max-width: 600px) {
-    /* 1. Scroll nativo en body */
-    body {
-        overflow-y: auto !important; 
-        height: auto; min-height: 100vh; padding-bottom: 0;
-    }
-    /* 2. Layout fluido */
-    #app-container {
-        height: auto !important;
-        min-height: calc(100vh - var(--header-height)); 
-        display: block; overflow: visible;
-    }
-    /* 3. Vistas relativas */
-    #vista-central, .vista {
-        position: relative; height: auto !important; overflow: visible !important;
-    }
-    ::-webkit-scrollbar { width: 4px; }
 }

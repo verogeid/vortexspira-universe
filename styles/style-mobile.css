@@ -1,43 +1,82 @@
 /* --- styles/style-mobile.css --- */
 
-/* (Sin cambios, tal como lo proporcionaste) */
 @media (max-width: 600px) {
-    /* ❗️ REGLAS DE DISPLAY ELIMINADAS (JS lo controla) ❗️ */
     
-    /* Ocultar sidebars en móvil (Esto SÍ es correcto) */
-    #card-volver-fija, #info-adicional {
-        display: none !important;
+    /* 1. Scroll nativo en body (CRÍTICO) */
+    body {
+        overflow-y: auto !important; 
+        height: auto; min-height: 100vh; padding-bottom: 0;
     }
-    
-    /* Ajustar grid para que la vista central ocupe todo (Correcto) */
+
+    /* 2. Layout fluido: Grid de 1 columna */
     #app-container {
+        height: auto !important;
+        min-height: calc(100vh - var(--header-height)); 
+        display: grid; /* Mantenemos grid pero de 1 col */
         grid-template-columns: 1fr;
         padding: 10px;
         gap: 10px;
+        overflow: visible;
     }
+
+    /* 3. Vista central ocupa todo */
     #vista-central {
         grid-column: 1 / -1;
+        position: relative; 
+        height: auto !important; 
+        overflow: visible !important;
     }
+    .vista {
+        position: relative; 
+        height: auto !important; 
+        overflow: visible !important;
+    }
+
+    /* 4. Ocultar sidebars (CSS forzado por si JS falla) */
+    #card-volver-fija, #info-adicional {
+        display: none !important;
+    }
+
+    /* 5. Contenedor de Detalle expandible */
+    #vista-detalle .contenido-curso {
+        overflow-y: visible !important; 
+        height: auto !important; 
+        max-height: none !important;
+    }
+
+    /* 6. Footer Relativo (Debajo del contenido) */
+    footer {
+        position: relative !important; 
+        bottom: auto;
+        margin-top: 40px;
+        padding: 20px 5px;
+        background: var(--color-bg); 
+        width: 100%;
+    }
+
+    /* 7. Scrollbars finas */
+    ::-webkit-scrollbar { width: 4px; }
 }
 
-/* ⭐️ 2. LAYOUT DEL TRACK MÓVIL ⭐️ */
+/* ⭐️ LAYOUT DEL TRACK MÓVIL ⭐️ */
 .mobile-track {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Espacio entre tarjetas */
+    gap: 15px; 
     width: 100%;
     height: 100%;
     padding: 15px;
     box-sizing: border-box;
-    overflow-y: auto; /* Scroll vertical */
+    /* overflow-y eliminado porque el body hace el scroll */
 }
 
-/* ⭐️ 3. TARJETAS EN MÓVIL ⭐️ */
+/* ⭐️ ESTILO TARJETAS MÓVIL ⭐️ */
 .mobile-track .card {
     width: 100%;
-    min-height: 120px; /* Una altura mínima fija */
+    min-height: 120px; 
     height: auto;
-    font-size: 1.2rem;
+    /* Fuente ligeramente más pequeña en móvil */
+    font-size: 1.1rem; 
 }
 
 .mobile-track .card-volver-vertical {

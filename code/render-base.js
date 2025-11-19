@@ -160,7 +160,7 @@ const LOGO_VOLVER = '↩';
                     role="button" 
                     tabindex="-1"
                     aria-label="${App.getString('ariaBackLevel')}">
-                    <h3>↩</h3>
+                    <h3>${LOGO_VOLVER}</h3>
                 </${wrapperTag}>
             `;
         }
@@ -171,12 +171,14 @@ const LOGO_VOLVER = '↩';
         const claseDisabled = estaActivo ? '' : 'disabled';
         const tagAriaDisabled = estaActivo ? '' : 'aria-disabled="true"';
         const tabindex = '-1'; 
-        let hint = '';
-        if (!estaActivo) hint = `<span>${LOGO_OBRAS}</span>`;
         
         let displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
         if (tipo === 'categoria') {
-            displayTitle = LOGO_CARPETA + ' ' + displayTitle;
+            if (!estaActivo) {
+                displayTitle = LOGO_OBRAS + ' ' + displayTitle;
+            } else {
+                displayTitle = LOGO_CARPETA + ' ' + displayTitle;
+            }
         } else {
             displayTitle = LOGO_CURSO + ' ' + displayTitle; 
         }
@@ -191,7 +193,6 @@ const LOGO_VOLVER = '↩';
                 tabindex="${tabindex}" 
                 ${tagAriaDisabled}
                 aria-label="${ariaLabel}">
-                ${hint}
                 <h3>${displayTitle}</h3>
             </${wrapperTag}>
         `;
