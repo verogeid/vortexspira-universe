@@ -1,6 +1,4 @@
 /* --- styles/style-components.css --- */
-
-/* 1. Componentes Laterales (Breadcrumb y Volver) */
 #card-nivel-actual {
     flex: 0 0 auto; border: 2px dashed var(--color-border-placeholder);
     background: transparent; padding: 1.5rem; border-radius: 12px;
@@ -36,10 +34,8 @@
     color: var(--color-primary);
 }
 
-/* 2. Botón Flotante Móvil (Oculto) */
 #btn-volver-navegacion { display: none !important; } 
 
-/* 3. Info Adicional */
 #info-adicional details { margin-bottom: 1.2rem; }
 #info-adicional summary { font-size: 1.2rem; font-weight: bold; cursor: pointer; list-style: none; padding: 0.2rem; color: var(--color-text); opacity: 0.9; transition: color 0.2s ease; }
 #info-adicional summary:hover { opacity: 1; color: var(--color-primary); }
@@ -52,11 +48,9 @@
 
 #info-adicional-lista-acerca a { display: flex; align-items: center; text-decoration: none; color: var(--color-text); opacity: 0.8; transition: all 0.2s ease; font-size: 0.95rem; }
 #info-adicional-lista-acerca a:hover, #info-adicional-lista-acerca a:focus-visible { opacity: 1; color: var(--color-primary); outline: none; transform: translateX(3px); }
-
 #info-adicional-lista-acerca a::before { width: 20px; height: 20px; margin-right: 10px; flex-shrink: 0; background-color: var(--color-text); }
 #info-adicional-lista-acerca a:hover::before, #info-adicional-lista-acerca a:focus-visible::before { background-color: var(--color-primary); }
 
-/* 4. Toast */
 .toast {
   position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
   background-color: var(--color-toast-bg); color: var(--color-toast-text);
@@ -67,8 +61,8 @@
 }
 .toast.active { opacity: 1; visibility: visible; }
 
-/* Reducción movimiento */
 @media (prefers-reduced-motion: reduce) {
     #card-volver-fija-elemento { transition: none !important; }
     #card-volver-fija-elemento:hover, #card-volver-fija-elemento:focus-visible { transform: none; box-shadow: none; }
+    .toast { transition: none; }
 }

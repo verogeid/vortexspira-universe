@@ -3,18 +3,18 @@
 /* 1. Variables y Tema (Colores, Modo Oscuro) */
 @import url('style-theme.css');
 
-/* 2. Estructura Global (Grid, Header, Scroll Móvil) */
+/* 2. Estructura Global (Layout General) */
 @import url('style-layout.css');
 
-/* 3. Componentes UI (Cards, Carrusel) */
+/* 3. Componentes UI Básicos */
 @import url('style-cards.css');
-
-/* 4. Vista de Detalle (Listas, Textos) */
 @import url('style-details.css');
-
-/* 5. Footer (SVGs pesados) */
 @import url('style-footer.css');
-
-/* 6. Otros Componentes (Toast, Botones flotantes, Info) */
 @import url('style-components.css');
 
+/* 4. Reglas Específicas por Dispositivo (Carruseles) */
+@import url('style-desktop.css');
+@import url('style-tablet.css');
+
+/* 5. Reglas Móviles (Overrides finales) */
+@import url('style-mobile.css');

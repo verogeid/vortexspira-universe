@@ -1,6 +1,4 @@
 /* --- styles/style-layout.css --- */
-
-/* Configuración Base */
 body {
     background: var(--color-bg);
     color: var(--color-text);
@@ -13,7 +11,6 @@ body {
     padding-bottom: var(--footer-height);
 }
 
-/* --- HEADER --- */
 header {
     position: fixed; top: 0; width: 100%; padding: 10px;
     text-align: center; background: var(--color-header-bg);
@@ -21,16 +18,17 @@ header {
 }
 header h1 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); margin: 0; padding: 0; line-height: 1.2; }
 
-/* --- GRID PRINCIPAL (Desktop Default) --- */
-#app-container {
-  height: calc(100vh - var(--header-height) - var(--footer-height)); 
-  width: 100%; max-width: 1600px; margin: 0 auto;
-  display: grid; grid-template-columns: 1fr 3fr 1fr; 
-  gap: 20px; padding: 20px; box-sizing: border-box;
-  align-items: start; background: var(--color-bg);
+/* ⭐️ GRID DE ESCRITORIO (Solo > 600px) ⭐️ */
+@media (min-width: 601px) {
+    #app-container {
+      height: calc(100vh - var(--header-height) - var(--footer-height)); 
+      width: 100%; max-width: 1600px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 3fr 1fr; 
+      gap: 20px; padding: 20px; box-sizing: border-box;
+      align-items: start; background: var(--color-bg);
+    }
 }
 
-/* --- VISTA CENTRAL --- */
 #vista-central {
   grid-column: 2 / 3; width: 100%; height: 100%; 
   position: relative; overflow: hidden; display: flex; 
@@ -42,7 +40,6 @@ header h1 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); margin: 0; padding: 0; line
 }
 .vista.active { opacity: 1; visibility: visible; width: 100%; height: 100%; } 
 
-/* --- COLUMNAS LATERALES --- */
 #card-volver-fija {
     grid-column: 1 / 2; position: relative; z-index: 50; 
     display: none; flex-direction: column; justify-content: flex-start; 
@@ -64,8 +61,7 @@ header h1 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); margin: 0; padding: 0; line
 }
 #info-adicional.visible { display: block !important; }
 
-/* --- REDUCCIÓN DE MOVIMIENTO --- */
 @media (prefers-reduced-motion: reduce) {
   .mask-left, .mask-right { -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .vista, .toast { transition: none !important; }
+  .vista { transition: none !important; }
 }
