@@ -31,9 +31,22 @@
         display: none !important;
     }
 
-    /* 5. Detalle expandible */
+    /* 5. Detalle expandible + ⭐️ CORRECCIÓN DE MARGEN SUPERIOR ⭐️ */
+    #vista-detalle {
+        padding-top: 0 !important; 
+        margin-top: 0 !important;
+    }
+
     #vista-detalle .contenido-curso {
         overflow-y: visible !important; height: auto !important; max-height: none !important;
+        padding: 0 5px 20px 5px; /* Padding lateral pequeño */
+    }
+
+    /* Ajuste del contenedor del botón volver inyectado */
+    .mobile-back-header {
+        margin-bottom: 15px !important; 
+        margin-top: 5px !important;
+        text-align: left;
     }
 
     /* 6. Footer Relativo */
@@ -45,12 +58,12 @@
     ::-webkit-scrollbar { width: 4px; }
 }
 
-/* Layout del Track Móvil */
+/* Layout del Track Móvil (Listado de tarjetas) */
 .mobile-track {
     display: flex; flex-direction: column; gap: 15px; 
     width: 100%; height: auto; padding: 5px; box-sizing: border-box;
     
-    /* ⭐️ CORRECCIÓN: Eliminar margen superior fantasma ⭐️ */
+    /* Eliminar margen superior fantasma */
     margin-top: 0 !important;
     justify-content: flex-start;
 }
