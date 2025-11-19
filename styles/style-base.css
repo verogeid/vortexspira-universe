@@ -1,71 +1,7 @@
 /* --- styles/style-base.css --- */
 
 /* 1. Variables y Tema (Colores, Modo Oscuro) */
-:root {
-    /* Fondos */
-    --color-bg: #f4f4f4;
-    --color-card-bg: rgba(255, 255, 255, 0.7);
-    --color-mask-gradient: rgba(244, 244, 244, 0.4);
-
-    /* Texto y Bordes */
-    --color-text: #111;
-    --color-card-border: #bbb;
-    --color-card-border-disabled: #ccc;
-
-    /* Acentos */
-    --color-primary: #007bff;
-    --color-primary-bg: rgba(0, 123, 255, 0.1);
-    --color-danger: #dc3545;
-    --color-danger-bg: rgba(220, 53, 69, 0.1);
-    --color-success: #28a745;
-    --color-success-bg: rgba(40, 167, 69, 0.1);
-
-    /* UI */
-    --color-border-placeholder: #ddd; 
-    --color-text-muted: #999;
-
-    /* Header/Footer */
-    --color-header-bg: #222;
-    --color-header-text: #fff;
-    --color-footer-text: #888;
-
-    /* Sombras */
-    --color-shadow-primary: rgba(0, 123, 255, 0.4);
-    --color-shadow-disabled: rgba(150, 150, 150, 0.2);
-    --color-shadow-modal: rgba(0, 0, 0, 0.5);
-
-    /* Toast */
-    --color-toast-bg: #222;
-    --color-toast-text: #fff;
-
-    /* Layout Sizes */
-    --header-height: 9vh;
-    --footer-height: 6vh;
-    --card-gap: 3vh; 
-    --nav-desktop-height: calc(100% - 0px); 
-    --nav-carousel-top-offset: 2vh; 
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {   
-        --color-bg: #111;
-        --color-card-bg: rgba(255, 255, 255, 0.02);
-        --color-mask-gradient: rgba(17, 17, 17, 0.4);
-        --color-text: #eee;
-        --color-card-border: #aaa; 
-        --color-card-border-disabled: #666; 
-        --color-border-placeholder: #555; 
-        --color-header-bg: #222;
-        --color-header-text: #fff;
-        --color-footer-text: #888;
-        --color-text-muted: #666;
-        --color-shadow-primary: rgba(0, 123, 255, 0.4); 
-        --color-shadow-disabled: rgba(170, 170, 170, 0.8);
-        --color-shadow-modal: rgba(0, 0, 0, 0.7); 
-        --color-toast-bg: #222;
-        --color-toast-text: #fff;
-    }
-}
+@import url('style-theme.css');
 
 /* 2. Estructura Global (Grid, Header, Scroll Móvil) */
 @import url('style-layout.css');
@@ -81,3 +17,4 @@
 
 /* 6. Otros Componentes (Toast, Botones flotantes, Info) */
 @import url('style-components.css');
+
