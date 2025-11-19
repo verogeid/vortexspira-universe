@@ -1,4 +1,9 @@
 // --- code/render-base.js ---
+const LOGO_OBRAS = '🚧';
+const LOGO_CARPETA = '📁';
+const LOGO_CURSO = '📚';
+const LOGO_VOLVER = '↩';
+
 (function() {
 
     // Almacena el modo actual (móvil, tablet, escritorio)
@@ -109,7 +114,7 @@
         this._updateNavViews(isSubLevel, isMobile, nodoActual); 
         
         if (typeof this._updateVisualFocus === 'function') {
-             this._updateVisualFocus(this.STATE.currentFocusIndex);
+            this._updateVisualFocus(this.STATE.currentFocusIndex);
         } else {
             this._updateFocus(false); // Fallback
         }
@@ -136,7 +141,7 @@
         }
 
         if (tipoEspecial === 'breadcrumb-vertical') {
-             return `
+            return `
                 <${wrapperTag} class="card card-breadcrumb-vertical" 
                     data-id="breadcrumb-nav" 
                     data-tipo="relleno" 
@@ -167,13 +172,13 @@
         const tagAriaDisabled = estaActivo ? '' : 'aria-disabled="true"';
         const tabindex = '-1'; 
         let hint = '';
-        if (!estaActivo) hint = '<span>🚧</span>';
+        if (!estaActivo) hint = `<span>${LOGO_OBRAS}</span>`;
         
         let displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
         if (tipo === 'categoria') {
-            displayTitle = '📁 ' + displayTitle;
+            displayTitle = LOGO_CARPETA + ' ' + displayTitle;
         } else {
-            displayTitle = '📚 ' + displayTitle; 
+            displayTitle = LOGO_CURSO + ' ' + displayTitle; 
         }
         
         const ariaLabel = `${tipo === 'curso' ? 'Curso' : 'Categoría'}: ${nodo.nombre || nodo.titulo || 'Sin Título'}. ${estaActivo ? 'Seleccionar para entrar.' : 'Contenido no disponible.'}`;
@@ -186,8 +191,8 @@
                 tabindex="${tabindex}" 
                 ${tagAriaDisabled}
                 aria-label="${ariaLabel}">
-                <h3>${displayTitle}</h3>
                 ${hint}
+                <h3>${displayTitle}</h3>
             </${wrapperTag}>
         `;
     };
@@ -251,7 +256,7 @@
 
 
     // ⭐️ 4. LÓGICA DE CONTROL DEL CARRUSEL (Stubs) ⭐️
-    App._generateCardHTML_Carousel = App._generateCardHTML_Carousel || function() { logError('navBase', "render-swipe.js no cargado"); return ""; };
+    App._generateCardHTML_Carousel = App._generateCardHTML_Carousel || function() {logError('navBase', "render-swipe.js no cargado"); return ""; };
     App._generateCardHTML_Mobile = App._generateCardHTML_Mobile || function() { logError('navBase', "render-mobile.js no cargado"); return ""; };
     App._initCarousel_Swipe = App._initCarousel_Swipe || function() { logError('navBase', "render-swipe.js no cargado"); };
     App._initCarousel_Mobile = App._initCarousel_Mobile || function() { logError('navBase', "render-mobile.js no cargado"); };
@@ -291,7 +296,7 @@
             // 3. Botón Volver (Izquierda)
             if (isSubLevel) {
                 this.DOM.cardVolverFijaElemento.classList.add('visible'); 
-                this.DOM.cardVolverFijaElemento.innerHTML = `<h3>↩</h3>`; 
+                this.DOM.cardVolverFijaElemento.innerHTML = `<h3>${LOGO_VOLVER}</h3>`; 
                 this.DOM.cardVolverFijaElemento.tabIndex = 0;
             } else {
                 this.DOM.cardVolverFijaElemento.classList.remove('visible'); 

@@ -39,7 +39,7 @@
             for (let j = 0; j < itemsPerSlide; j++) {
                 const item = itemsConRelleno[i + j];
                 if (item) {
-                     if (item.tipo === 'relleno') {
+                    if (item.tipo === 'relleno') {
                         slideContent += App._generarTarjetaHTML(item, false, true); 
                     } else {
                         const estaActivo = App._tieneContenidoActivo(item.id);
