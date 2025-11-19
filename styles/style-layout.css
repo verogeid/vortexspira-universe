@@ -1,0 +1,89 @@
+/* --- styles/style-layout.css --- */
+body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden; 
+    margin: 0;
+    box-sizing: border-box;
+    min-height: 100vh;
+    padding-top: var(--header-height);
+    padding-bottom: var(--footer-height);
+}
+
+/* --- HEADER --- */
+header {
+    position: fixed; top: 0; width: 100%; padding: 10px;
+    text-align: center; background: var(--color-header-bg);
+    color: var(--color-header-text); z-index: 100; box-sizing: border-box;
+}
+header h1 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); margin: 0; padding: 0; line-height: 1.2; }
+
+/* --- GRID PRINCIPAL (Desktop Default) --- */
+#app-container {
+  height: calc(100vh - var(--header-height) - var(--footer-height)); 
+  width: 100%; max-width: 1600px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 3fr 1fr; 
+  gap: 20px; padding: 20px; box-sizing: border-box;
+  align-items: start; background: var(--color-bg);
+}
+
+/* --- VISTA CENTRAL --- */
+#vista-central {
+  grid-column: 2 / 3; width: 100%; height: 100%; 
+  position: relative; overflow: hidden; display: flex; 
+}
+.vista {
+  position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+  display: flex; flex-direction: column; justify-content: start; 
+  opacity: 0; transition: opacity 0.3s ease; visibility: hidden;
+}
+.vista.active { opacity: 1; visibility: visible; width: 100%; height: 100%; } 
+
+/* --- COLUMNAS LATERALES --- */
+#card-volver-fija {
+    grid-column: 1 / 2; position: relative; z-index: 50; 
+    display: none; flex-direction: column; justify-content: flex-start; 
+    height: 100%; gap: var(--card-gap); 
+    padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
+    margin-right: var(--card-gap); border: none; background: transparent;
+    box-shadow: none; box-sizing: border-box;
+}
+#card-volver-fija.visible { display: flex; }
+#columna-volver-relleno { flex-grow: 1; width: 100%; border: none; }
+
+#info-adicional {
+    grid-column: 3 / 4; width: 100%; 
+    border-radius: 12px; border: 2px dashed var(--color-border-placeholder); 
+    background: var(--color-card-bg); display: none; 
+    box-sizing: border-box; margin-left: 0; 
+    padding: var(--nav-carousel-top-offset) 15px 15px 15px;
+    height: 100%; overflow-y: auto; 
+}
+#info-adicional.visible { display: block !important; }
+
+/* --- REDUCCIÓN DE MOVIMIENTO --- */
+@media (prefers-reduced-motion: reduce) {
+  .mask-left, .mask-right { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .vista, .toast { transition: none !important; }
+}
+
+/* --- AJUSTES ESPECÍFICOS PARA MÓVIL --- */
+@media (max-width: 600px) {
+    /* 1. Scroll nativo en body */
+    body {
+        overflow-y: auto !important; 
+        height: auto; min-height: 100vh; padding-bottom: 0;
+    }
+    /* 2. Layout fluido */
+    #app-container {
+        height: auto !important;
+        min-height: calc(100vh - var(--header-height)); 
+        display: block; overflow: visible;
+    }
+    /* 3. Vistas relativas */
+    #vista-central, .vista {
+        position: relative; height: auto !important; overflow: visible !important;
+    }
+    ::-webkit-scrollbar { width: 4px; }
+}

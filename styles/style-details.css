@@ -1,0 +1,53 @@
+/* --- styles/style-details.css --- */
+
+/* Scroll interno del contenedor */
+#vista-detalle .contenido-curso {
+    max-height: 100%; 
+    overflow-y: auto; 
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) transparent;
+}
+
+/* LISTA DE ACCIONES COMPACTA (Texto Izq - Botón Der) */
+.detail-actions-list {
+    display: flex; flex-direction: column; gap: 0; 
+    margin-top: 15px; width: 100%; max-width: 100%; 
+    border-top: 1px solid var(--color-border-placeholder); 
+}
+
+.detail-action-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 5px; background: transparent;
+    border-bottom: 1px solid var(--color-border-placeholder);
+    transition: background-color 0.2s ease;
+}
+.detail-action-item:hover { background-color: rgba(255, 255, 255, 0.05); }
+
+.detail-action-text {
+    font-size: 1rem; font-weight: 500; color: var(--color-text);
+    text-align: left; margin-right: 15px; flex-grow: 1;
+}
+
+/* Botón Redondo */
+.detail-action-btn {
+    display: flex; justify-content: center; align-items: center;
+    width: 38px; height: 38px; background: transparent; 
+    border: 2px solid var(--color-primary); border-radius: 50%; 
+    font-size: 1.1rem; text-decoration: none; cursor: pointer;
+    transition: all 0.2s ease; flex-shrink: 0; color: var(--color-primary); 
+}
+.detail-action-btn:hover, .detail-action-btn:focus-visible {
+    background: var(--color-primary); color: #fff; 
+    box-shadow: 0 0 10px var(--color-shadow-primary);
+    outline: none; transform: scale(1.1);
+}
+
+/* Ajustes Móvil */
+@media (max-width: 600px) {
+    #vista-detalle .contenido-curso {
+        overflow-y: visible !important; 
+        height: auto !important; 
+        max-height: none !important;
+    }
+}
