@@ -106,7 +106,7 @@ function injectHeaderLogo() {
 
         if (h1) {
             h1.insertBefore(svgElement, h1.firstChild);
-            if (!IS_PRODUCTION) h1.insertBefore(LOGO_NOT_PROD, h1.firstChild);
+            if (!IS_PRODUCTION) h1.insertBefore(document.createTextNode(LOGO_NOT_PROD), h1.firstChild);
         }
     }
 }
