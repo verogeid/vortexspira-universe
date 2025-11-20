@@ -1,4 +1,8 @@
 // --- code/nav-base.js ---
+const LOGO_OBRAS = '🚧';
+const LOGO_CARPETA = '📁';
+const LOGO_CURSO = '📚';
+const LOGO_VOLVER = '↩';
 
 (function() {
 
@@ -15,13 +19,11 @@
       }
     };
 
-    // ⭐️ HELPER: Clic en fila de acción (Solo mueve foco) ⭐️
+    // ⭐️ HELPER: Clic en fila (Solo foco, no acción) ⭐️
     App._handleActionRowClick = function(e) {
-        // Si el clic NO fue en el botón mismo (fue en el texto o el div)
         if (!e.target.closest('.detail-action-btn')) {
             const btn = e.currentTarget.querySelector('.detail-action-btn');
             if (btn && !btn.classList.contains('disabled')) {
-                // ⭐️ CORRECCIÓN: Solo poner foco, NO ejecutar acción ⭐️
                 btn.focus(); 
             }
         }
@@ -152,9 +154,9 @@
 
       const getIconHtml = (text) => {
           const lower = text.toLowerCase();
-          if (!lower.includes('freemium')) { return '🛒&#xFE0E;'; }
+          if (lower.includes('adquirir') || lower.includes('comprar')) { return '🛒&#xFE0E;'; }
           let iconClass = 'icon-link'; 
-          if (lower.includes('freemium')) { iconClass = 'icon-download'; }
+          if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa')) { iconClass = 'icon-download'; }
           return `<i class="action-icon ${iconClass}"></i>`; 
       };
 
@@ -165,9 +167,8 @@
               const isDisabled = !enlace.url || enlace.url === '#';
               const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
               
-              // ⭐️ CORRECCIÓN: Clase disabled SOLO al botón, NO al texto ⭐️
+              // ⭐️ CORRECCIÓN: Texto siempre blanco (sin clase disabled) ⭐️
               const classDisabledBtn = isDisabled ? 'disabled' : '';
-              // Texto siempre sin clase disabled para que sea blanco (por defecto en CSS)
               const classDisabledText = ''; 
               
               const tabIndex = '0'; 
@@ -206,10 +207,13 @@
             </div>
           `;
       }
+      
+      // ⭐️ TÍTULO ENFOCABLE PARA SCROLL ⭐️
+      const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
 
       this.DOM.detalleContenido.innerHTML = `
         ${mobileBackHtml}
-        <h2>${curso.titulo}</h2>
+        ${titleHtml}
         <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
         ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
       `;
@@ -241,7 +245,8 @@
           this.DOM.infoAdicional.classList.remove('visible');
           this.DOM.cardVolverFija.classList.remove('visible');
           
-          const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn');
+          // Foco a la card volver inyectada
+          const firstInteractive = this.DOM.detalleContenido.querySelector('.card, button, .detail-action-btn:not(.disabled)');
           primerElementoFocuseable = firstInteractive; 
       }
 
@@ -252,7 +257,7 @@
 
     // ⭐️ 5. HELPERS ⭐️
     App._getFocusableDetailElements = function() {
-        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn'));
+        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, button, h2, .detail-action-btn'));
         let elements = [];
         const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
         

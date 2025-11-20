@@ -64,7 +64,6 @@
         }
     });
 
-    // Helper Panel Info
     App._handleInfoNavigation = function(key) {
         const panel = App.DOM.infoAdicional;
         const elements = Array.from(panel.querySelectorAll('summary, a'));
@@ -135,8 +134,9 @@
         const activeElement = document.activeElement;
         const focusableDetailElements = App._getFocusableDetailElements();
         
+        // Filtramos para movernos solo dentro de la lista principal
         const mainContentElements = focusableDetailElements.filter(el => 
-            el.classList.contains('detail-action-btn') || el.classList.contains('card')
+            el.classList.contains('detail-action-btn') || el.classList.contains('card') || el.tagName === 'H2'
         );
 
         let currentIndex = mainContentElements.indexOf(activeElement);
@@ -150,10 +150,12 @@
         switch (key) {
             case 'ArrowLeft':
             case 'ArrowUp':
+                // Tope superior rígido
                 newIndex = (currentIndex > 0) ? currentIndex - 1 : currentIndex;
                 break;
             case 'ArrowRight':
             case 'ArrowDown':
+                // Tope inferior
                 newIndex = (currentIndex < mainContentElements.length - 1) ? currentIndex + 1 : currentIndex;
                 break;
             case 'Enter':
@@ -183,20 +185,20 @@
             const allCards = App.DOM.track ? Array.from(App.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])')) : [];
             const activeCard = allCards[App.STATE.currentFocusIndex] || null;
 
-            if (isMobile) {
+            if (isMobile || isTablet) {
                 groups = [ [activeCard].filter(Boolean), footerLinks ];
             } else { 
                 const cardVolver = App.DOM.cardVolverFijaElemento.tabIndex === 0 ? App.DOM.cardVolverFijaElemento : null;
                 groups = [
                     [cardVolver].filter(Boolean),
                     [activeCard].filter(Boolean),
-                    infoPanelLinks,
+                    infoPanelLinks, // Vacío en tablet
                     footerLinks
                 ];
             }
         } 
         else if (viewType === 'detail') {
-            const detailLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn'));
+            const detailLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, h2'));
             let volverElement = (!isMobile && App.DOM.cardVolverFijaElemento.tabIndex === 0) ? App.DOM.cardVolverFijaElemento : null;
 
             groups = [

@@ -1,5 +1,11 @@
 /* --- styles/style-layout.css --- */
 
+/* 1. Configuración Base y Scroll */
+html {
+    /* Evita que el foco quede oculto tras el header fijo */
+    scroll-padding-top: calc(var(--header-height) + 20px);
+}
+
 body {
     background: var(--color-bg);
     color: var(--color-text);
@@ -12,15 +18,23 @@ body {
     padding-bottom: var(--footer-height);
 }
 
+/* 2. Header */
 header {
     position: fixed; top: 0; width: 100%; padding: 10px;
     text-align: center; background: var(--color-header-bg);
     color: var(--color-header-text); z-index: 100; box-sizing: border-box;
     height: var(--header-height);
+    display: flex; align-items: center; justify-content: center;
 }
-header h1 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); margin: 0; padding: 0; line-height: 1.2; }
+/* Fuente adaptable para que no se corte */
+header h1 { 
+    font-size: clamp(1rem, 3vw, 2.2rem); 
+    margin: 0; padding: 0; line-height: 1.2; 
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    width: 100%;
+}
 
-/* GRID RESPONSIVE */
+/* 3. GRID RESPONSIVE (Desktop & Tablet) */
 
 /* TABLET (601px - 1024px): 2 Columnas (Izq - Centro) */
 @media (min-width: 601px) and (max-width: 1024px) {
@@ -28,7 +42,7 @@ header h1 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); margin: 0; padding: 0; line
         height: calc(100vh - var(--header-height) - var(--footer-height)); 
         width: 100%; max-width: 1600px; margin: 0 auto;
         display: grid; 
-        grid-template-columns: 200px 1fr; 
+        grid-template-columns: 200px 1fr; /* Columna derecha oculta */
         gap: 15px; padding: 15px; box-sizing: border-box;
         align-items: start; background: var(--color-bg);
     }
@@ -46,6 +60,7 @@ header h1 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); margin: 0; padding: 0; line
     }
 }
 
+/* 4. Vista Central */
 #vista-central {
   grid-column: 2 / 3; width: 100%; height: 100%; 
   position: relative; overflow: hidden; display: flex; 
@@ -57,6 +72,7 @@ header h1 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); margin: 0; padding: 0; line
 }
 .vista.active { opacity: 1; visibility: visible; width: 100%; height: 100%; } 
 
+/* 5. Columna Izquierda (Volver) */
 #card-volver-fija {
     grid-column: 1 / 2; position: relative; z-index: 50; 
     display: none; flex-direction: column; justify-content: flex-start; 
@@ -68,6 +84,7 @@ header h1 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); margin: 0; padding: 0; line
 #card-volver-fija.visible { display: flex; }
 #columna-volver-relleno { flex-grow: 1; width: 100%; border: none; }
 
+/* 6. Columna Derecha (Info Adicional) */
 #info-adicional {
     grid-column: 3 / 4; width: 100%; 
     border-radius: 12px; border: 2px dashed var(--color-border-placeholder); 
@@ -77,6 +94,40 @@ header h1 { font-size: clamp(1.4rem, 2.8vw, 2.2rem); margin: 0; padding: 0; line
     height: 100%; overflow-y: auto; 
 }
 #info-adicional.visible { display: block !important; }
+
+/* ⭐️ ESTILOS GHOST INTERACTIVOS (Panel Info) ⭐️ */
+#info-adicional summary,
+#info-adicional a {
+    display: block; 
+    padding: 8px; 
+    border: 2px solid transparent; /* Borde invisible por defecto */
+    border-radius: 8px; 
+    transition: all 0.2s ease-in-out; 
+    text-decoration: none; 
+    color: var(--color-text); 
+    cursor: pointer;
+    outline: none; 
+    margin-bottom: 5px;
+}
+#info-adicional summary { list-style: none; }
+#info-adicional summary::-webkit-details-marker { display: none; }
+
+/* Estado Hover / Focus-Visible -> AZUL */
+#info-adicional summary:hover,
+#info-adicional a:hover,
+#info-adicional summary:focus-visible,
+#info-adicional a:focus-visible {
+    border-color: var(--color-primary); 
+    color: var(--color-primary); 
+    box-shadow: 0 0 10px var(--color-shadow-primary); /* Sombra azul */
+    background-color: var(--color-bg); 
+}
+
+/* Filtro para iconos dentro de enlaces */
+#info-adicional a:hover img, #info-adicional a:focus-visible img,
+#info-adicional a:hover svg, #info-adicional a:focus-visible svg {
+    filter: drop-shadow(0 0 5px var(--color-primary));
+}
 
 @media (prefers-reduced-motion: reduce) {
   .mask-left, .mask-right { -webkit-backdrop-filter: none; backdrop-filter: none; }
