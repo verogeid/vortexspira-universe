@@ -1,7 +1,7 @@
 // --- code/nav-keyboard.js ---
 (function() {
 
-    // ⭐️ 1. LISTENER CENTRAL DE TECLADO ⭐️
+    // ⭐️ 1. LISTENER CENTRAL ⭐️
     document.addEventListener('keydown', (e) => {
         if (!App || !App.DOM || !App.DOM.vistaNav) return; 
 
@@ -33,7 +33,6 @@
             return; 
         }
 
-        // ⭐️ CORRECCIÓN: Usar cardVolverFijaElemento
         if (document.activeElement === App.DOM.cardVolverFijaElemento) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -108,13 +107,23 @@
         }
     };
 
-    // ⭐️ 3. NAVEGACIÓN EN DETALLES ⭐️
+    // ⭐️ 3. NAVEGACIÓN EN DETALLES (CORREGIDA) ⭐️
     App._handleDetailNavigation = function(key) {
         const activeElement = document.activeElement;
-        const focusableDetailElements = App._getFocusableDetailElements();
-        let currentIndex = focusableDetailElements.indexOf(activeElement);
+        // Usamos el helper que ya incluye todos los botones (enabled y disabled)
+        // PERO filtramos para quedarnos solo con los de la lista principal (excluyendo sidebar desktop)
+        const allFocusables = App._getFocusableDetailElements();
+        
+        // Filtramos para movernos solo dentro del contenido principal (botones de acción + card volver movil)
+        const mainContentElements = allFocusables.filter(el => 
+            el.classList.contains('detail-action-btn') || el.classList.contains('card')
+        );
+
+        let currentIndex = mainContentElements.indexOf(activeElement);
+        
         if (currentIndex === -1) {
-            if (focusableDetailElements.length > 0) focusableDetailElements[0].focus();
+            // Si el foco está fuera (ej. Sidebar), entrar al primero
+            if (mainContentElements.length > 0) mainContentElements[0].focus();
             return;
         }
         
@@ -122,19 +131,24 @@
         switch (key) {
             case 'ArrowLeft':
             case 'ArrowUp':
+                // ⭐️ TOPE SUPERIOR: No salir si es el primero
                 newIndex = (currentIndex > 0) ? currentIndex - 1 : currentIndex;
                 break;
             case 'ArrowRight':
             case 'ArrowDown':
-                newIndex = (currentIndex < focusableDetailElements.length - 1) ? currentIndex + 1 : currentIndex;
+                // Tope inferior
+                newIndex = (currentIndex < mainContentElements.length - 1) ? currentIndex + 1 : currentIndex;
                 break;
             case 'Enter':
             case ' ':
-                activeElement.click(); 
+                // ⭐️ CLICK SEGURO: Solo si no es disabled
+                if (!activeElement.classList.contains('disabled')) {
+                    activeElement.click(); 
+                }
                 return;
         }
         if (newIndex !== currentIndex) {
-            focusableDetailElements[newIndex].focus();
+            mainContentElements[newIndex].focus();
         }
     };
 
@@ -152,27 +166,19 @@
             const activeCard = allCards[App.STATE.currentFocusIndex] || null;
 
             if (isMobile || isTablet) {
-                groups = [
-                    [activeCard].filter(Boolean), 
-                    footerLinks                   
-                ];
+                groups = [ [activeCard].filter(Boolean), footerLinks ];
             } else { 
                 const cardVolver = App.DOM.cardVolverFijaElemento.tabIndex === 0 ? App.DOM.cardVolverFijaElemento : null;
-                groups = [
-                    [cardVolver].filter(Boolean), 
-                    [activeCard].filter(Boolean), 
-                    footerLinks                   
-                ];
+                groups = [ [cardVolver].filter(Boolean), [activeCard].filter(Boolean), footerLinks ];
             }
         } 
         else if (viewType === 'detail') {
-            // ⭐️ CORRECCIÓN: Selector actualizado a .detail-action-btn
-            const detailLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('.detail-action-btn'));
+            // Obtenemos todos los botones del contenido
+            const detailLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn'));
             
             let volverElement = null;
-
             if ((isMobile || isTablet)) {
-                volverElement = null; 
+                volverElement = null; // En móvil ya está dentro de detailLinks
             } 
             else if (!isMobile && !isTablet && App.DOM.cardVolverFijaElemento.tabIndex === 0) {
                 volverElement = App.DOM.cardVolverFijaElemento;
