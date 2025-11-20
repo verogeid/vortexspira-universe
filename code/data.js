@@ -1,6 +1,11 @@
 // --- code/data.js ---
 
-const LOGO_NOT_PROD = '🚧';
+const IS_PRODUCTION = false;
+
+const LOGO_OBRAS = '🚧';
+const LOGO_CARPETA = '📁';
+const LOGO_CURSO = '📚';
+const LOGO_VOLVER = '↩';
 
 // ⭐️ 1. DEFINICIÓN DE COLORES Y CONSTANTES ⭐️
 const PRIMARY_COLOR = '#999';
@@ -106,7 +111,7 @@ function injectHeaderLogo() {
 
         if (h1) {
             h1.insertBefore(svgElement, h1.firstChild);
-            if (!IS_PRODUCTION) h1.insertBefore(document.createTextNode(LOGO_NOT_PROD), h1.firstChild);
+            if (!IS_PRODUCTION) h1.insertBefore(document.createTextNode(LOGO_OBRAS), h1.firstChild);
         }
     }
 }

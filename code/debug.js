@@ -1,7 +1,5 @@
 // code/debug.js
 
-const IS_PRODUCTION = false;
-
 // Niveles de depuración estándar
 const DEBUG_LEVELS = {
     DISABLED: 0,  // No se muestra nada

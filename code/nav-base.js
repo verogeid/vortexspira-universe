@@ -1,8 +1,4 @@
 // --- code/nav-base.js ---
-const LOGO_OBRAS = '🚧';
-const LOGO_CARPETA = '📁';
-const LOGO_CURSO = '📚';
-const LOGO_VOLVER = '↩';
 
 (function() {
 
