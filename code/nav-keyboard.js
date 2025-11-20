@@ -1,7 +1,6 @@
 // --- code/nav-keyboard.js ---
 (function() {
 
-    // ⭐️ 1. LISTENER CENTRAL ⭐️
     document.addEventListener('keydown', (e) => {
         if (!App || !App.DOM || !App.DOM.vistaNav) return; 
 
@@ -21,6 +20,16 @@
         if (e.key === 'Escape') {
             e.preventDefault();
             App._handleVolverClick(); 
+            return;
+        }
+
+        // Navegación Panel Info (Desktop)
+        const isInfoPanel = document.activeElement.closest('#info-adicional');
+        if (isInfoPanel) {
+             if (['ArrowUp', 'ArrowDown', 'Enter', ' '].includes(e.key)) {
+                e.preventDefault();
+                App._handleInfoNavigation(e.key);
+            }
             return;
         }
 
@@ -55,7 +64,22 @@
         }
     });
 
-    // ⭐️ 2. NAVEGACIÓN EN VISTA NAV ⭐️
+    // Helper Panel Info
+    App._handleInfoNavigation = function(key) {
+        const panel = App.DOM.infoAdicional;
+        const elements = Array.from(panel.querySelectorAll('summary, a'));
+        const currentIndex = elements.indexOf(document.activeElement);
+        
+        if (currentIndex === -1) return;
+
+        let newIndex = currentIndex;
+        if (key === 'ArrowUp') newIndex = Math.max(0, currentIndex - 1);
+        if (key === 'ArrowDown') newIndex = Math.min(elements.length - 1, currentIndex + 1);
+        if (key === 'Enter' || key === ' ') document.activeElement.click();
+
+        if (newIndex !== currentIndex) elements[newIndex].focus();
+    };
+
     App._handleKeyNavigation = function(key) {
         const { itemsPorColumna } = App.STATE; 
         let currentIndex = App.STATE.currentFocusIndex;
@@ -107,22 +131,17 @@
         }
     };
 
-    // ⭐️ 3. NAVEGACIÓN EN DETALLES (CORREGIDA) ⭐️
     App._handleDetailNavigation = function(key) {
         const activeElement = document.activeElement;
-        // Usamos el helper que ya incluye todos los botones (enabled y disabled)
-        // PERO filtramos para quedarnos solo con los de la lista principal (excluyendo sidebar desktop)
-        const allFocusables = App._getFocusableDetailElements();
+        const focusableDetailElements = App._getFocusableDetailElements();
         
-        // Filtramos para movernos solo dentro del contenido principal (botones de acción + card volver movil)
-        const mainContentElements = allFocusables.filter(el => 
+        const mainContentElements = focusableDetailElements.filter(el => 
             el.classList.contains('detail-action-btn') || el.classList.contains('card')
         );
 
         let currentIndex = mainContentElements.indexOf(activeElement);
         
         if (currentIndex === -1) {
-            // Si el foco está fuera (ej. Sidebar), entrar al primero
             if (mainContentElements.length > 0) mainContentElements[0].focus();
             return;
         }
@@ -131,17 +150,14 @@
         switch (key) {
             case 'ArrowLeft':
             case 'ArrowUp':
-                // ⭐️ TOPE SUPERIOR: No salir si es el primero
                 newIndex = (currentIndex > 0) ? currentIndex - 1 : currentIndex;
                 break;
             case 'ArrowRight':
             case 'ArrowDown':
-                // Tope inferior
                 newIndex = (currentIndex < mainContentElements.length - 1) ? currentIndex + 1 : currentIndex;
                 break;
             case 'Enter':
             case ' ':
-                // ⭐️ CLICK SEGURO: Solo si no es disabled
                 if (!activeElement.classList.contains('disabled')) {
                     activeElement.click(); 
                 }
@@ -152,42 +168,42 @@
         }
     };
 
-    // ⭐️ 4. MANEJO DE FOCO (TAB) ⭐️
     App._handleFocusTrap = function(e, viewType) {
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
         const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
         
         const footerLinks = Array.from(document.querySelectorAll('footer a'));
+        const infoPanelLinks = (!isMobile && !isTablet) ? 
+            Array.from(App.DOM.infoAdicional.querySelectorAll('summary, a')) : [];
+
         let groups = [];
 
         if (viewType === 'nav') {
             const allCards = App.DOM.track ? Array.from(App.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])')) : [];
             const activeCard = allCards[App.STATE.currentFocusIndex] || null;
 
-            if (isMobile || isTablet) {
+            if (isMobile) {
                 groups = [ [activeCard].filter(Boolean), footerLinks ];
             } else { 
                 const cardVolver = App.DOM.cardVolverFijaElemento.tabIndex === 0 ? App.DOM.cardVolverFijaElemento : null;
-                groups = [ [cardVolver].filter(Boolean), [activeCard].filter(Boolean), footerLinks ];
+                groups = [
+                    [cardVolver].filter(Boolean),
+                    [activeCard].filter(Boolean),
+                    infoPanelLinks,
+                    footerLinks
+                ];
             }
         } 
         else if (viewType === 'detail') {
-            // Obtenemos todos los botones del contenido
             const detailLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn'));
-            
-            let volverElement = null;
-            if ((isMobile || isTablet)) {
-                volverElement = null; // En móvil ya está dentro de detailLinks
-            } 
-            else if (!isMobile && !isTablet && App.DOM.cardVolverFijaElemento.tabIndex === 0) {
-                volverElement = App.DOM.cardVolverFijaElemento;
-            }
+            let volverElement = (!isMobile && App.DOM.cardVolverFijaElemento.tabIndex === 0) ? App.DOM.cardVolverFijaElemento : null;
 
             groups = [
-                [volverElement].filter(Boolean), 
-                detailLinks,                     
-                footerLinks                      
+                [volverElement].filter(Boolean),
+                detailLinks,
+                infoPanelLinks,
+                footerLinks
             ];
         }
 
@@ -242,7 +258,6 @@
         }
     };
 
-    // ⭐️ 5. NAVEGACIÓN EN FOOTER ⭐️
     App._handleFooterNavigation = function(key) {
         const focusableElements = Array.from(document.querySelectorAll('footer a'));
         if (focusableElements.length === 0) return;

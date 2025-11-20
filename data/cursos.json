@@ -139,8 +139,8 @@
               "titulo": "Cyberseguridad para QA",
               "descripcion": "Hoy es tu primer día como becario en la empresa. El experto en ciberseguridad es tu mentor y te va a enseñar todo lo que sabe.<br>Una simulación con la que entenderás no solo el qué y el cómo, sino el porqué. Aprenderás a auditar una web, y hasta tu propia red doméstica o empresarial. Porque la superficie de ataque está en todas partes. Una simulación que va más allá del típico libro de texto.<br>Anticípate al hacker o al desastre natural o digital.",
               "enlaces": [
-                { "texto": "Instalar la PWA", "url": "#" },
-                { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
+                { "texto": "Prueba el freemium", "url": "#" },
+                { "texto": "Adquirir pack completo", "url": "#" }
               ]
             }
           ]
@@ -155,11 +155,11 @@
       "cursos": [
         {
           "id": "c-05-01",
-          "titulo": "Inglés: De A2 a C1",
+          "titulo": "🚧 Inglés: De A2 a C1",
           "descripcion": "Aprendizaje inmersivo. Aprende a leer el código IPA fácilmente. Aprenderás a verbalizar correctamente mientras escuchas una voz nativa diciendo exactamente lo mismo. Mientras, tu visión periférica aprenderá cómo se escribe. La ciencia cognitiva a tu disposición para aprender idiomas.",
           "enlaces": [
-            { "texto": "Instalar la PWA", "url": "#" },
-            { "texto": "Adquirir la licencia en Hotmart", "url": "#" }
+            { "texto": "Prueba el freemium", "url": "#" },
+            { "texto": "Adquirir pack completo", "url": "#" }
           ]
         }
       ]

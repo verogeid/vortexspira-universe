@@ -15,6 +15,18 @@
       }
     };
 
+    // ⭐️ HELPER: Clic en fila de acción (Solo mueve foco) ⭐️
+    App._handleActionRowClick = function(e) {
+        // Si el clic NO fue en el botón mismo (fue en el texto o el div)
+        if (!e.target.closest('.detail-action-btn')) {
+            const btn = e.currentTarget.querySelector('.detail-action-btn');
+            if (btn && !btn.classList.contains('disabled')) {
+                // ⭐️ CORRECCIÓN: Solo poner foco, NO ejecutar acción ⭐️
+                btn.focus(); 
+            }
+        }
+    };
+
     // ⭐️ 2. POINTER LISTENERS ⭐️
     App.setupTrackPointerListeners = function() { 
         if (this.DOM.track) {
@@ -133,11 +145,16 @@
       const curso = App._findNodoById(cursoId, App.STATE.fullData.navegacion);
       if (!curso) return;
 
+      // ⭐️ Scroll Reset (Móvil) ⭐️
+      window.scrollTo(0, 0);
+      if (this.DOM.vistaDetalle) this.DOM.vistaDetalle.scrollTop = 0;
+      if (this.DOM.detalleContenido) this.DOM.detalleContenido.scrollTop = 0;
+
       const getIconHtml = (text) => {
           const lower = text.toLowerCase();
-          if (lower.includes('adquirir') || lower.includes('comprar')) { return '🛒&#xFE0E;'; }
+          if (!lower.includes('freemium')) { return '🛒&#xFE0E;'; }
           let iconClass = 'icon-link'; 
-          if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa')) { iconClass = 'icon-download'; }
+          if (lower.includes('freemium')) { iconClass = 'icon-download'; }
           return `<i class="action-icon ${iconClass}"></i>`; 
       };
 
@@ -147,18 +164,21 @@
               const iconHtml = getIconHtml(enlace.texto);
               const isDisabled = !enlace.url || enlace.url === '#';
               const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
-              const classDisabled = isDisabled ? 'disabled' : '';
               
-              // ⭐️ Foco en todos, incluso disabled
+              // ⭐️ CORRECCIÓN: Clase disabled SOLO al botón, NO al texto ⭐️
+              const classDisabledBtn = isDisabled ? 'disabled' : '';
+              // Texto siempre sin clase disabled para que sea blanco (por defecto en CSS)
+              const classDisabledText = ''; 
+              
               const tabIndex = '0'; 
               const targetAttr = isDisabled ? '' : 'target="_blank"';
               const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
 
               return `
-                <div class="detail-action-item">
-                    <span class="detail-action-text ${classDisabled}">${enlace.texto}</span>
+                <div class="detail-action-item" onclick="App._handleActionRowClick(event)" style="cursor: pointer;">
+                    <span class="detail-action-text ${classDisabledText}">${enlace.texto}</span>
                     <a ${hrefAttr} 
-                       class="detail-action-btn ${classDisabled}" 
+                       class="detail-action-btn ${classDisabledBtn}" 
                        ${targetAttr} 
                        tabindex="${tabIndex}" 
                        ${onclickAttr}
@@ -221,7 +241,6 @@
           this.DOM.infoAdicional.classList.remove('visible');
           this.DOM.cardVolverFija.classList.remove('visible');
           
-          // Foco al primer elemento (Card volver en movil, o primer btn)
           const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn');
           primerElementoFocuseable = firstInteractive; 
       }
@@ -233,17 +252,13 @@
 
     // ⭐️ 5. HELPERS ⭐️
     App._getFocusableDetailElements = function() {
-        // ⭐️ Devuelve TODOS los botones (incluidos disabled) + la card volver movil
         const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn'));
         let elements = [];
         const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
         
-        // En Desktop/Tablet, la card izquierda fija se incluye para el Tab, pero NO para las flechas
-        // (Nav-keyboard.js filtra esto después)
         if (!isMobile && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
             elements.push(this.DOM.cardVolverFijaElemento);
         } 
-        
         elements.push(...detailLinks);
         return elements;
     };
