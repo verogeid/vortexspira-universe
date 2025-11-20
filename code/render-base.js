@@ -89,10 +89,18 @@ const LOGO_VOLVER = '↩';
             }
             
             // Fallback robusto para el título
-            const rootText = (typeof App.getString === 'function' ? App.getString('breadcrumbRoot') : 'Nivel Raíz') || 'Nivel Raíz';
-            const breadcrumbText = isSubLevel ? (nodoActual.nombre || 'Nivel') : rootText;
+            let breadcrumbText = 'Nivel Raíz';
+            if (isSubLevel && nodoActual) {
+                breadcrumbText = nodoActual.nombre || nodoActual.titulo || 'Nivel';
+            } else if (typeof App.getString === 'function') {
+                breadcrumbText = App.getString('breadcrumbRoot') || 'Nivel Raíz';
+            }
             
-            itemsDelNivel = [{ id: 'breadcrumb-nav', tipoEspecial: 'breadcrumb-vertical', texto: breadcrumbText }].concat(itemsDelNivel);
+            itemsDelNivel = [{ 
+                id: 'breadcrumb-nav', 
+                tipoEspecial: 'breadcrumb-vertical', 
+                texto: breadcrumbText 
+            }].concat(itemsDelNivel);
         }
 
         // 5. GESTIÓN DE VISTAS
@@ -107,7 +115,8 @@ const LOGO_VOLVER = '↩';
             this.setupTrackPointerListeners();
         }
         
-        // ⭐️⭐️⭐️ CORRECCIÓN: Pasamos 'isTablet' también para gestionar la columna derecha ⭐️⭐️⭐️
+        // ⭐️⭐️⭐️ CORRECCIÓN TABLET ⭐️⭐️⭐️
+        // Pasamos 'isTablet' para que _updateNavViews sepa ocultar la columna derecha
         this._updateNavViews(isSubLevel, isMobile, isTablet, nodoActual); 
         
         if (typeof this._updateVisualFocus === 'function') {
@@ -120,7 +129,11 @@ const LOGO_VOLVER = '↩';
         desktopView.classList.remove('active');
         tabletView.classList.remove('active');
         mobileView.classList.remove('active');
-        this.DOM.vistaNav.classList.add('active'); 
+        
+        // ⭐️ CORRECCIÓN DEEP LINK: Solo activar nav si NO estamos en detalle
+        if (!this.DOM.vistaDetalle.classList.contains('active')) {
+            this.DOM.vistaNav.classList.add('active'); 
+        }
 
         if (!this.STATE.resizeObserver) {
             this._setupResizeObserver();
@@ -129,13 +142,11 @@ const LOGO_VOLVER = '↩';
 
 
     // ⭐️ 2. FUNCIÓN DE PINTADO DE TARJETA INDIVIDUAL ⭐️
-    // ⭐️ CORRECCIÓN: Usamos 'tipoEspecialArg' para evitar conflictos y leemos del nodo si es null
     App._generarTarjetaHTML = function(nodo, estaActivo, esRelleno = false, tipoEspecialArg = null) {
 
         const wrapperTag = 'article';
         
-        // ⭐️ CORRECCIÓN CRÍTICA: Si no se pasa argumento, mirar si el nodo tiene la propiedad
-        // Esto arregla el problema de "Sin Título" en el Breadcrumb móvil
+        // ⭐️ CORRECCIÓN CRÍTICA: Leer propiedad del nodo si el argumento es null
         const tipoEspecial = tipoEspecialArg || nodo.tipoEspecial;
 
         if (esRelleno) {
@@ -266,8 +277,7 @@ const LOGO_VOLVER = '↩';
     App._destroyCarousel = App._destroyCarousel || function() { };
 
 
-    // ⭐️ 5. UTILIDADES DE VISTAS LATERALES Y DATOS (REESCRITO CON CLASES) ⭐️
-    // ⭐️ CORRECCIÓN: Añadido parámetro 'isTablet'
+    // ⭐️ 5. UTILIDADES DE VISTAS LATERALES Y DATOS ⭐️
     App._updateNavViews = function(isSubLevel, isMobile, isTablet, nodoActual) {
         
         // --- 1. Visibilidad de Sidebars y Botón Móvil ---
@@ -275,15 +285,13 @@ const LOGO_VOLVER = '↩';
             // --- MÓVIL (Sin sidebars) ---
             this.DOM.cardVolverFija.classList.remove('visible'); 
             this.DOM.infoAdicional.classList.remove('visible'); 
-            
-            // El botón volver se inyecta en el track en móvil
             this.DOM.btnVolverNav.classList.remove('visible');
             this.DOM.btnVolverNav.tabIndex = -1;
 
         } else { 
             // --- DESKTOP Y TABLET ---
             
-            // ⭐️ Lógica Específica Tablet: Ocultar Info Adicional (derecha)
+            // Tablet: Ocultar derecha
             if (isTablet) {
                 this.DOM.infoAdicional.classList.remove('visible');
             } else {
