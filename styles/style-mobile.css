@@ -8,7 +8,7 @@
         height: auto; min-height: 100vh; padding-bottom: 0;
     }
 
-    /* 2. Layout fluido (1 Columna) */
+    /* 2. Layout fluido */
     #app-container {
         height: auto !important;
         min-height: calc(100vh - var(--header-height)); 
@@ -16,22 +16,28 @@
         padding: 10px; gap: 10px; overflow: visible;
     }
 
-    /* 3. Vista central ocupa todo el ancho */
+    /* 3. Vista central */
     #vista-central {
         width: 100%; position: relative; 
         height: auto !important; overflow: visible !important;
         display: block; 
     }
+    
+    /* ⭐️ CORRECCIÓN CRÍTICA: Las vistas no activas no deben ocupar espacio ⭐️ */
+    .vista:not(.active) {
+        display: none !important;
+    }
+
     .vista {
         position: relative; height: auto !important; overflow: visible !important;
     }
 
-    /* 4. Asegurar que laterales mueran */
+    /* 4. Ocultar sidebars */
     #card-volver-fija, #info-adicional {
         display: none !important;
     }
 
-    /* 5. Detalle expandible + ⭐️ CORRECCIÓN DE MARGEN SUPERIOR ⭐️ */
+    /* 5. Detalle */
     #vista-detalle {
         padding-top: 0 !important; 
         margin-top: 0 !important;
@@ -39,17 +45,18 @@
 
     #vista-detalle .contenido-curso {
         overflow-y: visible !important; height: auto !important; max-height: none !important;
-        padding: 0 5px 20px 5px; /* Padding lateral pequeño */
+        padding: 0 5px 20px 5px;
     }
 
-    /* Ajuste del contenedor del botón volver inyectado */
+    /* Contenedor del Volver (Tarjeta) */
     .mobile-back-header {
         margin-bottom: 15px !important; 
         margin-top: 5px !important;
         text-align: left;
+        width: 100%; /* Asegurar que la card ocupe el ancho */
     }
 
-    /* 6. Footer Relativo */
+    /* 6. Footer */
     footer {
         position: relative !important; bottom: auto;
         margin-top: 40px; padding: 20px 5px; background: var(--color-bg); width: 100%;
@@ -58,21 +65,19 @@
     ::-webkit-scrollbar { width: 4px; }
 }
 
-/* Layout del Track Móvil (Listado de tarjetas) */
+/* Layout Track */
 .mobile-track {
     display: flex; flex-direction: column; gap: 15px; 
     width: 100%; height: auto; padding: 5px; box-sizing: border-box;
-    
-    /* Eliminar margen superior fantasma */
-    margin-top: 0 !important;
-    justify-content: flex-start;
+    margin-top: 0 !important; justify-content: flex-start;
 }
 
-/* Estilo específico de tarjetas en móvil */
+/* Tarjetas Móvil */
 .mobile-track .card {
     width: 100%; min-height: 100px; height: auto; font-size: 1.1rem;
 }
 
+/* Tarjeta Volver en menú */
 .mobile-track .card-volver-vertical {
     min-height: 60px; background: var(--color-card-bg);
     border-style: solid; text-align: center; margin-bottom: 10px;
