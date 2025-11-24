@@ -7,14 +7,49 @@
         height: auto; min-height: 100vh; padding-bottom: 0;
     }
 
+    /* Header fijo arriba de todo */
+    header {
+        position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+    }
+
     #app-container {
         height: auto !important;
         min-height: calc(100vh - var(--header-height)); 
+        /* Compensar Header Fijo */
         padding-top: calc(var(--header-height) + 10px) !important;
         display: flex; flex-direction: column;
         padding-left: 10px; padding-right: 10px; padding-bottom: 10px;
         gap: 15px; overflow: visible;
     }
+
+    /* Ocultar elementos Desktop/Tablet */
+    .mobile-detail-breadcrumb, .mobile-back-header { display: block; } /* Asegurar visibilidad */
+    
+    /* Ocultar sidebars */
+    #card-volver-fija, #info-adicional { display: none !important; }
+
+    /* STICKY ELEMENTS EN DETALLE */
+    .mobile-detail-breadcrumb .card-breadcrumb-vertical {
+        position: sticky;
+        top: calc(var(--header-height) + 10px);
+        z-index: 60;
+        background: var(--color-bg);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        border-style: solid !important;
+        margin-bottom: 5px;
+    }
+
+    .mobile-back-header {
+        position: sticky;
+        /* Justo debajo del breadcrumb (aprox) */
+        top: calc(var(--header-height) + 10px + 65px); 
+        z-index: 50;
+        margin-bottom: 20px !important; 
+        text-align: left; width: 100%;
+    }
+
+    /* Si no hay breadcrumb (ej. detalle sin nav), el volver sube */
+    /* (Esto requiere lógica JS o CSS :empty, pero por ahora stackean bien) */
 
     #vista-central {
         width: 100%; position: relative; 
@@ -22,30 +57,13 @@
         display: block; 
     }
     
-    /* Ocultar vistas inactivas para evitar desplazamiento */
-    .vista:not(.active) {
-        display: none !important;
-    }
+    .vista:not(.active) { display: none !important; }
+    .vista { position: relative; height: auto !important; overflow: visible !important; }
 
-    .vista {
-        position: relative; height: auto !important; overflow: visible !important;
-    }
-
-    #card-volver-fija, #info-adicional {
-        display: none !important;
-    }
-
-    #vista-detalle {
-        padding-top: 0 !important; margin-top: 0 !important;
-    }
-
+    #vista-detalle { padding-top: 0 !important; margin-top: 0 !important; }
     #vista-detalle .contenido-curso {
         overflow-y: visible !important; height: auto !important; max-height: none !important;
         padding: 0 5px 20px 5px;
-    }
-
-    .mobile-back-header {
-        margin-bottom: 15px !important; margin-top: 5px !important; text-align: left; width: 100%;
     }
 
     footer {
@@ -54,23 +72,14 @@
     }
     
     ::-webkit-scrollbar { width: 4px; }
-
-    /* ⭐️ MÁSCARA DE GRADIENTE INFERIOR ⭐️ */
-    #vista-navegacion-mobile::after {
-        content: '';
-        position: fixed; bottom: 0; left: 0; width: 100%; height: 15vh;
-        background: linear-gradient(to bottom, transparent 0%, var(--color-bg) 90%);
-        pointer-events: none; z-index: 20;
-    }
 }
 
-/* Layout Track */
+/* STICKY EN MENU (TRACK) */
 .mobile-track {
     display: flex; flex-direction: column; gap: 15px; 
     width: 100%; height: auto; padding: 5px; box-sizing: border-box;
     margin-top: 0 !important; justify-content: flex-start;
     
-    /* ⭐️ AUTO-SCROLL (SNAP) ⭐️ */
     scroll-snap-type: y mandatory; 
     padding-bottom: 15vh; 
 }
@@ -80,7 +89,6 @@
     scroll-snap-align: start; scroll-margin-top: 140px;
 }
 
-/* ⭐️ BREADCRUMB STICKY ⭐️ */
 .mobile-track .card-breadcrumb-vertical {
     position: sticky;
     top: calc(var(--header-height) + 10px); 
@@ -89,16 +97,6 @@
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     border-style: solid !important;
     margin-bottom: 20px; 
-}
-
-/* ⭐️ VOLVER STICKY EN DETALLE ⭐️ */
-.mobile-sticky-back {
-    position: sticky;
-    top: calc(var(--header-height) + 10px);
-    z-index: 60; 
-    background: var(--color-bg);
-    padding: 5px 0;
-    box-shadow: 0 5px 10px var(--color-bg); 
 }
 
 .mobile-track .card-volver-vertical {
