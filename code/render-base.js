@@ -81,6 +81,8 @@
         
         // Inyección de tarjetas para MÓVIL
         if (isMobile) {
+            
+            // Si es subnivel, el botón "volver" es la primera tarjeta.
             if (isSubLevel) {
                 itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
             }
@@ -92,11 +94,14 @@
                 breadcrumbText = App.getString('breadcrumbRoot') || 'Nivel Raíz';
             }
             
-            itemsDelNivel = [{ 
-                id: 'breadcrumb-nav', 
-                tipoEspecial: 'breadcrumb-vertical', 
-                texto: breadcrumbText 
-            }].concat(itemsDelNivel);
+            // ⭐️ CORRECCIÓN: SOLO AÑADIR BREADCRUMB SI ES UN SUBNIVEL ⭐️
+            if (isSubLevel) {
+                itemsDelNivel = [{ 
+                    id: 'breadcrumb-nav', 
+                    tipoEspecial: 'breadcrumb-vertical', 
+                    texto: breadcrumbText 
+                }].concat(itemsDelNivel);
+            }
         }
 
         App._destroyCarousel(); 
@@ -123,8 +128,7 @@
         tabletView.classList.remove('active');
         mobileView.classList.remove('active');
         
-        // ⭐️ CORRECCIÓN DEEP LINK: Solo forzar vistaNav si NO estamos viendo un detalle ⭐️
-        // Se añade la comprobación defensiva para this.DOM.vistaDetalle que era null al inicio.
+        // ⭐️ CORRECCIÓN DEEP LINK Y NULL CHECK ⭐️
         if (this.DOM.vistaNav && this.DOM.vistaDetalle) {
             if (!this.DOM.vistaDetalle.classList.contains('active')) {
                 this.DOM.vistaNav.classList.add('active'); 
@@ -240,8 +244,9 @@
                 if (targetSwiperSlide !== carouselInstance.realIndex) {
                     carouselInstance.slideToLoop(targetSwiperSlide, 400); 
                 }
-            } else if (isMobile && shouldSlide) {
-                nextFocusedCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else if (isMobile) {
+                // Usamos 'start' para respetar el scroll-margin-top y la posición de los sticky.
+                nextFocusedCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
     };

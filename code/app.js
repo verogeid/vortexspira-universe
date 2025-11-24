@@ -1,4 +1,4 @@
-// --- code/app.js --- (MODIFICADO)
+// --- code/app.js ---
 
 (function() {
 

@@ -19,7 +19,10 @@
         
         if (e.key === 'Escape') {
             e.preventDefault();
-            App._handleVolverClick(); 
+            // ⭐️ CORRECCIÓN: Verificar la existencia de la función antes de llamarla ⭐️
+            if (typeof App._handleVolverClick === 'function') {
+                App._handleVolverClick(); 
+            }
             return;
         }
 
@@ -44,7 +47,10 @@
         if (document.activeElement === App.DOM.cardVolverFijaElemento) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                App._handleVolverClick();
+                // ⭐️ CORRECCIÓN: Verificar la existencia de la función antes de llamarla ⭐️
+                if (typeof App._handleVolverClick === 'function') {
+                    App._handleVolverClick();
+                }
             }
             return; 
         }
@@ -109,7 +115,10 @@
                 if (allCards[currentIndex]) {
                     const tarjeta = allCards[currentIndex];
                     if (tarjeta.dataset.tipo === 'volver-vertical') {
-                        App._handleVolverClick();
+                        // ⭐️ CORRECCIÓN: Verificar la existencia de la función antes de llamarla ⭐️
+                         if (typeof App._handleVolverClick === 'function') {
+                            App._handleVolverClick();
+                         }
                         return;
                     }
                     if (tarjeta.classList.contains('disabled')) return;
