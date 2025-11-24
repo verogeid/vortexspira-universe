@@ -81,6 +81,7 @@
         
         // Inyección de tarjetas para MÓVIL
         if (isMobile) {
+            // Si es subnivel, el botón "volver" es la primera tarjeta.
             if (isSubLevel) {
                 itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
             }
@@ -92,11 +93,15 @@
                 breadcrumbText = App.getString('breadcrumbRoot') || 'Nivel Raíz';
             }
             
-            itemsDelNivel = [{ 
-                id: 'breadcrumb-nav', 
-                tipoEspecial: 'breadcrumb-vertical', 
-                texto: breadcrumbText 
-            }].concat(itemsDelNivel);
+            // ⭐️ CORRECCIÓN: SOLO AÑADIR BREADCRUMB SI ES UN SUBNIVEL ⭐️
+            // Si es Nivel Raíz (isSubLevel=false), no se añade el breadcrumb para no ocupar espacio.
+            if (isSubLevel) {
+                itemsDelNivel = [{ 
+                    id: 'breadcrumb-nav', 
+                    tipoEspecial: 'breadcrumb-vertical', 
+                    texto: breadcrumbText 
+                }].concat(itemsDelNivel);
+            }
         }
 
         App._destroyCarousel(); 
@@ -124,7 +129,6 @@
         mobileView.classList.remove('active');
         
         // ⭐️ CORRECCIÓN DEEP LINK Y NULL CHECK ⭐️
-        // Solo forzar vistaNav si NO estamos viendo un detalle.
         if (this.DOM.vistaNav && this.DOM.vistaDetalle) {
             if (!this.DOM.vistaDetalle.classList.contains('active')) {
                 this.DOM.vistaNav.classList.add('active'); 
@@ -231,7 +235,6 @@
             nextFocusedCard.tabIndex = 0;
             nextFocusedCard.setAttribute('aria-current', 'true'); 
             if (shouldSlide) {
-                // Foco sin preventScroll para que se haga scroll si es necesario
                 nextFocusedCard.focus(); 
             } else {
                 nextFocusedCard.focus({ preventScroll: true }); 
@@ -241,8 +244,8 @@
                 if (targetSwiperSlide !== carouselInstance.realIndex) {
                     carouselInstance.slideToLoop(targetSwiperSlide, 400); 
                 }
-            } else if (isMobile) { 
-                // ⭐️ CORRECCIÓN: Usar 'start' para respetar el scroll-margin-top ⭐️
+            } else if (isMobile) {
+                // Usamos 'start' para respetar el scroll-margin-top y la posición de los sticky.
                 nextFocusedCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }

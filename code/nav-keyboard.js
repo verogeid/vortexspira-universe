@@ -117,7 +117,10 @@
                     const id = tarjeta.dataset.id;
                     const tipo = tarjeta.dataset.tipo;
                     
-                    App._handleCardClick(id, tipo); 
+                    // ⭐️ CORRECCIÓN: Verificar la existencia de la función antes de llamarla ⭐️
+                    if (typeof App._handleCardClick === 'function') {
+                        App._handleCardClick(id, tipo); 
+                    }
                 }
                 return; 
         }
