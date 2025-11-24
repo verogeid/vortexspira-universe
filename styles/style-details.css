@@ -1,14 +1,19 @@
 /* --- styles/style-details.css --- */
 
-#vista-detalle .contenido-curso {
+/* 1. Scroll interno y Contenedores */
+/* Aplica tanto al contenedor de escritorio como al de móvil */
+#detalle-contenido-desktop, 
+#detalle-contenido-mobile {
     max-height: 100%; 
     overflow-y: auto; 
     padding-right: 10px;
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) transparent;
+    /* Asegura comportamiento suave */
+    scroll-behavior: smooth;
 }
 
-/* ⭐️ BLOQUE DE TEXTO CON FOCO GHOST ⭐️ */
+/* 2. BLOQUE DE TEXTO (Foco Ghost) */
 #detalle-bloque-texto {
     outline: none;
     border: 2px solid transparent;
@@ -20,49 +25,41 @@
 #detalle-bloque-texto:focus-visible {
     border-color: var(--color-primary);
     box-shadow: 0 0 15px var(--color-shadow-primary);
-    background-color: rgba(var(--color-primary-rgb), 0.05); /* Fondo sutil opcional */
+    background-color: rgba(var(--color-primary-rgb), 0.05); 
 }
 
-/* ⭐️ EFECTO BLUR CON DEGRADADO (MASK) ⭐️ */
+/* 3. EFECTO BLUR CON DEGRADADO (FOCUS MASK) */
 #detalle-bloque-texto,
 #detalle-bloque-acciones {
     transition: filter 0.4s ease, opacity 0.4s ease;
     will-change: filter, opacity;
 }
 
-/* Foco en Texto -> Difuminar Acciones (con degradado hacia abajo) */
-.contenido-curso.mode-focus-text #detalle-bloque-acciones {
+/* Foco en Texto -> Difuminar Acciones */
+.mode-focus-text #detalle-bloque-acciones {
     filter: blur(4px) grayscale(60%);
     opacity: 0.3;
     pointer-events: none; 
-    /* Máscara: Visible arriba, se desvanece hacia abajo */
     -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
     mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
 }
-.contenido-curso.mode-focus-text #detalle-bloque-texto { 
-    filter: none; 
-    opacity: 1; 
-    -webkit-mask-image: none;
-    mask-image: none; 
+.mode-focus-text #detalle-bloque-texto { 
+    filter: none; opacity: 1; -webkit-mask-image: none; mask-image: none; 
 }
 
-/* Foco en Acciones -> Difuminar Texto (con degradado hacia arriba) */
-.contenido-curso.mode-focus-actions #detalle-bloque-texto {
+/* Foco en Acciones -> Difuminar Texto */
+.mode-focus-actions #detalle-bloque-texto {
     filter: blur(4px) grayscale(60%);
     opacity: 0.3;
-    /* Máscara: Visible abajo, se desvanece hacia arriba */
     -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
     mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
 }
-.contenido-curso.mode-focus-actions #detalle-bloque-acciones { 
-    filter: none; 
-    opacity: 1; 
-    -webkit-mask-image: none;
-    mask-image: none; 
+.mode-focus-actions #detalle-bloque-acciones { 
+    filter: none; opacity: 1; -webkit-mask-image: none; mask-image: none; 
 }
 
 
-/* LISTA DE ACCIONES */
+/* 4. LISTA DE ACCIONES */
 .detail-actions-list {
     display: flex; flex-direction: column; gap: 0; 
     margin-top: 15px; width: 100%; max-width: 100%; 
@@ -77,42 +74,56 @@
 }
 .detail-action-item:hover { background-color: rgba(255, 255, 255, 0.05); }
 
+/* Texto de la acción (Izquierda) */
 .detail-action-text {
-    font-size: 1rem; font-weight: 500; color: var(--color-text);
+    font-size: 1rem; font-weight: 500; 
+    color: var(--color-text); /* Blanco por defecto */
     text-align: left; margin-right: 15px; flex-grow: 1;
 }
 
-/* BOTONES DE ACCIÓN */
+/* 5. BOTÓN DE ACCIÓN - ESTILO GHOST (Derecha) */
 .detail-action-btn {
     display: flex; justify-content: center; align-items: center;
-    width: 38px; height: 38px; background: transparent; 
-    border: 2px solid var(--color-card-border); 
-    border-radius: 50%; color: var(--color-text); 
+    width: 38px; height: 38px; 
+    background: transparent; 
+    border: 2px solid var(--color-card-border); /* Borde Gris por defecto */
+    border-radius: 50%; 
+    
+    /* Color de texto/icono por defecto */
+    color: var(--color-text); 
     font-size: 1.2rem; line-height: 1;
+    
     text-decoration: none; cursor: pointer;
     transition: all 0.2s ease; flex-shrink: 0; 
 }
 
+/* Estado HOVER / FOCUS (Enabled) -> AZUL */
 .detail-action-btn:not(.disabled):hover, 
 .detail-action-btn:not(.disabled):focus-visible {
-    border-color: var(--color-primary); color: var(--color-primary);          
+    border-color: var(--color-primary);   
+    color: var(--color-primary);          
     box-shadow: 0 0 15px var(--color-shadow-primary);
     transform: scale(1.1); outline: none;
 }
 
+/* Estado DISABLED -> GRIS APAGADO */
 .detail-action-btn.disabled {
     border-color: var(--color-card-border-disabled);
     color: var(--color-text-muted);
     cursor: default; opacity: 0.6; pointer-events: none;
 }
 
+/* Estado FOCUS en DISABLED (Legible, sin azul) */
 .detail-action-btn.disabled:focus-visible {
-    outline: none; border-color: var(--color-text); 
+    outline: none;
+    border-color: var(--color-text); 
     box-shadow: 0 0 10px var(--color-shadow-disabled);
-    color: var(--color-text); opacity: 1; transform: scale(1.03);
+    color: var(--color-text);
+    opacity: 1;
+    transform: scale(1.03);
 }
 
-/* ICONOS */
+/* 6. ICONOS SVG */
 .action-icon {
     display: inline-block; width: 20px; height: 20px;
     background-color: currentColor; 
@@ -123,6 +134,7 @@
 .icon-download { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="20" y2="21"></line><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="20" y2="21"></line><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>'); }
 .icon-link { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>'); }
 
+/* 7. Estilo Específico Botón Volver Móvil (Píldora) */
 button.detail-action-btn {
     width: auto !important; height: auto !important;
     padding: 0.5rem 1rem !important; 
@@ -131,8 +143,9 @@ button.detail-action-btn {
     background: var(--color-card-bg); 
 }
 
+/* Ajustes Padding */
 @media (max-width: 600px) {
-    #vista-detalle .contenido-curso {
+    #detalle-contenido-mobile {
         overflow-y: visible !important; height: auto !important; max-height: none !important;
     }
 }

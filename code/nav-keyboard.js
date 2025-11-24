@@ -133,6 +133,7 @@
         const activeElement = document.activeElement;
         const focusableDetailElements = App._getFocusableDetailElements();
         
+        // Navegamos solo por el contenido central (excluyendo el lateral izquierdo)
         const mainContentElements = focusableDetailElements.filter(el => 
             el.classList.contains('detail-action-btn') || el.classList.contains('card') || el.tagName === 'H2'
         );
@@ -148,17 +149,16 @@
         switch (key) {
             case 'ArrowLeft':
             case 'ArrowUp':
-                // ⭐️ TOPE SUPERIOR ⭐️
+                // ⭐️ TOPE SUPERIOR: No salir si es el primero
                 newIndex = (currentIndex > 0) ? currentIndex - 1 : currentIndex;
                 break;
             case 'ArrowRight':
             case 'ArrowDown':
-                // ⭐️ TOPE INFERIOR ⭐️
                 newIndex = (currentIndex < mainContentElements.length - 1) ? currentIndex + 1 : currentIndex;
                 break;
             case 'Enter':
             case ' ':
-                // ⭐️ CLICK SEGURO (Evitar en disabled o texto) ⭐️
+                // Permitir clic si no es disabled y no es el título
                 if (!activeElement.classList.contains('disabled') && activeElement.tagName !== 'DIV' && activeElement.tagName !== 'H2') {
                     activeElement.click(); 
                 }
@@ -199,7 +199,6 @@
         else if (viewType === 'detail') {
             const detailLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, h2'));
             
-            // ⭐️ EN TABLET/DESKTOP LA CARD VOLVER LATERAL ENTRA EN EL TRAP ⭐️
             let volverElement = (!isMobile && App.DOM.cardVolverFijaElemento.tabIndex === 0) ? App.DOM.cardVolverFijaElemento : null;
 
             groups = [

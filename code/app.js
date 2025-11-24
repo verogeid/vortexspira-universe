@@ -9,10 +9,7 @@
     DOM: {}, 
     STATE: {
       fullData: null,          
-      
-      // ⭐️ MODIFICADO: Usa la nueva pila de nav-stack.js
       historyStack: [],        
-      
       itemsPorColumna: 3,      
       carouselInstance: null,  
       resizeObserver: null,    
@@ -27,24 +24,36 @@
          log('app', DEBUG_LEVELS.BASIC, "App: Iniciando orquestación...");
       }
 
-      // --- ⭐️ CACHEAR EL DOM (Corregido) ⭐️ ---
-      this.DOM.vistaDetalle = document.getElementById('vista-detalle');
-      this.DOM.detalleContenido = document.getElementById('detalle-contenido');
+      // --- ⭐️ CACHEAR EL DOM (Actualizado para contenedores separados) ⭐️ ---
+      
+      // Vistas Globales
+      this.DOM.vistaNav = null; // Se asigna dinámicamente en render-base
+      
+      // Vista Detalle Escritorio/Tablet (Grid)
+      this.DOM.vistaDetalleDesktop = document.getElementById('vista-detalle-desktop');
+      this.DOM.detalleContenidoDesktop = document.getElementById('detalle-contenido-desktop');
+      
+      // Vista Detalle Móvil (Fullscreen)
+      this.DOM.vistaDetalleMobile = document.getElementById('vista-detalle-mobile');
+      this.DOM.detalleContenidoMobile = document.getElementById('detalle-contenido-mobile');
+      
+      // Referencias genéricas (se usarán apuntando al activo)
+      this.DOM.vistaDetalle = null; 
+      this.DOM.detalleContenido = null; 
+
+      // Carruseles
       this.DOM.swiperContainerDesktop = document.getElementById('nav-swiper');
       this.DOM.swiperContainerTablet = document.getElementById('nav-swiper-tablet');
-      this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); 
       
-      // ⭐️ CORREGIDO: IDs de la columna izquierda
+      // Botones y Laterales
+      this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); 
       this.DOM.cardVolverFija = document.getElementById('card-volver-fija'); 
       this.DOM.cardVolverFijaElemento = document.getElementById('card-volver-fija-elemento'); 
-      
       this.DOM.infoAdicional = document.getElementById('info-adicional'); 
       this.DOM.cardNivelActual = document.getElementById('card-nivel-actual');
-      
-      // ⭐️ AÑADIDO: Cachear el Toast
       this.DOM.toast = document.getElementById('toast-notification');
 
-      // 2.1. Cargar los datos
+      // 2.1. Cargar Datos
       try {
         if (typeof loadData === 'function') {
             await loadData(this); 
@@ -57,8 +66,7 @@
         return;
       }
 
-      // ⭐️ 2.2. GESTIÓN "DEEP LINKING" E INICIO DE LA PILA ⭐️
-      // (Depende de _findNodoById, _mostrarDetalle, y nav-stack.js)
+      // 2.2. GESTIÓN DEEP LINKING
       try {
         const urlParams = new URLSearchParams(window.location.search);
         const targetId = urlParams.get('id');
@@ -66,19 +74,19 @@
         if (targetId) {
             const nodo = this._findNodoById(targetId, this.STATE.fullData.navegacion); 
 
-            if (nodo && nodo.titulo) { // Es un CURSO
+            if (nodo && nodo.titulo) { // Curso
                 log('app', DEBUG_LEVELS.BASIC, `Deep link a CURSO: ${targetId}`);
                 this.stackBuildFromId(targetId, this.STATE.fullData); 
-                this.renderNavegacion(); // Renderiza la nav (oculta)
-                this._mostrarDetalle(targetId); // Muestra el detalle
+                this.renderNavegacion(); 
+                this._mostrarDetalle(targetId); // Llama al renderizador específico
             
-            } else if (nodo && nodo.nombre) { // Es una CATEGORÍA
+            } else if (nodo && nodo.nombre) { // Categoría
                 log('app', DEBUG_LEVELS.BASIC, `Deep link a CATEGORÍA: ${targetId}`);
                 this.stackBuildFromId(targetId, this.STATE.fullData); 
                 this.renderNavegacion();
             
-            } else { // ID Inválido
-                logWarn('app', `Deep link ID "${targetId}" no encontrado. Cargando raíz.`);
+            } else { // Inválido
+                logWarn('app', `Deep link ID "${targetId}" no encontrado.`);
                 this.stackInitialize(); 
                 this.renderNavegacion();
                 if (typeof this.showToast === 'function') {
@@ -86,39 +94,27 @@
                 }
             }
         } else {
-            // Carga normal (Raíz)
             this.stackInitialize(); 
             this.renderNavegacion();
         }
       } catch (error) {
          logError('app', `ERROR: Fallo al inicializar. ${error.message}`);
-         this.stackInitialize(); // Fallback a la raíz
+         this.stackInitialize(); 
          this.renderNavegacion();
       }
 
-      // 2.3. Configurar listeners estáticos
-      if (typeof this.setupListeners === 'function') {
-          this.setupListeners(); 
-      }
-      if (typeof this.setupKeyboardListeners === 'function') {
-          this.setupKeyboardListeners(); 
-      }
-
-      // 2.4. Configurar el observador
-      if (typeof this._setupResizeObserver === 'function') {
-        this._setupResizeObserver(); 
-      }
+      // 2.3. Configuración
+      if (typeof this.setupListeners === 'function') { this.setupListeners(); }
+      // setupKeyboardListeners se llama implícitamente al cargar nav-keyboard.js
+      if (typeof this._setupResizeObserver === 'function') { this._setupResizeObserver(); }
       
-      // 2.5. Renderizar (ya se llamó en el paso 2.2)
-
-      // 2.6. Finalizar la carga inicial
       this.STATE.initialRenderComplete = true; 
-      log('app', DEBUG_LEVELS.BASIC, "Carga inicial completada. Observer activo.");
+      log('app', DEBUG_LEVELS.BASIC, "Carga inicial completada.");
     
-    }, // Fin de App.init()
+    }, 
 
     /**
-     * Muestra una notificación "toast" temporal que se desvanece.
+     * Toast Notification
      */
     showToast(message) {
         if (!this.DOM.toast) return;
@@ -134,11 +130,8 @@
 
         this.DOM.toast._toastTimer = setTimeout(() => {
             this.DOM.toast.textContent = '';
-        }, 2500); // 2s + 0.5s de transición CSS
+        }, 2500); 
     }
   };
-
-  // ⭐️ PUNTO DE ENTRADA ⭐️
-  // La llamada a App.init() se mueve al script de 'DOMContentLoaded' en index.html
 
 })();

@@ -1,5 +1,4 @@
 // --- code/nav-base.js ---
-
 (function() {
 
     // ⭐️ 1. SETUP LISTENERS ⭐️
@@ -15,11 +14,14 @@
       }
     };
 
-    // ⭐️ HELPER: Clic en fila -> Solo pone foco ⭐️
+    // ⭐️ HELPER: Clic en fila -> Solo pone foco (NO click) ⭐️
     App._handleActionRowClick = function(e) {
+        // Si el clic NO fue directamente en el botón (fue en el texto o contenedor)
         if (!e.target.closest('.detail-action-btn')) {
             const btn = e.currentTarget.querySelector('.detail-action-btn');
-            if (btn && !btn.classList.contains('disabled')) {
+            // Si existe y no está deshabilitado (aunque el foco sí se permite en disabled, la acción no)
+            // En este caso, queremos mover el foco siempre para que el usuario vea dónde está.
+            if (btn) {
                 btn.focus(); 
             }
         }
@@ -143,7 +145,7 @@
       const curso = App._findNodoById(cursoId, App.STATE.fullData.navegacion);
       if (!curso) return;
 
-      // Scroll Reset
+      // ⭐️ Scroll Reset ⭐️
       window.scrollTo(0, 0);
       if (this.DOM.vistaDetalle) this.DOM.vistaDetalle.scrollTop = 0;
       if (this.DOM.detalleContenido) this.DOM.detalleContenido.scrollTop = 0;
@@ -163,11 +165,14 @@
               const isDisabled = !enlace.url || enlace.url === '#';
               const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
               
+              // ⭐️ CORRECCIÓN: Clase disabled SOLO al botón, NO al texto ⭐️
               const classDisabledBtn = isDisabled ? 'disabled' : '';
-              const classDisabledText = ''; // Texto siempre blanco
+              const classDisabledText = ''; // Texto siempre limpio (blanco por CSS)
               
               const tabIndex = '0'; 
               const targetAttr = isDisabled ? '' : 'target="_blank"';
+              
+              // Bloquear acción nativa si está deshabilitado
               const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
 
               return `
@@ -189,10 +194,10 @@
       const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
       let mobileBackHtml = '';
       
-      // ⭐️ MÓVIL: Inyectar CARD de volver (con clase para estilo específico en detalle) ⭐️
+      // ⭐️ MÓVIL: Inyectar CARD de volver ⭐️
       if (isMobile) {
           mobileBackHtml = `
-            <div class="mobile-back-header" style="margin-bottom: 20px;">
+            <div class="mobile-back-header">
                 <article class="card card-volver-vertical" 
                          role="button" 
                          tabindex="0" 
@@ -204,7 +209,6 @@
           `;
       }
 
-      // ⭐️ TÍTULO ENFOCABLE PARA SCROLL ⭐️
       const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
 
       this.DOM.detalleContenido.innerHTML = `
@@ -223,6 +227,7 @@
       let primerElementoFocuseable = null;
 
       if (!isMobile) { 
+          // DESKTOP/TABLET
           if (isTablet) {
               this.DOM.infoAdicional.classList.remove('visible');
           } else {
@@ -238,11 +243,12 @@
           primerElementoFocuseable = this.DOM.cardVolverFijaElemento;
 
       } else { 
+          // MÓVIL
           this.DOM.infoAdicional.classList.remove('visible');
           this.DOM.cardVolverFija.classList.remove('visible');
           
-          // Foco al primer elemento interactivo (Card Volver en móvil)
-          const firstInteractive = this.DOM.detalleContenido.querySelector('.card, button, .detail-action-btn');
+          // Foco al primer elemento interactivo (Card Volver)
+          const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn');
           primerElementoFocuseable = firstInteractive; 
       }
 
@@ -253,7 +259,8 @@
 
     // ⭐️ 5. HELPERS ⭐️
     App._getFocusableDetailElements = function() {
-        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, button, h2, .detail-action-btn'));
+        // Incluye card (volver movil), botones y el título h2
+        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, h2'));
         let elements = [];
         const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
         

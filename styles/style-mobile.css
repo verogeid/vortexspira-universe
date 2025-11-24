@@ -2,7 +2,7 @@
 
 @media (max-width: 600px) {
     
-    /* 1. Scroll nativo en body */
+    /* 1. Scroll nativo */
     body {
         overflow-y: auto !important; 
         height: auto; min-height: 100vh; padding-bottom: 0;
@@ -12,7 +12,7 @@
     #app-container {
         height: auto !important;
         min-height: calc(100vh - var(--header-height)); 
-        /* Compensar Header Fijo */
+        /* Padding superior para compensar el Header Fijo */
         padding-top: calc(var(--header-height) + 10px) !important;
         display: flex; flex-direction: column;
         padding-left: 10px; padding-right: 10px; padding-bottom: 10px;
@@ -26,7 +26,7 @@
         display: block; 
     }
     
-    /* ⭐️ CORRECCIÓN CRÍTICA: Ocultar vistas inactivas ⭐️ */
+    /* Ocultar vistas inactivas */
     .vista:not(.active) {
         display: none !important;
     }
@@ -73,14 +73,18 @@
     display: flex; flex-direction: column; gap: 15px; 
     width: 100%; height: auto; padding: 5px; box-sizing: border-box;
     margin-top: 0 !important; justify-content: flex-start;
+    
+    scroll-snap-type: y mandatory; 
+    padding-bottom: 15vh; 
 }
 
 /* Tarjetas Móvil */
 .mobile-track .card {
     width: 100%; min-height: 100px; height: auto; font-size: 1.1rem;
+    scroll-snap-align: start; scroll-margin-top: 140px;
 }
 
-/* Breadcrumb Sticky (Menú) */
+/* Breadcrumb Sticky */
 .mobile-track .card-breadcrumb-vertical {
     position: sticky;
     top: calc(var(--header-height) + 10px); 
@@ -91,7 +95,7 @@
     margin-bottom: 20px; 
 }
 
-/* Tarjeta Volver (Menú) */
+/* Tarjeta Volver */
 .mobile-track .card-volver-vertical {
     min-height: 60px; background: var(--color-card-bg);
     border-style: solid; text-align: center; margin-bottom: 10px;
