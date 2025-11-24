@@ -27,13 +27,18 @@
         let calculatedItemsPerColumn;
         let swiperId = null;
         
+        const desktopView = document.getElementById('vista-navegacion-desktop');
+        const tabletView = document.getElementById('vista-navegacion-tablet');
+        const mobileView = document.getElementById('vista-navegacion-mobile');
+
+        
         if (isMobile) {
             renderHtmlFn = App._generateCardHTML_Mobile;
             initCarouselFn = App._initCarousel_Mobile; 
             calculatedItemsPerColumn = 1;
 
             // Asignar elementos DOM específicos para el modo móvil
-            this.DOM.vistaNav = document.getElementById('vista-navegacion-mobile');
+            this.DOM.vistaNav = mobileView;
             this.DOM.vistaDetalle = document.getElementById('vista-detalle-mobile'); 
             this.DOM.detalleContenido = document.getElementById('detalle-contenido-mobile');
             this.DOM.track = document.getElementById('track-mobile'); // Track móvil
@@ -46,7 +51,7 @@
                 calculatedItemsPerColumn = 2; 
                 swiperId = '#nav-swiper-tablet';
 
-                this.DOM.vistaNav = document.getElementById('vista-navegacion-tablet');
+                this.DOM.vistaNav = tabletView;
                 this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop'); // Usar la vista desktop
                 this.DOM.detalleContenido = document.getElementById('detalle-contenido-desktop');
                 this.DOM.track = document.getElementById('track-tablet'); 
@@ -54,7 +59,7 @@
                 calculatedItemsPerColumn = 3; 
                 swiperId = '#nav-swiper';
 
-                this.DOM.vistaNav = document.getElementById('vista-navegacion-desktop');
+                this.DOM.vistaNav = desktopView;
                 this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop'); 
                 this.DOM.detalleContenido = document.getElementById('detalle-contenido-desktop');
                 this.DOM.track = document.getElementById('track-desktop'); // Track desktop
@@ -62,9 +67,6 @@
         }
         this.STATE.itemsPorColumna = calculatedItemsPerColumn;
 
-        const desktopView = document.getElementById('vista-navegacion-desktop');
-        const tabletView = document.getElementById('vista-navegacion-tablet');
-        const mobileView = document.getElementById('vista-navegacion-mobile');
         
         const nodoActual = this._findNodoById(currentLevelId, this.STATE.fullData.navegacion);
         let itemsDelNivel = [];
@@ -124,22 +126,36 @@
             this._updateFocus(false); 
         }
 
+        // --- DESACTIVACIÓN Y ACTIVACIÓN DE VISTAS (CORRECCIÓN DE ACTIVACIÓN MÓVIL) ---
         desktopView.classList.remove('active');
         tabletView.classList.remove('active');
         mobileView.classList.remove('active');
         
-        // ⭐️ CORRECCIÓN DE ACTIVACIÓN ROBUSTA EN MÓVIL ⭐️
-        if (isMobile) {
-            // Si es móvil, forzamos la activación de la vista móvil incondicionalmente.
-            mobileView.classList.add('active'); 
+        // ⭐️ NUEVA LÓGICA: Limpiar clases de estado de vista y aplicar la nueva ⭐️
+        mobileView.classList.remove('view-nav-root', 'view-nav-submenu'); // Limpiar las clases de estado
+
+        const isDetailActive = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active');
+        
+        if (isDetailActive) {
+            this.DOM.vistaDetalle.classList.add('active');
         } else {
-            // Si es Desktop/Tablet, usamos la lógica de Deep Link/Detalle.
-            if (this.DOM.vistaNav && this.DOM.vistaDetalle) {
-                if (!this.DOM.vistaDetalle.classList.contains('active')) {
-                    this.DOM.vistaNav.classList.add('active'); 
+            // Si NO estamos en detalle, activamos la vista de navegación específica.
+            if (isMobile) {
+                mobileView.classList.add('active'); // ACTIVACIÓN ROBUSTA MÓVIL 
+                
+                // ⭐️ APLICAR CLASE DE ESTADO ⭐️
+                if (isSubLevel) {
+                    mobileView.classList.add('view-nav-submenu');
+                } else {
+                    mobileView.classList.add('view-nav-root');
                 }
+            } else if (isTablet) {
+                tabletView.classList.add('active');
+            } else { // Desktop
+                desktopView.classList.add('active');
             }
         }
+        // --- FIN ACTIVACIÓN ---
 
         if (!this.STATE.resizeObserver) {
             this._setupResizeObserver();
