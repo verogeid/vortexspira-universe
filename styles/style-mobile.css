@@ -2,27 +2,31 @@
 
 @media (max-width: 600px) {
     
+    /* 1. Scroll nativo en body */
     body {
         overflow-y: auto !important; 
         height: auto; min-height: 100vh; padding-bottom: 0;
     }
 
+    /* 2. Layout fluido */
     #app-container {
         height: auto !important;
         min-height: calc(100vh - var(--header-height)); 
+        /* Compensar Header Fijo */
         padding-top: calc(var(--header-height) + 10px) !important;
         display: flex; flex-direction: column;
         padding-left: 10px; padding-right: 10px; padding-bottom: 10px;
         gap: 15px; overflow: visible;
     }
 
+    /* 3. Vista central */
     #vista-central {
         width: 100%; position: relative; 
         height: auto !important; overflow: visible !important;
         display: block; 
     }
     
-    /* ⭐️ CORRECCIÓN: Ocultar vistas inactivas para evitar desplazamiento ⭐️ */
+    /* ⭐️ CORRECCIÓN CRÍTICA: Ocultar vistas inactivas ⭐️ */
     .vista:not(.active) {
         display: none !important;
     }
@@ -31,10 +35,12 @@
         position: relative; height: auto !important; overflow: visible !important;
     }
 
+    /* 4. Ocultar sidebars */
     #card-volver-fija, #info-adicional {
         display: none !important;
     }
 
+    /* 5. Detalle */
     #vista-detalle {
         padding-top: 0 !important; 
         margin-top: 0 !important;
@@ -45,6 +51,7 @@
         padding: 0 5px 20px 5px;
     }
 
+    /* Contenedor del botón Volver (Sticky) */
     .mobile-back-header {
         margin-bottom: 15px !important; 
         margin-top: 5px !important;
@@ -52,6 +59,7 @@
         width: 100%;
     }
 
+    /* 6. Footer */
     footer {
         position: relative !important; bottom: auto;
         margin-top: 40px; padding: 20px 5px; background: var(--color-bg); width: 100%;
@@ -60,16 +68,19 @@
     ::-webkit-scrollbar { width: 4px; }
 }
 
+/* Layout del Track Móvil */
 .mobile-track {
     display: flex; flex-direction: column; gap: 15px; 
     width: 100%; height: auto; padding: 5px; box-sizing: border-box;
     margin-top: 0 !important; justify-content: flex-start;
 }
 
+/* Tarjetas Móvil */
 .mobile-track .card {
     width: 100%; min-height: 100px; height: auto; font-size: 1.1rem;
 }
 
+/* Breadcrumb Sticky (Menú) */
 .mobile-track .card-breadcrumb-vertical {
     position: sticky;
     top: calc(var(--header-height) + 10px); 
@@ -80,6 +91,7 @@
     margin-bottom: 20px; 
 }
 
+/* Tarjeta Volver (Menú) */
 .mobile-track .card-volver-vertical {
     min-height: 60px; background: var(--color-card-bg);
     border-style: solid; text-align: center; margin-bottom: 10px;
