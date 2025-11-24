@@ -94,7 +94,7 @@
                 breadcrumbText = App.getString('breadcrumbRoot') || 'Nivel Raíz';
             }
             
-            // ⭐️ CORRECCIÓN: SOLO AÑADIR BREADCRUMB SI ES UN SUBNIVEL ⭐️
+            // ⭐️ CORRECCIÓN: SOLO AÑADIR BREADCRUMB SI ES UN SUBNIVEL (para evitar espacio vacío en la raíz) ⭐️
             if (isSubLevel) {
                 itemsDelNivel = [{ 
                     id: 'breadcrumb-nav', 
@@ -128,10 +128,16 @@
         tabletView.classList.remove('active');
         mobileView.classList.remove('active');
         
-        // ⭐️ CORRECCIÓN DEEP LINK Y NULL CHECK ⭐️
-        if (this.DOM.vistaNav && this.DOM.vistaDetalle) {
-            if (!this.DOM.vistaDetalle.classList.contains('active')) {
-                this.DOM.vistaNav.classList.add('active'); 
+        // ⭐️ CORRECCIÓN DE ACTIVACIÓN ROBUSTA EN MÓVIL ⭐️
+        if (isMobile) {
+            // Si es móvil, forzamos la activación de la vista móvil incondicionalmente.
+            mobileView.classList.add('active'); 
+        } else {
+            // Si es Desktop/Tablet, usamos la lógica de Deep Link/Detalle.
+            if (this.DOM.vistaNav && this.DOM.vistaDetalle) {
+                if (!this.DOM.vistaDetalle.classList.contains('active')) {
+                    this.DOM.vistaNav.classList.add('active'); 
+                }
             }
         }
 
