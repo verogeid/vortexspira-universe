@@ -41,11 +41,15 @@
 /* Tipos Especiales */
 .card.card-breadcrumb-vertical {
     border-style: dashed; border-color: var(--color-border-placeholder);
-    background: transparent; min-height: 60px; opacity: 0.8;
+    background: transparent; min-height: 50px; /* ⭐️ AJUSTADO: 60px -> 50px ⭐️ */
+    opacity: 0.8;
     font-size: 1rem; cursor: default; text-align: center;
     justify-content: center; pointer-events: none;
 }
-.card.card-volver-vertical { min-height: 80px; text-align: center; }
+.card.card-volver-vertical { 
+    min-height: 50px; /* ⭐️ AJUSTADO: 80px -> 50px ⭐️ */
+    text-align: center; 
+}
 
 /* --- ESTADOS DE FOCO Y COLOR --- */
 

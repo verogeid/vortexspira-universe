@@ -51,12 +51,25 @@
         padding: 0 5px 20px 5px;
     }
 
-    /* Contenedor del botón Volver (Sticky) */
+    /* Contenedor del botón Volver (Sticky) - Vista Detalle */
     .mobile-back-header {
         margin-bottom: 15px !important; 
         margin-top: 5px !important;
         text-align: left;
         width: 100%;
+    }
+    /* ⭐️ AJUSTE: Transformamos la card-volver-vertical en píldora compacta en la vista de detalle ⭐️ */
+    .mobile-back-header .card-volver-vertical {
+        min-height: 40px !important; 
+        padding: 0.5rem 1rem !important; 
+        width: auto; 
+        display: inline-flex; 
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        cursor: pointer;
+        border-radius: 20px;
+    }
+    .mobile-back-header .card-volver-vertical:hover {
+        transform: scale(1.05);
     }
 
     /* 6. Footer */
@@ -78,13 +91,16 @@
     padding-bottom: 15vh; 
 }
 
-/* Tarjetas Móvil */
+/* Tarjetas Móvil (Contenido) */
 .mobile-track .card {
     width: 100%; min-height: 100px; height: auto; font-size: 1.1rem;
-    scroll-snap-align: start; scroll-margin-top: 140px;
+    /* ⭐️ CORRECCIÓN: Ajuste de scroll-margin-top ⭐️
+       Header (9vh) + Breadcrumb (50px) + Volver (50px) + Gaps (aprox 20px) */
+    scroll-snap-align: start; 
+    scroll-margin-top: calc(var(--header-height) + 120px); 
 }
 
-/* Breadcrumb Sticky */
+/* Breadcrumb Sticky (Nivel Superior) */
 .mobile-track .card-breadcrumb-vertical {
     position: sticky;
     top: calc(var(--header-height) + 10px); 
@@ -92,11 +108,19 @@
     background-color: var(--color-bg); 
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     border-style: solid !important;
-    margin-bottom: 20px; 
+    margin-bottom: 5px; /* Margen reducido */
+    min-height: 50px; /* Altura reducida */
 }
 
-/* Tarjeta Volver */
+/* Tarjeta Volver (Nivel Inferior) */
 .mobile-track .card-volver-vertical {
-    min-height: 60px; background: var(--color-card-bg);
-    border-style: solid; text-align: center; margin-bottom: 10px;
+    position: sticky; /* ⭐️ AÑADIDO: Hacemos sticky también la tarjeta Volver ⭐️ */
+    /* Posicionamiento: Debajo del Header + Gap + Breadcrumb (50px) + Margen (5px) */
+    top: calc(var(--header-height) + 10px + 50px + 5px); 
+    z-index: 49; 
+    min-height: 50px; /* Altura reducida */
+    background: var(--color-card-bg);
+    border-style: solid; 
+    text-align: center; 
+    margin-bottom: 10px; 
 }
