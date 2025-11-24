@@ -19,7 +19,7 @@
         
         if (e.key === 'Escape') {
             e.preventDefault();
-            // ⭐️ CORRECCIÓN: Verificar la existencia de la función antes de llamarla ⭐️
+            // ⭐️ CORRECCIÓN: Verificar la existencia de la función (resolviendo TypeError) ⭐️
             if (typeof App._handleVolverClick === 'function') {
                 App._handleVolverClick(); 
             }
@@ -47,7 +47,7 @@
         if (document.activeElement === App.DOM.cardVolverFijaElemento) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                // ⭐️ CORRECCIÓN: Verificar la existencia de la función antes de llamarla ⭐️
+                // ⭐️ CORRECCIÓN: Verificar la existencia de la función (resolviendo TypeError) ⭐️
                 if (typeof App._handleVolverClick === 'function') {
                     App._handleVolverClick();
                 }
@@ -115,7 +115,7 @@
                 if (allCards[currentIndex]) {
                     const tarjeta = allCards[currentIndex];
                     if (tarjeta.dataset.tipo === 'volver-vertical') {
-                        // ⭐️ CORRECCIÓN: Verificar la existencia de la función antes de llamarla ⭐️
+                        // ⭐️ CORRECCIÓN: Verificar la existencia de la función (resolviendo TypeError) ⭐️
                          if (typeof App._handleVolverClick === 'function') {
                             App._handleVolverClick();
                          }
@@ -126,7 +126,7 @@
                     const id = tarjeta.dataset.id;
                     const tipo = tarjeta.dataset.tipo;
                     
-                    // ⭐️ CORRECCIÓN: Verificar la existencia de la función antes de llamarla ⭐️
+                    // ⭐️ CORRECCIÓN: Verificar la existencia de la función (resolviendo TypeError) ⭐️
                     if (typeof App._handleCardClick === 'function') {
                         App._handleCardClick(id, tipo); 
                     }

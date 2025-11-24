@@ -71,6 +71,19 @@
     .mobile-back-header .card-volver-vertical:hover {
         transform: scale(1.05);
     }
+    
+    /* ⭐️ CORRECCIÓN AÑADIDA: Posicionamiento de la vista de detalle móvil ⭐️ */
+    #vista-detalle-mobile {
+        position: fixed; 
+        top: var(--header-height); 
+        left: 0;
+        width: 100%;
+        height: calc(100vh - var(--header-height)); 
+        overflow-y: auto;
+        z-index: 99; 
+        background: var(--color-bg); 
+    }
+    /* ⭐️ FIN CORRECCIÓN ⭐️ */
 
     /* 6. Footer */
     footer {
@@ -83,7 +96,8 @@
 
 /* Layout del Track Móvil */
 .mobile-track {
-    display: flex; flex-direction: column; gap: 15px; 
+    display: flex; flex-direction: column; 
+    gap: 10px; /* ⭐️ AJUSTADO: gap reducido para más compacidad ⭐️ */
     width: 100%; height: auto; padding: 5px; box-sizing: border-box;
     margin-top: 0 !important; justify-content: flex-start;
     
@@ -95,9 +109,9 @@
 .mobile-track .card {
     width: 100%; min-height: 100px; height: auto; font-size: 1.1rem;
     /* ⭐️ CORRECCIÓN: Ajuste de scroll-margin-top ⭐️
-       Header (9vh) + Breadcrumb (50px) + Volver (50px) + Gaps (aprox 20px) */
+       Header (9vh) + Breadcrumb (50px) + Volver (50px) + 2x Gaps (2x10px) = 110px + 9vh */
     scroll-snap-align: start; 
-    scroll-margin-top: calc(var(--header-height) + 120px); 
+    scroll-margin-top: calc(var(--header-height) + 115px); 
 }
 
 /* Breadcrumb Sticky (Nivel Superior) */
@@ -108,17 +122,17 @@
     background-color: var(--color-bg); 
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     border-style: solid !important;
-    margin-bottom: 5px; /* Margen reducido */
-    min-height: 50px; /* Altura reducida */
+    margin-bottom: 10px; /* ⭐️ AJUSTADO: Coincide con el gap del track ⭐️ */
+    min-height: 50px; 
 }
 
 /* Tarjeta Volver (Nivel Inferior) */
 .mobile-track .card-volver-vertical {
-    position: sticky; /* ⭐️ AÑADIDO: Hacemos sticky también la tarjeta Volver ⭐️ */
-    /* Posicionamiento: Debajo del Header + Gap + Breadcrumb (50px) + Margen (5px) */
-    top: calc(var(--header-height) + 10px + 50px + 5px); 
+    position: sticky; /* ⭐️ ES STICKY ⭐️ */
+    /* Posicionamiento: Debajo del Header + Gap + Breadcrumb (50px) + Margen (10px) */
+    top: calc(var(--header-height) + 10px + 50px + 10px); 
     z-index: 49; 
-    min-height: 50px; /* Altura reducida */
+    min-height: 50px; 
     background: var(--color-card-bg);
     border-style: solid; 
     text-align: center; 

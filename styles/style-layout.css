@@ -20,19 +20,19 @@ header {
 }
 header h1 { 
     /* ⭐️ CORRECCIÓN: Usar una fuente mínima más pequeña y centrar el contenido ⭐️ */
-    font-size: clamp(1.2rem, 2.8vw, 2.2rem); /* Mínimo reducido a 1.2rem */
+    font-size: clamp(1.2rem, 2.8vw, 2.2rem); 
     margin: 0; padding: 0; line-height: 1.2; 
-    display: flex; /* Permite centrar el icono y el texto juntos */
+    display: flex; 
     align-items: center;
     justify-content: center;
-    gap: 8px; /* Espacio entre el logo y el texto */
+    gap: 8px; 
 }
 
 /* ⭐️ AÑADIDO: Asegurar que el SVG del logo sea fluido en el header ⭐️ */
 header h1 svg {
-    height: 1.8em; /* Relativo al tamaño de la fuente de h1 */
+    height: 1.8em; 
     width: auto;
-    flex-shrink: 0; /* Evita que el SVG se encoja */
+    flex-shrink: 0; 
 }
 
 

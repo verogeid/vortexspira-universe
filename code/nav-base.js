@@ -4,21 +4,17 @@
     // ⭐️ 1. SETUP LISTENERS ⭐️
     App.setupListeners = function() {
       if (this.DOM.btnVolverNav) {
-          // Asumiendo que App._handleVolverClick ya existe cuando esto se llama
           this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
           this.DOM.btnVolverNav.addEventListener('keydown', (e) => {
-              if (e.key === 'Enter' || e.key === ' ') { 
-                  e.preventDefault(); 
-                  // ⭐️ RUPTURA DE CICLO: Llamar a la función correctamente ⭐️
-                  if (typeof App._handleVolverClick === 'function') {
-                      App._handleVolverClick();
-                  }
-              }
+              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this._handleVolverClick(); }
           });
       }
       if (this.DOM.cardVolverFijaElemento) { 
           this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
       }
+      
+      // ⭐️ AÑADIDO: Inicializar el manejador de foco para la vista de detalle (Blur Mask) ⭐️
+      this._setupDetailFocusHandler();
     };
 
     // ⭐️ HELPER: Clic en fila -> Solo pone foco (NO click) ⭐️
@@ -123,7 +119,7 @@
         }
     };
 
-    // ⭐️ 4. NAVEGACIÓN Y VOLVER (LA FUNCIÓN QUE FALLA AL SER LLAMADA ANTES) ⭐️
+    // ⭐️ 4. NAVEGACIÓN Y VOLVER ⭐️
     App._handleVolverClick = function() {
         if (this.DOM.vistaDetalle.classList.contains('active')) {
             this.DOM.vistaDetalle.classList.remove('active');
@@ -145,6 +141,46 @@
         }
     };
 
+    /**
+     * ⭐️ GESTIÓN DE FOCO EN VISTA DETALLE (BLUR MASK) ⭐️
+     */
+    App._setupDetailFocusHandler = function() {
+        // Usar el contenedor principal de la aplicación para observar los cambios de foco
+        // Se asume que este listener se llama solo una vez en App.init.
+        document.addEventListener('focusin', (e) => {
+            const focusedEl = e.target;
+            const isDetailView = App.DOM.vistaDetalle && App.DOM.vistaDetalle.classList.contains('active');
+
+            // Solo actuar si estamos en la vista de detalle activa
+            if (isDetailView) {
+                const detailContainer = App.DOM.vistaDetalle; // Puede ser desktop o mobile
+                const textBlock = detailContainer.querySelector('#detalle-bloque-texto');
+                const actionsBlock = detailContainer.querySelector('.detail-actions-list');
+
+
+                // 1. Identificar Texto vs Acciones
+                // Verificamos si el foco está en el bloque de texto o en el h2 (que es el primer tabbable del bloque)
+                const isTextContentArea = focusedEl === textBlock || focusedEl.closest('#detalle-bloque-texto');
+                // Verificamos si el foco está en el bloque de acciones
+                const isActionContentArea = focusedEl === actionsBlock || focusedEl.closest('.detail-actions-list') || focusedEl.classList.contains('detail-action-btn');
+
+                // 2. Aplicar/Quitar Clases al Contenedor (#vista-detalle-desktop o #vista-detalle-mobile)
+                if (isTextContentArea) {
+                    detailContainer.classList.add('mode-focus-text');
+                    detailContainer.classList.remove('mode-focus-actions');
+                    // Aplicar el ghost focus (borde azul) al bloque de texto
+                    if (textBlock) textBlock.focus(); 
+                } else if (isActionContentArea) {
+                    detailContainer.classList.add('mode-focus-actions');
+                    detailContainer.classList.remove('mode-focus-text');
+                } else {
+                    // Limpiar si el foco está fuera de las dos áreas (ej. en el botón volver móvil o título principal)
+                    detailContainer.classList.remove('mode-focus-actions', 'mode-focus-text');
+                }
+            }
+        });
+    };
+    
     /**
      * ⭐️ MUESTRA DETALLE DEL CURSO ⭐️
      */
@@ -201,7 +237,7 @@
       const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
       let mobileBackHtml = '';
       
-      // ⭐️ MÓVIL: Inyectar CARD de volver ⭐️
+      // ⭐️ MÓVIL: Inyectar CARD de volver (Es visible y funciona como breadcrumb) ⭐️
       if (isMobile) {
           mobileBackHtml = `
             <div class="mobile-back-header">
@@ -220,9 +256,13 @@
 
       this.DOM.detalleContenido.innerHTML = `
         ${mobileBackHtml}
-        ${titleHtml}
-        <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
-        ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
+        <div id="detalle-bloque-texto" tabindex="0"> 
+          ${titleHtml}
+          <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
+        </div>
+        <div id="detalle-bloque-acciones">
+          ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
+        </div>
       `;
 
       const screenWidth = window.innerWidth;
@@ -230,6 +270,7 @@
 
       this.DOM.vistaNav.classList.remove('active');
       this.DOM.vistaDetalle.classList.add('active');
+      // La máscara se gestiona en _setupDetailFocusHandler()
 
       let primerElementoFocuseable = null;
 
@@ -247,6 +288,7 @@
           this.DOM.cardVolverFijaElemento.classList.add('visible');
           this.DOM.cardVolverFijaElemento.innerHTML = `<h3>${LOGO_VOLVER}</h3>`; 
           this.DOM.cardVolverFijaElemento.tabIndex = 0;
+          
           primerElementoFocuseable = this.DOM.cardVolverFijaElemento;
 
       } else { 
@@ -254,7 +296,7 @@
           this.DOM.infoAdicional.classList.remove('visible');
           this.DOM.cardVolverFija.classList.remove('visible');
           
-          // Foco al primer elemento interactivo (Card Volver)
+          // Foco al primer elemento interactivo (Card Volver en móvil)
           const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn');
           primerElementoFocuseable = firstInteractive; 
       }
