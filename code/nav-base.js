@@ -1,8 +1,7 @@
 // --- code/nav-base.js ---
-
 (function() {
 
-    // ⭐️ 1. SETUP LISTENERS ⭐️
+    // ⭐️ 1. LISTENERS ⭐️
     App.setupListeners = function() {
       if (this.DOM.btnVolverNav) {
           this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
@@ -15,7 +14,7 @@
       }
     };
 
-    // ⭐️ HELPER: Clic en fila (Solo foco, no acción) ⭐️
+    // Helper clic fila (solo foco)
     App._handleActionRowClick = function(e) {
         if (!e.target.closest('.detail-action-btn')) {
             const btn = e.currentTarget.querySelector('.detail-action-btn');
@@ -25,7 +24,7 @@
         }
     };
 
-    // ⭐️ 2. POINTER LISTENERS ⭐️
+    // ⭐️ 2. TRACK POINTER ⭐️
     App.setupTrackPointerListeners = function() { 
         if (this.DOM.track) {
             if (this.DOM.track._clickListener) { this.DOM.track.removeEventListener('click', this.DOM.track._clickListener); }
@@ -114,7 +113,6 @@
         }
     };
 
-    // ⭐️ 4. LÓGICA DE NAVEGACIÓN ⭐️
     App._handleVolverClick = function() {
         if (this.DOM.vistaDetalle.classList.contains('active')) {
             this.DOM.vistaDetalle.classList.remove('active');
@@ -136,14 +134,44 @@
         }
     };
 
+    // ⭐️ 4. GESTIÓN DE FOCO (BLUR) EN DETALLE ⭐️
+    App._setupDetailFocusMask = function() {
+        const container = document.getElementById('detalle-contenido');
+        const textBlock = document.getElementById('detalle-bloque-texto');
+        const actionsBlock = document.getElementById('detalle-bloque-acciones');
+
+        if (!container || !textBlock || !actionsBlock) return;
+
+        container.className = 'contenido-curso'; // Reset
+
+        // Foco en acciones -> Difuminar texto
+        actionsBlock.addEventListener('focusin', () => {
+            container.classList.add('mode-focus-actions');
+            container.classList.remove('mode-focus-text');
+        });
+        actionsBlock.addEventListener('mouseenter', () => {
+             container.classList.add('mode-focus-actions');
+             container.classList.remove('mode-focus-text');
+        });
+
+        // Foco en texto -> Difuminar acciones
+        textBlock.addEventListener('focusin', () => {
+            container.classList.add('mode-focus-text');
+            container.classList.remove('mode-focus-actions');
+        });
+        textBlock.addEventListener('mouseenter', () => {
+             container.classList.add('mode-focus-text');
+             container.classList.remove('mode-focus-actions');
+        });
+    };
+
     /**
-     * ⭐️ MUESTRA DETALLE DEL CURSO ⭐️
+     * ⭐️ MUESTRA DETALLE DEL CURSO (Estructura Bipartita para Blur) ⭐️
      */
     App._mostrarDetalle = function(cursoId) {
       const curso = App._findNodoById(cursoId, App.STATE.fullData.navegacion);
       if (!curso) return;
 
-      // ⭐️ Scroll Reset (Móvil) ⭐️
       window.scrollTo(0, 0);
       if (this.DOM.vistaDetalle) this.DOM.vistaDetalle.scrollTop = 0;
       if (this.DOM.detalleContenido) this.DOM.detalleContenido.scrollTop = 0;
@@ -163,7 +191,7 @@
               const isDisabled = !enlace.url || enlace.url === '#';
               const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
               
-              // ⭐️ CORRECCIÓN: Texto siempre blanco (sin clase disabled) ⭐️
+              // Texto siempre blanco, botón recibe clase disabled
               const classDisabledBtn = isDisabled ? 'disabled' : '';
               const classDisabledText = ''; 
               
@@ -187,11 +215,24 @@
           enlacesHtml = `<div class="detail-actions-list">${itemsHtml}</div>`;
       }
 
+      // Generación de bloques separados
+      const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
+      const descHtml = `<p>${curso.descripcion || 'No hay descripción disponible.'}</p>`;
+
+      this.DOM.detalleContenido.innerHTML = `
+        <div id="detalle-bloque-texto">
+            ${titleHtml}
+            ${descHtml}
+        </div>
+        <div id="detalle-bloque-acciones">
+            ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
+        </div>
+      `;
+
+      // Inyección de botón Volver para MÓVIL (Sticky fuera de los bloques)
       const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
-      let mobileBackHtml = '';
-      
       if (isMobile) {
-          mobileBackHtml = `
+          const mobileBackHtml = `
             <div class="mobile-back-header" style="margin-bottom: 20px;">
                 <article class="card card-volver-vertical" 
                          role="button" 
@@ -202,23 +243,19 @@
                 </article>
             </div>
           `;
+          // Insertar al principio
+          this.DOM.detalleContenido.insertAdjacentHTML('afterbegin', mobileBackHtml);
       }
-      
-      // ⭐️ TÍTULO ENFOCABLE PARA SCROLL ⭐️
-      const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
 
-      this.DOM.detalleContenido.innerHTML = `
-        ${mobileBackHtml}
-        ${titleHtml}
-        <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
-        ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
-      `;
-
+      // Configuración de Vistas
       const screenWidth = window.innerWidth;
       const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
 
       this.DOM.vistaNav.classList.remove('active');
       this.DOM.vistaDetalle.classList.add('active');
+      
+      // Activar la máscara de enfoque
+      this._setupDetailFocusMask();
 
       let primerElementoFocuseable = null;
 
@@ -228,10 +265,8 @@
           } else {
               this.DOM.infoAdicional.classList.add('visible'); 
           }
-          
           this.DOM.cardVolverFija.classList.add('visible'); 
           this.DOM.cardNivelActual.classList.remove('visible'); 
-          
           this.DOM.cardVolverFijaElemento.classList.add('visible');
           this.DOM.cardVolverFijaElemento.innerHTML = `<h3>${LOGO_VOLVER}</h3>`; 
           this.DOM.cardVolverFijaElemento.tabIndex = 0;
@@ -241,8 +276,8 @@
           this.DOM.infoAdicional.classList.remove('visible');
           this.DOM.cardVolverFija.classList.remove('visible');
           
-          // Foco a la card volver inyectada
-          const firstInteractive = this.DOM.detalleContenido.querySelector('.card, button, .detail-action-btn:not(.disabled)');
+          // Foco a la card volver inyectada o al título
+          const firstInteractive = this.DOM.detalleContenido.querySelector('.card, h2');
           primerElementoFocuseable = firstInteractive; 
       }
 
@@ -253,7 +288,7 @@
 
     // ⭐️ 5. HELPERS ⭐️
     App._getFocusableDetailElements = function() {
-        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, button, h2, .detail-action-btn'));
+        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, h2'));
         let elements = [];
         const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
         

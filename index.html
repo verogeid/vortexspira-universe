@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VortexSpira®: Selector de Cursos</title> 
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <link rel="stylesheet" href="styles/style-base.css">
@@ -25,40 +26,29 @@
 
     <div id="vista-central" role="region">
         <div id="vista-navegacion-desktop" class="vista active">
-            <div class="carousel-mask">
-                <div class="mask-left"></div>
-                <div class="mask-right"></div>
-            </div>
-            <div id="nav-swiper" class="swiper carousel-viewport">
-                <div class="swiper-wrapper grid-track" id="track-desktop"></div>
-            </div>
+            <div class="carousel-mask"><div class="mask-left"></div><div class="mask-right"></div></div>
+            <div id="nav-swiper" class="swiper carousel-viewport"><div class="swiper-wrapper grid-track" id="track-desktop"></div></div>
         </div>
+        
         <div id="vista-navegacion-tablet" class="vista">
-            <div class="carousel-mask">
-                <div class="mask-left"></div>
-                <div class="mask-right"></div>
-            </div>
-            <div id="nav-swiper-tablet" class="swiper carousel-viewport">
-                <div class="swiper-wrapper grid-track" id="track-tablet"></div>
-            </div>
+            <div class="carousel-mask"><div class="mask-left"></div><div class="mask-right"></div></div>
+            <div id="nav-swiper-tablet" class="swiper carousel-viewport"><div class="swiper-wrapper grid-track" id="track-tablet"></div></div>
         </div>
+        
         <div id="vista-navegacion-mobile" class="vista">
             <div class="mobile-track" id="track-mobile"></div>
         </div>
+        
         <div id="vista-detalle" class="vista">
-            <div class="contenido-curso" id="detalle-contenido"></div>
+            <div class="contenido-curso" id="detalle-contenido">
+                </div>
         </div>
     </div>
 
     <div id="info-adicional">
         <details>
             <summary id="info-adicional-titulo-ayuda"></summary>
-            <small>
-              <ul id="info-adicional-lista-ayuda">
-                <li id="info-adicional-ayuda-gira"></li>
-                <li id="info-adicional-ayuda-vuelve"></li>
-              </ul>
-            </small>
+            <small><ul id="info-adicional-lista-ayuda"><li id="info-adicional-ayuda-gira"></li><li id="info-adicional-ayuda-vuelve"></li></ul></small>
         </details>
         <details open>
             <summary id="info-adicional-titulo-acerca"></summary>
@@ -78,9 +68,7 @@
 
   <button id="btn-volver-navegacion" tabindex="-1">↩️ Volver</button>
 
-  <footer>
-    <small id="footer-content"></small>
-  </footer>
+  <footer><small id="footer-content"></small></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="code/debug.js"></script>

@@ -9,6 +9,33 @@
     scrollbar-color: var(--color-primary) transparent;
 }
 
+/* ⭐️ EFECTO BLUR (FOCUS MASK) ⭐️ */
+#detalle-bloque-texto,
+#detalle-bloque-acciones {
+    transition: filter 0.4s ease, opacity 0.4s ease;
+    will-change: filter, opacity;
+}
+
+/* Si el foco está en TEXTO -> Difuminar acciones */
+.contenido-curso.mode-focus-text #detalle-bloque-acciones {
+    filter: blur(3px) grayscale(50%);
+    opacity: 0.4;
+    pointer-events: none; 
+}
+.contenido-curso.mode-focus-text #detalle-bloque-texto {
+    filter: none; opacity: 1;
+}
+
+/* Si el foco está en ACCIONES -> Difuminar texto */
+.contenido-curso.mode-focus-actions #detalle-bloque-texto {
+    filter: blur(3px) grayscale(50%);
+    opacity: 0.4;
+}
+.contenido-curso.mode-focus-actions #detalle-bloque-acciones {
+    filter: none; opacity: 1;
+}
+
+
 /* 2. LISTA DE ACCIONES */
 .detail-actions-list {
     display: flex; flex-direction: column; gap: 0; 
@@ -29,14 +56,12 @@
     font-size: 1rem; font-weight: 500; color: var(--color-text);
     text-align: left; margin-right: 15px; flex-grow: 1;
 }
-.detail-action-text.disabled {
-    color: var(--color-text-muted); opacity: 0.7;
-}
 
 /* 3. BOTÓN DE ACCIÓN (GHOST) */
 .detail-action-btn {
     display: flex; justify-content: center; align-items: center;
-    width: 38px; height: 38px; background: transparent; 
+    width: 38px; height: 38px; 
+    background: transparent; 
     border: 2px solid var(--color-card-border); 
     border-radius: 50%; 
     color: var(--color-text); 
@@ -58,41 +83,32 @@
 .detail-action-btn.disabled {
     border-color: var(--color-card-border-disabled);
     color: var(--color-text-muted);
-    cursor: default; opacity: 0.5; pointer-events: none; /* Pointer events off para ratón, pero focus funciona por teclado */
+    cursor: default; opacity: 0.6; pointer-events: none;
 }
 
-/* ⭐️ Estado FOCUS en DISABLED (Legible, sin azul) ⭐️ */
+/* Estado FOCUS en DISABLED (Legible, sin azul) */
 .detail-action-btn.disabled:focus-visible {
     outline: none;
-    border-color: var(--color-text); /* Blanco/Gris claro */
+    border-color: var(--color-text); 
     box-shadow: 0 0 10px var(--color-shadow-disabled);
     color: var(--color-text);
     opacity: 1;
     transform: scale(1.03);
 }
 
-
 /* 4. ICONOS SVG */
 .action-icon {
-    display: inline-block;
-    width: 20px; height: 20px;
+    display: inline-block; width: 20px; height: 20px;
     background-color: currentColor; 
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
     -webkit-mask-size: contain; mask-size: contain;
 }
 
-.icon-download {
-    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="20" y2="21"></line><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>');
-    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="20" y2="21"></line><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>');
-}
+.icon-download { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="20" y2="21"></line><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="20" y2="21"></line><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>'); }
+.icon-link { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>'); }
 
-.icon-link {
-    -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>');
-    mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>');
-}
-
-/* 5. Botón Volver Móvil */
+/* Botón Volver Móvil (Píldora) */
 button.detail-action-btn {
     width: auto !important; height: auto !important;
     padding: 0.5rem 1rem !important; 
