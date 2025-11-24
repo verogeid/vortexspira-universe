@@ -1,4 +1,4 @@
-// --- code/app.js ---
+// --- code/app.js --- (MODIFICADO)
 
 (function() {
 
@@ -36,10 +36,27 @@
       // Vista Detalle Móvil (Fullscreen)
       this.DOM.vistaDetalleMobile = document.getElementById('vista-detalle-mobile');
       this.DOM.detalleContenidoMobile = document.getElementById('detalle-contenido-mobile');
-      
+
       // Referencias genéricas (se usarán apuntando al activo)
       this.DOM.vistaDetalle = null; 
       this.DOM.detalleContenido = null; 
+
+      // ⭐️ INICIO CORRECCIÓN (INICIALIZACIÓN DE VISTAS GENÉRICAS) ⭐️
+      // Esto evita el 'Cannot read properties of null' en la primera llamada a renderNavegacion().
+      
+      // Usar 600 como fallback si data.js (donde está MOBILE_MAX_WIDTH) no ha cargado aún.
+      const MAX_WIDTH_MOBILE = typeof MOBILE_MAX_WIDTH !== 'undefined' ? MOBILE_MAX_WIDTH : 600;
+      const isMobileInit = window.innerWidth <= MAX_WIDTH_MOBILE;
+      
+      // Asignar al contenedor de vistaDetalle adecuado al iniciar la aplicación.
+      this.DOM.vistaDetalle = isMobileInit ? 
+          this.DOM.vistaDetalleMobile : 
+          this.DOM.vistaDetalleDesktop;
+      
+      this.DOM.detalleContenido = isMobileInit ?
+          this.DOM.detalleContenidoMobile :
+          this.DOM.detalleContenidoDesktop;
+      // ⭐️ FIN CORRECCIÓN ⭐️
 
       // Carruseles
       this.DOM.swiperContainerDesktop = document.getElementById('nav-swiper');

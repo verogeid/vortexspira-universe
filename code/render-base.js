@@ -31,15 +31,33 @@
             renderHtmlFn = App._generateCardHTML_Mobile;
             initCarouselFn = App._initCarousel_Mobile; 
             calculatedItemsPerColumn = 1;
+
+            // Asignar elementos DOM específicos para el modo móvil
+            this.DOM.vistaNav = document.getElementById('vista-navegacion-mobile');
+            this.DOM.vistaDetalle = document.getElementById('vista-detalle-mobile'); 
+            this.DOM.detalleContenido = document.getElementById('detalle-contenido-mobile');
+            this.DOM.track = document.getElementById('track-mobile'); // Track móvil
+            
         } else {
             renderHtmlFn = App._generateCardHTML_Carousel;
             initCarouselFn = App._initCarousel_Swipe; 
+            
             if (isTablet) {
                 calculatedItemsPerColumn = 2; 
                 swiperId = '#nav-swiper-tablet';
+
+                this.DOM.vistaNav = document.getElementById('vista-navegacion-tablet');
+                this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop'); // Usar la vista desktop
+                this.DOM.detalleContenido = document.getElementById('detalle-contenido-desktop');
+                this.DOM.track = document.getElementById('track-tablet'); 
             } else {
                 calculatedItemsPerColumn = 3; 
                 swiperId = '#nav-swiper';
+
+                this.DOM.vistaNav = document.getElementById('vista-navegacion-desktop');
+                this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop'); 
+                this.DOM.detalleContenido = document.getElementById('detalle-contenido-desktop');
+                this.DOM.track = document.getElementById('track-desktop'); // Track desktop
             }
         }
         this.STATE.itemsPorColumna = calculatedItemsPerColumn;
@@ -48,17 +66,6 @@
         const tabletView = document.getElementById('vista-navegacion-tablet');
         const mobileView = document.getElementById('vista-navegacion-mobile');
         
-        if (isMobile) {
-            this.DOM.vistaNav = mobileView;
-            this.DOM.track = document.getElementById('track-mobile');
-        } else if (isTablet) {
-            this.DOM.vistaNav = tabletView;
-            this.DOM.track = document.getElementById('track-tablet');
-        } else {
-            this.DOM.vistaNav = desktopView;
-            this.DOM.track = document.getElementById('track-desktop');
-        }
-
         const nodoActual = this._findNodoById(currentLevelId, this.STATE.fullData.navegacion);
         let itemsDelNivel = [];
 
@@ -117,8 +124,11 @@
         mobileView.classList.remove('active');
         
         // ⭐️ CORRECCIÓN DEEP LINK: Solo forzar vistaNav si NO estamos viendo un detalle ⭐️
-        if (!this.DOM.vistaDetalle.classList.contains('active')) {
-            this.DOM.vistaNav.classList.add('active'); 
+        // Se añade la comprobación defensiva para this.DOM.vistaDetalle que era null al inicio.
+        if (this.DOM.vistaNav && this.DOM.vistaDetalle) {
+            if (!this.DOM.vistaDetalle.classList.contains('active')) {
+                this.DOM.vistaNav.classList.add('active'); 
+            }
         }
 
         if (!this.STATE.resizeObserver) {
