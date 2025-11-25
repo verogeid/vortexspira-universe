@@ -147,7 +147,11 @@
         
         // Navegamos solo por el contenido central (excluyendo el lateral izquierdo)
         const mainContentElements = focusableDetailElements.filter(el => 
-            el.classList.contains('detail-action-btn') || el.classList.contains('card') || el.tagName === 'H2'
+            el.classList.contains('detail-action-btn') || 
+            el.classList.contains('card') || 
+            el.tagName === 'H2' || 
+            // ⭐️ CORRECCIÓN CLAVE: Incluir el bloque de texto para la navegación con flechas ⭐️
+            el.id === 'detalle-bloque-texto' 
         );
 
         let currentIndex = mainContentElements.indexOf(activeElement);
@@ -161,20 +165,24 @@
         switch (key) {
             case 'ArrowLeft':
             case 'ArrowUp':
-                // ⭐️ TOPE SUPERIOR: No salir si es el primero
+                // ⭐️ TOPE SUPERIOR: Navegar hacia arriba/izquierda ⭐️
                 newIndex = (currentIndex > 0) ? currentIndex - 1 : currentIndex;
                 break;
             case 'ArrowRight':
             case 'ArrowDown':
+                // Navegar hacia abajo/derecha
                 newIndex = (currentIndex < mainContentElements.length - 1) ? currentIndex + 1 : currentIndex;
                 break;
             case 'Enter':
             case ' ':
-                // Permitir clic si no es disabled y no es el título
-                if (!activeElement.classList.contains('disabled') && activeElement.tagName !== 'DIV' && activeElement.tagName !== 'H2') {
+                // Permitir clic si no es disabled y no es el título o bloque de texto
+                if (!activeElement.classList.contains('disabled') && activeElement.tagName !== 'DIV' && activeElement.tagName !== 'H2' && activeElement.id !== 'detalle-bloque-texto') {
                     activeElement.click(); 
+                } else if (activeElement.id === 'detalle-bloque-texto') {
+                    // Si el foco está en el bloque de texto (para Ghost Focus), mover al siguiente elemento interactivo.
+                    newIndex = (currentIndex < mainContentElements.length - 1) ? currentIndex + 1 : currentIndex;
                 }
-                return;
+                break;
         }
         if (newIndex !== currentIndex) {
             mainContentElements[newIndex].focus();
@@ -199,7 +207,8 @@
             if (isMobile) {
                 groups = [ [activeCard].filter(Boolean), footerLinks ];
             } else { 
-                const cardVolver = App.DOM.cardVolverFijaElemento.tabIndex === 0 ? App.DOM.cardVolverFijaElemento : null;
+                // ⭐️ CORRECCIÓN: Asegurar que cardVolverFijaElemento esté visible y tenga tabindex=0 ⭐️
+                const cardVolver = (App.DOM.cardVolverFijaElemento && App.DOM.cardVolverFijaElemento.tabIndex === 0) ? App.DOM.cardVolverFijaElemento : null;
                 groups = [
                     [cardVolver].filter(Boolean),
                     [activeCard].filter(Boolean),
@@ -209,13 +218,15 @@
             }
         } 
         else if (viewType === 'detail') {
-            const detailLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, h2'));
-            
-            let volverElement = (!isMobile && App.DOM.cardVolverFijaElemento.tabIndex === 0) ? App.DOM.cardVolverFijaElemento : null;
+            // Elementos enfocables dentro del contenido de detalle (texto, acciones)
+            const detailContentLinks = Array.from(App.DOM.detalleContenido.querySelectorAll('#detalle-bloque-texto, .detail-action-btn, .card'));
+
+            // El botón de Volver Fijo (Desktop/Tablet) debe estar en el ciclo de Tab
+            let volverElement = (!isMobile && (App.DOM.cardVolverFijaElemento && App.DOM.cardVolverFijaElemento.tabIndex === 0)) ? App.DOM.cardVolverFijaElemento : null;
 
             groups = [
                 [volverElement].filter(Boolean),
-                detailLinks,
+                detailContentLinks, // El contenido principal
                 infoPanelLinks,
                 footerLinks
             ];

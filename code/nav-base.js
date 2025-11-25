@@ -14,6 +14,7 @@
       }
       
       // ⭐️ AÑADIDO: Inicializar el manejador de foco para la vista de detalle (Blur Mask) ⭐️
+      // Se llama aquí en setupListeners, que a su vez es llamado por App.init
       this._setupDetailFocusHandler();
     };
 
@@ -146,7 +147,6 @@
      */
     App._setupDetailFocusHandler = function() {
         // Usar el contenedor principal de la aplicación para observar los cambios de foco
-        // Se asume que este listener se llama solo una vez en App.init.
         document.addEventListener('focusin', (e) => {
             const focusedEl = e.target;
             const isDetailView = App.DOM.vistaDetalle && App.DOM.vistaDetalle.classList.contains('active');
@@ -154,6 +154,7 @@
             // Solo actuar si estamos en la vista de detalle activa
             if (isDetailView) {
                 const detailContainer = App.DOM.vistaDetalle; // Puede ser desktop o mobile
+                // ⭐️ CAMBIO: Ahora buscamos el bloque de texto dentro del DOM.detalleContenido inyectado ⭐️
                 const textBlock = detailContainer.querySelector('#detalle-bloque-texto');
                 const actionsBlock = detailContainer.querySelector('.detail-actions-list');
 
@@ -254,6 +255,7 @@
 
       const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
 
+      // ⭐️ CORRECCIÓN: El bloque de texto (#detalle-bloque-texto) debe ser el contenedor enfocable ⭐️
       this.DOM.detalleContenido.innerHTML = `
         ${mobileBackHtml}
         <div id="detalle-bloque-texto" tabindex="0"> 
@@ -308,8 +310,8 @@
 
     // ⭐️ 5. HELPERS ⭐️
     App._getFocusableDetailElements = function() {
-        // Incluye card (volver movil), botones y el título h2
-        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, h2'));
+        // Incluye card (volver movil), botones y el bloque de texto (#detalle-bloque-texto)
+        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, #detalle-bloque-texto'));
         let elements = [];
         const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
         

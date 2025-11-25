@@ -25,7 +25,8 @@
 #detalle-bloque-texto:focus-visible {
     border-color: var(--color-primary);
     box-shadow: 0 0 15px var(--color-shadow-primary);
-    background-color: rgba(var(--color-primary-rgb), 0.05); 
+    /* Se asume que var(--color-primary-rgb) está definido, si no, usar rgba(0, 123, 255, 0.05) */
+    background-color: rgba(0, 123, 255, 0.05); 
 }
 
 /* 3. EFECTO BLUR CON DEGRADADO (FOCUS MASK) */
