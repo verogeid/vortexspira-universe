@@ -41,30 +41,30 @@
         </div>
 
         <div id="vista-detalle-desktop" class="vista">
-            <div class="contenido-curso" id="detalle-contenido-desktop" tabindex="0"></div>
+            <div class="contenido-curso" id="detalle-contenido-desktop" tabindex="0">
+                </div>
             <div id="detalle-bloque-acciones">
-                <a href="#" class="detail-action-btn" id="btn-descargar-curso" role="button" target="_blank" tabindex="-1"></a>
-                <a href="#" class="detail-action-btn" id="btn-adquirir-curso" role="button" target="_blank" tabindex="-1"></a>
+                <a href="#" class="detail-action-btn" id="btn-descargar-curso" role="button" target="_blank" tabindex="-1" title="Descargar Contenido"></a>
+                <a href="#" class="detail-action-btn" id="btn-adquirir-curso" role="button" target="_blank" tabindex="-1" title="Adquirir Curso"></a>
             </div>
         </div>
     </div>
 
     <div id="info-adicional">
         <details id="help-panel" open>
-            <summary id="help-title"></summary>
+            <summary id="info-adicional-titulo-ayuda"></summary>
             <small>
                 <ul id="info-adicional-lista-ayuda">
-                    <li data-i18n="helpRotate"></li>
-                    <li data-i18n="helpBack"></li>
-                    <li data-i18n="helpDetail"></li>
+                    <li id="info-adicional-ayuda-gira"></li>
+                    <li id="info-adicional-ayuda-vuelve"></li>
                 </ul>
             </small>
         </details>
         
-        <details id="about-panel">
-            <summary id="about-title"></summary>
+        <details id="about-panel" open>
+            <summary id="info-adicional-titulo-acerca"></summary>
             <small>
-                <p id="about-summary"></p>
+                <p id="info-adicional-summary"></p>
                 <ul id="info-adicional-lista-acerca">
                     <li><a href="#" id="info-adicional-link-landing" target="_top">Visita la Landing Page</a></li>
                     <li><a href="#" id="info-adicional-link-diary" target="_blank">Lee el Dev Diary en GitHub</a></li>
@@ -79,6 +79,10 @@
 
   <div id="vista-detalle-mobile" class="vista-mobile-fullscreen">
       <div class="contenido-curso" id="detalle-contenido-mobile"></div>
+      <div id="detalle-bloque-acciones-mobile">
+          <a href="#" class="detail-action-btn" id="btn-descargar-curso-mobile" role="button" target="_blank" tabindex="-1" title="Descargar Contenido Móvil"></a>
+          <a href="#" class="detail-action-btn" id="btn-adquirir-curso-mobile" role="button" target="_blank" tabindex="-1" title="Adquirir Curso Móvil"></a>
+      </div>
   </div>
 
   <button id="btn-volver-navegacion" tabindex="-1">↩️ Volver</button>

@@ -1,5 +1,16 @@
 /* --- styles/style-desktop.css --- */
+
+/* DESKTOP (> 1025px): 3 Columnas (Izq - Centro - Der) */
 @media (min-width: 1025px) {
+    #app-container {
+      height: calc(100vh - var(--header-height) - var(--footer-height)); 
+      width: 100%; max-width: 1600px; margin: 0 auto;
+      display: grid; 
+      grid-template-columns: 1fr 3fr 1fr; 
+      gap: 20px; padding: 20px; box-sizing: border-box;
+      align-items: start; background: var(--color-bg);
+    }
+
     :root {
         --card-height-calc: calc( (100% - (2 * var(--card-gap))) / 3 );
     }

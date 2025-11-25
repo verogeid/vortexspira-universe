@@ -38,30 +38,6 @@ header h1 svg {
 
 /* GRID RESPONSIVE */
 
-/* TABLET (601px - 1024px): 2 Columnas (Izq - Centro) */
-@media (min-width: 601px) and (max-width: 1024px) {
-    #app-container {
-        height: calc(100vh - var(--header-height) - var(--footer-height)); 
-        width: 100%; max-width: 1600px; margin: 0 auto;
-        display: grid; 
-        grid-template-columns: 200px 1fr; 
-        gap: 15px; padding: 15px; box-sizing: border-box;
-        align-items: start; background: var(--color-bg);
-    }
-}
-
-/* DESKTOP (> 1025px): 3 Columnas (Izq - Centro - Der) */
-@media (min-width: 1025px) {
-    #app-container {
-      height: calc(100vh - var(--header-height) - var(--footer-height)); 
-      width: 100%; max-width: 1600px; margin: 0 auto;
-      display: grid; 
-      grid-template-columns: 240px 1fr 240px; 
-      gap: 20px; padding: 20px; box-sizing: border-box;
-      align-items: start; background: var(--color-bg);
-    }
-}
-
 #vista-central {
   grid-column: 2 / 3; width: 100%; height: 100%; 
   position: relative; overflow: hidden; display: flex; 

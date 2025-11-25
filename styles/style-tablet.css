@@ -1,9 +1,21 @@
 /* --- styles/style-tablet.css --- */
+
+/* TABLET (601px - 1024px): 2 Columnas (Izq - Centro) */
+
 @media ((min-width: 601px) and (max-width: 1024px)) {
+    #app-container {
+        height: calc(100vh - var(--header-height) - var(--footer-height)); 
+        width: 100%; max-width: 1600px; margin: 0 auto;
+        display: grid; 
+        grid-template-columns: 1fr 3fr; 
+        gap: 15px; padding: 15px; box-sizing: border-box;
+        align-items: start; background: var(--color-bg);
+    }
+    
     :root {
         --card-height-calc: calc( (100% - var(--card-gap)) / 2 );
     }
-    
+
     /* ⭐️ OCULTAR COLUMNA DERECHA EN TABLET ⭐️ */
     #info-adicional {
         display: none !important;
