@@ -14,7 +14,6 @@
       }
       
       // ⭐️ AÑADIDO: Inicializar el manejador de foco para la vista de detalle (Blur Mask) ⭐️
-      // Se llama aquí en setupListeners, que a su vez es llamado por App.init
       this._setupDetailFocusHandler();
     };
 
@@ -34,10 +33,12 @@
     // ⭐️ 2. POINTER LISTENERS ⭐️
     App.setupTrackPointerListeners = function() { 
         if (this.DOM.track) {
+            // ⭐️ Mouse Click Listener ⭐️
             if (this.DOM.track._clickListener) { this.DOM.track.removeEventListener('click', this.DOM.track._clickListener); }
             this.DOM.track._clickListener = this._handleTrackClick.bind(this);
             this.DOM.track.addEventListener('click', this.DOM.track._clickListener);
 
+            // ⭐️ Mouse Over Listener ⭐️
             if (this.DOM.track._mouseoverListener) { this.DOM.track.removeEventListener('mouseover', this.DOM.track._mouseoverListener); }
             this.DOM.track._mouseoverListener = this._handleTrackMouseOver.bind(this);
             this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
@@ -122,11 +123,20 @@
 
     // ⭐️ 4. NAVEGACIÓN Y VOLVER ⭐️
     App._handleVolverClick = function() {
+        const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
+        
         if (this.DOM.vistaDetalle.classList.contains('active')) {
             this.DOM.vistaDetalle.classList.remove('active');
+            
+            // ⭐️ CORRECCIÓN: Ocultar el bloque de acciones móvil explícitamente ⭐️
+            if (isMobile && this.DOM.vistaDetalle.querySelector('#detalle-bloque-acciones-mobile')) {
+                 this.DOM.vistaDetalle.querySelector('#detalle-bloque-acciones-mobile').style.display = 'none';
+            }
+            
             this.DOM.btnVolverNav.classList.remove('visible');
             this.DOM.btnVolverNav.tabIndex = -1;
             this.renderNavegacion(); 
+            
         } 
         else if (App.STATE.historyStack.length > 1) { 
             App.stackPop(); 
@@ -154,28 +164,23 @@
             // Solo actuar si estamos en la vista de detalle activa
             if (isDetailView) {
                 const detailContainer = App.DOM.vistaDetalle; // Puede ser desktop o mobile
-                // ⭐️ CAMBIO: Ahora buscamos el bloque de texto dentro del DOM.detalleContenido inyectado ⭐️
                 const textBlock = detailContainer.querySelector('#detalle-bloque-texto');
                 const actionsBlock = detailContainer.querySelector('.detail-actions-list');
 
 
                 // 1. Identificar Texto vs Acciones
-                // Verificamos si el foco está en el bloque de texto o en el h2 (que es el primer tabbable del bloque)
                 const isTextContentArea = focusedEl === textBlock || focusedEl.closest('#detalle-bloque-texto');
-                // Verificamos si el foco está en el bloque de acciones
                 const isActionContentArea = focusedEl === actionsBlock || focusedEl.closest('.detail-actions-list') || focusedEl.classList.contains('detail-action-btn');
 
                 // 2. Aplicar/Quitar Clases al Contenedor (#vista-detalle-desktop o #vista-detalle-mobile)
                 if (isTextContentArea) {
                     detailContainer.classList.add('mode-focus-text');
                     detailContainer.classList.remove('mode-focus-actions');
-                    // Aplicar el ghost focus (borde azul) al bloque de texto
                     if (textBlock) textBlock.focus(); 
                 } else if (isActionContentArea) {
                     detailContainer.classList.add('mode-focus-actions');
                     detailContainer.classList.remove('mode-focus-text');
                 } else {
-                    // Limpiar si el foco está fuera de las dos áreas (ej. en el botón volver móvil o título principal)
                     detailContainer.classList.remove('mode-focus-actions', 'mode-focus-text');
                 }
             }
@@ -209,14 +214,12 @@
               const isDisabled = !enlace.url || enlace.url === '#';
               const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
               
-              // ⭐️ CORRECCIÓN: Clase disabled SOLO al botón, NO al texto ⭐️
               const classDisabledBtn = isDisabled ? 'disabled' : '';
-              const classDisabledText = ''; // Texto siempre limpio (blanco por CSS)
+              const classDisabledText = ''; 
               
               const tabIndex = '0'; 
               const targetAttr = isDisabled ? '' : 'target="_blank"';
               
-              // Bloquear acción nativa si está deshabilitado
               const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
 
               return `
@@ -238,7 +241,6 @@
       const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
       let mobileBackHtml = '';
       
-      // ⭐️ MÓVIL: Inyectar CARD de volver (Es visible y funciona como breadcrumb) ⭐️
       if (isMobile) {
           mobileBackHtml = `
             <div class="mobile-back-header">
@@ -255,7 +257,7 @@
 
       const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
 
-      // ⭐️ CORRECCIÓN: El bloque de texto (#detalle-bloque-texto) debe ser el contenedor enfocable ⭐️
+      // ⭐️ INYECCIÓN DE CONTENIDO ⭐️
       this.DOM.detalleContenido.innerHTML = `
         ${mobileBackHtml}
         <div id="detalle-bloque-texto" tabindex="0"> 
@@ -267,17 +269,25 @@
         </div>
       `;
 
-      const screenWidth = window.innerWidth;
-      const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
+      // ⭐️ GESTIÓN DE VISTAS Y FOCO ⭐️
 
       this.DOM.vistaNav.classList.remove('active');
       this.DOM.vistaDetalle.classList.add('active');
-      // La máscara se gestiona en _setupDetailFocusHandler()
+      
+      const screenWidth = window.innerWidth;
+      const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
 
       let primerElementoFocuseable = null;
 
       if (!isMobile) { 
           // DESKTOP/TABLET
+          
+          // ⭐️ CORRECCIÓN: Breadcrumb en Detalle ⭐️
+          if (this.DOM.cardNivelActual) {
+             this.DOM.cardNivelActual.innerHTML = `<h3>${curso.titulo || 'Curso'}</h3>`;
+             this.DOM.cardNivelActual.classList.add('visible'); 
+          }
+          
           if (isTablet) {
               this.DOM.infoAdicional.classList.remove('visible');
           } else {
@@ -285,19 +295,21 @@
           }
           
           this.DOM.cardVolverFija.classList.add('visible'); 
-          this.DOM.cardNivelActual.classList.remove('visible'); 
-          
           this.DOM.cardVolverFijaElemento.classList.add('visible');
           this.DOM.cardVolverFijaElemento.innerHTML = `<h3>${LOGO_VOLVER}</h3>`; 
           this.DOM.cardVolverFijaElemento.tabIndex = 0;
           
           primerElementoFocuseable = this.DOM.cardVolverFijaElemento;
-
+          
       } else { 
           // MÓVIL
           this.DOM.infoAdicional.classList.remove('visible');
           this.DOM.cardVolverFija.classList.remove('visible');
           
+          // El bloque de acciones móvil estaba fuera del contenedor de contenido, se mueve
+          const actionBlockMobile = document.getElementById('detalle-bloque-acciones-mobile');
+          if (actionBlockMobile) actionBlockMobile.style.display = 'block';
+
           // Foco al primer elemento interactivo (Card Volver en móvil)
           const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn');
           primerElementoFocuseable = firstInteractive; 

@@ -49,9 +49,18 @@
         overflow-y: auto !important; 
         padding-top: calc(var(--header-height) + 10px);
         padding-bottom: 10px;
+        
+        /* ⭐️ Scrollbar azul en detalle ⭐️ */
+        scrollbar-color: var(--color-primary) transparent;
+        /* ⭐️ El contenedor de detalle usa flex-column para el contenido y acciones ⭐️ */
+        display: flex; flex-direction: column; 
     }
-    .vista-mobile-fullscreen { 
-        padding: 0 5px 20px 5px;
+    #vista-detalle-mobile::-webkit-scrollbar-thumb {
+        background-color: var(--color-primary);
+    }
+
+    .vista-mobile-fullscreen .contenido-curso { 
+        padding: 0 5px 20px 5px; /* Padding interno */
     }
 
     /* Contenedor del botón Volver (Sticky) */
@@ -99,15 +108,15 @@
 /* ⭐️ VISTA RAÍZ (Usa #track-mobile-root) ⭐️ */
 /* --------------------------------------------------------------------- */
 
-/* Margen pequeño para compensar solo el header y el padding. */
+/* ⭐️ CORRECCIÓN: Margen mínimo para estar justo debajo del header ⭐️ */
 #track-mobile-root .card {
     width: 100%; min-height: 100px; height: auto; font-size: 1.1rem;
     scroll-snap-align: start; 
-    scroll-margin-top: calc(var(--header-height) + 20px); 
+    scroll-margin-top: calc(var(--header-height) + 10px); 
 }
 
 /* --------------------------------------------------------------------- */
-/* ⭐️ ESTILOS STICKY (Se aplican en el track que los renderice) ⭐️ */
+/* ⭐️ ESTILOS STICKY (Ajuste de Posición Vertical) ⭐️ */
 /* --------------------------------------------------------------------- */
 
 /* Breadcrumb Sticky */
@@ -125,8 +134,8 @@
 /* Tarjeta Volver (Nivel Inferior) */
 .mobile-track .card-volver-vertical {
     position: sticky; 
-    /* Posicionamiento: Debajo del Breadcrumb (50px) + Gap (10px) */
-    top: calc(var(--header-height) + 10px + 50px + 10px); 
+    /* ⭐️ CORRECCIÓN CLAVE: Ajustar TOP para eliminar el solapamiento ⭐️ */
+    top: calc(var(--header-height) + 70px); 
     z-index: 49; 
     min-height: 50px; 
     background: var(--color-card-bg);
