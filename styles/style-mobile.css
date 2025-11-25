@@ -12,8 +12,8 @@
     #app-container {
         height: auto !important;
         min-height: calc(100vh - var(--header-height)); 
-        /* Padding superior para compensar el Header Fijo */
-        padding-top: calc(var(--header-height) + 10px) !important;
+        /* ⭐️ CORRECCIÓN: Padding superior fijo (10px) ⭐️ */
+        padding-top: 10px !important;
         display: flex; flex-direction: column;
         padding-left: 10px; padding-right: 10px; padding-bottom: 10px;
         gap: 15px; overflow: visible;
@@ -45,14 +45,12 @@
         position: fixed; top: 0; left: 0; 
         width: 100%; height: 100vh;
         z-index: 1000;
-        /* El contenido tiene que poder scrollear nativamente */
         overflow-y: auto !important; 
         padding-top: calc(var(--header-height) + 10px);
         padding-bottom: 10px;
         
-        /* ⭐️ Scrollbar azul en detalle ⭐️ */
+        /* Scrollbar azul en detalle */
         scrollbar-color: var(--color-primary) transparent;
-        /* ⭐️ El contenedor de detalle usa flex-column para el contenido y acciones ⭐️ */
         display: flex; flex-direction: column; 
     }
     #vista-detalle-mobile::-webkit-scrollbar-thumb {
@@ -62,7 +60,7 @@
     .vista-mobile-fullscreen .contenido-curso { 
         padding: 0 5px 20px 5px; /* Padding interno */
     }
-
+    
     /* Contenedor del botón Volver (Sticky) */
     .mobile-back-header {
         margin-bottom: 15px !important; 
@@ -84,12 +82,18 @@
 /* Layout del Track Móvil (Base para ambos tracks) */
 .mobile-track {
     display: flex; flex-direction: column; 
-    gap: 10px; /* AJUSTADO: gap reducido para más compacidad */
+    gap: 10px; 
     width: 100%; height: auto; padding: 5px; box-sizing: border-box;
     margin-top: 0 !important; justify-content: flex-start;
     
     scroll-snap-type: y mandatory; 
     padding-bottom: 15vh; 
+}
+
+/* ⭐️ CORRECCIÓN: Cursor para Interacción Táctil ⭐️ */
+.mobile-track .card:not(.disabled):not([data-tipo="relleno"]) {
+    cursor: pointer !important;
+    pointer-events: auto !important; 
 }
 
 
@@ -101,18 +105,18 @@
 #track-mobile-submenu .card {
     width: 100%; min-height: 100px; height: auto; font-size: 1.1rem;
     scroll-snap-align: start; 
-    scroll-margin-top: calc(var(--header-height) + 130px); 
+    scroll-margin-top: 130px; 
 }
 
 /* --------------------------------------------------------------------- */
 /* ⭐️ VISTA RAÍZ (Usa #track-mobile-root) ⭐️ */
 /* --------------------------------------------------------------------- */
 
-/* ⭐️ CORRECCIÓN: Margen mínimo para estar justo debajo del header ⭐️ */
+/* Margen mínimo para compensar solo el padding del header */
 #track-mobile-root .card {
     width: 100%; min-height: 100px; height: auto; font-size: 1.1rem;
     scroll-snap-align: start; 
-    scroll-margin-top: calc(var(--header-height) + 10px); 
+    scroll-margin-top: 20px; 
 }
 
 /* --------------------------------------------------------------------- */
@@ -122,7 +126,7 @@
 /* Breadcrumb Sticky */
 .mobile-track .card-breadcrumb-vertical {
     position: sticky;
-    top: calc(var(--header-height) + 10px); /* Posición inicial */
+    top: 10px; /* ⭐️ CORRECCIÓN: 10px fijo ⭐️ */
     z-index: 50; 
     background-color: var(--color-bg); 
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
@@ -134,8 +138,8 @@
 /* Tarjeta Volver (Nivel Inferior) */
 .mobile-track .card-volver-vertical {
     position: sticky; 
-    /* ⭐️ CORRECCIÓN CLAVE: Ajustar TOP para eliminar el solapamiento ⭐️ */
-    top: calc(var(--header-height) + 70px); 
+    /* ⭐️ CORRECCIÓN CLAVE: Ajuste de TOP para evitar solapamiento ⭐️ */
+    top: 70px; 
     z-index: 49; 
     min-height: 50px; 
     background: var(--color-card-bg);

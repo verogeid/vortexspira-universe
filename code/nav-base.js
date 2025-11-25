@@ -126,11 +126,12 @@
         const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
         
         if (this.DOM.vistaDetalle.classList.contains('active')) {
-            this.DOM.vistaDetalle.classList.remove('active');
+            // ⭐️ CORRECCIÓN: Ocultar el contenedor principal de la vista de detalle ⭐️
+            this.DOM.vistaDetalle.classList.remove('active'); 
             
-            // ⭐️ CORRECCIÓN: Ocultar el bloque de acciones móvil explícitamente ⭐️
-            if (isMobile && this.DOM.vistaDetalle.querySelector('#detalle-bloque-acciones-mobile')) {
-                 this.DOM.vistaDetalle.querySelector('#detalle-bloque-acciones-mobile').style.display = 'none';
+            // Ocultar el bloque de acciones móvil explícitamente (si existe)
+            if (isMobile && document.getElementById('detalle-bloque-acciones-mobile')) {
+                 document.getElementById('detalle-bloque-acciones-mobile').style.display = 'none';
             }
             
             this.DOM.btnVolverNav.classList.remove('visible');
