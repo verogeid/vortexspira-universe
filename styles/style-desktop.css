@@ -5,7 +5,8 @@
     #app-container {
       height: calc(100vh - var(--header-height) - var(--footer-height)); 
       width: 100%; max-width: 1600px; margin: 0 auto;
-      /* ⭐️ CORRECCIÓN: 1fr 3fr 1fr para que las columnas laterales sean iguales ⭐️ */
+      display: grid; /* Asegurar que el display grid está activo */
+      /* ⭐️ COLUMNAS: 1fr (Volver/Fijo) 3fr (Carrusel) 1fr (Info Adicional) ⭐️ */
       grid-template-columns: 1fr 3fr 1fr; 
       gap: 20px; padding: 20px; box-sizing: border-box;
       align-items: start; background: var(--color-bg);
