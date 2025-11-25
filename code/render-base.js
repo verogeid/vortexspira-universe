@@ -41,7 +41,15 @@
             this.DOM.vistaNav = mobileView;
             this.DOM.vistaDetalle = document.getElementById('vista-detalle-mobile'); 
             this.DOM.detalleContenido = document.getElementById('detalle-contenido-mobile');
-            this.DOM.track = document.getElementById('track-mobile'); // Track móvil
+            
+            // ⭐️ ASIGNACIÓN DEL TRACK: Usamos el track correcto para el estado ⭐️
+            if (isSubLevel) {
+                this.DOM.track = document.getElementById('track-mobile-submenu'); 
+                this.DOM.inactiveTrack = document.getElementById('track-mobile-root'); 
+            } else {
+                this.DOM.track = document.getElementById('track-mobile-root'); 
+                this.DOM.inactiveTrack = document.getElementById('track-mobile-submenu'); 
+            }
             
         } else {
             renderHtmlFn = App._generateCardHTML_Carousel;
@@ -110,6 +118,12 @@
         let htmlContent = renderHtmlFn(itemsDelNivel, this.STATE.itemsPorColumna);
         this.DOM.track.innerHTML = htmlContent;
 
+        // Ocultar el track inactivo para eliminar el espaciado
+        if (isMobile && this.DOM.inactiveTrack) {
+            this.DOM.inactiveTrack.style.display = 'none';
+            this.DOM.track.style.display = 'flex'; 
+        }
+
         let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
         initCarouselFn(initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId);
 
@@ -131,9 +145,6 @@
         tabletView.classList.remove('active');
         mobileView.classList.remove('active');
         
-        // ⭐️ NUEVA LÓGICA: Limpiar clases de estado de vista y aplicar la nueva ⭐️
-        mobileView.classList.remove('view-nav-root', 'view-nav-submenu'); // Limpiar las clases de estado
-
         const isDetailActive = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active');
         
         if (isDetailActive) {
@@ -141,7 +152,7 @@
         } else {
             // Si NO estamos en detalle, activamos la vista de navegación específica.
             if (isMobile) {
-                mobileView.classList.add('active'); // ACTIVACIÓN ROBUSTA MÓVIL 
+                mobileView.classList.add('active'); // ⭐️ ACTIVACIÓN ROBUSTA MÓVIL ⭐️
                 
                 // ⭐️ APLICAR CLASE DE ESTADO ⭐️
                 if (isSubLevel) {

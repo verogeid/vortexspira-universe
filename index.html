@@ -32,29 +32,43 @@
             <div class="carousel-mask"><div class="mask-left"></div><div class="mask-right"></div></div>
             <div id="nav-swiper-tablet" class="swiper carousel-viewport"><div class="swiper-wrapper grid-track" id="track-tablet"></div></div>
         </div>
-        
+
         <div id="vista-navegacion-mobile" class="vista">
-            <div class="mobile-track" id="track-mobile"></div>
+            <div id="track-mobile-root" class="mobile-track view-root">
+                </div>
+            <div id="track-mobile-submenu" class="mobile-track view-submenu">
+                </div>
         </div>
-        
+
         <div id="vista-detalle-desktop" class="vista">
-            <div class="contenido-curso" id="detalle-contenido-desktop"></div>
+            <div class="contenido-curso" id="detalle-contenido-desktop" tabindex="0"></div>
+            <div id="detalle-bloque-acciones">
+                <a href="#" class="detail-action-btn" id="btn-descargar-curso" role="button" target="_blank" tabindex="-1"></a>
+                <a href="#" class="detail-action-btn" id="btn-adquirir-curso" role="button" target="_blank" tabindex="-1"></a>
+            </div>
         </div>
     </div>
 
     <div id="info-adicional">
-        <details>
-            <summary id="info-adicional-titulo-ayuda"></summary>
-            <small><ul id="info-adicional-lista-ayuda"><li id="info-adicional-ayuda-gira"></li><li id="info-adicional-ayuda-vuelve"></li></ul></small>
-        </details>
-        <details open>
-            <summary id="info-adicional-titulo-acerca"></summary>
+        <details id="help-panel" open>
+            <summary id="help-title"></summary>
             <small>
-              <p id="info-adicional-summary"></p>
-              <ul id="info-adicional-lista-acerca">
-                <li><a id="info-adicional-link-landing" href="#" target="_blank">Visita la Landing Page</a></li>
-                <li><a id="info-adicional-link-diary" href="#" target="_blank">Lee el Dev Diary en GitHub</a></li>
-              </ul>
+                <ul id="info-adicional-lista-ayuda">
+                    <li data-i18n="helpRotate"></li>
+                    <li data-i18n="helpBack"></li>
+                    <li data-i18n="helpDetail"></li>
+                </ul>
+            </small>
+        </details>
+        
+        <details id="about-panel">
+            <summary id="about-title"></summary>
+            <small>
+                <p id="about-summary"></p>
+                <ul id="info-adicional-lista-acerca">
+                    <li><a href="#" id="info-adicional-link-landing" target="_top">Visita la Landing Page</a></li>
+                    <li><a href="#" id="info-adicional-link-diary" target="_blank">Lee el Dev Diary en GitHub</a></li>
+                </ul>
             </small>
         </details>
     </div>
@@ -83,6 +97,7 @@
   <script src="code/nav-base.js"></script>
   <script src="code/nav-keyboard.js"></script>
   <script src="code/nav-tactil.js"></script>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
         if (window.App && App.applyStrings) { App.applyStrings(); }
