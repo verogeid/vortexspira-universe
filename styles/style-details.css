@@ -23,10 +23,10 @@
 }
 
 #detalle-bloque-texto:focus-visible {
+    /* ⭐️ CORRECCIÓN CLAVE: La sombra simula un halo exterior al borde y padding ⭐️ */
     border-color: var(--color-primary);
-    box-shadow: 0 0 15px var(--color-shadow-primary);
-    /* Se asume que var(--color-primary-rgb) está definido, si no, usar rgba(0, 123, 255, 0.05) */
-    background-color: rgba(0, 123, 255, 0.05); 
+    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2), 0 0 15px var(--color-shadow-primary);
+    background-color: transparent; 
 }
 
 /* 3. EFECTO BLUR CON DEGRADADO (FOCUS MASK) */

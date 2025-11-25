@@ -17,6 +17,10 @@ header {
     text-align: center; background: var(--color-header-bg);
     color: var(--color-header-text); z-index: 100; box-sizing: border-box;
     height: var(--header-height);
+    /* ⭐️ CORRECCIÓN: Centrado vertical y horizontal del contenido ⭐️ */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 header h1 { 
     /* ⭐️ CORRECCIÓN: Usar una fuente mínima más pequeña y centrar el contenido ⭐️ */
@@ -30,7 +34,8 @@ header h1 {
 
 /* ⭐️ AÑADIDO: Asegurar que el SVG del logo sea fluido en el header ⭐️ */
 header h1 svg {
-    height: 1.8em; 
+    height: calc(var(--header-height) - 20px); /* 20px para compensar el padding de 10px arriba y abajo */
+    max-height: 1.8em; /* Limite de fuente */
     width: auto;
     flex-shrink: 0; 
 }

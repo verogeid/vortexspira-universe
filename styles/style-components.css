@@ -36,6 +36,17 @@
 
 #btn-volver-navegacion { display: none !important; } 
 
+#info-adicional {
+    /* ⭐️ CORRECCIÓN: Añadir estilos de scroll ⭐️ */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) transparent;
+}
+/* For Webkit */
+#info-adicional::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary);
+}
+
+
 #info-adicional details { margin-bottom: 1.2rem; }
 #info-adicional summary { font-size: 1.2rem; font-weight: bold; cursor: pointer; list-style: none; padding: 0.2rem; color: var(--color-text); opacity: 0.9; transition: color 0.2s ease; }
 #info-adicional summary:hover { opacity: 1; color: var(--color-primary); }
@@ -46,8 +57,25 @@
 #info-adicional-lista-acerca { list-style-type: none; padding-left: 0; }
 #info-adicional-lista-ayuda { list-style-type: disc; padding-left: 15px; }
 
-#info-adicional-lista-acerca a { display: flex; align-items: center; text-decoration: none; color: var(--color-text); opacity: 0.8; transition: all 0.2s ease; font-size: 0.95rem; }
-#info-adicional-lista-acerca a:hover, #info-adicional-lista-acerca a:focus-visible { opacity: 1; color: var(--color-primary); outline: none; transform: translateX(3px); }
+#info-adicional-lista-acerca a { 
+    display: flex; align-items: center; text-decoration: none; 
+    color: var(--color-text); /* Color base */
+    opacity: 0.8; transition: all 0.2s ease; font-size: 0.95rem; 
+}
+
+#info-adicional-lista-acerca a:hover { 
+    opacity: 1; 
+    color: var(--color-text); /* ⭐️ CORRECCIÓN: Hover mantiene el color base del texto ⭐️ */
+    outline: none; 
+    transform: translateX(3px); 
+}
+#info-adicional-lista-acerca a:focus-visible { 
+    opacity: 1; 
+    color: var(--color-primary); /* ⭐️ Solo el foco es azul ⭐️ */
+    outline: none; 
+    transform: translateX(3px); 
+}
+
 #info-adicional-lista-acerca a::before { width: 20px; height: 20px; margin-right: 10px; flex-shrink: 0; background-color: var(--color-text); }
 #info-adicional-lista-acerca a:hover::before, #info-adicional-lista-acerca a:focus-visible::before { background-color: var(--color-primary); }
 
