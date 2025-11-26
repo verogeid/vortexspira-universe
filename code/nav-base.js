@@ -40,31 +40,30 @@
         
         if (this.DOM.track) {
             
-            // --- Limpieza de Listeners Antiguos (Importante para evitar duplicados) ---
-            if (this.DOM.track._clickListener) { this.DOM.track.removeEventListener('click', this.DOM.track._clickListener); }
-            if (this.DOM.track._mouseoverListener) { this.DOM.track.removeEventListener('mouseover', this.DOM.track._mouseoverListener); }
-            if (this.DOM.track._touchEndListener) { this.DOM.track.removeEventListener('touchend', this.DOM.track._touchEndListener); }
-            log('nav_base', DEBUG_LEVELS.DEEP, 'Listeners antiguos limpiados en:', this.DOM.track.id);
+            if (this.DOM.track._clickListener) { this.DOM.track.removeEventListener('click', this.DOM.track._clickListener); this.DOM.track._clickListener = null; }
+            if (this.DOM.track._mouseoverListener) { this.DOM.track.removeEventListener('mouseover', this.DOM.track._mouseoverListener); this.DOM.track._mouseoverListener = null; }
+            if (this.DOM.track._touchEndListener) { this.DOM.track.removeEventListener('touchend', this.DOM.track._touchEndListener); this.DOM.track._touchEndListener = null; }
+            log('nav_base', DEBUG_LEVELS.DEEP, 'Listeners CLIC/TOUCH programáticos eliminados.');
 
-            // --- Adjunción de Listeners Nuevos ---
-            
-            // ⭐️ 1. Click Listener (Delegación programática) ⭐️
-            this.DOM.track._clickListener = this._handleTrackClick.bind(this);
-            this.DOM.track.addEventListener('click', this.DOM.track._clickListener);
-            log('nav_base', DEBUG_LEVELS.DEEP, 'Listener "click" adjuntado.');
+            const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
 
-            // ⭐️ 2. Touchend Listener (Delegación programática para táctil) ⭐️
-            // NOTA: Con el 'onclick' en línea añadido en render-base.js, este listener puede ser redundante o causar duplicidad.
-            this.DOM.track._touchEndListener = this._handleTrackClick.bind(this);
-            this.DOM.track.addEventListener('touchend', this.DOM.track._touchEndListener);
-            log('nav_base', DEBUG_LEVELS.DEEP, 'Listener "touchend" adjuntado.');
-            
-            // ⭐️ 3. Mouse Over Listener (Hover/Foco visual) ⭐️
-            this.DOM.track._mouseoverListener = this._handleTrackMouseOver.bind(this);
-            this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
-            log('nav_base', DEBUG_LEVELS.DEEP, 'Listener "mouseover" adjuntado.');
-        } else {
-            logError('nav_base', 'this.DOM.track es nulo al adjuntar listeners.');
+            if (!isMobile) {
+                // ⭐️ DESKTOP/TABLET: Confiamos en la delegación programática (SWIPER) ⭐️
+                
+                this.DOM.track._clickListener = this._handleTrackClick.bind(this);
+                this.DOM.track.addEventListener('click', this.DOM.track._clickListener);
+                
+                this.DOM.track._mouseoverListener = this._handleTrackMouseOver.bind(this);
+                this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
+                log('nav_base', DEBUG_LEVELS.DEEP, 'Listeners programáticos adjuntados para Desktop/Tablet.');
+
+            } else {
+                // ⭐️ MÓVIL: Confiamos en el "onclick" en línea (Render-base.js) ⭐️
+                // Solo adjuntamos mouseover (por si se usa un ratón)
+                this.DOM.track._mouseoverListener = this._handleTrackMouseOver.bind(this);
+                this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
+                log('nav_base', DEBUG_LEVELS.DEEP, 'Solo mouseover programático adjuntado para Móvil.');
+            }
         }
     };
 
