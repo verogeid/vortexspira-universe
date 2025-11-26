@@ -15,30 +15,28 @@
 
         // 2. Preparar datos con relleno (para el final)
         const totalItems = items.length;
-        const itemsPerColumn = itemsPerSlide;
-        const currentContentSlides = Math.ceil(totalItems / itemsPerColumn);
-        
-        // ⭐️⭐️ LÓGICA OPTIMIZADA PARA MANTENER EL LOOP ⭐️⭐️
-        // Forzamos un mínimo de 8 slides para asegurar la fluidez de loop:true con slidesPerView:3
-        const MIN_REQUIRED_SLIDES = 8; 
-        
-        let totalSlidesDeseados = Math.max(currentContentSlides, MIN_REQUIRED_SLIDES);
-        let totalSlotsDeseados = totalSlidesDeseados * itemsPerColumn; 
+        let totalSlotsDeseados = Math.ceil(totalItems / itemsPerSlide) * itemsPerSlide; 
+
+        // Swiper (con loop:true y slidesPerView:3) necesita 
+        // al menos (3 * 2 = 6) slides para funcionar sin warnings.
+        // 5 slides de datos + 1 de relleno = 6.
+        const minDataSlides = 6; 
+
+        if (totalSlotsDeseados < (minDataSlides * itemsPerSlide)) {
+            totalSlotsDeseados = (minDataSlides * itemsPerSlide);
+        }
 
         const itemsConRelleno = [...items];
-        
-        // Rellenar hasta el número de slots deseados
         for (let i = totalItems; i < totalSlotsDeseados; i++) {
             itemsConRelleno.push({ nombre: '', id: `relleno-${i}`, tipo: 'relleno' });
         }
-        log('render_swipe', DEBUG_LEVELS.DEEP, `Items reales: ${totalItems}. conteniendo ${currentContentSlides} slides. conteniendo Slots totales forzados para loop: ${totalSlotsDeseados}.`);
 
         // 3. Iterar para crear los slides
-        for (let i = 0; i < itemsConRelleno.length; i += itemsPerColumn) {
+        for (let i = 0; i < itemsConRelleno.length; i += itemsPerSlide) {
             let slideContent = '';
 
             // Generar el contenido de la columna (2 o 3 tarjetas)
-            for (let j = 0; j < itemsPerColumn; j++) {
+            for (let j = 0; j < itemsPerSlide; j++) {
                 const item = itemsConRelleno[i + j];
                 if (item) {
                     if (item.tipo === 'relleno') {
