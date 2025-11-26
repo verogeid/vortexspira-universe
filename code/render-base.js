@@ -208,7 +208,7 @@
                     data-id="volver-nav" 
                     data-tipo="volver-vertical" 
                     role="button" 
-                    tabindex="-1"
+                    tabindex="0"
                     onclick="App._handleVolverClick()"
                     aria-label="${App.getString('ariaBackLevel')}">
                     <h3>${LOGO_VOLVER}</h3>
@@ -221,7 +221,10 @@
         const tipoData = `data-tipo="${tipo}"`;
         const claseDisabled = estaActivo ? '' : 'disabled';
         const tagAriaDisabled = estaActivo ? '' : 'aria-disabled="true"';
-        const tabindex = '-1'; 
+
+        const isMobileMode = window.innerWidth <= MOBILE_MAX_WIDTH;
+        // Si estamos en móvil, forzamos tabindex="0" para asegurar la respuesta de TAP.
+        const tabindex = isMobileMode ? '0' : '-1';
         
         let displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
         if (tipo === 'categoria') {
