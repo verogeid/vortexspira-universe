@@ -28,7 +28,7 @@
             swiper.on('slideChangeTransitionStart', swiper._slideChangeStartHandler);
             swiper.on('slideChangeTransitionEnd', swiper._slideChangeEndHandler);
             
-            log('navTactil', DEBUG_LEVELS.BASIC, "Listeners de Swiper (táctil) configurados.");
+            log('nav_tactil', DEBUG_LEVELS.BASIC, "Listeners de Swiper (táctil) configurados.");
         }
     };
 
@@ -78,7 +78,7 @@
 
         // ⭐️ 2. LÓGICA DE SALTO (SI ESTÁ VACÍO) ⭐️
         if (!newFocusCard) {
-            logWarn('navTactil', "Columna vacía, saltando a la siguiente...");
+            logWarn('nav_tactil', "Columna vacía, saltando a la siguiente...");
             if (_swipeDirection === 'next') {
                 swiper.slideNext(200); // Salto rápido
             } else {

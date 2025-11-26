@@ -6,10 +6,10 @@
 
     // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL ⭐️
     App.renderNavegacion = function() {
-        log('renderBase', DEBUG_LEVELS.BASIC, "Iniciando renderNavegacion...");
+        log('render_base', DEBUG_LEVELS.BASIC, "Iniciando renderNavegacion...");
         
         if (!this.STATE.fullData) {
-            logError('renderBase', "No se puede renderizar: Datos no cargados.");
+            logError('render_base', "No se puede renderizar: Datos no cargados.");
             return;
         }
 
@@ -53,7 +53,7 @@
                 this.DOM.track = document.getElementById('track-mobile-root'); 
                 this.DOM.inactiveTrack = document.getElementById('track-mobile-submenu'); 
             }
-            log('renderBase', DEBUG_LEVELS.DEEP, 'Modo Móvil. Track activo:', this.DOM.track.id); // <-- LÍNEA DE DEPURACIÓN
+            log('render_base', DEBUG_LEVELS.DEEP, 'Modo Móvil. Track activo:', this.DOM.track.id); // <-- LÍNEA DE DEPURACIÓN
             
         } else {
             renderHtmlFn = App._generateCardHTML_Carousel;
@@ -136,7 +136,7 @@
         initCarouselFn(initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId);
 
         if (typeof this.setupTrackPointerListeners === 'function') {
-            log('renderBase', DEBUG_LEVELS.DEEP, 'Llamando a setupTrackPointerListeners.'); // <-- LÍNEA DE DEPURACIÓN
+            log('render_base', DEBUG_LEVELS.DEEP, 'Llamando a setupTrackPointerListeners.'); // <-- LÍNEA DE DEPURACIÓN
             this.setupTrackPointerListeners();
         }
         
@@ -172,7 +172,7 @@
                 desktopView.classList.add('active');
             }
         }
-        log('renderBase', DEBUG_LEVELS.BASIC, 'Renderizado completado.');
+        log('render_base', DEBUG_LEVELS.BASIC, 'Renderizado completado.');
         
         if (!this.STATE.resizeObserver) {
             this._setupResizeObserver();

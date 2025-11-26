@@ -18,7 +18,7 @@
         App.STATE.historyStack = [
             { levelId: null, focusIndex: 0 } // Nivel raíz
         ];
-        log('navStack', DEBUG_LEVELS.BASIC, 'Pila de navegación inicializada.');
+        log('nav_stack', DEBUG_LEVELS.BASIC, 'Pila de navegación inicializada.');
     };
 
     /**
@@ -27,7 +27,7 @@
      */
     App.stackGetCurrent = function() {
         if (App.STATE.historyStack.length === 0) {
-            logError('navStack', 'La pila está vacía. Inicializando.');
+            logError('nav_stack', 'La pila está vacía. Inicializando.');
             App.stackInitialize();
         }
         return App.STATE.historyStack[App.STATE.historyStack.length - 1];
@@ -39,11 +39,11 @@
      */
     App.stackPop = function() {
         if (App.STATE.historyStack.length <= 1) {
-            logWarn('navStack', 'Intento de pop en el nivel raíz.');
+            logWarn('nav_stack', 'Intento de pop en el nivel raíz.');
             return null; // No se puede sacar el raíz
         }
         App.STATE.historyStack.pop(); // Elimina el nivel actual
-        log('navStack', DEBUG_LEVELS.BASIC, `Nivel popeado. Profundidad actual: ${App.STATE.historyStack.length}`);
+        log('nav_stack', DEBUG_LEVELS.BASIC, `Nivel popeado. Profundidad actual: ${App.STATE.historyStack.length}`);
         return App.stackGetCurrent(); // Devuelve el nuevo nivel superior (al que volvemos)
     };
 
@@ -57,7 +57,7 @@
         const currentLevel = App.stackGetCurrent();
         if (currentLevel) {
             currentLevel.focusIndex = currentFocusIndex;
-            log('navStack', DEBUG_LEVELS.BASIC, `Guardando foco ${currentFocusIndex} para nivel ${currentLevel.levelId}`);
+            log('nav_stack', DEBUG_LEVELS.BASIC, `Guardando foco ${currentFocusIndex} para nivel ${currentLevel.levelId}`);
         }
         
         // 2. Añadir el nuevo nivel
@@ -65,7 +65,7 @@
             levelId: newLevelId,
             focusIndex: 0 // El nuevo nivel siempre empieza con foco en 0
         });
-        log('navStack', DEBUG_LEVELS.BASIC, `Nivel pusheado: ${newLevelId}. Profundidad actual: ${App.STATE.historyStack.length}`);
+        log('nav_stack', DEBUG_LEVELS.BASIC, `Nivel pusheado: ${newLevelId}. Profundidad actual: ${App.STATE.historyStack.length}`);
     };
 
     /**
@@ -134,11 +134,11 @@
             }
             
             App.STATE.historyStack = newStack;
-            log('navStack', DEBUG_LEVELS.IMPORTANT, `Pila reconstruida desde ID "${targetId}". Profundidad: ${newStack.length}`);
+            log('nav_stack', DEBUG_LEVELS.IMPORTANT, `Pila reconstruida desde ID "${targetId}". Profundidad: ${newStack.length}`);
             return true;
         }
 
-        logWarn('navStack', `No se pudo construir la pila para el ID "${targetId}".`);
+        logWarn('nav_stack', `No se pudo construir la pila para el ID "${targetId}".`);
         return false;
     };
 

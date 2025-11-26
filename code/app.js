@@ -24,6 +24,11 @@
          log('app', DEBUG_LEVELS.BASIC, "App: Iniciando orquestación...");
       }
 
+      // --- ⭐️ CONFIGURACIÓN DE DEPURACIÓN GLOBAL (SIEMPRE AL INICIO) ⭐️
+      if (typeof this._setupGlobalDebugListeners === 'function') {
+           this._setupGlobalDebugListeners();
+      }
+      
       // --- ⭐️ CACHEAR EL DOM (Actualizado para contenedores separados) ⭐️ ---
       
       // Vistas Globales
@@ -42,13 +47,9 @@
       this.DOM.detalleContenido = null; 
 
       // ⭐️ INICIO CORRECCIÓN (INICIALIZACIÓN DE VISTAS GENÉRICAS) ⭐️
-      // Esto evita el 'Cannot read properties of null' en la primera llamada a renderNavegacion().
-      
-      // Usar 600 como fallback si data.js (donde está MOBILE_MAX_WIDTH) no ha cargado aún.
       const MAX_WIDTH_MOBILE = typeof MOBILE_MAX_WIDTH !== 'undefined' ? MOBILE_MAX_WIDTH : 600;
       const isMobileInit = window.innerWidth <= MAX_WIDTH_MOBILE;
       
-      // Asignar al contenedor de vistaDetalle adecuado al iniciar la aplicación.
       this.DOM.vistaDetalle = isMobileInit ? 
           this.DOM.vistaDetalleMobile : 
           this.DOM.vistaDetalleDesktop;
@@ -79,7 +80,7 @@
             return;
         }
       } catch (error) {
-        logError('app', `ERROR: Carga de datos fallida. ${error.message}`);
+        logError('app', "ERROR: Carga de datos fallida. " + error.message);
         return;
       }
 
@@ -115,14 +116,13 @@
             this.renderNavegacion();
         }
       } catch (error) {
-         logError('app', `ERROR: Fallo al inicializar. ${error.message}`);
+         logError('app', "ERROR: Fallo al inicializar. " + error.message);
          this.stackInitialize(); 
          this.renderNavegacion();
       }
 
       // 2.3. Configuración
       if (typeof this.setupListeners === 'function') { this.setupListeners(); }
-      // setupKeyboardListeners se llama implícitamente al cargar nav-keyboard.js
       if (typeof this._setupResizeObserver === 'function') { this._setupResizeObserver(); }
       
       this.STATE.initialRenderComplete = true; 
@@ -148,6 +148,36 @@
         this.DOM.toast._toastTimer = setTimeout(() => {
             this.DOM.toast.textContent = '';
         }, 2500); 
+    },
+    
+    /**
+     * ⭐️ FUNCIÓN PRIVADA: Configura el listener de clic global para depuración. ⭐️
+     * Mueve el código del index.html aquí para que sea persistente y reutilizable.
+     */
+    _setupGlobalDebugListeners() {
+        document.addEventListener('click', function(e) {
+            if (typeof log === 'function') {
+                const targetElement = e.target;
+                const closestCard = targetElement.closest('.card');
+                
+                logGroupCollapsed('global', DEBUG_LEVELS.DEEP, '❌ CLIC GLOBAL CAPTURADO ❌');
+                
+                log('global', DEBUG_LEVELS.DEEP, 'Tipo de Evento:', e.type);
+                log('global', DEBUG_LEVELS.DEEP, 'Origen (e.target):', targetElement.tagName, targetElement.id, targetElement.className);
+                
+                if (e.clientX !== undefined && e.clientY !== undefined) {
+                    log('global', DEBUG_LEVELS.DEEP, 'Coordenadas:', `X=${e.clientX}, Y=${e.clientY}`);
+                }
+
+                if (closestCard) {
+                    log('global', DEBUG_LEVELS.DEEP, 'Elemento Clicado es una Tarjeta.', 'Card ID:', closestCard.dataset.id);
+                } else {
+                    log('global', DEBUG_LEVELS.DEEP, 'El clic no fue en una tarjeta.');
+                }
+                
+                logGroupEnd('global', DEBUG_LEVELS.DEEP);
+            }
+        }, true); // El 'true' activa la fase de CAPTURA.
     }
   };
 

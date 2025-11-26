@@ -42,11 +42,20 @@
                 <div class="swiper-wrapper grid-track" id="track-tablet"></div>
             </div>
         </div>
+        
+        <div id="vista-navegacion-mobile" class="vista">
+            <div id="track-mobile-root" class="mobile-track view-root"></div>
+            <div id="track-mobile-submenu" class="mobile-track view-submenu"></div>
+        </div>
 
         <div id="vista-detalle-desktop" class="vista">
             <div class="contenido-curso" id="detalle-contenido-desktop" tabindex="0">
                 </div>
             <div id="detalle-bloque-acciones"></div>
+        </div>
+        
+        <div id="vista-detalle-mobile" class="vista vista-mobile-fullscreen">
+            <div class="contenido-curso" id="detalle-contenido-mobile"></div>
         </div>
     </div>
 
@@ -77,14 +86,6 @@
 
   </main>
 
-  <div id="vista-navegacion-mobile" class="vista">
-      <div id="track-mobile-root" class="mobile-track view-root"></div>
-      <div id="track-mobile-submenu" class="mobile-track view-submenu"></div>
-  </div>
-  <div id="vista-detalle-mobile" class="vista-mobile-fullscreen">
-      <div class="contenido-curso" id="detalle-contenido-mobile"></div>
-  </div>
-
   <button id="btn-volver-navegacion" tabindex="-1">↩️ Volver</button>
 
   <footer><small id="footer-content"></small></footer>
@@ -110,32 +111,5 @@
         if (window.App && window.App.init) { App.init(); }
     });
   </script>
-  
-  <script>
-    document.addEventListener('click', function(e) {
-        if (typeof log === 'function') {
-            const targetElement = e.target;
-            const closestCard = targetElement.closest('.card');
-            
-            logGroupCollapsed('global', DEBUG_LEVELS.DEEP, '❌ CLIC GLOBAL CAPTURADO ❌');
-            
-            log('global', DEBUG_LEVELS.DEEP, 'Tipo de Evento:', e.type);
-            log('global', DEBUG_LEVELS.DEEP, 'Origen (e.target):', targetElement.tagName, targetElement.id, targetElement.className);
-            
-            if (e.clientX !== undefined && e.clientY !== undefined) {
-                 log('global', DEBUG_LEVELS.DEEP, 'Coordenadas:', `X=${e.clientX}, Y=${e.clientY}`);
-            }
-
-            if (closestCard) {
-                log('global', DEBUG_LEVELS.DEEP, 'Elemento Clicado es una Tarjeta.', 'Card ID:', closestCard.dataset.id);
-            } else {
-                log('global', DEBUG_LEVELS.DEEP, 'El clic no fue en una tarjeta.');
-            }
-            
-            logGroupEnd('global', DEBUG_LEVELS.DEEP);
-        }
-    }, true); // El 'true' activa la fase de CAPTURA.
-  </script>
-
 </body>
 </html>

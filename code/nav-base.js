@@ -3,7 +3,7 @@
 
     // ⭐️ 1. SETUP LISTENERS ⭐️
     App.setupListeners = function() {
-      log('navBase', DEBUG_LEVELS.DEEP, 'Inicializando listeners de elementos fijos (Volver/Detalle).');
+      log('nav_base', DEBUG_LEVELS.DEEP, 'Inicializando listeners de elementos fijos (Volver/Detalle).');
       
       if (this.DOM.btnVolverNav) {
           this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
@@ -21,7 +21,7 @@
 
     // ⭐️ HELPER: Clic en fila -> Solo pone foco (NO click) ⭐️
     App._handleActionRowClick = function(e) {
-        log('navBase', DEBUG_LEVELS.DEEP, 'Clic en fila de acción (Detalle) detectado.');
+        log('nav_base', DEBUG_LEVELS.DEEP, 'Clic en fila de acción (Detalle) detectado.');
         
         // Si el clic NO fue directamente en el botón (fue en el texto o contenedor)
         if (!e.target.closest('.detail-action-btn')) {
@@ -36,7 +36,7 @@
 
     // ⭐️ 2. POINTER LISTENERS (CLAVE: Adjuntar listeners programáticos a los tracks) ⭐️
     App.setupTrackPointerListeners = function() { 
-        log('navBase', DEBUG_LEVELS.DEEP, 'Ejecutando setupTrackPointerListeners.');
+        log('nav_base', DEBUG_LEVELS.DEEP, 'Ejecutando setupTrackPointerListeners.');
         
         if (this.DOM.track) {
             
@@ -44,46 +44,46 @@
             if (this.DOM.track._clickListener) { this.DOM.track.removeEventListener('click', this.DOM.track._clickListener); }
             if (this.DOM.track._mouseoverListener) { this.DOM.track.removeEventListener('mouseover', this.DOM.track._mouseoverListener); }
             if (this.DOM.track._touchEndListener) { this.DOM.track.removeEventListener('touchend', this.DOM.track._touchEndListener); }
-            log('navBase', DEBUG_LEVELS.DEEP, 'Listeners antiguos limpiados en:', this.DOM.track.id);
+            log('nav_base', DEBUG_LEVELS.DEEP, 'Listeners antiguos limpiados en:', this.DOM.track.id);
 
             // --- Adjunción de Listeners Nuevos ---
             
             // ⭐️ 1. Click Listener (Delegación programática) ⭐️
             this.DOM.track._clickListener = this._handleTrackClick.bind(this);
             this.DOM.track.addEventListener('click', this.DOM.track._clickListener);
-            log('navBase', DEBUG_LEVELS.DEEP, 'Listener "click" adjuntado.');
+            log('nav_base', DEBUG_LEVELS.DEEP, 'Listener "click" adjuntado.');
 
             // ⭐️ 2. Touchend Listener (Delegación programática para táctil) ⭐️
             // NOTA: Con el 'onclick' en línea añadido en render-base.js, este listener puede ser redundante o causar duplicidad.
             this.DOM.track._touchEndListener = this._handleTrackClick.bind(this);
             this.DOM.track.addEventListener('touchend', this.DOM.track._touchEndListener);
-            log('navBase', DEBUG_LEVELS.DEEP, 'Listener "touchend" adjuntado.');
+            log('nav_base', DEBUG_LEVELS.DEEP, 'Listener "touchend" adjuntado.');
             
             // ⭐️ 3. Mouse Over Listener (Hover/Foco visual) ⭐️
             this.DOM.track._mouseoverListener = this._handleTrackMouseOver.bind(this);
             this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
-            log('navBase', DEBUG_LEVELS.DEEP, 'Listener "mouseover" adjuntado.');
+            log('nav_base', DEBUG_LEVELS.DEEP, 'Listener "mouseover" adjuntado.');
         } else {
-            logError('navBase', 'this.DOM.track es nulo al adjuntar listeners.');
+            logError('nav_base', 'this.DOM.track es nulo al adjuntar listeners.');
         }
     };
 
     // ⭐️ 3. HANDLERS ⭐️
     App._handleTrackClick = function(e) {
-      log('navBase', DEBUG_LEVELS.DEEP, 'CLICK/TAP DETECTADO:', e.type, 'Target:', e.target); // <-- LÍNEA CLAVE DE DEPURACIÓN
+      log('nav_base', DEBUG_LEVELS.DEEP, 'CLICK/TAP DETECTADO:', e.type, 'Target:', e.target); // <-- LÍNEA CLAVE DE DEPURACIÓN
       
       const tarjeta = e.target.closest('[data-id]'); 
       if (!tarjeta || tarjeta.dataset.tipo === 'relleno') {
-          log('navBase', DEBUG_LEVELS.DEEP, 'Clic ignorado: No es tarjeta válida (relleno o null).');
+          log('nav_base', DEBUG_LEVELS.DEEP, 'Clic ignorado: No es tarjeta válida (relleno o null).');
           return;
       }
-      log('navBase', DEBUG_LEVELS.DEEP, 'Tarjeta seleccionada:', tarjeta.dataset.id); // <-- LÍNEA CLAVE DE DEPURACIÓN
+      log('nav_base', DEBUG_LEVELS.DEEP, 'Tarjeta seleccionada:', tarjeta.dataset.id); // <-- LÍNEA CLAVE DE DEPURACIÓN
       
       const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
       const newIndex = allCards.findIndex(c => c === tarjeta);
       
       if (newIndex === -1) {
-          logWarn('navBase', 'Tarjeta seleccionada no encontrada en la lista de tarjetas activas.');
+          logWarn('nav_base', 'Tarjeta seleccionada no encontrada en la lista de tarjetas activas.');
           return;
       }
 
@@ -157,7 +157,7 @@
 
     // ⭐️ 4. NAVEGACIÓN Y VOLVER ⭐️
     App._handleVolverClick = function() {
-        log('navBase', DEBUG_LEVELS.BASIC, 'Acción Volver iniciada.');
+        log('nav_base', DEBUG_LEVELS.BASIC, 'Acción Volver iniciada.');
         const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
         
         if (this.DOM.vistaDetalle.classList.contains('active')) {
@@ -186,7 +186,7 @@
                  if (firstCard) firstCard.focus();
              }
         } else {
-             log('navBase', DEBUG_LEVELS.BASIC, 'Volver bloqueado: Ya estamos en el nivel raíz.');
+             log('nav_base', DEBUG_LEVELS.BASIC, 'Volver bloqueado: Ya estamos en el nivel raíz.');
         }
     };
 
@@ -225,10 +225,10 @@
      * ⭐️ MUESTRA DETALLE DEL CURSO ⭐️
      */
     App._mostrarDetalle = function(cursoId) {
-      log('navBase', DEBUG_LEVELS.BASIC, 'Mostrando detalle del curso:', cursoId);
+      log('nav_base', DEBUG_LEVELS.BASIC, 'Mostrando detalle del curso:', cursoId);
       const curso = App._findNodoById(cursoId, App.STATE.fullData.navegacion);
       if (!curso) {
-          logWarn('navBase', 'Curso no encontrado para ID:', cursoId);
+          logWarn('nav_base', 'Curso no encontrado para ID:', cursoId);
           return;
       }
 

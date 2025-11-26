@@ -93,7 +93,7 @@
 
         if (App.STATE.carouselInstance) {
             App.STATE.carouselInstance.update(); 
-            log('renderSwipe', DEBUG_LEVELS.BASIC, `Swiper inicializado en ${swiperId}. Slide inicial: ${initialSwiperSlide + 1}`);
+            log('render_swipe', DEBUG_LEVELS.BASIC, `Swiper inicializado en ${swiperId}. Slide inicial: ${initialSwiperSlide + 1}`);
 
             // Enganchar los listeners táctiles AQUI, justo después de crear la instancia.
             if (typeof App.setupTouchListeners === 'function') {

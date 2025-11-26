@@ -27,7 +27,7 @@
     // ⭐️ 2. FUNCIÓN DE INICIALIZACIÓN MÓVIL (NO-OP para Swiper) ⭐️
     App._initCarousel_Mobile = function() {
         // En móvil, el carrusel se destruye (en _destroyCarousel) y no se inicializa.
-        log('renderMobile', DEBUG_LEVELS.BASIC, "Modo móvil activo. Swiper no inicializado.");
+        log('render_mobile', DEBUG_LEVELS.BASIC, "Modo móvil activo. Swiper no inicializado.");
         // Llama al destructor real (definido en render-swipe.js)
         App._destroyCarousel(); 
     };
