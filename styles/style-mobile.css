@@ -86,7 +86,7 @@
     width: 100%; height: auto; padding: 5px; box-sizing: border-box;
     margin-top: 0 !important; justify-content: flex-start;
     
-    scroll-snap-type: y mandatory; 
+    /*scroll-snap-type: y mandatory; */
     padding-bottom: 15vh; 
 }
 
