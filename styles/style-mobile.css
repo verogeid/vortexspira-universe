@@ -12,7 +12,7 @@
     #app-container {
         height: auto !important;
         min-height: calc(100vh - var(--header-height)); 
-        /* ⭐️ CORRECCIÓN: Padding superior fijo (10px) ⭐️ */
+        /* ⭐️ Padding superior fijo (10px) ⭐️ */
         padding-top: 10px !important;
         display: flex; flex-direction: column;
         padding-left: 10px; padding-right: 10px; padding-bottom: 10px;
@@ -26,13 +26,25 @@
         display: block; 
     }
     
-    /* Ocultar vistas inactivas */
+    /* Ocultar vistas inactivas que están DENTRO DE VISTA-CENTRAL */
     .vista:not(.active) {
         display: none !important;
     }
 
+    /* Estilos generales para las vistas */
     .vista {
         position: relative; height: auto !important; overflow: visible !important;
+    }
+
+    /* ⭐️ AÑADIDO/REFUERZO: VISTA DE NAVEGACIÓN MÓVIL (FUERA DEL MAIN) ⭐️ */
+    #vista-navegacion-mobile {
+        /* Aseguramos que tome todo el ancho y se comporte como elemento de flujo */
+        position: relative !important; 
+        top: auto !important; 
+        left: auto !important; 
+        width: 100% !important; 
+        height: auto !important; 
+        /* El JS controlará si es 'active' para mostrar/ocultar */
     }
 
     /* 4. Ocultar sidebars innecesarios */
@@ -50,6 +62,7 @@
         padding-bottom: 10px;
         
         /* Scrollbar azul en detalle */
+        scrollbar-width: thin;
         scrollbar-color: var(--color-primary) transparent;
         display: flex; flex-direction: column; 
     }
@@ -90,7 +103,7 @@
     padding-bottom: 15vh; 
 }
 
-/* ⭐️ CORRECCIÓN: Cursor para Interacción Táctil ⭐️ */
+/* ⭐️ CORRECCIÓN: Cursor para Interacción Táctil (Esencial) ⭐️ */
 .mobile-track .card:not(.disabled):not([data-tipo="relleno"]) {
     cursor: pointer !important;
     pointer-events: auto !important; 
