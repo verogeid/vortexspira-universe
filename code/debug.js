@@ -19,7 +19,7 @@ const DEBUG_CONFIG = {
     render_base: DEBUG_LEVELS.DISABLED,
     render_swipe: DEBUG_LEVELS.DISABLED,
     render_mobile: DEBUG_LEVELS.DISABLED,
-    global: DEBUG_LEVELS.DEEP
+    global: DEBUG_LEVELS.DISABLED
 };
 
 /**
