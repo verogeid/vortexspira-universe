@@ -173,10 +173,17 @@
         }
     };
 
-    // ⭐️ 2. GENERADOR DE TARJETAS ⭐️
+    /**
+     * ⭐️ FUNCIÓN CENTRAL DE GENERACIÓN DE TARJETA HTML ⭐️
+     */
     App._generarTarjetaHTML = function(nodo, estaActivo, esRelleno = false, tipoEspecialArg = null) {
         const wrapperTag = 'article';
         const tipoEspecial = tipoEspecialArg || nodo.tipoEspecial;
+
+        // ⭐️ CORRECCIÓN CLAVE: Añadir el handler de clic en línea para compatibilidad móvil ⭐️
+        // Permite que navegadores móviles reconozcan la tarjeta como un objetivo de 'tap' claro,
+        // llamando al manejador de eventos delegado en nav-base.js.
+        const onclickHandler = `onclick="App._handleTrackClick(event)"`; 
 
         if (esRelleno) {
             return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1" aria-hidden="true"></article>`;
@@ -195,12 +202,14 @@
         }
 
         if (tipoEspecial === 'volver-vertical') {
+            // El 'volver' en el track móvil tiene un handler de clic diferente y debe seguir usándolo
             return `
                 <${wrapperTag} class="card card-volver-vertical" 
                     data-id="volver-nav" 
                     data-tipo="volver-vertical" 
                     role="button" 
                     tabindex="-1"
+                    onclick="App._handleVolverClick()"
                     aria-label="${App.getString('ariaBackLevel')}">
                     <h3>${LOGO_VOLVER}</h3>
                 </${wrapperTag}>
@@ -234,6 +243,7 @@
                 role="button" 
                 tabindex="${tabindex}" 
                 ${tagAriaDisabled}
+                ${onclickHandler} 
                 aria-label="${ariaLabel}">
                 <h3>${displayTitle}</h3>
             </${wrapperTag}>
