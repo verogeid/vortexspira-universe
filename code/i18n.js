@@ -6,8 +6,8 @@
     App.STRINGS = {
         'es': {
             // Meta y Títulos
-            'pageTitle': 'VortexSpira®: Selector de Cursos',
-            'headerTitle': 'VortexSpira®: Tu Mentor de Audio-Aprendizaje Técnico',
+            'pageTitle': 'VortexSpira® Universe: Selector de Cursos',
+            'headerTitle': 'VortexSpira® Universe: Tu Mentor de Audio-Aprendizaje Técnico',
 
             // Botones y Controles
             'btnBack': '↩ Volver', // Botón móvil

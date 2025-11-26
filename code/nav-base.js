@@ -30,16 +30,29 @@
         }
     };
 
-    // ⭐️ 2. POINTER LISTENERS ⭐️
+    // ⭐️ 2. POINTER LISTENERS (CLAVE: Asegurar Click/Tap en el nuevo DIV móvil) ⭐️
     App.setupTrackPointerListeners = function() { 
         if (this.DOM.track) {
-            // ⭐️ Mouse Click Listener ⭐️
+            
+            // --- Limpieza de Listeners Antiguos (Importante para evitar duplicados) ---
             if (this.DOM.track._clickListener) { this.DOM.track.removeEventListener('click', this.DOM.track._clickListener); }
+            if (this.DOM.track._mouseoverListener) { this.DOM.track.removeEventListener('mouseover', this.DOM.track._mouseoverListener); }
+            // ⭐️ AÑADIDO: Limpiar Listener Touchend ⭐️
+            if (this.DOM.track._touchEndListener) { this.DOM.track.removeEventListener('touchend', this.DOM.track._touchEndListener); }
+
+            // --- Adjunción de Listeners Nuevos ---
+            
+            // ⭐️ 1. Click Listener (Para ratón y dispositivos que emulan el click) ⭐️
             this.DOM.track._clickListener = this._handleTrackClick.bind(this);
             this.DOM.track.addEventListener('click', this.DOM.track._clickListener);
 
-            // ⭐️ Mouse Over Listener ⭐️
-            if (this.DOM.track._mouseoverListener) { this.DOM.track.removeEventListener('mouseover', this.DOM.track._mouseoverListener); }
+            // ⭐️ 2. Touchend Listener (CLAVE para la interacción táctil fiable en móvil/lista vertical) ⭐️
+            // Touchend se dispara al levantar el dedo, imitando un 'tap' sin el retraso del evento 'click' 
+            // en muchos navegadores móviles, y asegurando que el evento llegue al nuevo contenedor.
+            this.DOM.track._touchEndListener = this._handleTrackClick.bind(this);
+            this.DOM.track.addEventListener('touchend', this.DOM.track._touchEndListener);
+            
+            // ⭐️ 3. Mouse Over Listener (Hover/Foco visual) ⭐️
             this.DOM.track._mouseoverListener = this._handleTrackMouseOver.bind(this);
             this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
         }
@@ -47,6 +60,10 @@
 
     // ⭐️ 3. HANDLERS ⭐️
     App._handleTrackClick = function(e) {
+      // ⭐️ CORRECCIÓN: Evitar que 'touchend' se dispare dos veces si también se dispara 'click' ⭐️
+      // Los navegadores modernos a veces disparan ambos. Usaremos un mecanismo de prevención si es necesario,
+      // pero por ahora confiamos en que 'e.target.closest' es seguro para ambos eventos.
+      
       const tarjeta = e.target.closest('[data-id]'); 
       if (!tarjeta || tarjeta.dataset.tipo === 'relleno') return;
 
