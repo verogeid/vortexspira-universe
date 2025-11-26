@@ -110,5 +110,32 @@
         if (window.App && window.App.init) { App.init(); }
     });
   </script>
+  
+  <script>
+    document.addEventListener('click', function(e) {
+        if (typeof log === 'function') {
+            const targetElement = e.target;
+            const closestCard = targetElement.closest('.card');
+            
+            logGroupCollapsed('global', DEBUG_LEVELS.DEEP, '❌ CLIC GLOBAL CAPTURADO ❌');
+            
+            log('global', DEBUG_LEVELS.DEEP, 'Tipo de Evento:', e.type);
+            log('global', DEBUG_LEVELS.DEEP, 'Origen (e.target):', targetElement.tagName, targetElement.id, targetElement.className);
+            
+            if (e.clientX !== undefined && e.clientY !== undefined) {
+                 log('global', DEBUG_LEVELS.DEEP, 'Coordenadas:', `X=${e.clientX}, Y=${e.clientY}`);
+            }
+
+            if (closestCard) {
+                log('global', DEBUG_LEVELS.DEEP, 'Elemento Clicado es una Tarjeta.', 'Card ID:', closestCard.dataset.id);
+            } else {
+                log('global', DEBUG_LEVELS.DEEP, 'El clic no fue en una tarjeta.');
+            }
+            
+            logGroupEnd('global', DEBUG_LEVELS.DEEP);
+        }
+    }, true); // El 'true' activa la fase de CAPTURA.
+  </script>
+
 </body>
 </html>

@@ -16,7 +16,8 @@ const DEBUG_CONFIG = {
     navTactil: DEBUG_LEVELS.DISABLED,
     renderBase: DEBUG_LEVELS.DEEP,
     renderSwipe: DEBUG_LEVELS.DISABLED,
-    renderMobile: DEBUG_LEVELS.DISABLED
+    renderMobile: DEBUG_LEVELS.DISABLED,
+    global: DEBUG_LEVELS.DEEP
 };
 
 /**
