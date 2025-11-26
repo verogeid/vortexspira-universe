@@ -6,8 +6,10 @@
 
     // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL ⭐️
     App.renderNavegacion = function() {
+        log('renderBase', DEBUG_LEVELS.BASIC, "Iniciando renderNavegacion...");
+        
         if (!this.STATE.fullData) {
-            logError('navBase', "No se puede renderizar: Datos no cargados.");
+            logError('renderBase', "No se puede renderizar: Datos no cargados.");
             return;
         }
 
@@ -30,19 +32,20 @@
         const desktopView = document.getElementById('vista-navegacion-desktop');
         const tabletView = document.getElementById('vista-navegacion-tablet');
         const mobileView = document.getElementById('vista-navegacion-mobile');
-
+        
+        // -------------------------------------------------------------
+        // ⭐️ Detección de Modo y Asignación de DOM ⭐️
+        // -------------------------------------------------------------
         
         if (isMobile) {
             renderHtmlFn = App._generateCardHTML_Mobile;
             initCarouselFn = App._initCarousel_Mobile; 
             calculatedItemsPerColumn = 1;
 
-            // Asignar elementos DOM específicos para el modo móvil
             this.DOM.vistaNav = mobileView;
             this.DOM.vistaDetalle = document.getElementById('vista-detalle-mobile'); 
             this.DOM.detalleContenido = document.getElementById('detalle-contenido-mobile');
             
-            // ⭐️ ASIGNACIÓN DEL TRACK: Usamos el track correcto para el estado ⭐️
             if (isSubLevel) {
                 this.DOM.track = document.getElementById('track-mobile-submenu'); 
                 this.DOM.inactiveTrack = document.getElementById('track-mobile-root'); 
@@ -50,35 +53,42 @@
                 this.DOM.track = document.getElementById('track-mobile-root'); 
                 this.DOM.inactiveTrack = document.getElementById('track-mobile-submenu'); 
             }
+            log('renderBase', DEBUG_LEVELS.DEEP, 'Modo Móvil. Track activo:', this.DOM.track.id); // <-- LÍNEA DE DEPURACIÓN
             
         } else {
             renderHtmlFn = App._generateCardHTML_Carousel;
             initCarouselFn = App._initCarousel_Swipe; 
             
             if (isTablet) {
+                // ... (lógica de asignación de tablet sin cambios) ...
                 calculatedItemsPerColumn = 2; 
                 swiperId = '#nav-swiper-tablet';
 
                 this.DOM.vistaNav = tabletView;
-                this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop'); // Usar la vista desktop
+                this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop'); 
                 this.DOM.detalleContenido = document.getElementById('detalle-contenido-desktop');
                 this.DOM.track = document.getElementById('track-tablet'); 
             } else {
+                // ... (lógica de asignación de desktop sin cambios) ...
                 calculatedItemsPerColumn = 3; 
                 swiperId = '#nav-swiper';
 
                 this.DOM.vistaNav = desktopView;
                 this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop'); 
                 this.DOM.detalleContenido = document.getElementById('detalle-contenido-desktop');
-                this.DOM.track = document.getElementById('track-desktop'); // Track desktop
+                this.DOM.track = document.getElementById('track-desktop'); 
             }
         }
         this.STATE.itemsPorColumna = calculatedItemsPerColumn;
-
         
+        // -------------------------------------------------------------
+        // ⭐️ Obtención de Datos y Renderizado ⭐️
+        // -------------------------------------------------------------
+
         const nodoActual = this._findNodoById(currentLevelId, this.STATE.fullData.navegacion);
         let itemsDelNivel = [];
 
+        // ... (lógica de obtención de datos sin cambios) ...
         if (!isSubLevel) {
             itemsDelNivel = this.STATE.fullData.navegacion;
         } else if (nodoActual) {
@@ -91,8 +101,7 @@
         
         // Inyección de tarjetas para MÓVIL
         if (isMobile) {
-            
-            // Si es subnivel, el botón "volver" es la primera tarjeta.
+            // ... (lógica de inyección de breadcrumb y volver móvil sin cambios) ...
             if (isSubLevel) {
                 itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
             }
@@ -104,7 +113,6 @@
                 breadcrumbText = App.getString('breadcrumbRoot') || 'Nivel Raíz';
             }
             
-            // ⭐️ CORRECCIÓN: SOLO AÑADIR BREADCRUMB SI ES UN SUBNIVEL (para evitar espacio vacío en la raíz) ⭐️
             if (isSubLevel) {
                 itemsDelNivel = [{ 
                     id: 'breadcrumb-nav', 
@@ -128,10 +136,10 @@
         initCarouselFn(initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId);
 
         if (typeof this.setupTrackPointerListeners === 'function') {
+            log('renderBase', DEBUG_LEVELS.DEEP, 'Llamando a setupTrackPointerListeners.'); // <-- LÍNEA DE DEPURACIÓN
             this.setupTrackPointerListeners();
         }
         
-        // ⭐️ CORRECCIÓN: Pasar los argumentos en orden correcto ⭐️
         this._updateNavViews(isSubLevel, isMobile, isTablet, nodoActual); 
         
         if (typeof this._updateVisualFocus === 'function') {
@@ -140,7 +148,7 @@
             this._updateFocus(false); 
         }
 
-        // --- DESACTIVACIÓN Y ACTIVACIÓN DE VISTAS (CORRECCIÓN DE ACTIVACIÓN MÓVIL) ---
+        // --- LÓGICA DE ACTIVACIÓN DE VISTAS ---
         desktopView.classList.remove('active');
         tabletView.classList.remove('active');
         mobileView.classList.remove('active');
@@ -150,11 +158,9 @@
         if (isDetailActive) {
             this.DOM.vistaDetalle.classList.add('active');
         } else {
-            // Si NO estamos en detalle, activamos la vista de navegación específica.
             if (isMobile) {
-                mobileView.classList.add('active'); // ⭐️ ACTIVACIÓN ROBUSTA MÓVIL ⭐️
+                mobileView.classList.add('active'); 
                 
-                // ⭐️ APLICAR CLASE DE ESTADO ⭐️
                 if (isSubLevel) {
                     mobileView.classList.add('view-nav-submenu');
                 } else {
@@ -162,12 +168,12 @@
                 }
             } else if (isTablet) {
                 tabletView.classList.add('active');
-            } else { // Desktop
+            } else { 
                 desktopView.classList.add('active');
             }
         }
-        // --- FIN ACTIVACIÓN ---
-
+        log('renderBase', DEBUG_LEVELS.BASIC, 'Renderizado completado.');
+        
         if (!this.STATE.resizeObserver) {
             this._setupResizeObserver();
         }
@@ -175,14 +181,12 @@
 
     /**
      * ⭐️ FUNCIÓN CENTRAL DE GENERACIÓN DE TARJETA HTML ⭐️
+     * (Contiene la corrección de onclick y tabindex="0" en móvil)
      */
     App._generarTarjetaHTML = function(nodo, estaActivo, esRelleno = false, tipoEspecialArg = null) {
         const wrapperTag = 'article';
         const tipoEspecial = tipoEspecialArg || nodo.tipoEspecial;
 
-        // ⭐️ CORRECCIÓN CLAVE: Añadir el handler de clic en línea para compatibilidad móvil ⭐️
-        // Permite que navegadores móviles reconozcan la tarjeta como un objetivo de 'tap' claro,
-        // llamando al manejador de eventos delegado en nav-base.js.
         const onclickHandler = `onclick="App._handleTrackClick(event)"`; 
 
         if (esRelleno) {
@@ -202,7 +206,6 @@
         }
 
         if (tipoEspecial === 'volver-vertical') {
-            // El 'volver' en el track móvil tiene un handler de clic diferente y debe seguir usándolo
             return `
                 <${wrapperTag} class="card card-volver-vertical" 
                     data-id="volver-nav" 
@@ -223,7 +226,7 @@
         const tagAriaDisabled = estaActivo ? '' : 'aria-disabled="true"';
 
         const isMobileMode = window.innerWidth <= MOBILE_MAX_WIDTH;
-        // Si estamos en móvil, forzamos tabindex="0" para asegurar la respuesta de TAP.
+        // ⭐️ CORRECCIÓN: Forzar tabindex="0" en modo móvil para asegurar la respuesta de TAP. ⭐️
         const tabindex = isMobileMode ? '0' : '-1';
         
         let displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
@@ -254,6 +257,7 @@
     };
 
     App._updateFocus = function(shouldSlide = true) {
+        // ... (lógica de actualización de foco sin cambios, solo se mantiene el log en nav-base) ...
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
@@ -291,7 +295,6 @@
                     carouselInstance.slideToLoop(targetSwiperSlide, 400); 
                 }
             } else if (isMobile) {
-                // Usamos 'start' para respetar el scroll-margin-top y la posición de los sticky.
                 nextFocusedCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
@@ -303,11 +306,10 @@
     App._initCarousel_Mobile = App._initCarousel_Mobile || function() { };
     App._destroyCarousel = App._destroyCarousel || function() { };
 
-    // ⭐️ CORRECCIÓN: Definición correcta de argumentos y lógica Tablet ⭐️
     App._updateNavViews = function(isSubLevel, isMobile, isTablet, nodoActual) {
+        // ... (lógica de actualización de vistas sin cambios) ...
         
         if (isMobile) { 
-            // Móvil
             this.DOM.cardVolverFija.classList.remove('visible'); 
             this.DOM.infoAdicional.classList.remove('visible'); 
             this.DOM.btnVolverNav.classList.remove('visible');
@@ -315,7 +317,6 @@
         } else { 
             // Tablet y Desktop
             
-            // Ocultar Info Adicional en Tablet
             if (isTablet) {
                 this.DOM.infoAdicional.classList.remove('visible');
             } else {
@@ -328,16 +329,13 @@
             this.DOM.cardVolverFija.classList.add('visible'); 
             this.DOM.cardNivelActual.classList.add('visible');
             
-            // Breadcrumb
             if (isSubLevel) {
-                // ⭐️ CORRECCIÓN: Evitar crash si nodoActual es null ⭐️
                 const nombreNivel = nodoActual ? (nodoActual.nombre || nodoActual.titulo || 'Nivel') : 'Nivel';
                 this.DOM.cardNivelActual.innerHTML = `<h3>${nombreNivel}</h3>`;
             } else {
                 this.DOM.cardNivelActual.innerHTML = `<h3>${App.getString('breadcrumbRoot')}</h3>`;
             }
             
-            // Botón Volver Izquierdo
             if (isSubLevel) {
                 this.DOM.cardVolverFijaElemento.classList.add('visible'); 
                 this.DOM.cardVolverFijaElemento.innerHTML = `<h3>${LOGO_VOLVER}</h3>`; 
@@ -351,6 +349,7 @@
     };
 
     App._setupResizeObserver = function() {
+        // ... (lógica de ResizeObserver sin cambios) ...
         const getMode = (width) => {
             if (width <= MOBILE_MAX_WIDTH) return 'mobile';
             if (width <= TABLET_MAX_WIDTH) return 'tablet';
@@ -383,6 +382,7 @@
     };
 
     App._findNodoById = function(id, nodos) {
+        // ... (helper sin cambios) ...
         if (!nodos || !id) return null;
         for (const n of nodos) {
             if (n.id === id) return n;
@@ -399,6 +399,7 @@
     };
 
     App._tieneContenidoActivo = function(nodoId) {
+        // ... (helper sin cambios) ...
         const nodo = this._findNodoById(nodoId, this.STATE.fullData.navegacion);
         if (!nodo) return false;
         if (nodo.titulo) return true; 

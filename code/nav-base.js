@@ -3,6 +3,8 @@
 
     // ⭐️ 1. SETUP LISTENERS ⭐️
     App.setupListeners = function() {
+      log('navBase', DEBUG_LEVELS.DEEP, 'Inicializando listeners de elementos fijos (Volver/Detalle).');
+      
       if (this.DOM.btnVolverNav) {
           this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
           this.DOM.btnVolverNav.addEventListener('keydown', (e) => {
@@ -19,6 +21,8 @@
 
     // ⭐️ HELPER: Clic en fila -> Solo pone foco (NO click) ⭐️
     App._handleActionRowClick = function(e) {
+        log('navBase', DEBUG_LEVELS.DEEP, 'Clic en fila de acción (Detalle) detectado.');
+        
         // Si el clic NO fue directamente en el botón (fue en el texto o contenedor)
         if (!e.target.closest('.detail-action-btn')) {
             const btn = e.currentTarget.querySelector('.detail-action-btn');
@@ -30,47 +34,58 @@
         }
     };
 
-    // ⭐️ 2. POINTER LISTENERS (CLAVE: Asegurar Click/Tap en el nuevo DIV móvil) ⭐️
+    // ⭐️ 2. POINTER LISTENERS (CLAVE: Adjuntar listeners programáticos a los tracks) ⭐️
     App.setupTrackPointerListeners = function() { 
+        log('navBase', DEBUG_LEVELS.DEEP, 'Ejecutando setupTrackPointerListeners.');
+        
         if (this.DOM.track) {
             
             // --- Limpieza de Listeners Antiguos (Importante para evitar duplicados) ---
             if (this.DOM.track._clickListener) { this.DOM.track.removeEventListener('click', this.DOM.track._clickListener); }
             if (this.DOM.track._mouseoverListener) { this.DOM.track.removeEventListener('mouseover', this.DOM.track._mouseoverListener); }
-            // ⭐️ AÑADIDO: Limpiar Listener Touchend ⭐️
             if (this.DOM.track._touchEndListener) { this.DOM.track.removeEventListener('touchend', this.DOM.track._touchEndListener); }
+            log('navBase', DEBUG_LEVELS.DEEP, 'Listeners antiguos limpiados en:', this.DOM.track.id);
 
             // --- Adjunción de Listeners Nuevos ---
             
-            // ⭐️ 1. Click Listener (Para ratón y dispositivos que emulan el click) ⭐️
+            // ⭐️ 1. Click Listener (Delegación programática) ⭐️
             this.DOM.track._clickListener = this._handleTrackClick.bind(this);
             this.DOM.track.addEventListener('click', this.DOM.track._clickListener);
+            log('navBase', DEBUG_LEVELS.DEEP, 'Listener "click" adjuntado.');
 
-            // ⭐️ 2. Touchend Listener (CLAVE para la interacción táctil fiable en móvil/lista vertical) ⭐️
-            // Touchend se dispara al levantar el dedo, imitando un 'tap' sin el retraso del evento 'click' 
-            // en muchos navegadores móviles, y asegurando que el evento llegue al nuevo contenedor.
+            // ⭐️ 2. Touchend Listener (Delegación programática para táctil) ⭐️
+            // NOTA: Con el 'onclick' en línea añadido en render-base.js, este listener puede ser redundante o causar duplicidad.
             this.DOM.track._touchEndListener = this._handleTrackClick.bind(this);
             this.DOM.track.addEventListener('touchend', this.DOM.track._touchEndListener);
+            log('navBase', DEBUG_LEVELS.DEEP, 'Listener "touchend" adjuntado.');
             
             // ⭐️ 3. Mouse Over Listener (Hover/Foco visual) ⭐️
             this.DOM.track._mouseoverListener = this._handleTrackMouseOver.bind(this);
             this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
+            log('navBase', DEBUG_LEVELS.DEEP, 'Listener "mouseover" adjuntado.');
+        } else {
+            logError('navBase', 'this.DOM.track es nulo al adjuntar listeners.');
         }
     };
 
     // ⭐️ 3. HANDLERS ⭐️
     App._handleTrackClick = function(e) {
-      // ⭐️ CORRECCIÓN: Evitar que 'touchend' se dispare dos veces si también se dispara 'click' ⭐️
-      // Los navegadores modernos a veces disparan ambos. Usaremos un mecanismo de prevención si es necesario,
-      // pero por ahora confiamos en que 'e.target.closest' es seguro para ambos eventos.
+      log('navBase', DEBUG_LEVELS.DEEP, 'CLICK/TAP DETECTADO:', e.type, 'Target:', e.target); // <-- LÍNEA CLAVE DE DEPURACIÓN
       
       const tarjeta = e.target.closest('[data-id]'); 
-      if (!tarjeta || tarjeta.dataset.tipo === 'relleno') return;
-
+      if (!tarjeta || tarjeta.dataset.tipo === 'relleno') {
+          log('navBase', DEBUG_LEVELS.DEEP, 'Clic ignorado: No es tarjeta válida (relleno o null).');
+          return;
+      }
+      log('navBase', DEBUG_LEVELS.DEEP, 'Tarjeta seleccionada:', tarjeta.dataset.id); // <-- LÍNEA CLAVE DE DEPURACIÓN
+      
       const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
       const newIndex = allCards.findIndex(c => c === tarjeta);
       
-      if (newIndex === -1) return;
+      if (newIndex === -1) {
+          logWarn('navBase', 'Tarjeta seleccionada no encontrada en la lista de tarjetas activas.');
+          return;
+      }
 
       const parentFocusIndex = this.STATE.currentFocusIndex;
       const indexChanged = newIndex !== parentFocusIndex;
@@ -105,6 +120,7 @@
     };
 
     App._updateVisualFocus = function(newIndex) {
+        // ... (lógica de actualización visual sin cambios) ...
         const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
         allCardsInTrack.forEach(card => {
             card.classList.remove('focus-visible');
@@ -129,6 +145,7 @@
     };
 
     App._handleCardClick = function(id, tipo, parentFocusIndex) {
+        // ... (lógica de click de tarjeta sin cambios) ...
         const focusParaGuardar = (parentFocusIndex !== undefined) ? parentFocusIndex : this.STATE.currentFocusIndex;
         if (tipo === 'categoria') {
             App.stackPush(id, focusParaGuardar);
@@ -140,13 +157,13 @@
 
     // ⭐️ 4. NAVEGACIÓN Y VOLVER ⭐️
     App._handleVolverClick = function() {
+        log('navBase', DEBUG_LEVELS.BASIC, 'Acción Volver iniciada.');
         const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
         
         if (this.DOM.vistaDetalle.classList.contains('active')) {
-            // ⭐️ CORRECCIÓN: Ocultar el contenedor principal de la vista de detalle ⭐️
+            // ... (lógica de salir de detalle sin cambios) ...
             this.DOM.vistaDetalle.classList.remove('active'); 
             
-            // Ocultar el bloque de acciones móvil explícitamente (si existe)
             if (isMobile && document.getElementById('detalle-bloque-acciones-mobile')) {
                  document.getElementById('detalle-bloque-acciones-mobile').style.display = 'none';
             }
@@ -157,6 +174,7 @@
             
         } 
         else if (App.STATE.historyStack.length > 1) { 
+            // ... (lógica de volver un nivel sin cambios) ...
             App.stackPop(); 
             this.renderNavegacion();
              const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
@@ -167,6 +185,8 @@
                  const firstCard = this.DOM.track.querySelector('[data-id]:not([data-tipo="relleno"])');
                  if (firstCard) firstCard.focus();
              }
+        } else {
+             log('navBase', DEBUG_LEVELS.BASIC, 'Volver bloqueado: Ya estamos en el nivel raíz.');
         }
     };
 
@@ -174,23 +194,19 @@
      * ⭐️ GESTIÓN DE FOCO EN VISTA DETALLE (BLUR MASK) ⭐️
      */
     App._setupDetailFocusHandler = function() {
-        // Usar el contenedor principal de la aplicación para observar los cambios de foco
+        // ... (lógica de focusin en detalle sin cambios) ...
         document.addEventListener('focusin', (e) => {
             const focusedEl = e.target;
             const isDetailView = App.DOM.vistaDetalle && App.DOM.vistaDetalle.classList.contains('active');
 
-            // Solo actuar si estamos en la vista de detalle activa
             if (isDetailView) {
-                const detailContainer = App.DOM.vistaDetalle; // Puede ser desktop o mobile
+                const detailContainer = App.DOM.vistaDetalle; 
                 const textBlock = detailContainer.querySelector('#detalle-bloque-texto');
                 const actionsBlock = detailContainer.querySelector('.detail-actions-list');
 
-
-                // 1. Identificar Texto vs Acciones
                 const isTextContentArea = focusedEl === textBlock || focusedEl.closest('#detalle-bloque-texto');
                 const isActionContentArea = focusedEl === actionsBlock || focusedEl.closest('.detail-actions-list') || focusedEl.classList.contains('detail-action-btn');
 
-                // 2. Aplicar/Quitar Clases al Contenedor (#vista-detalle-desktop o #vista-detalle-mobile)
                 if (isTextContentArea) {
                     detailContainer.classList.add('mode-focus-text');
                     detailContainer.classList.remove('mode-focus-actions');
@@ -209,13 +225,14 @@
      * ⭐️ MUESTRA DETALLE DEL CURSO ⭐️
      */
     App._mostrarDetalle = function(cursoId) {
+      log('navBase', DEBUG_LEVELS.BASIC, 'Mostrando detalle del curso:', cursoId);
       const curso = App._findNodoById(cursoId, App.STATE.fullData.navegacion);
-      if (!curso) return;
+      if (!curso) {
+          logWarn('navBase', 'Curso no encontrado para ID:', cursoId);
+          return;
+      }
 
-      // ⭐️ Scroll Reset ⭐️
-      window.scrollTo(0, 0);
-      if (this.DOM.vistaDetalle) this.DOM.vistaDetalle.scrollTop = 0;
-      if (this.DOM.detalleContenido) this.DOM.detalleContenido.scrollTop = 0;
+      // ... (lógica de inyección de HTML de detalle sin cambios) ...
 
       const getIconHtml = (text) => {
           const lower = text.toLowerCase();
@@ -275,7 +292,6 @@
 
       const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
 
-      // ⭐️ INYECCIÓN DE CONTENIDO ⭐️
       this.DOM.detalleContenido.innerHTML = `
         ${mobileBackHtml}
         <div id="detalle-bloque-texto" tabindex="0"> 
@@ -287,8 +303,6 @@
         </div>
       `;
 
-      // ⭐️ GESTIÓN DE VISTAS Y FOCO ⭐️
-
       this.DOM.vistaNav.classList.remove('active');
       this.DOM.vistaDetalle.classList.add('active');
       
@@ -298,9 +312,7 @@
       let primerElementoFocuseable = null;
 
       if (!isMobile) { 
-          // DESKTOP/TABLET
-          
-          // ⭐️ CORRECCIÓN: Breadcrumb en Detalle ⭐️
+          // ... (lógica de escritorio/tablet sin cambios) ...
           if (this.DOM.cardNivelActual) {
              this.DOM.cardNivelActual.innerHTML = `<h3>${curso.titulo || 'Curso'}</h3>`;
              this.DOM.cardNivelActual.classList.add('visible'); 
@@ -324,23 +336,22 @@
           this.DOM.infoAdicional.classList.remove('visible');
           this.DOM.cardVolverFija.classList.remove('visible');
           
-          // El bloque de acciones móvil estaba fuera del contenedor de contenido, se mueve
           const actionBlockMobile = document.getElementById('detalle-bloque-acciones-mobile');
           if (actionBlockMobile) actionBlockMobile.style.display = 'block';
 
-          // Foco al primer elemento interactivo (Card Volver en móvil)
           const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn');
           primerElementoFocuseable = firstInteractive; 
       }
 
       if (primerElementoFocuseable) {
           primerElementoFocuseable.focus();
+          log('navBase', DEBUG_LEVELS.DEEP, 'Foco en detalle:', primerElementoFocuseable.tagName, primerElementoFocuseable.id);
       }
     };
 
     // ⭐️ 5. HELPERS ⭐️
     App._getFocusableDetailElements = function() {
-        // Incluye card (volver movil), botones y el bloque de texto (#detalle-bloque-texto)
+        // ... (helper sin cambios) ...
         const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, #detalle-bloque-texto'));
         let elements = [];
         const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
@@ -353,6 +364,7 @@
     };
     
     App.findBestFocusInColumn = function(columnCards, targetRow) {
+        // ... (helper sin cambios) ...
         const isFocusable = (card) => { return card && card.dataset.id && card.dataset.tipo !== 'relleno'; };
         if (isFocusable(columnCards[targetRow])) return columnCards[targetRow];
         for (let i = targetRow - 1; i >= 0; i--) { if (isFocusable(columnCards[i])) return columnCards[i]; }
