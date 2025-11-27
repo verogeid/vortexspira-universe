@@ -116,8 +116,8 @@ class VortexSpiraApp {
     _mostrarDetalle(cursoId) { nav_base._mostrarDetalle.call(this, cursoId); }
     
     // I18N
-    getString(key) { return i18n._getString(key); }
-    applyStrings() { i18n._applyStrings(this); }
+    getString(key) { return i18n.getString(key); }
+    applyStrings() { i18n.applyStrings(this); }
 
     // Otros
     
