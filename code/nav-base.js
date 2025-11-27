@@ -76,6 +76,12 @@ export function setupTrackPointerListeners() {
 
 // ⭐️ 3. HANDLERS ⭐️
 export function _handleTrackClick(e) {
+  // ⭐️ CORRECCIÓN: Verifica que el evento 'e' exista antes de usarlo ⭐️
+  if (!e || !e.target) {
+      debug.logWarn('nav_base', 'Clic de track ignorado: Evento o target indefinido.');
+      return;
+  }
+  
   // 'this' es la instancia de App
   debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'CLICK/TAP DETECTADO:', e.type, 'Target:', e.target); 
   
@@ -173,9 +179,10 @@ export function _updateFocusImpl(shouldSlide = true) {
         }
         if (!isMobile && carouselInstance && shouldSlide) {
             const targetSwiperSlide = Math.floor(normalizedIndex / itemsPorColumna) + 1; 
+            // ⭐️ USO DE VELOCIDAD LENTA (400ms) PARA MOVIMIENTO FLUIDO ANTI-FATIGA ⭐️
             if (targetSwiperSlide !== carouselInstance.realIndex) {
-                this.STATE.keyboardNavInProgress = true; // Establecer bandera antes de deslizar
-                carouselInstance.slideToLoop(targetSwiperSlide, 400); 
+                this.STATE.keyboardNavInProgress = true; 
+                carouselInstance.slideToLoop(targetSwiperSlide, 400); // Velocidad: 400ms
             }
         } else if (isMobile) {
             nextFocusedCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -331,9 +338,6 @@ export function _mostrarDetalle(cursoId) {
            this.DOM.cardNivelActual.classList.add('visible'); 
         }
         
-        // La lógica de visibilidad de #info-adicional la maneja renderNavegacion al volver
-        // Aquí solo nos aseguramos de que los controles laterales estén activos para el foco
-        
         this.DOM.cardVolverFija.classList.add('visible'); 
         this.DOM.cardVolverFijaElemento.classList.add('visible');
         this.DOM.cardVolverFijaElemento.innerHTML = `<h3>${data.LOGO_VOLVER}</h3>`; 
@@ -345,8 +349,6 @@ export function _mostrarDetalle(cursoId) {
         // MÓVIL
         this.DOM.infoAdicional.classList.remove('visible');
         this.DOM.cardVolverFija.classList.remove('visible');
-        
-        // En móvil, el botón de volver está inyectado en el HTML del detalle, lo cual es correcto.
         
         const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn');
         primerElementoFocuseable = firstInteractive; 
@@ -365,7 +367,6 @@ export function _setupDetailFocusHandler() {
     // 'this' es la instancia de App
     document.addEventListener('focusin', (e) => {
         const focusedEl = e.target;
-        // Referencia a la instancia a través del closure del listener
         const isDetailView = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active'); 
 
         if (isDetailView) {
@@ -379,7 +380,6 @@ export function _setupDetailFocusHandler() {
             if (isTextContentArea) {
                 detailContainer.classList.add('mode-focus-text');
                 detailContainer.classList.remove('mode-focus-actions');
-                // Nota: No forzamos el foco aquí si ya está en el bloque.
             } else if (isActionContentArea) {
                 detailContainer.classList.add('mode-focus-actions');
                 detailContainer.classList.remove('mode-focus-text');
@@ -426,7 +426,6 @@ export function _tieneContenidoActivoImpl(nodoId) {
 
 export function _getFocusableDetailElements() {
     // 'this' es la instancia de App
-    // Asumimos que la lógica de findBestFocusInColumn es exportada por otro módulo (o pura).
     const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, #detalle-bloque-texto'));
     let elements = [];
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
@@ -436,4 +435,25 @@ export function _getFocusableDetailElements() {
     } 
     elements.push(...detailLinks);
     return elements;
+};
+
+/**
+ * Helper usado por nav-tactil para encontrar la mejor tarjeta donde posar el foco en una columna.
+ */
+export function findBestFocusInColumn(columnCards, targetRow) {
+    const isFocusable = (card) => { return card && card.dataset.id && card.dataset.tipo !== 'relleno'; };
+    
+    // 1. Intentar la fila objetivo
+    if (isFocusable(columnCards[targetRow])) return columnCards[targetRow];
+    
+    // 2. Intentar arriba
+    for (let i = targetRow - 1; i >= 0; i--) { 
+        if (isFocusable(columnCards[i])) return columnCards[i]; 
+    }
+    
+    // 3. Intentar abajo
+    for (let i = targetRow + 1; i < columnCards.length; i++) { 
+        if (isFocusable(columnCards[i])) return columnCards[i]; 
+    }
+    return null;
 };

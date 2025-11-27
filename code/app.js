@@ -37,13 +37,14 @@ class VortexSpiraApp {
         this.stackInitialize = nav_stack.stackInitialize;
         this.stackGetCurrent = nav_stack.stackGetCurrent;
         this.stackPop = nav_stack.stackPop;
-        this.stackPush =nav_stack.stackPush;
+        this.stackPush = nav_stack.stackPush;
         this.stackUpdateCurrentFocus = nav_stack.stackUpdateCurrentFocus;
         this.stackBuildFromId = nav_stack.stackBuildFromId;
 
         // Helpers de Búsqueda y Estado
         this._findNodoById = nav_base._findNodoById;
         this._tieneContenidoActivo = nav_base._tieneContenidoActivoImpl;
+        this.findBestFocusInColumn = nav_base.findBestFocusInColumn; // Delegación para nav-tactil
 
         // Funciones de Renderizado
         this._generarTarjetaHTML = render_base._generarTarjetaHTMLImpl; 
@@ -52,6 +53,11 @@ class VortexSpiraApp {
         this._initCarousel_Swipe = render_swipe._initCarousel_Swipe;
         this._initCarousel_Mobile = render_mobile._initCarousel_Mobile;
         this._destroyCarousel = render_swipe._destroyCarouselImpl;
+
+        // Listeners Táctiles (para Swiper)
+        this.setupTouchListeners = nav_tactil.setupTouchListeners;
+        this.handleSlideChangeStart = nav_tactil.handleSlideChangeStart;
+        this.handleSlideChangeEnd = nav_tactil.handleSlideChangeEnd;
     }
 
     // -----------------------------------------------------------------
@@ -103,19 +109,30 @@ class VortexSpiraApp {
     }
 
     // -----------------------------------------------------------------
-    // ⭐️ MÉTODOS DE SERVICIO Y DELEGACIÓN ⭐️
+    // ⭐️ MÉTODOS DE SERVICIO Y DELEGACIÓN (LLAMADOS DESDE HTML O JS) ⭐️
     // -----------------------------------------------------------------
     
     // Renderizado
     renderNavegacion() { render_base.renderNavegacion.call(this); }
     _updateFocus(shouldSlide) { nav_base._updateFocusImpl.call(this, shouldSlide); }
-
-    // Handlers (Invocados por onclick)
-    _handleTrackClick() { nav_base._handleTrackClick.call(this); }
-    _handleVolverClick() { nav_base._handleVolverClick.call(this); }
-    _handleCardClick(id, tipo, parentFocusIndex) { nav_base._handleCardClick.call(this, id, tipo, parentFocusIndex); }
-    _mostrarDetalle(cursoId) { nav_base._mostrarDetalle.call(this, cursoId); }
     
+    // Handlers (Invocados por onclick/eventos)
+    _handleTrackClick(e) { 
+        nav_base._handleTrackClick.call(this, e); 
+    }
+    _handleVolverClick() { 
+        nav_base._handleVolverClick.call(this); 
+    }
+    _handleCardClick(id, tipo, parentFocusIndex) { 
+        nav_base._handleCardClick.call(this, id, tipo, parentFocusIndex); 
+    }
+    _mostrarDetalle(cursoId) { 
+        nav_base._mostrarDetalle.call(this, cursoId); 
+    }
+    _handleActionRowClick(e) {
+        nav_base._handleActionRowClick.call(this, e);
+    }
+
     // I18N
     getString(key) { return i18n.getString(key); }
     applyStrings() { i18n.applyStrings(this); }
@@ -169,6 +186,7 @@ class VortexSpiraApp {
         this.DOM.infoAdicional = document.getElementById('info-adicional'); 
         this.DOM.cardNivelActual = document.getElementById('card-nivel-actual');
         this.DOM.toast = document.getElementById('toast-notification');
+        this.DOM.appContainer = document.getElementById('app-container');
     }
     
     /**
