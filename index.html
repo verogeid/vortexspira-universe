@@ -91,19 +91,24 @@
   <footer><small id="footer-content"></small></footer>
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  
-  <script type="module" src="code/app.js"></script> 
+  <script src="code/debug.js"></script>
+  <script src="code/app.js"></script>     
+  <script src="code/data.js"></script>   
+  <script src="code/i18n.js"></script>    
+  <script src="code/render-base.js"></script>
+  <script src="code/render-swipe.js"></script> 
+  <script src="code/render-mobile.js"></script>
+  <script src="code/nav-stack.js"></script>
+  <script src="code/nav-base.js"></script>
+  <script src="code/nav-keyboard.js"></script>
+  <script src="code/nav-tactil.js"></script>
 
-  <script type="module">
-    // ⭐️ Cambio: Importación de funciones necesarias para el inicio ⭐️
-    import { init, applyStrings, injectHeaderLogo, injectFooterContent } from './code/app.js'; 
-
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Llamadas directas, ya no condicionales a window.App
-        if (applyStrings) { applyStrings(); }
-        if (injectHeaderLogo) { injectHeaderLogo(); }
-        if (injectFooterContent) { injectFooterContent(); }
-        if (init) { init(); }
+        if (window.App && App.applyStrings) { App.applyStrings(); }
+        if (typeof injectHeaderLogo === 'function') { injectHeaderLogo(); }
+        if (typeof injectFooterContent === 'function') { injectFooterContent(); }
+        if (window.App && window.App.init) { App.init(); }
     });
   </script>
 </body>
