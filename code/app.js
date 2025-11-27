@@ -109,8 +109,9 @@ class VortexSpiraApp {
     // Renderizado
     renderNavegacion() { render_base.renderNavegacion.call(this); }
     _updateFocus(shouldSlide) { nav_base._updateFocusImpl.call(this, shouldSlide); }
-    
+
     // Handlers (Invocados por onclick)
+    _handleTrackClick() { nav_base._handleTrackClick.call(this); }
     _handleVolverClick() { nav_base._handleVolverClick.call(this); }
     _handleCardClick(id, tipo, parentFocusIndex) { nav_base._handleCardClick.call(this, id, tipo, parentFocusIndex); }
     _mostrarDetalle(cursoId) { nav_base._mostrarDetalle.call(this, cursoId); }

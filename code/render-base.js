@@ -4,6 +4,7 @@ import * as debug from './debug.js';
 import * as data from './data.js';
 
 let _lastMode = 'desktop'; 
+let _lastWidth = window.innerWidth;
 
 // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL ⭐️
 /**
@@ -331,9 +332,23 @@ export function _setupResizeObserver() {
     // Usamos 'app' como alias para 'this' dentro del closure del listener
     this.STATE.resizeObserver = new ResizeObserver(() => {
         const app = this;
-        const newMode = getMode(window.innerWidth);
+        const newWidth = window.innerWidth;
+        const newMode = getMode(newWidth);
+
+        // ⭐️ NUEVA LÓGICA DE ACTIVACIÓN DE RENDERIZADO ⭐️
+        const shouldRenderForLayout = 
+            // 1. Cambio de Modo Completo (mobile -> tablet | tablet -> desktop)
+            newMode !== _lastMode ||
+            
+            // 2. Transición Portrait <-> Landscape (Cruza la barrera de 801px)
+            (newWidth > data.TABLET_LANDSCAPE_MIN_WIDTH && _lastWidth <= data.TABLET_LANDSCAPE_MIN_WIDTH) ||
+            (newWidth <= data.TABLET_LANDSCAPE_MIN_WIDTH && _lastWidth > data.TABLET_LANDSCAPE_MIN_WIDTH);
+
+        // Actualizar el último ancho antes de la comprobación final
+        const oldLastWidth = _lastWidth;
+        _lastWidth = newWidth; // Actualizar el ancho para la próxima ejecución
         
-        if (newMode !== _lastMode && app.STATE.initialRenderComplete) {
+        if (shouldRenderForLayout && app.STATE.initialRenderComplete) {
             const isSubLevel = (app.stackGetCurrent() && app.stackGetCurrent().levelId);
             const lastWasMobile = (_lastMode === 'mobile');
             const newIsMobile = (newMode === 'mobile');
