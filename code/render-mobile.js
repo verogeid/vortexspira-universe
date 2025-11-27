@@ -1,35 +1,44 @@
-// --- code/render-mobile.js ---
-/* (Sin cambios, tal como lo proporcionaste) */
-(function() {
+// --- code/render-mobile.js (REFRACTORIZADO A ES MODULE) ---
 
-    // ⭐️ 1. FUNCIÓN DE GENERACIÓN DE HTML ESPECÍFICA PARA MÓVIL ⭐️
-    App._generateCardHTML_Mobile = function(items, itemsPerColumna) {
-        let html = '';
+import * as debug from './debug.js';
 
-        // En móvil, es una lista vertical simple.
-        for (const nodo of items) {
+// ⭐️ 1. FUNCIÓN DE GENERACIÓN DE HTML ESPECÍFICA PARA MÓVIL ⭐️
+/**
+ * Genera el HTML para la vista móvil (lista vertical).
+ * Se llama con .call(this) desde renderNavegacion.
+ */
+export function _generateCardHTML_Mobile(items, itemsPerColumna) {
+    // 'this' es la instancia de App
+    let html = '';
 
-            if (nodo.tipoEspecial === 'volver-vertical') {
-                html += App._generarTarjetaHTML(nodo, true, false, 'volver-vertical');
-                continue;
-            }
+    // En móvil, es una lista vertical simple.
+    for (const nodo of items) {
 
-            const esRelleno = nodo.tipo === 'relleno'; // No debería haber, pero por si acaso
-            const estaActivo = esRelleno ? false : App._tieneContenidoActivo(nodo.id);
-
-            html += App._generarTarjetaHTML(nodo, estaActivo, esRelleno);
+        if (nodo.tipoEspecial === 'volver-vertical' || nodo.tipoEspecial === 'breadcrumb-vertical') {
+            html += this._generarTarjetaHTML(nodo, true, false, nodo.tipoEspecial); // Método delegado
+            continue;
         }
 
-        App.DOM.track.style.gridTemplateRows = '';
-        return html;
-    };
+        const esRelleno = nodo.tipo === 'relleno';
+        const estaActivo = esRelleno ? false : this._tieneContenidoActivo(nodo.id); // Método delegado
 
-    // ⭐️ 2. FUNCIÓN DE INICIALIZACIÓN MÓVIL (NO-OP para Swiper) ⭐️
-    App._initCarousel_Mobile = function() {
-        // En móvil, el carrusel se destruye (en _destroyCarousel) y no se inicializa.
-        log('render_mobile', DEBUG_LEVELS.BASIC, "Modo móvil activo. Swiper no inicializado.");
-        // Llama al destructor real (definido en render-swipe.js)
-        App._destroyCarousel(); 
-    };
+        html += this._generarTarjetaHTML(nodo, estaActivo, esRelleno); // Método delegado
+    }
 
-})();
+    if (this.DOM.track) {
+         this.DOM.track.style.gridTemplateRows = '';
+    }
+    return html;
+};
+
+// ⭐️ 2. FUNCIÓN DE INICIALIZACIÓN MÓVIL (NO-OP para Swiper) ⭐️
+/**
+ * Destruye el carrusel si existe (no-op para inicialización).
+ * Se llama con .call(this) desde renderNavegacion.
+ */
+export function _initCarousel_Mobile() {
+    // 'this' es la instancia de App
+    debug.log('render_mobile', debug.DEBUG_LEVELS.BASIC, "Modo móvil activo. Swiper no inicializado.");
+    // Llama al destructor real (método delegado)
+    this._destroyCarousel(); 
+};

@@ -1,135 +1,126 @@
-// --- code/app.js ---
+// --- code/app.js (CLASE PRINCIPAL Y ENTRY POINT) ---
 
-(function() {
+// Importaciones de módulos de la aplicación
+import * as data from './data.js';
+import * as debug from './debug.js';
+import * as i18n from './i18n.js';
+import * as nav_stack from './nav-stack.js';
 
-  // ⭐️ DEFINICIÓN DEL OBJETO GLOBAL DE LA APLICACIÓN ⭐️
-  window.App = {
+// Importaciones de funciones de nav-base y render-base (como helpers)
+import * as nav_base from './nav-base.js';
+import * as render_base from './render-base.js';
+import * as nav_keyboard from './nav-keyboard.js';
+import * as nav_tactil from './nav-tactil.js';
+import * as render_swipe from './render-swipe.js';
+import * as render_mobile from './render-mobile.js';
+
+class VortexSpiraApp {
     
-    // --- 1. PROPIEDADES ---
-    DOM: {}, 
-    STATE: {
-      fullData: null,          
-      historyStack: [],        
-      itemsPorColumna: 3,      
-      carouselInstance: null,  
-      resizeObserver: null,    
-      currentFocusIndex: 0,    
-      initialRenderComplete: false, 
-      keyboardNavInProgress: false 
-    },
+    constructor() {
+        this.DOM = {}; 
+        this.STATE = {
+            fullData: null,          
+            historyStack: [],        
+            itemsPorColumna: 3,      
+            carouselInstance: null,  
+            resizeObserver: null,    
+            currentFocusIndex: 0,    
+            initialRenderComplete: false, 
+            keyboardNavInProgress: false 
+        };
+        
+        // ⭐️ Exposición temporal para onclick en HTML (patrón mixto) ⭐️
+        window.App = this; 
+        
+        // --- INYECCIÓN DE HELPERS DE MÓDULOS EN LA INSTANCIA (Delegación de contexto) ---
+        // Stack de Navegación
+        this.stackInitialize = nav_stack.stackInitialize;
+        this.stackGetCurrent = nav_stack.stackGetCurrent;
+        this.stackPop = nav_stack.stackPop;
+        this.stackPush =nav_stack.stackPush;
+        this.stackUpdateCurrentFocus = nav_stack.stackUpdateCurrentFocus;
+        this.stackBuildFromId = nav_stack.stackBuildFromId;
 
-    // --- 2. INICIALIZACIÓN ---
+        // Helpers de Búsqueda y Estado
+        this._findNodoById = nav_base._findNodoById;
+        this._tieneContenidoActivo = nav_base._tieneContenidoActivoImpl;
+
+        // Funciones de Renderizado
+        this._generarTarjetaHTML = render_base._generarTarjetaHTMLImpl; 
+        this._generateCardHTML_Carousel = render_swipe._generateCardHTML_Carousel;
+        this._generateCardHTML_Mobile = render_mobile._generateCardHTML_Mobile;
+        this._initCarousel_Swipe = render_swipe._initCarousel_Swipe;
+        this._initCarousel_Mobile = render_mobile._initCarousel_Mobile;
+        this._destroyCarousel = render_swipe._destroyCarouselImpl;
+    }
+
+    // -----------------------------------------------------------------
+    // ⭐️ MÉTODOS PÚBLICOS Y DE INICIALIZACIÓN ⭐️
+    // -----------------------------------------------------------------
+    
     async init() {
-      if (typeof log === 'function') {
-         log('app', DEBUG_LEVELS.BASIC, "App: Iniciando orquestación...");
-      }
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, "App: Iniciando orquestación (POO)...");
+        
+        this._setupGlobalDebugListeners();
+        this._cacheDOM();
 
-      // --- ⭐️ CONFIGURACIÓN DE DEPURACIÓN GLOBAL (SIEMPRE AL INICIO) ⭐️
-      if (typeof this._setupGlobalDebugListeners === 'function') {
-           this._setupGlobalDebugListeners();
-      }
-      
-      // --- ⭐️ CACHEAR EL DOM (Actualizado para contenedores separados) ⭐️ ---
-      
-      // Vistas Globales
-      this.DOM.vistaNav = null; // Se asigna dinámicamente en render-base
-      
-      // Vista Detalle Escritorio/Tablet (Grid)
-      this.DOM.vistaDetalleDesktop = document.getElementById('vista-detalle-desktop');
-      this.DOM.detalleContenidoDesktop = document.getElementById('detalle-contenido-desktop');
-      
-      // Vista Detalle Móvil (Fullscreen)
-      this.DOM.vistaDetalleMobile = document.getElementById('vista-detalle-mobile');
-      this.DOM.detalleContenidoMobile = document.getElementById('detalle-contenido-mobile');
-
-      // Referencias genéricas (se usarán apuntando al activo)
-      this.DOM.vistaDetalle = null; 
-      this.DOM.detalleContenido = null; 
-
-      // ⭐️ INICIO CORRECCIÓN (INICIALIZACIÓN DE VISTAS GENÉRICAS) ⭐️
-      const MAX_WIDTH_MOBILE = typeof MOBILE_MAX_WIDTH !== 'undefined' ? MOBILE_MAX_WIDTH : 600;
-      const isMobileInit = window.innerWidth <= MAX_WIDTH_MOBILE;
-      
-      this.DOM.vistaDetalle = isMobileInit ? 
-          this.DOM.vistaDetalleMobile : 
-          this.DOM.vistaDetalleDesktop;
-      
-      this.DOM.detalleContenido = isMobileInit ?
-          this.DOM.detalleContenidoMobile :
-          this.DOM.detalleContenidoDesktop;
-      // ⭐️ FIN CORRECCIÓN ⭐️
-
-      // Carruseles
-      this.DOM.swiperContainerDesktop = document.getElementById('nav-swiper');
-      this.DOM.swiperContainerTablet = document.getElementById('nav-swiper-tablet');
-      
-      // Botones y Laterales
-      this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); 
-      this.DOM.cardVolverFija = document.getElementById('card-volver-fija'); 
-      this.DOM.cardVolverFijaElemento = document.getElementById('card-volver-fija-elemento'); 
-      this.DOM.infoAdicional = document.getElementById('info-adicional'); 
-      this.DOM.cardNivelActual = document.getElementById('card-nivel-actual');
-      this.DOM.toast = document.getElementById('toast-notification');
-
-      // 2.1. Cargar Datos
-      try {
-        if (typeof loadData === 'function') {
-            await loadData(this); 
-        } else {
-            logError('app', "ERROR: loadData no está definido.");
+        try {
+            this.STATE.fullData = await data.loadData(); 
+        } catch (error) {
+            debug.logError('app', "ERROR: Carga de datos fallida. " + error.message);
             return;
         }
-      } catch (error) {
-        logError('app', "ERROR: Carga de datos fallida. " + error.message);
-        return;
-      }
 
-      // 2.2. GESTIÓN DEEP LINKING
-      try {
+        // --- GESTIÓN DEEP LINKING ---
         const urlParams = new URLSearchParams(window.location.search);
         const targetId = urlParams.get('id');
 
         if (targetId) {
-            const nodo = this._findNodoById(targetId, this.STATE.fullData.navegacion); 
-
-            if (nodo && nodo.titulo) { // Curso
-                log('app', DEBUG_LEVELS.BASIC, `Deep link a CURSO: ${targetId}`);
-                this.stackBuildFromId(targetId, this.STATE.fullData); 
-                this.renderNavegacion(); 
-                this._mostrarDetalle(targetId); // Llama al renderizador específico
-            
-            } else if (nodo && nodo.nombre) { // Categoría
-                log('app', DEBUG_LEVELS.BASIC, `Deep link a CATEGORÍA: ${targetId}`);
-                this.stackBuildFromId(targetId, this.STATE.fullData); 
-                this.renderNavegacion();
-            
-            } else { // Inválido
-                logWarn('app', `Deep link ID "${targetId}" no encontrado.`);
+            if (this.stackBuildFromId(targetId, this.STATE.fullData)) { 
+                const nodo = this._findNodoById(targetId, this.STATE.fullData.navegacion);
+                if (nodo && nodo.titulo) { 
+                    this._mostrarDetalle(targetId);
+                } else {
+                    this.renderNavegacion();
+                }
+            } else {
                 this.stackInitialize(); 
                 this.renderNavegacion();
-                if (typeof this.showToast === 'function') {
-                    this.showToast(App.getString('toastErrorId'));
-                }
+                this.showToast(this.getString('toastErrorId'));
             }
         } else {
             this.stackInitialize(); 
             this.renderNavegacion();
         }
-      } catch (error) {
-         logError('app', "ERROR: Fallo al inicializar. " + error.message);
-         this.stackInitialize(); 
-         this.renderNavegacion();
-      }
 
-      // 2.3. Configuración
-      if (typeof this.setupListeners === 'function') { this.setupListeners(); }
-      if (typeof this._setupResizeObserver === 'function') { this._setupResizeObserver(); }
-      
-      this.STATE.initialRenderComplete = true; 
-      log('app', DEBUG_LEVELS.BASIC, "Carga inicial completada.");
+        // Inicialización de Listeners y ResizeObserver
+        nav_base.setupListeners.call(this);
+        nav_keyboard.initKeyboardControls.call(this);
+        render_base._setupResizeObserver.call(this); 
+        
+        this.STATE.initialRenderComplete = true; 
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, "Carga inicial completada.");
+    }
+
+    // -----------------------------------------------------------------
+    // ⭐️ MÉTODOS DE SERVICIO Y DELEGACIÓN ⭐️
+    // -----------------------------------------------------------------
     
-    }, 
+    // Renderizado
+    renderNavegacion() { render_base.renderNavegacion.call(this); }
+    _updateFocus(shouldSlide) { nav_base._updateFocusImpl.call(this, shouldSlide); }
+    
+    // Handlers (Invocados por onclick)
+    _handleVolverClick() { nav_base._handleVolverClick.call(this); }
+    _handleCardClick(id, tipo, parentFocusIndex) { nav_base._handleCardClick.call(this, id, tipo, parentFocusIndex); }
+    _mostrarDetalle(cursoId) { nav_base._mostrarDetalle.call(this, cursoId); }
+    
+    // I18N
+    getString(key) { return i18n._getString(key); }
+    applyStrings() { i18n._applyStrings(this); }
 
+    // Otros
+    
     /**
      * Toast Notification
      */
@@ -148,37 +139,70 @@
         this.DOM.toast._toastTimer = setTimeout(() => {
             this.DOM.toast.textContent = '';
         }, 2500); 
-    },
+    }
     
     /**
-     * ⭐️ FUNCIÓN PRIVADA: Configura el listener de clic global para depuración. ⭐️
-     * Mueve el código del index.html aquí para que sea persistente y reutilizable.
+     * Caching del DOM. Necesario para inicializar las referencias genéricas de detalle.
+     */
+    _cacheDOM() {
+        const isMobileInit = window.innerWidth <= data.MOBILE_MAX_WIDTH;
+        
+        // Vistas de Detalle
+        this.DOM.vistaDetalleDesktop = document.getElementById('vista-detalle-desktop');
+        this.DOM.detalleContenidoDesktop = document.getElementById('detalle-contenido-desktop');
+        this.DOM.vistaDetalleMobile = document.getElementById('vista-detalle-mobile');
+        this.DOM.detalleContenidoMobile = document.getElementById('detalle-contenido-mobile');
+
+        // Referencias genéricas (apuntan al activo en la inicialización)
+        this.DOM.vistaDetalle = isMobileInit ? this.DOM.vistaDetalleMobile : this.DOM.vistaDetalleDesktop;
+        this.DOM.detalleContenido = isMobileInit ? this.DOM.detalleContenidoMobile : this.DOM.detalleContenidoDesktop;
+        
+        // Carruseles
+        this.DOM.swiperContainerDesktop = document.getElementById('nav-swiper');
+        this.DOM.swiperContainerTablet = document.getElementById('nav-swiper-tablet');
+        
+        // Botones y Laterales
+        this.DOM.btnVolverNav = document.getElementById('btn-volver-navegacion'); 
+        this.DOM.cardVolverFija = document.getElementById('card-volver-fija'); 
+        this.DOM.cardVolverFijaElemento = document.getElementById('card-volver-fija-elemento'); 
+        this.DOM.infoAdicional = document.getElementById('info-adicional'); 
+        this.DOM.cardNivelActual = document.getElementById('card-nivel-actual');
+        this.DOM.toast = document.getElementById('toast-notification');
+    }
+    
+    /**
+     * Configura el listener de clic global para depuración.
      */
     _setupGlobalDebugListeners() {
-        document.addEventListener('click', function(e) {
-            if (typeof log === 'function') {
-                const targetElement = e.target;
-                const closestCard = targetElement.closest('.card');
-                
-                logGroupCollapsed('global', DEBUG_LEVELS.DEEP, '❌ CLIC GLOBAL CAPTURADO ❌');
-                
-                log('global', DEBUG_LEVELS.DEEP, 'Tipo de Evento:', e.type);
-                log('global', DEBUG_LEVELS.DEEP, 'Origen (e.target):', targetElement.tagName, targetElement.id, targetElement.className);
-                
-                if (e.clientX !== undefined && e.clientY !== undefined) {
-                    log('global', DEBUG_LEVELS.DEEP, 'Coordenadas:', `X=${e.clientX}, Y=${e.clientY}`);
+        if (debug.DEBUG_CONFIG.global > debug.DEBUG_LEVELS.DISABLED) {
+            document.addEventListener('click', function(e) {
+                if (typeof debug.log === 'function') {
+                    const targetElement = e.target;
+                    const closestCard = targetElement.closest('.card');
+                    
+                    debug.log('global', debug.DEBUG_LEVELS.DEEP, '❌ CLIC GLOBAL CAPTURADO ❌');
+                    debug.log('global', debug.DEBUG_LEVELS.DEEP, 'Origen (e.target):', targetElement.tagName, targetElement.id, targetElement.className);
+                    
+                    if (closestCard) {
+                        debug.log('global', debug.DEBUG_LEVELS.DEEP, 'Elemento Clicado es una Tarjeta.', 'Card ID:', closestCard.dataset.id);
+                    }
                 }
-
-                if (closestCard) {
-                    log('global', DEBUG_LEVELS.DEEP, 'Elemento Clicado es una Tarjeta.', 'Card ID:', closestCard.dataset.id);
-                } else {
-                    log('global', DEBUG_LEVELS.DEEP, 'El clic no fue en una tarjeta.');
-                }
-                
-                logGroupEnd('global', DEBUG_LEVELS.DEEP);
-            }
-        }, true); // El 'true' activa la fase de CAPTURA.
+            }, true); // El 'true' activa la fase de CAPTURA.
+        }
     }
-  };
+}
 
-})();
+// -------------------------------------------------------------
+// ⭐️ EXPORTACIÓN E INICIALIZACIÓN (Entry Point) ⭐️
+// -------------------------------------------------------------
+
+const appInstance = new VortexSpiraApp();
+
+// ⭐️ Funciones que index.html necesita importar ⭐️
+export const init = () => appInstance.init();
+export const applyStrings = () => appInstance.applyStrings();
+export const injectHeaderLogo = () => data.injectHeaderLogo(appInstance);
+export const injectFooterContent = () => data.injectFooterContent(appInstance);
+
+// Exportamos la instancia App (para el código HTML onclick)
+export const App = appInstance;

@@ -1,374 +1,439 @@
-// --- code/nav-base.js ---
-(function() {
+// --- code/nav-base.js (REFRACTORIZADO A ES MODULE) ---
 
-    // ⭐️ 1. SETUP LISTENERS ⭐️
-    App.setupListeners = function() {
-      log('nav_base', DEBUG_LEVELS.DEEP, 'Inicializando listeners de elementos fijos (Volver/Detalle).');
-      
-      if (this.DOM.btnVolverNav) {
-          this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
-          this.DOM.btnVolverNav.addEventListener('keydown', (e) => {
-              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this._handleVolverClick(); }
-          });
-      }
-      if (this.DOM.cardVolverFijaElemento) { 
-          this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
-      }
-      
-      // ⭐️ AÑADIDO: Inicializar el manejador de foco para la vista de detalle (Blur Mask) ⭐️
-      this._setupDetailFocusHandler();
-    };
+import * as debug from './debug.js';
+import * as data from './data.js';
 
-    // ⭐️ HELPER: Clic en fila -> Solo pone foco (NO click) ⭐️
-    App._handleActionRowClick = function(e) {
-        log('nav_base', DEBUG_LEVELS.DEEP, 'Clic en fila de acción (Detalle) detectado.');
-        
-        // Si el clic NO fue directamente en el botón (fue en el texto o contenedor)
-        if (!e.target.closest('.detail-action-btn')) {
-            const btn = e.currentTarget.querySelector('.detail-action-btn');
-            // Si existe y no está deshabilitado (aunque el foco sí se permite en disabled, la acción no)
-            // En este caso, queremos mover el foco siempre para que el usuario vea dónde está.
-            if (btn) {
-                btn.focus(); 
-            }
+// ⭐️ 1. SETUP LISTENERS ⭐️
+/**
+ * Inicializa los listeners de elementos fijos y la vista de detalle.
+ * Se llama con .call(this) desde VortexSpiraApp.init()
+ */
+export function setupListeners() {
+  debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Inicializando listeners de elementos fijos (Volver/Detalle).');
+  
+  if (this.DOM.btnVolverNav) {
+      this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
+      this.DOM.btnVolverNav.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this._handleVolverClick(); }
+      });
+  }
+  if (this.DOM.cardVolverFijaElemento) { 
+      this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
+  }
+  
+  _setupDetailFocusHandler.call(this); // Llamada con contexto de instancia
+};
+
+// ⭐️ HELPER: Clic en fila -> Solo pone foco (NO click) ⭐️
+export function _handleActionRowClick(e) {
+    // 'this' es la instancia de App
+    debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Clic en fila de acción (Detalle) detectado.');
+    
+    if (!e.target.closest('.detail-action-btn')) {
+        const btn = e.currentTarget.querySelector('.detail-action-btn');
+        if (btn) {
+            btn.focus(); 
         }
-    };
+    }
+};
 
-    // ⭐️ 2. POINTER LISTENERS (CLAVE: Adjuntar listeners programáticos a los tracks) ⭐️
-    App.setupTrackPointerListeners = function() { 
-        log('nav_base', DEBUG_LEVELS.DEEP, 'Ejecutando setupTrackPointerListeners.');
-        
-        if (this.DOM.track) {
+// ⭐️ 2. POINTER LISTENERS (Adjuntar listeners programáticos a los tracks) ⭐️
+/**
+ * Configura los listeners de mouse/touch para los carruseles (Desktop/Tablet).
+ */
+export function setupTrackPointerListeners() { 
+    // 'this' es la instancia de App
+    debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Ejecutando setupTrackPointerListeners.');
+    
+    if (this.DOM.track) {
+        // Limpieza de listeners
+        if (this.DOM.track._clickListener) { this.DOM.track.removeEventListener('click', this.DOM.track._clickListener); this.DOM.track._clickListener = null; }
+        if (this.DOM.track._mouseoverListener) { this.DOM.track.removeEventListener('mouseover', this.DOM.track._mouseoverListener); this.DOM.track._mouseoverListener = null; }
+        if (this.DOM.track._touchEndListener) { this.DOM.track.removeEventListener('touchend', this.DOM.track._touchEndListener); this.DOM.track._touchEndListener = null; }
+        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Listeners CLIC/TOUCH programáticos eliminados.');
+
+        const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
+
+        if (!isMobile) {
+            // DESKTOP/TABLET: Confiamos en la delegación programática (SWIPER) 
             
-            if (this.DOM.track._clickListener) { this.DOM.track.removeEventListener('click', this.DOM.track._clickListener); this.DOM.track._clickListener = null; }
-            if (this.DOM.track._mouseoverListener) { this.DOM.track.removeEventListener('mouseover', this.DOM.track._mouseoverListener); this.DOM.track._mouseoverListener = null; }
-            if (this.DOM.track._touchEndListener) { this.DOM.track.removeEventListener('touchend', this.DOM.track._touchEndListener); this.DOM.track._touchEndListener = null; }
-            log('nav_base', DEBUG_LEVELS.DEEP, 'Listeners CLIC/TOUCH programáticos eliminados.');
-
-            const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
-
-            if (!isMobile) {
-                // ⭐️ DESKTOP/TABLET: Confiamos en la delegación programática (SWIPER) ⭐️
-                
-                this.DOM.track._clickListener = this._handleTrackClick.bind(this);
-                this.DOM.track.addEventListener('click', this.DOM.track._clickListener);
-                
-                this.DOM.track._mouseoverListener = this._handleTrackMouseOver.bind(this);
-                this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
-                log('nav_base', DEBUG_LEVELS.DEEP, 'Listeners programáticos adjuntados para Desktop/Tablet.');
-
-            } else {
-                // ⭐️ MÓVIL: Confiamos en el "onclick" en línea (Render-base.js) ⭐️
-                // Solo adjuntamos mouseover (por si se usa un ratón)
-                this.DOM.track._mouseoverListener = this._handleTrackMouseOver.bind(this);
-                this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
-                log('nav_base', DEBUG_LEVELS.DEEP, 'Solo mouseover programático adjuntado para Móvil.');
-            }
-        }
-    };
-
-    // ⭐️ 3. HANDLERS ⭐️
-    App._handleTrackClick = function(e) {
-      log('nav_base', DEBUG_LEVELS.DEEP, 'CLICK/TAP DETECTADO:', e.type, 'Target:', e.target); // <-- LÍNEA CLAVE DE DEPURACIÓN
-      
-      const tarjeta = e.target.closest('[data-id]'); 
-      if (!tarjeta || tarjeta.dataset.tipo === 'relleno') {
-          log('nav_base', DEBUG_LEVELS.DEEP, 'Clic ignorado: No es tarjeta válida (relleno o null).');
-          return;
-      }
-      log('nav_base', DEBUG_LEVELS.DEEP, 'Tarjeta seleccionada:', tarjeta.dataset.id); // <-- LÍNEA CLAVE DE DEPURACIÓN
-      
-      const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
-      const newIndex = allCards.findIndex(c => c === tarjeta);
-      
-      if (newIndex === -1) {
-          logWarn('nav_base', 'Tarjeta seleccionada no encontrada en la lista de tarjetas activas.');
-          return;
-      }
-
-      const parentFocusIndex = this.STATE.currentFocusIndex;
-      const indexChanged = newIndex !== parentFocusIndex;
-
-      this.STATE.currentFocusIndex = newIndex;
-      App.stackUpdateCurrentFocus(newIndex); 
-      this._updateFocus(true); 
-
-      if (tarjeta.classList.contains('disabled')) return;
-      if (tarjeta.dataset.tipo === 'volver-vertical') {
-          this._handleVolverClick();
-          return;
-      }
-      
-      const id = tarjeta.dataset.id;
-      const tipo = tarjeta.dataset.tipo;
-      const delay = indexChanged ? 300 : 0; 
-
-      setTimeout(() => {
-          this._handleCardClick(id, tipo, parentFocusIndex);
-      }, delay);
-    };
-
-    App._handleTrackMouseOver = function(e) {
-        const tarjeta = e.target.closest('[data-id]');
-        if (!tarjeta || tarjeta.dataset.tipo === 'relleno') return;
-        const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
-        const newIndex = allCards.findIndex(c => c === tarjeta);
-        if (newIndex > -1 && newIndex !== this.STATE.currentFocusIndex) {
-            this._updateVisualFocus(newIndex);
-        }
-    };
-
-    App._updateVisualFocus = function(newIndex) {
-        // ... (lógica de actualización visual sin cambios) ...
-        const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
-        allCardsInTrack.forEach(card => {
-            card.classList.remove('focus-visible');
-            card.removeAttribute('aria-current');
-        });
-        if (App.DOM.cardVolverFijaElemento) { 
-            App.DOM.cardVolverFijaElemento.classList.remove('focus-visible');
-            App.DOM.cardVolverFijaElemento.removeAttribute('aria-current');
-        }
-        const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
-        if (allCards.length === 0) return;
-        let normalizedIndex = newIndex;
-        if (normalizedIndex < 0) normalizedIndex = 0;
-        if (normalizedIndex >= allCards.length) normalizedIndex = allCards.length - 1;
-        const nextFocusedCard = allCards[normalizedIndex];
-        this.STATE.currentFocusIndex = normalizedIndex;
-        App.stackUpdateCurrentFocus(normalizedIndex);
-        if (nextFocusedCard) {
-            nextFocusedCard.classList.add('focus-visible');
-            nextFocusedCard.setAttribute('aria-current', 'true');
-        }
-    };
-
-    App._handleCardClick = function(id, tipo, parentFocusIndex) {
-        // ... (lógica de click de tarjeta sin cambios) ...
-        const focusParaGuardar = (parentFocusIndex !== undefined) ? parentFocusIndex : this.STATE.currentFocusIndex;
-        if (tipo === 'categoria') {
-            App.stackPush(id, focusParaGuardar);
-            this.renderNavegacion();
-        } else if (tipo === 'curso') {
-            this._mostrarDetalle(id);
-        }
-    };
-
-    // ⭐️ 4. NAVEGACIÓN Y VOLVER ⭐️
-    App._handleVolverClick = function() {
-        log('nav_base', DEBUG_LEVELS.BASIC, 'Acción Volver iniciada.');
-        const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
-        
-        if (this.DOM.vistaDetalle.classList.contains('active')) {
-            // ... (lógica de salir de detalle sin cambios) ...
-            this.DOM.vistaDetalle.classList.remove('active'); 
+            this.DOM.track._clickListener = _handleTrackClick.bind(this);
+            this.DOM.track.addEventListener('click', this.DOM.track._clickListener);
             
-            if (isMobile && document.getElementById('detalle-bloque-acciones-mobile')) {
-                 document.getElementById('detalle-bloque-acciones-mobile').style.display = 'none';
-            }
-            
-            this.DOM.btnVolverNav.classList.remove('visible');
-            this.DOM.btnVolverNav.tabIndex = -1;
-            this.renderNavegacion(); 
-            
-        } 
-        else if (App.STATE.historyStack.length > 1) { 
-            // ... (lógica de volver un nivel sin cambios) ...
-            App.stackPop(); 
-            this.renderNavegacion();
-             const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
-             const isTablet = window.innerWidth >= TABLET_MIN_WIDTH && window.innerWidth <= TABLET_MAX_WIDTH;
-             if (!isMobile && !isTablet && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
-                 this.DOM.cardVolverFijaElemento.focus();
-             } else if (isMobile || isTablet) {
-                 const firstCard = this.DOM.track.querySelector('[data-id]:not([data-tipo="relleno"])');
-                 if (firstCard) firstCard.focus();
-             }
+            this.DOM.track._mouseoverListener = _handleTrackMouseOver.bind(this);
+            this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
+            debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Listeners programáticos adjuntados para Desktop/Tablet.');
+
         } else {
-             log('nav_base', DEBUG_LEVELS.BASIC, 'Volver bloqueado: Ya estamos en el nivel raíz.');
+            // MÓVIL: Confiamos en el "onclick" en línea (Render-base.js) 
+            // Solo adjuntamos mouseover (por si se usa un ratón)
+            this.DOM.track._mouseoverListener = _handleTrackMouseOver.bind(this);
+            this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
+            debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Solo mouseover programático adjuntado para Móvil.');
         }
-    };
+    }
+};
 
-    /**
-     * ⭐️ GESTIÓN DE FOCO EN VISTA DETALLE (BLUR MASK) ⭐️
-     */
-    App._setupDetailFocusHandler = function() {
-        // ... (lógica de focusin en detalle sin cambios) ...
-        document.addEventListener('focusin', (e) => {
-            const focusedEl = e.target;
-            const isDetailView = App.DOM.vistaDetalle && App.DOM.vistaDetalle.classList.contains('active');
+// ⭐️ 3. HANDLERS ⭐️
+export function _handleTrackClick(e) {
+  // 'this' es la instancia de App
+  debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'CLICK/TAP DETECTADO:', e.type, 'Target:', e.target); 
+  
+  const tarjeta = e.target.closest('[data-id]'); 
+  if (!tarjeta || tarjeta.dataset.tipo === 'relleno') {
+      debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Clic ignorado: No es tarjeta válida (relleno o null).');
+      return;
+  }
+  debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Tarjeta seleccionada:', tarjeta.dataset.id); 
+  
+  const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+  const newIndex = allCards.findIndex(c => c === tarjeta);
+  
+  if (newIndex === -1) {
+      debug.logWarn('nav_base', 'Tarjeta seleccionada no encontrada en la lista de tarjetas activas.');
+      return;
+  }
 
-            if (isDetailView) {
-                const detailContainer = App.DOM.vistaDetalle; 
-                const textBlock = detailContainer.querySelector('#detalle-bloque-texto');
-                const actionsBlock = detailContainer.querySelector('.detail-actions-list');
+  const parentFocusIndex = this.STATE.currentFocusIndex;
+  const indexChanged = newIndex !== parentFocusIndex;
 
-                const isTextContentArea = focusedEl === textBlock || focusedEl.closest('#detalle-bloque-texto');
-                const isActionContentArea = focusedEl === actionsBlock || focusedEl.closest('.detail-actions-list') || focusedEl.classList.contains('detail-action-btn');
+  this.STATE.currentFocusIndex = newIndex;
+  this.stackUpdateCurrentFocus(newIndex); // Método delegado
+  this._updateFocus(true); // Método delegado
 
-                if (isTextContentArea) {
-                    detailContainer.classList.add('mode-focus-text');
-                    detailContainer.classList.remove('mode-focus-actions');
-                    if (textBlock) textBlock.focus(); 
-                } else if (isActionContentArea) {
-                    detailContainer.classList.add('mode-focus-actions');
-                    detailContainer.classList.remove('mode-focus-text');
-                } else {
-                    detailContainer.classList.remove('mode-focus-actions', 'mode-focus-text');
-                }
-            }
-        });
-    };
+  if (tarjeta.classList.contains('disabled')) return;
+  if (tarjeta.dataset.tipo === 'volver-vertical') {
+      this._handleVolverClick(); // Método delegado
+      return;
+  }
+  
+  const id = tarjeta.dataset.id;
+  const tipo = tarjeta.dataset.tipo;
+  const delay = indexChanged ? 300 : 0; 
+
+  setTimeout(() => {
+      this._handleCardClick(id, tipo, parentFocusIndex); // Método delegado
+  }, delay);
+};
+
+export function _handleTrackMouseOver(e) {
+    // 'this' es la instancia de App
+    const tarjeta = e.target.closest('[data-id]');
+    if (!tarjeta || tarjeta.dataset.tipo === 'relleno') return;
+    const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+    const newIndex = allCards.findIndex(c => c === tarjeta);
+    if (newIndex > -1 && newIndex !== this.STATE.currentFocusIndex) {
+        this._updateFocus(false); // Método delegado (solo sincroniza foco visual, sin slide)
+    }
+};
+
+/**
+ * Lógica de actualización de foco visual (delegada de render-base.js).
+ */
+export function _updateFocusImpl(shouldSlide = true) {
+    // 'this' es la instancia de App
+    const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
+    const screenWidth = window.innerWidth;
+    const isMobile = screenWidth <= data.MOBILE_MAX_WIDTH;
+
+    const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
     
-    /**
-     * ⭐️ MUESTRA DETALLE DEL CURSO ⭐️
-     */
-    App._mostrarDetalle = function(cursoId) {
-      log('nav_base', DEBUG_LEVELS.BASIC, 'Mostrando detalle del curso:', cursoId);
-      const curso = App._findNodoById(cursoId, App.STATE.fullData.navegacion);
-      if (!curso) {
-          logWarn('nav_base', 'Curso no encontrado para ID:', cursoId);
-          return;
-      }
-
-      // ... (lógica de inyección de HTML de detalle sin cambios) ...
-
-      const getIconHtml = (text) => {
-          const lower = text.toLowerCase();
-          if (lower.includes('adquirir') || lower.includes('comprar')) { return '🛒&#xFE0E;'; }
-          let iconClass = 'icon-link'; 
-          if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa')) { iconClass = 'icon-download'; }
-          return `<i class="action-icon ${iconClass}"></i>`; 
-      };
-
-      let enlacesHtml = '';
-      if (curso.enlaces && curso.enlaces.length > 0) {
-          const itemsHtml = curso.enlaces.map(enlace => {
-              const iconHtml = getIconHtml(enlace.texto);
-              const isDisabled = !enlace.url || enlace.url === '#';
-              const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
-              
-              const classDisabledBtn = isDisabled ? 'disabled' : '';
-              const classDisabledText = ''; 
-              
-              const tabIndex = '0'; 
-              const targetAttr = isDisabled ? '' : 'target="_blank"';
-              
-              const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
-
-              return `
-                <div class="detail-action-item" onclick="App._handleActionRowClick(event)" style="cursor: pointer;">
-                    <span class="detail-action-text ${classDisabledText}">${enlace.texto}</span>
-                    <a ${hrefAttr} 
-                       class="detail-action-btn ${classDisabledBtn}" 
-                       ${targetAttr} 
-                       tabindex="${tabIndex}" 
-                       ${onclickAttr}
-                       aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
-                       ${iconHtml}
-                    </a>
-                </div>`;
-          }).join('');
-          enlacesHtml = `<div class="detail-actions-list">${itemsHtml}</div>`;
-      }
-
-      const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
-      let mobileBackHtml = '';
-      
-      if (isMobile) {
-          mobileBackHtml = `
-            <div class="mobile-back-header">
-                <article class="card card-volver-vertical" 
-                         role="button" 
-                         tabindex="0" 
-                         onclick="App._handleVolverClick()"
-                         aria-label="Volver">
-                    <h3>${LOGO_VOLVER} Volver</h3>
-                </article>
-            </div>
-          `;
-      }
-
-      const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
-
-      this.DOM.detalleContenido.innerHTML = `
-        ${mobileBackHtml}
-        <div id="detalle-bloque-texto" tabindex="0"> 
-          ${titleHtml}
-          <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
-        </div>
-        <div id="detalle-bloque-acciones">
-          ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
-        </div>
-      `;
-
-      this.DOM.vistaNav.classList.remove('active');
-      this.DOM.vistaDetalle.classList.add('active');
-      
-      const screenWidth = window.innerWidth;
-      const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
-
-      let primerElementoFocuseable = null;
-
-      if (!isMobile) { 
-          // ... (lógica de escritorio/tablet sin cambios) ...
-          if (this.DOM.cardNivelActual) {
-             this.DOM.cardNivelActual.innerHTML = `<h3>${curso.titulo || 'Curso'}</h3>`;
-             this.DOM.cardNivelActual.classList.add('visible'); 
-          }
-          
-          if (isTablet) {
-              this.DOM.infoAdicional.classList.remove('visible');
-          } else {
-              this.DOM.infoAdicional.classList.add('visible'); 
-          }
-          
-          this.DOM.cardVolverFija.classList.add('visible'); 
-          this.DOM.cardVolverFijaElemento.classList.add('visible');
-          this.DOM.cardVolverFijaElemento.innerHTML = `<h3>${LOGO_VOLVER}</h3>`; 
-          this.DOM.cardVolverFijaElemento.tabIndex = 0;
-          
-          primerElementoFocuseable = this.DOM.cardVolverFijaElemento;
-          
-      } else { 
-          // MÓVIL
-          this.DOM.infoAdicional.classList.remove('visible');
-          this.DOM.cardVolverFija.classList.remove('visible');
-          
-          const actionBlockMobile = document.getElementById('detalle-bloque-acciones-mobile');
-          if (actionBlockMobile) actionBlockMobile.style.display = 'block';
-
-          const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn');
-          primerElementoFocuseable = firstInteractive; 
-      }
-
-      if (primerElementoFocuseable) {
-          primerElementoFocuseable.focus();
-          log('navBase', DEBUG_LEVELS.DEEP, 'Foco en detalle:', primerElementoFocuseable.tagName, primerElementoFocuseable.id);
-      }
-    };
-
-    // ⭐️ 5. HELPERS ⭐️
-    App._getFocusableDetailElements = function() {
-        // ... (helper sin cambios) ...
-        const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, #detalle-bloque-texto'));
-        let elements = [];
-        const isMobile = window.innerWidth <= MOBILE_MAX_WIDTH;
+    // 1. Limpiar todos los focos y tabindex
+    allCardsInTrack.forEach(card => {
+        card.classList.remove('focus-visible');
+        card.tabIndex = -1; 
+        card.removeAttribute('aria-current'); 
+    });
+    if (this.DOM.cardVolverFijaElemento) {
+        this.DOM.cardVolverFijaElemento.classList.remove('focus-visible');
+        this.DOM.cardVolverFijaElemento.removeAttribute('aria-current'); 
+    }
+    
+    const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+    if (allCards.length === 0) return;
+    
+    let normalizedIndex = currentFocusIndex;
+    if (normalizedIndex < 0) normalizedIndex = 0;
+    if (normalizedIndex >= allCards.length) normalizedIndex = allCards.length - 1;
+    const nextFocusedCard = allCards[normalizedIndex];
+    
+    this.STATE.currentFocusIndex = normalizedIndex;
+    this.stackUpdateCurrentFocus(normalizedIndex); // Método delegado
+    
+    // 2. Aplicar foco y tabindex="0" a la tarjeta correcta
+    if (nextFocusedCard) {
+        nextFocusedCard.classList.add('focus-visible');
+        nextFocusedCard.tabIndex = 0; 
+        nextFocusedCard.setAttribute('aria-current', 'true'); 
         
-        if (!isMobile && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
-            elements.push(this.DOM.cardVolverFijaElemento);
-        } 
-        elements.push(...detailLinks);
-        return elements;
-    };
+        if (shouldSlide) {
+            nextFocusedCard.focus(); 
+        } else {
+            nextFocusedCard.focus({ preventScroll: true }); 
+        }
+        if (!isMobile && carouselInstance && shouldSlide) {
+            const targetSwiperSlide = Math.floor(normalizedIndex / itemsPorColumna) + 1; 
+            if (targetSwiperSlide !== carouselInstance.realIndex) {
+                this.STATE.keyboardNavInProgress = true; // Establecer bandera antes de deslizar
+                carouselInstance.slideToLoop(targetSwiperSlide, 400); 
+            }
+        } else if (isMobile) {
+            nextFocusedCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+};
+
+
+export function _handleCardClick(id, tipo, parentFocusIndex) {
+    // 'this' es la instancia de App
+    const focusParaGuardar = (parentFocusIndex !== undefined) ? parentFocusIndex : this.STATE.currentFocusIndex;
+    if (tipo === 'categoria') {
+        this.stackPush(id, focusParaGuardar); // Método delegado
+        this.renderNavegacion();              // Método delegado
+    } else if (tipo === 'curso') {
+        this._mostrarDetalle(id);             // Método delegado
+    }
+};
+
+
+export function _handleVolverClick() {
+    // 'this' es la instancia de App
+    debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Acción Volver iniciada.');
+    const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
+    const isTablet = window.innerWidth >= data.TABLET_MIN_WIDTH && window.innerWidth <= data.TABLET_MAX_WIDTH;
     
-    App.findBestFocusInColumn = function(columnCards, targetRow) {
-        // ... (helper sin cambios) ...
-        const isFocusable = (card) => { return card && card.dataset.id && card.dataset.tipo !== 'relleno'; };
-        if (isFocusable(columnCards[targetRow])) return columnCards[targetRow];
-        for (let i = targetRow - 1; i >= 0; i--) { if (isFocusable(columnCards[i])) return columnCards[i]; }
-        for (let i = targetRow + 1; i < columnCards.length; i++) { if (isFocusable(columnCards[i])) return columnCards[i]; }
-        return null;
+    if (this.DOM.vistaDetalle.classList.contains('active')) {
+        // Salir de detalle
+        this.DOM.vistaDetalle.classList.remove('active'); 
+        
+        // Resetear la vista genérica de detalle al Desktop por si acaso
+        this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop');
+        this.DOM.detalleContenido = document.getElementById('detalle-contenido-desktop');
+        
+        this.DOM.btnVolverNav.classList.remove('visible');
+        this.DOM.btnVolverNav.tabIndex = -1;
+        
+        this.renderNavegacion(); 
+        
+    } 
+    else if (this.STATE.historyStack.length > 1) { 
+        // Volver un nivel
+        this.stackPop(); // Método delegado
+        this.renderNavegacion(); // Método delegado
+        
+         if (!isMobile && !isTablet && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
+             this.DOM.cardVolverFijaElemento.focus();
+         } else if (isMobile || isTablet) {
+             const firstCard = this.DOM.track.querySelector('[data-id]:not([data-tipo="relleno"])');
+             if (firstCard) firstCard.focus();
+         }
+    } else {
+         debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Volver bloqueado: Ya estamos en el nivel raíz.');
+    }
+};
+
+
+export function _mostrarDetalle(cursoId) {
+    // 'this' es la instancia de App
+    debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Mostrando detalle del curso:', cursoId);
+    const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion); // Método delegado
+    if (!curso) {
+        debug.logWarn('nav_base', 'Curso no encontrado para ID:', cursoId);
+        return;
+    }
+
+    const getIconHtml = (text) => {
+        const lower = text.toLowerCase();
+        if (lower.includes('adquirir') || lower.includes('comprar')) { return '🛒&#xFE0E;'; }
+        let iconClass = 'icon-link'; 
+        if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa')) { iconClass = 'icon-download'; }
+        return `<i class="action-icon ${iconClass}"></i>`; 
     };
 
-})();
+    let enlacesHtml = '';
+    if (curso.enlaces && curso.enlaces.length > 0) {
+        const itemsHtml = curso.enlaces.map(enlace => {
+            const iconHtml = getIconHtml(enlace.texto);
+            const isDisabled = !enlace.url || enlace.url === '#';
+            const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
+            
+            const classDisabledBtn = isDisabled ? 'disabled' : '';
+            const classDisabledText = ''; 
+            
+            const tabIndex = '0'; 
+            const targetAttr = isDisabled ? '' : 'target="_blank"';
+            
+            const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
+
+            return `
+              <div class="detail-action-item" onclick="App._handleActionRowClick(event)" style="cursor: pointer;">
+                  <span class="detail-action-text ${classDisabledText}">${enlace.texto}</span>
+                  <a ${hrefAttr} 
+                     class="detail-action-btn ${classDisabledBtn}" 
+                     ${targetAttr} 
+                     tabindex="${tabIndex}" 
+                     ${onclickAttr}
+                     aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
+                     ${iconHtml}
+                  </a>
+              </div>`;
+        }).join('');
+        enlacesHtml = `<div class="detail-actions-list">${itemsHtml}</div>`;
+    }
+
+    const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
+    let mobileBackHtml = '';
+    
+    if (isMobile) {
+        mobileBackHtml = `
+          <div class="mobile-back-header">
+              <article class="card card-volver-vertical" 
+                       role="button" 
+                       tabindex="0" 
+                       onclick="App._handleVolverClick()"
+                       aria-label="Volver">
+                  <h3>${data.LOGO_VOLVER} Volver</h3>
+              </article>
+          </div>
+        `;
+    }
+
+    const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
+
+    this.DOM.detalleContenido.innerHTML = `
+      ${mobileBackHtml}
+      <div id="detalle-bloque-texto" tabindex="0"> 
+        ${titleHtml}
+        <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
+      </div>
+      <div id="detalle-bloque-acciones">
+        ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
+      </div>
+    `;
+
+    // ⭐️ Actualizar la vista de detalle genérica (crucial para focus handlers) ⭐️
+    this.DOM.vistaDetalle = isMobile ? document.getElementById('vista-detalle-mobile') : document.getElementById('vista-detalle-desktop');
+    this.DOM.detalleContenido = isMobile ? document.getElementById('detalle-contenido-mobile') : document.getElementById('detalle-contenido-desktop');
+
+
+    this.DOM.vistaNav.classList.remove('active');
+    this.DOM.vistaDetalle.classList.add('active');
+    
+    const screenWidth = window.innerWidth;
+    const isTablet = screenWidth >= data.TABLET_MIN_WIDTH && screenWidth <= data.TABLET_MAX_WIDTH;
+
+    let primerElementoFocuseable = null;
+
+    if (!isMobile) { 
+        // DESKTOP/TABLET
+        if (this.DOM.cardNivelActual) {
+           this.DOM.cardNivelActual.innerHTML = `<h3>${curso.titulo || 'Curso'}</h3>`;
+           this.DOM.cardNivelActual.classList.add('visible'); 
+        }
+        
+        // La lógica de visibilidad de #info-adicional la maneja renderNavegacion al volver
+        // Aquí solo nos aseguramos de que los controles laterales estén activos para el foco
+        
+        this.DOM.cardVolverFija.classList.add('visible'); 
+        this.DOM.cardVolverFijaElemento.classList.add('visible');
+        this.DOM.cardVolverFijaElemento.innerHTML = `<h3>${data.LOGO_VOLVER}</h3>`; 
+        this.DOM.cardVolverFijaElemento.tabIndex = 0;
+        
+        primerElementoFocuseable = this.DOM.cardVolverFijaElemento;
+        
+    } else { 
+        // MÓVIL
+        this.DOM.infoAdicional.classList.remove('visible');
+        this.DOM.cardVolverFija.classList.remove('visible');
+        
+        // En móvil, el botón de volver está inyectado en el HTML del detalle, lo cual es correcto.
+        
+        const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn');
+        primerElementoFocuseable = firstInteractive; 
+    }
+
+    if (primerElementoFocuseable) {
+        primerElementoFocuseable.focus();
+        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Foco en detalle:', primerElementoFocuseable.tagName, primerElementoFocuseable.id);
+    }
+};
+
+/**
+ * ⭐️ GESTIÓN DE FOCO EN VISTA DETALLE (BLUR MASK) ⭐️
+ */
+export function _setupDetailFocusHandler() {
+    // 'this' es la instancia de App
+    document.addEventListener('focusin', (e) => {
+        const focusedEl = e.target;
+        // Referencia a la instancia a través del closure del listener
+        const isDetailView = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active'); 
+
+        if (isDetailView) {
+            const detailContainer = this.DOM.vistaDetalle; 
+            const textBlock = detailContainer.querySelector('#detalle-bloque-texto');
+            const actionsBlock = detailContainer.querySelector('.detail-actions-list');
+
+            const isTextContentArea = focusedEl === textBlock || focusedEl.closest('#detalle-bloque-texto');
+            const isActionContentArea = focusedEl === actionsBlock || focusedEl.closest('.detail-actions-list') || focusedEl.classList.contains('detail-action-btn');
+
+            if (isTextContentArea) {
+                detailContainer.classList.add('mode-focus-text');
+                detailContainer.classList.remove('mode-focus-actions');
+                // Nota: No forzamos el foco aquí si ya está en el bloque.
+            } else if (isActionContentArea) {
+                detailContainer.classList.add('mode-focus-actions');
+                detailContainer.classList.remove('mode-focus-text');
+            } else {
+                detailContainer.classList.remove('mode-focus-actions', 'mode-focus-text');
+            }
+        }
+    });
+};
+
+
+// ⭐️ 5. HELPERS DE BÚSQUEDA Y ESTADO ⭐️
+
+export function _findNodoById(id, nodos) {
+    // 'this' es la instancia de App
+    if (!nodos || !id) return null;
+    for (const n of nodos) {
+        if (n.id === id) return n;
+        if (n.subsecciones && n.subsecciones.length > 0) {
+            const encontrado = _findNodoById(id, n.subsecciones);
+            if (encontrado) return encontrado;
+        }
+        if (n.cursos && n.cursos.length > 0) {
+            const cursoEncontrado = n.cursos.find(c => c.id === id);
+            if (cursoEncontrado) return cursoEncontrado;
+        }
+    }
+    return null;
+};
+
+export function _tieneContenidoActivoImpl(nodoId) {
+    // 'this' es la instancia de App
+    const nodo = this._findNodoById(nodoId, this.STATE.fullData.navegacion); // Delegamos a _findNodoById de la instancia
+    if (!nodo) return false;
+    if (nodo.titulo) return true; 
+    if (nodo.cursos && nodo.cursos.length > 0) return true;
+    if (nodo.subsecciones && nodo.subsecciones.length > 0) {
+        for (const sub of nodo.subsecciones) {
+            if (this._tieneContenidoActivo(sub.id)) return true; // Llamada recursiva
+        }
+    }
+    return false;
+};
+
+export function _getFocusableDetailElements() {
+    // 'this' es la instancia de App
+    // Asumimos que la lógica de findBestFocusInColumn es exportada por otro módulo (o pura).
+    const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, #detalle-bloque-texto'));
+    let elements = [];
+    const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
+    
+    if (!isMobile && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
+        elements.push(this.DOM.cardVolverFijaElemento);
+    } 
+    elements.push(...detailLinks);
+    return elements;
+};
