@@ -100,10 +100,10 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         // Llamadas usando las funciones importadas
-        if (applyStrings) { app.applyStrings(); }
-        if (injectHeaderLogo) { app.injectHeaderLogo(); }
-        if (injectFooterContent) { app.injectFooterContent(); }
-        if (init) { app.init(); }
+        if (app.applyStrings) { app.applyStrings(); }
+        if (app.injectHeaderLogo) { app.injectHeaderLogo(); }
+        if (app.injectFooterContent) { app.injectFooterContent(); }
+        if (app.init) { app.init(); }
     });
   </script>
 </body>
