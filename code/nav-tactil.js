@@ -2,7 +2,6 @@
 
 import * as debug from './debug.js';
 import * as data from './data.js';
-// Asumimos que findBestFocusInColumn es importado de nav-base o que se define como método delegado
 
 let _swipeDirection = 'next';
 
@@ -86,9 +85,9 @@ export function handleSlideChangeEnd(swiper) {
     if (!newFocusCard) {
         debug.logWarn('nav_tactil', "Columna vacía, saltando a la siguiente...");
         if (_swipeDirection === 'next') {
-            swiper.slideNext(200); // Salto rápido
+            swiper.slideNext(data.SWIPE_SLIDE_SPEED);
         } else {
-            swiper.slidePrev(200); // Salto rápido
+            swiper.slidePrev(data.SWIPE_SLIDE_SPEED);
         }
         return; 
     }

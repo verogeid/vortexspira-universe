@@ -4,7 +4,7 @@ import * as debug from './debug.js';
 import * as data from './data.js';
 
 let _lastMode = 'desktop'; 
-let _lastWidth = window.innerWidth;
+let _lastWidth = window.innerWidth; // Añadido para detectar el cambio Landscape/Portrait
 
 // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL ⭐️
 /**
@@ -50,7 +50,7 @@ export function renderNavegacion() {
     const mobileView = document.getElementById('vista-navegacion-mobile');
     
     // -------------------------------------------------------------
-    // ⭐️ Detección de Modo y Asignación de DOM ⭐️
+    // ⭐️ Detección de Modo y Asignación de DOM para Navegación ⭐️
     // -------------------------------------------------------------
     
     if (isMobile) {
@@ -59,16 +59,9 @@ export function renderNavegacion() {
         calculatedItemsPerColumn = 1;
 
         this.DOM.vistaNav = mobileView;
-        this.DOM.vistaDetalle = document.getElementById('vista-detalle-mobile'); 
-        this.DOM.detalleContenido = document.getElementById('detalle-contenido-mobile');
+        this.DOM.track = document.getElementById(isSubLevel ? 'track-mobile-submenu' : 'track-mobile-root'); 
+        this.DOM.inactiveTrack = document.getElementById(isSubLevel ? 'track-mobile-root' : 'track-mobile-submenu'); 
         
-        if (isSubLevel) {
-            this.DOM.track = document.getElementById('track-mobile-submenu'); 
-            this.DOM.inactiveTrack = document.getElementById('track-mobile-root'); 
-        } else {
-            this.DOM.track = document.getElementById('track-mobile-root'); 
-            this.DOM.inactiveTrack = document.getElementById('track-mobile-submenu'); 
-        }
         if (typeof debug.log === 'function') {
             debug.log('render_base', debug.DEBUG_LEVELS.DEEP, 'Modo Móvil. Track activo:', this.DOM.track.id);
         }
@@ -78,39 +71,35 @@ export function renderNavegacion() {
         initCarouselFn = this._initCarousel_Swipe;     // Método delegado
         
         if (isTablet) {
-            calculatedItemsPerColumn = 2; 
+            calculatedItemsPerColumn = data.SWIPE_ELEMENTS_PER_COLUMN_TABLET; 
             swiperId = '#nav-swiper-tablet';
-
             this.DOM.vistaNav = tabletView;
             this.DOM.track = document.getElementById('track-tablet'); 
         } 
         
         if (isDesktop) {
-            calculatedItemsPerColumn = 3; 
+            calculatedItemsPerColumn = data.SWIPE_ELEMENTS_PER_COLUMN_DESKTOP; 
             swiperId = '#nav-swiper';
-
             this.DOM.vistaNav = desktopView;
             this.DOM.track = document.getElementById('track-desktop'); 
         }
-        
-        this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop'); 
-        this.DOM.detalleContenido = document.getElementById('detalle-contenido-desktop');
     }
     this.STATE.itemsPorColumna = calculatedItemsPerColumn;
     
     // -------------------------------------------------------------
-    // ⭐️ Obtención de Datos y Renderizado ⭐️
+    // ⭐️ Obtención de Datos y Renderizado de Navegación ⭐️
     // -------------------------------------------------------------
 
     const nodoActual = this._findNodoById(currentLevelId, this.STATE.fullData.navegacion); // Método delegado
     let itemsDelNivel = [];
 
+    // ... (lógica de obtención de datos y construcción de itemsDelNivel) ...
     if (!isSubLevel) {
         itemsDelNivel = this.STATE.fullData.navegacion;
     } else if (nodoActual) {
         itemsDelNivel = (nodoActual.subsecciones || []).concat(nodoActual.cursos || []);
     } else { 
-        this.stackPop(); // Método delegado
+        this.stackPop(); 
         this.renderNavegacion();
         return;
     }
@@ -135,41 +124,53 @@ export function renderNavegacion() {
         }
     }
 
-    this._destroyCarousel(); // Método delegado
-    let htmlContent = renderHtmlFn.call(this, itemsDelNivel, this.STATE.itemsPorColumna); // Invocación con 'call(this)'
-    this.DOM.track.innerHTML = htmlContent;
-
-    // Ocultar el track inactivo para eliminar el espaciado
-    if (isMobile && this.DOM.inactiveTrack) {
-        this.DOM.inactiveTrack.style.display = 'none';
-        this.DOM.track.style.display = 'flex'; 
-    }
-
-    let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
-    initCarouselFn.call(this, initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId); // Invocación con 'call(this)'
-
-    if (typeof this.setupTrackPointerListeners === 'function') {
-        if (typeof debug.log === 'function') {
-            debug.log('render_base', debug.DEBUG_LEVELS.DEEP, 'Llamando a setupTrackPointerListeners.');
-        }
-        this.setupTrackPointerListeners();
-    }
+    // ⭐️ Determinar el estado de detalle ANTES de limpiar las vistas de navegación ⭐️
+    const isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
+                            document.getElementById('vista-detalle-mobile').classList.contains('active');
     
-    // ⭐️ Lógica de Visibilidad de Sidebars (Incluye Landscape/Portrait) ⭐️
-    _updateNavViews.call(this, isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual); 
-    
-    this._updateFocus(false); // Método delegado (sincroniza foco visual)
-
-    // --- LÓGICA DE ACTIVACIÓN DE VISTAS ---
+    // ⭐️ Limpiar todas las vistas de Navegación + Detalle ⭐️
     desktopView.classList.remove('active');
     tabletView.classList.remove('active');
     mobileView.classList.remove('active');
+    document.getElementById('vista-detalle-desktop').classList.remove('active');
+    document.getElementById('vista-detalle-mobile').classList.remove('active');
     
-    const isDetailActive = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active');
+    // ⭐️ Reevaluar las referencias de DOM para el detalle (CORRECCIÓN CLAVE) ⭐️
+    // Esto asegura que this.DOM.vistaDetalle apunte al contenedor correcto después del resize
+    const detailModeIsMobile = screenWidth <= data.MOBILE_MAX_WIDTH;
+    this.DOM.vistaDetalle = detailModeIsMobile ? document.getElementById('vista-detalle-mobile') : document.getElementById('vista-detalle-desktop');
+    this.DOM.detalleContenido = detailModeIsMobile ? document.getElementById('detalle-contenido-mobile') : document.getElementById('detalle-contenido-desktop');
+
+
+    if (!isDetailActive) {
+        // Solo renderizamos si NO estamos en detalle (o acabamos de salir)
+        this._destroyCarousel(); // Método delegado
+        let htmlContent = renderHtmlFn.call(this, itemsDelNivel, this.STATE.itemsPorColumna); // Invocación con 'call(this)'
+        this.DOM.track.innerHTML = htmlContent;
+
+        // Ocultar el track inactivo para eliminar el espaciado
+        if (isMobile && this.DOM.inactiveTrack) {
+            this.DOM.inactiveTrack.style.display = 'none';
+            this.DOM.track.style.display = 'flex'; 
+        }
+
+        let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
+        initCarouselFn.call(this, initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId); // Invocación con 'call(this)'
+        
+        if (typeof this.setupTrackPointerListeners === 'function') {
+            this.setupTrackPointerListeners();
+        }
+    }
     
+    // -------------------------------------------------------------
+    // ⭐️ LÓGICA DE ACTIVACIÓN DE VISTAS ⭐️
+    // -------------------------------------------------------------
+
     if (isDetailActive) {
+        // Si estábamos en detalle, reactivamos la vista de detalle que corresponde al nuevo tamaño
         this.DOM.vistaDetalle.classList.add('active');
     } else {
+        // Activamos la vista de navegación
         if (isMobile) {
             mobileView.classList.add('active'); 
             
@@ -184,6 +185,15 @@ export function renderNavegacion() {
             desktopView.classList.add('active');
         }
     }
+
+    // ⭐️ Actualización de Visibilidad de Sidebars (Se llama siempre) ⭐️
+    _updateNavViews.call(this, isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual); 
+    
+    // Sincronización de foco (solo si la navegación está visible)
+    if (!isDetailActive) {
+        this._updateFocus(false); 
+    }
+    
     if (typeof debug.log === 'function') {
         debug.log('render_base', debug.DEBUG_LEVELS.BASIC, 'Renderizado completado.');
     }
@@ -208,7 +218,7 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
     }
 
     if (tipoEspecial === 'breadcrumb-vertical') {
-         return `
+        return `
             <${wrapperTag} class="card card-breadcrumb-vertical" 
                 data-id="breadcrumb-nav" 
                 data-tipo="relleno" 
@@ -272,7 +282,7 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
 
 
 /**
- * ⭐️ CORRECCIÓN COMPLETA: Lógica de visibilidad de Sidebars (Incluye Landscape/Portrait) ⭐️
+ * Lógica de visibilidad de Sidebars (Incluye Landscape/Portrait)
  * Se llama con .call(this) desde renderNavegacion.
  */
 export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual) {
@@ -328,30 +338,37 @@ export function _setupResizeObserver() {
         return 'desktop';
     };
     _lastMode = getMode(window.innerWidth);
+    let _lastWidth = window.innerWidth;
     
     // Usamos 'app' como alias para 'this' dentro del closure del listener
     this.STATE.resizeObserver = new ResizeObserver(() => {
         const app = this;
         const newWidth = window.innerWidth;
         const newMode = getMode(newWidth);
+        
+        const isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
+                                document.getElementById('vista-detalle-mobile').classList.contains('active');
 
-        // ⭐️ NUEVA LÓGICA DE ACTIVACIÓN DE RENDERIZADO ⭐️
+        // Lógica de activación:
         const shouldRenderForLayout = 
             // 1. Cambio de Modo Completo (mobile -> tablet | tablet -> desktop)
             newMode !== _lastMode ||
             
             // 2. Transición Portrait <-> Landscape (Cruza la barrera de 801px)
             (newWidth > data.TABLET_LANDSCAPE_MIN_WIDTH && _lastWidth <= data.TABLET_LANDSCAPE_MIN_WIDTH) ||
-            (newWidth <= data.TABLET_LANDSCAPE_MIN_WIDTH && _lastWidth > data.TABLET_LANDSCAPE_MIN_WIDTH);
-
+            (newWidth <= data.TABLET_LANDSCAPE_MIN_WIDTH && _lastWidth > data.TABLET_LANDSCAPE_MIN_WIDTH) ||
+            
+            // 3. Si estamos en detalle, siempre re-renderizar para actualizar las vistas de detalle
+            (isDetailActive && newMode !== _lastMode); 
+        
         // Actualizar el último ancho antes de la comprobación final
         const oldLastWidth = _lastWidth;
-        _lastWidth = newWidth; // Actualizar el ancho para la próxima ejecución
+        _lastWidth = newWidth; 
         
         if (shouldRenderForLayout && app.STATE.initialRenderComplete) {
             const isSubLevel = (app.stackGetCurrent() && app.stackGetCurrent().levelId);
-            const lastWasMobile = (_lastMode === 'mobile');
-            const newIsMobile = (newMode === 'mobile');
+            const lastWasMobile = (oldLastWidth <= data.MOBILE_MAX_WIDTH);
+            const newIsMobile = (newWidth <= data.MOBILE_MAX_WIDTH);
             let focusDelta = 0;
             
             // Lógica de corrección del índice de foco al cambiar de modo
@@ -367,6 +384,7 @@ export function _setupResizeObserver() {
                 app.STATE.currentFocusIndex = Math.max(0, app.STATE.currentFocusIndex + focusDelta);
                 app.stackUpdateCurrentFocus(app.STATE.currentFocusIndex);
             }
+            
             _lastMode = newMode;
             app.renderNavegacion(); 
         }

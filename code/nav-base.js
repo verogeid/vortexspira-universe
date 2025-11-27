@@ -9,19 +9,19 @@ import * as data from './data.js';
  * Se llama con .call(this) desde VortexSpiraApp.init()
  */
 export function setupListeners() {
-  debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Inicializando listeners de elementos fijos (Volver/Detalle).');
-  
-  if (this.DOM.btnVolverNav) {
-      this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
-      this.DOM.btnVolverNav.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this._handleVolverClick(); }
-      });
-  }
-  if (this.DOM.cardVolverFijaElemento) { 
-      this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
-  }
-  
-  _setupDetailFocusHandler.call(this); // Llamada con contexto de instancia
+    debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Inicializando listeners de elementos fijos (Volver/Detalle).');
+    
+    if (this.DOM.btnVolverNav) {
+        this.DOM.btnVolverNav.addEventListener('click', this._handleVolverClick.bind(this));
+        this.DOM.btnVolverNav.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this._handleVolverClick(); }
+        });
+    }
+    if (this.DOM.cardVolverFijaElemento) { 
+        this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
+    }
+    
+    _setupDetailFocusHandler.call(this); // Llamada con contexto de instancia
 };
 
 // ⭐️ HELPER: Clic en fila -> Solo pone foco (NO click) ⭐️
@@ -209,14 +209,13 @@ export function _handleVolverClick() {
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
     const isTablet = window.innerWidth >= data.TABLET_MIN_WIDTH && window.innerWidth <= data.TABLET_MAX_WIDTH;
     
+    // ⭐️ CORRECCIÓN 1: El resize observer debe haber actualizado this.DOM.vistaDetalle
     if (this.DOM.vistaDetalle.classList.contains('active')) {
         // Salir de detalle
         this.DOM.vistaDetalle.classList.remove('active'); 
         
-        // Resetear la vista genérica de detalle al Desktop por si acaso
-        this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop');
-        this.DOM.detalleContenido = document.getElementById('detalle-contenido-desktop');
-        
+        // NO es necesario resetear this.DOM.vistaDetalle, ya que RenderNavegacion lo hará.
+        // Pero debemos ocultar el botón móvil si existiera
         this.DOM.btnVolverNav.classList.remove('visible');
         this.DOM.btnVolverNav.tabIndex = -1;
         
@@ -248,6 +247,12 @@ export function _mostrarDetalle(cursoId) {
         debug.logWarn('nav_base', 'Curso no encontrado para ID:', cursoId);
         return;
     }
+    
+    // ⭐️ CORRECCIÓN 2: Reasignar referencias de detalle ANTES de inyectar
+    const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
+    this.DOM.vistaDetalle = isMobile ? document.getElementById('vista-detalle-mobile') : document.getElementById('vista-detalle-desktop');
+    this.DOM.detalleContenido = isMobile ? document.getElementById('detalle-contenido-mobile') : document.getElementById('detalle-contenido-desktop');
+
 
     const getIconHtml = (text) => {
         const lower = text.toLowerCase();
@@ -273,22 +278,21 @@ export function _mostrarDetalle(cursoId) {
             const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
 
             return `
-              <div class="detail-action-item" onclick="App._handleActionRowClick(event)" style="cursor: pointer;">
-                  <span class="detail-action-text ${classDisabledText}">${enlace.texto}</span>
-                  <a ${hrefAttr} 
-                     class="detail-action-btn ${classDisabledBtn}" 
-                     ${targetAttr} 
-                     tabindex="${tabIndex}" 
-                     ${onclickAttr}
-                     aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
-                     ${iconHtml}
-                  </a>
-              </div>`;
+                <div class="detail-action-item" onclick="App._handleActionRowClick(event)" style="cursor: pointer;">
+                    <span class="detail-action-text ${classDisabledText}">${enlace.texto}</span>
+                    <a ${hrefAttr} 
+                        class="detail-action-btn ${classDisabledBtn}" 
+                        ${targetAttr} 
+                        tabindex="${tabIndex}" 
+                        ${onclickAttr}
+                        aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
+                        ${iconHtml}
+                    </a>
+                </div>`;
         }).join('');
         enlacesHtml = `<div class="detail-actions-list">${itemsHtml}</div>`;
     }
 
-    const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
     let mobileBackHtml = '';
     
     if (isMobile) {
@@ -318,11 +322,7 @@ export function _mostrarDetalle(cursoId) {
       </div>
     `;
 
-    // ⭐️ Actualizar la vista de detalle genérica (crucial para focus handlers) ⭐️
-    this.DOM.vistaDetalle = isMobile ? document.getElementById('vista-detalle-mobile') : document.getElementById('vista-detalle-desktop');
-    this.DOM.detalleContenido = isMobile ? document.getElementById('detalle-contenido-mobile') : document.getElementById('detalle-contenido-desktop');
-
-
+    // ⭐️ Activación de la vista ⭐️
     this.DOM.vistaNav.classList.remove('active');
     this.DOM.vistaDetalle.classList.add('active');
     

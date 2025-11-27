@@ -24,6 +24,10 @@ export const TABLET_LANDSCAPE_MIN_WIDTH = 801;
 export const TABLET_MAX_WIDTH = 1024;
 export const DESKTOP_MIN_WIDTH = 1025;
 
+export const SWIPE_SLIDE_SPEED = 400; // en ms
+export const SWIPE_ELEMENTS_PER_COLUMN_TABLET = 2;
+export const SWIPE_ELEMENTS_PER_COLUMN_DESKTOP = 3;
+
 export const SVG_TRIANGLE = `<svg class="triangulo-svg" viewBox="0 0 100 86.6">
         <defs>
             <filter id="ghostShadow" x="-50%" y="-50%" width="200%" height="200%">
