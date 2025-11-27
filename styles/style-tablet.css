@@ -1,7 +1,6 @@
 /* --- styles/style-tablet.css --- */
 
-/* TABLET (601px - 1024px): 2 Columnas (Izq - Centro) */
-
+/* TABLET (601px - 1024px): 2 Columnas de Tarjetas */
 @media ((min-width: 601px) and (max-width: 1024px)) {
     #app-container {
         height: calc(100vh - var(--header-height) - var(--footer-height)); 
@@ -17,9 +16,15 @@
         --card-height-calc: calc( (100% - var(--card-gap)) / 2 );
     }
 
-    /* ⭐️ OCULTAR COLUMNA DERECHA EN TABLET ⭐️ */
-    #info-adicional {
-        display: none !important;
+    /* ⭐️ OCULTAR COLUMNA DERECHA SOLO EN TABLET PORTRAIT (<= 800px) ⭐️ */
+    @media (max-width: 800px) {
+        #info-adicional {
+            display: none !important;
+        }
+    }
+    /* ⭐️ MOSTRAR COLUMNA DERECHA EN TABLET LANDSCAPE (> 800px) ⭐️ */
+    @media (min-width: 801px) {
+        /* No necesitamos hacer nada aquí porque style-layout ya lo muestra con .visible */
     }
 
     #nav-swiper-tablet {

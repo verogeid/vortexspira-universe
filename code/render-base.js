@@ -1,15 +1,25 @@
 // --- code/render-base.js ---
-
 (function() {
 
     let _lastMode = 'desktop'; 
-
+    
+    // ⭐️ Importar las constantes de breakpoint (Patrón actual: variables globales) ⭐️
+    const MOBILE_MAX_WIDTH = typeof window.MOBILE_MAX_WIDTH !== 'undefined' ? window.MOBILE_MAX_WIDTH : 600;
+    const TABLET_MIN_WIDTH = typeof window.TABLET_MIN_WIDTH !== 'undefined' ? window.TABLET_MIN_WIDTH : 601;
+    const TABLET_MAX_WIDTH = typeof window.TABLET_MAX_WIDTH !== 'undefined' ? window.TABLET_MAX_WIDTH : 1024;
+    const DESKTOP_MIN_WIDTH = typeof window.DESKTOP_MIN_WIDTH !== 'undefined' ? window.DESKTOP_MIN_WIDTH : 1025;
+    const LOGO_VOLVER = typeof window.LOGO_VOLVER !== 'undefined' ? window.LOGO_VOLVER : '↩';
+    
     // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL ⭐️
     App.renderNavegacion = function() {
-        log('render_base', DEBUG_LEVELS.BASIC, "Iniciando renderNavegacion...");
+        if (typeof log === 'function') {
+            log('render_base', DEBUG_LEVELS.BASIC, "Iniciando renderNavegacion...");
+        }
         
         if (!this.STATE.fullData) {
-            logError('render_base', "No se puede renderizar: Datos no cargados.");
+            if (typeof logError === 'function') {
+                logError('render_base', "No se puede renderizar: Datos no cargados.");
+            }
             return;
         }
 
@@ -22,7 +32,11 @@
 
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
-        const isTablet = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= TABLET_MAX_WIDTH;
+        
+        // ⭐️ Detección de rangos para Tablet Landscape y Portrait ⭐️
+        const isTabletLandscape = screenWidth >= 801 && screenWidth <= TABLET_MAX_WIDTH;
+        const isTabletPortrait = screenWidth >= TABLET_MIN_WIDTH && screenWidth <= 800;
+        const isDesktop = screenWidth >= DESKTOP_MIN_WIDTH;
 
         let renderHtmlFn;
         let initCarouselFn;
@@ -53,31 +67,34 @@
                 this.DOM.track = document.getElementById('track-mobile-root'); 
                 this.DOM.inactiveTrack = document.getElementById('track-mobile-submenu'); 
             }
-            log('render_base', DEBUG_LEVELS.DEEP, 'Modo Móvil. Track activo:', this.DOM.track.id); // <-- LÍNEA DE DEPURACIÓN
+            if (typeof log === 'function') {
+                 log('render_base', DEBUG_LEVELS.DEEP, 'Modo Móvil. Track activo:', this.DOM.track.id);
+            }
             
         } else {
             renderHtmlFn = App._generateCardHTML_Carousel;
             initCarouselFn = App._initCarousel_Swipe; 
             
-            if (isTablet) {
-                // ... (lógica de asignación de tablet sin cambios) ...
+            if (isTabletPortrait || isTabletLandscape) {
+                // TAMAÑO: 2 elementos por tarjeta para AMBOS modos Tablet
                 calculatedItemsPerColumn = 2; 
                 swiperId = '#nav-swiper-tablet';
 
                 this.DOM.vistaNav = tabletView;
-                this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop'); 
-                this.DOM.detalleContenido = document.getElementById('detalle-contenido-desktop');
                 this.DOM.track = document.getElementById('track-tablet'); 
-            } else {
-                // ... (lógica de asignación de desktop sin cambios) ...
+            } 
+            
+            if (isDesktop) {
+                // TAMAÑO: 3 elementos por tarjeta
                 calculatedItemsPerColumn = 3; 
                 swiperId = '#nav-swiper';
 
                 this.DOM.vistaNav = desktopView;
-                this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop'); 
-                this.DOM.detalleContenido = document.getElementById('detalle-contenido-desktop');
                 this.DOM.track = document.getElementById('track-desktop'); 
             }
+            
+            this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop'); 
+            this.DOM.detalleContenido = document.getElementById('detalle-contenido-desktop');
         }
         this.STATE.itemsPorColumna = calculatedItemsPerColumn;
         
@@ -88,7 +105,6 @@
         const nodoActual = this._findNodoById(currentLevelId, this.STATE.fullData.navegacion);
         let itemsDelNivel = [];
 
-        // ... (lógica de obtención de datos sin cambios) ...
         if (!isSubLevel) {
             itemsDelNivel = this.STATE.fullData.navegacion;
         } else if (nodoActual) {
@@ -99,9 +115,8 @@
             return;
         }
         
-        // Inyección de tarjetas para MÓVIL
+        // Lógica de inyección de tarjetas para MÓVIL
         if (isMobile) {
-            // ... (lógica de inyección de breadcrumb y volver móvil sin cambios) ...
             if (isSubLevel) {
                 itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
             }
@@ -136,11 +151,14 @@
         initCarouselFn(initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId);
 
         if (typeof this.setupTrackPointerListeners === 'function') {
-            log('render_base', DEBUG_LEVELS.DEEP, 'Llamando a setupTrackPointerListeners.'); // <-- LÍNEA DE DEPURACIÓN
+            if (typeof log === 'function') {
+                log('render_base', DEBUG_LEVELS.DEEP, 'Llamando a setupTrackPointerListeners.');
+            }
             this.setupTrackPointerListeners();
         }
         
-        this._updateNavViews(isSubLevel, isMobile, isTablet, nodoActual); 
+        // ⭐️ Llamada al actualizador de vistas con los nuevos rangos ⭐️
+        this._updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual); 
         
         if (typeof this._updateVisualFocus === 'function') {
              this._updateVisualFocus(this.STATE.currentFocusIndex);
@@ -166,13 +184,18 @@
                 } else {
                     mobileView.classList.add('view-nav-root');
                 }
-            } else if (isTablet) {
+            } 
+            // ⭐️ Activa la vista de Tablet (swiper-tablet) para ambos rangos Tablet ⭐️
+            else if (isTabletPortrait || isTabletLandscape) {
                 tabletView.classList.add('active');
-            } else { 
+            } 
+            else { // Desktop
                 desktopView.classList.add('active');
             }
         }
-        log('render_base', DEBUG_LEVELS.BASIC, 'Renderizado completado.');
+        if (typeof log === 'function') {
+             log('render_base', DEBUG_LEVELS.BASIC, 'Renderizado completado.');
+        }
         
         if (!this.STATE.resizeObserver) {
             this._setupResizeObserver();
@@ -181,13 +204,17 @@
 
     /**
      * ⭐️ FUNCIÓN CENTRAL DE GENERACIÓN DE TARJETA HTML ⭐️
-     * (Contiene la corrección de onclick y tabindex="0" en móvil)
      */
     App._generarTarjetaHTML = function(nodo, estaActivo, esRelleno = false, tipoEspecialArg = null) {
         const wrapperTag = 'article';
         const tipoEspecial = tipoEspecialArg || nodo.tipoEspecial;
 
         const onclickHandler = `onclick="App._handleTrackClick(event)"`; 
+        
+        if (typeof LOGO_VOLVER === 'undefined') { LOGO_VOLVER = '↩'; }
+        const LOGO_OBRAS = typeof window.LOGO_OBRAS !== 'undefined' ? window.LOGO_OBRAS : '🚧';
+        const LOGO_CARPETA = typeof window.LOGO_CARPETA !== 'undefined' ? window.LOGO_CARPETA : '📁';
+        const LOGO_CURSO = typeof window.LOGO_CURSO !== 'undefined' ? window.LOGO_CURSO : '📚';
 
         if (esRelleno) {
             return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1" aria-hidden="true"></article>`;
@@ -226,7 +253,7 @@
         const tagAriaDisabled = estaActivo ? '' : 'aria-disabled="true"';
 
         const isMobileMode = window.innerWidth <= MOBILE_MAX_WIDTH;
-        // ⭐️ CORRECCIÓN: Forzar tabindex="0" en modo móvil para asegurar la respuesta de TAP. ⭐️
+        // Forzar tabindex="0" en modo móvil para asegurar la respuesta de TAP.
         const tabindex = isMobileMode ? '0' : '-1';
         
         let displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
@@ -256,8 +283,10 @@
         `;
     };
 
+    /**
+     * Helper para actualizar el foco visual y el slide de Swiper.
+     */
     App._updateFocus = function(shouldSlide = true) {
-        // ... (lógica de actualización de foco sin cambios, solo se mantiene el log en nav-base) ...
         const { currentFocusIndex, itemsPorColumna, carouselInstance } = this.STATE;
         const screenWidth = window.innerWidth;
         const isMobile = screenWidth <= MOBILE_MAX_WIDTH;
@@ -300,15 +329,10 @@
         }
     };
 
-    App._generateCardHTML_Carousel = App._generateCardHTML_Carousel || function() { return ""; };
-    App._generateCardHTML_Mobile = App._generateCardHTML_Mobile || function() { return ""; };
-    App._initCarousel_Swipe = App._initCarousel_Swipe || function() { };
-    App._initCarousel_Mobile = App._initCarousel_Mobile || function() { };
-    App._destroyCarousel = App._destroyCarousel || function() { };
-
-    App._updateNavViews = function(isSubLevel, isMobile, isTablet, nodoActual) {
-        // ... (lógica de actualización de vistas sin cambios) ...
-        
+    /**
+     * Actualiza la visibilidad de los paneles laterales (`card-volver-fija` e `info-adicional`).
+     */
+    App._updateNavViews = function(isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual) {
         if (isMobile) { 
             this.DOM.cardVolverFija.classList.remove('visible'); 
             this.DOM.infoAdicional.classList.remove('visible'); 
@@ -317,10 +341,11 @@
         } else { 
             // Tablet y Desktop
             
-            if (isTablet) {
-                this.DOM.infoAdicional.classList.remove('visible');
-            } else {
+            // ⭐️ Lógica clave: Mostrar info-adicional solo en Desktop (>1025) y Tablet Landscape (801-1024) ⭐️
+            if (isDesktop || isTabletLandscape) {
                 this.DOM.infoAdicional.classList.add('visible'); 
+            } else { // Tablet Portrait (601-800)
+                this.DOM.infoAdicional.classList.remove('visible');
             }
 
             this.DOM.btnVolverNav.classList.remove('visible'); 
@@ -348,8 +373,10 @@
         }
     };
 
+    /**
+     * Configura el ResizeObserver para detectar cambios de modo.
+     */
     App._setupResizeObserver = function() {
-        // ... (lógica de ResizeObserver sin cambios) ...
         const getMode = (width) => {
             if (width <= MOBILE_MAX_WIDTH) return 'mobile';
             if (width <= TABLET_MAX_WIDTH) return 'tablet';
@@ -363,13 +390,16 @@
                 const lastWasMobile = (_lastMode === 'mobile');
                 const newIsMobile = (newMode === 'mobile');
                 let focusDelta = 0;
+                
+                // Lógica de corrección del índice de foco al cambiar de modo (solo ejemplo)
                 if (isSubLevel) {
-                    if (lastWasMobile && !newIsMobile) focusDelta = -2; 
-                    else if (!lastWasMobile && newIsMobile) focusDelta = 2; 
+                    if (lastWasMobile && !newIsMobile) focusDelta = -2; // Mover de volver/breadcrumb a la primera tarjeta
+                    else if (!lastWasMobile && newIsMobile) focusDelta = 2; // Mover al inicio tras añadir volver/breadcrumb
                 } else {
                     if (lastWasMobile && !newIsMobile) focusDelta = -1; 
                     else if (!lastWasMobile && newIsMobile) focusDelta = 1; 
                 }
+                
                 if (focusDelta !== 0) {
                     this.STATE.currentFocusIndex = Math.max(0, this.STATE.currentFocusIndex + focusDelta);
                     App.stackUpdateCurrentFocus(this.STATE.currentFocusIndex);
@@ -381,35 +411,15 @@
         this.STATE.resizeObserver.observe(document.body);
     };
 
-    App._findNodoById = function(id, nodos) {
-        // ... (helper sin cambios) ...
-        if (!nodos || !id) return null;
-        for (const n of nodos) {
-            if (n.id === id) return n;
-            if (n.subsecciones && n.subsecciones.length > 0) {
-                const encontrado = this._findNodoById(id, n.subsecciones);
-                if (encontrado) return encontrado;
-            }
-            if (n.cursos && n.cursos.length > 0) {
-                const cursoEncontrado = n.cursos.find(c => c.id === id);
-                if (cursoEncontrado) return cursoEncontrado;
-            }
-        }
-        return null;
-    };
+    // Asegurar que las funciones de render-swipe/mobile están definidas
+    App._generateCardHTML_Carousel = App._generateCardHTML_Carousel || function() { return ""; };
+    App._generateCardHTML_Mobile = App._generateCardHTML_Mobile || function() { return ""; };
+    App._initCarousel_Swipe = App._initCarousel_Swipe || function() { };
+    App._initCarousel_Mobile = App._initCarousel_Mobile || function() { };
+    App._destroyCarousel = App._destroyCarousel || function() { };
 
-    App._tieneContenidoActivo = function(nodoId) {
-        // ... (helper sin cambios) ...
-        const nodo = this._findNodoById(nodoId, this.STATE.fullData.navegacion);
-        if (!nodo) return false;
-        if (nodo.titulo) return true; 
-        if (nodo.cursos && nodo.cursos.length > 0) return true;
-        if (nodo.subsecciones && nodo.subsecciones.length > 0) {
-            for (const sub of nodo.subsecciones) {
-                if (this._tieneContenidoActivo(sub.id)) return true;
-            }
-        }
-        return false;
-    };
+    // Helpers de búsqueda (asumidos aquí)
+    App._findNodoById = App._findNodoById || function() { return null; };
+    App._tieneContenidoActivo = App._tieneContenidoActivo || function() { return true; };
 
 })();
