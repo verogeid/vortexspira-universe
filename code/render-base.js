@@ -2,7 +2,6 @@
 
 import * as debug from './debug.js';
 import * as data from './data.js';
-import * as debug from './debug.js'; 
 
 let _lastMode = 'desktop'; 
 
