@@ -71,14 +71,14 @@ export function renderNavegacion() {
         initCarouselFn = this._initCarousel_Swipe;     // Método delegado
         
         if (isTablet) {
-            calculatedItemsPerColumn = data.SWIPE_ELEMENTS_PER_COLUMN_TABLET; 
+            calculatedItemsPerColumn = 2; 
             swiperId = '#nav-swiper-tablet';
             this.DOM.vistaNav = tabletView;
             this.DOM.track = document.getElementById('track-tablet'); 
         } 
         
         if (isDesktop) {
-            calculatedItemsPerColumn = data.SWIPE_ELEMENTS_PER_COLUMN_DESKTOP; 
+            calculatedItemsPerColumn = 3; 
             swiperId = '#nav-swiper';
             this.DOM.vistaNav = desktopView;
             this.DOM.track = document.getElementById('track-desktop'); 
@@ -125,16 +125,17 @@ export function renderNavegacion() {
     }
 
     // ⭐️ Determinar el estado de detalle ANTES de limpiar las vistas de navegación ⭐️
+    // Usamos las referencias DOM completas ya que this.DOM.vistaDetalle se reasigna abajo
     const isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
-                            document.getElementById('vista-detalle-mobile').classList.contains('active');
-    
+                           document.getElementById('vista-detalle-mobile').classList.contains('active');
+                           
     // ⭐️ Limpiar todas las vistas de Navegación + Detalle ⭐️
     desktopView.classList.remove('active');
     tabletView.classList.remove('active');
     mobileView.classList.remove('active');
     document.getElementById('vista-detalle-desktop').classList.remove('active');
     document.getElementById('vista-detalle-mobile').classList.remove('active');
-    
+                           
     // ⭐️ Reevaluar las referencias de DOM para el detalle (CORRECCIÓN CLAVE) ⭐️
     // Esto asegura que this.DOM.vistaDetalle apunte al contenedor correcto después del resize
     const detailModeIsMobile = screenWidth <= data.MOBILE_MAX_WIDTH;
@@ -169,6 +170,16 @@ export function renderNavegacion() {
     if (isDetailActive) {
         // Si estábamos en detalle, reactivamos la vista de detalle que corresponde al nuevo tamaño
         this.DOM.vistaDetalle.classList.add('active');
+        
+        // ⭐️ CORRECCIÓN: Si estamos en detalle, ocultamos la navegación principal ⭐️
+        if(isMobile) {
+            mobileView.classList.remove('active');
+        } else if (isTablet) {
+            tabletView.classList.remove('active');
+        } else {
+            desktopView.classList.remove('active');
+        }
+
     } else {
         // Activamos la vista de navegación
         if (isMobile) {
@@ -218,7 +229,7 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
     }
 
     if (tipoEspecial === 'breadcrumb-vertical') {
-        return `
+         return `
             <${wrapperTag} class="card card-breadcrumb-vertical" 
                 data-id="breadcrumb-nav" 
                 data-tipo="relleno" 
@@ -282,7 +293,7 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
 
 
 /**
- * Lógica de visibilidad de Sidebars (Incluye Landscape/Portrait)
+ * ⭐️ CORRECCIÓN COMPLETA: Lógica de visibilidad de Sidebars (Incluye Landscape/Portrait) ⭐️
  * Se llama con .call(this) desde renderNavegacion.
  */
 export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual) {
@@ -347,7 +358,7 @@ export function _setupResizeObserver() {
         const newMode = getMode(newWidth);
         
         const isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
-                                document.getElementById('vista-detalle-mobile').classList.contains('active');
+                               document.getElementById('vista-detalle-mobile').classList.contains('active');
 
         // Lógica de activación:
         const shouldRenderForLayout = 
