@@ -86,7 +86,7 @@
 
 /* Foco en Texto -> Desenfoque de ACCIONES */
 .mode-focus-text #detalle-bloque-acciones {
-    filter: blur(4px) grayscale(60%);
+    filter: blur(2px) grayscale(50%);
     opacity: 0.3;
     pointer-events: none; 
     -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
@@ -96,7 +96,7 @@
 
 /* Foco en Acciones -> Desenfoque de TEXTO (Global) */
 .mode-focus-actions .detail-text-fragment {
-    filter: blur(4px) grayscale(60%) !important; /* Aplicar desenfoque fuerte a todo el texto */
+    filter: blur(2px) grayscale(50%) !important;
     opacity: 0.3 !important;
     pointer-events: none; /* Deshabilitar clics en texto */
     /* Añadimos la máscara global para el bloque de texto */
