@@ -59,9 +59,9 @@
 /* 3. EFECTO BLUR CON GRADIENTE DE PROXIMIDAD */
 /* ---------------------------------------------------- */
 
-/* ESTADO INICIAL: Texto con desenfoque TÉNUO por defecto (Modo focus-text) */
+/* ESTADO INICIAL: Texto con desenfoque TÉNUO por defecto (Máximo desenfoque en el texto) */
 .mode-focus-text .detail-text-fragment {
-    filter: blur(2px) grayscale(50%); /* Desenfoque inicial muy tenue */
+    filter: blur(2px) grayscale(50%); 
     opacity: 0.8; 
     pointer-events: auto;
 }
@@ -74,30 +74,30 @@
 
 /* ⭐️ Fragmento Adyacente 1 (Menos desenfoque) ⭐️ */
 .mode-focus-text .detail-text-fragment.focus-adj-1 {
-    filter: blur(0.5px) grayscale(20%); /* Casi nítido */
+    filter: blur(0.5px) grayscale(20%); 
     opacity: 0.9;
 }
 
 /* ⭐️ Fragmento Adyacente 2 (Desenfoque intermedio) ⭐️ */
 .mode-focus-text .detail-text-fragment.focus-adj-2 {
-    filter: blur(1.5px) grayscale(40%); /* Un poco más borroso */
+    filter: blur(1.5px) grayscale(40%); 
     opacity: 0.85;
 }
 
-/* Foco en Texto -> Desenfoque de ACCIONES */
+/* ⭐️ CORRECCIÓN 1: Foco en Texto -> Desenfoque de ACCIONES (Nivel de desenfoque similar al texto base) ⭐️ */
 .mode-focus-text #detalle-bloque-acciones {
-    filter: blur(2px) grayscale(50%);
-    opacity: 0.3;
+    filter: blur(2px) grayscale(50%); /* Nivel máximo de desenfoque del texto */
+    opacity: 0.5; /* Opacidad ajustada */
     pointer-events: none; 
     -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
     mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
 }
 
 
-/* Foco en Acciones -> Desenfoque de TEXTO (Global) */
+/* ⭐️ CORRECCIÓN 2: Foco en Acciones -> Desenfoque de TEXTO (Volver al nivel de desenfoque base) ⭐️ */
 .mode-focus-actions .detail-text-fragment {
-    filter: blur(2px) grayscale(50%) !important;
-    opacity: 0.3 !important;
+    filter: blur(2px) grayscale(50%) !important; 
+    opacity: 0.5 !important; /* Opacidad similar a la de las acciones desenfocadas */
     pointer-events: none; /* Deshabilitar clics en texto */
     /* Añadimos la máscara global para el bloque de texto */
     -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
