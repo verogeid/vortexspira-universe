@@ -106,7 +106,7 @@ export function injectFooterContent() {
             ${App.getString('footerCopyright')} 
             
             <a href="${LICENSE_URL}" target="_top" 
-               aria-label="${App.getString('ariaLicense')}" class="footer-license-link">
+                aria-label="${App.getString('ariaLicense')}" class="footer-license-link">
                 <img src="${LICENSE_IMG_SRC}" width=88 height=31 alt="Creative Commons License"/>
             </a>
             
@@ -115,7 +115,7 @@ export function injectFooterContent() {
             <span class="footer-separator">|</span>
             
             <a href="${LINKEDIN_URL}" target="_top" 
-               aria-label="${App.getString('ariaLinkedIn')}" class="footer-social-link">
+                aria-label="${App.getString('ariaLinkedIn')}" class="footer-social-link">
             </a>
         `;
     }
