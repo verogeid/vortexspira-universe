@@ -59,6 +59,8 @@ class VortexSpiraApp {
         this.setupTouchListeners = nav_tactil.setupTouchListeners;
         this.handleSlideChangeStart = nav_tactil.handleSlideChangeStart;
         this.handleSlideChangeEnd = nav_tactil.handleSlideChangeEnd;
+
+        this.clearConsole = debug.logClear
     }
 
     // -----------------------------------------------------------------

@@ -19,9 +19,9 @@ export const DEBUG_CONFIG = {
     nav_keyboard: DEBUG_LEVELS.DISABLED,
     nav_tactil: DEBUG_LEVELS.DISABLED,
     nav_stack: DEBUG_LEVELS.DISABLED,
-    render_base: DEBUG_LEVELS.DEEP,
+    render_base: DEBUG_LEVELS.DISABLED,
     render_swipe: DEBUG_LEVELS.DISABLED,
-    render_mobile: DEBUG_LEVELS.DEEP,
+    render_mobile: DEBUG_LEVELS.DISABLED,
     global: DEBUG_LEVELS.DISABLED
 };
 
