@@ -1,7 +1,10 @@
-// --- code/nav-base.js (REFRACTORIZADO A ES MODULE) ---
+// --- code/nav-base.js (MÓDULO CENTRAL DE NAVEGACIÓN) ---
 
 import * as debug from './debug.js';
 import * as data from './data.js';
+// Importamos el nuevo módulo de detalle para los listeners y helpers de foco
+import * as nav_details from './nav-details.js'; 
+
 
 // ⭐️ 1. SETUP LISTENERS ⭐️
 /**
@@ -21,21 +24,10 @@ export function setupListeners() {
       this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
   }
   
-  _setupDetailFocusHandler.call(this); // Llamada con contexto de instancia
+  // Delegamos la configuración de handlers de foco de detalle
+  nav_details._setupDetailFocusHandler.call(this); 
 };
 
-// ⭐️ HELPER: Clic en fila -> Solo pone foco (NO click) ⭐️
-export function _handleActionRowClick(e) {
-    // 'this' es la instancia de App
-    debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Clic en fila de acción (Detalle) detectado.');
-    
-    if (!e.target.closest('.detail-action-btn')) {
-        const btn = e.currentTarget.querySelector('.detail-action-btn');
-        if (btn) {
-            btn.focus(); 
-        }
-    }
-};
 
 // ⭐️ 2. POINTER LISTENERS (Adjuntar listeners programáticos a los tracks) ⭐️
 /**
@@ -74,23 +66,20 @@ export function setupTrackPointerListeners() {
     }
 };
 
+
 // ⭐️ 3. HANDLERS ⭐️
+
 export function _handleTrackClick(e) {
-  // ⭐️ CORRECCIÓN: Verifica que el evento 'e' exista antes de usarlo ⭐️
   if (!e || !e.target) {
       debug.logWarn('nav_base', 'Clic de track ignorado: Evento o target indefinido.');
       return;
   }
-  
-  // 'this' es la instancia de App
-  debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'CLICK/TAP DETECTADO:', e.type, 'Target:', e.target); 
   
   const tarjeta = e.target.closest('[data-id]'); 
   if (!tarjeta || tarjeta.dataset.tipo === 'relleno') {
       debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Clic ignorado: No es tarjeta válida (relleno o null).');
       return;
   }
-  debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Tarjeta seleccionada:', tarjeta.dataset.id); 
   
   const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
   const newIndex = allCards.findIndex(c => c === tarjeta);
@@ -104,12 +93,12 @@ export function _handleTrackClick(e) {
   const indexChanged = newIndex !== parentFocusIndex;
 
   this.STATE.currentFocusIndex = newIndex;
-  this.stackUpdateCurrentFocus(newIndex); // Método delegado
-  this._updateFocus(true); // Método delegado
+  this.stackUpdateCurrentFocus(newIndex); 
+  this._updateFocus(true); 
 
   if (tarjeta.classList.contains('disabled')) return;
   if (tarjeta.dataset.tipo === 'volver-vertical') {
-      this._handleVolverClick(); // Método delegado
+      this._handleVolverClick(); 
       return;
   }
   
@@ -118,18 +107,17 @@ export function _handleTrackClick(e) {
   const delay = indexChanged ? 300 : 0; 
 
   setTimeout(() => {
-      this._handleCardClick(id, tipo, parentFocusIndex); // Método delegado
+      this._handleCardClick(id, tipo, parentFocusIndex); 
   }, delay);
 };
 
 export function _handleTrackMouseOver(e) {
-    // 'this' es la instancia de App
     const tarjeta = e.target.closest('[data-id]');
     if (!tarjeta || tarjeta.dataset.tipo === 'relleno') return;
     const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
     const newIndex = allCards.findIndex(c => c === tarjeta);
     if (newIndex > -1 && newIndex !== this.STATE.currentFocusIndex) {
-        this._updateFocus(false); // Método delegado (solo sincroniza foco visual, sin slide)
+        this._updateFocus(false); 
     }
 };
 
@@ -198,7 +186,8 @@ export function _handleCardClick(id, tipo, parentFocusIndex) {
         this.stackPush(id, focusParaGuardar); // Método delegado
         this.renderNavegacion();              // Método delegado
     } else if (tipo === 'curso') {
-        this._mostrarDetalle(id);             // Método delegado
+        // Llama al método delegado en la instancia (this._mostrarDetalle, que ahora apunta a nav-details)
+        this._mostrarDetalle(id);             
     }
 };
 
@@ -237,245 +226,6 @@ export function _handleVolverClick() {
     } else {
          debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Volver bloqueado: Ya estamos en el nivel raíz.');
     }
-};
-
-
-export function _mostrarDetalle(cursoId) {
-    // 'this' es la instancia de App
-    debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Mostrando detalle del curso:', cursoId);
-    const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion); // Método delegado
-    if (!curso) {
-        debug.logWarn('nav_base', 'Curso no encontrado para ID:', cursoId);
-        return;
-    }
-
-    // ⭐️ Reasignar referencias de detalle ANTES de inyectar
-    const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
-    this.DOM.vistaDetalle = isMobile ? document.getElementById('vista-detalle-mobile') : document.getElementById('vista-detalle-desktop');
-    this.DOM.detalleContenido = isMobile ? document.getElementById('detalle-contenido-mobile') : document.getElementById('detalle-contenido-desktop');
-
-
-    const getIconHtml = (text) => {
-        const lower = text.toLowerCase();
-        if (lower.includes('adquirir') || lower.includes('comprar')) { return '🛒&#xFE0E;'; }
-        let iconClass = 'icon-link'; 
-        if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa')) { iconClass = 'icon-download'; }
-        return `<i class="action-icon ${iconClass}"></i>`; 
-    };
-
-    let enlacesHtml = '';
-    if (curso.enlaces && curso.enlaces.length > 0) {
-        const itemsHtml = curso.enlaces.map(enlace => {
-            const iconHtml = getIconHtml(enlace.texto);
-            const isDisabled = !enlace.url || enlace.url === '#';
-            const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
-            
-            const classDisabledBtn = isDisabled ? 'disabled' : '';
-            const classDisabledText = ''; 
-            
-            const tabIndex = '0'; 
-            const targetAttr = isDisabled ? '' : 'target="_blank"';
-            
-            const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
-
-            return `
-              <div class="detail-action-item" onclick="App._handleActionRowClick(event)" style="cursor: pointer;">
-                  <span class="detail-action-text ${classDisabledText}">${enlace.texto}</span>
-                  <a ${hrefAttr} 
-                     class="detail-action-btn ${classDisabledBtn}" 
-                     ${targetAttr} 
-                     tabindex="${tabIndex}" 
-                     ${onclickAttr}
-                     aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
-                     ${iconHtml}
-                  </a>
-              </div>`;
-        }).join('');
-        enlacesHtml = `<div class="detail-actions-list">${itemsHtml}</div>`;
-    }
-
-    let mobileBackHtml = '';
-    
-    if (isMobile) {
-        mobileBackHtml = `
-          <div class="mobile-back-header">
-              <article class="card card-volver-vertical" 
-                       role="button" 
-                       tabindex="0" 
-                       onclick="App._handleVolverClick()"
-                       aria-label="Volver">
-                  <h3>${data.LOGO_VOLVER} Volver</h3>
-              </article>
-          </div>
-        `;
-    }
-    
-    // ⭐️ 1. PROCESAMIENTO DE LA DESCRIPCIÓN EN FRAGMENTOS ⭐️
-    let textFragmentsHtml = '';
-    const description = curso.descripcion || 'No hay descripción disponible.';
-    
-    // Convertir el texto a un DOM temporal para facilitar la iteración sobre nodos de bloque (p, ul, etc.)
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = description.trim();
-    
-    // Envolver cada nodo de bloque (p, ul) en un contenedor enfocable
-    Array.from(tempDiv.childNodes).forEach((node, index) => {
-        // Solo envolver elementos de bloque (Type 1) o nodos de texto no vacíos (Type 3)
-        if (node.nodeType === 1 && (node.tagName === 'P' || node.tagName === 'UL' || node.tagName === 'OL' || node.tagName === 'DIV')) {
-            // Utilizamos role="document" para fragmentos de lectura largos
-            textFragmentsHtml += `
-                <div class="detail-text-fragment" data-index="${index}" role="document" tabindex="0">
-                    ${node.outerHTML}
-                </div>
-            `;
-        } else if (node.nodeType === 3 && node.textContent.trim().length > 0) {
-            // Manejar nodos de texto sueltos (aunque idealmente no deberían existir si se usa <p>)
-            textFragmentsHtml += `
-                <div class="detail-text-fragment" data-index="${index}" role="document" tabindex="0">
-                    <p>${node.textContent}</p>
-                </div>
-            `;
-        }
-    });
-
-    const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
-
-    this.DOM.detalleContenido.innerHTML = `
-      ${mobileBackHtml}
-      <div id="detalle-bloque-texto" tabindex="-1"> 
-        ${titleHtml}
-        
-        <div id="detalle-contenido-fragmentado"> 
-            ${textFragmentsHtml}
-        </div>
-
-      </div>
-      <div id="detalle-bloque-acciones">
-        ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
-      </div>
-    `;
-
-    // ⭐️ Activación de la vista ⭐️
-    this.DOM.vistaNav.classList.remove('active');
-    this.DOM.vistaDetalle.classList.add('active');
-    
-    const screenWidth = window.innerWidth;
-    const isTablet = screenWidth >= data.TABLET_MIN_WIDTH && screenWidth <= data.TABLET_MAX_WIDTH;
-
-    let primerElementoFocuseable = null;
-
-    // ⭐️ 2. FOCO INICIAL EN EL PRIMER FRAGMENTO DE TEXTO ⭐️
-    const firstFragment = this.DOM.detalleContenido.querySelector('.detail-text-fragment');
-    
-    if (!isMobile) { 
-        // DESKTOP/TABLET
-        if (this.DOM.cardNivelActual) {
-           this.DOM.cardNivelActual.innerHTML = `<h3>${curso.titulo || 'Curso'}</h3>`;
-           this.DOM.cardNivelActual.classList.add('visible'); 
-        }
-        
-        this.DOM.cardVolverFija.classList.add('visible'); 
-        this.DOM.cardVolverFijaElemento.classList.add('visible');
-        this.DOM.cardVolverFijaElemento.innerHTML = `<h3>${data.LOGO_VOLVER}</h3>`; 
-        this.DOM.cardVolverFijaElemento.tabIndex = 0;
-        
-        primerElementoFocuseable = this.DOM.cardVolverFijaElemento;
-
-        if (firstFragment) {
-            firstFragment.focus();
-            _updateDetailFocusState.call(this, firstFragment); 
-            primerElementoFocuseable = firstFragment;
-        }
-        
-    } else { 
-        // MÓVIL
-        this.DOM.infoAdicional.classList.remove('visible');
-        this.DOM.cardVolverFija.classList.remove('visible');
-        
-        const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn, .detail-text-fragment');
-        if (firstInteractive) {
-             firstInteractive.focus();
-             _updateDetailFocusState.call(this, firstInteractive); 
-             primerElementoFocuseable = firstInteractive;
-        }
-    }
-
-    if (primerElementoFocuseable) {
-        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Foco en detalle:', primerElementoFocuseable.tagName, primerElementoFocuseable.id || primerElementoFocuseable.className);
-    }
-};
-
-/**
- * ⭐️ GESTIÓN DE FOCO EN VISTA DETALLE (BLUR MASK Y FRAGMENTOS) ⭐️
- * Función que actualiza las clases CSS en función del elemento enfocado.
- */
-export function _updateDetailFocusState(focusedEl) {
-    // 'this' es la instancia de App
-    const detailContainer = this.DOM.vistaDetalle; 
-    const fragments = Array.from(detailContainer.querySelectorAll('.detail-text-fragment'));
-    const actionsBlock = detailContainer.querySelector('#detalle-bloque-acciones');
-    
-    const isFragment = focusedEl.classList.contains('detail-text-fragment');
-    const isAction = focusedEl.closest('#detalle-bloque-acciones') || focusedEl.classList.contains('detail-action-btn');
-
-    // --- Control de Foco Principal (Texto vs Acciones) ---
-    if (isFragment) {
-        detailContainer.classList.add('mode-focus-text');
-        detailContainer.classList.remove('mode-focus-actions');
-        
-        // --- Control de Foco Granular (Fragmentos de Texto) ---
-        const focusedIndex = parseInt(focusedEl.dataset.index);
-        
-        fragments.forEach(fragment => {
-            fragment.classList.remove('focus-adj-1', 'focus-adj-2');
-            const index = parseInt(fragment.dataset.index);
-            const diff = Math.abs(index - focusedIndex);
-
-            // Gradiente de foco:
-            if (diff === 0) {
-                // El elemento actual
-                fragment.classList.add('focus-current');
-            } else {
-                fragment.classList.remove('focus-current');
-            }
-
-            if (diff === 1) {
-                // Adyacente (a la vista, desenfoque tenue)
-                fragment.classList.add('focus-adj-1'); 
-            } else if (diff === 2) {
-                // Segundo adyacente (más desenfoque)
-                fragment.classList.add('focus-adj-2'); 
-            }
-            // Si diff > 2, queda con la clase base (desenfoque por defecto)
-        });
-
-    } else if (isAction) {
-        detailContainer.classList.add('mode-focus-actions');
-        detailContainer.classList.remove('mode-focus-text');
-        // Limpiar clases de foco de texto al enfocar acciones
-        fragments.forEach(f => f.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2'));
-    } else {
-        // Si el foco sale de las áreas de contenido (ej. al volver)
-        detailContainer.classList.remove('mode-focus-actions', 'mode-focus-text');
-        fragments.forEach(f => f.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2'));
-    }
-};
-
-
-/**
- * Reemplazo de _setupDetailFocusHandler para usar la lógica granular.
- */
-export function _setupDetailFocusHandler() {
-    // 'this' es la instancia de App
-    document.addEventListener('focusin', (e) => {
-        const focusedEl = e.target;
-        const isDetailView = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active'); 
-
-        if (isDetailView) {
-            // ⭐️ Delegamos toda la lógica de clasificación y aplicación de clases ⭐️
-            _updateDetailFocusState.call(this, focusedEl);
-        }
-    });
 };
 
 
@@ -519,20 +269,6 @@ export function _tieneContenidoActivoImpl(nodoId) {
         }
     }
     return false;
-};
-
-export function _getFocusableDetailElements() {
-    // 'this' es la instancia de App
-    // ⭐️ Incluir los fragmentos de texto ⭐️
-    const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, .detail-text-fragment'));
-    let elements = [];
-    const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
-    
-    if (!isMobile && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
-        elements.push(this.DOM.cardVolverFijaElemento);
-    } 
-    elements.push(...detailLinks);
-    return elements;
 };
 
 /**
