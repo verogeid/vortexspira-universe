@@ -127,6 +127,8 @@ export function renderNavegacion() {
     // ⭐️ Determinar el estado de detalle ANTES de limpiar las vistas de navegación ⭐️
     const isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
                            document.getElementById('vista-detalle-mobile').classList.contains('active');
+
+    debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `renderNavigation: isDetailActive: ${isDetailActive}, activeCourseId: ${this.STATE.activeCourseId}`);
                            
     // ⭐️ Limpiar todas las vistas de Navegación + Detalle ⭐️
     desktopView.classList.remove('active');
@@ -140,13 +142,12 @@ export function renderNavegacion() {
     this.DOM.vistaDetalle = detailModeIsMobile ? document.getElementById('vista-detalle-mobile') : document.getElementById('vista-detalle-desktop');
     this.DOM.detalleContenido = detailModeIsMobile ? document.getElementById('detalle-contenido-mobile') : document.getElementById('detalle-contenido-desktop');
 
-
     if (isDetailActive) {
         // ⭐️ CORRECCIÓN CLAVE 2: Forzar la re-inyección del contenido del detalle ⭐️
         if (this.STATE.activeCourseId) {
             // Llamamos a _mostrarDetalle. Esto reinyecta el HTML en el contenedor correcto (this.DOM.detalleContenido) y lo activa.
             this._mostrarDetalle(this.STATE.activeCourseId); 
-            debug.log('render_base', debug.DEBUG_LEVELS.IMPORTANT, `Detalle re-renderizado para curso: ${this.STATE.activeCourseId}`);
+            debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `Detalle re-renderizado para curso: ${this.STATE.activeCourseId}`);
         } else {
             // Si el ID se perdió, volvemos a la navegación
             isDetailActive = false;
@@ -351,6 +352,8 @@ export function _setupResizeObserver() {
         
         const isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
                                document.getElementById('vista-detalle-mobile').classList.contains('active');
+
+        debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `ResizeObserver detectó cambio: Nuevo ancho = ${newWidth}px, Modo = ${newMode}, Detalle activo = ${isDetailActive}`);
 
         // Lógica de activación:
         const shouldRenderForLayout = 
