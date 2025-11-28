@@ -26,7 +26,8 @@ class VortexSpiraApp {
             resizeObserver: null,    
             currentFocusIndex: 0,    
             initialRenderComplete: false, 
-            keyboardNavInProgress: false 
+            keyboardNavInProgress: false,
+            activeCourseId: null, // ⭐️ NUEVO: Guarda el ID del curso activo para el resize ⭐️
         };
         
         // ⭐️ Exposición temporal para onclick en HTML (patrón mixto) ⭐️
@@ -120,15 +121,24 @@ class VortexSpiraApp {
     _handleTrackClick(e) { 
         nav_base._handleTrackClick.call(this, e); 
     }
+    
     _handleVolverClick() { 
+        // ⭐️ CORRECCIÓN: Limpiar el ID del curso al salir del detalle ⭐️
+        if (this.DOM.vistaDetalle.classList.contains('active')) {
+             this.STATE.activeCourseId = null; 
+        }
         nav_base._handleVolverClick.call(this); 
     }
+    
     _handleCardClick(id, tipo, parentFocusIndex) { 
         nav_base._handleCardClick.call(this, id, tipo, parentFocusIndex); 
     }
+    
     _mostrarDetalle(cursoId) { 
         nav_base._mostrarDetalle.call(this, cursoId); 
+        this.STATE.activeCourseId = cursoId; // ⭐️ GUARDAR ID del curso activo ⭐️
     }
+    
     _handleActionRowClick(e) {
         nav_base._handleActionRowClick.call(this, e);
     }
