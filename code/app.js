@@ -17,6 +17,8 @@ import * as render_mobile from './render-mobile.js';
 class VortexSpiraApp {
     
     constructor() {
+        debug.setupConsoleInterceptor();
+        
         this.DOM = {}; 
         this.STATE = {
             fullData: null,          

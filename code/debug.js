@@ -32,6 +32,43 @@ export function logClear() {
 };
 
 /**
+ * Función de intercepción de consola (Monkey-patching).
+ * Debe llamarse antes de inicializar bibliotecas externas.
+ */
+export function setupConsoleInterceptor() {
+    const originalConsoleWarn = console.warn;
+    const originalConsoleLog = console.log;
+
+    // Patrón de la advertencia de Swiper
+    const SWIPER_WARNING_PATTERN = /Swiper Loop Warning/;
+    // Patrón del mensaje de aviso de limpieza de consola
+    const CLEAR_CONSOLE_AVOIDED_PATTERN = /console\.clear\(\) se ha evitado/;
+
+    console.warn = function(...args) {
+        const message = args.join(' ');
+        if (SWIPER_WARNING_PATTERN.test(message)) {
+            // Suprimir la advertencia específica de Swiper
+            return;
+        }
+        // Llamar a la función original para otras advertencias
+        originalConsoleWarn.apply(console, args);
+    };
+
+    // Sobreescribir console.log para suprimir el mensaje de limpieza de consola si es necesario
+    console.log = function(...args) {
+        const message = args.join(' ');
+        if (CLEAR_CONSOLE_AVOIDED_PATTERN.test(message)) {
+            // Suprimir el mensaje de "console.clear() se ha evitado"
+            return;
+        }
+        // Llamar a la función original para otros logs
+        originalConsoleLog.apply(console, args);
+    };
+    
+    // Nota: La intercepción de los logs de la propia aplicación está manejada por la lógica de IS_PRODUCTION.
+}
+
+/**
  * Función de logging centralizada.
  * @param {string} moduleName - El nombre del módulo que llama (ej. 'app', 'ui').
  * @param {number} requiredLevel - El nivel de importancia de este mensaje (ej. DEBUG_LEVELS.DEEP).
