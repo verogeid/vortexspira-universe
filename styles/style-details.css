@@ -28,21 +28,33 @@
     outline: none;
     padding: 10px; /* Padding interno para el fragmento */
     border-radius: 4px;
-    border-bottom: 2px solid transparent; /* Inicialmente transparente */
+    /* Cambiamos a border-bottom-color para que no haya conflicto visual */
+    border-bottom-color: transparent; 
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
     transition: all 0.2s ease, filter 0.5s ease;
     will-change: filter, opacity;
     cursor: text;
 }
 
-/* ⭐️ NUEVO: ESTILO DE FOCO INFERIOR GHOST para fragmentos ⭐️ */
-.detail-text-fragment:focus-visible {
-    border-bottom-color: var(--color-primary);
-    /* Solo sombra inferior (simula el halo) */
-    box-shadow: 0 4px 0 0 rgba(0, 123, 255, 0.2), 0 4px 10px var(--color-shadow-primary);
-    background-color: transparent; 
-    filter: none !important; /* Asegura nitidez al enfocar */
+/* ⭐️ NUEVO: ESTILO DE FOCO INFERIOR GHOST para fragmentos (Sutil y Click/Keyboard friendly) ⭐️ */
+.detail-text-fragment:focus-visible,
+.detail-text-fragment.focus-current { 
+    /* 1. Resetear el filtro para nitidez inmediata */
+    filter: none !important; 
     opacity: 1 !important;
+
+    /* 2. Aplicar el borde y sombra sutil (menos desplazado y más tenue) */
+    border-bottom-color: var(--color-primary);
+    
+    /* ⭐️ AJUSTE SUTILEZA: Reducir la opacidad y el desplazamiento de la sombra ⭐️ */
+    box-shadow: 
+        0 1px 0 0 rgba(0, 123, 255, 0.1), /* Borde más fino */
+        0 1px 3px var(--color-shadow-primary); 
+    
+    background-color: transparent; 
 }
+
 
 /* 3. EFECTO BLUR CON GRADIENTE DE PROXIMIDAD */
 /* ---------------------------------------------------- */

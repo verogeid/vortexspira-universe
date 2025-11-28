@@ -18,6 +18,8 @@ export function initKeyboardControls() {
         const isNavActive = app.DOM.vistaNav.classList.contains('active');
         const isDetailActive = app.DOM.vistaDetalle.classList.contains('active');
 
+        debug.log('nav_keyboard', debug.DEBUG_LEVELS.DEEP, `Tecla presionada: ${e.key}`);
+
         if (e.key === 'Tab') {
             e.preventDefault();
             if (isNavActive) {
@@ -162,44 +164,57 @@ export function _handleKeyNavigation(key) {
 export function _handleDetailNavigation(key) {
     // 'this' es la instancia de App
     const activeElement = document.activeElement;
-    // Usamos el helper importado
-    const focusableDetailElements = nav_base._getFocusableDetailElements.call(this); 
     
-    const mainContentElements = focusableDetailElements.filter(el => 
-        el.classList.contains('detail-action-btn') || 
-        el.classList.contains('card') || 
-        el.tagName === 'H2' || 
-        el.id === 'detalle-bloque-texto' 
-    );
+    // ⭐️ CORRECCIÓN: Obtenemos todos los elementos navegables, excluyendo el botón "Volver" fijo lateral ⭐️
+    const focusableElements = nav_base._getFocusableDetailElements.call(this)
+        .filter(el => 
+            !el.classList.contains('card-volver-vertical') && 
+            // Excluir el 'card-volver-fija-elemento' que se maneja con la tecla ESC o TAB
+            el.id !== 'card-volver-fija-elemento'
+        );
 
-    let currentIndex = mainContentElements.indexOf(activeElement);
+    let currentIndex = focusableElements.indexOf(activeElement);
+    const maxIndex = focusableElements.length - 1;
     
+    // Si el foco está en el título o en un lugar perdido, lo movemos al primer fragmento de texto o al inicio.
     if (currentIndex === -1) {
-        if (mainContentElements.length > 0) mainContentElements[0].focus();
+        const firstElement = focusableElements.find(el => el.classList.contains('detail-text-fragment')) || focusableElements[0];
+        if (firstElement) {
+            firstElement.focus();
+        }
         return;
     }
     
     let newIndex = currentIndex;
+
     switch (key) {
-        case 'ArrowLeft':
         case 'ArrowUp':
-            newIndex = (currentIndex > 0) ? currentIndex - 1 : currentIndex;
+            newIndex = Math.max(0, currentIndex - 1);
             break;
-        case 'ArrowRight':
         case 'ArrowDown':
-            newIndex = (currentIndex < mainContentElements.length - 1) ? currentIndex + 1 : currentIndex;
+            newIndex = Math.min(maxIndex, currentIndex + 1);
             break;
+        case 'ArrowLeft':
+        case 'ArrowRight':
+            // Ignoramos el movimiento lateral para no romper el orden secuencial
+            return; 
         case 'Enter':
         case ' ':
-            if (!activeElement.classList.contains('disabled') && activeElement.tagName !== 'DIV' && activeElement.tagName !== 'H2' && activeElement.id !== 'detalle-bloque-texto') {
+            // Si está sobre un fragmento de texto, avanza al siguiente (simula la lectura).
+            if (activeElement.classList.contains('detail-text-fragment')) {
+                newIndex = Math.min(maxIndex, currentIndex + 1);
+            } 
+            // Si está sobre un botón de acción, lo clicamos (salvo si está deshabilitado).
+            else if (activeElement.classList.contains('detail-action-btn') && !activeElement.classList.contains('disabled')) {
                 activeElement.click(); 
-            } else if (activeElement.id === 'detalle-bloque-texto') {
-                newIndex = (currentIndex < mainContentElements.length - 1) ? currentIndex + 1 : currentIndex;
+                return;
             }
             break;
     }
-    if (newIndex !== currentIndex) {
-        mainContentElements[newIndex].focus();
+    
+    // Aplicar el nuevo foco
+    if (newIndex !== currentIndex && focusableElements[newIndex]) {
+        focusableElements[newIndex].focus();
     }
 };
 
@@ -234,7 +249,8 @@ export function _handleFocusTrap(e, viewType) {
         }
     } 
     else if (viewType === 'detail') {
-        const detailContentLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('#detalle-bloque-texto, .detail-action-btn, .card'));
+        // Incluye fragmentos de texto, acciones y el botón "Volver" móvil si existe.
+        const detailContentLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.detail-text-fragment, .detail-action-btn, .card'));
         let volverElement = (!isMobile && (this.DOM.cardVolverFijaElemento && this.DOM.cardVolverFijaElemento.tabIndex === 0)) ? this.DOM.cardVolverFijaElemento : null;
 
         groups = [
