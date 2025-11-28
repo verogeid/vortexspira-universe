@@ -13,30 +13,66 @@
     scroll-behavior: smooth;
 }
 
-/* 2. BLOQUE DE TEXTO (Foco Ghost) */
+/* 2. BLOQUE DE TEXTO Y FRAGMENTOS */
+
+/* Contenedor principal de texto (Ahora solo un wrapper) */
 #detalle-bloque-texto {
+    /* Eliminamos el borde de foco del contenedor principal */
     outline: none;
-    border: 2px solid transparent;
-    border-radius: 12px;
-    padding: 10px;
-    transition: all 0.2s ease;
+    border: none;
+    padding: 0; 
 }
 
-#detalle-bloque-texto:focus-visible {
-    /* ⭐️ CORRECCIÓN CLAVE: La sombra simula un halo exterior al borde y padding ⭐️ */
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2), 0 0 15px var(--color-shadow-primary);
-    background-color: transparent; 
-}
-
-/* 3. EFECTO BLUR CON DEGRADADO (FOCUS MASK) */
-#detalle-bloque-texto,
-#detalle-bloque-acciones {
-    transition: filter 0.4s ease, opacity 0.4s ease;
+/* ⭐️ NUEVO: Contenedor para cada fragmento enfocable ⭐️ */
+.detail-text-fragment {
+    outline: none;
+    padding: 10px; /* Padding interno para el fragmento */
+    border-radius: 4px;
+    border-bottom: 2px solid transparent; /* Inicialmente transparente */
+    transition: all 0.2s ease, filter 0.5s ease;
     will-change: filter, opacity;
+    cursor: text;
 }
 
-/* Foco en Texto -> Difuminar Acciones */
+/* ⭐️ NUEVO: ESTILO DE FOCO INFERIOR GHOST para fragmentos ⭐️ */
+.detail-text-fragment:focus-visible {
+    border-bottom-color: var(--color-primary);
+    /* Solo sombra inferior (simula el halo) */
+    box-shadow: 0 4px 0 0 rgba(0, 123, 255, 0.2), 0 4px 10px var(--color-shadow-primary);
+    background-color: transparent; 
+    filter: none !important; /* Asegura nitidez al enfocar */
+    opacity: 1 !important;
+}
+
+/* 3. EFECTO BLUR CON GRADIENTE DE PROXIMIDAD */
+/* ---------------------------------------------------- */
+
+/* ESTADO INICIAL: Texto con desenfoque TÉNUO por defecto (Modo focus-text) */
+.mode-focus-text .detail-text-fragment {
+    filter: blur(2px) grayscale(50%); /* Desenfoque inicial muy tenue */
+    opacity: 0.8; 
+    pointer-events: auto;
+}
+
+/* ⭐️ Foco Actual (Nitidez Completa) ⭐️ */
+.mode-focus-text .detail-text-fragment.focus-current {
+    filter: none;
+    opacity: 1;
+}
+
+/* ⭐️ Fragmento Adyacente 1 (Menos desenfoque) ⭐️ */
+.mode-focus-text .detail-text-fragment.focus-adj-1 {
+    filter: blur(0.5px) grayscale(20%); /* Casi nítido */
+    opacity: 0.9;
+}
+
+/* ⭐️ Fragmento Adyacente 2 (Desenfoque intermedio) ⭐️ */
+.mode-focus-text .detail-text-fragment.focus-adj-2 {
+    filter: blur(1.5px) grayscale(40%); /* Un poco más borroso */
+    opacity: 0.85;
+}
+
+/* Foco en Texto -> Desenfoque de ACCIONES */
 .mode-focus-text #detalle-bloque-acciones {
     filter: blur(4px) grayscale(60%);
     opacity: 0.3;
@@ -44,14 +80,14 @@
     -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
     mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
 }
-.mode-focus-text #detalle-bloque-texto { 
-    filter: none; opacity: 1; -webkit-mask-image: none; mask-image: none; 
-}
 
-/* Foco en Acciones -> Difuminar Texto */
-.mode-focus-actions #detalle-bloque-texto {
-    filter: blur(4px) grayscale(60%);
-    opacity: 0.3;
+
+/* Foco en Acciones -> Desenfoque de TEXTO (Global) */
+.mode-focus-actions .detail-text-fragment {
+    filter: blur(4px) grayscale(60%) !important; /* Aplicar desenfoque fuerte a todo el texto */
+    opacity: 0.3 !important;
+    pointer-events: none; /* Deshabilitar clics en texto */
+    /* Añadimos la máscara global para el bloque de texto */
     -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
     mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
 }
@@ -140,7 +176,7 @@ button.detail-action-btn {
     width: auto !important; height: auto !important;
     padding: 0.5rem 1rem !important; 
     border-radius: 20px !important; margin-bottom: 0; 
-    font-weight: bold; aspect-ratio: auto; font-size: 1rem;
+    font-weight: bold; aspect-ratio: auto; font-size: 1.1rem;
     background: var(--color-card-bg); 
 }
 

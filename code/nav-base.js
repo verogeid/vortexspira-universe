@@ -309,14 +309,46 @@ export function _mostrarDetalle(cursoId) {
           </div>
         `;
     }
+    
+    // ⭐️ 1. PROCESAMIENTO DE LA DESCRIPCIÓN EN FRAGMENTOS ⭐️
+    let textFragmentsHtml = '';
+    const description = curso.descripcion || 'No hay descripción disponible.';
+    
+    // Convertir el texto a un DOM temporal para facilitar la iteración sobre nodos de bloque (p, ul, etc.)
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = description.trim();
+    
+    // Envolver cada nodo de bloque (p, ul) en un contenedor enfocable
+    Array.from(tempDiv.childNodes).forEach((node, index) => {
+        // Solo envolver elementos de bloque (Type 1) o nodos de texto no vacíos (Type 3)
+        if (node.nodeType === 1 && (node.tagName === 'P' || node.tagName === 'UL' || node.tagName === 'OL' || node.tagName === 'DIV')) {
+            // Utilizamos role="document" para fragmentos de lectura largos
+            textFragmentsHtml += `
+                <div class="detail-text-fragment" data-index="${index}" role="document" tabindex="0">
+                    ${node.outerHTML}
+                </div>
+            `;
+        } else if (node.nodeType === 3 && node.textContent.trim().length > 0) {
+            // Manejar nodos de texto sueltos (aunque idealmente no deberían existir si se usa <p>)
+            textFragmentsHtml += `
+                <div class="detail-text-fragment" data-index="${index}" role="document" tabindex="0">
+                    <p>${node.textContent}</p>
+                </div>
+            `;
+        }
+    });
 
     const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
 
     this.DOM.detalleContenido.innerHTML = `
       ${mobileBackHtml}
-      <div id="detalle-bloque-texto" tabindex="0"> 
+      <div id="detalle-bloque-texto" tabindex="-1"> 
         ${titleHtml}
-        <p>${curso.descripcion || 'No hay descripción disponible.'}</p>
+        
+        <div id="detalle-contenido-fragmentado"> 
+            ${textFragmentsHtml}
+        </div>
+
       </div>
       <div id="detalle-bloque-acciones">
         ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
@@ -332,6 +364,9 @@ export function _mostrarDetalle(cursoId) {
 
     let primerElementoFocuseable = null;
 
+    // ⭐️ 2. FOCO INICIAL EN EL PRIMER FRAGMENTO DE TEXTO ⭐️
+    const firstFragment = this.DOM.detalleContenido.querySelector('.detail-text-fragment');
+    
     if (!isMobile) { 
         // DESKTOP/TABLET
         if (this.DOM.cardNivelActual) {
@@ -345,24 +380,90 @@ export function _mostrarDetalle(cursoId) {
         this.DOM.cardVolverFijaElemento.tabIndex = 0;
         
         primerElementoFocuseable = this.DOM.cardVolverFijaElemento;
+
+        if (firstFragment) {
+            firstFragment.focus();
+            _updateDetailFocusState.call(this, firstFragment); 
+            primerElementoFocuseable = firstFragment;
+        }
         
     } else { 
         // MÓVIL
         this.DOM.infoAdicional.classList.remove('visible');
         this.DOM.cardVolverFija.classList.remove('visible');
         
-        const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn');
-        primerElementoFocuseable = firstInteractive; 
+        const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn, .detail-text-fragment');
+        if (firstInteractive) {
+             firstInteractive.focus();
+             _updateDetailFocusState.call(this, firstInteractive); 
+             primerElementoFocuseable = firstInteractive;
+        }
     }
 
     if (primerElementoFocuseable) {
-        primerElementoFocuseable.focus();
-        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Foco en detalle:', primerElementoFocuseable.tagName, primerElementoFocuseable.id);
+        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Foco en detalle:', primerElementoFocuseable.tagName, primerElementoFocuseable.id || primerElementoFocuseable.className);
     }
 };
 
 /**
- * ⭐️ GESTIÓN DE FOCO EN VISTA DETALLE (BLUR MASK) ⭐️
+ * ⭐️ GESTIÓN DE FOCO EN VISTA DETALLE (BLUR MASK Y FRAGMENTOS) ⭐️
+ * Función que actualiza las clases CSS en función del elemento enfocado.
+ */
+export function _updateDetailFocusState(focusedEl) {
+    // 'this' es la instancia de App
+    const detailContainer = this.DOM.vistaDetalle; 
+    const fragments = Array.from(detailContainer.querySelectorAll('.detail-text-fragment'));
+    const actionsBlock = detailContainer.querySelector('#detalle-bloque-acciones');
+    
+    const isFragment = focusedEl.classList.contains('detail-text-fragment');
+    const isAction = focusedEl.closest('#detalle-bloque-acciones') || focusedEl.classList.contains('detail-action-btn');
+
+    // --- Control de Foco Principal (Texto vs Acciones) ---
+    if (isFragment) {
+        detailContainer.classList.add('mode-focus-text');
+        detailContainer.classList.remove('mode-focus-actions');
+        
+        // --- Control de Foco Granular (Fragmentos de Texto) ---
+        const focusedIndex = parseInt(focusedEl.dataset.index);
+        
+        fragments.forEach(fragment => {
+            fragment.classList.remove('focus-adj-1', 'focus-adj-2');
+            const index = parseInt(fragment.dataset.index);
+            const diff = Math.abs(index - focusedIndex);
+
+            // Gradiente de foco:
+            if (diff === 0) {
+                // El elemento actual
+                fragment.classList.add('focus-current');
+            } else {
+                fragment.classList.remove('focus-current');
+            }
+
+            if (diff === 1) {
+                // Adyacente (a la vista, desenfoque tenue)
+                fragment.classList.add('focus-adj-1'); 
+            } else if (diff === 2) {
+                // Segundo adyacente (más desenfoque)
+                fragment.classList.add('focus-adj-2'); 
+            }
+            // Si diff > 2, queda con la clase base (desenfoque por defecto)
+        });
+
+    } else if (isAction) {
+        detailContainer.classList.add('mode-focus-actions');
+        detailContainer.classList.remove('mode-focus-text');
+        // Limpiar clases de foco de texto al enfocar acciones
+        fragments.forEach(f => f.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2'));
+    } else {
+        // Si el foco sale de las áreas de contenido (ej. al volver)
+        detailContainer.classList.remove('mode-focus-actions', 'mode-focus-text');
+        fragments.forEach(f => f.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2'));
+    }
+};
+
+
+/**
+ * Reemplazo de _setupDetailFocusHandler para usar la lógica granular.
  */
 export function _setupDetailFocusHandler() {
     // 'this' es la instancia de App
@@ -371,22 +472,8 @@ export function _setupDetailFocusHandler() {
         const isDetailView = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active'); 
 
         if (isDetailView) {
-            const detailContainer = this.DOM.vistaDetalle; 
-            const textBlock = detailContainer.querySelector('#detalle-bloque-texto');
-            const actionsBlock = detailContainer.querySelector('.detail-actions-list');
-
-            const isTextContentArea = focusedEl === textBlock || focusedEl.closest('#detalle-bloque-texto');
-            const isActionContentArea = focusedEl === actionsBlock || focusedEl.closest('.detail-actions-list') || focusedEl.classList.contains('detail-action-btn');
-
-            if (isTextContentArea) {
-                detailContainer.classList.add('mode-focus-text');
-                detailContainer.classList.remove('mode-focus-actions');
-            } else if (isActionContentArea) {
-                detailContainer.classList.add('mode-focus-actions');
-                detailContainer.classList.remove('mode-focus-text');
-            } else {
-                detailContainer.classList.remove('mode-focus-actions', 'mode-focus-text');
-            }
+            // ⭐️ Delegamos toda la lógica de clasificación y aplicación de clases ⭐️
+            _updateDetailFocusState.call(this, focusedEl);
         }
     });
 };
@@ -436,7 +523,8 @@ export function _tieneContenidoActivoImpl(nodoId) {
 
 export function _getFocusableDetailElements() {
     // 'this' es la instancia de App
-    const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, #detalle-bloque-texto'));
+    // ⭐️ Incluir los fragmentos de texto ⭐️
+    const detailLinks = Array.from(this.DOM.detalleContenido.querySelectorAll('.card, .detail-action-btn, .detail-text-fragment'));
     let elements = [];
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
     
