@@ -18,7 +18,7 @@ class VortexSpiraApp {
     
     constructor() {
         debug.setupConsoleInterceptor();
-        
+
         this.DOM = {}; 
         this.STATE = {
             fullData: null,          
@@ -71,6 +71,8 @@ class VortexSpiraApp {
     
     async init() {
         debug.logClear();
+
+        debug.log('global', debug.DEBUG_LEVELS.BASIC, "VortexSpira Universe - Versión 1.0.0");
 
         debug.log('app', debug.DEBUG_LEVELS.BASIC, "App: Iniciando orquestación (POO)...");
         
@@ -209,7 +211,7 @@ class VortexSpiraApp {
      * Configura el listener de clic global para depuración.
      */
     _setupGlobalDebugListeners() {
-        if (debug.DEBUG_CONFIG.global > debug.DEBUG_LEVELS.DISABLED) {
+        if (debug.DEBUG_CONFIG.global >= debug.DEBUG_LEVELS.DEEP) {
             document.addEventListener('click', function(e) {
                 if (typeof debug.log === 'function') {
                     const targetElement = e.target;
