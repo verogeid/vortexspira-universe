@@ -66,6 +66,8 @@ class VortexSpiraApp {
     // -----------------------------------------------------------------
     
     async init() {
+        debug.logClear();
+
         debug.log('app', debug.DEBUG_LEVELS.BASIC, "App: Iniciando orquestación (POO)...");
         
         this._setupGlobalDebugListeners();

@@ -1,6 +1,7 @@
 // code/debug.js
 
 export const IS_PRODUCTION = false;
+export const CLEAR_CONSOLE_ON_START = true;
 
 // Niveles de depuración estándar
 export const DEBUG_LEVELS = {
@@ -22,6 +23,12 @@ export const DEBUG_CONFIG = {
     render_swipe: DEBUG_LEVELS.DISABLED,
     render_mobile: DEBUG_LEVELS.DEEP,
     global: DEBUG_LEVELS.DISABLED
+};
+
+export function logClear() {
+    if (CLEAR_CONSOLE_ON_START) {
+        console.clear();
+    }
 };
 
 /**
