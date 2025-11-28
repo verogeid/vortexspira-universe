@@ -36,13 +36,13 @@
     will-change: filter, opacity;
     cursor: text;
     
-    /* ⭐️ BASE BLUR/OPACITY (Nivel de desenfoque MÁXIMO) ⭐️ */
+    /* ⭐️ BASE BLUR/OPACITY (Nivel de desenfoque MÁXIMO por defecto) ⭐️ */
     filter: blur(2px) grayscale(50%); 
     opacity: 0.4; 
     pointer-events: auto;
 }
 
-/* ⭐️ NUEVO: ESTILO DE FOCO INFERIOR GHOST para fragmentos (Sutil y Click/Keyboard friendly) ⭐️ */
+/* ⭐️ FOCO: Asegurar nitidez al recibir foco (teclado/clic) ⭐️ */
 .detail-text-fragment:focus-visible,
 .detail-text-fragment.focus-current { 
     /* 1. Resetear el filtro para nitidez inmediata */
@@ -52,7 +52,7 @@
     /* 2. Aplicar el borde y sombra sutil (menos desplazado y más tenue) */
     border-bottom-color: var(--color-primary);
     
-    /* ⭐️ AJUSTE SUTILEZA: Reducir la opacidad y el desplazamiento de la sombra ⭐️ */
+    /* ⭐️ AJUSTE SUTILEZA ⭐️ */
     box-shadow: 
         0 1px 0 0 rgba(0, 123, 255, 0.1), /* Borde más fino */
         0 1px 3px var(--color-shadow-primary); 
@@ -61,7 +61,7 @@
 }
 
 
-/* 3. EFECTO BLUR CON GRADIENTE DE PROXIMIDAD (APLICADO A TODOS LOS ELEMENTOS) */
+/* 3. EFECTO BLUR CON GRADIENTE DE PROXIMIDAD */
 /* ---------------------------------------------------- */
 
 /* ⭐️ Foco Actual (Nitidez Completa) ⭐️ */
@@ -85,7 +85,6 @@
     opacity: 0.6;
 }
 
-
 /* ⭐️ BASE BLUR para las acciones (Nivel de desenfoque MÁXIMO) ⭐️ */
 .detail-action-item {
     transition: filter 0.5s ease, opacity 0.5s ease;
@@ -101,7 +100,7 @@
 
 /* --- MÁSCARAS (Controladas por las clases binarias mode-focus-text/actions) --- */
 
-/* Foco en Texto -> Desenfoque de ACCIONES (Solo aplica la MÁSCARA) */
+/* Foco en Texto -> Desenfoque de ACCIONES (Mismo nivel que el texto más lejano) */
 .mode-focus-text #detalle-bloque-acciones {
     /* Las reglas de BLUR y OPACITY se definen en .detail-action-item por defecto (2px, 0.4) */
     pointer-events: none; 
@@ -110,7 +109,7 @@
 }
 
 
-/* Foco en Acciones -> Desenfoque de TEXTO (Solo aplica la MÁSCARA) */
+/* Foco en Acciones -> Desenfoque de TEXTO (Uniforme al nivel de desenfoque base) */
 /* Las reglas de BLUR y OPACITY se definen en .detail-text-fragment por defecto (2px, 0.4) */
 .mode-focus-actions .detail-text-fragment {
     pointer-events: none; /* Deshabilitar clics en texto */
