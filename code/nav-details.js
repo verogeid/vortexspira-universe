@@ -2,6 +2,7 @@
 
 import * as debug from './debug.js';
 import * as data from './data.js';
+import * as nav_base from './nav-base.js'; // ⭐️ NECESARIO para el helper de búsqueda
 
 /**
  * Lógica de inicialización de los handlers de foco en la vista de detalle.
@@ -74,7 +75,10 @@ export function _updateDetailFocusState(focusedEl) {
 export function _mostrarDetalle(cursoId) {
     // 'this' es la instancia de App
     debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Mostrando detalle del curso:', cursoId);
-    const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion); // Método delegado
+    
+    // ⭐️ CORRECCIÓN: Llamada al helper de búsqueda directamente desde nav_base ⭐️
+    const curso = nav_base._findNodoById(cursoId, this.STATE.fullData.navegacion); 
+    
     if (!curso) {
         debug.logWarn('nav_base', 'Curso no encontrado para ID:', cursoId);
         return;
@@ -186,7 +190,7 @@ export function _mostrarDetalle(cursoId) {
     this.DOM.vistaDetalle.classList.add('active');
     
     const screenWidth = window.innerWidth;
-    const isTablet = screenWidth >= data.TABLET_MIN_WIDTH && screenWidth <= data.TABLET_MAX_WIDTH;
+    const isTablet = screenWidth >= data.TABLET_MIN_WIDTH && window.innerWidth <= data.TABLET_MAX_WIDTH;
 
     let primerElementoFocuseable = null;
 
