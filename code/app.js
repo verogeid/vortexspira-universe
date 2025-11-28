@@ -11,7 +11,7 @@ import * as nav_base from './nav-base.js';
 import * as nav_details from './nav-details.js'; 
 import * as render_base from './render-base.js';
 // ⭐️ CAMBIO: Importar los nuevos módulos de teclado ⭐️
-import * as nav_keyboard_base from './nav-keyboard-base.js'; 
+import * as nav_keyboard_base from './nav-keyboard.js'; 
 import * as nav_keyboard_details from './nav-keyboard-details.js'; 
 import * as nav_tactil from './nav-tactil.js';
 import * as render_swipe from './render-swipe.js';
