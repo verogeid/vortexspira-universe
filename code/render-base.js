@@ -127,8 +127,8 @@ export function renderNavegacion() {
     // ⭐️ Determinar el estado de detalle ANTES de limpiar las vistas de navegación ⭐️
     // Usamos las referencias DOM completas ya que this.DOM.vistaDetalle se reasigna abajo
     const isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
-                           document.getElementById('vista-detalle-mobile').classList.contains('active');
-                           
+                            document.getElementById('vista-detalle-mobile').classList.contains('active');
+
     // ⭐️ Limpiar todas las vistas de Navegación + Detalle ⭐️
     desktopView.classList.remove('active');
     tabletView.classList.remove('active');

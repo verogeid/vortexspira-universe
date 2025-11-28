@@ -1,6 +1,6 @@
 // code/debug.js
 
-export const IS_PRODUCTION = import.meta.env.PROD || false;
+export const IS_PRODUCTION = false;
 
 // Niveles de depuración estándar
 export const DEBUG_LEVELS = {
