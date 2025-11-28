@@ -62,6 +62,9 @@
         height: var(--card-height-calc); min-height: var(--card-height-calc); 
         margin-bottom: 0; 
     }
+    #card-volver-fija {
+        min-width: 0;
+    }
     /* ⭐️ CORRECCIÓN: Usar la variable unificada de altura ⭐️ */
     #card-volver-fija #card-nivel-actual,
     #card-volver-fija #card-volver-fija-elemento {

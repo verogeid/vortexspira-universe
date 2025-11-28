@@ -36,6 +36,9 @@
     #nav-swiper .cards-column-group .card {
         flex: none; height: var(--card-height-calc); min-height: var(--card-height-calc); margin-bottom: 0; 
     }
+    #card-volver-fija {
+        min-width: 0;
+    }
     #card-volver-fija #card-nivel-actual,
     #card-volver-fija #card-volver-fija-elemento {
         /* Ya utiliza la variable, sin cambios necesarios */
