@@ -1,8 +1,8 @@
 // --- code/app.js (CLASE PRINCIPAL Y ENTRY POINT) ---
 
 // Importaciones de módulos de la aplicación
-import * as data from './data.js';
 import * as debug from './debug.js';
+import * as data from './data.js';
 import * as i18n from './i18n.js';
 import * as nav_stack from './nav-stack.js';
 

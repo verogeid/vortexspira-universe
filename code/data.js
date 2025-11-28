@@ -1,8 +1,6 @@
 // --- code/data.js ---
 import * as debug from './debug.js';
 
-export const IS_PRODUCTION = false;
-
 export const LOGO_OBRAS = '🚧';
 export const LOGO_CARPETA = '📁';
 export const LOGO_CURSO = '📚';
@@ -91,7 +89,7 @@ export function injectHeaderLogo() {
 
         if (h1) {
             h1.insertBefore(svgElement, h1.firstChild);
-            if (!IS_PRODUCTION) {
+            if (!debug.IS_PRODUCTION) {
                 h1.insertBefore(document.createTextNode(LOGO_OBRAS), h1.firstChild);
             }
         }
