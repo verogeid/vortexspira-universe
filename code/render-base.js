@@ -125,10 +125,9 @@ export function renderNavegacion() {
     }
 
     // ⭐️ Determinar el estado de detalle ANTES de limpiar las vistas de navegación ⭐️
-    // Usamos las referencias DOM completas ya que this.DOM.vistaDetalle se reasigna abajo
     const isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
-                            document.getElementById('vista-detalle-mobile').classList.contains('active');
-
+                           document.getElementById('vista-detalle-mobile').classList.contains('active');
+                           
     // ⭐️ Limpiar todas las vistas de Navegación + Detalle ⭐️
     desktopView.classList.remove('active');
     tabletView.classList.remove('active');
@@ -136,13 +135,25 @@ export function renderNavegacion() {
     document.getElementById('vista-detalle-desktop').classList.remove('active');
     document.getElementById('vista-detalle-mobile').classList.remove('active');
                            
-    // ⭐️ Reevaluar las referencias de DOM para el detalle (CORRECCIÓN CLAVE) ⭐️
-    // Esto asegura que this.DOM.vistaDetalle apunte al contenedor correcto después del resize
+    // ⭐️ Reevaluar las referencias de DOM para el detalle (CORRECCIÓN CLAVE 1) ⭐️
     const detailModeIsMobile = screenWidth <= data.MOBILE_MAX_WIDTH;
     this.DOM.vistaDetalle = detailModeIsMobile ? document.getElementById('vista-detalle-mobile') : document.getElementById('vista-detalle-desktop');
     this.DOM.detalleContenido = detailModeIsMobile ? document.getElementById('detalle-contenido-mobile') : document.getElementById('detalle-contenido-desktop');
 
 
+    if (isDetailActive) {
+        // ⭐️ CORRECCIÓN CLAVE 2: Forzar la re-inyección del contenido del detalle ⭐️
+        if (this.STATE.activeCourseId) {
+            // Llamamos a _mostrarDetalle. Esto reinyecta el HTML en el contenedor correcto (this.DOM.detalleContenido) y lo activa.
+            this._mostrarDetalle(this.STATE.activeCourseId); 
+            debug.log('render_base', debug.DEBUG_LEVELS.IMPORTANT, `Detalle re-renderizado para curso: ${this.STATE.activeCourseId}`);
+        } else {
+            // Si el ID se perdió, volvemos a la navegación
+            isDetailActive = false;
+            debug.logWarn('render_base', "activeCourseId perdido durante resize, volviendo a navegación.");
+        }
+    } 
+    
     if (!isDetailActive) {
         // Solo renderizamos si NO estamos en detalle (o acabamos de salir)
         this._destroyCarousel(); // Método delegado
@@ -161,26 +172,7 @@ export function renderNavegacion() {
         if (typeof this.setupTrackPointerListeners === 'function') {
             this.setupTrackPointerListeners();
         }
-    }
-    
-    // -------------------------------------------------------------
-    // ⭐️ LÓGICA DE ACTIVACIÓN DE VISTAS ⭐️
-    // -------------------------------------------------------------
 
-    if (isDetailActive) {
-        // Si estábamos en detalle, reactivamos la vista de detalle que corresponde al nuevo tamaño
-        this.DOM.vistaDetalle.classList.add('active');
-        
-        // ⭐️ CORRECCIÓN: Si estamos en detalle, ocultamos la navegación principal ⭐️
-        if(isMobile) {
-            mobileView.classList.remove('active');
-        } else if (isTablet) {
-            tabletView.classList.remove('active');
-        } else {
-            desktopView.classList.remove('active');
-        }
-
-    } else {
         // Activamos la vista de navegación
         if (isMobile) {
             mobileView.classList.add('active'); 
