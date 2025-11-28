@@ -2,10 +2,14 @@
 
 @media (max-width: 600px) {
     
-    /* 1. Scroll nativo */
+    /* 1. Scroll nativo y Header fijo (Aseguramos que el Header esté por encima de todo) */
     body {
         overflow-y: auto !important; 
         height: auto; min-height: 100vh; padding-bottom: 0;
+    }
+    
+    header { 
+        position: fixed; /* Asegura que el header permanece fijo y en capa superior */
     }
 
     /* 2. Layout fluido */
@@ -40,16 +44,16 @@
         display: none !important;
     }
     
-    /* 5. Vista de detalle full-screen */
+    /* 5. Vista de detalle full-screen (Asegura que el scroll empieza DEBAJO del header) */
     #vista-detalle-mobile {
         /* Revertimos a posición fija (full screen) cuando está activo */
         position: fixed !important; top: 0 !important; left: 0 !important; 
         width: 100% !important; height: 100vh !important;
         
-        /* ⭐️ CONTROL DE CAPAS: Z-index más alto para cubrir toda la aplicación ⭐️ */
         z-index: 1000 !important;
         
         overflow-y: auto !important; 
+        /* ⭐️ CORRECCIÓN CLAVE: Empujar el contenido debajo del header ⭐️ */
         padding-top: calc(var(--header-height) + 10px);
         padding-bottom: 10px;
         
@@ -88,7 +92,6 @@
     }
     
     ::-webkit-scrollbar { width: 4px; }
-}
 
 
 /* Layout del Track Móvil (Base para ambos tracks) */
@@ -160,4 +163,5 @@
     border-style: solid; 
     text-align: center; 
     margin-bottom: 10px; 
+}
 }
