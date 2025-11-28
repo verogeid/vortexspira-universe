@@ -8,8 +8,11 @@ import * as nav_stack from './nav-stack.js';
 
 // Importaciones de funciones de nav-base y render-base (como helpers)
 import * as nav_base from './nav-base.js';
+import * as nav_details from './nav-details.js'; 
 import * as render_base from './render-base.js';
-import * as nav_keyboard from './nav-keyboard.js';
+// ⭐️ CAMBIO: Importar los nuevos módulos de teclado ⭐️
+import * as nav_keyboard_base from './nav-keyboard.js'; 
+import * as nav_keyboard_details from './nav-keyboard-details.js'; 
 import * as nav_tactil from './nav-tactil.js';
 import * as render_swipe from './render-swipe.js';
 import * as render_mobile from './render-mobile.js';
@@ -61,6 +64,10 @@ class VortexSpiraApp {
         this.setupTouchListeners = nav_tactil.setupTouchListeners;
         this.handleSlideChangeStart = nav_tactil.handleSlideChangeStart;
         this.handleSlideChangeEnd = nav_tactil.handleSlideChangeEnd;
+        
+        // ⭐️ FUNCIONES DE DETALLE ⭐️
+        this._handleActionRowClick = nav_details._handleActionRowClick; 
+        this._mostrarDetalle = nav_details._mostrarDetalle;             
 
         this.clearConsole = debug.logClear
     }
@@ -72,7 +79,7 @@ class VortexSpiraApp {
     async init() {
         debug.logClear();
 
-        debug.log('global', debug.DEBUG_LEVELS.BASIC, "VortexSpira Universe - Versión 1.0.6");
+        debug.log('global', debug.DEBUG_LEVELS.BASIC, "VortexSpira Universe - Versión 1.0.2");
 
         debug.log('app', debug.DEBUG_LEVELS.BASIC, "App: Iniciando orquestación (POO)...");
         
@@ -110,7 +117,8 @@ class VortexSpiraApp {
 
         // Inicialización de Listeners y ResizeObserver
         nav_base.setupListeners.call(this);
-        nav_keyboard.initKeyboardControls.call(this);
+        // ⭐️ CAMBIO: Llamada al nuevo módulo base de teclado ⭐️
+        nav_keyboard_base.initKeyboardControls.call(this); 
         render_base._setupResizeObserver.call(this); 
         
         this.STATE.initialRenderComplete = true; 
@@ -143,12 +151,12 @@ class VortexSpiraApp {
     }
     
     _mostrarDetalle(cursoId) { 
-        nav_base._mostrarDetalle.call(this, cursoId); 
+        this._mostrarDetalle.call(this, cursoId); 
         this.STATE.activeCourseId = cursoId; // ⭐️ GUARDAR ID del curso activo ⭐️
     }
     
     _handleActionRowClick(e) {
-        nav_base._handleActionRowClick.call(this, e);
+        this._handleActionRowClick.call(this, e);
     }
 
     // I18N
