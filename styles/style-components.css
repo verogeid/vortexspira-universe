@@ -4,27 +4,37 @@
     background: transparent; padding: 1.5rem; border-radius: 12px;
     display: none; flex-direction: column; justify-content: center;
     box-sizing: border-box; overflow: hidden; min-width: 0; 
-    height: calc( (100% - (2 * var(--card-gap))) / 3 ); min-height: 0;
+    /* ⭐️ CORRECCIÓN: Usar la variable unificada de altura (con fallback para Desktop) ⭐️ */
+    height: var(--card-height-calc, calc( (100% - (2 * var(--card-gap))) / 3 )); min-height: 0;
 }
 #card-nivel-actual.visible { display: flex; }
 #card-nivel-actual h3 {
-    margin: 0; font-size: 1.5rem; color: var(--color-text); opacity: 0.7;
-    overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2; line-clamp: 2; line-height: 1.3; max-height: calc(1.5rem * 1.3 * 2); 
+    margin: 0; font-size: 1.5rem; 
+    color: var(--color-text); opacity: 0.7;
+    overflow: hidden; display: -webkit-box; 
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2; line-clamp: 2; 
+    line-height: 1.3; max-height: calc(1.5rem * 1.3 * 2); 
     white-space: normal; text-overflow: ellipsis; 
 }
 
 #card-volver-fija-elemento {
-    flex: 0 0 auto; padding: 1.5rem; border-radius: 12px;
+    flex: 0 0 auto; padding: 1.5rem; 
     display: none; flex-direction: column; justify-content: center; align-items: center; 
     margin-bottom: 0; overflow: hidden; box-sizing: border-box; 
-    transition: all 0.2s ease; color: var(--color-text); 
-    border: 2px solid var(--color-card-border); background: var(--color-card-bg); 
+    transition: all 0.2s ease; 
+    color: var(--color-text); background: var(--color-card-bg);
+    border: 2px solid var(--color-card-border); border-radius: 12px;
     cursor: pointer;
-    height: calc( (100% - (2 * var(--card-gap))) / 3 ); min-height: 0;
+    /* ⭐️ CORRECCIÓN: Usar la variable unificada de altura (con fallback para Desktop) ⭐️ */
+    height: var(--card-height-calc, calc( (100% - (2 * var(--card-gap))) / 3 )); min-height: 0;
 }
 #card-volver-fija-elemento.visible { display: flex !important; }
-#card-volver-fija-elemento h3 { margin: 0; font-size: 1.5rem; font-weight: bold; text-align: center; display: block; }
+#card-volver-fija-elemento h3 { 
+    margin: 0; 
+    font-size: 1.5rem; font-weight: bold; text-align: center; 
+    display: block; 
+}
 
 #card-volver-fija-elemento.focus-visible,
 #card-volver-fija-elemento:hover,
@@ -48,19 +58,38 @@
 
 
 #info-adicional details { margin-bottom: 1.2rem; }
-#info-adicional summary { font-size: 1.2rem; font-weight: bold; cursor: pointer; list-style: none; padding: 0.2rem; color: var(--color-text); opacity: 0.9; transition: color 0.2s ease; }
-#info-adicional summary:hover { opacity: 1; color: var(--color-primary); }
+#info-adicional summary { 
+    font-size: 1.2rem; font-weight: bold; 
+    cursor: pointer; 
+    list-style: none; 
+    padding: 0.2rem; 
+    color: var(--color-text); 
+    opacity: 0.9; transition: color 0.2s ease; 
+}
+#info-adicional summary:hover { 
+    opacity: 1; 
+    color: var(--color-primary); 
+}
 #info-adicional summary::-webkit-details-marker { display: none; }
-#info-adicional summary::before { content: '▶'; font-size: 0.8em; margin-right: 8px; display: inline-block; transition: transform 0.2s ease; }
+#info-adicional summary::before { 
+    content: '▶'; font-size: 0.8em; margin-right: 8px; 
+    display: inline-block; transition: transform 0.2s ease; 
+}
 #info-adicional details[open] > summary::before { transform: rotate(90deg); }
-#info-adicional details > small { display: block; padding: 0.5rem 0.5rem 0.5rem 1.5rem; color: var(--color-text-muted); font-size: 0.9rem; line-height: 1.5; }
+#info-adicional details > small { 
+    display: block; padding: 0.5rem 0.5rem 0.5rem 1.5rem; 
+    color: var(--color-text-muted); 
+    font-size: 0.9rem; 
+    line-height: 1.5; 
+}
 #info-adicional-lista-acerca { list-style-type: none; padding-left: 0; }
 #info-adicional-lista-ayuda { list-style-type: disc; padding-left: 15px; }
 
 #info-adicional-lista-acerca a { 
     display: flex; align-items: center; text-decoration: none; 
     color: var(--color-text); /* Color base */
-    opacity: 0.8; transition: all 0.2s ease; font-size: 0.95rem; 
+    opacity: 0.8; transition: all 0.2s ease; 
+    font-size: 0.95rem; 
 }
 
 #info-adicional-lista-acerca a:hover { 
@@ -76,21 +105,28 @@
     transform: translateX(3px); 
 }
 
-#info-adicional-lista-acerca a::before { width: 20px; height: 20px; margin-right: 10px; flex-shrink: 0; background-color: var(--color-text); }
+#info-adicional-lista-acerca a::before { 
+    width: 20px; height: 20px; margin-right: 10px; 
+    flex-shrink: 0; 
+    background-color: var(--color-text); 
+}
 #info-adicional-lista-acerca a:hover::before, #info-adicional-lista-acerca a:focus-visible::before { background-color: var(--color-primary); }
 
 .toast {
-  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  background-color: var(--color-toast-bg); color: var(--color-toast-text);
-  padding: 1rem 2rem; border-radius: 12px; border: 2px solid var(--color-card-border);
-  box-shadow: 0 5px 25px var(--color-shadow-modal);
-  z-index: 9999; text-align: center; max-width: 80%;
-  opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s ease;
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background-color: var(--color-toast-bg); color: var(--color-toast-text);
+    padding: 1rem 2rem; border-radius: 12px; border: 2px solid var(--color-card-border);
+    box-shadow: 0 5px 25px var(--color-shadow-modal);
+    z-index: 9999; text-align: center; max-width: 80%;
+    opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 .toast.active { opacity: 1; visibility: visible; }
 
 @media (prefers-reduced-motion: reduce) {
     #card-volver-fija-elemento { transition: none !important; }
-    #card-volver-fija-elemento:hover, #card-volver-fija-elemento:focus-visible { transform: none; box-shadow: none; }
+    #card-volver-fija-elemento:hover, 
+    #card-volver-fija-elemento:focus-visible { 
+        transform: none; 
+        box-shadow: none; }
     .toast { transition: none; }
 }
