@@ -11,7 +11,7 @@ import * as nav_base from './nav-base.js';
 import * as nav_details from './nav-details.js'; 
 import * as render_base from './render-base.js';
 // ⭐️ CAMBIO: Importar los nuevos módulos de teclado ⭐️
-import * as nav_keyboard_base from './nav-keyboard.js'; 
+import * as nav_keyboard_base from './nav-keyboard-base.js'; 
 import * as nav_keyboard_details from './nav-keyboard-details.js'; 
 import * as nav_tactil from './nav-tactil.js';
 import * as render_swipe from './render-swipe.js';
@@ -65,7 +65,7 @@ class VortexSpiraApp {
         this.handleSlideChangeStart = nav_tactil.handleSlideChangeStart;
         this.handleSlideChangeEnd = nav_tactil.handleSlideChangeEnd;
         
-        // ⭐️ FUNCIONES DE DETALLE ⭐️
+        // ⭐️ FUNCIONES DE DETALLE (Delegadas a nav-details) ⭐️
         this._handleActionRowClick = nav_details._handleActionRowClick; 
         this._mostrarDetalle = nav_details._mostrarDetalle;             
 
@@ -79,7 +79,7 @@ class VortexSpiraApp {
     async init() {
         debug.logClear();
 
-        debug.log('global', debug.DEBUG_LEVELS.BASIC, "VortexSpira Universe - Versión 1.0.2");
+        debug.log('global', debug.DEBUG_LEVELS.BASIC, "VortexSpira Universe - Versión 1.0.7");
 
         debug.log('app', debug.DEBUG_LEVELS.BASIC, "App: Iniciando orquestación (POO)...");
         
