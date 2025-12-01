@@ -32,8 +32,9 @@ export const SVG_TRIANGLE = `<svg class="triangulo-svg" viewBox="0 0 100 86.6">
                 <feDropShadow 
                     dx="0" dy="0"                /* Desplazamiento x e y de la sombra */
                     stdDeviation="4"             /* Difuminado de la sombra */
-                    flood-color="var(--shadow-color, #eee)" /* Color de la sombra, usa variable CSS */
-                    flood-opacity="0.5"          /* Opacidad de la sombra */
+                    /* ⭐️ CORRECCIÓN: Usar variables CSS para el color y la opacidad ⭐️ */
+                    flood-color="var(--shadow-color-hex, #eee)" 
+                    flood-opacity="var(--shadow-opacity, 0.8)"          /* Opacidad de la sombra */
                 />
             </filter>
         </defs>

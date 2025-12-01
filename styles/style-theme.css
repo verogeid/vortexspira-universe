@@ -23,6 +23,10 @@
     --color-toast-bg: #222;
     --color-toast-text: #fff;
 
+    /* ⭐️ Variables añadidas para el control dinámico del filtro SVG ⭐️ */
+    --shadow-color-hex: #969696; /* Color puro de la sombra Ghost (gris por defecto) */
+    --shadow-opacity: 0.8;       /* Opacidad base de la sombra Ghost */
+
     --header-height: 9vh;
     --footer-height: 6vh;
     --card-gap: 3vh; 
@@ -48,5 +52,8 @@
         --color-shadow-modal: rgba(0, 0, 0, 0.7); 
         --color-toast-bg: #222;
         --color-toast-text: #fff;
+
+        /* ⭐️ Variables añadidas para el control dinámico del filtro SVG (Dark Mode) ⭐️ */
+        --shadow-color-hex: #888888;
     }
 }

@@ -158,7 +158,8 @@
     
     text-decoration: none; cursor: pointer;
     transition: all 0.2s ease; flex-shrink: 0; 
-    position: relative; /* CLAVE para el posicionamiento del SVG */
+    position: relative; 
+    overflow: hidden; 
 }
 
 /* ⭐️ REQUISITO 3: Estado HOVER / FOCUS (Enabled) -> AZUL ⭐️ */
@@ -175,9 +176,10 @@
 /* ----------------------------------------------------- */
 
 .detail-action-btn.disabled {
-    /* ⭐️ Variables CSS para controlar el color del stroke (currentColor) y la sombra (var(--shadow-color)) ⭐️ */
-    --shadow-color: var(--color-card-border-disabled); /* Gris oscuro para la sombra base */
-    color: var(--color-text-muted); /* Color para el stroke del SVG y el emoji 🚫 */
+    /* ⭐️ VARIABLES para el SVG ⭐️ */
+    color: var(--color-text-muted); 
+    --shadow-color-hex: var(--color-card-border-disabled); /* Gris claro */
+    --shadow-opacity: 0.8; /* Sombra visible */
     
     border: none; /* Quitamos el borde redondo original */
     background: transparent;
@@ -186,48 +188,69 @@
     /* ⭐️ TAMAÑO Y FORMA TRIANGULAR (ANULAMOS EL REDONDO) ⭐️ */
     width: 44px; 
     height: 44px;
-    border-radius: 0; /* Anulamos el 50% */
+    border-radius: 0; 
     
-    /* Aseguramos que los iconos originales no se muestren */
-    .action-icon { display: none; }
+    transform: none; /* Inicializar el transform para el zoom */
+    transition: all 0.2s ease; 
+    pointer-events: auto; 
 }
 
-/* ⭐️ ESTILOS DEL TRIÁNGULO SVG (Inyectado en el HTML) ⭐️ */
+/* Ocultamos el icono original (ej. <i>) o emoji (ej. 🛒) en el botón disabled si no están en el wrapper */
+.detail-action-btn.disabled > i,
+.detail-action-btn.disabled > span:not(.icon-wrapper) {
+    display: none;
+}
+/* Aseguramos que el SVG se muestre */
 .detail-action-btn.disabled .triangulo-svg {
+    display: block;
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0; left: 0;
     z-index: 1;
-    /* ⭐️ ROTAR PARA MIRAR HACIA ABAJO (Triángulo invertido) ⭐️ */
     transform: rotate(180deg); 
     transform-origin: center center;
 }
-/* El color del trazo del SVG (stroke) se controla por 'color' del botón (currentColor) */
 
 
-/* ⭐️ ESTILOS DEL EMOJI 🚫 (Se comporta como texto) ⭐️ */
-.detail-action-btn.disabled .action-icon-emoji {
+/* ⭐️ AJUSTE DEL ICONO ORIGINAL DENTRO DEL TRIÁNGULO (Wrapper) ⭐️ */
+.detail-action-btn.disabled .icon-wrapper {
     position: relative;
     z-index: 2; /* Siempre encima del SVG */
-    font-size: 1.4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
     color: inherit; /* Hereda el color del botón (var(--color-text-muted)) */
+}
+
+/* Ajuste para el emoji/texto dentro del wrapper */
+.detail-action-btn.disabled .icon-wrapper > span {
+    font-size: 1.4rem; /* Ajuste para que el emoji sea visible */
     line-height: 1;
 }
 
-/* ⭐️ REQUISITO 2: Estado FOCUS en DISABLED -> Cambiar colores (Gris/Blanco) ⭐️ */
-.detail-action-btn.disabled:focus-visible {
-    outline: none;
-    transform: scale(1.03);
-    
-    /* ⭐️ CAMBIO DE COLOR DEL EMOJI/BORDE SVG ⭐️ */
-    /* El color del SVG (stroke) y el emoji (color) se vuelven el color principal del texto */
-    color: var(--color-text); 
+/* Aseguramos que el SVG de máscara dentro del wrapper tome el color correcto */
+.detail-action-btn.disabled .icon-wrapper .action-icon {
+    background-color: currentColor; 
+}
 
-    /* ⭐️ CAMBIO DE COLOR DE LA SOMBRA (Usando la sombra deshabilitada existente) ⭐️ */
-    --shadow-color: var(--color-shadow-disabled); /* El color del filtro SVG cambia a la sombra de foco gris */
+
+/* ⭐️ REQUISITO 2: Estado FOCUS y HOVER en DISABLED -> Cambiar colores y ZOOM ⭐️ */
+.detail-action-btn.disabled:focus-visible,
+.detail-action-btn.disabled:hover {
+    outline: none;
     
-    /* La sombra box-shadow se deja para el estado ENABLED, el DISABLED usa el filtro SVG */
+    /* ⭐️ RESTAURAR EL ZOOM ⭐️ */
+    transform: scale(1.03); 
+    
+    /* ⭐️ CAMBIO DE COLOR DEL BORDE SVG (Ghost Blanco/Gris) ⭐️ */
+    color: var(--color-text); /* Borde y icono a Gris/Blanco (var(--color-text)) */
+
+    /* ⭐️ CAMBIO DE COLOR DE LA SOMBRA (Usando la sombra de foco Ghost) ⭐️ */
+    --shadow-color-hex: var(--color-card-border); /* Color del borde de tarjeta (gris/blanco) */
+    --shadow-opacity: 1; /* Opacidad al 100% */
 }
 
 
