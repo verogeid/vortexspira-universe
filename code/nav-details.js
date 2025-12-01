@@ -92,9 +92,10 @@ export function _mostrarDetalle(cursoId) {
 
     const getIconHtml = (text) => {
         const lower = text.toLowerCase();
-        if (lower.includes('adquirir') || lower.includes('comprar')) { return '🛒&#xFE0E;'; }
+        if (lower.includes('adquirir') || lower.includes('comprar')) { return '<i class="action-icon icon-buy"></i>'; } // Icono de compra
         let iconClass = 'icon-link'; 
         if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa')) { iconClass = 'icon-download'; }
+        // Se mantiene el icono link para los que no son de compra/descarga
         return `<i class="action-icon ${iconClass}"></i>`; 
     };
 
@@ -108,11 +109,16 @@ export function _mostrarDetalle(cursoId) {
             const classDisabledBtn = isDisabled ? 'disabled' : '';
             const classDisabledText = ''; 
             
-            const tabIndexContainer = '-1'; // ⭐️ REMOVIDO: El contenedor ya no es objetivo de tabulación ⭐️
-            const tabIndexButton = '0';   // ⭐️ RESTAURADO: El botón es el objetivo principal ⭐️
+            const tabIndexContainer = '-1'; 
+            const tabIndexButton = isDisabled ? '-1' : '0'; // ⭐️ DESHABILITAR TABULACIÓN SI NO TIENE ACCIÓN ⭐️
             const targetAttr = isDisabled ? '' : 'target="_blank"';
             
             const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
+
+            // ⭐️ LÓGICA DE INYECCIÓN DEL TRIÁNGULO Y EL EMOJI 🚫 ⭐️
+            const contentHtml = isDisabled ? 
+                `${data.SVG_TRIANGLE}<span class="action-icon-emoji">🚫</span>` : 
+                iconHtml;
 
             return `
               <div class="detail-action-item" onclick="App._handleActionRowClick(event)" style="cursor: pointer;" tabindex="${tabIndexContainer}" role="listitem">
@@ -123,7 +129,7 @@ export function _mostrarDetalle(cursoId) {
                      tabindex="${tabIndexButton}" 
                      ${onclickAttr}
                      aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
-                     ${iconHtml}
+                     ${contentHtml}
                   </a>
               </div>`;
         }).join('');
