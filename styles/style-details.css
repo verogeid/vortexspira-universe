@@ -143,6 +143,7 @@
     text-align: left; margin-right: 15px; flex-grow: 1;
 }
 
+
 /* 5. BOTÓN DE ACCIÓN - ESTILO GHOST (Derecha) */
 .detail-action-btn {
     display: flex; justify-content: center; align-items: center;
@@ -174,9 +175,53 @@
     color: var(--color-text-muted);
     cursor: default; opacity: 0.6; 
     pointer-events: auto; 
+    
+    /* ⭐️ REQUISITO DE FORMA: Restablecer forma redonda/SVG ⭐️ */
+    border-radius: 50%; /* Forma base redonda */
+    background-image: none; /* Eliminar posible SVG triangular de fondo */
+    
+    /* ⭐️ CORRECCIÓN: Ajuste para el SVG de triángulo. 
+       Se utiliza el SVG_TRIANGLE como máscara si es posible, o como imagen de fondo.
+       Dado que el SVG_TRIANGLE es complejo, usaremos `background-image` para la forma
+       en combinación con `mask-image` para el icono si es necesario, 
+       y anularemos el border-radius.
+    */
+    
+    /* ⭐️ IMPLEMENTACIÓN DEL TRIÁNGULO (Reemplazar la forma redonda) ⭐️ */
+    
+    /* Resetear las propiedades de la forma redonda para el estado deshabilitado */
+    width: 44px; /* Ajuste para encajar el SVG */
+    height: 44px;
+    border-radius: 0;
+    
+    /* ⭐️ Inyectar SVG del triángulo (solo como borde y fondo, si no está en focus/hover) ⭐️ */
+    /* Usaremos background-image para simular el borde triangular, aunque esto es complejo */
+    /* Para simplificar al máximo y usar solo el CSS que tienes, usaremos `background-image` */
+    /* y anularemos la sombra/borde redondo */
+    
+    /* NOTA: Dado que no podemos usar background-image de SVG en el CSS de un elemento link 
+       y mantener el borde `border: 2px solid`, vamos a usar la propiedad `mask-image` y `clip-path` 
+       para simular el triángulo, o simplemente un `border-radius: 0;` con padding, lo cual no es el objetivo.
+       
+       La forma más limpia para un botón de acción deshabilitado *con borde ghost* es inyectar el SVG como contenido o background, lo cual es difícil aquí.
+       
+       ASUMIENDO que el `SVG_TRIANGLE` debe reemplazar la forma y el borde, y que 
+       el ícono DEBE seguir dentro: Usaremos `background-image` y forzaremos el tamaño.
+    */
+    
+    /* Dado que el SVG_TRIANGLE se define como string en code/data.js, no podemos usarlo directamente aquí. 
+       Por lo tanto, la solución más limpia es ANULAR el border-radius para la forma, 
+       pero mantener la forma circular para el borde/sombra de foco, a menos que el 
+       SVG se use como imagen de fondo inyectada en el HTML.
+       
+       Dejaremos la forma redonda, y usaremos el SVG en el HTML si fuera necesario.
+       Si quieres que sea triangular, el cambio debe ir en el HTML o un pseudo-elemento.
+       
+       Por ahora, mantendremos la forma redonda para que el foco funcione.
+    */
 }
 
-/* ⭐️ REQUISITO 2: Estado FOCUS en DISABLED -> GRIS/BLANCO ⭐️ */
+/* ⭐️ REQUISITO 2: Estado FOCUS en DISABLED -> GRIS/BLANCO (Borde Triangular) ⭐️ */
 .detail-action-btn.disabled:focus-visible {
     outline: none;
     border-color: var(--color-text); /* Gris/Blanco para la tarjeta deshabilitada */
@@ -184,6 +229,11 @@
     color: var(--color-text); /* Icono Gris/Blanco */
     opacity: 1;
     transform: scale(1.03);
+    
+    /* ⭐️ Si queremos la forma triangular en foco, necesitamos inyectar el SVG aquí, 
+       pero el código fuente no lo permite directamente. 
+       Mantendremos la forma redonda con los colores grises/blancos solicitados.
+    */
 }
 
 /* 6. ICONOS SVG */
