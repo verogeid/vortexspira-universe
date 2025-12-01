@@ -195,7 +195,7 @@
     pointer-events: auto; 
 }
 
-/* Ocultamos el icono original (ej. <i>) o emoji (ej. 🛒) en el botón disabled si no están en el wrapper */
+/* Ocultamos el icono original (ej. <i> o emoji) en el botón disabled si no están en el wrapper */
 .detail-action-btn.disabled > i,
 .detail-action-btn.disabled > span:not(.icon-wrapper) {
     display: none;
@@ -231,26 +231,34 @@
     line-height: 1;
 }
 
-/* Aseguramos que el SVG de máscara dentro del wrapper tome el color correcto */
+/* Aseguramos que el SVG de máscara o el emoji dentro del wrapper tome el color correcto */
 .detail-action-btn.disabled .icon-wrapper .action-icon {
     background-color: currentColor; 
 }
 
 
-/* ⭐️ REQUISITO 2: Estado FOCUS y HOVER en DISABLED -> Cambiar colores y ZOOM ⭐️ */
-.detail-action-btn.disabled:focus-visible,
+/* ⭐️ REQUISITO 2: Estado FOCUS y HOVER en DISABLED -> Separación de efectos ⭐️ */
+.detail-action-btn.disabled:focus-visible {
+    outline: none;
+    
+    /* ZOOM y SOMBRA DE FOCO */
+    transform: scale(1.03); 
+    --shadow-color-hex: var(--color-card-border); /* Gris/Blanco para la sombra de FOCO */
+    --shadow-opacity: 1; 
+
+    /* COLOR: Cambia el borde y el icono al color de texto normal */
+    color: var(--color-text); 
+}
+
 .detail-action-btn.disabled:hover {
     outline: none;
     
-    /* ⭐️ RESTAURAR EL ZOOM ⭐️ */
+    /* ⭐️ ZOOM (Sin cambiar color) ⭐️ */
     transform: scale(1.03); 
-    
-    /* ⭐️ CAMBIO DE COLOR DEL BORDE SVG (Ghost Blanco/Gris) ⭐️ */
-    color: var(--color-text); /* Borde y icono a Gris/Blanco (var(--color-text)) */
 
-    /* ⭐️ CAMBIO DE COLOR DE LA SOMBRA (Usando la sombra de foco Ghost) ⭐️ */
-    --shadow-color-hex: var(--color-card-border); /* Color del borde de tarjeta (gris/blanco) */
-    --shadow-opacity: 1; /* Opacidad al 100% */
+    /* Sombra sutil para HOVER (Gris más suave) */
+    --shadow-color-hex: var(--color-card-border-disabled); 
+    --shadow-opacity: 0.5; 
 }
 
 
@@ -262,8 +270,13 @@
     -webkit-mask-position: center; mask-position: center;
     -webkit-mask-size: contain; mask-size: contain;
 }
+/* Flecha de Descarga (PWA) */
 .icon-download { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="20" y2="21"></line><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="20" y2="21"></line><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>'); }
+/* Enlace externo */
 .icon-link { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>'); }
+/* Carrito de compra (aunque se usa emoji, esta es la definición de máscara) */
+.icon-buy { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 19.5c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5zm3.5-1.5c.829 0 1.5.671 1.5 1.5s-.671 1.5-1.5 1.5-1.5-.671-1.5-1.5c0-.828.671-1.5 1.5-1.5zm6.304-14.773l-3.23 10.428c-.271.867-1.127 1.488-2.079 1.488h-6.273c-.952 0-1.808-.621-2.079-1.488l-3.23-10.428h17.104zm-19.304-2.227l3.655 11.834c.061.197.168.375.297.534.129.158.283.298.455.409.172.112.358.199.553.256.195.058.397.089.601.089h6.273c.204 0 .406-.031.601-.089.195-.057.381-.144.553-.256.172-.111.326-.251.455-.409.129-.159.236-.337.297-.534l3.655-11.834h2.721v-2h-17.581v2h2.711z"/></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 19.5c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5zm3.5-1.5c.829 0 1.5.671 1.5 1.5s-.671 1.5-1.5 1.5-1.5-.671-1.5-1.5c0-.828.671-1.5 1.5-1.5zm6.304-14.773l-3.23 10.428c-.271.867-1.127 1.488-2.079 1.488h-6.273c-.952 0-1.808-.621-2.079-1.488l-3.23-10.428h17.104zm-19.304-2.227l3.655 11.834c.061.197.168.375.297.534.129.158.283.298.455.409.172.112.358.199.553.256.195.058.397.089.601.089h6.273c.204 0 .406-.031.601-.089.195-.057.381-.144.553-.256.172-.111.326-.251.455-.409.129-.159.236-.337.297-.534l3.655-11.834h2.721v-2h-17.581v2h2.711z"/></svg>'); }
+
 
 /* 7. Estilo Específico Botón Volver Móvil (Píldora) */
 button.detail-action-btn {
