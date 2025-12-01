@@ -1,4 +1,4 @@
-// --- code/nav-keyboard.js ---
+// --- code/nav-keyboard-base.js ---
 
 import * as debug from './debug.js';
 import * as data from './data.js';

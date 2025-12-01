@@ -108,18 +108,19 @@ export function _mostrarDetalle(cursoId) {
             const classDisabledBtn = isDisabled ? 'disabled' : '';
             const classDisabledText = ''; 
             
-            const tabIndex = '0'; 
+            const tabIndexContainer = '0'; // ⭐️ Habilitar foco en el contenedor ⭐️
+            const tabIndexButton = '-1';   // ⭐️ Deshabilitar tabulación normal en el botón ⭐️
             const targetAttr = isDisabled ? '' : 'target="_blank"';
             
             const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
 
             return `
-              <div class="detail-action-item" onclick="App._handleActionRowClick(event)" style="cursor: pointer;">
+              <div class="detail-action-item" onclick="App._handleActionRowClick(event)" style="cursor: pointer;" tabindex="${tabIndexContainer}" role="listitem">
                   <span class="detail-action-text ${classDisabledText}">${enlace.texto}</span>
                   <a ${hrefAttr} 
                      class="detail-action-btn ${classDisabledBtn}" 
                      ${targetAttr} 
-                     tabindex="${tabIndex}" 
+                     tabindex="${tabIndexButton}" 
                      ${onclickAttr}
                      aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
                      ${iconHtml}
@@ -222,7 +223,7 @@ export function _mostrarDetalle(cursoId) {
         this.DOM.infoAdicional.classList.remove('visible');
         this.DOM.cardVolverFija.classList.remove('visible');
         
-        const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn, .detail-text-fragment');
+        const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-item, .detail-text-fragment');
         if (firstInteractive) {
              firstInteractive.focus();
              _updateDetailFocusState.call(this, firstInteractive); 

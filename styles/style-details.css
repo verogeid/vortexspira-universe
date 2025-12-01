@@ -39,7 +39,7 @@
     /* ⭐️ BASE BLUR/OPACITY (Nivel de desenfoque MÁXIMO por defecto) ⭐️ */
     filter: blur(2px) grayscale(50%); 
     opacity: 0.4; 
-    pointer-events: auto;
+    pointer-events: auto; /* Permitir interacción táctil/clic */
 }
 
 /* ⭐️ FOCO: Asegurar nitidez al recibir foco (teclado/clic) ⭐️ */
@@ -90,7 +90,7 @@
     transition: filter 0.5s ease, opacity 0.5s ease;
     filter: blur(2px) grayscale(50%);
     opacity: 0.4;
-    pointer-events: none;
+    pointer-events: auto; /* ⭐️ CORRECCIÓN CLAVE: Permitir focus/click en el contenedor ⭐️ */
 }
 /* Re-habilitar clic en el botón solo si el contenedor tiene el foco actual */
 .detail-action-item.focus-current .detail-action-btn {
@@ -172,7 +172,8 @@
 .detail-action-btn.disabled {
     border-color: var(--color-card-border-disabled);
     color: var(--color-text-muted);
-    cursor: default; opacity: 0.6; pointer-events: none;
+    cursor: default; opacity: 0.6; 
+    pointer-events: auto; /* ⭐️ CORRECCIÓN CLAVE: Permitir foco en el botón ⭐️ */
 }
 
 /* Estado FOCUS en DISABLED (Legible, sin azul) */
