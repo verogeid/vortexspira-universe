@@ -90,7 +90,7 @@
     transition: filter 0.5s ease, opacity 0.5s ease;
     filter: blur(2px) grayscale(50%);
     opacity: 0.4;
-    pointer-events: auto; 
+    pointer-events: auto; /* Permitir foco y click */
 }
 /* Re-habilitar clic en el botón solo si el contenedor tiene el foco actual */
 .detail-action-item.focus-current .detail-action-btn {
@@ -139,23 +139,9 @@
 /* Texto de la acción (Izquierda) */
 .detail-action-text {
     font-size: 1rem; font-weight: 500; 
-    color: var(--color-text); /* Base color */
+    color: var(--color-text); /* ⭐️ FIJO: Nunca cambia de color ⭐️ */
     text-align: left; margin-right: 15px; flex-grow: 1;
-    transition: color 0.2s ease; /* Transición para el cambio de color */
 }
-
-/* ⭐️ REQUISITO 4: CAMBIO DE COLOR DE TEXTO (SOLO EN FOCUS) ⭐️ */
-
-/* Enabled State (Blue Text) - Aplica SOLO en foco */
-.detail-action-item:not(:has(.disabled)).focus-current .detail-action-text {
-    color: var(--color-primary); 
-}
-
-/* Disabled State (Gray Text) - Aplica SOLO en foco */
-.detail-action-item:has(.disabled).focus-current .detail-action-text {
-    color: var(--color-text); 
-}
-
 
 /* 5. BOTÓN DE ACCIÓN - ESTILO GHOST (Derecha) */
 .detail-action-btn {

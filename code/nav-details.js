@@ -108,8 +108,8 @@ export function _mostrarDetalle(cursoId) {
             const classDisabledBtn = isDisabled ? 'disabled' : '';
             const classDisabledText = ''; 
             
-            const tabIndexContainer = '0'; // ⭐️ Habilitar foco en el contenedor ⭐️
-            const tabIndexButton = '-1';   // ⭐️ Deshabilitar tabulación normal en el botón ⭐️
+            const tabIndexContainer = '-1'; // ⭐️ REMOVIDO: El contenedor ya no es objetivo de tabulación ⭐️
+            const tabIndexButton = '0';   // ⭐️ RESTAURADO: El botón es el objetivo principal ⭐️
             const targetAttr = isDisabled ? '' : 'target="_blank"';
             
             const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
@@ -223,7 +223,7 @@ export function _mostrarDetalle(cursoId) {
         this.DOM.infoAdicional.classList.remove('visible');
         this.DOM.cardVolverFija.classList.remove('visible');
         
-        const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-item, .detail-text-fragment');
+        const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn, .detail-text-fragment');
         if (firstInteractive) {
              firstInteractive.focus();
              _updateDetailFocusState.call(this, firstInteractive); 
@@ -241,16 +241,15 @@ export function _mostrarDetalle(cursoId) {
  */
 export function _getFocusableDetailElements() {
     // 'this' es la instancia de App
-    // ⭐️ Incluir los fragmentos de texto y las filas de acción (que contienen el botón) ⭐️
-    const detailElements = Array.from(this.DOM.detalleContenido.querySelectorAll('.detail-text-fragment, .detail-action-item'));
+    // ⭐️ CORRECCIÓN: Obtener elementos secuenciales que son focales (Fragmento de texto O Botón) ⭐️
+    const detailElements = Array.from(this.DOM.detalleContenido.querySelectorAll('.detail-text-fragment, .detail-action-btn'));
     let elements = [];
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
     
     if (!isMobile && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
         elements.push(this.DOM.cardVolverFijaElemento);
     } 
-    // Usamos .detail-action-item para la navegación secuencial con flechas, 
-    // y .detail-text-fragment.
+    // Usamos .detail-action-btn para la navegación secuencial, ya que tiene tabindex=0.
     elements.push(...detailElements);
     return elements;
 };
@@ -260,10 +259,9 @@ export function _handleActionRowClick(e) {
     // 'this' es la instancia de App
     debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Clic en fila de acción (Detalle) detectado.');
     
-    if (!e.target.closest('.detail-action-btn')) {
-        const btn = e.currentTarget.querySelector('.detail-action-btn');
-        if (btn) {
-            btn.focus(); 
-        }
+    // Apuntamos al botón de acción, ya que ahora es el foco objetivo.
+    const btn = e.currentTarget.querySelector('.detail-action-btn');
+    if (btn) {
+        btn.focus(); 
     }
 };
