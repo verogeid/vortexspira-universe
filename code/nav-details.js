@@ -121,17 +121,17 @@ export function _mostrarDetalle(cursoId) {
                 iconHtml;
 
             return `
-              <div class="detail-action-item" onclick="App._handleActionRowClick(event)" style="cursor: pointer;" tabindex="${tabIndexContainer}" role="listitem">
-                  <span class="detail-action-text ${classDisabledText}">${enlace.texto}</span>
-                  <a ${hrefAttr} 
-                     class="detail-action-btn ${classDisabledBtn}" 
-                     ${targetAttr} 
-                     tabindex="${tabIndexButton}" 
-                     ${onclickAttr}
-                     aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
-                     ${contentHtml}
-                  </a>
-              </div>`;
+                <div class="detail-action-item" onclick="App._handleActionRowClick(event)" style="cursor: pointer;" tabindex="${tabIndexContainer}" role="listitem">
+                    <span class="detail-action-text ${classDisabledText}">${enlace.texto}</span>
+                    <a ${hrefAttr} 
+                        class="detail-action-btn ${classDisabledBtn}" 
+                        ${targetAttr} 
+                        tabindex="${tabIndexButton}" 
+                        ${onclickAttr}
+                        aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
+                        ${contentHtml}
+                    </a>
+                </div>`;
         }).join('');
         enlacesHtml = `<div class="detail-actions-list">${itemsHtml}</div>`;
     }
@@ -140,15 +140,15 @@ export function _mostrarDetalle(cursoId) {
     
     if (isMobile) {
         mobileBackHtml = `
-          <div class="mobile-back-header">
-              <article class="card card-volver-vertical" 
-                       role="button" 
-                       tabindex="0" 
-                       onclick="App._handleVolverClick()"
-                       aria-label="Volver">
-                  <h3>${data.LOGO_VOLVER} Volver</h3>
-              </article>
-          </div>
+            <div class="mobile-back-header">
+                <article class="card card-volver-vertical" 
+                        role="button" 
+                        tabindex="0" 
+                        onclick="App._handleVolverClick()"
+                        aria-label="Volver">
+                    <h3>${data.LOGO_VOLVER} Volver</h3>
+                </article>
+            </div>
         `;
     }
     
@@ -178,18 +178,18 @@ export function _mostrarDetalle(cursoId) {
     const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
 
     this.DOM.detalleContenido.innerHTML = `
-      ${mobileBackHtml}
-      <div id="detalle-bloque-texto" tabindex="-1"> 
-        ${titleHtml}
-        
-        <div id="detalle-contenido-fragmentado"> 
-            ${textFragmentsHtml}
-        </div>
+        ${mobileBackHtml}
+        <div id="detalle-bloque-texto" tabindex="-1"> 
+            ${titleHtml}
+            
+            <div id="detalle-contenido-fragmentado"> 
+                ${textFragmentsHtml}
+            </div>
 
-      </div>
-      <div id="detalle-bloque-acciones">
-        ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
-      </div>
+        </div>
+        <div id="detalle-bloque-acciones">
+            ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
+        </div>
     `;
 
     // ⭐️ Activación de la vista ⭐️
@@ -207,8 +207,8 @@ export function _mostrarDetalle(cursoId) {
     if (!isMobile) { 
         // DESKTOP/TABLET
         if (this.DOM.cardNivelActual) {
-           this.DOM.cardNivelActual.innerHTML = `<h3>${curso.titulo || 'Curso'}</h3>`;
-           this.DOM.cardNivelActual.classList.add('visible'); 
+            this.DOM.cardNivelActual.innerHTML = `<h3>${curso.titulo || 'Curso'}</h3>`;
+            this.DOM.cardNivelActual.classList.add('visible'); 
         }
         
         this.DOM.cardVolverFija.classList.add('visible'); 
@@ -231,9 +231,9 @@ export function _mostrarDetalle(cursoId) {
         
         const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn, .detail-text-fragment');
         if (firstInteractive) {
-             firstInteractive.focus();
-             _updateDetailFocusState.call(this, firstInteractive); 
-             primerElementoFocuseable = firstInteractive;
+            firstInteractive.focus();
+            _updateDetailFocusState.call(this, firstInteractive); 
+            primerElementoFocuseable = firstInteractive;
         }
     }
 
