@@ -39,7 +39,7 @@
     /* ⭐️ BASE BLUR/OPACITY (Nivel de desenfoque MÁXIMO por defecto) ⭐️ */
     filter: blur(2px) grayscale(50%); 
     opacity: 0.4; 
-    pointer-events: auto; /* Permitir interacción táctil/clic */
+    pointer-events: auto;
 }
 
 /* ⭐️ FOCO: Asegurar nitidez al recibir foco (teclado/clic) ⭐️ */
@@ -90,7 +90,7 @@
     transition: filter 0.5s ease, opacity 0.5s ease;
     filter: blur(2px) grayscale(50%);
     opacity: 0.4;
-    pointer-events: auto; /* ⭐️ CORRECCIÓN CLAVE: Permitir focus/click en el contenedor ⭐️ */
+    pointer-events: auto; 
 }
 /* Re-habilitar clic en el botón solo si el contenedor tiene el foco actual */
 .detail-action-item.focus-current .detail-action-btn {
@@ -139,9 +139,23 @@
 /* Texto de la acción (Izquierda) */
 .detail-action-text {
     font-size: 1rem; font-weight: 500; 
-    color: var(--color-text); /* Blanco por defecto */
+    color: var(--color-text); /* Base color */
     text-align: left; margin-right: 15px; flex-grow: 1;
+    transition: color 0.2s ease; /* Transición para el cambio de color */
 }
+
+/* ⭐️ REQUISITO 4: CAMBIO DE COLOR DE TEXTO (SOLO EN FOCUS) ⭐️ */
+
+/* Enabled State (Blue Text) - Aplica SOLO en foco */
+.detail-action-item:not(:has(.disabled)).focus-current .detail-action-text {
+    color: var(--color-primary); 
+}
+
+/* Disabled State (Gray Text) - Aplica SOLO en foco */
+.detail-action-item:has(.disabled).focus-current .detail-action-text {
+    color: var(--color-text); 
+}
+
 
 /* 5. BOTÓN DE ACCIÓN - ESTILO GHOST (Derecha) */
 .detail-action-btn {
@@ -159,7 +173,7 @@
     transition: all 0.2s ease; flex-shrink: 0; 
 }
 
-/* Estado HOVER / FOCUS (Enabled) -> AZUL */
+/* ⭐️ REQUISITO 3: Estado HOVER / FOCUS (Enabled) -> AZUL ⭐️ */
 .detail-action-btn:not(.disabled):hover, 
 .detail-action-btn:not(.disabled):focus-visible {
     border-color: var(--color-primary);   
@@ -168,20 +182,20 @@
     transform: scale(1.1); outline: none;
 }
 
-/* Estado DISABLED -> GRIS APAGADO */
+/* Estado DISABLED -> GRIS APAGADO (Visual base) */
 .detail-action-btn.disabled {
     border-color: var(--color-card-border-disabled);
     color: var(--color-text-muted);
     cursor: default; opacity: 0.6; 
-    pointer-events: auto; /* ⭐️ CORRECCIÓN CLAVE: Permitir foco en el botón ⭐️ */
+    pointer-events: auto; 
 }
 
-/* Estado FOCUS en DISABLED (Legible, sin azul) */
+/* ⭐️ REQUISITO 2: Estado FOCUS en DISABLED -> GRIS/BLANCO ⭐️ */
 .detail-action-btn.disabled:focus-visible {
     outline: none;
-    border-color: var(--color-text); 
-    box-shadow: 0 0 10px var(--color-shadow-disabled);
-    color: var(--color-text);
+    border-color: var(--color-text); /* Gris/Blanco para la tarjeta deshabilitada */
+    box-shadow: 0 0 10px var(--color-shadow-disabled); /* Sombra gris */
+    color: var(--color-text); /* Icono Gris/Blanco */
     opacity: 1;
     transform: scale(1.03);
 }
