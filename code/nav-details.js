@@ -103,23 +103,19 @@ export function _mostrarDetalle(cursoId) {
         const itemsHtml = curso.enlaces.map(enlace => {
             const iconHtml = getIconHtml(enlace.texto);
             const isDisabled = !enlace.url || enlace.url === '#';
-            const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
             
+            // ⭐️ NUEVO CONTENIDO: Emoji simple para deshabilitado ⭐️
+            const contentHtml = isDisabled ? '🚫&#xFE0E;' : iconHtml; 
+
+            const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
             const classDisabledBtn = isDisabled ? 'disabled' : '';
             const classDisabledText = ''; 
             
-            const tabIndexContainer = '-1'; // ⭐️ REMOVIDO: El contenedor ya no es objetivo de tabulación ⭐️
-            const tabIndexButton = isDisabled ? '-1' : '0'; // ⭐️ RESTAURADO: El botón es el objetivo principal ⭐️
+            const tabIndexContainer = '-1'; 
+            const tabIndexButton = isDisabled ? '-1' : '0'; 
             const targetAttr = isDisabled ? '' : 'target="_blank"';
             
             const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
-
-            // ⭐️ LÓGICA DE INYECCIÓN CONDICIONAL (SVG y ICONO ORIGINAL) ⭐️
-            const contentHtml = isDisabled ? 
-                // Inyectamos el SVG del triángulo y el icono original dentro de un wrapper para posicionamiento
-                `${data.SVG_TRIANGLE}<div class="icon-wrapper">${iconHtml}</div>` : 
-                // Para los habilitados, solo el icono original (circular)
-                iconHtml;
 
             return `
               <div class="detail-action-item" onclick="App._handleActionRowClick(event)" style="cursor: pointer;" tabindex="${tabIndexContainer}" role="listitem">
@@ -127,7 +123,7 @@ export function _mostrarDetalle(cursoId) {
                   <a ${hrefAttr} 
                      class="detail-action-btn ${classDisabledBtn}" 
                      ${targetAttr} 
-                     tabindex="${tabIndexButton}" 
+                     tabIndex="${tabIndexButton}" 
                      ${onclickAttr}
                      aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
                      ${contentHtml}
