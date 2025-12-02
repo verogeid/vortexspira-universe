@@ -57,3 +57,31 @@
         --shadow-color-hex: #888888;
     }
 }
+
+/* ⭐️ AÑADIDO: Alto Contraste (prefers-contrast: more) ⭐️ */
+@media (prefers-contrast: more) {
+    :root {
+        /* Fondo y Contraste */
+        --color-bg: #000000;
+        --color-text: #FFFFFF;
+        --color-card-bg: #000000; /* Fondo de tarjeta negro sólido */
+        --color-mask-gradient: rgba(0, 0, 0, 0.9); /* Máscaras sólidas */
+        
+        /* Foco y Énfasis (Cian puro de alto contraste) */
+        --color-primary: #00FFFF;
+        --color-primary-bg: rgba(0, 255, 255, 0.1);
+        --color-shadow-primary: transparent; /* Se elimina la sombra */
+        
+        /* Bordes y Deshabilitado */
+        --color-card-border: #FFFFFF; /* Borde de tarjeta blanco */
+        --color-card-border-disabled: #AAAAAA; /* Gris claro */
+        --color-text-muted: #AAAAAA;
+        
+        /* Footer/Header */
+        --color-header-bg: #000000;
+        --color-footer-text: #FFFFFF;
+        
+        /* Eliminamos las sombras en las variables */
+        --color-shadow-disabled: transparent;
+    }
+}
