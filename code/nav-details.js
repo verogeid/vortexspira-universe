@@ -94,7 +94,8 @@ export function _mostrarDetalle(cursoId) {
         const lower = text.toLowerCase();
         if (lower.includes('adquirir') || lower.includes('comprar')) { return '🛒&#xFE0E;'; }
         let iconClass = 'icon-link'; 
-        if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa')) { iconClass = 'icon-download'; }
+        // ⭐️ CLAVE: Incluir "prueba" para usar el icono de descarga ⭐️
+        if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa') || lower.includes('prueba')) { iconClass = 'icon-download'; }
         return `<i class="action-icon ${iconClass}"></i>`; 
     };
 

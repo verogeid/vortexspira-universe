@@ -147,7 +147,7 @@
 /* 5. BOTÓN DE ACCIÓN - ESTILO GHOST (Derecha) */
 .detail-action-btn {
     display: flex; justify-content: center; align-items: center;
-    /* ⭐️ TAMAÑO HABILITADO ⭐️ */
+    /* ⭐️ TAMAÑO ESTÁNDAR (38px) ⭐️ */
     width: 38px; 
     height: 38px; 
     background: transparent; 
@@ -165,12 +165,21 @@
 }
 
 /* ⭐️ REQUISITO 3: Estado HOVER / FOCUS (Enabled) -> AZUL ⭐️ */
-.detail-action-btn:not(.disabled):hover, 
+/* HOVER: Solo Borde/Sombra, NO texto/icono color */
+.detail-action-btn:not(.disabled):hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 15px var(--color-shadow-primary);
+    transform: scale(1.1);
+    color: var(--color-text); /* CLAVE: Mantiene el color del texto original */
+    outline: none;
+}
+/* FOCUS: Borde/Sombra + Color de texto/icono */
 .detail-action-btn:not(.disabled):focus-visible {
     border-color: var(--color-primary);   
-    color: var(--color-primary);          
+    color: var(--color-primary);          /* CLAVE: Aplica color primario */
     box-shadow: 0 0 15px var(--color-shadow-primary);
-    transform: scale(1.1); outline: none;
+    transform: scale(1.1);
+    outline: none;
 }
 
 /* ----------------------------------------------------- */
@@ -183,23 +192,22 @@
     background: transparent;
     cursor: default; 
     
-    /* ⭐️ NUEVA FORMA Y TAMAÑO (COINCIDIR CON HABILITADO) ⭐️ */
+    /* ⭐️ CORRECCIÓN TAMAÑO: COINCIDIR CON HABILITADO (38px) ⭐️ */
     width: 38px; 
     height: 38px;
     border-radius: 8px; 
     
     /* ESTILO DEL EMOJI */
-    font-size: 1.8rem; 
+    font-size: 1.6rem; /* Ajustado para caber en 38px */
     line-height: 1;
     
-    /* ⭐️ LIMPIEZA DE SVG VESTIGIAL ⭐️ */
     filter: none; 
     transform: none; 
     transition: all 0.2s ease; 
     pointer-events: auto; 
 }
 
-/* ⭐️ LIMPIEZA DE VESTIGIOS DEL TRIÁNGULO (ELIMINAR ESTAS REGLAS) ⭐️ */
+/* Aseguramos que solo se muestre el emoji 🚫 (texto) */
 .detail-action-btn.disabled .triangulo-svg,
 .detail-action-btn.disabled .icon-wrapper,
 .detail-action-btn.disabled > i {
@@ -211,7 +219,7 @@
 .detail-action-btn.disabled:hover {
     outline: none;
     transform: scale(1.03); 
-    border-color: var(--color-card-border); /* Gris más suave que el foco */
+    border-color: var(--color-card-border); 
     box-shadow: 0 0 10px var(--color-shadow-disabled);
     color: var(--color-text-muted); /* Color del icono se mantiene gris */
 }
@@ -220,9 +228,9 @@
 .detail-action-btn.disabled:focus-visible {
     outline: none;
     transform: scale(1.03); 
-    border-color: var(--color-text); /* Color del borde a Blanco/Gris oscuro */
+    border-color: var(--color-text); 
     box-shadow: 0 0 15px var(--color-shadow-disabled); 
-    color: var(--color-text); /* Color del icono a Blanco/Gris oscuro */
+    color: var(--color-text); /* Color del icono cambia a color de texto */
 }
 
 
