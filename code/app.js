@@ -33,6 +33,7 @@ class VortexSpiraApp {
             initialRenderComplete: false, 
             keyboardNavInProgress: false,
             activeCourseId: null, // ⭐️ NUEVO: Guarda el ID del curso activo para el resize ⭐️
+            lastDetailFocusIndex: 0, // ⭐️ AÑADIDO: Guarda el último índice de foco en Detalle ⭐️
         };
         
         // ⭐️ Exposición temporal para onclick en HTML (patrón mixto) ⭐️
@@ -142,6 +143,7 @@ class VortexSpiraApp {
         // ⭐️ CORRECCIÓN: Limpiar el ID del curso al salir del detalle ⭐️
         if (this.DOM.vistaDetalle.classList.contains('active')) {
              this.STATE.activeCourseId = null; 
+             this.STATE.lastDetailFocusIndex = 0; // ⭐️ AÑADIDO: Resetear el foco del detalle al salir ⭐️
         }
         nav_base._handleVolverClick.call(this); 
     }

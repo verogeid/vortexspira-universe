@@ -221,7 +221,10 @@ export function _handleFocusTrap(e, viewType) {
     } 
     else if (viewType === 'detail') {
         // Obtenemos los elementos enfocables del módulo de detalles
-        const detailContentLinks = nav_details._getFocusableDetailElements.call(this).filter(el => 
+        const allFocusableDetailElements = nav_details._getFocusableDetailElements.call(this);
+
+        // Los elementos de contenido de detalle son los que no son 'Volver Fijo'
+        const detailContentLinks = allFocusableDetailElements.filter(el => 
             !el.classList.contains('card-volver-vertical') && 
             el.id !== 'card-volver-fija-elemento'
         );
@@ -245,6 +248,7 @@ export function _handleFocusTrap(e, viewType) {
             break;
         }
     }
+    // Si el foco estaba en el body o en un elemento fuera de los grupos
     if (currentGroupIndex === -1) currentGroupIndex = 0; 
 
     let nextGroupIndex;
@@ -261,6 +265,21 @@ export function _handleFocusTrap(e, viewType) {
         elementToFocus = nextGroup[nextGroup.length - 1];
     } else {
         elementToFocus = nextGroup[0];
+    }
+    
+    // ⭐️ CORRECCIÓN CLAVE: RESTAURAR EL FOCO EN LA VISTA DE DETALLE ⭐️
+    // Se utiliza la longitud de detailContentLinks para identificar si el grupo es el de contenido.
+    if (viewType === 'detail' && detailContentLinks && nextGroup.length === detailContentLinks.length) {
+        
+        const lastIndex = this.STATE.lastDetailFocusIndex || 0;
+        let restoredElement = detailContentLinks[lastIndex];
+
+        if (restoredElement) {
+            elementToFocus = restoredElement;
+        } else {
+            // Fallback al primer elemento
+            elementToFocus = detailContentLinks[0];
+        }
     }
     
     // Lógica para aplicar la clase focus-visible durante el trap

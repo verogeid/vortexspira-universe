@@ -34,15 +34,31 @@ export function _updateDetailFocusState(focusedEl) {
     const focusedContainer = focusedEl.closest('.detail-text-fragment') || focusedEl.closest('.detail-action-item');
 
     if (!focusedContainer) {
-        // Foco fuera del contenido principal (ej. título o sidebar)
+        // Foco fuera del contenido principal (ej. título, sidebar, footer)
+        
+        // ⭐️ CORRECCIÓN CLAVE: No limpiar el estado visual si el foco se mueve a un elemento de la trampa ⭐️
+        const isTrapElement = focusedEl === this.DOM.cardVolverFijaElemento || 
+                              focusedEl.closest('#info-adicional') || 
+                              focusedEl.closest('footer');
+        
+        if (isTrapElement) {
+            // El estado visual (blur/nitidez) se congela y se mantiene.
+            return;
+        }
+        
+        // Si el foco se mueve a un elemento no controlado (ej. el h2 del curso), limpiar el estado (comportamiento de fallback original)
         sequenceItems.forEach(item => item.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2'));
         detailContainer.classList.remove('mode-focus-actions', 'mode-focus-text');
         return;
     }
     
-    // 2. Proximidad y aplicación de clases
+    // Si llegamos aquí, un fragmento/acción ha sido enfocado.
     const focusedIndex = sequenceItems.indexOf(focusedContainer);
+    
+    // ⭐️ Guardar el índice del elemento enfocado para la función de retorno del foco ⭐️
+    this.STATE.lastDetailFocusIndex = focusedIndex; 
 
+    // 2. Proximidad y aplicación de clases
     sequenceItems.forEach((item, index) => {
         const diff = Math.abs(index - focusedIndex);
 
@@ -199,9 +215,16 @@ export function _mostrarDetalle(cursoId) {
 
     let primerElementoFocuseable = null;
 
-    // ⭐️ 2. FOCO INICIAL EN EL PRIMER FRAGMENTO DE TEXTO ⭐️
-    const firstFragment = this.DOM.detalleContenido.querySelector('.detail-text-fragment');
+    // ⭐️ 2. FOCO INICIAL EN EL PRIMER FRAGMENTO DE TEXTO (RESTAURACIÓN) ⭐️
+    const allDetailElements = _getFocusableDetailElements.call(this).filter(el => 
+        !el.classList.contains('card-volver-vertical') && 
+        el.id !== 'card-volver-fija-elemento'
+    );
     
+    // Seleccionar el elemento a enfocar (usando el índice guardado)
+    const focusIndex = this.STATE.lastDetailFocusIndex || 0;
+    const elementToFocus = allDetailElements[focusIndex];
+
     if (!isMobile) { 
         // DESKTOP/TABLET
         if (this.DOM.cardNivelActual) {
@@ -216,10 +239,10 @@ export function _mostrarDetalle(cursoId) {
         
         primerElementoFocuseable = this.DOM.cardVolverFijaElemento;
 
-        if (firstFragment) {
-            firstFragment.focus();
-            _updateDetailFocusState.call(this, firstFragment); 
-            primerElementoFocuseable = firstFragment;
+        if (elementToFocus) {
+            elementToFocus.focus();
+            _updateDetailFocusState.call(this, elementToFocus); 
+            primerElementoFocuseable = elementToFocus;
         }
         
     } else { 
@@ -227,11 +250,18 @@ export function _mostrarDetalle(cursoId) {
         this.DOM.infoAdicional.classList.remove('visible');
         this.DOM.cardVolverFija.classList.remove('visible');
         
-        const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn, .detail-text-fragment');
-        if (firstInteractive) {
-             firstInteractive.focus();
-             _updateDetailFocusState.call(this, firstInteractive); 
-             primerElementoFocuseable = firstInteractive;
+        if (elementToFocus) {
+             elementToFocus.focus();
+             _updateDetailFocusState.call(this, elementToFocus); 
+             primerElementoFocuseable = elementToFocus;
+        } else {
+             // Fallback al primer elemento interactivo si el índice guardado es inválido o 0
+             const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn, .detail-text-fragment');
+             if (firstInteractive) {
+                firstInteractive.focus();
+                _updateDetailFocusState.call(this, firstInteractive); 
+                primerElementoFocuseable = firstInteractive;
+             }
         }
     }
 
@@ -245,15 +275,15 @@ export function _mostrarDetalle(cursoId) {
  */
 export function _getFocusableDetailElements() {
     // 'this' es la instancia de App
-    // ⭐️ CORRECCIÓN: Obtener elementos secuenciales que son focales (Fragmento de texto O Botón) ⭐️
-    const detailElements = Array.from(this.DOM.detalleContenido.querySelectorAll('.detail-text-fragment, .detail-action-btn'));
+    // ⭐️ CORRECCIÓN: Obtener elementos secuenciales que son focales (Fragmento de texto O Fila de acción) ⭐️
+    const detailElements = Array.from(this.DOM.detalleContenido.querySelectorAll('.detail-text-fragment, .detail-action-item'));
     let elements = [];
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
     
     if (!isMobile && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
         elements.push(this.DOM.cardVolverFijaElemento);
     } 
-    // Usamos .detail-action-btn para la navegación secuencial, ya que tiene tabindex=0.
+    // Usamos .detail-action-item/fragment para el cálculo de proximidad del blur.
     elements.push(...detailElements);
     return elements;
 };

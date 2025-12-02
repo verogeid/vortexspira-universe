@@ -36,9 +36,9 @@
     will-change: filter, opacity;
     cursor: text;
     
-    /* ⭐️ BASE BLUR/OPACITY (Nivel de desenfoque MÁXIMO por defecto) ⭐️ */
-    filter: blur(2px) grayscale(50%); 
-    opacity: 0.4; 
+    /* ⭐️ CORRECCIÓN BLUR: Se eliminan el filtro y la opacidad base ⭐️ */
+    filter: none; 
+    opacity: 1; 
     pointer-events: auto;
 }
 
@@ -85,11 +85,11 @@
     opacity: 0.6;
 }
 
-/* ⭐️ BASE BLUR para las acciones (Nivel de desenfoque MÁXIMO) ⭐️ */
+/* ⭐️ BASE BLUR para las acciones (CORRECCIÓN: Se elimina el filtro base) ⭐️ */
 .detail-action-item {
     transition: filter 0.5s ease, opacity 0.5s ease;
-    filter: blur(2px) grayscale(50%);
-    opacity: 0.4;
+    filter: none; /* CORRECCIÓN */
+    opacity: 1; /* CORRECCIÓN */
     pointer-events: auto; /* Permitir foco y click */
 }
 /* Re-habilitar clic en el botón solo si el contenedor tiene el foco actual */
