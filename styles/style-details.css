@@ -166,7 +166,8 @@
 
 /* ⭐️ REQUISITO 3: Estado HOVER / FOCUS (Enabled) -> AZUL ⭐️ */
 /* HOVER: Solo Borde/Sombra, NO texto/icono color */
-.detail-action-btn:not(.disabled):hover {
+.detail-action-btn:not(.disabled):hover,
+.detail-action-item:hover .detail-action-btn:not(.disabled) { /* << CORRECCIÓN APLICADA */
     border-color: var(--color-primary);
     box-shadow: 0 0 15px var(--color-shadow-primary);
     transform: scale(1.1);
