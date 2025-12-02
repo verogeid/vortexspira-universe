@@ -53,14 +53,21 @@
 
 /* --- ESTADOS DE FOCO Y COLOR --- */
 
-/* Habilitadas -> AZUL */
+/* ⭐️ Habilitadas -> AZUL (SOLO FOCUS) ⭐️ */
 .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
-.card:not(.disabled):not([data-tipo="relleno"]):hover,
 .card:not(.disabled):not([data-tipo="relleno"]):focus-visible {
   outline: none; border-color: var(--color-primary);
   background: var(--color-card-bg); transform: scale(1.03);
   box-shadow: 0 0 25px var(--color-shadow-primary); 
   color: var(--color-primary); 
+}
+
+/* ⭐️ Habilitadas -> HOVER (SIN CAMBIO DE COLOR DE TEXTO) ⭐️ */
+.card:not(.disabled):not([data-tipo="relleno"]):hover {
+  outline: none; border-color: var(--color-primary);
+  background: var(--color-card-bg); transform: scale(1.03);
+  box-shadow: 0 0 25px var(--color-shadow-primary); 
+  color: var(--color-text); /* Evita el cambio de color de texto */
 }
 
 /* Deshabilitadas -> GRIS */

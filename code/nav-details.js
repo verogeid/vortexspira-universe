@@ -3,6 +3,7 @@
 import * as debug from './debug.js';
 import * as data from './data.js';
 import * as nav_base from './nav-base.js'; // ⭐️ NECESARIO para el helper de búsqueda
+import * as nav_keyboard_details from './nav-keyboard-details.js'; // ⭐️ AÑADIDO: Para delegar la navegación de detalle ⭐️
 
 /**
  * Lógica de inicialización de los handlers de foco en la vista de detalle.
@@ -18,7 +19,47 @@ export function _setupDetailFocusHandler() {
             _updateDetailFocusState.call(this, focusedEl);
         }
     });
+    
+    // ⭐️ AÑADIDO: Listener de rueda de ratón (Mouse Wheel) en el contenedor principal ⭐️
+    if (this.DOM.appContainer) {
+        this.DOM.appContainer.addEventListener('wheel', _handleDetailWheel.bind(this));
+    }
 };
+
+/**
+ * Handler para el evento de rueda de ratón en la vista de detalle.
+ */
+function _handleDetailWheel(e) {
+    // 'this' es la instancia de App
+    const isDetailView = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active');
+    
+    // Solo actuamos si estamos en la vista de detalle y el evento se originó en la columna de detalles.
+    const targetIsDetailContent = e.target.closest('#vista-detalle-desktop, #vista-detalle-mobile');
+    
+    if (isDetailView && targetIsDetailContent && e.deltaY !== 0) {
+        
+        const content = this.DOM.detalleContenido;
+        let canScroll = false;
+        
+        // Determinar si el scroll nativo PUEDE o debe actuar.
+        if (e.deltaY < 0) { // Scrolling Up
+            canScroll = content.scrollTop > 0;
+        } else { // Scrolling Down
+            canScroll = (content.scrollHeight - content.clientHeight) > content.scrollTop;
+        }
+        
+        // Si el contenedor no puede scrollear más, o estamos muy cerca del límite,
+        // interceptamos para cambiar el foco (navegación secuencial).
+        if (!canScroll) {
+             e.preventDefault(); 
+             
+             const key = e.deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
+             // Delegar a la función de navegación por teclado
+             nav_keyboard_details._handleDetailNavigation.call(this, key);
+        }
+    }
+};
+
 
 /**
  * ⭐️ GESTIÓN DE FOCO EN VISTA DETALLE (BLUR MASK Y FRAGMENTOS) ⭐️

@@ -202,6 +202,7 @@ export function _handleFocusTrap(e, viewType) {
         Array.from(this.DOM.infoAdicional.querySelectorAll('summary, a')) : [];
 
     let groups = [];
+    let detailContentLinks = [];
 
     if (viewType === 'nav') {
         const allCards = this.DOM.track ? Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])')) : [];
@@ -224,7 +225,7 @@ export function _handleFocusTrap(e, viewType) {
         const allFocusableDetailElements = nav_details._getFocusableDetailElements.call(this);
 
         // Los elementos de contenido de detalle son los que no son 'Volver Fijo'
-        const detailContentLinks = allFocusableDetailElements.filter(el => 
+        detailContentLinks = allFocusableDetailElements.filter(el => 
             !el.classList.contains('card-volver-vertical') && 
             el.id !== 'card-volver-fija-elemento'
         );
