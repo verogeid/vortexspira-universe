@@ -147,7 +147,9 @@
 /* 5. BOTÓN DE ACCIÓN - ESTILO GHOST (Derecha) */
 .detail-action-btn {
     display: flex; justify-content: center; align-items: center;
-    width: 38px; height: 38px; 
+    /* ⭐️ TAMAÑO HABILITADO ⭐️ */
+    width: 38px; 
+    height: 38px; 
     background: transparent; 
     border: 2px solid var(--color-card-border); /* Borde Gris por defecto */
     border-radius: 50%; /* ⭐️ HABILITADO: REDONDO ⭐️ */
@@ -181,24 +183,23 @@
     background: transparent;
     cursor: default; 
     
-    /* ⭐️ NUEVA FORMA: Cuadrado con bordes redondeados ⭐️ */
-    width: 44px; /* Mayor tamaño para el emoji */
-    height: 44px;
+    /* ⭐️ NUEVA FORMA Y TAMAÑO (COINCIDIR CON HABILITADO) ⭐️ */
+    width: 38px; 
+    height: 38px;
     border-radius: 8px; 
     
     /* ESTILO DEL EMOJI */
     font-size: 1.8rem; 
     line-height: 1;
     
-    /* Resetear efectos SVG/Filtro */
+    /* ⭐️ LIMPIEZA DE SVG VESTIGIAL ⭐️ */
     filter: none; 
-    
     transform: none; 
     transition: all 0.2s ease; 
     pointer-events: auto; 
 }
 
-/* Aseguramos que solo se muestre el emoji 🚫 (texto) */
+/* ⭐️ LIMPIEZA DE VESTIGIOS DEL TRIÁNGULO (ELIMINAR ESTAS REGLAS) ⭐️ */
 .detail-action-btn.disabled .triangulo-svg,
 .detail-action-btn.disabled .icon-wrapper,
 .detail-action-btn.disabled > i {
