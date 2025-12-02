@@ -193,6 +193,9 @@
     transform: none; /* Inicializar el transform para el zoom */
     transition: all 0.2s ease; 
     pointer-events: auto; 
+    
+    /* ⭐️ APLICAMOS LA SOMBRA EXTERIOR MEDIANTE CSS (SOLUCIÓN AL ERROR SVG) ⭐️ */
+    filter: drop-shadow(0 0 4px var(--shadow-color-hex));
 }
 
 /* Ocultamos el icono original (ej. <i> o emoji) en el botón disabled si no están en el wrapper */
@@ -243,11 +246,14 @@
     
     /* ZOOM y SOMBRA DE FOCO */
     transform: scale(1.03); 
+    color: var(--color-text); /* Borde y icono a Gris/Blanco (var(--color-text)) */
+    
+    /* Cambia la sombra de foco (Ghost) */
     --shadow-color-hex: var(--color-card-border); /* Gris/Blanco para la sombra de FOCO */
     --shadow-opacity: 1; 
 
-    /* COLOR: Cambia el borde y el icono al color de texto normal */
-    color: var(--color-text); 
+    /* Sombra CSS para el foco */
+    filter: drop-shadow(0 0 8px var(--color-card-border)); 
 }
 
 .detail-action-btn.disabled:hover {
@@ -257,8 +263,7 @@
     transform: scale(1.03); 
 
     /* Sombra sutil para HOVER (Gris más suave) */
-    --shadow-color-hex: var(--color-card-border-disabled); 
-    --shadow-opacity: 0.5; 
+    filter: drop-shadow(0 0 4px var(--color-card-border-disabled));
 }
 
 
@@ -270,8 +275,8 @@
     -webkit-mask-position: center; mask-position: center;
     -webkit-mask-size: contain; mask-size: contain;
 }
-/* Flecha de Descarga (PWA) */
-.icon-download { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="20" y2="21"></line><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="20" y2="21"></line><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>'); }
+/* ⭐️ MODIFICADO: Flecha hacia el suelo (Download/PWA) ⭐️ */
+.icon-download { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>'); }
 /* Enlace externo */
 .icon-link { -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>'); mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>'); }
 /* Carrito de compra (aunque se usa emoji, esta es la definición de máscara) */
