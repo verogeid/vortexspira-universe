@@ -162,9 +162,9 @@ export function _mostrarDetalle(cursoId) {
             const classDisabledBtn = isDisabled ? 'disabled' : '';
             const classDisabledText = ''; 
             
-            // ⭐️ CORRECCIÓN: La fila es enfocable (tabindex="0") y el botón solo si está habilitado ⭐️
+            // ⭐️ CORRECCIÓN: La fila es enfocable (tabindex="0") y el botón NO ⭐️
             const tabIndexContainer = '0'; 
-            const tabIndexButton = isDisabled ? '-1' : '-1'; 
+            const tabIndexButton = '-1'; 
             const targetAttr = isDisabled ? '' : 'target="_blank"';
             
             const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
@@ -251,9 +251,9 @@ export function _mostrarDetalle(cursoId) {
     fragments.forEach(fragment => {
         // Fix A: Manually handle click/focus on fragments (1st click focus)
         fragment.addEventListener('click', (e) => {
-            // Si ya está activo, permitimos que el click pase al handler de teclado para avanzar.
+            // ⭐️ CORRECCIÓN: Siempre enfocar al hacer clic para asegurar el cambio de foco de la secuencia ⭐️
             if (document.activeElement !== fragment) {
-                e.preventDefault(); 
+                // e.preventDefault() eliminado para permitir el comportamiento predeterminado del clic (ej. selección)
                 fragment.focus(); 
             }
         });

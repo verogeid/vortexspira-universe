@@ -21,7 +21,12 @@ export function _handleDetailNavigation(key) {
         const firstElement = focusableElements.find(el => el.classList.contains('detail-text-fragment')) || focusableElements[0];
         if (firstElement) {
             firstElement.focus();
-            firstElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); // ⭐️ AÑADIDO: Scroll al primer elemento ⭐️
+            // Scroll al inicio si es el primer elemento.
+            if (this.DOM.detalleContenido) {
+                 this.DOM.detalleContenido.scrollTop = 0;
+            } else {
+                 firstElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); 
+            }
         }
         return;
     }
@@ -62,7 +67,12 @@ export function _handleDetailNavigation(key) {
     if (newIndex !== currentIndex && focusableElements[newIndex]) {
         const elementToFocus = focusableElements[newIndex];
         elementToFocus.focus();
-        // ⭐️ CORRECCIÓN CLAVE: Scroll al elemento enfocado ⭐️
-        elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+        // ⭐️ CORRECCIÓN CLAVE: Forzar el scroll al inicio del contenedor si es el primer fragmento (para ver el título) ⭐️
+        if (newIndex === 0 && elementToFocus.classList.contains('detail-text-fragment') && this.DOM.detalleContenido) {
+             this.DOM.detalleContenido.scrollTop = 0;
+        } else {
+             elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     }
 }
