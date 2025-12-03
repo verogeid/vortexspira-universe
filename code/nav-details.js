@@ -33,29 +33,20 @@ function _handleDetailWheel(e) {
     // 'this' es la instancia de App
     const isDetailView = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active');
     
-    // Solo actuamos si estamos en la vista de detalle y el evento se originó en la columna de detalles.
+    // Solo actuamos si estamos en la vista de detalle
+    if (!isDetailView) return; 
+
+    // Solo se debe intentar la navegación si el evento se originó dentro de la columna de detalle
     const targetIsDetailContent = e.target.closest('#vista-detalle-desktop, #vista-detalle-mobile');
-    
-    if (isDetailView && targetIsDetailContent && e.deltaY !== 0) {
+    if (!targetIsDetailContent) return;
+
+    // ⭐️ CORRECCIÓN CLAVE: Interceptamos el scroll nativo y lo convertimos a navegación por foco. ⭐️
+    if (e.deltaY !== 0) {
+        e.preventDefault(); 
         
-        const content = this.DOM.detalleContenido;
-        let canScroll = false;
-        
-        // Determinar si el scroll nativo PUEDE o debe actuar.
-        if (e.deltaY < 0) { // Scrolling Up
-            canScroll = content.scrollTop > 0;
-        } else { // Scrolling Down
-            canScroll = (content.scrollHeight - content.clientHeight) > content.scrollTop;
-        }
-        
-        // ⭐️ CORRECCIÓN CLAVE: Permitimos scroll nativo hasta el límite, luego interceptamos ⭐️
-        if (!canScroll || Math.abs(e.deltaY) > 5) { // Interceptamos si no hay más scroll O si el delta es grande
-             e.preventDefault(); 
-             
-             const key = e.deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
-             // Delegar a la función de navegación por teclado
-             nav_keyboard_details._handleDetailNavigation.call(this, key);
-        }
+        const key = e.deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
+        // Delegar a la función de navegación por teclado, que cambia el foco y llama a scrollIntoView
+        nav_keyboard_details._handleDetailNavigation.call(this, key);
     }
 };
 
@@ -73,6 +64,9 @@ export function _updateDetailFocusState(focusedEl) {
     // Encontrar el contenedor secuencial del elemento enfocado (puede ser el botón de acción o el fragmento de texto)
     const focusedContainer = focusedEl.closest('.detail-text-fragment') || focusedEl.closest('.detail-action-item');
 
+    // ⭐️ CORRECCIÓN: Limpiar cualquier estado de HOVER/MOUSEOVER ⭐️
+    sequenceItems.forEach(item => item.classList.remove('focus-current-hover'));
+    
     if (!focusedContainer) {
         // Foco fuera del contenido principal (ej. título, sidebar, footer)
         

@@ -21,6 +21,7 @@ export function _handleDetailNavigation(key) {
         const firstElement = focusableElements.find(el => el.classList.contains('detail-text-fragment')) || focusableElements[0];
         if (firstElement) {
             firstElement.focus();
+            firstElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); // ⭐️ AÑADIDO: Scroll al primer elemento ⭐️
         }
         return;
     }
@@ -54,6 +55,9 @@ export function _handleDetailNavigation(key) {
     
     // Aplicar el nuevo foco
     if (newIndex !== currentIndex && focusableElements[newIndex]) {
-        focusableElements[newIndex].focus();
+        const elementToFocus = focusableElements[newIndex];
+        elementToFocus.focus();
+        // ⭐️ CORRECCIÓN CLAVE: Scroll al elemento enfocado ⭐️
+        elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 }

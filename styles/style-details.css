@@ -44,7 +44,9 @@
 
 /* ⭐️ FOCO: Asegurar nitidez al recibir foco (teclado/clic) ⭐️ */
 .detail-text-fragment:focus-visible,
-.detail-text-fragment.focus-current { 
+.detail-text-fragment.focus-current,
+/* ⭐️ CORRECCIÓN: Hace el elemento nítido al pasar el ratón (sin robar el foco) ⭐️ */
+.detail-text-fragment.focus-current-hover { 
     /* 1. Resetear el filtro para nitidez inmediata */
     filter: none !important; 
     opacity: 1 !important;
@@ -217,7 +219,8 @@
 
 
 /* Hover: Zoom + Sombra (mantener color gris) */
-.detail-action-btn.disabled:hover {
+.detail-action-btn.disabled:hover,
+.detail-action-item:hover .detail-action-btn.disabled { /* <== Añadido hover en label */
     outline: none;
     transform: scale(1.03); 
     border-color: var(--color-card-border); 

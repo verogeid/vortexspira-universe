@@ -55,7 +55,9 @@
 
 /* ⭐️ Habilitadas -> AZUL (SOLO FOCUS) ⭐️ */
 .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
-.card:not(.disabled):not([data-tipo="relleno"]):focus-visible {
+.card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
+/* ⭐️ CORRECCIÓN: Si está en foco Y se hace hover, debe mantener el color primario ⭐️ */
+.card:not(.disabled):not([data-tipo="relleno"]).focus-visible:hover {
   outline: none; border-color: var(--color-primary);
   background: var(--color-card-bg); transform: scale(1.03);
   box-shadow: 0 0 25px var(--color-shadow-primary); 
@@ -67,7 +69,7 @@
   outline: none; border-color: var(--color-primary);
   background: var(--color-card-bg); transform: scale(1.03);
   box-shadow: 0 0 25px var(--color-shadow-primary); 
-  color: var(--color-text); /* Evita el cambio de color de texto */
+  color: var(--color-text); /* Mantiene el color por defecto si NO tiene foco */
 }
 
 /* Deshabilitadas -> GRIS */
