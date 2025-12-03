@@ -1,7 +1,7 @@
 // --- code/data.js ---
 import * as debug from './debug.js';
 
-export const LOGO_OBRAS = '🚫&#xFE0E;'; //'🚧';
+export const LOGO_OBRAS = '🚧';
 export const LOGO_CARPETA = '📁';
 export const LOGO_CURSO = '📚';
 export const LOGO_VOLVER = '↩';
