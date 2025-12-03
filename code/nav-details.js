@@ -142,7 +142,7 @@ export function _mostrarDetalle(cursoId) {
 
     const getIconHtml = (text) => {
         const lower = text.toLowerCase();
-        if (lower.includes('adquirir') || lower.includes('comprar')) { return '🛒&#xFE0E;'; }
+        if (lower.includes('adquirir') || lower.includes('comprar')) { return data.LOGO_BUY; }
         let iconClass = 'icon-link'; 
         // ⭐️ CLAVE: Incluir "prueba" para usar el icono de descarga ⭐️
         if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa') || lower.includes('prueba')) { iconClass = 'icon-download'; }
@@ -156,7 +156,7 @@ export function _mostrarDetalle(cursoId) {
             const isDisabled = !enlace.url || enlace.url === '#';
             
             // ⭐️ NUEVO CONTENIDO: Emoji simple para deshabilitado ⭐️
-            const contentHtml = isDisabled ? '🚫&#xFE0E;' : iconHtml; 
+            const contentHtml = isDisabled ? data.LOGO_DISABLED : iconHtml; 
 
             const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
             const classDisabledBtn = isDisabled ? 'disabled' : '';
