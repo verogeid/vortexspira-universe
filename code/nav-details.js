@@ -162,8 +162,9 @@ export function _mostrarDetalle(cursoId) {
             const classDisabledBtn = isDisabled ? 'disabled' : '';
             const classDisabledText = ''; 
             
-            const tabIndexContainer = '-1'; 
-            const tabIndexButton = isDisabled ? '-1' : '0'; 
+            // ⭐️ CORRECCIÓN: La fila es enfocable (tabindex="0") y el botón solo si está habilitado ⭐️
+            const tabIndexContainer = '0'; 
+            const tabIndexButton = isDisabled ? '-1' : '-1'; 
             const targetAttr = isDisabled ? '' : 'target="_blank"';
             
             const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
@@ -223,7 +224,8 @@ export function _mostrarDetalle(cursoId) {
         }
     });
 
-    const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
+    // ⭐️ CORRECCIÓN: El título no debe ser enfocable ⭐️
+    const titleHtml = `<h2 style="outline:none;">${curso.titulo}</h2>`;
 
     this.DOM.detalleContenido.innerHTML = `
       ${mobileBackHtml}
@@ -258,9 +260,8 @@ export function _mostrarDetalle(cursoId) {
         
         // Fix B: Handle hover on fragments (make it sharp on mouseover)
         fragment.addEventListener('mouseover', (e) => {
-            if (document.activeElement !== fragment) {
-                 fragment.classList.add('focus-current-hover');
-            }
+            // Aplicar la clase para nitidez sin el borde azul
+            fragment.classList.add('focus-current-hover');
         });
         fragment.addEventListener('mouseout', () => {
             fragment.classList.remove('focus-current-hover');
@@ -299,7 +300,7 @@ export function _mostrarDetalle(cursoId) {
         // ⭐️ CORRECCIÓN CLAVE: Scroll para asegurar que el título es visible al inicio ⭐️
         const firstFragment = this.DOM.detalleContenido.querySelector('.detail-text-fragment');
         
-        if (elementToFocus && elementToFocus === firstFragment && !isMobile) {
+        if (elementToFocus && elementToFocus === firstFragment) {
             // Si el foco inicial es el primer fragmento, forzamos el scroll al inicio del contenedor (donde está el título)
             this.DOM.detalleContenido.scrollTop = 0; 
             elementToFocus.focus();
@@ -325,7 +326,7 @@ export function _mostrarDetalle(cursoId) {
              primerElementoFocuseable = elementToFocus;
         } else {
              // Fallback al primer elemento interactivo si el índice guardado es inválido o 0
-             const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn, .detail-text-fragment');
+             const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-item, .detail-text-fragment');
              if (firstInteractive) {
                 firstInteractive.focus();
                 _updateDetailFocusState.call(this, firstInteractive); 
@@ -362,9 +363,6 @@ export function _handleActionRowClick(e) {
     // 'this' es la instancia de App
     debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Clic en fila de acción (Detalle) detectado.');
     
-    // Apuntamos al botón de acción, ya que ahora es el foco objetivo.
-    const btn = e.currentTarget.querySelector('.detail-action-btn');
-    if (btn) {
-        btn.focus(); 
-    }
+    // Apuntamos a la fila, ya que es el elemento secuencial enfocable.
+    e.currentTarget.focus(); 
 };

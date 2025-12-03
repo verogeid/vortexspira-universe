@@ -61,7 +61,9 @@
 }
 
 /* ⭐️ CORRECCIÓN: Hover de texto (nítido sin borde inferior accent) ⭐️ */
-.detail-text-fragment.focus-current-hover {
+.detail-text-fragment.focus-current-hover, 
+/* Permite que el hover ponga nitidez sin tener el foco actual/teclado */
+.detail-text-fragment:hover:not(.focus-current):not(.focus-adj-1):not(.focus-adj-2) {
     filter: none !important; 
     opacity: 1 !important;
     border-bottom-color: transparent !important; /* Asegurar que el hover NO añade la línea accent */
@@ -73,8 +75,16 @@
 /* ---------------------------------------------------- */
 
 /* ⭐️ Foco Actual (Nitidez Completa) ⭐️ */
-.detail-text-fragment.focus-current,
+.detail-text-fragment.focus-current {
+    filter: none;
+    opacity: 1;
+}
+
+/* ⭐️ CORRECCIÓN: Evitar que la fila de acción aplique su propio foco visual ⭐️ */
 .detail-action-item.focus-current {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
     filter: none;
     opacity: 1;
 }
@@ -99,6 +109,9 @@
     filter: blur(1.5px) grayscale(40%); /* CORRECCIÓN */
     opacity: 0.6; /* CORRECCIÓN */
     pointer-events: auto; /* Permitir foco y click */
+    
+    /* ⭐️ CORRECCIÓN: Asegurar que el focus de la fila no tiene estilos visuales ⭐️ */
+    outline: none;
 }
 /* Re-habilitar clic en el botón solo si el contenedor tiene el foco actual */
 .detail-action-item.focus-current .detail-action-btn {
@@ -184,7 +197,8 @@
 }
 /* FOCUS: Borde/Sombra + Color de texto/icono */
 .detail-action-btn:not(.disabled):focus-visible,
-.detail-action-item:not(.disabled):focus-visible .detail-action-btn { /* <-- CORRECCIÓN: Estilo de foco del padre al botón hijo */
+/* ⭐️ CORRECCIÓN: Aplicar el foco visual (azul) cuando la fila padre tiene el foco lógico ⭐️ */
+.detail-action-item.focus-current .detail-action-btn:not(.disabled) { 
     border-color: var(--color-primary);   
     color: var(--color-primary) !important;          /* ⭐️ Asegura el color AZUL en focus ⭐️ */
     box-shadow: 0 0 15px var(--color-shadow-primary);
@@ -236,8 +250,9 @@
 }
 
 /* Focus: Zoom + Foco Color (cambiar a blanco/gris oscuro) */
+/* ⭐️ CORRECCIÓN: Aplicar el foco visual (gris) cuando la fila padre tiene el foco lógico ⭐️ */
 .detail-action-btn.disabled:focus-visible,
-.detail-action-item.disabled:focus-visible .detail-action-btn { /* <-- CORRECCIÓN: Estilo de foco del padre al botón hijo */
+.detail-action-item.focus-current .detail-action-btn.disabled { 
     outline: none;
     transform: scale(1.03); 
     border-color: var(--color-text); 

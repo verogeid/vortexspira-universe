@@ -46,9 +46,14 @@ export function _handleDetailNavigation(key) {
                 newIndex = Math.min(maxIndex, currentIndex + 1);
             } 
             // Si está sobre un botón de acción, lo clicamos (salvo si está deshabilitado).
-            else if (activeElement.classList.contains('detail-action-btn') && !activeElement.classList.contains('disabled')) {
-                activeElement.click(); 
-                return;
+            // El elemento enfocado es el div .detail-action-item, el botón es su hijo 'a.detail-action-btn'
+            else if (activeElement.classList.contains('detail-action-item')) {
+                const btn = activeElement.querySelector('.detail-action-btn');
+                if (btn && !btn.classList.contains('disabled')) {
+                    // Simular clic en el elemento interactivo real (el <a>)
+                    btn.click(); 
+                    return;
+                }
             }
             break;
     }
