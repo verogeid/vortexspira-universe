@@ -48,9 +48,8 @@ function _handleDetailWheel(e) {
             canScroll = (content.scrollHeight - content.clientHeight) > content.scrollTop;
         }
         
-        // Si el contenedor no puede scrollear más, o estamos muy cerca del límite,
-        // interceptamos para cambiar el foco (navegación secuencial).
-        if (!canScroll) {
+        // ⭐️ CORRECCIÓN CLAVE: Permitimos scroll nativo hasta el límite, luego interceptamos ⭐️
+        if (!canScroll || Math.abs(e.deltaY) > 5) { // Interceptamos si no hay más scroll O si el delta es grande
              e.preventDefault(); 
              
              const key = e.deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
@@ -250,6 +249,29 @@ export function _mostrarDetalle(cursoId) {
     // ⭐️ Activación de la vista ⭐️
     this.DOM.vistaNav.classList.remove('active');
     this.DOM.vistaDetalle.classList.add('active');
+    
+    // ⭐️ 3. Attaching listeners for Text Fragments and Actions ⭐️
+    const fragments = this.DOM.detalleContenido.querySelectorAll('.detail-text-fragment');
+    fragments.forEach(fragment => {
+        // Fix A: Manually handle click/focus on fragments (1st click focus)
+        fragment.addEventListener('click', (e) => {
+            // Si ya está activo, permitimos que el click pase al handler de teclado para avanzar.
+            if (document.activeElement !== fragment) {
+                e.preventDefault(); 
+                fragment.focus(); 
+            }
+        });
+        
+        // Fix B: Handle hover on fragments (make it sharp on mouseover)
+        fragment.addEventListener('mouseover', (e) => {
+            if (document.activeElement !== fragment) {
+                 fragment.classList.add('focus-current-hover');
+            }
+        });
+        fragment.addEventListener('mouseout', () => {
+            fragment.classList.remove('focus-current-hover');
+        });
+    });
     
     const screenWidth = window.innerWidth;
     const isTablet = screenWidth >= data.TABLET_MIN_WIDTH && window.innerWidth <= data.TABLET_MAX_WIDTH;
