@@ -115,7 +115,7 @@
     transition: filter 0.5s ease, opacity 0.5s ease;
     filter: blur(1.5px) grayscale(40%); /* CORRECCIÓN */
     opacity: 0.6; /* CORRECCIÓN */
-    pointer-events: auto; /* Permitir foco y click */
+    pointer-events: auto;
     
     /* ⭐️ CORRECCIÓN: Asegurar que el focus de la fila no tiene estilos visuales ⭐️ */
     outline: none;
@@ -131,7 +131,7 @@
 /* Foco en Texto -> Desenfoque de ACCIONES (Mismo nivel que el texto más lejano) */
 .mode-focus-text #detalle-bloque-acciones {
     /* Las reglas de BLUR y OPACITY se definen en .detail-action-item por defecto (2px, 0.4) */
-    pointer-events: none; 
+    /* ⭐️ CORRECCIÓN: Quitar pointer-events: none; para permitir hover/click ⭐️ */
     -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
     mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
 }
@@ -140,7 +140,7 @@
 /* Foco en Acciones -> Desenfoque de TEXTO (Uniforme al nivel de desenfoque base) */
 /* Las reglas de BLUR y OPACITY se definen en .detail-text-fragment por defecto (2px, 0.4) */
 .mode-focus-actions .detail-text-fragment {
-    pointer-events: none; /* Deshabilitar clics en texto */
+    /* ⭐️ CORRECCIÓN: Quitar pointer-events: none; para permitir hover/click ⭐️ */
     -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
     mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
 }

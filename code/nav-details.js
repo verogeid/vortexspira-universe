@@ -252,6 +252,8 @@ export function _mostrarDetalle(cursoId) {
         // Fix A: Manually handle click/focus on fragments (1st click focus)
         fragment.addEventListener('click', (e) => {
             // ⭐️ CORRECCIÓN CLAVE: Si el foco NO está aquí, forzamos el foco con un solo clic y prevenimos el comportamiento nativo ⭐️
+            // Si el foco está en la sección de botones, el clic es "absorbido" por el SO o se usa para selección, 
+            // impidiendo el foco. Prevenir el default asegura la adquisición.
             if (document.activeElement !== fragment) {
                 e.preventDefault(); 
                 fragment.focus(); 
