@@ -251,9 +251,9 @@ export function _mostrarDetalle(cursoId) {
     fragments.forEach(fragment => {
         // Fix A: Manually handle click/focus on fragments (1st click focus)
         fragment.addEventListener('click', (e) => {
-            // ⭐️ CORRECCIÓN: Siempre enfocar al hacer clic para asegurar el cambio de foco de la secuencia ⭐️
+            // ⭐️ CORRECCIÓN CLAVE: Si el foco NO está aquí, forzamos el foco con un solo clic y prevenimos el comportamiento nativo ⭐️
             if (document.activeElement !== fragment) {
-                // e.preventDefault() eliminado para permitir el comportamiento predeterminado del clic (ej. selección)
+                e.preventDefault(); 
                 fragment.focus(); 
             }
         });

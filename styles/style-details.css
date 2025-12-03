@@ -80,14 +80,21 @@
 }
 
 /* ⭐️ CORRECCIÓN: Evitar que la fila de acción aplique su propio foco visual, y quitar blur en hover ⭐️ */
-.detail-action-item.focus-current,
-.detail-action-item:hover { /* ⭐️ CORRECCIÓN: Quita blur/grayscale en hover siempre ⭐️ */
+.detail-action-item.focus-current {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    filter: none !important; 
+    opacity: 1 !important; 
+}
+.detail-action-item:hover { /* ⭐️ CORRECCIÓN: Hover de la fila de acción (anula blur siempre) ⭐️ */
     outline: none !important;
     border: none !important;
     box-shadow: none !important;
     filter: none !important; /* Asegura la nitidez en hover */
     opacity: 1 !important; /* Asegura la nitidez en hover */
 }
+
 
 /* ⭐️ Fragmento/Acción Adyacente 1 (Mínimo desenfoque: 0.5px) ⭐️ */
 .detail-text-fragment.focus-adj-1,
