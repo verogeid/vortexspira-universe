@@ -3,6 +3,9 @@
 /* 1. Variables y Tema (Colores, Modo Oscuro) */
 @import url('style-theme.css');
 
+/* ⭐️ AÑADIDO: Variables de medios (SVG Icons) ⭐️ */
+@import url('style-media.css');
+
 /* 2. Estructura Global (Layout General) */
 @import url('style-layout.css');
 

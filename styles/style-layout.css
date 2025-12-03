@@ -101,6 +101,15 @@ header h1 svg {
 }
 #info-adicional.visible { display: block !important; }
 
+#info-adicional-link-landing::before {
+    -webkit-mask-image: var(--icon-link-landing);
+    mask-image: var(--icon-link-landing);
+}
+#info-adicional-link-diary::before {
+    -webkit-mask-image: var(--icon-link-diary);
+    mask-image: var(--icon-link-diary);
+}
+
 /* TABLET PORTRAIT (601px - 800px): 2 COLUMNAS */
 @media (min-width: 601px) and (max-width: 800px) {
     #app-container {
