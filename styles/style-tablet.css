@@ -78,7 +78,7 @@
     }
     #vista-navegacion-tablet .mask-left, #vista-navegacion-tablet .mask-right {
       position: absolute; 
-      top: 0; width: 25%; height: 100%;
+      top: 0; width: 33%; height: 100%;
       -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); 
       background: linear-gradient(to right, var(--color-mask-gradient) 0%, transparent 60%); 
       z-index: 10;
