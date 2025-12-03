@@ -296,10 +296,21 @@ export function _mostrarDetalle(cursoId) {
         
         primerElementoFocuseable = this.DOM.cardVolverFijaElemento;
 
-        if (elementToFocus) {
+        // ⭐️ CORRECCIÓN CLAVE: Scroll para asegurar que el título es visible al inicio ⭐️
+        const firstFragment = this.DOM.detalleContenido.querySelector('.detail-text-fragment');
+        
+        if (elementToFocus && elementToFocus === firstFragment && !isMobile) {
+            // Si el foco inicial es el primer fragmento, forzamos el scroll al inicio del contenedor (donde está el título)
+            this.DOM.detalleContenido.scrollTop = 0; 
             elementToFocus.focus();
-            _updateDetailFocusState.call(this, elementToFocus); 
+            _updateDetailFocusState.call(this, elementToFocus);
             primerElementoFocuseable = elementToFocus;
+        }
+        else if (elementToFocus) {
+             elementToFocus.focus();
+             _updateDetailFocusState.call(this, elementToFocus); 
+             elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+             primerElementoFocuseable = elementToFocus;
         }
         
     } else { 
@@ -310,6 +321,7 @@ export function _mostrarDetalle(cursoId) {
         if (elementToFocus) {
              elementToFocus.focus();
              _updateDetailFocusState.call(this, elementToFocus); 
+             elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
              primerElementoFocuseable = elementToFocus;
         } else {
              // Fallback al primer elemento interactivo si el índice guardado es inválido o 0

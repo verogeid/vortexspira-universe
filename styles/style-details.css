@@ -44,9 +44,7 @@
 
 /* ⭐️ FOCO: Asegurar nitidez al recibir foco (teclado/clic) ⭐️ */
 .detail-text-fragment:focus-visible,
-.detail-text-fragment.focus-current,
-/* ⭐️ CORRECCIÓN: Hace el elemento nítido al pasar el ratón (sin robar el foco) ⭐️ */
-.detail-text-fragment.focus-current-hover { 
+.detail-text-fragment.focus-current { 
     /* 1. Resetear el filtro para nitidez inmediata */
     filter: none !important; 
     opacity: 1 !important;
@@ -60,6 +58,14 @@
         0 1px 3px var(--color-shadow-primary); 
     
     background-color: transparent; 
+}
+
+/* ⭐️ CORRECCIÓN: Hover de texto (nítido sin borde inferior accent) ⭐️ */
+.detail-text-fragment.focus-current-hover {
+    filter: none !important; 
+    opacity: 1 !important;
+    border-bottom-color: transparent !important; /* Asegurar que el hover NO añade la línea accent */
+    box-shadow: none !important; /* Evitar sombra */
 }
 
 
@@ -177,7 +183,8 @@
     outline: none;
 }
 /* FOCUS: Borde/Sombra + Color de texto/icono */
-.detail-action-btn:not(.disabled):focus-visible {
+.detail-action-btn:not(.disabled):focus-visible,
+.detail-action-item:not(.disabled):focus-visible .detail-action-btn { /* <-- CORRECCIÓN: Estilo de foco del padre al botón hijo */
     border-color: var(--color-primary);   
     color: var(--color-primary) !important;          /* ⭐️ Asegura el color AZUL en focus ⭐️ */
     box-shadow: 0 0 15px var(--color-shadow-primary);
@@ -229,7 +236,8 @@
 }
 
 /* Focus: Zoom + Foco Color (cambiar a blanco/gris oscuro) */
-.detail-action-btn.disabled:focus-visible {
+.detail-action-btn.disabled:focus-visible,
+.detail-action-item.disabled:focus-visible .detail-action-btn { /* <-- CORRECCIÓN: Estilo de foco del padre al botón hijo */
     outline: none;
     transform: scale(1.03); 
     border-color: var(--color-text); 
