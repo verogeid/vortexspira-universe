@@ -53,8 +53,8 @@
         z-index: 1000 !important;
         
         overflow-y: auto !important; 
-        /* ⭐️ CORRECCIÓN CLAVE: Empujar el contenido debajo del header ⭐️ */
-        padding-top: calc(var(--header-height) + 10px);
+        /* Eliminamos el padding top del contenedor de scroll */
+        padding-top: 10px; 
         padding-bottom: 10px;
         
         /* Scrollbar azul en detalle */
@@ -79,12 +79,26 @@
     
     /* Contenedor del botón Volver (Sticky) */
     .mobile-back-header {
-        margin-bottom: 15px !important; 
-        margin-top: 5px !important;
+        position: fixed; /* ⭐️ CORRECCIÓN CLAVE: Fijo en lugar de sticky ⭐️ */
+        top: var(--header-height); /* Comienza debajo del header */
+        z-index: 1001; /* Más alto que el contenido */
+        padding: 5px 10px; 
+        background: var(--color-bg); /* Fondo para ocultar el contenido de scroll */
+        box-shadow: 0 5px 10px rgba(0,0,0,0.4); 
+        width: calc(100% - 20px); /* 100% menos los 10px de padding de #app-container */
+        
+        margin-bottom: 0 !important; 
+        margin-top: 0 !important;
+        
         text-align: left;
         width: 100%;
     }
-
+    
+    /* ⭐️ AÑADIDO: Clase para empujar el contenido debajo del header fijo de la vista detalle ⭐️ */
+    #detalle-contenido-mobile .contenido-curso {
+        padding-top: 120px; /* Espacio para el breadcrumb y botón volver fijo */
+    }
+    
     /* 6. Footer */
     footer {
         position: relative !important; bottom: auto;
@@ -93,51 +107,62 @@
     
     ::-webkit-scrollbar { width: 4px; }
 
-/* --------------------------------------------------------------------- */
-/* ⭐️ SWIPER VERTICAL MÓVIL (Reemplaza los mobile-track) ⭐️ */
-/* --------------------------------------------------------------------- */
+    /* --------------------------------------------------------------------- */
+    /* ⭐️ SWIPER VERTICAL MÓVIL ⭐️ */
+    /* --------------------------------------------------------------------- */
 
-#nav-swiper-mobile {
-    height: auto !important; /* Permitir que el contenido defina el alto */
-    min-height: calc(100vh - var(--header-height) - 40px); /* Mínimo para llenar el espacio */
-    width: 100%; position: relative;
-    overflow: hidden; 
+    #nav-swiper-mobile {
+        height: auto !important; /* Permitir que el contenido defina el alto */
+        min-height: calc(100vh - var(--header-height) - 40px); /* Mínimo para llenar el espacio */
+        width: 100%; position: relative;
+        overflow: hidden; 
+    }
+
+    #nav-swiper-mobile .swiper-wrapper {
+        display: flex !important; flex-direction: column; 
+        gap: 10px; 
+        width: 100%; height: auto !important; /* Altura auto para que el swipe funcione */
+        padding-bottom: 15vh; 
+    }
+
+    /* Los slides contienen las tarjetas */
+    #nav-swiper-mobile .swiper-slide {
+        width: 100% !important; height: auto !important; /* Altura determinada por el contenido */
+        display: flex; 
+        flex-direction: column;
+        align-items: center;
+        /* ⭐️ AÑADIDO: Padding horizontal para el margen del zoom ⭐️ */
+        padding: 0 5px; 
+    }
+
+    /* ⭐️ AÑADIDO: Las tarjetas deben usar todo el ancho disponible del slide ⭐️ */
+    #nav-swiper-mobile .swiper-slide .card {
+        width: 100%;
+    }
+
+    .swiper-slide .card:not(.disabled):not([data-tipo="relleno"]) {
+        cursor: pointer !important;
+        pointer-events: auto !important; 
+        /* ⭐️ SOLUCIÓN CLAVE (si el navegador cancela el evento por scroll) ⭐️ */
+        touch-action: manipulation; 
+    }
+
+    /* ⭐️ AÑADIDO: Estilos específicos para Breadcrumb y Volver fijo ⭐️ */
+    .card-breadcrumb-vertical {
+        position: relative; /* Dentro de mobile-back-header */
+        top: auto; 
+        z-index: auto; 
+        box-shadow: none;
+        border-style: dashed !important;
+        margin-bottom: 5px; 
+    }
+
+    .card-volver-vertical {
+        position: relative; /* Dentro de mobile-back-header */
+        top: auto;
+        z-index: auto;
+        margin-bottom: 5px; 
+    }
 }
 
-#nav-swiper-mobile .swiper-wrapper {
-    display: flex !important; flex-direction: column; 
-    gap: 10px; 
-    width: 100%; height: auto !important; /* Altura auto para que el swipe funcione */
-    padding-bottom: 15vh; 
-}
-
-/* Los slides contienen las tarjetas */
-#nav-swiper-mobile .swiper-slide {
-    width: 100% !important; height: auto !important; /* Altura determinada por el contenido */
-    display: flex; 
-    flex-direction: column;
-    align-items: center;
-}
-
-.swiper-slide .card:not(.disabled):not([data-tipo="relleno"]) {
-    cursor: pointer !important;
-    pointer-events: auto !important; 
-    /* ⭐️ SOLUCIÓN CLAVE (si el navegador cancela el evento por scroll) ⭐️ */
-    touch-action: manipulation; 
-}
-
-/* Breadcrumb Sticky */
-/* ⭐️ ELIMINAR STICKY (CONFLICTO CON SWIPER) ⭐️ */
-.card-breadcrumb-vertical {
-    position: sticky;
-    top: 10px; /* ⭐️ CORRECCIÓN: 10px fijo ⭐️ */
-    z-index: 50; 
-}
-
-/* Tarjeta Volver (Nivel Inferior) */
-.card-volver-vertical {
-    position: sticky; 
-    /* ⭐️ CORRECCIÓN CLAVE: Ajuste de TOP para evitar solapamiento ⭐️ */
-    top: 70px; 
-}
-}
+/* --- styles/style-mobile.css --- */

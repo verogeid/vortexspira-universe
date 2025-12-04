@@ -306,3 +306,5 @@ export function _handleFocusTrap(e, viewType) {
         elementToFocus.focus();
     }
 };
+
+// --- code/nav-keyboard-base.js ---

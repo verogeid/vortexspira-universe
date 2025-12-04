@@ -68,11 +68,14 @@ export function _handleDetailNavigation(key) {
         const elementToFocus = focusableElements[newIndex];
         elementToFocus.focus();
         
-        // ⭐️ CORRECCIÓN CLAVE: Forzar el scroll al inicio del contenedor si es el primer fragmento (para ver el título) ⭐️
+        // ⭐️ CORRECCIÓN CLAVE: Forzar el scroll para que el elemento enfocado esté visible (block: 'center' es más seguro) ⭐️
         if (newIndex === 0 && elementToFocus.classList.contains('detail-text-fragment') && this.DOM.detalleContenido) {
              this.DOM.detalleContenido.scrollTop = 0;
         } else {
-             elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+             // Usar 'center' para mantenerlo visible en el centro/medio del viewport si es posible
+             elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
         }
     }
 }
+
+// --- code/nav-keyboard-details.js ---

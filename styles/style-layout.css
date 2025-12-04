@@ -144,3 +144,5 @@ header h1 svg {
   .mask-left, .mask-right { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .vista { transition: none !important; }
 }
+
+/* --- styles/style-layout.css --- */

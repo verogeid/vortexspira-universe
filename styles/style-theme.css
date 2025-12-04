@@ -1,4 +1,5 @@
 /* --- styles/style-theme.css --- */
+
 :root {
     --color-bg: #f4f4f4;
     --color-card-bg: rgba(255, 255, 255, 0.7);
@@ -85,3 +86,5 @@
         --color-shadow-disabled: transparent;
     }
 }
+
+/* --- styles/style-theme.css --- */

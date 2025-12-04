@@ -1,4 +1,4 @@
-// --- code/i18n.js (MODULARIZADO) ---
+// --- code/i18n.js ---
 
 import * as debug from './debug.js';
 import * as data from './data.js';
@@ -108,3 +108,5 @@ export function applyStrings(appInstance) {
         }
     }
 }
+
+// --- code/i18n.js ---

@@ -1,4 +1,4 @@
-// --- code/nav-details.js (NUEVO MÓDULO DE DETALLE) ---
+// --- code/nav-details.js ---
 
 import * as debug from './debug.js';
 import * as data from './data.js';
@@ -190,15 +190,42 @@ export function _mostrarDetalle(cursoId) {
     let mobileBackHtml = '';
     
     if (isMobile) {
+        // ⭐️ FIX: Obtener el nivel superior (padre) para el breadcrumb ⭐️
+        const parentLevel = this.stackGetCurrent();
+        let breadcrumbText = this.getString('breadcrumbRoot');
+        let volverHtml = '';
+        
+        if (parentLevel && parentLevel.levelId) {
+            const parentNodo = nav_base._findNodoById(parentLevel.levelId, this.STATE.fullData.navegacion);
+            breadcrumbText = parentNodo ? (parentNodo.nombre || parentNodo.titulo) : this.getString('breadcrumbRoot');
+            
+            // Generar el botón Volver
+            volverHtml = `
+                <article class="card card-volver-vertical" 
+                         role="button" 
+                         tabindex="0" 
+                         onclick="App._handleVolverClick()"
+                         aria-label="${this.getString('ariaBackLevel')}">
+                    <h3>${data.LOGO_VOLVER} Volver</h3>
+                </article>
+            `;
+        }
+
+        const breadcrumbHtml = `
+            <article class="card card-breadcrumb-vertical" 
+                     data-id="breadcrumb-nav" 
+                     data-tipo="relleno" 
+                     tabindex="-1"
+                     aria-hidden="true">
+                <h3>${breadcrumbText}</h3>
+            </article>
+        `;
+        
+        // ⭐️ FIX: Contenedor fixed para el breadcrumb y volver ⭐️
         mobileBackHtml = `
           <div class="mobile-back-header">
-              <article class="card card-volver-vertical" 
-                       role="button" 
-                       tabindex="0" 
-                       onclick="App._handleVolverClick()"
-                       aria-label="Volver">
-                  <h3>${data.LOGO_VOLVER} Volver</h3>
-              </article>
+              ${breadcrumbHtml}
+              ${volverHtml}
           </div>
         `;
     }
@@ -370,3 +397,5 @@ export function _handleActionRowClick(e) {
     // Apuntamos a la fila, ya que es el elemento secuencial enfocable.
     e.currentTarget.focus(); 
 };
+
+// --- code/nav-details.js ---

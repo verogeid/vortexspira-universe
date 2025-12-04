@@ -1,4 +1,4 @@
-// --- code/nav-tactil.js (REFRACTORIZADO A ES MODULE) ---
+// --- code/nav-tactil.js ---
 
 import * as debug from './debug.js';
 import * as data from './data.js';
@@ -120,3 +120,5 @@ export function handleSlideChangeEnd(swiper) {
         this._updateFocus(false); // Método delegado
     }
 };
+
+// --- code/nav-tactil.js ---

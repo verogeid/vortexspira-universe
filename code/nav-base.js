@@ -293,3 +293,5 @@ export function findBestFocusInColumn(columnCards, targetRow) {
     }
     return null;
 };
+
+// --- code/nav-base.js (MÓDULO CENTRAL DE NAVEGACIÓN) ---

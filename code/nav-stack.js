@@ -1,4 +1,4 @@
-// --- code/nav-stack.js (MODULARIZADO) ---
+// --- code/nav-stack.js ---
 
 import * as debug from './debug.js';
 
@@ -116,3 +116,5 @@ export function stackBuildFromId(targetId, fullData) {
     debug.logWarn('nav_stack', `No se pudo construir la pila para el ID "${targetId}".`);
     return false;
 };
+
+// --- code/nav-stack.js ---

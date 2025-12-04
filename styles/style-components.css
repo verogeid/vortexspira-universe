@@ -1,4 +1,5 @@
 /* --- styles/style-components.css --- */
+
 #card-nivel-actual {
     flex: 0 0 auto; border: 2px dashed var(--color-border-placeholder);
     background: transparent; padding: 1.5rem; border-radius: 12px;
@@ -142,3 +143,5 @@
         box-shadow: none; }
     .toast { transition: none; }
 }
+
+/* --- styles/style-components.css --- */

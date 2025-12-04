@@ -1,4 +1,4 @@
-// --- code/render-mobile.js (REFRACTORIZADO A ES MODULE) ---
+// --- code/render-mobile.js ---
 
 import * as debug from './debug.js';
 import * as data from './data.js';
@@ -70,3 +70,5 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
         this.setupTouchListeners(); 
     }
 };
+
+// --- code/render-mobile.js ---

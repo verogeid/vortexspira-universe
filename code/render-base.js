@@ -393,3 +393,5 @@ export function _setupResizeObserver() {
     });
     this.STATE.resizeObserver.observe(document.body);
 };
+
+// --- code/render-base.js ---

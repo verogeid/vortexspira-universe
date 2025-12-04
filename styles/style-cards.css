@@ -100,3 +100,5 @@
     .card { transition: none !important; }
     .card:hover, .card:focus-visible { transform: none; box-shadow: none; }
 }
+
+/* --- styles/style-cards.css --- */

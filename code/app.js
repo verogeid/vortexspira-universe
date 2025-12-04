@@ -80,7 +80,7 @@ class VortexSpiraApp {
     async init() {
         debug.logClear();
 
-        debug.log('global', debug.DEBUG_LEVELS.BASIC, "VortexSpira Universe - Versión 1.0.30");
+        debug.log('global', debug.DEBUG_LEVELS.BASIC, "VortexSpira Universe - Versión 1.0.31");
 
         debug.log('app', debug.DEBUG_LEVELS.BASIC, "App: Iniciando orquestación (POO)...");
         
@@ -253,3 +253,5 @@ export const injectFooterContent = () => data.injectFooterContent(appInstance);
 
 // Exportamos la instancia App (para el código HTML onclick)
 export const App = appInstance;
+
+// --- code/app.js ---

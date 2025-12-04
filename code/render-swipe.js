@@ -1,4 +1,4 @@
-// --- code/render-swipe.js (REFRACTORIZADO A ES MODULE) ---
+// --- code/render-swipe.js ---
 
 import * as debug from './debug.js';
 
@@ -129,3 +129,5 @@ export function _destroyCarouselImpl() {
         debug.log('render_swipe', debug.DEBUG_LEVELS.BASIC, "Swiper destruido.");
     }
 };
+
+// --- code/render-swipe.js ---
