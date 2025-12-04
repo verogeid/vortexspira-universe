@@ -117,15 +117,15 @@
         min-height: calc(100vh - var(--header-height) - 40px); /* Mínimo para llenar el espacio */
         width: 100%; position: relative;
         overflow: hidden; 
-        border-color: yellow;
     }
 
     #nav-swiper-mobile .swiper-wrapper {
         display: flex !important; flex-direction: column; 
         gap: 10px; 
         width: 100%; height: auto !important; /* Altura auto para que el swipe funcione */
-        padding-top: 15px !important;
         padding-bottom: 15vh; 
+        /* ⭐️ FIX: Padding Superior Interno ⭐️ */
+        padding-top: 15px !important; 
     }
 
     /* Los slides contienen las tarjetas */
@@ -135,7 +135,7 @@
         flex-direction: column;
         align-items: center;
         /* ⭐️ CORRECCIÓN MARGEN: Añadir el padding para absorber el zoom del 3% ⭐️ */
-        padding: 0 5%; 
+        padding: 0 6%; /* Aumento a 6% para garantizar margen derecho y absorber el zoom (1.03) */
     }
 
     /* ⭐️ AÑADIDO: Las tarjetas deben usar todo el ancho disponible del slide ⭐️ */
