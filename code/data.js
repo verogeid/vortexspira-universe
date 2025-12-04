@@ -52,7 +52,7 @@ export function injectHeaderLogo() {
 
     const faviconLink = document.createElement('link');
     faviconLink.rel = 'icon';
-    faviconLink.href = 'image/logo.svg';// FAVICON_SVG_DATA_URI;
+    faviconLink.href = 'images/logo.svg';// FAVICON_SVG_DATA_URI;
     faviconLink.type = 'image/svg+xml';
     document.head.appendChild(faviconLink);
 
