@@ -76,9 +76,10 @@ export function handleSlideChangeEnd(swiper) {
     
     let targetRow;
     if (isMobile) {
-        // En móvil (1xN), el targetRow es siempre 0 (ya que solo hay una 'fila'/columna)
+        // En móvil (1xN), el targetRow es siempre 0.
         targetRow = 0; 
     } else {
+        // En Desktop/Tablet, calculamos la fila objetivo.
         targetRow = currentFocusIndex % itemsPorColumna;
     }
 

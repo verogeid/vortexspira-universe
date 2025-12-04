@@ -140,23 +140,25 @@ export function _mostrarDetalle(cursoId) {
     this.DOM.detalleContenido = isMobile ? document.getElementById('detalle-contenido-mobile') : document.getElementById('detalle-contenido-desktop');
 
 
-    const getIconHtml = (text) => {
+    // ⭐️ FIX ICONOS: Usar clases CSS para los iconos de acción (SVG Masks) ⭐️
+    const getIconClass = (text) => {
         const lower = text.toLowerCase();
-        if (lower.includes('adquirir') || lower.includes('comprar')) { return data.LOGO_BUY; }
-        let iconClass = 'icon-link'; 
-        // ⭐️ CLAVE: Incluir "prueba" para usar el icono de descarga ⭐️
-        if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa') || lower.includes('prueba')) { iconClass = 'icon-download'; }
-        return `<i class="action-icon ${iconClass}"></i>`; 
+        if (lower.includes('adquirir') || lower.includes('comprar') || lower.includes('paquete')) { return 'icon-buy'; }
+        if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa') || lower.includes('prueba')) { return 'icon-download'; }
+        return 'icon-link'; 
     };
 
     let enlacesHtml = '';
     if (curso.enlaces && curso.enlaces.length > 0) {
         const itemsHtml = curso.enlaces.map(enlace => {
-            const iconHtml = getIconHtml(enlace.texto);
+            const iconClass = getIconClass(enlace.texto);
             const isDisabled = !enlace.url || enlace.url === '#';
             
-            // ⭐️ NUEVO CONTENIDO: Emoji simple para deshabilitado ⭐️
-            const contentHtml = isDisabled ? data.LOGO_DISABLED : iconHtml; 
+            // ⭐️ FIX ICONOS: Usar clase SVG para habilitados, o emoji para deshabilitados ⭐️
+            const contentHtml = `<i class="action-icon ${iconClass}"></i>`;
+            
+            // ⭐️ FIX ICONOS: Usar el emoji LOGO_DISABLED para el deshabilitado ⭐️
+            const disabledContent = data.LOGO_DISABLED; 
 
             const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
             const classDisabledBtn = isDisabled ? 'disabled' : '';
@@ -178,7 +180,7 @@ export function _mostrarDetalle(cursoId) {
                      tabIndex="${tabIndexButton}" 
                      ${onclickAttr}
                      aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
-                     ${contentHtml}
+                     ${isDisabled ? disabledContent : contentHtml}
                   </a>
               </div>`;
         }).join('');

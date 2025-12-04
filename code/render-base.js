@@ -1,6 +1,6 @@
 // --- code/render-base.js ---
 
-import * as debug from './debug.js';
+import * as debug from './debug.js'; // AÑADIDO: Importar debug
 import * as data from './data.js';
 
 let _lastMode = 'desktop'; 
@@ -18,7 +18,7 @@ export function renderNavegacion() {
     
     if (!this.STATE.fullData) {
         if (typeof debug.logError === 'function') {
-            logError('render_base', "No se puede renderizar: Datos no cargados.");
+            debug.logError('render_base', "No se puede renderizar: Datos no cargados."); // FIX: debug.logError
         }
         return;
     }
@@ -62,23 +62,27 @@ export function renderNavegacion() {
         this.DOM.vistaNav = mobileView;
         this.DOM.track = document.getElementById('track-mobile'); 
         this.DOM.inactiveTrack = null; // Ya no se necesita un track inactivo
-        debug.log('render_base', debug.DEBUG_LEVELS.DEEP, 'Modo Móvil. Track activo: #track-mobile');
+        debug.log('render_base', debug.DEBUG_LEVELS.DEEP, 'Modo Móvil. Track activo: #track-mobile'); // FIX: debug.log
     } else {
         renderHtmlFn = this._generateCardHTML_Carousel; // Método delegado
         initCarouselFn = this._initCarousel_Swipe;     // Método delegado
         
-        if (isTablet) {
-            calculatedItemsPerColumn = 2; 
-            swiperId = '#nav-swiper-tablet';
-            this.DOM.vistaNav = tabletView;
-            this.DOM.track = document.getElementById('track-tablet'); 
-        } 
-        
+        // FIX BREAKPOINT: Priorizar DESKTOP (3 COL) y luego TABLET LANDSCAPE (3 COL) y finalmente TABLET PORTRAIT (2 COL)
         if (isDesktop) {
             calculatedItemsPerColumn = 3; 
             swiperId = '#nav-swiper';
             this.DOM.vistaNav = desktopView;
             this.DOM.track = document.getElementById('track-desktop'); 
+        } else if (isTabletLandscape) {
+            calculatedItemsPerColumn = 3; 
+            swiperId = '#nav-swiper-tablet';
+            this.DOM.vistaNav = tabletView;
+            this.DOM.track = document.getElementById('track-tablet'); 
+        } else if (isTabletPortrait) {
+            calculatedItemsPerColumn = 2; 
+            swiperId = '#nav-swiper-tablet';
+            this.DOM.vistaNav = tabletView;
+            this.DOM.track = document.getElementById('track-tablet'); 
         }
     }
     this.STATE.itemsPorColumna = calculatedItemsPerColumn;
@@ -125,7 +129,7 @@ export function renderNavegacion() {
     const isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
                            document.getElementById('vista-detalle-mobile').classList.contains('active');
 
-    debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `renderNavigation: isDetailActive: ${isDetailActive}, activeCourseId: ${this.STATE.activeCourseId}`);
+    debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `renderNavigation: isDetailActive: ${isDetailActive}, activeCourseId: ${this.STATE.activeCourseId}`); // FIX: debug.log
                            
     // ⭐️ Limpiar todas las vistas de Navegación + Detalle ⭐️
     desktopView.classList.remove('active');
@@ -144,11 +148,11 @@ export function renderNavegacion() {
         if (this.STATE.activeCourseId) {
             // Llamamos a _mostrarDetalle. Esto reinyecta el HTML en el contenedor correcto (this.DOM.detalleContenido) y lo activa.
             this._mostrarDetalle(this.STATE.activeCourseId); 
-            debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `Detalle re-renderizado para curso: ${this.STATE.activeCourseId}`);
+            debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `Detalle re-renderizado para curso: ${this.STATE.activeCourseId}`); // FIX: debug.log
         } else {
             // Si el ID se perdió, volvemos a la navegación
             isDetailActive = false;
-            debug.logWarn('render_base', "activeCourseId perdido durante resize, volviendo a navegación.");
+            debug.logWarn('render_base', "activeCourseId perdido durante resize, volviendo a navegación."); // FIX: debug.logWarn
         }
     } 
     
@@ -190,7 +194,7 @@ export function renderNavegacion() {
     }
     
     if (typeof debug.log === 'function') {
-        log('render_base', debug.DEBUG_LEVELS.BASIC, 'Renderizado completado.');
+        debug.log('render_base', debug.DEBUG_LEVELS.BASIC, 'Renderizado completado.'); // FIX: debug.log
     }
     
     if (!this.STATE.resizeObserver) {
@@ -251,7 +255,8 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
     // LÓGICA DE ICONOS RESTAURADA
     if (tipo === 'categoria') {
         if (!estaActivo) {
-            displayTitle = data.LOGO_OBRAS + ' ' + displayTitle;
+            // FIX ICONO: Usar LOGO_DISABLED para categorías deshabilitadas
+            displayTitle = data.LOGO_DISABLED + ' ' + displayTitle; 
         } else {
             displayTitle = data.LOGO_CARPETA + ' ' + displayTitle;
         }
@@ -344,7 +349,7 @@ export function _setupResizeObserver() {
         const isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
                                document.getElementById('vista-detalle-mobile').classList.contains('active');
 
-        debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `ResizeObserver detectó cambio: Nuevo ancho = ${newWidth}px, Modo = ${newMode}, Detalle activo = ${isDetailActive}`);
+        debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `ResizeObserver detectó cambio: Nuevo ancho = ${newWidth}px, Modo = ${newMode}, Detalle activo = ${isDetailActive}`); // FIX: debug.log
 
         // Lógica de activación:
         const shouldRenderForLayout = 
