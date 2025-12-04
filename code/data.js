@@ -93,6 +93,9 @@ export function injectFooterContent() {
             <a href="${LINKEDIN_URL}" target="_top" 
                 aria-label="${App.getString('ariaLinkedIn')}" class="footer-social-link">
             </a>
+
+            <span class="footer-separator">|</span> 
+            v${App.getString('version')}
         `;
     }
 }
