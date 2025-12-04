@@ -131,8 +131,8 @@
         display: flex; 
         flex-direction: column;
         align-items: center;
-        /* ⭐️ AÑADIDO: Padding horizontal para el margen del zoom ⭐️ */
-        padding: 0 5px; 
+        /* ⭐️ CORRECCIÓN MARGEN: Añadir el padding para absorber el zoom del 3% ⭐️ */
+        padding: 0 5%; 
     }
 
     /* ⭐️ AÑADIDO: Las tarjetas deben usar todo el ancho disponible del slide ⭐️ */

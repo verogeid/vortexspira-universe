@@ -154,11 +154,11 @@ export function _mostrarDetalle(cursoId) {
             const iconClass = getIconClass(enlace.texto);
             const isDisabled = !enlace.url || enlace.url === '#';
             
-            // ⭐️ FIX ICONOS: Usar clase SVG para habilitados, o emoji para deshabilitados ⭐️
+            // ⭐️ FIX ICONOS: Contenido habilitado usa la clase SVG ⭐️
             const contentHtml = `<i class="action-icon ${iconClass}"></i>`;
             
-            // ⭐️ FIX ICONOS: Usar el emoji LOGO_DISABLED para el deshabilitado ⭐️
-            const disabledContent = data.LOGO_DISABLED; 
+            // ⭐️ FIX ICONOS: Contenido deshabilitado usa la clase SVG para el set vacío ⭐️
+            const disabledContentHtml = `<i class="action-icon icon-vacio"></i>`; // CAMBIO CLAVE
 
             const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
             const classDisabledBtn = isDisabled ? 'disabled' : '';
@@ -180,7 +180,7 @@ export function _mostrarDetalle(cursoId) {
                      tabIndex="${tabIndexButton}" 
                      ${onclickAttr}
                      aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
-                     ${isDisabled ? disabledContent : contentHtml}
+                     ${isDisabled ? disabledContentHtml : contentHtml}
                   </a>
               </div>`;
         }).join('');

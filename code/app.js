@@ -80,7 +80,7 @@ class VortexSpiraApp {
     async init() {
         debug.logClear();
 
-        debug.log('global', debug.DEBUG_LEVELS.BASIC, "VortexSpira Universe - Versión 1.0.32");
+        debug.log('global', debug.DEBUG_LEVELS.BASIC, "VortexSpira Universe - Versión 1.0.33");
 
         debug.log('app', debug.DEBUG_LEVELS.BASIC, "App: Iniciando orquestación (POO)...");
         
