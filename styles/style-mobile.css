@@ -117,12 +117,14 @@
         min-height: calc(100vh - var(--header-height) - 40px); /* Mínimo para llenar el espacio */
         width: 100%; position: relative;
         overflow: hidden; 
+        border-color: yellow;
     }
 
     #nav-swiper-mobile .swiper-wrapper {
         display: flex !important; flex-direction: column; 
         gap: 10px; 
         width: 100%; height: auto !important; /* Altura auto para que el swipe funcione */
+        padding-top: 15px !important;
         padding-bottom: 15vh; 
     }
 
