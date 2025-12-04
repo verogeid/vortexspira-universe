@@ -17,6 +17,7 @@ export const LICENSE_URL = "http://creativecommons.org/licenses/by-nc-nd/4.0/";
 export const LICENSE_IMG_SRC = "https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png";
 export const LANDING_PAGE_URL = "https://subscribepage.io/vortexspira";
 export const DEV_DIARY_URL = "https://github.com/verogeid/vortexspira";
+export const WEBPAGE_URL = "https://www.vortexspira.com";
 
 export const MOBILE_MAX_WIDTH = 600;
 export const TABLET_MIN_WIDTH = 601;
@@ -62,7 +63,8 @@ export function injectHeaderLogo() {
         const h1 = header.querySelector('h1');
 
         const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = logoSVG;
+        tempDiv.innerHTML = `<a href="${WEBPAGE_URL}" target="_self" 
+                aria-label="${App.getString('ariaSelfUrl')}">${logoSVG}</a>`;
         const svgElement = tempDiv.firstChild;
 
         if (h1) {
