@@ -19,7 +19,8 @@
         /* ⭐️ CORRECCIÓN: Padding superior fijo (10px) ⭐️ */
         padding-top: 10px !important;
         display: flex; flex-direction: column;
-        padding-left: 10px; padding-right: 10px; padding-bottom: 10px;
+        /* FIX MARGINS: Remove lateral padding here and rely on slide padding */
+        padding-left: 0px; padding-right: 0px; padding-bottom: 10px; 
         gap: 15px; overflow: visible;
     }
 
@@ -79,16 +80,16 @@
     
     /* Contenedor del botón Volver (Sticky) */
     .mobile-back-header {
-        position: fixed; /* ⭐️ CORRECCIÓN CLAVE: Fijo en lugar de sticky ⭐️ */
-        top: var(--header-height); /* Comienza debajo del header */
-        z-index: 1001; /* Más alto que el contenido */
+        position: relative; /* ⭐️ CORRECCIÓN CLAVE: RELATIVO (scroll normal) ⭐️ */
+        top: auto; /* Deshabilitar fixed/sticky */
+        z-index: auto; 
+        box-shadow: none;
         padding: 5px 10px; 
-        background: var(--color-bg); /* Fondo para ocultar el contenido de scroll */
-        box-shadow: 0 5px 10px rgba(0,0,0,0.4); 
-        width: calc(100% - 20px); /* 100% menos los 10px de padding de #app-container */
+        background: transparent; /* Fondo transparente */
+        width: 100%; /* Restaurar width */
         
-        margin-bottom: 0 !important; 
-        margin-top: 0 !important;
+        margin-bottom: 15px !important; 
+        margin-top: 5px !important;
         
         text-align: left;
         width: 100%;
@@ -96,7 +97,7 @@
     
     /* ⭐️ AÑADIDO: Clase para empujar el contenido debajo del header fijo de la vista detalle ⭐️ */
     #detalle-contenido-mobile .contenido-curso {
-        padding-top: 120px; /* Espacio para el breadcrumb y botón volver fijo */
+        padding-top: 0px; /* FIX: Eliminar el padding extra ya que los botones ya no son fijos */
     }
     
     /* 6. Footer */
