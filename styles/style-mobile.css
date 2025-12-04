@@ -16,10 +16,8 @@
     #app-container {
         height: auto !important;
         min-height: calc(100vh - var(--header-height)); 
-        /* ⭐️ CORRECCIÓN: Padding superior fijo (10px) ⭐️ */
         padding-top: 10px !important;
         display: flex; flex-direction: column;
-        /* FIX MARGINS: Remove lateral padding here and rely on slide padding */
         padding-left: 0px; padding-right: 0px; padding-bottom: 10px; 
         gap: 15px; overflow: visible;
         border: 1px solid red !important; /* 🟥 Borde Contenedor Principal (DEBUG) */
@@ -82,13 +80,13 @@
     
     /* Contenedor del botón Volver (Sticky) */
     .mobile-back-header {
-        position: relative; /* ⭐️ CORRECCIÓN CLAVE: RELATIVO (scroll normal) ⭐️ */
-        top: auto; /* Deshabilitar fixed/sticky */
+        position: relative; 
+        top: auto; 
         z-index: auto; 
         box-shadow: none;
         padding: 5px 10px; 
-        background: transparent; /* Fondo transparente */
-        width: 100%; /* Restaurar width */
+        background: transparent; 
+        width: 100%; 
         
         margin-bottom: 15px !important; 
         margin-top: 5px !important;
@@ -131,7 +129,7 @@
         gap: 10px; 
         width: 100%; height: auto !important; 
         padding-bottom: 15vh; 
-        padding-top: 15px !important; /* ⭐️ FIX: Padding Superior Interno ⭐️ */
+        padding-top: 15px !important; /* ⭐️ FIX: Padding Superior Interno (Interior del swipe) ⭐️ */
         border: 1px solid lime !important; /* 🟢 Borde Swiper Wrapper (DEBUG) */
     }
 
@@ -141,6 +139,9 @@
         display: flex; 
         flex-direction: column;
         align-items: center;
+        /* ⭐️ CAMBIO CLAVE PARA CORREGIR DESBORDAMIENTO: Incluir padding dentro del 100% del width ⭐️ */
+        box-sizing: border-box; 
+        
         /* ⭐️ CORRECCIÓN MARGEN DERECHO: 6% para absorber el zoom (1.03) ⭐️ */
         padding: 0 6%; 
         border: 1px solid cyan !important; /* 🔵 Borde Slide (DEBUG) */
@@ -149,6 +150,8 @@
     /* ⭐️ AÑADIDO: Las tarjetas deben usar todo el ancho disponible del slide ⭐️ */
     #nav-swiper-mobile .swiper-slide .card {
         width: 100%;
+        /* ⭐️ CAMBIO CLAVE: Asegurar que la tarjeta también respete el box-sizing ⭐️ */
+        box-sizing: border-box; 
     }
 
     .swiper-slide .card:not(.disabled):not([data-tipo="relleno"]) {
@@ -185,3 +188,5 @@
         margin-bottom: 5px; 
     }
 }
+
+/* --- styles/style-mobile.css --- */
