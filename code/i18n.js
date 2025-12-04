@@ -15,6 +15,7 @@ export const STRINGS = {
         'btnBack': '↩ Volver', 
 
         // Labels de Accesibilidad (ARIA)
+        'ariaSelfUrl': 'URL de VortexSpira',
         'ariaNavRegion': 'Navegación principal de cursos',
         'ariaBackLevel': 'Volver al nivel anterior', 
         'ariaLicense': 'Descripción de la licencia CC BY-NC-ND 4.0',
