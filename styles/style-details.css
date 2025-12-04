@@ -238,25 +238,30 @@
     pointer-events: auto; 
 }
 
-/* Aseguramos que solo se muestre el emoji 🚫 (texto) */
+/* Aseguramos que solo se muestre el SVG del conjunto vacío (<i>) */
 .detail-action-btn.disabled .triangulo-svg,
 .detail-action-btn.disabled .icon-wrapper,
-.detail-action-btn.disabled > i {
+/* ⭐️ FIX: Asegurar que el icono SVG (<i>) SÍ se muestra ⭐️ */
+.detail-action-btn.disabled > i:not(.icon-vacio) { 
     display: none !important; 
+}
+.detail-action-btn.disabled > i.icon-vacio { /* Muestra solo el SVG del conjunto vacío */
+    display: block !important;
 }
 
 
-/* Hover: Zoom + Sombra (mantener color gris) */
+/* Hover: Zoom + Sombra (y cambio de color a accent/gris) */
 .detail-action-btn.disabled:hover,
 .detail-action-item:hover .detail-action-btn.disabled { /* <== Añadido hover en label */
     outline: none;
     transform: scale(1.03); 
     border-color: var(--color-card-border); 
     box-shadow: 0 0 10px var(--color-shadow-disabled);
-    color: var(--color-text-muted); /* Color del icono se mantiene gris */
+    /* ⭐️ CAMBIO CLAVE: Usar color: var(--color-text) en hover para el acento gris ⭐️ */
+    color: var(--color-text); /* Color del icono cambia a color de texto (accent/gris) */
 }
 
-/* Focus: Zoom + Foco Color (cambiar a blanco/gris oscuro) */
+/* Focus: Zoom + Foco Color (cambiar a accent/gris) */
 /* ⭐️ CORRECCIÓN: Aplicar el foco visual (gris) cuando la fila padre tiene el foco lógico ⭐️ */
 .detail-action-btn.disabled:focus-visible,
 .detail-action-item.focus-current .detail-action-btn.disabled { 
@@ -290,6 +295,12 @@
 .icon-buy { 
     -webkit-mask-image: var(--icon-buy); 
     mask-image: var(--icon-buy); 
+}
+
+/* Empty set (for disabled button) */
+.icon-vacio { 
+    -webkit-mask-image: var(--icon-vacio); 
+    mask-image: var(--icon-vacio); 
 }
 
 /* 7. Estilo Específico Botón Volver Móvil (Píldora) */
