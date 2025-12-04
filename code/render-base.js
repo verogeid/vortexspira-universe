@@ -6,44 +6,6 @@ import * as data from './data.js';
 let _lastMode = 'desktop'; 
 let _lastWidth = window.innerWidth; // Añadido para detectar el cambio Landscape/Portrait
 
-/**
- * Helper para generar el HTML del icono SVG para las tarjetas de navegación.
- * @param {string} iconUnicode - El carácter Unicode original (data.LOGO_OBRAS, etc.)
- * @returns {string} HTML del icono.
- */
-function _generarIconoCardHtml(iconUnicode) {
-    let iconClass;
-    let fallbackText = '';
-    
-    switch (iconUnicode) {
-        case data.LOGO_OBRAS: // 🚧 (Obras/Disabled)
-            iconClass = 'icon-vacio';
-            break;
-        case data.LOGO_CARPETA: // 📁 (Categoría)
-            iconClass = 'icon-link'; // Usamos 'icon-link' como un icono de 'entrada/navegación' genérico
-            break;
-        case data.LOGO_CURSO: // 📚 (Curso)
-            iconClass = 'icon-buy'; // Usamos 'icon-buy' como un icono de 'adquirir'
-            break;
-        case data.LOGO_VOLVER: // ↩ (Volver)
-             iconClass = 'icon-return'; // Clase para icono de retorno (aunque probablemente se muestre como texto en card-volver-vertical)
-             fallbackText = iconUnicode;
-             break;
-        default:
-            fallbackText = iconUnicode;
-    }
-    
-    // Si tenemos una clase SVG válida, la usamos.
-    if (iconClass && iconClass !== 'icon-return' && iconUnicode !== data.LOGO_VOLVER) {
-        // Usamos la misma estructura base que el detalle (action-icon), pero adaptada a la tarjeta.
-        return `<span class="card-icon-wrapper"><i class="action-icon card-icon ${iconClass}"></i></span>`;
-    }
-    
-    // Si no es un icono SVG de reemplazo (ej. el de volver), usamos el texto original.
-    return `<span class="card-icon-text">${fallbackText}</span>`;
-}
-
-
 // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL ⭐️
 /**
  * Renderiza el nivel de navegación actual.
@@ -221,10 +183,6 @@ export function renderNavegacion() {
             } else {
                 mobileView.classList.add('view-nav-root');
             }
-            
-            // ⭐️ CORRECCIÓN CLAVE: Scroll al inicio de la ventana al cargar la vista de navegación móvil ⭐️
-            window.scrollTo(0, 0); 
-            
         } else if (isTablet) {
             tabletView.classList.add('active');
         } else { 
@@ -299,7 +257,7 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
     
     let displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
     
-    // ⭐️ LÓGICA DE ICONOS (RESTAURADA A UNICODE/EMOJI QUE FUNCIONA) ⭐️
+    // LÓGICA DE ICONOS RESTAURADA
     if (tipo === 'categoria') {
         if (!estaActivo) {
             displayTitle = data.LOGO_OBRAS + ' ' + displayTitle;

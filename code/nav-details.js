@@ -142,17 +142,10 @@ export function _mostrarDetalle(cursoId) {
 
     const getIconHtml = (text) => {
         const lower = text.toLowerCase();
-        
-        // ⭐️ CORRECCIÓN: Reemplazar el emoji 🛒 por el SVG icon-buy ⭐️
-        if (lower.includes('adquirir') || lower.includes('comprar')) { 
-             return `<i class="action-icon icon-buy"></i>`;
-        }
-        
+        if (lower.includes('adquirir') || lower.includes('comprar')) { return data.LOGO_BUY; }
         let iconClass = 'icon-link'; 
-        // CLAVE: Incluir "prueba" para usar el icono de descarga 
-        if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa') || lower.includes('prueba')) { 
-             iconClass = 'icon-download'; 
-        }
+        // ⭐️ CLAVE: Incluir "prueba" para usar el icono de descarga ⭐️
+        if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa') || lower.includes('prueba')) { iconClass = 'icon-download'; }
         return `<i class="action-icon ${iconClass}"></i>`; 
     };
 
@@ -162,15 +155,16 @@ export function _mostrarDetalle(cursoId) {
             const iconHtml = getIconHtml(enlace.texto);
             const isDisabled = !enlace.url || enlace.url === '#';
             
-            // ⭐️ CORRECCIÓN: Reemplazar el emoji 🚫 por el SVG icon-vacio ⭐️
-            const contentHtml = isDisabled ? `<i class="action-icon icon-vacio"></i>` : iconHtml; 
+            // ⭐️ NUEVO CONTENIDO: Emoji simple para deshabilitado ⭐️
+            const contentHtml = isDisabled ? data.LOGO_DISABLED : iconHtml; 
 
             const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
             const classDisabledBtn = isDisabled ? 'disabled' : '';
             const classDisabledText = ''; 
             
-            const tabIndexContainer = '-1'; 
-            const tabIndexButton = isDisabled ? '-1' : '0'; 
+            // ⭐️ CORRECCIÓN: La fila es enfocable (tabindex="0") y el botón NO ⭐️
+            const tabIndexContainer = '0'; 
+            const tabIndexButton = '-1'; 
             const targetAttr = isDisabled ? '' : 'target="_blank"';
             
             const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
@@ -230,7 +224,8 @@ export function _mostrarDetalle(cursoId) {
         }
     });
 
-    const titleHtml = `<h2 tabindex="0" style="outline:none;">${curso.titulo}</h2>`;
+    // ⭐️ CORRECCIÓN: El título no debe ser enfocable ⭐️
+    const titleHtml = `<h2 style="outline:none;">${curso.titulo}</h2>`;
 
     this.DOM.detalleContenido.innerHTML = `
       ${mobileBackHtml}
@@ -256,7 +251,9 @@ export function _mostrarDetalle(cursoId) {
     fragments.forEach(fragment => {
         // Fix A: Manually handle click/focus on fragments (1st click focus)
         fragment.addEventListener('click', (e) => {
-            // Si ya está activo, permitimos que el click pase al handler de teclado para avanzar.
+            // ⭐️ CORRECCIÓN CLAVE: Si el foco NO está aquí, forzamos el foco con un solo clic y prevenimos el comportamiento nativo ⭐️
+            // Si el foco está en la sección de botones, el clic es "absorbido" por el SO o se usa para selección, 
+            // impidiendo el foco. Prevenir el default asegura la adquisición.
             if (document.activeElement !== fragment) {
                 e.preventDefault(); 
                 fragment.focus(); 
@@ -265,9 +262,8 @@ export function _mostrarDetalle(cursoId) {
         
         // Fix B: Handle hover on fragments (make it sharp on mouseover)
         fragment.addEventListener('mouseover', (e) => {
-            if (document.activeElement !== fragment) {
-                 fragment.classList.add('focus-current-hover');
-            }
+            // Aplicar la clase para nitidez sin el borde azul
+            fragment.classList.add('focus-current-hover');
         });
         fragment.addEventListener('mouseout', () => {
             fragment.classList.remove('focus-current-hover');
@@ -306,7 +302,7 @@ export function _mostrarDetalle(cursoId) {
         // ⭐️ CORRECCIÓN CLAVE: Scroll para asegurar que el título es visible al inicio ⭐️
         const firstFragment = this.DOM.detalleContenido.querySelector('.detail-text-fragment');
         
-        if (elementToFocus && elementToFocus === firstFragment && !isMobile) {
+        if (elementToFocus && elementToFocus === firstFragment) {
             // Si el foco inicial es el primer fragmento, forzamos el scroll al inicio del contenedor (donde está el título)
             this.DOM.detalleContenido.scrollTop = 0; 
             elementToFocus.focus();
@@ -332,7 +328,7 @@ export function _mostrarDetalle(cursoId) {
              primerElementoFocuseable = elementToFocus;
         } else {
              // Fallback al primer elemento interactivo si el índice guardado es inválido o 0
-             const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-btn, .detail-text-fragment');
+             const firstInteractive = this.DOM.detalleContenido.querySelector('.card, .detail-action-item, .detail-text-fragment');
              if (firstInteractive) {
                 firstInteractive.focus();
                 _updateDetailFocusState.call(this, firstInteractive); 
@@ -369,9 +365,6 @@ export function _handleActionRowClick(e) {
     // 'this' es la instancia de App
     debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 'Clic en fila de acción (Detalle) detectado.');
     
-    // Apuntamos al botón de acción, ya que ahora es el foco objetivo.
-    const btn = e.currentTarget.querySelector('.detail-action-btn');
-    if (btn) {
-        btn.focus(); 
-    }
+    // Apuntamos a la fila, ya que es el elemento secuencial enfocable.
+    e.currentTarget.focus(); 
 };
