@@ -18,7 +18,7 @@ export function renderNavegacion() {
     
     if (!this.STATE.fullData) {
         if (typeof debug.logError === 'function') {
-            debug.logError('render_base', "No se puede renderizar: Datos no cargados.");
+            logError('render_base', "No se puede renderizar: Datos no cargados.");
         }
         return;
     }
@@ -58,14 +58,11 @@ export function renderNavegacion() {
         initCarouselFn = this._initCarousel_Mobile;   // Método delegado
         calculatedItemsPerColumn = 1;
 
+        swiperId = '#nav-swiper-mobile';
         this.DOM.vistaNav = mobileView;
-        this.DOM.track = document.getElementById(isSubLevel ? 'track-mobile-submenu' : 'track-mobile-root'); 
-        this.DOM.inactiveTrack = document.getElementById(isSubLevel ? 'track-mobile-root' : 'track-mobile-submenu'); 
-        
-        if (typeof debug.log === 'function') {
-            debug.log('render_base', debug.DEBUG_LEVELS.DEEP, 'Modo Móvil. Track activo:', this.DOM.track.id);
-        }
-        
+        this.DOM.track = document.getElementById('track-mobile'); 
+        this.DOM.inactiveTrack = null; // Ya no se necesita un track inactivo
+        debug.log('render_base', debug.DEBUG_LEVELS.DEEP, 'Modo Móvil. Track activo: #track-mobile');
     } else {
         renderHtmlFn = this._generateCardHTML_Carousel; // Método delegado
         initCarouselFn = this._initCarousel_Swipe;     // Método delegado
@@ -161,12 +158,6 @@ export function renderNavegacion() {
         let htmlContent = renderHtmlFn.call(this, itemsDelNivel, this.STATE.itemsPorColumna); // Invocación con 'call(this)'
         this.DOM.track.innerHTML = htmlContent;
 
-        // Ocultar el track inactivo para eliminar el espaciado
-        if (isMobile && this.DOM.inactiveTrack) {
-            this.DOM.inactiveTrack.style.display = 'none';
-            this.DOM.track.style.display = 'flex'; 
-        }
-
         let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
         initCarouselFn.call(this, initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId); // Invocación con 'call(this)'
         
@@ -199,7 +190,7 @@ export function renderNavegacion() {
     }
     
     if (typeof debug.log === 'function') {
-        debug.log('render_base', debug.DEBUG_LEVELS.BASIC, 'Renderizado completado.');
+        log('render_base', debug.DEBUG_LEVELS.BASIC, 'Renderizado completado.');
     }
     
     if (!this.STATE.resizeObserver) {

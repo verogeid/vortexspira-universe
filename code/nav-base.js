@@ -172,8 +172,10 @@ export function _updateFocusImpl(shouldSlide = true) {
                 this.STATE.keyboardNavInProgress = true; 
                 carouselInstance.slideToLoop(targetSwiperSlide, 400); // Velocidad: 400ms
             }
-        } else if (isMobile) {
-            nextFocusedCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else if (isMobile && carouselInstance && shouldSlide) {
+             this.STATE.keyboardNavInProgress = true; 
+             // Usamos slideTo, ya que el loop está deshabilitado en móvil
+             carouselInstance.slideTo(normalizedIndex, data.SWIPE_SLIDE_SPEED); 
         }
     }
 };

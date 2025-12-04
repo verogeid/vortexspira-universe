@@ -93,75 +93,51 @@
     
     ::-webkit-scrollbar { width: 4px; }
 
+/* --------------------------------------------------------------------- */
+/* ⭐️ SWIPER VERTICAL MÓVIL (Reemplaza los mobile-track) ⭐️ */
+/* --------------------------------------------------------------------- */
 
-/* Layout del Track Móvil (Base para ambos tracks) */
-.mobile-track {
-    display: flex; flex-direction: column; 
+#nav-swiper-mobile {
+    height: auto !important; /* Permitir que el contenido defina el alto */
+    min-height: calc(100vh - var(--header-height) - 40px); /* Mínimo para llenar el espacio */
+    width: 100%; position: relative;
+    overflow: hidden; 
+}
+
+#nav-swiper-mobile .swiper-wrapper {
+    display: flex !important; flex-direction: column; 
     gap: 10px; 
-    width: 100%; height: auto; padding: 5px; box-sizing: border-box;
-    margin-top: 0 !important; justify-content: flex-start;
-    
-    /*scroll-snap-type: y mandatory; */
+    width: 100%; height: auto !important; /* Altura auto para que el swipe funcione */
     padding-bottom: 15vh; 
 }
 
-/* ⭐️ CORRECCIÓN DE INTERACCIÓN: Cursor y Touch Action ⭐️ */
-.mobile-track .card:not(.disabled):not([data-tipo="relleno"]) {
+/* Los slides contienen las tarjetas */
+#nav-swiper-mobile .swiper-slide {
+    width: 100% !important; height: auto !important; /* Altura determinada por el contenido */
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+}
+
+.swiper-slide .card:not(.disabled):not([data-tipo="relleno"]) {
     cursor: pointer !important;
     pointer-events: auto !important; 
     /* ⭐️ SOLUCIÓN CLAVE (si el navegador cancela el evento por scroll) ⭐️ */
     touch-action: manipulation; 
 }
 
-
-/* --------------------------------------------------------------------- */
-/* ⭐️ VISTA SUBMENÚ (Usa #track-mobile-submenu) ⭐️ */
-/* --------------------------------------------------------------------- */
-
-/* Margen grande para limpiar los dos elementos sticky (Breadcrumb y Volver) */
-#track-mobile-submenu .card {
-    width: 100%; min-height: 100px; height: auto; font-size: 1.1rem;
-    scroll-snap-align: start; 
-    scroll-margin-top: 130px; 
-}
-
-/* --------------------------------------------------------------------- */
-/* ⭐️ VISTA RAÍZ (Usa #track-mobile-root) ⭐️ */
-/* --------------------------------------------------------------------- */
-
-/* Margen mínimo para compensar solo el padding del header */
-#track-mobile-root .card {
-    width: 100%; min-height: 100px; height: auto; font-size: 1.1rem;
-    scroll-snap-align: start; 
-    scroll-margin-top: 20px; 
-}
-
-/* --------------------------------------------------------------------- */
-/* ⭐️ ESTILOS STICKY (Ajuste de Posición Vertical) ⭐️ */
-/* --------------------------------------------------------------------- */
-
 /* Breadcrumb Sticky */
-.mobile-track .card-breadcrumb-vertical {
+/* ⭐️ ELIMINAR STICKY (CONFLICTO CON SWIPER) ⭐️ */
+.card-breadcrumb-vertical {
     position: sticky;
     top: 10px; /* ⭐️ CORRECCIÓN: 10px fijo ⭐️ */
     z-index: 50; 
-    background-color: var(--color-bg); 
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    border-style: solid !important;
-    margin-bottom: 10px; 
-    min-height: 50px; 
 }
 
 /* Tarjeta Volver (Nivel Inferior) */
-.mobile-track .card-volver-vertical {
+.card-volver-vertical {
     position: sticky; 
     /* ⭐️ CORRECCIÓN CLAVE: Ajuste de TOP para evitar solapamiento ⭐️ */
     top: 70px; 
-    z-index: 49; 
-    min-height: 50px; 
-    background: var(--color-card-bg);
-    border-style: solid; 
-    text-align: center; 
-    margin-bottom: 10px; 
 }
 }

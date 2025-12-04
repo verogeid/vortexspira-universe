@@ -15,7 +15,7 @@ export function setupTouchListeners() {
     const screenWidth = window.innerWidth;
     const isMobile = screenWidth <= data.MOBILE_MAX_WIDTH;
 
-    if (!isMobile && this.STATE.carouselInstance) {
+    if (this.STATE.carouselInstance) {
         const swiper = this.STATE.carouselInstance;
 
         // --- Limpiar listeners antiguos ---
@@ -46,12 +46,14 @@ export function handleSlideChangeStart(swiper) {
     if (swiper.activeIndex === swiper.previousIndex) return;
     _swipeDirection = swiper.activeIndex > swiper.previousIndex ? 'next' : 'prev';
 
-    // Manejar el salto del loop
-    if (swiper.previousIndex === swiper.slides.length - 1 && swiper.activeIndex === 0) {
-        _swipeDirection = 'next';
-    }
-    if (swiper.previousIndex === 0 && swiper.activeIndex === swiper.slides.length - 1) {
-        _swipeDirection = 'prev';
+    // Manejar el salto del loop (Solo para horizontal/loop)
+    if (swiper.params.loop) {
+        if (swiper.previousIndex === swiper.slides.length - 1 && swiper.activeIndex === 0) {
+            _swipeDirection = 'next';
+        }
+        if (swiper.previousIndex === 0 && swiper.activeIndex === swiper.slides.length - 1) {
+            _swipeDirection = 'prev';
+        }
     }
 };
 
@@ -69,11 +71,21 @@ export function handleSlideChangeEnd(swiper) {
     // --- El resto es la lógica de SWIPE TÁCTIL (o Rueda de Ratón) ---
     
     const { currentFocusIndex, itemsPorColumna } = this.STATE;
-    const targetRow = currentFocusIndex % itemsPorColumna;
+    const screenWidth = window.innerWidth;
+    const isMobile = screenWidth <= data.MOBILE_MAX_WIDTH;
+    
+    let targetRow;
+    if (isMobile) {
+        // En móvil (1xN), el targetRow es siempre 0 (ya que solo hay una 'fila'/columna)
+        targetRow = 0; 
+    } else {
+        targetRow = currentFocusIndex % itemsPorColumna;
+    }
 
     const activeSlideEl = swiper.slides[swiper.activeIndex];
     if (!activeSlideEl) return;
 
+    // En móvil, la columna de tarjetas es directamente el swiper-slide
     const columnCards = Array.from(activeSlideEl.querySelectorAll('.card'));
     if (columnCards.length === 0) return;
 
@@ -82,7 +94,7 @@ export function handleSlideChangeEnd(swiper) {
 
 
     // ⭐️ 2. LÓGICA DE SALTO (SI ESTÁ VACÍO) ⭐️
-    if (!newFocusCard) {
+    if (!newFocusCard && !isMobile) { // Solo saltamos automáticamente en Desktop/Tablet
         debug.logWarn('nav_tactil', "Columna vacía, saltando a la siguiente...");
         if (_swipeDirection === 'next') {
             swiper.slideNext(data.SWIPE_SLIDE_SPEED);
@@ -91,6 +103,9 @@ export function handleSlideChangeEnd(swiper) {
         }
         return; 
     }
+    
+    // Si estamos en móvil y no hay tarjeta enfocable, simplemente no hacemos nada (el foco se queda donde estaba)
+    if (!newFocusCard && isMobile) return; 
 
     // 3. Encontrar el índice GLOBAL de esta nueva tarjeta
     const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
