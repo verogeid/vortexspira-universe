@@ -140,18 +140,20 @@ export function _mostrarDetalle(cursoId) {
     this.DOM.detalleContenido = isMobile ? document.getElementById('detalle-contenido-mobile') : document.getElementById('detalle-contenido-desktop');
 
 
-    // ⭐️ FIX ICONOS: Usar clases CSS para los iconos de acción (SVG Masks) ⭐️
-    const getIconClass = (text) => {
-        const lower = text.toLowerCase();
-        if (lower.includes('adquirir') || lower.includes('comprar') || lower.includes('paquete')) { return 'icon-buy'; }
-        if (lower.includes('instalar') || lower.includes('descargar') || lower.includes('pwa') || lower.includes('prueba')) { return 'icon-download'; }
-        return 'icon-link'; 
+    // ⬇️ MODIFICACIÓN CLAVE: Usar la key 'type' del JSON ⬇️
+    const getIconClass = (type) => {
+        if (type === 'c') { return 'icon-buy'; }
+        if (type === 'd') { return 'icon-download'; }
+        return 'icon-link'; // Por defecto (si 'type' no está definido o es otro valor)
     };
+    // ⬆️ FIN MODIFICACIÓN CLAVE ⬆️
 
     let enlacesHtml = '';
     if (curso.enlaces && curso.enlaces.length > 0) {
         const itemsHtml = curso.enlaces.map(enlace => {
-            const iconClass = getIconClass(enlace.texto);
+            // ⬇️ MODIFICACIÓN CLAVE: Usar enlace.type en lugar de analizar enlace.texto ⬇️
+            const iconClass = getIconClass(enlace.type); 
+            // ⬆️ FIN MODIFICACIÓN CLAVE ⬆️
             const isDisabled = !enlace.url || enlace.url === '#';
             
             // ⭐️ FIX ICONOS: Contenido habilitado usa la clase SVG ⭐️
