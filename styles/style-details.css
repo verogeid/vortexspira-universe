@@ -61,8 +61,7 @@
 }
 
 /* ⭐️ CORRECCIÓN: Hover de texto (nítido sin borde inferior accent) ⭐️ */
-.detail-text-fragment.focus-current-hover, 
-.detail-text-fragment:hover { /* ⭐️ CORRECCIÓN: Quita blur/grayscale en hover siempre ⭐️ */
+.detail-text-fragment.focus-current-hover {
     filter: none !important; 
     opacity: 1 !important;
     border-bottom-color: transparent !important; /* Asegurar que el hover NO añade la línea accent */
@@ -74,27 +73,11 @@
 /* ---------------------------------------------------- */
 
 /* ⭐️ Foco Actual (Nitidez Completa) ⭐️ */
-.detail-text-fragment.focus-current {
+.detail-text-fragment.focus-current,
+.detail-action-item.focus-current {
     filter: none;
     opacity: 1;
 }
-
-/* ⭐️ CORRECCIÓN: Evitar que la fila de acción aplique su propio foco visual, y quitar blur en hover ⭐️ */
-.detail-action-item.focus-current {
-    outline: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    filter: none !important; 
-    opacity: 1 !important; 
-}
-.detail-action-item:hover { /* ⭐️ CORRECCIÓN: Hover de la fila de acción (anula blur siempre) ⭐️ */
-    outline: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    filter: none !important; /* Asegura la nitidez en hover */
-    opacity: 1 !important; /* Asegura la nitidez en hover */
-}
-
 
 /* ⭐️ Fragmento/Acción Adyacente 1 (Mínimo desenfoque: 0.5px) ⭐️ */
 .detail-text-fragment.focus-adj-1,
@@ -115,10 +98,7 @@
     transition: filter 0.5s ease, opacity 0.5s ease;
     filter: blur(1.5px) grayscale(40%); /* CORRECCIÓN */
     opacity: 0.6; /* CORRECCIÓN */
-    pointer-events: auto;
-    
-    /* ⭐️ CORRECCIÓN: Asegurar que el focus de la fila no tiene estilos visuales ⭐️ */
-    outline: none;
+    pointer-events: auto; /* Permitir foco y click */
 }
 /* Re-habilitar clic en el botón solo si el contenedor tiene el foco actual */
 .detail-action-item.focus-current .detail-action-btn {
@@ -131,7 +111,7 @@
 /* Foco en Texto -> Desenfoque de ACCIONES (Mismo nivel que el texto más lejano) */
 .mode-focus-text #detalle-bloque-acciones {
     /* Las reglas de BLUR y OPACITY se definen en .detail-action-item por defecto (2px, 0.4) */
-    /* ⭐️ CORRECCIÓN: Quitar pointer-events: none; para permitir hover/click ⭐️ */
+    pointer-events: none; 
     -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
     mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
 }
@@ -140,7 +120,7 @@
 /* Foco en Acciones -> Desenfoque de TEXTO (Uniforme al nivel de desenfoque base) */
 /* Las reglas de BLUR y OPACITY se definen en .detail-text-fragment por defecto (2px, 0.4) */
 .mode-focus-actions .detail-text-fragment {
-    /* ⭐️ CORRECCIÓN: Quitar pointer-events: none; para permitir hover/click ⭐️ */
+    pointer-events: none; /* Deshabilitar clics en texto */
     -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
     mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
 }
@@ -204,8 +184,7 @@
 }
 /* FOCUS: Borde/Sombra + Color de texto/icono */
 .detail-action-btn:not(.disabled):focus-visible,
-/* ⭐️ CORRECCIÓN: Aplicar el foco visual (azul) cuando la fila padre tiene el foco lógico ⭐️ */
-.detail-action-item.focus-current .detail-action-btn:not(.disabled) { 
+.detail-action-item:not(.disabled):focus-visible .detail-action-btn { /* <-- CORRECCIÓN: Estilo de foco del padre al botón hijo */
     border-color: var(--color-primary);   
     color: var(--color-primary) !important;          /* ⭐️ Asegura el color AZUL en focus ⭐️ */
     box-shadow: 0 0 15px var(--color-shadow-primary);
@@ -214,7 +193,7 @@
 }
 
 /* ----------------------------------------------------- */
-/* ⭐️ ESTADO DISABLED: CUADRADO CON BORDES REDONDEADOS + 🚫 ⭐️ */
+/* ⭐️ ESTADO DISABLED: CUADRADO CON BORDES REDONDEADOS + SVG 🚫 ⭐️ */
 /* ----------------------------------------------------- */
 
 .detail-action-btn.disabled {
@@ -228,9 +207,7 @@
     height: 38px;
     border-radius: 8px; 
     
-    /* ESTILO DEL EMOJI */
-    font-size: 1.6rem; /* Ajustado para caber en 38px */
-    line-height: 1;
+    /* [REMOVIDO: Reglas de font-size/line-height del emoji] */
     
     filter: none; 
     transform: none; 
@@ -238,13 +215,11 @@
     pointer-events: auto; 
 }
 
-/* Aseguramos que solo se muestre el emoji 🚫 (texto) */
+/* Aseguramos que solo se muestre el SVG y ocultamos otros elementos de texto/envoltorio */
 .detail-action-btn.disabled .triangulo-svg,
-.detail-action-btn.disabled .icon-wrapper,
-.detail-action-btn.disabled > i {
+.detail-action-btn.disabled .icon-wrapper {
     display: none !important; 
 }
-
 
 /* Hover: Zoom + Sombra (mantener color gris) */
 .detail-action-btn.disabled:hover,
@@ -257,9 +232,8 @@
 }
 
 /* Focus: Zoom + Foco Color (cambiar a blanco/gris oscuro) */
-/* ⭐️ CORRECCIÓN: Aplicar el foco visual (gris) cuando la fila padre tiene el foco lógico ⭐️ */
 .detail-action-btn.disabled:focus-visible,
-.detail-action-item.focus-current .detail-action-btn.disabled { 
+.detail-action-item.disabled:focus-visible .detail-action-btn { /* <-- CORRECCIÓN: Estilo de foco del padre al botón hijo */
     outline: none;
     transform: scale(1.03); 
     border-color: var(--color-text); 
@@ -286,10 +260,15 @@
     -webkit-mask-image: var(--icon-link); 
     mask-image: var(--icon-link); 
 }
-/* Carrito de compra (aunque se usa emoji, esta es la definición de máscara) */
+/* Carrito de compra */
 .icon-buy { 
     -webkit-mask-image: var(--icon-buy); 
     mask-image: var(--icon-buy); 
+}
+/* ⭐️ AÑADIDO: Icono para deshabilitado/vacio ⭐️ */
+.icon-vacio { 
+    -webkit-mask-image: var(--icon-vacio); 
+    mask-image: var(--icon-vacio); 
 }
 
 /* 7. Estilo Específico Botón Volver Móvil (Píldora) */
