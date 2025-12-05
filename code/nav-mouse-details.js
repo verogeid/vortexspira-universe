@@ -25,7 +25,7 @@ function _handleDetailWheel(e) {
     if (!isDetailView) return; 
 
     // Solo se debe intentar la navegación si el evento se originó dentro del carrusel de detalle o su contenido
-    const targetIsDetailContent = e.target.closest('#vista-detalle-desktop, #vista-detalle-mobile, .detalle-viewport');
+    const targetIsDetailContent = e.target.closest('.detalle-viewport'); // Apuntamos al viewport de detalle
 
     if (targetIsDetailContent) {
         // ⭐️ CORRECCIÓN CLAVE: Interceptamos el scroll nativo y lo convertimos a navegación por foco. ⭐️

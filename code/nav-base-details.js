@@ -37,7 +37,8 @@ export function _updateDetailFocusState(appInstance) {
             if (diff === 0) {
                 content.classList.add('focus-current');
                 // Forzamos el foco del teclado al contenido real dentro de la slide.
-                content.focus({ preventScroll: true }); 
+                // ⭐️ FIX CLAVE: Eliminar { preventScroll: true } para que el foco nativo mueva el scroll si Swiper falla. ⭐️
+                content.focus(); 
                 // Aplicar clase al slide para estilos de contenedor si es necesario
                 slide.classList.add('focus-current'); 
 

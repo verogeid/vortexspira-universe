@@ -203,16 +203,20 @@ export function _updateFocusImpl(shouldSlide = true) {
         } else {
             nextFocusedCard.focus({ preventScroll: true }); 
         }
+        
+        // ⭐️ FIX: Forzar el deslizamiento del carrusel principal si estamos en Desktop/Tablet ⭐️
         if (!isMobile && carouselInstance && shouldSlide) {
+            // Calcular el índice del slide que debe estar centrado
             const targetSwiperSlide = Math.floor(normalizedIndex / itemsPorColumna) + 1; 
-            // ⭐️ USO DE VELOCIDAD LENTA (400ms) PARA MOVIMIENTO FLUIDO ANTI-FATIGA ⭐️
+            
+            // Si el slide activo de Swiper no es el target, forzamos el deslizamiento
             if (targetSwiperSlide !== carouselInstance.realIndex) {
                 this.STATE.keyboardNavInProgress = true; 
                 carouselInstance.slideToLoop(targetSwiperSlide, 400); // Velocidad: 400ms
             }
         } else if (isMobile && carouselInstance && shouldSlide) {
              this.STATE.keyboardNavInProgress = true; 
-             // Usamos slideTo, ya que el loop está deshabilitado en móvil
+             // En móvil, deslizamos al índice de la tarjeta directamente
              carouselInstance.slideTo(normalizedIndex, data.SWIPE_SLIDE_SPEED); 
         }
     }
@@ -236,7 +240,7 @@ export function _handleVolverClick() {
     // 'this' es la instancia de App
     debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Acción Volver iniciada.');
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
-    const isTablet = window.innerWidth > data.MOBILE_MAX_WIDTH && window.innerWidth <= data.TABLET_LANDSCAPE_MAX_WIDTH;
+    const isTablet = window.innerWidth >= data.TABLET_MIN_WIDTH && window.innerWidth <= data.TABLET_MAX_WIDTH;
     
     if (this.DOM.vistaDetalle.classList.contains('active')) {
         // Salir de detalle
