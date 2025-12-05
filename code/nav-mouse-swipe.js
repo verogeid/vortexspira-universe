@@ -1,4 +1,4 @@
-// --- code/nav-tactil.js ---
+// --- code/nav-mouse-swipe.js ---
 
 import * as debug from './debug.js';
 import * as data from './data.js';
@@ -34,7 +34,7 @@ export function setupTouchListeners() {
         swiper.on('slideChangeTransitionStart', swiper._slideChangeStartHandler);
         swiper.on('slideChangeTransitionEnd', swiper._slideChangeEndHandler);
         
-        debug.log('nav_tactil', debug.DEBUG_LEVELS.BASIC, "Listeners de Swiper (táctil) configurados.");
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "Listeners de Swiper (táctil) configurados.");
     }
 };
 
@@ -96,7 +96,7 @@ export function handleSlideChangeEnd(swiper) {
 
     // ⭐️ 2. LÓGICA DE SALTO (SI ESTÁ VACÍO) ⭐️
     if (!newFocusCard && !isMobile) { // Solo saltamos automáticamente en Desktop/Tablet
-        debug.logWarn('nav_tactil', "Columna vacía, saltando a la siguiente...");
+        debug.logWarn('nav_mouse_swipe', "Columna vacía, saltando a la siguiente...");
         if (_swipeDirection === 'next') {
             swiper.slideNext(data.SWIPE_SLIDE_SPEED);
         } else {
@@ -121,4 +121,4 @@ export function handleSlideChangeEnd(swiper) {
     }
 };
 
-// --- code/nav-tactil.js ---
+// --- code/nav-mouse-swipe.js ---

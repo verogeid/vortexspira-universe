@@ -1,13 +1,13 @@
 // --- code/nav-keyboard-details.js ---
 
-import * as nav_details from './nav-details.js'; // Necesario para _getFocusableDetailElements
+import * as nav_base_details from './nav-base-details.js'; // ⬇️ MODIFICACIÓN: Usar nav_base_details ⬇️
 
 export function _handleDetailNavigation(key) {
     // 'this' es la instancia de App
     const activeElement = document.activeElement;
     
     // Obtenemos todos los elementos navegables del módulo nav-details
-    const focusableElements = nav_details._getFocusableDetailElements.call(this)
+    const focusableElements = nav_base_details._getFocusableDetailElements(this) // ⬇️ MODIFICACIÓN: Pasar 'this' ⬇️
         .filter(el => 
             !el.classList.contains('card-volver-vertical') && 
             el.id !== 'card-volver-fija-elemento'

@@ -2,8 +2,9 @@
 
 import * as debug from './debug.js';
 import * as data from './data.js';
-import * as nav_details from './nav-details.js'; // Necesario para _getFocusableDetailElements en el trap de detalle
-import * as nav_keyboard_details from './nav-keyboard-details.js'; // Necesario para delegar la navegación de detalle
+import * as nav_base_details from './nav-base-details.js'; // ⬇️ MODIFICACIÓN: Nuevo módulo ⬇️
+import * as nav_keyboard_details from './nav-keyboard-details.js'; 
+import * as nav_keyboard_swipe from './nav-keyboard-swipe.js'; // ⬇️ MODIFICACIÓN: Nuevo módulo ⬇️
 import * as nav_base from './nav-base.js'; // Necesario para _updateFocusImpl
 
 /**
@@ -71,13 +72,15 @@ export function initKeyboardControls() {
         if (isNavActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault(); 
-                _handleKeyNavigation.call(app, e.key);
+                // ⬇️ MODIFICACIÓN: Delegamos a nav-keyboard-swipe ⬇️
+                nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
+                // ⬆️ FIN MODIFICACIÓN ⬆️
             }
         } 
         else if (isDetailActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault();
-                // Delegamos al nuevo módulo de detalles de teclado
+                // Delegamos al módulo de detalles de teclado
                 nav_keyboard_details._handleDetailNavigation.call(app, e.key);
             }
         }
@@ -103,62 +106,8 @@ export function _handleInfoNavigation(key) {
     if (newIndex !== currentIndex) elements[newIndex].focus();
 };
 
-export function _handleKeyNavigation(key) {
-    // 'this' es la instancia de App
-    const { itemsPorColumna } = this.STATE; 
-    let currentIndex = this.STATE.currentFocusIndex;
-    let newIndex = currentIndex;
-
-    const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
-    const totalCards = allCards.length;
-    if (totalCards === 0) return;
-
-    switch (key) {
-        case 'ArrowUp':
-            newIndex = currentIndex - 1;
-            if (newIndex < 0) newIndex = totalCards - 1;
-            break;
-        case 'ArrowDown':
-            newIndex = currentIndex + 1;
-            if (newIndex >= totalCards) newIndex = 0;
-            break;
-        case 'ArrowLeft':
-            newIndex = currentIndex - itemsPorColumna;
-            if (newIndex < 0) newIndex = totalCards - 1; 
-            break;
-        case 'ArrowRight':
-            newIndex = currentIndex + itemsPorColumna;
-            if (newIndex >= totalCards) newIndex = 0;
-            break;
-        case 'Enter':
-        case ' ':
-            if (allCards[currentIndex]) {
-                const tarjeta = allCards[currentIndex];
-                if (tarjeta.dataset.tipo === 'volver-vertical') {
-                     if (typeof this._handleVolverClick === 'function') {
-                        this._handleVolverClick();
-                     }
-                    return;
-                }
-                if (tarjeta.classList.contains('disabled')) return;
-
-                const id = tarjeta.dataset.id;
-                const tipo = tarjeta.dataset.tipo;
-                
-                if (typeof this._handleCardClick === 'function') {
-                    this._handleCardClick(id, tipo); 
-                }
-            }
-            return; 
-    }
-
-    if (newIndex !== currentIndex) {
-        this.STATE.keyboardNavInProgress = true; 
-        this.STATE.currentFocusIndex = newIndex;
-        // Delegamos a _updateFocusImpl en nav_base
-        nav_base._updateFocusImpl.call(this, true);
-    }
-};
+// ⬇️ ELIMINACIÓN: Lógica de navegación movida a nav-keyboard-swipe.js ⬇️
+/* export function _handleKeyNavigation(key) { ... }; */
 
 export function _handleFooterNavigation(key) {
     // 'this' es la instancia de App
@@ -222,7 +171,7 @@ export function _handleFocusTrap(e, viewType) {
     } 
     else if (viewType === 'detail') {
         // Obtenemos los elementos enfocables del módulo de detalles
-        const allFocusableDetailElements = nav_details._getFocusableDetailElements.call(this);
+        const allFocusableDetailElements = nav_base_details._getFocusableDetailElements(this); // ⬇️ MODIFICACIÓN: Usar nav_base_details ⬇️
 
         // Los elementos de contenido de detalle son los que no son 'Volver Fijo'
         detailContentLinks = allFocusableDetailElements.filter(el => 

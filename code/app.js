@@ -8,12 +8,17 @@ import * as nav_stack from './nav-stack.js';
 
 // Importaciones de funciones de nav-base y render-base (como helpers)
 import * as nav_base from './nav-base.js';
-import * as nav_details from './nav-details.js'; 
+// ⬇️ MODIFICACIÓN: Reemplazar nav_details por los nuevos módulos ⬇️
+import * as nav_base_details from './nav-base-details.js'; 
+import * as render_details from './render-details.js'; 
+// ⬆️ FIN MODIFICACIÓN ⬆️
 import * as render_base from './render-base.js';
 // ⭐️ CAMBIO: Importar los nuevos módulos de teclado ⭐️
 import * as nav_keyboard_base from './nav-keyboard-base.js'; 
 import * as nav_keyboard_details from './nav-keyboard-details.js'; 
-import * as nav_tactil from './nav-tactil.js';
+// ⬇️ MODIFICACIÓN: Reemplazar nav_tactil por nav-mouse-swipe ⬇️
+import * as nav_mouse_swipe from './nav-mouse-swipe.js';
+// ⬆️ FIN MODIFICACIÓN ⬆️
 import * as render_swipe from './render-swipe.js';
 import * as render_mobile from './render-mobile.js';
 
@@ -51,7 +56,7 @@ class VortexSpiraApp {
         // Helpers de Búsqueda y Estado
         this._findNodoById = nav_base._findNodoById;
         this._tieneContenidoActivo = nav_base._tieneContenidoActivoImpl;
-        this.findBestFocusInColumn = nav_base.findBestFocusInColumn; // Delegación para nav-tactil
+        this.findBestFocusInColumn = nav_base.findBestFocusInColumn; // Delegación para nav-mouse-swipe
 
         // Funciones de Renderizado
         this._generarTarjetaHTML = render_base._generarTarjetaHTMLImpl; 
@@ -62,13 +67,17 @@ class VortexSpiraApp {
         this._destroyCarousel = render_swipe._destroyCarouselImpl;
 
         // Listeners Táctiles (para Swiper)
-        this.setupTouchListeners = nav_tactil.setupTouchListeners;
-        this.handleSlideChangeStart = nav_tactil.handleSlideChangeStart;
-        this.handleSlideChangeEnd = nav_tactil.handleSlideChangeEnd;
+        // ⬇️ MODIFICACIÓN: Reemplazar nav_tactil por nav-mouse-swipe ⬇️
+        this.setupTouchListeners = nav_mouse_swipe.setupTouchListeners;
+        this.handleSlideChangeStart = nav_mouse_swipe.handleSlideChangeStart;
+        this.handleSlideChangeEnd = nav_mouse_swipe.handleSlideChangeEnd;
+        // ⬆️ FIN MODIFICACIÓN ⬆️
         
-        // ⭐️ FUNCIONES DE DETALLE (Delegadas a nav-details) ⭐️
-        this._handleActionRowClick = nav_details._handleActionRowClick; 
-        this._mostrarDetalle = nav_details._mostrarDetalle;             
+        // ⭐️ FUNCIONES DE DETALLE (Delegadas) ⭐️
+        // ⬇️ MODIFICACIÓN: Usar los nuevos módulos ⬇️
+        this._handleActionRowClick = nav_base_details._handleActionRowClick; 
+        this._mostrarDetalle = render_details._mostrarDetalle;             
+        // ⬆️ FIN MODIFICACIÓN ⬆️
 
         this.clearConsole = debug.logClear
     }

@@ -2,8 +2,10 @@
 
 import * as debug from './debug.js';
 import * as data from './data.js';
-// Importamos el nuevo módulo de detalle para los listeners y helpers de foco
-import * as nav_details from './nav-details.js'; 
+// ⬇️ MODIFICACIÓN: Importar los nuevos módulos de detalles y mouse para su inicialización ⬇️
+import * as nav_base_details from './nav-base-details.js'; 
+import * as nav_mouse_details from './nav-mouse-details.js';
+// ⬆️ FIN MODIFICACIÓN ⬆️
 
 
 // ⭐️ 1. SETUP LISTENERS ⭐️
@@ -24,9 +26,29 @@ export function setupListeners() {
       this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
   }
   
-  // Delegamos la configuración de handlers de foco de detalle
-  nav_details._setupDetailFocusHandler.call(this); 
+  // ⬇️ MODIFICACIÓN: Delegamos la configuración de handlers de foco y mouse de detalle ⬇️
+  _setupDetailFocusHandler.call(this); 
+  nav_mouse_details._setupDetailMouseListeners(this);
+  // ⬆️ FIN MODIFICACIÓN ⬆️
 };
+
+// ⬇️ AÑADIDO: Mueve la configuración del listener focusin aquí ⬇️
+/**
+ * Lógica de inicialización del listener de foco en la vista de detalle.
+ */
+function _setupDetailFocusHandler() {
+    // 'this' es la instancia de App
+    document.addEventListener('focusin', (e) => {
+        const focusedEl = e.target;
+        const isDetailView = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active'); 
+
+        if (isDetailView) {
+            // Llamamos a la lógica de actualización del foco del nuevo módulo base de detalle
+            nav_base_details._updateDetailFocusState(focusedEl, this);
+        }
+    });
+};
+// ⬆️ FIN AÑADIDO ⬆️
 
 
 // ⭐️ 2. POINTER LISTENERS (Adjuntar listeners programáticos a los tracks) ⭐️
@@ -188,7 +210,7 @@ export function _handleCardClick(id, tipo, parentFocusIndex) {
         this.stackPush(id, focusParaGuardar); // Método delegado
         this.renderNavegacion();              // Método delegado
     } else if (tipo === 'curso') {
-        // Llama al método delegado en la instancia (this._mostrarDetalle, que ahora apunta a nav-details)
+        // Llama al método delegado en la instancia (this._mostrarDetalle, que ahora apunta a render-details)
         this._mostrarDetalle(id);             
     }
 };
