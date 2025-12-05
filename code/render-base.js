@@ -1,400 +1,170 @@
 // --- code/render-base.js ---
 
-import * as debug from './debug.js'; // AÑADIDO: Importar debug
 import * as data from './data.js';
+import * as debug from './debug.js';
+import * as render_swipe from './render-swipe.js';
+import * as render_mobile from './render-mobile.js';
 
-let _lastMode = 'desktop'; 
-let _lastWidth = window.innerWidth; // Añadido para detectar el cambio Landscape/Portrait
-
-// ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL ⭐️
 /**
- * Renderiza el nivel de navegación actual.
- * Se llama con .call(this) desde VortexSpiraApp.renderNavegacion().
+ * Carga los datos de la aplicación.
+ * @returns {Promise<void>}
  */
-export function renderNavegacion() {
-    if (typeof debug.log === 'function') {
-        debug.log('render_base', debug.DEBUG_LEVELS.BASIC, "Iniciando renderNavegacion...");
-    }
-    
-    if (!this.STATE.fullData) {
-        if (typeof debug.logError === 'function') {
-            debug.logError('render_base', "No se puede renderizar: Datos no cargados."); // FIX: debug.logError
+export async function _loadData() {
+    // 'this' es la instancia de App
+    try {
+        const response = await fetch('data/cursos.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return;
+        this.STATE.fullData = await response.json();
+        debug.log('render_base', debug.DEBUG_LEVELS.BASIC, 'Datos cargados correctamente.');
+    } catch (e) {
+        debug.log('render_base', debug.DEBUG_LEVELS.ERROR, 'Error al cargar los datos:', e);
+        // Manejar error fatal aquí (ej. mostrar mensaje al usuario)
     }
+}
 
-    const currentLevelState = this.stackGetCurrent(); // Método delegado
-    if (!currentLevelState) return;
+/**
+ * Inicializa el estado visual base y prepara el DOM.
+ */
+export function _init() {
+    // 'this' es la instancia de App
+    
+    // ⭐️ CORRECCIÓN: Referencias DOM para el layout dinámico ⭐️
+    // Se asegura que las referencias DOM apunten a los contenedores principales y específicos.
+    this.DOM.vistaDetalle = document.getElementById('vista-detalle-desktop');
+    this.DOM.detalleContenido = document.getElementById('detalle-contenido-desktop');
+    // Referencia al nuevo contenedor de detalle móvil
+    this.DOM.vistaDetalleMobile = document.getElementById('vista-detalle-mobile'); 
+    
+    // Inicializar vistas con la clase base (invisible)
+    this.DOM.vistaNav.classList.add('view-base');
+    this.DOM.vistaDetalle.classList.add('view-base');
+    this.DOM.vistaDetalleMobile.classList.add('view-base');
+    
+    // Determinar la vista activa inicial
+    const activeView = this.STATE.isMobile ? this.DOM.vistaNavMobile : this.DOM.vistaNav;
+    activeView.classList.add('active');
+    
+    // El ResizeObserver está ahora en nav-base.js
+}
 
-    const currentLevelId = currentLevelState.levelId;
-    const isSubLevel = !!currentLevelId;
-    this.STATE.currentFocusIndex = currentLevelState.focusIndex;
+/**
+ * Busca un nodo (categoría o curso) por su ID.
+ * @param {string} id - ID del nodo.
+ * @param {object} [currentLevel=this.STATE.fullData] - Nodo desde donde empezar la búsqueda.
+ * @returns {object|null} El nodo encontrado o null.
+ */
+export function _findNodoById(id, currentLevel = this.STATE.fullData) {
+    if (!currentLevel) return null;
+    if (currentLevel.id === id) return currentLevel;
 
-    const screenWidth = window.innerWidth;
-    const isMobile = screenWidth <= data.MOBILE_MAX_WIDTH;
-    
-    // ⭐️ Detección de rangos para Tablet Landscape y Portrait ⭐️
-    const isTabletLandscape = screenWidth >= data.TABLET_LANDSCAPE_MIN_WIDTH && screenWidth <= data.TABLET_MAX_WIDTH;
-    const isTabletPortrait = screenWidth >= data.TABLET_MIN_WIDTH && screenWidth < data.TABLET_LANDSCAPE_MIN_WIDTH;
-    const isDesktop = screenWidth >= data.DESKTOP_MIN_WIDTH;
-    
-    const isTablet = isTabletPortrait || isTabletLandscape; // Booleano general para Tablet
-
-    let renderHtmlFn;
-    let initCarouselFn;
-    let calculatedItemsPerColumn;
-    let swiperId = null;
-    
-    const desktopView = document.getElementById('vista-navegacion-desktop');
-    const tabletView = document.getElementById('vista-navegacion-tablet');
-    const mobileView = document.getElementById('vista-navegacion-mobile');
-    
-    // -------------------------------------------------------------
-    // ⭐️ Detección de Modo y Asignación de DOM para Navegación ⭐️
-    // -------------------------------------------------------------
-    
-    if (isMobile) {
-        renderHtmlFn = this._generateCardHTML_Mobile; // Método delegado
-        initCarouselFn = this._initCarousel_Mobile;   // Método delegado
-        calculatedItemsPerColumn = 1;
-
-        swiperId = '#nav-swiper-mobile';
-        this.DOM.vistaNav = mobileView;
-        this.DOM.track = document.getElementById('track-mobile'); 
-        this.DOM.inactiveTrack = null; // Ya no se necesita un track inactivo
-        debug.log('render_base', debug.DEBUG_LEVELS.DEEP, 'Modo Móvil. Track activo: #track-mobile'); // FIX: debug.log
-    } else {
-        renderHtmlFn = this._generateCardHTML_Carousel; // Método delegado
-        initCarouselFn = this._initCarousel_Swipe;     // Método delegado
-        
-        // FIX BREAKPOINT: Priorizar DESKTOP (3 COL) y luego TABLET (2 COL)
-        if (isDesktop) {
-            calculatedItemsPerColumn = 3; 
-            swiperId = '#nav-swiper';
-            this.DOM.vistaNav = desktopView;
-            this.DOM.track = document.getElementById('track-desktop'); 
-        } else if (isTablet) { // Cubre isTabletLandscape (801-1024) y isTabletPortrait (601-800)
-            calculatedItemsPerColumn = 2; // <-- CORRECCIÓN: 2 items por columna en Tablet.
-            swiperId = '#nav-swiper-tablet';
-            this.DOM.vistaNav = tabletView;
-            this.DOM.track = document.getElementById('track-tablet'); 
+    if (currentLevel.children) {
+        for (const child of currentLevel.children) {
+            const found = this._findNodoById(id, child);
+            if (found) return found;
         }
     }
-    this.STATE.itemsPorColumna = calculatedItemsPerColumn;
+    return null;
+}
+
+/**
+ * Renderiza y muestra el nivel de navegación especificado, o la vista de detalle.
+ * @param {string} levelId - ID del nodo a mostrar (categoría o curso).
+ * @param {number} [cardIndexToFocus=0] - Índice de la tarjeta a la que hacer scroll/foco.
+ */
+export function _mostrarNivel(levelId, cardIndexToFocus = 0) {
+    // 'this' es la instancia de App
+    if (this.STATE.isInitializing) return;
     
-    // -------------------------------------------------------------
-    // ⭐️ Obtención de Datos y Renderizado de Navegación ⭐️
-    // -------------------------------------------------------------
-
-    const nodoActual = this._findNodoById(currentLevelId, this.STATE.fullData.navegacion); // Método delegado
-    let itemsDelNivel = [];
-
-    // ... (lógica de obtención de datos y construcción de itemsDelNivel) ...
-    if (!isSubLevel) {
-        itemsDelNivel = this.STATE.fullData.navegacion;
-    } else if (nodoActual) {
-        itemsDelNivel = (nodoActual.subsecciones || []).concat(nodoActual.cursos || []);
-    } else { 
-        this.stackPop(); 
-        this.renderNavegacion();
+    // 1. Encontrar el nodo
+    const node = this._findNodoById(levelId);
+    if (!node) {
+        debug.log('render_base', debug.DEBUG_LEVELS.WARNING, `Nodo no encontrado para ID: ${levelId}`);
         return;
     }
     
-    // Inyección de tarjetas para MÓVIL (Lógica de breadcrumb y volver)
-    if (isMobile) {
-        if (isSubLevel) {
-            itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
-        }
+    debug.log('render_base', debug.DEBUG_LEVELS.BASIC, `Mostrando nivel: ${node.id} (${node.title})`);
+
+    // 2. Limpiar vistas y estados previos
+    this.DOM.vistaNav.classList.remove('active');
+    this.DOM.vistaNavMobile.classList.remove('active');
+    this._resetVistaDetalle(); 
+    
+    // 3. Determinar si es una vista de detalle
+    if (node.isDetail) {
+        // Es un curso. Mostrar detalle.
+        // ⭐️ ACTUALIZACIÓN: Guardar el ID del curso activo ⭐️
+        this.STATE.activeCourseId = node.id; 
+        this._mostrarDetalle(node);
+        return;
+    }
+    
+    // 4. Es una vista de navegación (menú)
+    
+    // ⭐️ ACTUALIZACIÓN: Limpiar el ID del curso activo ⭐️
+    this.STATE.activeCourseId = null; 
+    
+    this.STATE.currentLevel = levelId;
+    
+    // 5. Renderizar y activar la vista correcta (Desktop vs Mobile)
+    if (this.STATE.isMobile) {
+        render_mobile._renderNavegacionMobile.call(this, node, cardIndexToFocus);
+        this.DOM.vistaNavMobile.classList.add('active');
+        // Actualizar el header móvil (no lo mostramos aquí pero la lógica debe estar delegada)
+        render_mobile._updateMobileHeader(this, node);
         
-        let breadcrumbText = this.getString('breadcrumbRoot'); // Método delegado
-        if (isSubLevel && nodoActual) {
-            breadcrumbText = nodoActual.nombre || nodoActual.titulo || this.getString('breadcrumbRoot');
-        }
-        
-        if (isSubLevel) {
-            itemsDelNivel = [{ 
-                id: 'breadcrumb-nav', 
-                tipoEspecial: 'breadcrumb-vertical', 
-                texto: breadcrumbText 
-            }].concat(itemsDelNivel);
-        }
-    }
-
-    // ⭐️ Determinar el estado de detalle ANTES de limpiar las vistas de navegación ⭐️
-    let isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
-                           document.getElementById('vista-detalle-mobile').classList.contains('active');
-
-    debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `renderNavigation: isDetailActive: ${isDetailActive}, activeCourseId: ${this.STATE.activeCourseId}`); // FIX: debug.log
-                           
-    // ⭐️ Limpiar todas las vistas de Navegación + Detalle ⭐️
-    desktopView.classList.remove('active');
-    tabletView.classList.remove('active');
-    mobileView.classList.remove('active');
-    document.getElementById('vista-detalle-desktop').classList.remove('active');
-    document.getElementById('vista-detalle-mobile').classList.remove('active');
-                           
-    // ⭐️ Reevaluar las referencias de DOM para el detalle (CORRECCIÓN CLAVE 1) ⭐️
-    const detailModeIsMobile = screenWidth <= data.MOBILE_MAX_WIDTH;
-    this.DOM.vistaDetalle = detailModeIsMobile ? document.getElementById('vista-detalle-mobile') : document.getElementById('vista-detalle-desktop');
-    this.DOM.detalleContenido = detailModeIsMobile ? document.getElementById('detalle-contenido-mobile') : document.getElementById('detalle-contenido-desktop');
-
-    if (isDetailActive) {
-        // ⭐️ CORRECCIÓN CLAVE 2: Forzar la re-inyección del contenido del detalle ⭐️
-        if (this.STATE.activeCourseId) {
-            // Llamamos a _mostrarDetalle. Esto reinyecta el HTML en el contenedor correcto (this.DOM.detalleContenido) y lo activa.
-            this._mostrarDetalle(this.STATE.activeCourseId); 
-            debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `Detalle re-renderizado para curso: ${this.STATE.activeCourseId}`); // FIX: debug.log
-        } else {
-            // Si el ID se perdió, volvemos a la navegación
-            isDetailActive = false; // Línea 154 (Ahora es let)
-            debug.logWarn('render_base', "activeCourseId perdido durante resize, volviendo a navegación."); // FIX: debug.logWarn
-        }
-    } 
-    
-    if (!isDetailActive) {
-        // Solo renderizamos si NO estamos en detalle (o acabamos de salir)
-        this._destroyCarousel(); // Método delegado
-        let htmlContent = renderHtmlFn.call(this, itemsDelNivel, this.STATE.itemsPorColumna); // Invocación con 'call(this)'
-        this.DOM.track.innerHTML = htmlContent;
-
-        let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
-        initCarouselFn.call(this, initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId); // Invocación con 'call(this)'
-        
-        if (typeof this.setupTrackPointerListeners === 'function') {
-            this.setupTrackPointerListeners();
-        }
-
-        // Activamos la vista de navegación
-        if (isMobile) {
-            mobileView.classList.add('active'); 
-            
-            if (isSubLevel) {
-                mobileView.classList.add('view-nav-submenu');
-            } else {
-                mobileView.classList.add('view-nav-root');
-            }
-        } else if (isTablet) {
-            tabletView.classList.add('active');
-        } else { 
-            desktopView.classList.add('active');
-        }
-    }
-
-    // ⭐️ Actualización de Visibilidad de Sidebars (Se llama siempre) ⭐️
-    _updateNavViews.call(this, isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual); 
-    
-    // Sincronización de foco (solo si la navegación está visible)
-    if (!isDetailActive) {
-        this._updateFocus(false); 
-    }
-    
-    if (typeof debug.log === 'function') {
-        debug.log('render_base', debug.DEBUG_LEVELS.BASIC, 'Renderizado completado.'); // FIX: debug.log
-    }
-    
-    if (!this.STATE.resizeObserver) {
-        _setupResizeObserver.call(this); // Invocación con 'call(this)'
-    }
-};
-
-/**
- * ⭐️ FUNCIÓN CENTRAL DE GENERACIÓN DE TARJETA HTML (ACCESIBILIDAD/ICONOS CORREGIDOS) ⭐️
- * Se llama con .call(this) desde los generadores de HTML (render-swipe/render-mobile).
- */
-export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tipoEspecialArg = null) {
-    const wrapperTag = 'article';
-    const tipoEspecial = tipoEspecialArg || nodo.tipoEspecial;
-
-    const onclickHandler = `onclick="App._handleTrackClick(event)"`; 
-
-    if (esRelleno) {
-        return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1" aria-hidden="true"></article>`;
-    }
-
-    if (tipoEspecial === 'breadcrumb-vertical') {
-         return `
-            <${wrapperTag} class="card card-breadcrumb-vertical" 
-                data-id="breadcrumb-nav" 
-                data-tipo="relleno" 
-                tabindex="-1"
-                aria-hidden="true">
-                <h3>${nodo.texto}</h3>
-            </${wrapperTag}>
-        `;
-    }
-
-    if (tipoEspecial === 'volver-vertical') {
-        return `
-            <${wrapperTag} class="card card-volver-vertical" 
-                data-id="volver-nav" 
-                data-tipo="volver-vertical" 
-                role="button" 
-                tabindex="0"
-                onclick="App._handleVolverClick()"
-                aria-label="${this.getString('ariaBackLevel') || 'Volver'}">
-                <h3>${data.LOGO_VOLVER}</h3>
-            </${wrapperTag}>
-        `;
-    }
-
-    const isCourse = !!nodo.titulo;
-    const tipo = isCourse ? 'curso' : 'categoria';
-    const tipoData = `data-tipo="${tipo}"`;
-    const claseDisabled = estaActivo ? '' : 'disabled';
-    const tagAriaDisabled = estaActivo ? '' : 'aria-disabled="true"';
-
-    const tabindex = '0'; // Forzar tabindex="0" siempre para la navegación por teclado
-    
-    let displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
-    
-    // LÓGICA DE ICONOS RESTAURADA
-    if (tipo === 'categoria') {
-        if (!estaActivo) {
-            // FIX ICONO: Usar LOGO_DISABLED para categorías deshabilitadas
-            displayTitle = data.LOGO_DISABLED + ' ' + displayTitle; 
-        } else {
-            displayTitle = data.LOGO_CARPETA + ' ' + displayTitle;
-        }
     } else {
-        displayTitle = data.LOGO_CURSO + ' ' + displayTitle; 
+        render_swipe._renderNavegacionDesktop.call(this, node);
+        this.DOM.vistaNav.classList.add('active');
     }
     
-    const ariaLabel = `${tipo === 'curso' ? 'Curso' : 'Categoría'}: ${nodo.nombre || nodo.titulo || 'Sin Título'}. ${estaActivo ? 'Seleccionar para entrar.' : 'Contenido no disponible.'}`;
-
-    return `
-        <${wrapperTag} class="card ${claseDisabled}" 
-            data-id="${nodo.id}" 
-            ${tipoData}
-            role="button" 
-            tabindex="${tabindex}" 
-            ${tagAriaDisabled}
-            ${onclickHandler} 
-            aria-label="${ariaLabel}">
-            <h3>${displayTitle}</h3>
-        </${wrapperTag}>
-    `;
-};
-
+    // 6. Actualizar la pila de navegación
+    this.stackPush(levelId, cardIndexToFocus); 
+}
 
 /**
- * ⭐️ CORRECCIÓN COMPLETA: Lógica de visibilidad de Sidebars (Incluye Landscape/Portrait) ⭐️
- * Se llama con .call(this) desde renderNavegacion.
+ * Maneja el clic en una tarjeta de navegación.
+ * @param {string} id - ID del nodo clicado.
  */
-export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual) {
-    
-    if (isMobile) { 
-        this.DOM.cardVolverFija.classList.remove('visible'); 
-        this.DOM.infoAdicional.classList.remove('visible'); 
-        this.DOM.btnVolverNav.classList.remove('visible');
-        this.DOM.btnVolverNav.tabIndex = -1;
-    } else { 
-        // Tablet y Desktop
-        
-        // Lógica clave: Mostrar info-adicional solo en Desktop (>1025) y Tablet Landscape (801-1024)
-        const shouldShowInfoAdicional = isDesktop || isTabletLandscape;
-        
-        if (shouldShowInfoAdicional) {
-            this.DOM.infoAdicional.classList.add('visible'); 
-        } else { // Tablet Portrait (601-800)
-            this.DOM.infoAdicional.classList.remove('visible');
-        }
+export function _handleCardClick(id) {
+    // 'this' es la instancia de App
+    const node = this._findNodoById(id);
+    if (!node) return;
 
-        this.DOM.btnVolverNav.classList.remove('visible'); 
-        this.DOM.btnVolverNav.tabIndex = -1;
-        
-        this.DOM.cardVolverFija.classList.add('visible'); 
-        this.DOM.cardNivelActual.classList.add('visible');
-        
-        if (isSubLevel) {
-            const nombreNivel = nodoActual ? (nodoActual.nombre || nodoActual.titulo || 'Nivel') : 'Nivel';
-            this.DOM.cardNivelActual.innerHTML = `<h3>${nombreNivel}</h3>`;
-        } else {
-            this.DOM.cardNivelActual.innerHTML = `<h3>${this.getString('breadcrumbRoot')}</h3>`;
-        }
-        
-        if (isSubLevel) {
-            this.DOM.cardVolverFijaElemento.classList.add('visible'); 
-            this.DOM.cardVolverFijaElemento.innerHTML = `<h3>${data.LOGO_VOLVER}</h3>`; 
-            this.DOM.cardVolverFijaElemento.tabIndex = 0;
-        } else {
-            this.DOM.cardVolverFijaElemento.classList.remove('visible'); 
-            this.DOM.cardVolverFijaElemento.innerHTML = ''; 
-            this.DOM.cardVolverFijaElemento.tabIndex = -1;
-        }
+    if (node.isDetail) {
+        // ⭐️ ACTUALIZACIÓN: Guardar el ID del curso activo ⭐️
+        this.STATE.activeCourseId = node.id; 
+        this._mostrarDetalle(node);
+    } else {
+        this._mostrarNivel(id);
     }
-};
+}
 
 /**
- * Configura el ResizeObserver para detectar cambios de modo.
- * Se llama con .call(this) desde VortexSpiraApp.
+ * Limpia la vista de detalle y oculta el botón "Volver" fijo.
  */
-export function _setupResizeObserver() {
-    const getMode = (width) => {
-        if (width <= data.MOBILE_MAX_WIDTH) return 'mobile';
-        if (width <= data.TABLET_MAX_WIDTH) return 'tablet';
-        return 'desktop';
-    };
-    _lastMode = getMode(window.innerWidth);
-    let _lastWidth = window.innerWidth;
+export function _resetVistaDetalle() {
+    // 'this' es la instancia de App
     
-    // Usamos 'app' como alias para 'this' dentro del closure del listener
-    this.STATE.resizeObserver = new ResizeObserver(() => {
-        const app = this;
-        const newWidth = window.innerWidth;
-        const newMode = getMode(newWidth);
-        
-        let isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
-                               document.getElementById('vista-detalle-mobile').classList.contains('active');
-
-        debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `ResizeObserver detectó cambio: Nuevo ancho = ${newWidth}px, Modo = ${newMode}, Detalle activo = ${isDetailActive}`); // FIX: debug.log
-
-        // Lógica de activación:
-        const shouldRenderForLayout = 
-            // 1. Cambio de Modo Completo (mobile -> tablet | tablet -> desktop)
-            newMode !== _lastMode ||
-            
-            // 2. Transición Portrait <-> Landscape (Cruza la barrera de 801px)
-            (newWidth > data.TABLET_LANDSCAPE_MIN_WIDTH && _lastWidth <= data.TABLET_LANDSCAPE_MIN_WIDTH) ||
-            (newWidth <= data.TABLET_LANDSCAPE_MIN_WIDTH && _lastWidth > data.TABLET_LANDSCAPE_MIN_WIDTH) ||
-            
-            // 3. Si estamos en detalle, siempre re-renderizar para actualizar las vistas de detalle
-            (isDetailActive && newMode !== _lastMode); 
-        
-        // Actualizar el último ancho antes de la comprobación final
-        const oldLastWidth = _lastWidth;
-        _lastWidth = newWidth; 
-        
-        if (shouldRenderForLayout && app.STATE.initialRenderComplete) {
-            const isSubLevel = (app.stackGetCurrent() && app.stackGetCurrent().levelId);
-            const lastWasMobile = (oldLastWidth <= data.MOBILE_MAX_WIDTH);
-            const newIsMobile = (newWidth <= data.MOBILE_MAX_WIDTH);
-            let focusDelta = 0;
-            
-            // Lógica de corrección del índice de foco al cambiar de modo
-            if (isSubLevel) {
-                if (lastWasMobile && !newIsMobile) focusDelta = -2; 
-                else if (!lastWasMobile && newIsMobile) focusDelta = 2; 
-            } else {
-                if (lastWasMobile && !newIsMobile) focusDelta = -1; 
-                else if (!lastWasMobile && newIsMobile) focusDelta = 1; 
-            }
-            
-            if (focusDelta !== 0) {
-                app.STATE.currentFocusIndex = Math.max(0, app.STATE.currentFocusIndex + focusDelta);
-                app.stackUpdateCurrentFocus(app.STATE.currentFocusIndex);
-            }
-            
-            _lastMode = newMode;
-            
-            // ⬇️ MODIFICACIÓN CLAVE: Mantenemos el detalle si hay activeCourseId ⬇️
-            if (app.STATE.activeCourseId) {
-                app._mostrarDetalle(app.STATE.activeCourseId); 
-            } else {
-                app.renderNavegacion(); 
-            }
-        }
-    });
-    this.STATE.resizeObserver.observe(document.body);
-};
+    // Limpiar clases de actividad
+    this.DOM.vistaDetalle.classList.remove('active');
+    this.DOM.vistaDetalleMobile.classList.remove('active');
+    
+    // ⭐️ Limpiar contenido de los contenedores de detalle ⭐️
+    this.DOM.detalleContenido.innerHTML = '';
+    
+    // Destruir instancia del Swiper si existe
+    if (this.STATE.detailCarouselInstance) {
+        this.STATE.detailCarouselInstance.destroy(true, true);
+        this.STATE.detailCarouselInstance = null;
+    }
+    
+    // Ocultar card de volver fija
+    this.DOM.cardVolverFija.classList.remove('visible');
+    
+    // Limpiar estado de foco
+    this.STATE.lastDetailFocusIndex = 0;
+}
 
 // --- code/render-base.js ---

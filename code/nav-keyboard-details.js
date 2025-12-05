@@ -1,13 +1,18 @@
 // --- code/nav-keyboard-details.js ---
 
-import * as nav_base_details from './nav-base-details.js'; // ⬇️ MODIFICACIÓN: Usar nav_base_details ⬇️
+import * as nav_base_details from './nav-base-details.js'; 
 
 export function _handleDetailNavigation(key) {
     // 'this' es la instancia de App
+    const appInstance = this;
     const activeElement = document.activeElement;
+    // ⭐️ Nuevo: Referencia a la instancia del Swiper de Detalle ⭐️
+    const swiper = appInstance.STATE.detailCarouselInstance;
     
-    // Obtenemos todos los elementos navegables del módulo nav-details
-    const focusableElements = nav_base_details._getFocusableDetailElements(this) // ⬇️ MODIFICACIÓN: Pasar 'this' ⬇️
+    if (!swiper) return;
+
+    // Obtenemos todos los elementos enfocables del módulo nav-details (fragmentos + filas de acción)
+    const focusableElements = nav_base_details._getFocusableDetailElements(appInstance)
         .filter(el => 
             !el.classList.contains('card-volver-vertical') && 
             el.id !== 'card-volver-fija-elemento'
@@ -16,17 +21,13 @@ export function _handleDetailNavigation(key) {
     let currentIndex = focusableElements.indexOf(activeElement);
     const maxIndex = focusableElements.length - 1;
     
-    // Si el foco está en el título o en un lugar perdido, lo movemos al primer fragmento de texto o al inicio.
+    // 1. Manejo del foco inicial o perdido (siempre lo movemos al primer slide enfocable)
     if (currentIndex === -1) {
         const firstElement = focusableElements.find(el => el.classList.contains('detail-text-fragment')) || focusableElements[0];
         if (firstElement) {
-            firstElement.focus();
-            // Scroll al inicio si es el primer elemento.
-            if (this.DOM.detalleContenido) {
-                 this.DOM.detalleContenido.scrollTop = 0;
-            } else {
-                 firstElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); 
-            }
+             firstElement.focus();
+             // Intentamos hacer scroll al inicio del Swiper
+             swiper.slideTo(0, 300);
         }
         return;
     }
@@ -42,20 +43,17 @@ export function _handleDetailNavigation(key) {
             break;
         case 'ArrowLeft':
         case 'ArrowRight':
-            // Ignoramos el movimiento lateral para no romper el orden secuencial
+            // Ignoramos el movimiento lateral para no romper el orden secuencial vertical
             return; 
         case 'Enter':
         case ' ':
-            // Si está sobre un fragmento de texto, avanza al siguiente (simula la lectura).
+            // Simula la lectura (avanza al siguiente fragmento) o el clic del botón de acción
             if (activeElement.classList.contains('detail-text-fragment')) {
                 newIndex = Math.min(maxIndex, currentIndex + 1);
             } 
-            // Si está sobre un botón de acción, lo clicamos (salvo si está deshabilitado).
-            // El elemento enfocado es el div .detail-action-item, el botón es su hijo 'a.detail-action-btn'
             else if (activeElement.classList.contains('detail-action-item')) {
                 const btn = activeElement.querySelector('.detail-action-btn');
                 if (btn && !btn.classList.contains('disabled')) {
-                    // Simular clic en el elemento interactivo real (el <a>)
                     btn.click(); 
                     return;
                 }
@@ -63,17 +61,19 @@ export function _handleDetailNavigation(key) {
             break;
     }
     
-    // Aplicar el nuevo foco
+    // 2. Aplicar el nuevo foco y sincronizar el slide del Swiper
     if (newIndex !== currentIndex && focusableElements[newIndex]) {
         const elementToFocus = focusableElements[newIndex];
         elementToFocus.focus();
         
-        // ⭐️ CORRECCIÓN CLAVE: Forzar el scroll para que el elemento enfocado esté visible (block: 'center' es más seguro) ⭐️
-        if (newIndex === 0 && elementToFocus.classList.contains('detail-text-fragment') && this.DOM.detalleContenido) {
-             this.DOM.detalleContenido.scrollTop = 0;
-        } else {
-             // Usar 'center' para mantenerlo visible en el centro/medio del viewport si es posible
-             elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+        // ⭐️ CLAVE: El elemento está dentro de un slide. Hacemos que el Swiper se mueva a ese slide.
+        const slideEl = elementToFocus.closest('.swiper-slide');
+        if (slideEl) {
+            const slideIndex = swiper.slides.indexOf(slideEl);
+            if (slideIndex !== -1) {
+                // Usamos slideTo para el movimiento suave.
+                swiper.slideTo(slideIndex, 300);
+            }
         }
     }
 }
