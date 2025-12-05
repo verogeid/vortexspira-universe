@@ -221,8 +221,9 @@ export function _mostrarDetalle(cursoId) {
                 e.preventDefault(); 
                 swiper.slideTo(targetIndex, 300); 
             } else {
-                 // Si ya es el slide activo, forzamos el foco nativo para el CSS focus-visible
-                 e.currentTarget.focus();
+                 // ⭐️ FIX CLAVE: Si ya es el slide activo, forzamos el foco nativo (sin scroll) y el refresh del blur/foco. ⭐️
+                 e.currentTarget.focus({ preventScroll: true });
+                 nav_base_details._updateDetailFocusState(appInstance);
             }
         });
         

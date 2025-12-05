@@ -37,8 +37,8 @@ export function _updateDetailFocusState(appInstance) {
             if (diff === 0) {
                 content.classList.add('focus-current');
                 // Forzamos el foco del teclado al contenido real dentro de la slide.
-                // ⭐️ FIX CLAVE: Eliminar { preventScroll: true } para que el foco nativo mueva el scroll si Swiper falla. ⭐️
-                content.focus(); 
+                // ⭐️ FIX CLAVE: Añadir { preventScroll: true } para evitar el scroll nativo si Swiper ya ha posicionado el slide. ⭐️
+                content.focus({ preventScroll: true }); 
                 // Aplicar clase al slide para estilos de contenedor si es necesario
                 slide.classList.add('focus-current'); 
 
@@ -105,8 +105,9 @@ export function _handleActionRowClick(e) {
              swiper.slideTo(targetIndex, data.SWIPE_SLIDE_SPEED);
              // El foco se actualizará en el evento 'slideChangeTransitionEnd'
         } else if (e.currentTarget) {
-             // Si ya estamos en el slide, forzamos el foco nativo en el contenedor de acción.
+             // ⭐️ FIX CLAVE: Si ya estamos en el slide, forzamos el foco nativo (sin scroll) y el refresh del blur/foco. ⭐️
              e.currentTarget.focus({ preventScroll: true });
+             _updateDetailFocusState(App);
         }
     }
 };

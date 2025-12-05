@@ -97,14 +97,12 @@ export function handleSlideChangeEnd(swiper) {
     // ⭐️ 2. LÓGICA DE SALTO (SI ESTÁ VACÍO) ⭐️
     if (!newFocusCard && !isMobile) { // Solo saltamos automáticamente en Desktop/Tablet
         debug.logWarn('nav_mouse_swipe', "Columna vacía, saltando a la siguiente...");
-        // ⭐️ FIX: Añadir un pequeño timeout para asegurar que Swiper está libre para la siguiente animación ⭐️
-        setTimeout(() => {
-            if (_swipeDirection === 'next') {
-                swiper.slideNext(data.SWIPE_SLIDE_SPEED);
-            } else {
-                swiper.slidePrev(data.SWIPE_SLIDE_SPEED);
-            }
-        }, 50); // 50ms delay
+        // ⭐️ FIX CLAVE: Eliminamos el setTimeout para forzar un salto inmediato y continuo ⭐️
+        if (_swipeDirection === 'next') {
+            swiper.slideNext(data.SWIPE_SLIDE_SPEED);
+        } else {
+            swiper.slidePrev(data.SWIPE_SLIDE_SPEED);
+        }
         return; 
     }
     
