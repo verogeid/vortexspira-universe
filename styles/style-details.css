@@ -13,6 +13,17 @@
     scroll-behavior: smooth;
 }
 
+/* ⭐️ CORRECCIÓN CRÍTICA PARA SWIPER VERTICAL DE DETALLE ⭐️ */
+/* Asegura que los slides en el carrusel de detalle solo midan lo que mide su contenido */
+#detalle-swiper-desktop .swiper-slide,
+#detalle-swiper-mobile .swiper-slide {
+    height: auto !important; /* CLAVE: Deja que la altura se ajuste al contenido */
+    max-height: none !important;
+    flex-shrink: 0; /* Asegura que no se encoja */
+    margin-bottom: 20px; /* Espacio entre fragmentos, ajustable */
+}
+
+
 /* 2. BLOQUE DE TEXTO Y FRAGMENTOS */
 
 /* Contenedor principal de texto (Ahora solo un wrapper) */
