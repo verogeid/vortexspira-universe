@@ -19,8 +19,8 @@
 #detalle-swiper-mobile .swiper-slide {
     height: auto !important; /* CLAVE: Deja que la altura se ajuste al contenido */
     max-height: none !important;
+    margin-bottom: 0px; /* Espacio entre fragmentos */
     flex-shrink: 0; /* Asegura que no se encoja */
-    margin-bottom: 20px; /* Espacio entre fragmentos, ajustable */
 }
 
 

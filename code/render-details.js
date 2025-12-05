@@ -15,7 +15,7 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
     
     const swiperConfig = {
         direction: 'vertical', 
-        slidesPerView: 'auto', // ⭐️ CAMBIO CLAVE: Muestra tantos slides como quepan (panorámica) ⭐️
+        slidesPerView: 'auto', // ⭐️ CLAVE: Muestra todos los slides que caben (panorámica) ⭐️
         slidesPerGroup: 1, 
         loop: false, 
         
@@ -23,7 +23,7 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
 
         touchRatio: 1, 
         simulateTouch: true, 
-        centeredSlides: false, // ⭐️ CAMBIO CLAVE: Deshabilita el centrado para la vista secuencial ⭐️
+        centeredSlides: false, // ⭐️ CLAVE: Deshabilita el centrado total para la vista secuencial ⭐️
         mousewheel: { sensitivity: 1, releaseOnEdges: true }, 
         keyboard: { enabled: false }, // Lo manejamos en nav-keyboard-details
         speed: 300, // Velocidad de snap

@@ -1,7 +1,7 @@
 // --- code/nav-base-details.js ---
 
 import * as data from './data.js';
-import * as debug from './debug.js';
+import * as debug from './debug.js'; // Necesario para debug
 
 // ⭐️ GESTIÓN DE FOCO EN VISTA DETALLE (BLUR MASK Y FRAGMENTOS) ⭐️
 /**
@@ -81,7 +81,7 @@ export function _getFocusableDetailElements(appInstance) {
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
     
     // Añadir el botón volver fijo de escritorio si está visible
-    if (!isMobile && appInstance.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
+    if (!isMobile && appInstance.DOM.cardVolverFijaElemento && appInstance.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
         elements.push(appInstance.DOM.cardVolverFijaElemento);
     } 
 
