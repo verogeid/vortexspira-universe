@@ -208,6 +208,33 @@ export function _mostrarDetalle(cursoId) {
     const initialSlideIndex = appInstance.STATE.lastDetailFocusIndex;
     _initDetailCarousel(appInstance, swiperId, initialSlideIndex);
 
+    // ⭐️ 5. Attaching listeners for Text Fragments ⭐️
+    const fragments = appInstance.DOM.detalleTrack.querySelectorAll('.detail-text-fragment');
+    fragments.forEach(fragment => {
+        // Fix A: Manually handle click/focus on fragments (1st click focus)
+        fragment.addEventListener('click', (e) => {
+            const swiper = appInstance.STATE.detailCarouselInstance;
+            const slide = e.currentTarget.closest('.swiper-slide');
+            const targetIndex = swiper ? swiper.slides.indexOf(slide) : -1;
+            
+            if (swiper && targetIndex > -1 && targetIndex !== swiper.activeIndex) {
+                e.preventDefault(); 
+                swiper.slideTo(targetIndex, 300); 
+            } else {
+                 // Si ya es el slide activo, forzamos el foco nativo para el CSS focus-visible
+                 e.currentTarget.focus();
+            }
+        });
+        
+        // Fix B: Handle hover on fragments (make it sharp on mouseover)
+        fragment.addEventListener('mouseover', () => {
+            fragment.classList.add('focus-current-hover');
+        });
+        fragment.addEventListener('mouseout', () => {
+            fragment.classList.remove('focus-current-hover');
+        });
+    });
+
 
     // ⭐️ 4. ACTIVACIÓN Y UI (Desktop/Tablet) ⭐️
     if (appInstance.DOM.vistaNav) { 

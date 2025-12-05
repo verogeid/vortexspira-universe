@@ -91,19 +91,20 @@ export function _getFocusableDetailElements(appInstance) {
 
 // ⭐️ HELPER: Clic en fila -> Solo pone foco (NO click) ⭐️
 export function _handleActionRowClick(e) {
+    // 'this' es la instancia de App
     // Apuntamos a la fila, ya que es el elemento secuencial enfocable.
-    // Con Swiper, debemos encontrar el slide padre y saltar a él.
     const slide = e.currentTarget.closest('.swiper-slide');
     if (slide) {
         const swiper = App.STATE.detailCarouselInstance;
         const slides = swiper.slides;
-        const targetIndex = slides.indexOf(slide);
+        const targetIndex = swiper ? slides.indexOf(slide) : -1;
         
-        if (targetIndex > -1 && targetIndex !== swiper.activeIndex) {
+        if (swiper && targetIndex > -1 && targetIndex !== swiper.activeIndex) {
+             // Si el slide no está activo, deslizamos a él.
              swiper.slideTo(targetIndex, data.SWIPE_SLIDE_SPEED);
              // El foco se actualizará en el evento 'slideChangeTransitionEnd'
-        } else {
-             // Si ya estamos en el slide, simplemente enfocamos el elemento.
+        } else if (e.currentTarget) {
+             // Si ya estamos en el slide, forzamos el foco nativo en el contenedor de acción.
              e.currentTarget.focus({ preventScroll: true });
         }
     }
