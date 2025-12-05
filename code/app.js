@@ -66,11 +66,9 @@ class VortexSpiraApp {
         this._initCarousel_Mobile = render_mobile._initCarousel_Mobile;
         this._destroyCarousel = render_swipe._destroyCarouselImpl;
 
-        // Listeners Táctiles (para Swiper)
-        this.setupTouchListeners = nav_mouse_swipe.setupTouchListeners;
-        this.handleSlideChangeStart = nav_mouse_swipe.handleSlideChangeStart;
-        this.handleSlideChangeEnd = nav_mouse_swipe.handleSlideChangeEnd;
-        
+        // ⭐️ FIX: Delegar la función principal de renderizado ⭐️
+        this.renderNavegacion = render_base.renderNavegacion; 
+
         // ⭐️ FUNCIONES DE DETALLE (Delegadas) ⭐️
         this._handleActionRowClick = nav_base_details._handleActionRowClick; 
         this._mostrarDetalle = render_details._mostrarDetalle;             
@@ -141,7 +139,7 @@ class VortexSpiraApp {
     // -----------------------------------------------------------------
     
     // Renderizado
-    renderNavegacion() { render_base.renderNavegacion.call(this); }
+    // renderNavegacion() { render_base.renderNavegacion.call(this); } // <-- LÍNEA ELIMINADA (Delegación movida al constructor)
     _updateFocus(shouldSlide) { nav_base._updateFocusImpl.call(this, shouldSlide); }
     
     // Handlers (Invocados por onclick/eventos)
