@@ -1,154 +1,154 @@
 // --- code/nav-base.js ---
 
-import * as data from './data.js';
 import * as debug from './debug.js';
-import * as nav_mouse_swipe from './nav-mouse-swipe.js';
-import * as nav_mouse_details from './nav-mouse-details.js'; // ⭐️ Importación de detalle de ratón ⭐️
-import * as nav_base_details from './nav-base-details.js'; // ⭐️ Importación de base de detalle ⭐️
+import * as data from './data.js';
 
 /**
- * Inicializa todos los listeners de eventos necesarios para la navegación.
- * Se llama desde app.js.
+ * Maneja el clic en una tarjeta de nivel/curso.
+ * @param {Event} event - Evento de clic.
  */
-export function _setupListeners() {
+export function _handleCardClick(event) {
     // 'this' es la instancia de App
-    const appInstance = this;
+    let target = event.target.closest('[data-id]');
     
-    // 1. Eventos de Teclado Global
-    document.addEventListener('keydown', appInstance._handleKeyDown.bind(appInstance));
-    
-    // 2. Eventos de Redimensionamiento (para cambiar entre móvil/desktop)
-    window.addEventListener('resize', _handleResize.bind(appInstance));
-    
-    // 3. Eventos de Ratón (Swipe en Navegación y Volver)
-    nav_mouse_swipe._setupSwipeMouseListeners(appInstance);
-    
-    // ⭐️ 4. Eventos de Ratón en Detalle (Aunque ahora vacío, mantiene la estructura) ⭐️
-    nav_mouse_details._setupDetailMouseListeners(appInstance);
-    
-    // 5. Handlers de Foco (para Teclado, Lectores de Pantalla y Estado Visual)
-    
-    // a) Focusin global (para aplicar estado de foco/blur en Detalle)
-    appInstance.DOM.appContainer.addEventListener('focusin', _setupDetailFocusHandler.bind(appInstance));
-    
-    // b) Click en tarjeta de navegación (para navegar)
-    // Se usa la delegación en DOM.vistaNav y DOM.vistaNavMobile
-    appInstance.DOM.vistaNav.addEventListener('click', _handleNavClick.bind(appInstance));
-    appInstance.DOM.vistaNavMobile.addEventListener('click', _handleNavClick.bind(appInstance));
+    if (!target) return;
 
-    // c) Click en botón 'Volver' fijo (Desktop/Tablet)
-    if (appInstance.DOM.cardVolverFijaElemento) {
-        appInstance.DOM.cardVolverFijaElemento.addEventListener('click', appInstance._handleVolverClick.bind(appInstance));
-    }
-    
-    // d) Click en botón 'Inicio' del header móvil
-    const mobileLogo = appInstance.DOM.header.querySelector('.logo-mobile');
-    if (mobileLogo) {
-        mobileLogo.addEventListener('click', () => {
-            // Mueve el foco a la app (siempre es el primer elemento enfocable al volver a HOME)
-            appInstance._mostrarNivel(data.ROOT_LEVEL_ID);
-        });
+    // Si el elemento es una acción, no es un cambio de nivel/curso
+    if (target.classList.contains('detail-action-item')) {
+        return;
     }
 
-    // e) Click en el botón 'Volver' del header móvil
-    if (appInstance.DOM.mobileBackHeader) {
-        appInstance.DOM.mobileBackHeader.addEventListener('click', appInstance._handleVolverClick.bind(appInstance));
+    const cardId = target.getAttribute('data-id');
+    const cardType = target.getAttribute('data-tipo');
+    
+    if (!cardId || cardType === 'relleno' || cardType === 'header') return;
+
+    // Guardar el foco antes de cambiar de vista
+    this.STATE.lastFocusCard = target;
+
+    if (cardType === 'curso') {
+        debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, `Navegando a detalle de curso: ${cardId}`);
+        // Guarda el estado actual de la navegación antes de ir al detalle
+        this.stackPush(this.STATE.activeLevelId, target.tabIndex);
+        this.STATE.activeCourseId = cardId;
+        this._mostrarDetalle(cardId); // Método delegado
+    } else {
+        // Es una categoría/subsección
+        debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, `Navegando a nivel: ${cardId}`);
+        this.stackPush(this.STATE.activeLevelId, target.tabIndex);
+        this._mostrarNivel(cardId); // Método delegado
     }
 }
 
-/**
- * Función que maneja el click en la vista de navegación.
- */
-function _handleNavClick(e) {
-    // 'this' es la instancia de App
-    const card = e.target.closest('.curso-card');
-    if (card && !card.classList.contains('card-placeholder')) {
-        const id = card.getAttribute('data-id');
-        this._handleCardClick(id);
-    }
-}
 
 /**
- * Manejador global del evento focusin para aplicar el estado visual 
- * de enfoque/desenfoque en la vista de detalle.
- */
-function _setupDetailFocusHandler(e) {
-    // 'this' es la instancia de App
-    if (this.DOM.vistaDetalle.classList.contains('active') || this.DOM.vistaDetalleMobile.classList.contains('active')) {
-        // ⭐️ DELEGACIÓN AL NUEVO HANDLER CENTRALIZADO ⭐️
-        nav_base_details._updateDetailFocusState(e.target, this);
-    }
-}
-
-/**
- * Maneja el click del botón "Volver" (funciona tanto para Desktop como para Mobile)
+ * Maneja el evento de 'Volver' desde cualquier vista.
  */
 export function _handleVolverClick() {
     // 'this' es la instancia de App
-    debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Click en Volver, pila:', this.STATE.navigationStack.length);
-    
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
+    const isTablet = window.innerWidth >= data.TABLET_MIN_WIDTH && window.innerWidth <= data.TABLET_MAX_WIDTH;
     
-    if (this.STATE.navigationStack.length > 1) {
-        // Pop the current level to get the previous one
-        this.stackPop(); 
-        const previousLevelState = this.stackGetCurrent();
+    if (this.DOM.vistaDetalle.classList.contains('active')) {
+        // Salir de detalle y volver al nivel de navegación
+        debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Saliendo de la vista de detalle.');
+        this._resetVistaDetalle(); // Limpia la vista de detalle
+        
+        // El estado de navegación actual es el estado ANTERIOR a la apertura del detalle
+        const previousLevelState = this.stackGetCurrent(); 
         
         if (previousLevelState) {
+            // ⭐️ CORRECCIÓN: Usar _mostrarNivel ⭐️
             this._mostrarNivel(previousLevelState.levelId, previousLevelState.cardIndex);
         } else {
-             // Debería ser imposible si la pila > 1, pero por seguridad, volver al inicio
              this._mostrarNivel(data.ROOT_LEVEL_ID);
         }
         
+        this.STATE.activeCourseId = null; 
+        
+    } 
+    else if (this.STATE.historyStack.length > 1) { 
+        // Volver un nivel en la navegación
+        debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Volviendo un nivel.');
+        this.stackPop(); // Método delegado
+        
+        const previousLevelState = this.stackGetCurrent();
+        
+        if (previousLevelState) {
+            // ⭐️ CORRECCIÓN: Usar _mostrarNivel ⭐️
+            this._mostrarNivel(previousLevelState.levelId, previousLevelState.cardIndex);
+        }
+        
+         // Manejar el foco después de volver
+         if (!isMobile && !isTablet && this.DOM.cardVolverFijaElemento && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
+             this.DOM.cardVolverFijaElemento.focus();
+         } else if (isMobile || isTablet) {
+             // En móvil/tablet, intentar enfocar la primera tarjeta
+             const firstCard = this.DOM.track.querySelector('[data-id]:not([data-tipo="relleno"])');
+             if (firstCard) firstCard.focus();
+         }
     } else {
-        // Si estamos en el primer nivel (ROOT) y queremos volver, 
-        // significa que estamos en la vista de detalle. 
-        // Volvemos a la vista de navegación (ROOT).
-        this._mostrarNivel(data.ROOT_LEVEL_ID);
+         debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Volver bloqueado: Ya estamos en el nivel raíz.');
     }
+}
+
+/**
+ * Maneja el evento de redimensionamiento de ventana.
+ */
+export function _handleResize() {
+    // 'this' es la instancia de App
+    const newIsMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
+    const newIsTablet = window.innerWidth >= data.TABLET_MIN_WIDTH && window.innerWidth <= data.TABLET_MAX_WIDTH;
     
-    // En móvil, mover el foco a la primera tarjeta del nuevo nivel si es posible
-    if (isMobile) {
-        setTimeout(() => {
-            const firstCard = this.DOM.vistaNavMobile.querySelector('.card:not(.card-placeholder)');
-            if (firstCard) {
-                firstCard.focus();
-            }
-        }, 100); 
+    if (this.STATE.isMobile !== newIsMobile || this.STATE.isTablet !== newIsTablet) {
+        debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, `Cambio de modo de vista: Mobile=${newIsMobile}, Tablet=${newIsTablet}`);
+        
+        this.STATE.isMobile = newIsMobile;
+        this.STATE.isTablet = newIsTablet;
+
+        // Limpiar el carrusel de navegación si existe
+        this._destroyCarousel(); 
+        
+        // Re-renderizar el nivel actual (el segundo argumento fuerza el reset de la vista)
+        const currentLevelState = this.stackGetCurrent() || { levelId: data.ROOT_LEVEL_ID };
+        this._mostrarNivel(currentLevelState.levelId, currentLevelState.cardIndex);
+        
+        // Si estábamos en detalle, re-renderizar detalle para aplicar estilos correctos
+        if (this.STATE.activeCourseId) {
+            this._mostrarDetalle(this.STATE.activeCourseId);
+        }
     }
 }
 
 
+// ⭐️ FUNCIÓN MOVIDA DE RENDER-BASE.JS ⭐️
 /**
- * Maneja el evento de redimensionamiento de la ventana.
- * Necesario para cambiar dinámicamente entre layout móvil/desktop.
+ * Busca un nodo (categoría o curso) por su ID dentro de la estructura de navegación.
+ * @param {string} id - ID del nodo.
+ * @param {object} nodos - Array de nodos (subsecciones o cursos) desde donde empezar la búsqueda.
+ * @returns {object|null} El nodo encontrado o null.
  */
-function _handleResize() {
+export function _findNodoById(id, nodos = this.STATE.fullData.navegacion.subsecciones) {
     // 'this' es la instancia de App
-    const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
+    if (!nodos || !id) return null;
     
-    if (isMobile !== this.STATE.isMobile) {
-        debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Cambio de layout:', isMobile ? 'Mobile' : 'Desktop');
-        this.STATE.isMobile = isMobile;
+    for (const n of nodos) {
+        if (n.id === id) return n;
         
-        // Re-renderizar el nivel actual para aplicar el layout y DOM correctos
-        const currentState = this.stackGetCurrent();
-        if (currentState) {
-             // Llama a _mostrarNivel, que internamente llamará a _initCarousel_Nav si es necesario.
-             this._mostrarNivel(currentState.levelId, currentState.cardIndex);
+        // Búsqueda recursiva en subsecciones (si existen)
+        if (n.subsecciones && n.subsecciones.length > 0) {
+            // ⭐️ CORRECCIÓN RECURSIVA: Debe usar this._findNodoById (la versión delegada) ⭐️
+            const encontrado = this._findNodoById(id, n.subsecciones); 
+            if (encontrado) return encontrado;
+        }
+        
+        // Búsqueda en cursos (si existen)
+        if (n.cursos && n.cursos.length > 0) {
+            const cursoEncontrado = n.cursos.find(c => c.id === id);
+            if (cursoEncontrado) return cursoEncontrado;
         }
     }
-    
-    // Asegurar que el Swiper de navegación se actualiza en cualquier redimensionamiento
-    if (this.STATE.navCarouselInstance) {
-        this.STATE.navCarouselInstance.update();
-        
-        // ⭐️ Asegurar que el Swiper de Detalle se actualiza ⭐️
-        if (this.STATE.detailCarouselInstance) {
-             this.STATE.detailCarouselInstance.update();
-        }
-    }
+    return null;
 }
 
 // --- code/nav-base.js ---
