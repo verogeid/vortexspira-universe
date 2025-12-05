@@ -34,9 +34,9 @@ export function renderNavegacion() {
     const isMobile = screenWidth <= data.MOBILE_MAX_WIDTH;
     
     // ⭐️ Detección de rangos para Tablet Landscape y Portrait ⭐️
-    const isTabletLandscape = screenWidth >= data.TABLET_LANDSCAPE_MIN_WIDTH && screenWidth <= data.TABLET_MAX_WIDTH;
-    const isTabletPortrait = screenWidth >= data.TABLET_MIN_WIDTH && screenWidth < data.TABLET_LANDSCAPE_MIN_WIDTH;
-    const isDesktop = screenWidth >= data.DESKTOP_MIN_WIDTH;
+    const isTabletLandscape = screenWidth > data.TABLET_PORTRAIT_MAX_WIDTH && screenWidth <= data.TABLET_LANDSCAPE_MAX_WIDTH;
+    const isTabletPortrait = screenWidth > data.MOBILE_MAX_WIDTH && screenWidth <= data.TABLET_PORTRAIT_MAX_WIDTH;
+    const isDesktop = screenWidth > data.TABLET_LANDSCAPE_MAX_WIDTH;
     
     const isTablet = isTabletPortrait || isTabletLandscape; // Booleano general para Tablet
 
@@ -331,7 +331,7 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
 export function _setupResizeObserver() {
     const getMode = (width) => {
         if (width <= data.MOBILE_MAX_WIDTH) return 'mobile';
-        if (width <= data.TABLET_MAX_WIDTH) return 'tablet';
+        if (width <= data.TABLET_LANDSCAPE_MAX_WIDTH) return 'tablet';
         return 'desktop';
     };
     _lastMode = getMode(window.innerWidth);
@@ -354,8 +354,8 @@ export function _setupResizeObserver() {
             newMode !== _lastMode ||
             
             // 2. Transición Portrait <-> Landscape (Cruza la barrera de 801px)
-            (newWidth > data.TABLET_LANDSCAPE_MIN_WIDTH && _lastWidth <= data.TABLET_LANDSCAPE_MIN_WIDTH) ||
-            (newWidth <= data.TABLET_LANDSCAPE_MIN_WIDTH && _lastWidth > data.TABLET_LANDSCAPE_MIN_WIDTH) ||
+            (newWidth > data.TABLET_PORTRAIT_MAX_WIDTH && _lastWidth <= data.TABLET_PORTRAIT_MAX_WIDTH) ||
+            (newWidth <= data.TABLET_PORTRAIT_MAX_WIDTH && _lastWidth > data.TABLET_PORTRAIT_MAX_WIDTH) ||
             
             // 3. Si estamos en detalle, siempre re-renderizar para actualizar las vistas de detalle
             (isDetailActive && newMode !== _lastMode); 

@@ -144,8 +144,8 @@ export function _handleFocusTrap(e, viewType) {
     // 'this' es la instancia de App
     const screenWidth = window.innerWidth;
     const isMobile = screenWidth <= data.MOBILE_MAX_WIDTH;
-    const isTabletLandscape = screenWidth >= data.TABLET_LANDSCAPE_MIN_WIDTH && screenWidth <= data.TABLET_MAX_WIDTH;
-    const isDesktop = screenWidth >= data.DESKTOP_MIN_WIDTH;
+    const isTabletLandscape = screenWidth > data.TABLET_PORTRAIT_MAX_WIDTH && screenWidth <= data.TABLET_LANDSCAPE_MAX_WIDTH;
+    const isDesktop = screenWidth > data.TABLET_LANDSCAPE_MAX_WIDTH;
 
     const footerLinks = Array.from(document.querySelectorAll('footer a'));
     const infoPanelLinks = (isDesktop || isTabletLandscape) ? 

@@ -224,9 +224,9 @@ class VortexSpiraApp {
         this.DOM.appContainer = document.getElementById('app-container');
         
         // ⬇️ MODIFICACIÓN: Inicializar vistaNav si es posible (solo en caso de que init NO lo haga) ⬇️
-        const isDesktop = window.innerWidth >= data.DESKTOP_MIN_WIDTH;
-        const isTabletLandscape = window.innerWidth >= data.TABLET_LANDSCAPE_MIN_WIDTH && window.innerWidth <= data.TABLET_MAX_WIDTH;
-        const isTabletPortrait = window.innerWidth >= data.TABLET_MIN_WIDTH && window.innerWidth < data.TABLET_LANDSCAPE_MIN_WIDTH;
+        const isDesktop = window.innerWidth > data.TABLET_LANDSCAPE_MAX_WIDTH
+        const isTabletLandscape = window.innerWidth > data.TABLET_PORTRAIT_MAX_WIDTH && window.innerWidth <= data.TABLET_LANDSCAPE_MAX_WIDTH;
+        const isTabletPortrait = window.innerWidth > data.MOBILE_MAX_WIDTH && window.innerWidth <= data.TABLET_PORTRAIT_MAX_WIDTH;
 
         if (isMobileInit) {
             this.DOM.vistaNav = document.getElementById('vista-navegacion-mobile');

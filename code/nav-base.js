@@ -236,7 +236,7 @@ export function _handleVolverClick() {
     // 'this' es la instancia de App
     debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Acción Volver iniciada.');
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
-    const isTablet = window.innerWidth >= data.TABLET_MIN_WIDTH && window.innerWidth <= data.TABLET_MAX_WIDTH;
+    const isTablet = window.innerWidth > data.MOBILE_MAX_WIDTH && window.innerWidth <= data.TABLET_LANDSCAPE_MAX_WIDTH;
     
     if (this.DOM.vistaDetalle.classList.contains('active')) {
         // Salir de detalle

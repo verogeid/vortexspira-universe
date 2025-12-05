@@ -20,10 +20,8 @@ export const DEV_DIARY_URL = "https://github.com/verogeid/vortexspira";
 export const WEBPAGE_URL = "https://www.vortexspira.com";
 
 export const MOBILE_MAX_WIDTH = 600;
-export const TABLET_MIN_WIDTH = 601;
-export const TABLET_LANDSCAPE_MIN_WIDTH = 801;
-export const TABLET_MAX_WIDTH = 1024;
-export const DESKTOP_MIN_WIDTH = 1025;
+export const TABLET_PORTRAIT_MAX_WIDTH = 800;
+export const TABLET_LANDSCAPE_MAX_WIDTH = 1024;
 
 export const SWIPE_SLIDE_SPEED = 400; // en ms
 export const SWIPE_ELEMENTS_PER_COLUMN_TABLET = 2;
