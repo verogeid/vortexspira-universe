@@ -7,7 +7,6 @@ import * as nav_base_details from './nav-base-details.js';
 
 /**
  * Muestra el detalle del curso, inyectando contenido y gestionando el foco.
- * Se llama con .call(this) desde app.js (this._mostrarDetalle) y render-base.js (resize).
  */
 export function _mostrarDetalle(cursoId) {
     // 'this' es la instancia de App
@@ -70,15 +69,25 @@ export function _mostrarDetalle(cursoId) {
 
     let mobileBackHtml = '';
     
+    // ⬇️ Lógica para obtener el nombre de la CATEGORÍA PADRE ⬇️
+    const parentLevelState = appInstance.stackGetCurrent();
+    let parentName = appInstance.getString('breadcrumbRoot');
+
+    if (parentLevelState && parentLevelState.levelId) {
+        // En un curso, el nivel actual de la pila (parentLevelState) apunta a la CATEGORÍA
+        const parentNodo = appInstance._findNodoById(parentLevelState.levelId, appInstance.STATE.fullData.navegacion);
+        if (parentNodo) {
+            parentName = parentNodo.nombre || parentNodo.titulo || appInstance.getString('breadcrumbRoot');
+        }
+    }
+    // ⬆️ FIN Lógica Padre ⬆️
+
     if (isMobile) {
-        const parentLevel = appInstance.stackGetCurrent();
-        let breadcrumbText = appInstance.getString('breadcrumbRoot');
+        
         let volverHtml = '';
         
-        if (parentLevel && parentLevel.levelId) {
-            const parentNodo = appInstance._findNodoById(parentLevel.levelId, appInstance.STATE.fullData.navegacion);
-            breadcrumbText = parentNodo ? (parentNodo.nombre || parentNodo.titulo) : appInstance.getString('breadcrumbRoot');
-            
+        if (parentLevelState && parentLevelState.levelId) { // Solo si no estamos en el nivel raíz
+            // Generar el botón Volver
             volverHtml = `
                 <article class="card card-volver-vertical" 
                          role="button" 
@@ -96,7 +105,7 @@ export function _mostrarDetalle(cursoId) {
                      data-tipo="relleno" 
                      tabindex="-1"
                      aria-hidden="true">
-                <h3>${breadcrumbText}</h3>
+                <h3>${parentName}</h3>
             </article>
         `;
         
@@ -149,7 +158,9 @@ export function _mostrarDetalle(cursoId) {
     `;
 
     // ⭐️ Activación de la vista ⭐️
-    appInstance.DOM.vistaNav.classList.remove('active');
+    if (appInstance.DOM.vistaNav) { 
+        appInstance.DOM.vistaNav.classList.remove('active'); 
+    }
     appInstance.DOM.vistaDetalle.classList.add('active');
     
     // ⭐️ 3. Attaching listeners for Text Fragments and Actions ⭐️
@@ -172,6 +183,8 @@ export function _mostrarDetalle(cursoId) {
         });
     });
     
+    const isTablet = window.innerWidth >= data.TABLET_MIN_WIDTH && window.innerWidth <= data.TABLET_MAX_WIDTH;
+
     // ⭐️ 2. FOCO INICIAL EN EL PRIMER FRAGMENTO DE TEXTO (RESTAURACIÓN) ⭐️
     const allDetailElements = nav_base_details._getFocusableDetailElements(appInstance).filter(el => 
         !el.classList.contains('card-volver-vertical') && 
@@ -184,7 +197,8 @@ export function _mostrarDetalle(cursoId) {
     if (!isMobile) { 
         // DESKTOP/TABLET
         if (appInstance.DOM.cardNivelActual) {
-           appInstance.DOM.cardNivelActual.innerHTML = `<h3>${curso.titulo || 'Curso'}</h3>`;
+           // ⬇️ MODIFICACIÓN: Mostrar el nombre del padre (categoría) ⬇️
+           appInstance.DOM.cardNivelActual.innerHTML = `<h3>${parentName}</h3>`;
            appInstance.DOM.cardNivelActual.classList.add('visible'); 
         }
         

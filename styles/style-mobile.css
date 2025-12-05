@@ -20,7 +20,7 @@
         display: flex; flex-direction: column;
         padding-left: 0px; padding-right: 0px; padding-bottom: 10px; 
         gap: 15px; overflow: visible;
-        /* border: 1px solid red !important; */ /* 🟥 Borde Contenedor Principal (DEBUG desactivado) */
+        /* DEBUG desactivado */
     }
 
     /* 3. Vista central */
@@ -28,7 +28,7 @@
         width: 100%; position: relative; 
         height: auto !important; overflow: visible !important;
         display: block; 
-        /* border: 1px solid yellow !important; */ /* 🟨 Borde Vista Central (DEBUG desactivado) */
+        /* DEBUG desactivado */
     }
     
     /* Ocultar vistas inactivas */
@@ -54,15 +54,15 @@
         z-index: 1000 !important;
         
         overflow-y: auto !important; 
-        /* ⭐️ MODIFICACIÓN CLAVE: Usar altura del header para el padding superior ⭐️ */
-        padding-top: var(--header-height); 
+        
+        /* ⬇️ MODIFICACIÓN 1: Quitar padding del contenedor fijo ⬇️ */
+        padding-top: 0; 
         padding-bottom: 10px;
         
         /* Scrollbar azul en detalle */
         scrollbar-width: thin;
         scrollbar-color: var(--color-primary) transparent;
         display: flex; flex-direction: column; 
-        /* border: 1px solid orange !important; */ /* 🟧 Borde Vista Detalle (DEBUG desactivado) */
     }
     #vista-detalle-mobile::-webkit-scrollbar-thumb {
         background-color: var(--color-primary);
@@ -79,6 +79,14 @@
         padding: 0 5px 20px 5px; /* Padding interno */
     }
     
+    /* ⬇️ MODIFICACIÓN 2: Aplicar el margen al contenedor scrollable interno ⬇️ */
+    #detalle-contenido-mobile {
+        /* Aplicamos el margen para empujar el contenido por debajo del header fijo */
+        margin-top: var(--header-height); 
+        width: 100%; 
+        height: auto;
+    }
+
     /* Contenedor del botón Volver (Sticky) */
     .mobile-back-header {
         position: relative; 
@@ -94,13 +102,8 @@
         
         text-align: left;
         width: 100%;
-        /* border: 1px solid purple !important; */ /* 🟪 Borde Mobile Back Header (DEBUG desactivado) */
     }
     
-    #detalle-contenido-mobile {
-        /* border: 1px solid deeppink !important; */ /* 🌺 Borde Contenido Detalle (DEBUG desactivado) */
-    }
-
     #detalle-contenido-mobile .contenido-curso {
         padding-top: 0px; 
     }
@@ -122,7 +125,6 @@
         min-height: calc(100vh - var(--header-height) - 40px); 
         width: 100%; position: relative;
         overflow: hidden; 
-        /* border: 1px solid blue !important; */ /* 🟦 Borde Swiper Viewport (DEBUG desactivado) */
     }
 
     #nav-swiper-mobile .swiper-wrapper {
@@ -131,7 +133,6 @@
         width: 100%; height: auto !important; 
         padding-bottom: 15vh; 
         padding-top: 15px !important; /* ⭐️ FIX: Padding Superior Interno (Interior del swipe) ⭐️ */
-        /* border: 1px solid lime !important; */ /* 🟢 Borde Swiper Wrapper (DEBUG desactivado) */
     }
 
     /* Los slides contienen las tarjetas */
@@ -145,7 +146,6 @@
         
         /* ⭐️ CORRECCIÓN MARGEN DERECHO: 6% para absorber el zoom (1.03) ⭐️ */
         padding: 0 6%; 
-        /* border: 1px solid cyan !important; */ /* 🔵 Borde Slide (DEBUG desactivado) */
     }
 
     /* ⭐️ AÑADIDO: Las tarjetas deben usar todo el ancho disponible del slide ⭐️ */
@@ -160,17 +160,6 @@
         pointer-events: auto !important; 
         touch-action: manipulation; 
     }
-    
-    /* Estilos de Breadcrumb y Volver (Contenidos en mobile-back-header) */
-    .card-breadcrumb-vertical, .card-volver-vertical {
-        /* border: 1px solid gray !important; */ /* Gris para tarjetas (DEBUG desactivado) */
-    }
-    
-    /* Foco en fragmentos de detalle */
-    .detail-text-fragment, .detail-action-item {
-        /* border: 1px dashed white !important; */ /* Blanco punteado para fragmentos (DEBUG desactivado) */
-    }
-
 
     /* ⭐️ AÑADIDO: Estilos específicos para Breadcrumb y Volver fijo ⭐️ */
     .card-breadcrumb-vertical {

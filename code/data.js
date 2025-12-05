@@ -2,11 +2,11 @@
 import * as debug from './debug.js';
 
 export const LOGO_OBRAS = '🚧';
-export const LOGO_CARPETA = '📁';
+export const LOGO_CARPETA = '📂';
 export const LOGO_CURSO = '📚';
 export const LOGO_VOLVER = '↩';
 export const LOGO_BUY = '🛒';
-export const LOGO_DISABLED = '🚫';
+export const LOGO_DISABLED = '🔒​'; //'💤​'; //'🚫';
 
 export const PRIMARY_COLOR = '#999';
 export const SECONDARY_COLOR = '#F89707';

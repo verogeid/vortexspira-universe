@@ -235,6 +235,9 @@ export function _handleVolverClick() {
         
         this.renderNavegacion(); 
         
+        // ⬇️ MODIFICACIÓN CLAVE: Clear activeCourseId AQUI después del renderizado ⬇️
+        this.STATE.activeCourseId = null;
+        
     } 
     else if (this.STATE.historyStack.length > 1) { 
         // Volver un nivel

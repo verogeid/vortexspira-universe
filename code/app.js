@@ -8,10 +8,10 @@ import * as nav_stack from './nav-stack.js';
 
 // Importaciones de funciones de nav-base y render-base (como helpers)
 import * as nav_base from './nav-base.js';
-// ⬇️ MODIFICACIÓN: Reemplazar nav_details por los nuevos módulos ⬇️
+// ⬇️ Módulos de Detalle refactorizados ⬇️
 import * as nav_base_details from './nav-base-details.js'; 
 import * as render_details from './render-details.js'; 
-// ⬆️ FIN MODIFICACIÓN ⬆️
+// ⬆️ Fin Módulos de Detalle refactorizados ⬆️
 import * as render_base from './render-base.js';
 // ⭐️ CAMBIO: Importar los nuevos módulos de teclado ⭐️
 import * as nav_keyboard_base from './nav-keyboard-base.js'; 
@@ -67,17 +67,13 @@ class VortexSpiraApp {
         this._destroyCarousel = render_swipe._destroyCarouselImpl;
 
         // Listeners Táctiles (para Swiper)
-        // ⬇️ MODIFICACIÓN: Reemplazar nav_tactil por nav-mouse-swipe ⬇️
         this.setupTouchListeners = nav_mouse_swipe.setupTouchListeners;
         this.handleSlideChangeStart = nav_mouse_swipe.handleSlideChangeStart;
         this.handleSlideChangeEnd = nav_mouse_swipe.handleSlideChangeEnd;
-        // ⬆️ FIN MODIFICACIÓN ⬆️
         
         // ⭐️ FUNCIONES DE DETALLE (Delegadas) ⭐️
-        // ⬇️ MODIFICACIÓN: Usar los nuevos módulos ⬇️
         this._handleActionRowClick = nav_base_details._handleActionRowClick; 
         this._mostrarDetalle = render_details._mostrarDetalle;             
-        // ⬆️ FIN MODIFICACIÓN ⬆️
 
         this.clearConsole = debug.logClear
     }
@@ -95,6 +91,11 @@ class VortexSpiraApp {
         
         this._setupGlobalDebugListeners();
         this._cacheDOM();
+        
+        // ⬇️ MODIFICACIÓN CLAVE: Inicializar vistaNav de forma segura para Deep Link ⬇️
+        // Si no está definido, forzamos la referencia a la de Desktop (la más grande)
+        this.DOM.vistaNav = this.DOM.vistaNav || document.getElementById('vista-navegacion-desktop'); 
+        // ⬆️ FIN MODIFICACIÓN CLAVE ⬆️
 
         try {
             this.STATE.fullData = await data.loadData(); 
@@ -149,10 +150,9 @@ class VortexSpiraApp {
     }
     
     _handleVolverClick() { 
-        // ⭐️ CORRECCIÓN: Limpiar el ID del curso al salir del detalle ⭐️
+        // ⭐️ CORRECCIÓN: Al salir de detalle, solo reseteamos el foco, la limpieza de ID se hace en nav-base.js
         if (this.DOM.vistaDetalle.classList.contains('active')) {
-             this.STATE.activeCourseId = null; 
-             this.STATE.lastDetailFocusIndex = 0; // ⭐️ AÑADIDO: Resetear el foco del detalle al salir ⭐️
+             this.STATE.lastDetailFocusIndex = 0;
         }
         nav_base._handleVolverClick.call(this); 
     }
@@ -224,6 +224,23 @@ class VortexSpiraApp {
         this.DOM.cardNivelActual = document.getElementById('card-nivel-actual');
         this.DOM.toast = document.getElementById('toast-notification');
         this.DOM.appContainer = document.getElementById('app-container');
+        
+        // ⬇️ MODIFICACIÓN: Inicializar vistaNav si es posible (solo en caso de que init NO lo haga) ⬇️
+        const isDesktop = window.innerWidth >= data.DESKTOP_MIN_WIDTH;
+        const isTabletLandscape = window.innerWidth >= data.TABLET_LANDSCAPE_MIN_WIDTH && window.innerWidth <= data.TABLET_MAX_WIDTH;
+        const isTabletPortrait = window.innerWidth >= data.TABLET_MIN_WIDTH && window.innerWidth < data.TABLET_LANDSCAPE_MIN_WIDTH;
+
+        if (isMobileInit) {
+            this.DOM.vistaNav = document.getElementById('vista-navegacion-mobile');
+            this.DOM.track = document.getElementById('track-mobile');
+        } else if (isDesktop) {
+            this.DOM.vistaNav = document.getElementById('vista-navegacion-desktop');
+            this.DOM.track = document.getElementById('track-desktop');
+        } else if (isTabletLandscape || isTabletPortrait) {
+            this.DOM.vistaNav = document.getElementById('vista-navegacion-tablet');
+            this.DOM.track = document.getElementById('track-tablet');
+        }
+        // ⬆️ FIN MODIFICACIÓN ⬆️
     }
     
     /**
