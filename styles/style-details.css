@@ -119,6 +119,9 @@
     
     /* ⭐️ CORRECCIÓN: Asegurar que el focus de la fila no tiene estilos visuales ⭐️ */
     outline: none;
+    
+    /* ⭐️ AÑADIDO: Box-sizing para evitar desbordes de elementos con padding/border internos ⭐️ */
+    box-sizing: border-box; 
 }
 /* Re-habilitar clic en el botón solo si el contenedor tiene el foco actual */
 .detail-action-item.focus-current .detail-action-btn {

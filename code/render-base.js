@@ -121,7 +121,6 @@ export function renderNavegacion() {
     }
 
     // ⭐️ Determinar el estado de detalle ANTES de limpiar las vistas de navegación ⭐️
-    // ⬇️ FIX: Cambiado a 'let' para permitir reasignación en la línea 154. ⬇️
     let isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
                            document.getElementById('vista-detalle-mobile').classList.contains('active');
 
@@ -292,7 +291,9 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
         // Tablet y Desktop
         
         // Lógica clave: Mostrar info-adicional solo en Desktop (>1025) y Tablet Landscape (801-1024)
-        if (isDesktop || isTabletLandscape) {
+        const shouldShowInfoAdicional = isDesktop || isTabletLandscape;
+        
+        if (shouldShowInfoAdicional) {
             this.DOM.infoAdicional.classList.add('visible'); 
         } else { // Tablet Portrait (601-800)
             this.DOM.infoAdicional.classList.remove('visible');
@@ -384,7 +385,13 @@ export function _setupResizeObserver() {
             }
             
             _lastMode = newMode;
-            app.renderNavegacion(); 
+            
+            // ⬇️ MODIFICACIÓN CLAVE: Mantenemos el detalle si hay activeCourseId ⬇️
+            if (app.STATE.activeCourseId) {
+                app._mostrarDetalle(app.STATE.activeCourseId); 
+            } else {
+                app.renderNavegacion(); 
+            }
         }
     });
     this.STATE.resizeObserver.observe(document.body);

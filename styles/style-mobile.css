@@ -55,9 +55,12 @@
         
         overflow-y: auto !important; 
         
-        /* ⬇️ MODIFICACIÓN 1: Quitar padding del contenedor fijo ⬇️ */
-        padding-top: 0; 
+        /* ⬇️ CORRECCIÓN: Usar padding-top para alinear el scroll con el header ⬇️ */
+        padding-top: var(--header-height); 
         padding-bottom: 10px;
+        
+        /* ⭐️ CLAVE: box-sizing para que padding-top no cause doble scroll ⭐️ */
+        box-sizing: border-box; 
         
         /* Scrollbar azul en detalle */
         scrollbar-width: thin;
@@ -79,10 +82,9 @@
         padding: 0 5px 20px 5px; /* Padding interno */
     }
     
-    /* ⬇️ MODIFICACIÓN 2: Aplicar el margen al contenedor scrollable interno ⬇️ */
+    /* ⬇️ CORRECCIÓN: Eliminamos el margin-top de detalle-contenido-mobile ⬇️ */
     #detalle-contenido-mobile {
-        /* Aplicamos el margen para empujar el contenido por debajo del header fijo */
-        margin-top: var(--header-height); 
+        margin-top: 0; 
         width: 100%; 
         height: auto;
     }
@@ -141,7 +143,7 @@
         display: flex; 
         flex-direction: column;
         align-items: center;
-        /* ⭐️ CAMBIO CLAVE PARA CORREGIR DESBORDAMIENTO: Incluir padding dentro del 100% del width ⭐️ */
+        /* ⭐️ CORRECCIÓN DESBORDAMIENTO: Incluir padding dentro del 100% del width ⭐️ */
         box-sizing: border-box; 
         
         /* ⭐️ CORRECCIÓN MARGEN DERECHO: 6% para absorber el zoom (1.03) ⭐️ */
@@ -151,7 +153,7 @@
     /* ⭐️ AÑADIDO: Las tarjetas deben usar todo el ancho disponible del slide ⭐️ */
     #nav-swiper-mobile .swiper-slide .card {
         width: 100%;
-        /* ⭐️ CAMBIO CLAVE: Asegurar que la tarjeta también respete el box-sizing ⭐️ */
+        /* ⭐️ CLAVE: Asegurar que la tarjeta también respete el box-sizing ⭐️ */
         box-sizing: border-box; 
     }
 
@@ -159,6 +161,20 @@
         cursor: pointer !important;
         pointer-events: auto !important; 
         touch-action: manipulation; 
+    }
+    
+    /* --------------------------------------------------------------------- */
+    /* ⭐️ BOTONES DE DETALLE MÓVIL (CORRECCIÓN DESBORDE) ⭐️ */
+    /* --------------------------------------------------------------------- */
+    .detail-actions-list {
+        /* Añadimos padding lateral para que los elementos dentro respiren */
+        padding: 0 5%; 
+    }
+    
+    .detail-action-item {
+        /* El padding se mueve a detail-actions-list, aquí solo aseguramos el espacio */
+        padding: 10px 0; 
+        width: 100%;
     }
 
     /* ⭐️ AÑADIDO: Estilos específicos para Breadcrumb y Volver fijo ⭐️ */
