@@ -224,6 +224,11 @@ export function _mostrarDetalle(cursoId) {
         appInstance.DOM.infoAdicional.classList.remove('visible');
         appInstance.DOM.cardVolverFija.classList.remove('visible');
         
+        // ⭐️ CORRECCIÓN SCROLL: Asegurar que el scroll está al inicio al abrir el detalle en móvil. ⭐️
+        if (appInstance.DOM.detalleContenido) {
+             appInstance.DOM.detalleContenido.scrollTop = 0;
+        }
+
         if (elementToFocus) {
              elementToFocus.focus();
              nav_base_details._updateDetailFocusState(elementToFocus, appInstance); 
