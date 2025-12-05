@@ -20,7 +20,7 @@
         display: flex; flex-direction: column;
         padding-left: 0px; padding-right: 0px; padding-bottom: 10px; 
         gap: 15px; overflow: visible;
-        border: 1px solid red !important; /* 🟥 Borde Contenedor Principal (DEBUG) */
+        /* border: 1px solid red !important; */ /* 🟥 Borde Contenedor Principal (DEBUG desactivado) */
     }
 
     /* 3. Vista central */
@@ -28,7 +28,7 @@
         width: 100%; position: relative; 
         height: auto !important; overflow: visible !important;
         display: block; 
-        border: 1px solid yellow !important; /* 🟨 Borde Vista Central (DEBUG) */
+        /* border: 1px solid yellow !important; */ /* 🟨 Borde Vista Central (DEBUG desactivado) */
     }
     
     /* Ocultar vistas inactivas */
@@ -54,14 +54,15 @@
         z-index: 1000 !important;
         
         overflow-y: auto !important; 
-        padding-top: 10px; 
+        /* ⭐️ MODIFICACIÓN CLAVE: Usar altura del header para el padding superior ⭐️ */
+        padding-top: var(--header-height); 
         padding-bottom: 10px;
         
         /* Scrollbar azul en detalle */
         scrollbar-width: thin;
         scrollbar-color: var(--color-primary) transparent;
         display: flex; flex-direction: column; 
-        border: 1px solid orange !important; /* 🟧 Borde Vista Detalle (DEBUG) */
+        /* border: 1px solid orange !important; */ /* 🟧 Borde Vista Detalle (DEBUG desactivado) */
     }
     #vista-detalle-mobile::-webkit-scrollbar-thumb {
         background-color: var(--color-primary);
@@ -93,11 +94,11 @@
         
         text-align: left;
         width: 100%;
-        border: 1px solid purple !important; /* 🟪 Borde Mobile Back Header (DEBUG) */
+        /* border: 1px solid purple !important; */ /* 🟪 Borde Mobile Back Header (DEBUG desactivado) */
     }
     
     #detalle-contenido-mobile {
-        border: 1px solid deeppink !important; /* 🌺 Borde Contenido Detalle (DEBUG) */
+        /* border: 1px solid deeppink !important; */ /* 🌺 Borde Contenido Detalle (DEBUG desactivado) */
     }
 
     #detalle-contenido-mobile .contenido-curso {
@@ -121,7 +122,7 @@
         min-height: calc(100vh - var(--header-height) - 40px); 
         width: 100%; position: relative;
         overflow: hidden; 
-        border: 1px solid blue !important; /* 🟦 Borde Swiper Viewport (DEBUG) */
+        /* border: 1px solid blue !important; */ /* 🟦 Borde Swiper Viewport (DEBUG desactivado) */
     }
 
     #nav-swiper-mobile .swiper-wrapper {
@@ -130,7 +131,7 @@
         width: 100%; height: auto !important; 
         padding-bottom: 15vh; 
         padding-top: 15px !important; /* ⭐️ FIX: Padding Superior Interno (Interior del swipe) ⭐️ */
-        border: 1px solid lime !important; /* 🟢 Borde Swiper Wrapper (DEBUG) */
+        /* border: 1px solid lime !important; */ /* 🟢 Borde Swiper Wrapper (DEBUG desactivado) */
     }
 
     /* Los slides contienen las tarjetas */
@@ -144,7 +145,7 @@
         
         /* ⭐️ CORRECCIÓN MARGEN DERECHO: 6% para absorber el zoom (1.03) ⭐️ */
         padding: 0 6%; 
-        border: 1px solid cyan !important; /* 🔵 Borde Slide (DEBUG) */
+        /* border: 1px solid cyan !important; */ /* 🔵 Borde Slide (DEBUG desactivado) */
     }
 
     /* ⭐️ AÑADIDO: Las tarjetas deben usar todo el ancho disponible del slide ⭐️ */
@@ -162,12 +163,12 @@
     
     /* Estilos de Breadcrumb y Volver (Contenidos en mobile-back-header) */
     .card-breadcrumb-vertical, .card-volver-vertical {
-        border: 1px solid gray !important; /* Gris para tarjetas (DEBUG) */
+        /* border: 1px solid gray !important; */ /* Gris para tarjetas (DEBUG desactivado) */
     }
     
     /* Foco en fragmentos de detalle */
     .detail-text-fragment, .detail-action-item {
-        border: 1px dashed white !important; /* Blanco punteado para fragmentos (DEBUG) */
+        /* border: 1px dashed white !important; */ /* Blanco punteado para fragmentos (DEBUG desactivado) */
     }
 
 

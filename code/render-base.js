@@ -67,19 +67,14 @@ export function renderNavegacion() {
         renderHtmlFn = this._generateCardHTML_Carousel; // Método delegado
         initCarouselFn = this._initCarousel_Swipe;     // Método delegado
         
-        // FIX BREAKPOINT: Priorizar DESKTOP (3 COL) y luego TABLET LANDSCAPE (3 COL) y finalmente TABLET PORTRAIT (2 COL)
+        // FIX BREAKPOINT: Priorizar DESKTOP (3 COL) y luego TABLET (2 COL)
         if (isDesktop) {
             calculatedItemsPerColumn = 3; 
             swiperId = '#nav-swiper';
             this.DOM.vistaNav = desktopView;
             this.DOM.track = document.getElementById('track-desktop'); 
-        } else if (isTabletLandscape) {
-            calculatedItemsPerColumn = 3; 
-            swiperId = '#nav-swiper-tablet';
-            this.DOM.vistaNav = tabletView;
-            this.DOM.track = document.getElementById('track-tablet'); 
-        } else if (isTabletPortrait) {
-            calculatedItemsPerColumn = 2; 
+        } else if (isTablet) { // Cubre isTabletLandscape (801-1024) y isTabletPortrait (601-800)
+            calculatedItemsPerColumn = 2; // <-- CORRECCIÓN: 2 items por columna en Tablet.
             swiperId = '#nav-swiper-tablet';
             this.DOM.vistaNav = tabletView;
             this.DOM.track = document.getElementById('track-tablet'); 
@@ -152,7 +147,7 @@ export function renderNavegacion() {
             debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `Detalle re-renderizado para curso: ${this.STATE.activeCourseId}`); // FIX: debug.log
         } else {
             // Si el ID se perdió, volvemos a la navegación
-            isDetailActive = false; // Línea 154 (ahora funciona con 'let')
+            isDetailActive = false; // Línea 154 (Ahora es let)
             debug.logWarn('render_base', "activeCourseId perdido durante resize, volviendo a navegación."); // FIX: debug.logWarn
         }
     } 
