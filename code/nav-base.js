@@ -32,7 +32,7 @@ export function setupListeners() {
   // ⬆️ FIN MODIFICACIÓN ⬆️
 };
 
-// ⬇️ AÑADIDO: Mueve la configuración del listener focusin aquí ⬇️
+// ⬇️ MODIFICACIÓN: Lógica de inicialización del listener de foco en la vista de detalle. ⬇️
 /**
  * Lógica de inicialización del listener de foco en la vista de detalle.
  */
@@ -43,12 +43,28 @@ function _setupDetailFocusHandler() {
         const isDetailView = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active'); 
 
         if (isDetailView) {
-            // Llamamos a la lógica de actualización del foco del nuevo módulo base de detalle
-            nav_base_details._updateDetailFocusState(focusedEl, this);
+            // La lógica de blur/foco ya no necesita el focusedEl. La actualiza Swiper. 
+            // ⭐️ FIX: Evitamos la llamada directa a _updateDetailFocusState para prevenir el error. ⭐️
+            
+            const focusedIsContent = focusedEl.closest('.detail-text-fragment, .detail-action-item, .detail-title-slide, .card-volver-vertical, .card-breadcrumb-vertical');
+            
+            if (focusedIsContent) {
+                // Si el elemento enfocado está dentro de un slide, el Swiper debe encargarse de deslizarlo a la vista
+                const slide = focusedIsContent.closest('.swiper-slide');
+                const swiper = this.STATE.detailCarouselInstance;
+                
+                if (swiper && slide) {
+                    const targetIndex = swiper.slides.indexOf(slide);
+                    if (targetIndex > -1 && targetIndex !== swiper.activeIndex) {
+                         // Solo deslizar, el evento 'slideChangeTransitionEnd' llamará a _updateDetailFocusState.
+                         swiper.slideTo(targetIndex, 300);
+                    }
+                }
+            }
         }
     });
 };
-// ⬆️ FIN AÑADIDO ⬆️
+// ⬆️ FIN MODIFICACIÓN ⬆️
 
 
 // ⭐️ 2. POINTER LISTENERS (Adjuntar listeners programáticos a los tracks) ⭐️
