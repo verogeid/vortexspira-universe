@@ -55,11 +55,11 @@
         
         overflow-y: auto !important; 
         
-        /* ⬇️ CORRECCIÓN: Usar padding-top para alinear el scroll con el header ⬇️ */
-        padding-top: var(--header-height); 
+        /* ⭐️ CORRECCIÓN POSICIONAMIENTO: Quitar padding-top en contenedor fixed ⭐️ */
+        padding-top: 0; 
         padding-bottom: 10px;
         
-        /* ⭐️ CLAVE: box-sizing para que padding-top no cause doble scroll ⭐️ */
+        /* Aseguramos box-sizing en contenedor fixed */
         box-sizing: border-box; 
         
         /* Scrollbar azul en detalle */
@@ -82,12 +82,14 @@
         padding: 0 5px 20px 5px; /* Padding interno */
     }
     
-    /* ⬇️ CORRECCIÓN: Eliminamos el margin-top de detalle-contenido-mobile ⬇️ */
+    /* ⬇️ MODIFICACIÓN CLAVE: Aplicar margin-top al contenido scrollable interno ⬇️ */
     #detalle-contenido-mobile {
-        margin-top: 0; 
+        /* ⭐️ FIX POSICIONAMIENTO: Empujar el contenido completo bajo el header ⭐️ */
+        margin-top: var(--header-height); 
         width: 100%; 
         height: auto;
     }
+    /* ⬆️ FIN MODIFICACIÓN CLAVE ⬆️ */
 
     /* Contenedor del botón Volver (Sticky) */
     .mobile-back-header {
@@ -167,15 +169,28 @@
     /* ⭐️ BOTONES DE DETALLE MÓVIL (CORRECCIÓN DESBORDE) ⭐️ */
     /* --------------------------------------------------------------------- */
     .detail-actions-list {
-        /* Añadimos padding lateral para que los elementos dentro respiren */
-        padding: 0 5%; 
+        /* ⭐️ FIX DESBORDE: Eliminar padding lateral para que los elementos usen el padding de .contenido-curso ⭐️ */
+        padding-left: 0;
+        padding-right: 0;
+        width: 100%; /* Asegura que no se expande */
     }
     
     .detail-action-item {
-        /* El padding se mueve a detail-actions-list, aquí solo aseguramos el espacio */
         padding: 10px 0; 
         width: 100%;
     }
+
+
+    /* Estilos de Breadcrumb y Volver (Contenidos en mobile-back-header) */
+    .card-breadcrumb-vertical, .card-volver-vertical {
+        /* DEBUG desactivado */
+    }
+    
+    /* Foco en fragmentos de detalle */
+    .detail-text-fragment, .detail-action-item {
+        /* DEBUG desactivado */
+    }
+
 
     /* ⭐️ AÑADIDO: Estilos específicos para Breadcrumb y Volver fijo ⭐️ */
     .card-breadcrumb-vertical {
