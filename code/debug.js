@@ -12,17 +12,27 @@ export const DEBUG_LEVELS = {
 };
 
 export const DEBUG_CONFIG = {
+    global: DEBUG_LEVELS.BASIC,
+    
     app: DEBUG_LEVELS.DISABLED,
     data: DEBUG_LEVELS.DISABLED,
     i18n: DEBUG_LEVELS.DISABLED,
-    nav_base: DEBUG_LEVELS.DISABLED,
-    nav_keyboard: DEBUG_LEVELS.DISABLED,
-    nav_tactil: DEBUG_LEVELS.DISABLED,
     nav_stack: DEBUG_LEVELS.DISABLED,
+
+    nav_base: DEBUG_LEVELS.DISABLED,
+    nav_base_details: DEBUG_LEVELS.DISABLED,
+
+    nav_keyboard_base: DEBUG_LEVELS.DISABLED,
+    nav_keyboard_details: DEBUG_LEVELS.DISABLED,
+    nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
+
+    nav_mouse_details: DEBUG_LEVELS.DISABLED,
+    nav_mouse_swipe: DEBUG_LEVELS.DISABLED,
+    
     render_base: DEBUG_LEVELS.DISABLED,
-    render_swipe: DEBUG_LEVELS.DISABLED,
+    render_details: DEBUG_LEVELS.DISABLED,
     render_mobile: DEBUG_LEVELS.DISABLED,
-    global: DEBUG_LEVELS.BASIC
+    render_swipe: DEBUG_LEVELS.DISABLED
 };
 
 export function logClear() {

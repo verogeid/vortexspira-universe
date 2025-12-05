@@ -1,81 +1,50 @@
 // --- code/nav-keyboard-details.js ---
 
-import * as nav_base_details from './nav-base-details.js'; // ⬇️ MODIFICACIÓN: Usar nav_base_details ⬇️
+import * as nav_base_details from './nav-base-details.js'; 
+import * as debug from './debug.js'; // Importar debug
 
 export function _handleDetailNavigation(key) {
     // 'this' es la instancia de App
-    const activeElement = document.activeElement;
-    
-    // Obtenemos todos los elementos navegables del módulo nav-details
-    const focusableElements = nav_base_details._getFocusableDetailElements(this) // ⬇️ MODIFICACIÓN: Pasar 'this' ⬇️
-        .filter(el => 
-            !el.classList.contains('card-volver-vertical') && 
-            el.id !== 'card-volver-fija-elemento'
-        );
+    const app = this;
+    const swiper = app.STATE.detailCarouselInstance;
+    if (!swiper) return;
 
-    let currentIndex = focusableElements.indexOf(activeElement);
-    const maxIndex = focusableElements.length - 1;
-    
-    // Si el foco está en el título o en un lugar perdido, lo movemos al primer fragmento de texto o al inicio.
-    if (currentIndex === -1) {
-        const firstElement = focusableElements.find(el => el.classList.contains('detail-text-fragment')) || focusableElements[0];
-        if (firstElement) {
-            firstElement.focus();
-            // Scroll al inicio si es el primer elemento.
-            if (this.DOM.detalleContenido) {
-                 this.DOM.detalleContenido.scrollTop = 0;
-            } else {
-                 firstElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); 
-            }
-        }
-        return;
-    }
-    
-    let newIndex = currentIndex;
+    const focusedSlide = swiper.slides[swiper.activeIndex];
+    const focusedContent = focusedSlide ? focusedSlide.querySelector('.detail-text-fragment, .detail-action-item, .detail-title-slide') : null;
 
+    // Lógica para que Swiper gestione el movimiento vertical
     switch (key) {
         case 'ArrowUp':
-            newIndex = Math.max(0, currentIndex - 1);
-            break;
+            swiper.slidePrev(app.STATE.keyboardNavInProgress ? 100 : 300); // Velocidad ligeramente más rápida para teclado
+            app.STATE.keyboardNavInProgress = true;
+            return;
         case 'ArrowDown':
-            newIndex = Math.min(maxIndex, currentIndex + 1);
-            break;
+            swiper.slideNext(app.STATE.keyboardNavInProgress ? 100 : 300);
+            app.STATE.keyboardNavInProgress = true;
+            return;
         case 'ArrowLeft':
         case 'ArrowRight':
-            // Ignoramos el movimiento lateral para no romper el orden secuencial
+            // Ignoramos el movimiento lateral en la vista de detalle
             return; 
         case 'Enter':
         case ' ':
-            // Si está sobre un fragmento de texto, avanza al siguiente (simula la lectura).
-            if (activeElement.classList.contains('detail-text-fragment')) {
-                newIndex = Math.min(maxIndex, currentIndex + 1);
-            } 
-            // Si está sobre un botón de acción, lo clicamos (salvo si está deshabilitado).
-            // El elemento enfocado es el div .detail-action-item, el botón es su hijo 'a.detail-action-btn'
-            else if (activeElement.classList.contains('detail-action-item')) {
-                const btn = activeElement.querySelector('.detail-action-btn');
+            // Si está sobre una acción, la activamos.
+            if (focusedContent && focusedContent.classList.contains('detail-action-item')) {
+                const btn = focusedContent.querySelector('.detail-action-btn');
                 if (btn && !btn.classList.contains('disabled')) {
                     // Simular clic en el elemento interactivo real (el <a>)
                     btn.click(); 
                     return;
                 }
+            } else if (focusedContent && focusedContent.classList.contains('detail-title-slide') || focusedContent && focusedContent.classList.contains('detail-text-fragment')) {
+                 // Si está sobre el título/fragmento, avanzamos al siguiente slide (simula la lectura).
+                 swiper.slideNext(300);
             }
             break;
     }
     
-    // Aplicar el nuevo foco
-    if (newIndex !== currentIndex && focusableElements[newIndex]) {
-        const elementToFocus = focusableElements[newIndex];
-        elementToFocus.focus();
-        
-        // ⭐️ CORRECCIÓN CLAVE: Forzar el scroll para que el elemento enfocado esté visible (block: 'center' es más seguro) ⭐️
-        if (newIndex === 0 && elementToFocus.classList.contains('detail-text-fragment') && this.DOM.detalleContenido) {
-             this.DOM.detalleContenido.scrollTop = 0;
-        } else {
-             // Usar 'center' para mantenerlo visible en el centro/medio del viewport si es posible
-             elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'center' }); 
-        }
-    }
+    // Si la tecla no causó una acción de Swiper, liberamos la bandera.
+    app.STATE.keyboardNavInProgress = false; 
 }
 
 // --- code/nav-keyboard-details.js ---

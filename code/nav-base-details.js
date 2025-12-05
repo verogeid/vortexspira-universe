@@ -1,97 +1,119 @@
 // --- code/nav-base-details.js ---
 
 import * as data from './data.js';
+import * as debug from './debug.js';
 
 // ⭐️ GESTIÓN DE FOCO EN VISTA DETALLE (BLUR MASK Y FRAGMENTOS) ⭐️
 /**
- * Función que actualiza las clases CSS en función del elemento enfocado.
- * Se llama desde nav-base.js (listener focusin).
+ * Función que actualiza las clases CSS en función del índice del slide activo.
+ * Se llama desde render-details.js (listener slideChangeTransitionEnd).
  */
-export function _updateDetailFocusState(focusedEl, appInstance) {
+export function _updateDetailFocusState(appInstance) {
+    const swiper = appInstance.STATE.detailCarouselInstance; 
+    if (!swiper) return;
+
     const detailContainer = appInstance.DOM.vistaDetalle; 
+    const slides = swiper.slides;
     
-    // 1. Obtener TODOS los elementos secuenciales enfocables (Fragmento de texto O Fila de acción)
-    const sequenceItems = Array.from(detailContainer.querySelectorAll('.detail-text-fragment, .detail-action-item'));
-
-    // Encontrar el contenedor secuencial del elemento enfocado (puede ser el botón de acción o el fragmento de texto)
-    const focusedContainer = focusedEl.closest('.detail-text-fragment') || focusedEl.closest('.detail-action-item');
-
-    // ⭐️ CORRECCIÓN: Limpiar cualquier estado de HOVER/MOUSEOVER ⭐️
-    sequenceItems.forEach(item => item.classList.remove('focus-current-hover'));
-    
-    if (!focusedContainer) {
-        // Foco fuera del contenido principal (ej. título, sidebar, footer)
-        
-        // ⭐️ CORRECCIÓN CLAVE: No limpiar el estado visual si el foco se mueve a un elemento de la trampa ⭐️
-        const isTrapElement = focusedEl === appInstance.DOM.cardVolverFijaElemento || 
-                              focusedEl.closest('#info-adicional') || 
-                              focusedEl.closest('footer');
-        
-        if (isTrapElement) {
-            // El estado visual (blur/nitidez) se congela y se mantiene.
-            return;
-        }
-        
-        // Si el foco se mueve a un elemento no controlado (ej. el h2 del curso), limpiar el estado (comportamiento de fallback original)
-        sequenceItems.forEach(item => item.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2'));
-        detailContainer.classList.remove('mode-focus-actions', 'mode-focus-text');
-        return;
-    }
-    
-    // Si llegamos aquí, un fragmento/acción ha sido enfocado.
-    const focusedIndex = sequenceItems.indexOf(focusedContainer);
+    // 1. Obtener el índice del slide enfocado (gestionado por Swiper)
+    const focusedIndex = swiper.activeIndex;
     
     // ⭐️ Guardar el índice del elemento enfocado para la función de retorno del foco ⭐️
     appInstance.STATE.lastDetailFocusIndex = focusedIndex; 
 
     // 2. Proximidad y aplicación de clases
-    sequenceItems.forEach((item, index) => {
+    slides.forEach((slide, index) => {
         const diff = Math.abs(index - focusedIndex);
 
-        item.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2');
+        // Limpiar
+        slide.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2');
         
-        if (diff === 0) {
-            item.classList.add('focus-current');
-        } else if (diff === 1) {
-            item.classList.add('focus-adj-1'); 
-        } else if (diff === 2) {
-            item.classList.add('focus-adj-2'); 
+        // El contenido real que queremos desenfocar/enfocar está dentro de la diapositiva.
+        const content = slide.querySelector('.detail-text-fragment, .detail-action-item, .detail-title-slide, .card-volver-vertical, .card-breadcrumb-vertical');
+        if (content) {
+            content.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2');
+            content.classList.remove('focus-current-hover'); // Limpiar hover por si acaso
+
+            if (diff === 0) {
+                content.classList.add('focus-current');
+                // Forzamos el foco del teclado al contenido real dentro de la slide.
+                content.focus({ preventScroll: true }); 
+                // Aplicar clase al slide para estilos de contenedor si es necesario
+                slide.classList.add('focus-current'); 
+
+            } else if (diff === 1) {
+                content.classList.add('focus-adj-1'); 
+            } else if (diff === 2) {
+                content.classList.add('focus-adj-2'); 
+            }
         }
     });
 
-    // 3. Aplicar clases binarias para el control de la MÁSCARA (ya no controlan el blur)
-    const isTextFocus = focusedContainer.classList.contains('detail-text-fragment');
+    // 3. Aplicar clases binarias (para máscaras globales)
+    const focusedSlide = slides[focusedIndex];
+    if (focusedSlide) {
+        const isTextFocus = focusedSlide.querySelector('.detail-text-fragment') || focusedSlide.querySelector('.detail-title-slide');
+        const isActionFocus = focusedSlide.querySelector('.detail-action-item');
 
-    if (isTextFocus) {
-        detailContainer.classList.add('mode-focus-text');
-        detailContainer.classList.remove('mode-focus-actions');
-    } else {
-        detailContainer.classList.add('mode-focus-actions');
-        detailContainer.classList.remove('mode-focus-text');
+        detailContainer.classList.remove('mode-focus-actions', 'mode-focus-text');
+        
+        if (isActionFocus) {
+            detailContainer.classList.add('mode-focus-actions');
+        } else {
+            detailContainer.classList.add('mode-focus-text');
+        }
     }
 };
 
 /**
- * Helper para obtener todos los elementos enfocables dentro de la vista de detalle.
+ * Helper para obtener todos los elementos enfocables (los contenidos de los slides).
+ * Esto es necesario para la trampa de foco de nav-keyboard-base.js.
  */
 export function _getFocusableDetailElements(appInstance) {
-    // ⭐️ CORRECCIÓN: Obtener elementos secuenciales que son focales (Fragmento de texto O Fila de acción) ⭐️
-    const detailElements = Array.from(appInstance.DOM.detalleContenido.querySelectorAll('.detail-text-fragment, .detail-action-item'));
+    if (!appInstance.DOM.detalleTrack) return [];
+    
+    // ⭐️ NOTA: Devolvemos el contenido real dentro de los slides ⭐️
+    const slideContents = Array.from(appInstance.DOM.detalleTrack.querySelectorAll('.swiper-slide')).map(slide => 
+        slide.querySelector('.detail-text-fragment, .detail-action-item, .detail-title-slide, .card-volver-vertical, .card-breadcrumb-vertical')
+    ).filter(el => el && el.tabIndex !== -1); // Filtrar solo los focables reales
+
     let elements = [];
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
     
+    // Añadir el botón volver fijo de escritorio si está visible
     if (!isMobile && appInstance.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
         elements.push(appInstance.DOM.cardVolverFijaElemento);
     } 
-    // Usamos .detail-action-item/fragment para el cálculo de proximidad del blur.
-    elements.push(...detailElements);
+
+    elements.push(...slideContents);
     return elements;
 };
 
 // ⭐️ HELPER: Clic en fila -> Solo pone foco (NO click) ⭐️
 export function _handleActionRowClick(e) {
     // Apuntamos a la fila, ya que es el elemento secuencial enfocable.
-    e.currentTarget.focus(); 
+    // Con Swiper, debemos encontrar el slide padre y saltar a él.
+    const slide = e.currentTarget.closest('.swiper-slide');
+    if (slide) {
+        const swiper = App.STATE.detailCarouselInstance;
+        const slides = swiper.slides;
+        const targetIndex = slides.indexOf(slide);
+        
+        if (targetIndex > -1 && targetIndex !== swiper.activeIndex) {
+             swiper.slideTo(targetIndex, data.SWIPE_SLIDE_SPEED);
+             // El foco se actualizará en el evento 'slideChangeTransitionEnd'
+        } else {
+             // Si ya estamos en el slide, simplemente enfocamos el elemento.
+             e.currentTarget.focus({ preventScroll: true });
+        }
+    }
 };
+
+/**
+ * Maneja el evento de cambio de slide de Swiper y sincroniza el foco.
+ */
+export function _handleSlideChangeEnd(swiper, appInstance) {
+    _updateDetailFocusState(appInstance);
+}
 
 // --- code/nav-base-details.js ---
