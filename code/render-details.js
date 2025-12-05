@@ -15,7 +15,7 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
     
     const swiperConfig = {
         direction: 'vertical', 
-        slidesPerView: 1, // Mostramos 1 slide a la vez
+        slidesPerView: 'auto', // ⭐️ CAMBIO CLAVE: Muestra tantos slides como quepan (panorámica) ⭐️
         slidesPerGroup: 1, 
         loop: false, 
         
@@ -23,7 +23,7 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
 
         touchRatio: 1, 
         simulateTouch: true, 
-        centeredSlides: true, // Centramos el slide activo para el efecto visual
+        centeredSlides: false, // ⭐️ CAMBIO CLAVE: Deshabilita el centrado para la vista secuencial ⭐️
         mousewheel: { sensitivity: 1, releaseOnEdges: true }, 
         keyboard: { enabled: false }, // Lo manejamos en nav-keyboard-details
         speed: 300, // Velocidad de snap
@@ -200,7 +200,9 @@ export function _mostrarDetalle(cursoId) {
     }
     
     // ⭐️ 3. INYECCIÓN E INICIALIZACIÓN ⭐️
-    appInstance.DOM.detalleTrack.innerHTML = slidesHtml;
+    if (appInstance.DOM.detalleTrack) {
+        appInstance.DOM.detalleTrack.innerHTML = slidesHtml;
+    }
 
     // Inicializar Swiper
     const initialSlideIndex = appInstance.STATE.lastDetailFocusIndex;
@@ -211,27 +213,39 @@ export function _mostrarDetalle(cursoId) {
     if (appInstance.DOM.vistaNav) { 
         appInstance.DOM.vistaNav.classList.remove('active'); 
     }
-    appInstance.DOM.vistaDetalle.classList.add('active');
+    if (appInstance.DOM.vistaDetalle) {
+        appInstance.DOM.vistaDetalle.classList.add('active');
+    }
     
     if (!isMobile) { 
         // DESKTOP/TABLET Sidebar UI
+        // La lógica de verificación del DOM se ha fortalecido aquí.
         if (appInstance.DOM.cardNivelActual) {
            appInstance.DOM.cardNivelActual.innerHTML = `<h3>${parentName}</h3>`;
            appInstance.DOM.cardNivelActual.classList.add('visible'); 
         }
         
-        appInstance.DOM.cardVolverFija.classList.add('visible'); 
-        appInstance.DOM.cardVolverFijaElemento.classList.add('visible');
-        appInstance.DOM.cardVolverFijaElemento.innerHTML = `<h3>${data.LOGO_VOLVER}</h3>`; 
-        appInstance.DOM.cardVolverFijaElemento.tabIndex = 0;
+        if (appInstance.DOM.cardVolverFija) {
+             appInstance.DOM.cardVolverFija.classList.add('visible'); 
+        }
+        
+        if (appInstance.DOM.cardVolverFijaElemento) {
+            appInstance.DOM.cardVolverFijaElemento.classList.add('visible');
+            appInstance.DOM.cardVolverFijaElemento.innerHTML = `<h3>${data.LOGO_VOLVER}</h3>`; 
+            appInstance.DOM.cardVolverFijaElemento.tabIndex = 0;
+        }
         
         // Ejecutar el enfoque/blur después de la inicialización de Swiper
         nav_base_details._updateDetailFocusState(appInstance);
         
     } else { 
         // MÓVIL
-        appInstance.DOM.infoAdicional.classList.remove('visible');
-        appInstance.DOM.cardVolverFija.classList.remove('visible');
+        if (appInstance.DOM.infoAdicional) {
+            appInstance.DOM.infoAdicional.classList.remove('visible');
+        }
+        if (appInstance.DOM.cardVolverFija) {
+            appInstance.DOM.cardVolverFija.classList.remove('visible');
+        }
         
         // Ejecutar el enfoque/blur después de la inicialización de Swiper
         nav_base_details._updateDetailFocusState(appInstance);
