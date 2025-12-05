@@ -2,9 +2,9 @@
 
 import * as debug from './debug.js';
 import * as data from './data.js';
-import * as nav_base_details from './nav-base-details.js'; // ⬇️ MODIFICACIÓN: Nuevo módulo ⬇️
+import * as nav_base_details from './nav-base-details.js'; 
 import * as nav_keyboard_details from './nav-keyboard-details.js'; 
-import * as nav_keyboard_swipe from './nav-keyboard-swipe.js'; // ⬇️ MODIFICACIÓN: Nuevo módulo ⬇️
+import * as nav_keyboard_swipe from './nav-keyboard-swipe.js'; 
 import * as nav_base from './nav-base.js'; // Necesario para _updateFocusImpl
 
 /**
@@ -51,8 +51,9 @@ export function initKeyboardControls() {
         // Lógica para footer
         const isFooterActive = document.activeElement.closest('footer');
         if (isFooterActive) {
-            if (['ArrowLeft', 'ArrowRight'].includes(e.key)) {
-                e.preventDefault();
+            if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) { // Incluir las flechas para poder prevenirlas
+                // PREVENIR el scroll por defecto del navegador
+                e.preventDefault(); 
                 _handleFooterNavigation.call(app, e.key);
             }
             return; 
@@ -72,9 +73,9 @@ export function initKeyboardControls() {
         if (isNavActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault(); 
-                // ⬇️ MODIFICACIÓN: Delegamos a nav-keyboard-swipe ⬇️
+                // ⬇️ Delegamos a nav-keyboard-swipe ⬇️
                 nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
-                // ⬆️ FIN MODIFICACIÓN ⬆️
+                // ⬆️ FIN DELEGACIÓN ⬆️
             }
         } 
         else if (isDetailActive) {
@@ -106,9 +107,6 @@ export function _handleInfoNavigation(key) {
     if (newIndex !== currentIndex) elements[newIndex].focus();
 };
 
-// ⬇️ ELIMINACIÓN: Lógica de navegación movida a nav-keyboard-swipe.js ⬇️
-/* export function _handleKeyNavigation(key) { ... }; */
-
 export function _handleFooterNavigation(key) {
     // 'this' es la instancia de App
     const focusableElements = Array.from(document.querySelectorAll('footer a'));
@@ -123,15 +121,18 @@ export function _handleFooterNavigation(key) {
     let newIndex = currentIndex;
     switch (key) {
         case 'ArrowLeft':
-        case 'ArrowUp':
             newIndex = currentIndex - 1;
             if (newIndex < 0) newIndex = focusableElements.length - 1;
             break;
         case 'ArrowRight':
-        case 'ArrowDown':
             newIndex = currentIndex + 1;
             if (newIndex >= focusableElements.length) newIndex = 0;
             break;
+        // ⭐️ MODIFICACIÓN CLAVE: Ignoramos ArrowUp y ArrowDown para la navegación interna del footer. ⭐️
+        case 'ArrowUp':
+        case 'ArrowDown':
+            // Prevenimos cualquier acción o scroll y volvemos.
+            return; 
     }
 
     if (newIndex !== currentIndex) {
@@ -171,7 +172,7 @@ export function _handleFocusTrap(e, viewType) {
     } 
     else if (viewType === 'detail') {
         // Obtenemos los elementos enfocables del módulo de detalles
-        const allFocusableDetailElements = nav_base_details._getFocusableDetailElements(this); // ⬇️ MODIFICACIÓN: Usar nav_base_details ⬇️
+        const allFocusableDetailElements = nav_base_details._getFocusableDetailElements(this); 
 
         // Los elementos de contenido de detalle son los que no son 'Volver Fijo'
         detailContentLinks = allFocusableDetailElements.filter(el => 

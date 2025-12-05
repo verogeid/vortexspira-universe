@@ -126,7 +126,8 @@ export function renderNavegacion() {
     }
 
     // ⭐️ Determinar el estado de detalle ANTES de limpiar las vistas de navegación ⭐️
-    const isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
+    // ⬇️ FIX: Cambiado a 'let' para permitir reasignación en la línea 154. ⬇️
+    let isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
                            document.getElementById('vista-detalle-mobile').classList.contains('active');
 
     debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `renderNavigation: isDetailActive: ${isDetailActive}, activeCourseId: ${this.STATE.activeCourseId}`); // FIX: debug.log
@@ -151,7 +152,7 @@ export function renderNavegacion() {
             debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `Detalle re-renderizado para curso: ${this.STATE.activeCourseId}`); // FIX: debug.log
         } else {
             // Si el ID se perdió, volvemos a la navegación
-            isDetailActive = false;
+            isDetailActive = false; // Línea 154 (ahora funciona con 'let')
             debug.logWarn('render_base', "activeCourseId perdido durante resize, volviendo a navegación."); // FIX: debug.logWarn
         }
     } 
@@ -346,7 +347,7 @@ export function _setupResizeObserver() {
         const newWidth = window.innerWidth;
         const newMode = getMode(newWidth);
         
-        const isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
+        let isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
                                document.getElementById('vista-detalle-mobile').classList.contains('active');
 
         debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `ResizeObserver detectó cambio: Nuevo ancho = ${newWidth}px, Modo = ${newMode}, Detalle activo = ${isDetailActive}`); // FIX: debug.log
