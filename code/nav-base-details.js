@@ -76,7 +76,6 @@ export function _updateDetailFocusState(focusedEl, appInstance) {
  */
 export function _getFocusableDetailElements(appInstance) {
     // ⭐️ CORRECCIÓN: Obtener elementos secuenciales que son focales (Fragmento de texto O Fila de acción) ⭐️
-    // Se buscan los elementos dentro de la estructura Swiper de detalle.
     const detailElements = Array.from(appInstance.DOM.detalleContenido.querySelectorAll('.detail-text-fragment, .detail-action-item'));
     let elements = [];
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;

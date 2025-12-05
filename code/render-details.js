@@ -5,32 +5,6 @@ import * as data from './data.js';
 import * as nav_base from './nav-base.js';
 import * as nav_base_details from './nav-base-details.js';
 
-// ⭐️ NUEVO: Inicialización del Swiper de Detalle
-function _initCarousel_Detail(appInstance) {
-    if (appInstance.STATE.detailCarouselInstance) {
-        appInstance.STATE.detailCarouselInstance.destroy(true, true);
-    }
-    
-    if (typeof Swiper === 'undefined') {
-         debug.logError('render_details', "Swiper library not found.");
-         return;
-    }
-
-    const swiperConfig = {
-        direction: 'vertical', 
-        // Usamos 'auto' y freeMode para permitir el scroll fluido de documento en móvil
-        slidesPerView: 'auto', 
-        freeMode: true, 
-        mousewheel: { sensitivity: 1, releaseOnEdges: true }, 
-        speed: 300,
-        keyboard: { enabled: false }, 
-    };
-
-    appInstance.STATE.detailCarouselInstance = new Swiper('#nav-swiper-detail', swiperConfig);
-    debug.log('render_details', debug.DEBUG_LEVELS.BASIC, "Detail Vertical Swiper initialized.");
-}
-
-
 /**
  * Muestra el detalle del curso, inyectando contenido y gestionando el foco.
  */
@@ -58,12 +32,49 @@ export function _mostrarDetalle(cursoId) {
         if (type === 'd') { return 'icon-download'; }
         return 'icon-link';
     };
+
+    let enlacesHtml = '';
+    if (curso.enlaces && curso.enlaces.length > 0) {
+        const itemsHtml = curso.enlaces.map(enlace => {
+            const iconClass = getIconClass(enlace.type);
+            const isDisabled = !enlace.url || enlace.url === '#';
+            
+            const contentHtml = `<i class="action-icon ${iconClass}"></i>`;
+            const disabledContentHtml = `<i class="action-icon icon-vacio"></i>`; 
+
+            const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
+            const classDisabledBtn = isDisabled ? 'disabled' : '';
+            
+            const tabIndexContainer = '0'; 
+            const tabIndexButton = '-1'; 
+            const targetAttr = isDisabled ? '' : 'target="_blank"';
+            
+            const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
+
+            return `
+              <div class="detail-action-item" onclick="App._handleActionRowClick(event)" style="cursor: pointer;" tabindex="${tabIndexContainer}" role="listitem">
+                  <span class="detail-action-text">${enlace.texto}</span>
+                  <a ${hrefAttr} 
+                     class="detail-action-btn ${classDisabledBtn}" 
+                     ${targetAttr} 
+                     tabIndex="${tabIndexButton}" 
+                     ${onclickAttr}
+                     aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
+                     ${isDisabled ? disabledContentHtml : contentHtml}
+                  </a>
+              </div>`;
+        }).join('');
+        enlacesHtml = `<div class="detail-actions-list">${itemsHtml}</div>`;
+    }
+
+    let mobileBackHtml = '';
     
-    // ⬇️ Lógica para obtener el nombre de la CATEGORÍA PADRE (Breadcrumb) ⬇️
+    // ⬇️ Lógica para obtener el nombre de la CATEGORÍA PADRE ⬇️
     const parentLevelState = appInstance.stackGetCurrent();
     let parentName = appInstance.getString('breadcrumbRoot');
 
     if (parentLevelState && parentLevelState.levelId) {
+        // En un curso, el nivel actual de la pila (parentLevelState) apunta a la CATEGORÍA
         const parentNodo = appInstance._findNodoById(parentLevelState.levelId, appInstance.STATE.fullData.navegacion);
         if (parentNodo) {
             parentName = parentNodo.nombre || parentNodo.titulo || appInstance.getString('breadcrumbRoot');
@@ -71,117 +82,165 @@ export function _mostrarDetalle(cursoId) {
     }
     // ⬆️ FIN Lógica Padre ⬆️
 
-    const fragmentsAndActions = [];
-    
-    // 1. MOBILE ONLY: Add Breadcrumb and Volver cards as the first slides if necessary
     if (isMobile) {
-        if (parentLevelState && parentLevelState.levelId) {
-            // Breadcrumb slide
-            fragmentsAndActions.push(`
-                <div class="swiper-slide card card-breadcrumb-vertical" data-id="breadcrumb-nav" data-tipo="relleno" tabindex="-1" aria-hidden="true">
-                    <h3>${parentName}</h3>
-                </div>
-            `);
-
-            // Volver slide
-            fragmentsAndActions.push(`
-                <div class="swiper-slide card card-volver-vertical" data-id="volver-nav" data-tipo="volver-vertical" role="button" tabindex="0" onclick="App._handleVolverClick()" aria-label="${appInstance.getString('ariaBackLevel')}">
+        
+        let volverHtml = '';
+        
+        if (parentLevelState && parentLevelState.levelId) { // Solo si no estamos en el nivel raíz
+            // Generar el botón Volver
+            volverHtml = `
+                <article class="card card-volver-vertical" 
+                         role="button" 
+                         tabindex="0" 
+                         onclick="App._handleVolverClick()"
+                         aria-label="${appInstance.getString('ariaBackLevel')}">
                     <h3>${data.LOGO_VOLVER} Volver</h3>
-                </div>
-            `);
+                </article>
+            `;
         }
+
+        const breadcrumbHtml = `
+            <article class="card card-breadcrumb-vertical" 
+                     data-id="breadcrumb-nav" 
+                     data-tipo="relleno" 
+                     tabindex="-1"
+                     aria-hidden="true">
+                <h3>${parentName}</h3>
+            </article>
+        `;
+        
+        mobileBackHtml = `
+          <div class="mobile-back-header">
+              ${breadcrumbHtml}
+              ${volverHtml}
+          </div>
+        `;
     }
     
-    // 2. Title Slide (Siempre visible en Desktop/Tablet)
-    const titleHtml = `<h2 style="outline:none;">${curso.titulo}</h2>`;
-    fragmentsAndActions.push(`
-        <div class="swiper-slide detail-title-slide" tabindex="-1"> 
-            ${titleHtml}
-        </div>
-    `);
-
-    // 3. Process fragments into slides
+    // ⭐️ 1. PROCESAMIENTO DE LA DESCRIPCIÓN EN FRAGMENTOS ⭐️
+    let textFragmentsHtml = '';
     const description = curso.descripcion || 'No hay descripción disponible.';
+    
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = description.trim();
     
-    Array.from(tempDiv.childNodes).forEach((node) => {
+    Array.from(tempDiv.childNodes).forEach((node, index) => {
         if (node.nodeType === 1 && (node.tagName === 'P' || node.tagName === 'UL' || node.tagName === 'OL' || node.tagName === 'DIV')) {
-            // Cada fragmento de texto es un slide
-            fragmentsAndActions.push(`
-                <div class="swiper-slide detail-fragment-slide detail-text-fragment" tabindex="0">
+            textFragmentsHtml += `
+                <div class="detail-text-fragment" data-index="${index}" role="document" tabindex="0">
                     ${node.outerHTML}
                 </div>
-            `);
+            `;
         } else if (node.nodeType === 3 && node.textContent.trim().length > 0) {
-            // Texto suelto también es un slide
-            fragmentsAndActions.push(`
-                <div class="swiper-slide detail-fragment-slide detail-text-fragment" tabindex="0">
+            textFragmentsHtml += `
+                <div class="detail-text-fragment" data-index="${index}" role="document" tabindex="0">
                     <p>${node.textContent}</p>
                 </div>
-            `);
+            `;
         }
     });
-    
-    // 4. Process action items into slides
-    if (curso.enlaces && curso.enlaces.length > 0) {
-        // La lista completa de acciones es un único slide grande y enfocable
-        fragmentsAndActions.push(`
-            <div class="swiper-slide detail-fragment-slide detail-actions-list-wrapper" tabindex="-1">
-                <div class="detail-actions-list">
-                    ${curso.enlaces.map(enlace => {
-                        const iconClass = getIconClass(enlace.type);
-                        const isDisabled = !enlace.url || enlace.url === '#';
-                        const contentHtml = `<i class="action-icon ${iconClass}"></i>`;
-                        const disabledContentHtml = `<i class="action-icon icon-vacio"></i>`; 
-                        const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
-                        const classDisabledBtn = isDisabled ? 'disabled' : '';
-                        const tabIndexContainer = '0'; 
-                        const targetAttr = isDisabled ? '' : 'target="_blank"';
-                        const onclickAttr = isDisabled ? 'onclick="return false;"' : '';
 
-                        // Nota: Las filas de acción son los elementos enfocables reales dentro del slide
-                        return `
-                          <div class="detail-action-item" onclick="App._handleActionRowClick(event)" tabindex="${tabIndexContainer}" role="listitem">
-                              <span class="detail-action-text">${enlace.texto}</span>
-                              <a ${hrefAttr} class="detail-action-btn ${classDisabledBtn}" ${targetAttr} aria-label="${enlace.texto} ${isDisabled ? '(No disponible)' : ''}">
-                                 ${isDisabled ? disabledContentHtml : contentHtml}
-                              </a>
-                          </div>`;
-                    }).join('')}
-                </div>
-            </div>
-        `);
-    }
+    const titleHtml = `<h2 style="outline:none;">${curso.titulo}</h2>`;
 
-    // ⭐️ New DOM Injection Structure ⭐️
     appInstance.DOM.detalleContenido.innerHTML = `
-      <div class="swiper swiper-vertical-detalle" id="nav-swiper-detail">
-        <div class="swiper-wrapper">
-            ${fragmentsAndActions.join('')}
+      ${mobileBackHtml}
+      <div id="detalle-bloque-texto" tabindex="-1"> 
+        ${titleHtml}
+        
+        <div id="detalle-contenido-fragmentado"> 
+            ${textFragmentsHtml}
         </div>
+
+      </div>
+      <div id="detalle-bloque-acciones">
+        ${enlacesHtml || '<p>No hay acciones disponibles para este curso.</p>'}
       </div>
     `;
 
-
-    // ⭐️ Initialization and Activation ⭐️
-    if (appInstance.DOM.vistaNav) { appInstance.DOM.vistaNav.classList.remove('active'); }
+    // ⭐️ Activación de la vista ⭐️
+    if (appInstance.DOM.vistaNav) { 
+        appInstance.DOM.vistaNav.classList.remove('active'); 
+    }
     appInstance.DOM.vistaDetalle.classList.add('active');
+    
+    // ⭐️ 3. Attaching listeners for Text Fragments and Actions ⭐️
+    const fragments = appInstance.DOM.detalleContenido.querySelectorAll('.detail-text-fragment');
+    fragments.forEach(fragment => {
+        // Fix A: Manually handle click/focus on fragments (1st click focus)
+        fragment.addEventListener('click', (e) => {
+            if (document.activeElement !== fragment) {
+                e.preventDefault(); 
+                fragment.focus(); 
+            }
+        });
+        
+        // Fix B: Handle hover on fragments (make it sharp on mouseover)
+        fragment.addEventListener('mouseover', () => {
+            fragment.classList.add('focus-current-hover');
+        });
+        fragment.addEventListener('mouseout', () => {
+            fragment.classList.remove('focus-current-hover');
+        });
+    });
+    
+    const isTablet = window.innerWidth >= data.TABLET_MIN_WIDTH && window.innerWidth <= data.TABLET_MAX_WIDTH;
 
-    // ⭐️ Initialize the new Swiper ⭐️
-    _initCarousel_Detail(appInstance);
+    // ⭐️ 2. FOCO INICIAL EN EL PRIMER FRAGMENTO DE TEXTO (RESTAURACIÓN) ⭐️
+    const allDetailElements = nav_base_details._getFocusableDetailElements(appInstance).filter(el => 
+        !el.classList.contains('card-volver-vertical') && 
+        el.id !== 'card-volver-fija-elemento'
+    );
     
-    // ⬇️ Lógica de Foco Inicial (post-swiper) ⬇️
-    // Encontrar el índice del primer slide de contenido real (saltando Breadcrumb/Volver)
-    let targetSlideIndex = 0;
-    if (isMobile && parentLevelState && parentLevelState.levelId) {
-         // Si hay breadcrumb/volver, el contenido empieza en el slide 2
-         targetSlideIndex = 2; 
+    const focusIndex = appInstance.STATE.lastDetailFocusIndex || 0;
+    const elementToFocus = allDetailElements[focusIndex];
+
+    if (!isMobile) { 
+        // DESKTOP/TABLET
+        if (appInstance.DOM.cardNivelActual) {
+           // ⬇️ MODIFICACIÓN: Mostrar el nombre del padre (categoría) ⬇️
+           appInstance.DOM.cardNivelActual.innerHTML = `<h3>${parentName}</h3>`;
+           appInstance.DOM.cardNivelActual.classList.add('visible'); 
+        }
+        
+        appInstance.DOM.cardVolverFija.classList.add('visible'); 
+        appInstance.DOM.cardVolverFijaElemento.classList.add('visible');
+        appInstance.DOM.cardVolverFijaElemento.innerHTML = `<h3>${data.LOGO_VOLVER}</h3>`; 
+        appInstance.DOM.cardVolverFijaElemento.tabIndex = 0;
+        
+        if (elementToFocus && elementToFocus.classList.contains('detail-text-fragment')) {
+            // Si el foco inicial es el primer fragmento, forzamos el scroll al inicio del contenedor (donde está el título)
+            appInstance.DOM.detalleContenido.scrollTop = 0; 
+            elementToFocus.focus();
+            nav_base_details._updateDetailFocusState(elementToFocus, appInstance);
+        }
+        else if (elementToFocus) {
+             elementToFocus.focus();
+             nav_base_details._updateDetailFocusState(elementToFocus, appInstance); 
+             elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+    } else { 
+        // MÓVIL
+        appInstance.DOM.infoAdicional.classList.remove('visible');
+        appInstance.DOM.cardVolverFija.classList.remove('visible');
+        
+        // ⭐️ CORRECCIÓN SCROLL: Asegurar que el scroll está al inicio al abrir el detalle en móvil. ⭐️
+        if (appInstance.DOM.detalleContenido) {
+             appInstance.DOM.detalleContenido.scrollTop = 0;
+        }
+
+        if (elementToFocus) {
+             elementToFocus.focus();
+             nav_base_details._updateDetailFocusState(elementToFocus, appInstance); 
+             elementToFocus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+             const firstInteractive = appInstance.DOM.detalleContenido.querySelector('.card, .detail-action-item, .detail-text-fragment');
+             if (firstInteractive) {
+                firstInteractive.focus();
+                nav_base_details._updateDetailFocusState(firstInteractive, appInstance); 
+             }
+        }
     }
-    
-    if (appInstance.STATE.detailCarouselInstance.slides[targetSlideIndex]) {
-        appInstance.STATE.detailCarouselInstance.slideTo(targetSlideIndex, 0);
-    }
-}
+};
 
 // --- code/render-details.js ---

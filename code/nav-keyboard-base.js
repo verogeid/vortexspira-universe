@@ -1,114 +1,260 @@
 // --- code/nav-keyboard-base.js ---
 
-import * as nav_keyboard_details from './nav-keyboard-details.js';
-import * as nav_keyboard_swipe from './nav-keyboard-swipe.js';
-import * as nav_base_details from './nav-base-details.js'; // ⭐️ Importación de helper de detalle ⭐️
 import * as debug from './debug.js';
+import * as data from './data.js';
+import * as nav_base_details from './nav-base-details.js'; 
+import * as nav_keyboard_details from './nav-keyboard-details.js'; 
+import * as nav_keyboard_swipe from './nav-keyboard-swipe.js'; 
+import * as nav_base from './nav-base.js'; // Necesario para _updateFocusImpl
 
 /**
- * Maneja el evento keydown global.
- * @param {Event} e 
+ * Función de inicialización de los controles de teclado (Entry Point).
  */
-export function _handleKeyDown(e) {
-    // 'this' es la instancia de App
-    const appInstance = this;
-    const isDetailView = appInstance.DOM.vistaDetalle.classList.contains('active') || appInstance.DOM.vistaDetalleMobile.classList.contains('active');
+export function initKeyboardControls() {
+    // Usamos 'app' como alias para 'this' dentro del closure del listener
+    document.addEventListener('keydown', (e) => {
+        const app = this; 
 
-    // Módulos que manejan las teclas:
-    // 1. Teclas de Navegación (Flechas, Enter, Space)
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
-        e.preventDefault(); 
-        
-        if (isDetailView) {
-            // Navegación secuencial de fragmentos en Detalle
-            appInstance._handleDetailNavigation(e.key);
-        } else {
-            // Navegación entre tarjetas de Navegación (Swipe)
-            nav_keyboard_swipe._handleNavigation.call(appInstance, e.key);
+        if (!app || !app.DOM || !app.DOM.vistaNav) return; 
+
+        const isNavActive = app.DOM.vistaNav.classList.contains('active');
+        const isDetailActive = app.DOM.vistaDetalle.classList.contains('active');
+
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            if (isNavActive) {
+                _handleFocusTrap.call(app, e, 'nav');
+            } else if (isDetailActive) {
+                _handleFocusTrap.call(app, e, 'detail');
+            }
+            return; 
         }
-    } 
-    
-    // 2. Tecla de Escape (Volver/Cerrar Detalle)
-    else if (e.key === 'Escape') {
-        e.preventDefault(); 
-        appInstance._handleVolverClick();
-    }
-    
-    // 3. Tecla TAB (Manejo del Focus Trap)
-    else if (e.key === 'Tab') {
-        // e.preventDefault() NO debe ser llamado aquí para permitir el movimiento nativo
-        _handleFocusTrap.call(appInstance, e);
-    }
-    
-    // 4. Teclas PageUp/PageDown (Scroll en detalle)
-    else if (isDetailView && (e.key === 'PageUp' || e.key === 'PageDown')) {
-        // Permitir el comportamiento nativo del navegador para el scroll de página
-    }
-    
-    // 5. Teclas de Letra (Atajos de búsqueda/etc)
-    else if (e.key.length === 1 && e.key.match(/[a-z0-9]/i)) {
-        // Actualmente no implementado: Podría ser atajos de búsqueda o salto rápido
-    }
-}
-
-/**
- * Maneja el Focus Trap (la navegación con TAB) para asegurar que el foco 
- * permanezca dentro de la vista activa (Navegación o Detalle).
- */
-function _handleFocusTrap(e) {
-    // 'this' es la instancia de App
-    const appInstance = this;
-    const isDetailView = appInstance.DOM.vistaDetalle.classList.contains('active') || appInstance.DOM.vistaDetalleMobile.classList.contains('active');
-    
-    let focusableElements = [];
-    
-    if (isDetailView) {
-        // ⭐️ Usar el helper actualizado de nav-base-details ⭐️
-        focusableElements = nav_base_details._getFocusableDetailElements(appInstance);
         
-        // ⭐️ Incluir el elemento 'Volver' fijo si es Desktop ⭐️
-        if (window.innerWidth > 600) {
-            if (appInstance.DOM.cardVolverFijaElemento.classList.contains('visible')) {
-                focusableElements.unshift(appInstance.DOM.cardVolverFijaElemento);
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            if (typeof app._handleVolverClick === 'function') {
+                app._handleVolverClick(); 
+            }
+            return;
+        }
+
+        // Lógica para info panel (derecho)
+        const isInfoPanel = document.activeElement.closest('#info-adicional');
+        if (isInfoPanel) {
+             if (['ArrowUp', 'ArrowDown', 'Enter', ' '].includes(e.key)) {
+                e.preventDefault();
+                _handleInfoNavigation.call(app, e.key);
+            }
+            return;
+        }
+        
+        // Lógica para footer
+        const isFooterActive = document.activeElement.closest('footer');
+        if (isFooterActive) {
+            if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) { // Incluir las flechas para poder prevenirlas
+                // PREVENIR el scroll por defecto del navegador
+                e.preventDefault(); 
+                _handleFooterNavigation.call(app, e.key);
+            }
+            return; 
+        }
+
+        // Lógica para botón Volver Fijo
+        if (document.activeElement === app.DOM.cardVolverFijaElemento) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (typeof app._handleVolverClick === 'function') {
+                    app._handleVolverClick();
+                }
+            }
+            return; 
+        }
+
+        if (isNavActive) {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
+                e.preventDefault(); 
+                // ⬇️ Delegamos a nav-keyboard-swipe ⬇️
+                nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
+                // ⬆️ FIN DELEGACIÓN ⬆️
+            }
+        } 
+        else if (isDetailActive) {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
+                e.preventDefault();
+                // Delegamos al módulo de detalles de teclado
+                nav_keyboard_details._handleDetailNavigation.call(app, e.key);
             }
         }
-        
-    } else {
-        // Vista de Navegación
-        focusableElements = nav_keyboard_swipe._getFocusableNavElements(appInstance);
+    });
+};
+
+export function _handleInfoNavigation(key) {
+    // 'this' es la instancia de App
+    const panel = this.DOM.infoAdicional;
+    const elements = Array.from(panel.querySelectorAll('summary, a'));
+    const currentIndex = elements.indexOf(document.activeElement);
+    
+    if (currentIndex === -1) return;
+
+    let newIndex = currentIndex;
+    if (key === 'ArrowUp') newIndex = Math.max(0, currentIndex - 1);
+    if (key === 'ArrowDown') newIndex = Math.min(elements.length - 1, currentIndex + 1);
+    
+    if (key === 'Enter' || key === ' ') {
+        document.activeElement.click();
     }
 
+    if (newIndex !== currentIndex) elements[newIndex].focus();
+};
+
+export function _handleFooterNavigation(key) {
+    // 'this' es la instancia de App
+    const focusableElements = Array.from(document.querySelectorAll('footer a'));
     if (focusableElements.length === 0) return;
 
-    const first = focusableElements[0];
-    const last = focusableElements[focusableElements.length - 1];
-    
-    // Si el foco está en el contenedor principal de la vista, intentar moverlo al primer elemento.
-    // Esto se da cuando se vuelve del detalle o se inicia la app.
-    if (document.activeElement === appInstance.DOM.appContainer ||
-        document.activeElement === appInstance.DOM.vistaDetalle ||
-        document.activeElement === appInstance.DOM.vistaDetalleMobile) {
-        
-        // Mover el foco a la primera tarjeta/fragmento, no al header.
-        e.preventDefault();
-        first.focus();
+    const currentIndex = focusableElements.indexOf(document.activeElement);
+    if (currentIndex === -1) {
+        focusableElements[0].focus();
         return;
     }
-    
-    // Si el foco está en el último elemento (y presionamos TAB)
-    if (document.activeElement === last) {
-        if (!e.shiftKey) {
-            e.preventDefault();
-            first.focus();
+
+    let newIndex = currentIndex;
+    switch (key) {
+        case 'ArrowLeft':
+            newIndex = currentIndex - 1;
+            if (newIndex < 0) newIndex = focusableElements.length - 1;
+            break;
+        case 'ArrowRight':
+            newIndex = currentIndex + 1;
+            if (newIndex >= focusableElements.length) newIndex = 0;
+            break;
+        // ⭐️ MODIFICACIÓN CLAVE: Ignoramos ArrowUp y ArrowDown para la navegación interna del footer. ⭐️
+        case 'ArrowUp':
+        case 'ArrowDown':
+            // Prevenimos cualquier acción o scroll y volvemos.
+            return; 
+    }
+
+    if (newIndex !== currentIndex) {
+        focusableElements[newIndex].focus();
+    }
+};
+
+export function _handleFocusTrap(e, viewType) {
+    // 'this' es la instancia de App
+    const screenWidth = window.innerWidth;
+    const isMobile = screenWidth <= data.MOBILE_MAX_WIDTH;
+    const isTabletLandscape = screenWidth >= data.TABLET_LANDSCAPE_MIN_WIDTH && screenWidth <= data.TABLET_MAX_WIDTH;
+    const isDesktop = screenWidth >= data.DESKTOP_MIN_WIDTH;
+
+    const footerLinks = Array.from(document.querySelectorAll('footer a'));
+    const infoPanelLinks = (isDesktop || isTabletLandscape) ? 
+        Array.from(this.DOM.infoAdicional.querySelectorAll('summary, a')) : [];
+
+    let groups = [];
+    let detailContentLinks = [];
+
+    if (viewType === 'nav') {
+        const allCards = this.DOM.track ? Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])')) : [];
+        const activeCard = allCards[this.STATE.currentFocusIndex] || null;
+
+        if (isMobile) {
+            groups = [ [activeCard].filter(Boolean), footerLinks ];
+        } else { 
+            const cardVolver = (this.DOM.cardVolverFijaElemento && this.DOM.cardVolverFijaElemento.tabIndex === 0) ? this.DOM.cardVolverFijaElemento : null;
+            groups = [
+                [cardVolver].filter(Boolean),
+                [activeCard].filter(Boolean),
+                infoPanelLinks,
+                footerLinks
+            ];
         }
     } 
-    // Si el foco está en el primer elemento (y presionamos SHIFT + TAB)
-    else if (document.activeElement === first) {
-        if (e.shiftKey) {
-            e.preventDefault();
-            last.focus();
+    else if (viewType === 'detail') {
+        // Obtenemos los elementos enfocables del módulo de detalles
+        const allFocusableDetailElements = nav_base_details._getFocusableDetailElements(this); 
+
+        // Los elementos de contenido de detalle son los que no son 'Volver Fijo'
+        detailContentLinks = allFocusableDetailElements.filter(el => 
+            !el.classList.contains('card-volver-vertical') && 
+            el.id !== 'card-volver-fija-elemento'
+        );
+        let volverElement = (!isMobile && (this.DOM.cardVolverFijaElemento && this.DOM.cardVolverFijaElemento.tabIndex === 0)) ? this.DOM.cardVolverFijaElemento : null;
+
+        groups = [
+            [volverElement].filter(Boolean),
+            detailContentLinks, 
+            infoPanelLinks,
+            footerLinks
+        ];
+    }
+
+    groups = groups.filter(g => g.length > 0);
+    if (groups.length === 0) return;
+
+    let currentGroupIndex = -1;
+    for (let i = 0; i < groups.length; i++) {
+        if (groups[i].includes(document.activeElement)) {
+            currentGroupIndex = i;
+            break;
         }
     }
-}
+    // Si el foco estaba en el body o en un elemento fuera de los grupos
+    if (currentGroupIndex === -1) currentGroupIndex = 0; 
+
+    let nextGroupIndex;
+    if (e.shiftKey) { 
+        nextGroupIndex = (currentGroupIndex <= 0) ? groups.length - 1 : currentGroupIndex - 1;
+    } else { 
+        nextGroupIndex = (currentGroupIndex >= groups.length - 1) ? 0 : currentGroupIndex + 1;
+    }
+
+    const nextGroup = groups[nextGroupIndex];
+    let elementToFocus;
+
+    if (e.shiftKey) {
+        elementToFocus = nextGroup[nextGroup.length - 1];
+    } else {
+        elementToFocus = nextGroup[0];
+    }
+    
+    // ⭐️ CORRECCIÓN CLAVE: RESTAURAR EL FOCO EN LA VISTA DE DETALLE ⭐️
+    // Se utiliza la longitud de detailContentLinks para identificar si el grupo es el de contenido.
+    if (viewType === 'detail' && detailContentLinks && nextGroup.length === detailContentLinks.length) {
+        
+        const lastIndex = this.STATE.lastDetailFocusIndex || 0;
+        let restoredElement = detailContentLinks[lastIndex];
+
+        if (restoredElement) {
+            elementToFocus = restoredElement;
+        } else {
+            // Fallback al primer elemento
+            elementToFocus = detailContentLinks[0];
+        }
+    }
+    
+    // Lógica para aplicar la clase focus-visible durante el trap
+    const activeCard = this.DOM.track ? this.DOM.track.querySelector('[data-id].focus-visible') : null;
+    if (activeCard && activeCard !== elementToFocus) {
+        activeCard.classList.remove('focus-visible');
+    }
+
+    if (this.DOM.cardVolverFijaElemento && document.activeElement === this.DOM.cardVolverFijaElemento && elementToFocus !== this.DOM.cardVolverFijaElemento) {
+        this.DOM.cardVolverFijaElemento.classList.remove('focus-visible');
+    }
+
+    if (elementToFocus === this.DOM.cardVolverFijaElemento) {
+         elementToFocus.classList.add('focus-visible');
+    }
+    
+    const allCards = this.DOM.track ? Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])')) : [];
+    if (allCards.length > 0 && allCards.includes(elementToFocus)) {
+        elementToFocus.classList.add('focus-visible');
+    }
+
+    if (elementToFocus) {
+        elementToFocus.focus();
+    }
+};
 
 // --- code/nav-keyboard-base.js ---
