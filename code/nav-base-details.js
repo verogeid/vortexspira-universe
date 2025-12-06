@@ -3,6 +3,15 @@
 import * as data from './data.js';
 import * as debug from './debug.js'; // Necesario para debug
 
+// Helper function to manually clear focus classes
+function _clearAllFocusClasses(track) {
+    if (!track) return;
+    // Limpiamos las clases de foco de todos los elementos candidatos
+    track.querySelectorAll('.detail-text-fragment, .detail-action-item, .detail-title-slide, .card-volver-vertical, .card-breadcrumb-vertical, .focus-current, .focus-adj-1, .focus-adj-2').forEach(el => {
+        el.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2');
+    });
+}
+
 // ⭐️ GESTIÓN DE FOCO EN VISTA DETALLE (BLUR MASK Y FRAGMENTOS) ⭐️
 /**
  * Función que actualiza las clases CSS en función del índice del slide activo.
@@ -128,6 +137,10 @@ export function _handleActionRowClick(e) {
         
         if (swiper && targetIndex > -1 && targetIndex !== swiper.activeIndex) {
              // Si el slide no está activo, deslizamos a él.
+             
+             // ⭐️ FIX CRÍTICO: Limpiar foco visual inmediatamente para dar feedback de que la acción se recibió ⭐️
+             _clearAllFocusClasses(App.DOM.detalleTrack);
+             
              swiper.slideTo(targetIndex, data.SWIPE_SLIDE_SPEED);
              // El foco se actualizará en el evento 'slideChangeTransitionEnd'
         } else if (e.currentTarget) {
