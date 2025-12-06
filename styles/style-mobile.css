@@ -5,7 +5,9 @@
     /* 1. Scroll nativo y Header fijo (Aseguramos que el Header esté por encima de todo) */
     body {
         overflow-y: auto !important; 
-        height: auto; min-height: 100vh; padding-bottom: 0;
+        height: auto; min-height: 100vh; 
+        /* ⭐️ FIX: Añadir padding-bottom para el footer fijo ⭐️ */
+        padding-bottom: var(--footer-height); 
     }
     
     header { 
@@ -18,7 +20,9 @@
         min-height: calc(100vh - var(--header-height)); 
         padding-top: 10px !important;
         display: flex; flex-direction: column;
-        padding-left: 0px; padding-right: 0px; padding-bottom: 10px; 
+        padding-left: 0px; padding-right: 0px; 
+        /* ⭐️ FIX: Usar el gap como padding-bottom, el footer es fijo. ⭐️ */
+        padding-bottom: 10px; 
         gap: 15px; overflow: visible;
         /* DEBUG desactivado */
     }
@@ -54,9 +58,9 @@
         width: 100% !important; 
         height: 100vh !important; /* Restaurar 100vh */
         
-        z-index: 99 !important; /* ⬅️ FIX 4.3: Reducido para que el header (z-index: 100) lo cubra. */
+        z-index: 99 !important; /* ⬅️ FIX: Reducido para que el header (z-index: 100) lo cubra. */
         
-        overflow-y: hidden !important; /* ⬅️ FIX 4.1: Swiper maneja el scroll interno */
+        overflow-y: hidden !important; /* ⬅️ FIX: Swiper maneja el scroll interno */
         
         /* CORRECCIÓN POSICIONAMIENTO: Quitar padding-top en contenedor fixed */
         padding-top: 0; 
@@ -85,17 +89,17 @@
         box-sizing: border-box;
     }
     
-    /* ⬇️ FIX 4.1: Contenedor interno que define el área de scroll de Swiper ⬇️ */
+    /* ⬇️ FIX: Contenedor interno que define el área de scroll de Swiper (Detalle) ⬇️ */
     #detalle-contenido-mobile {
         /* ⭐️ FIX POSICIONAMIENTO: Empujar el contenido completo bajo el header ⭐️ */
         margin-top: var(--header-height); 
         width: 100%; 
-        /* ⭐️ FIX CLAVE: Altura restante para que Swiper pueda hacer scroll interno ⭐️ */
-        height: calc(100vh - var(--header-height)); 
+        /* ⭐️ FIX CLAVE: Sustraer el footer fijo de la altura disponible ⭐️ */
+        height: calc(100vh - var(--header-height) - var(--footer-height)); 
         overflow: hidden; /* Swiper maneja el overflow/scroll */
     }
     
-    /* ⭐️ FIX 4.1: Swiper Container (Debe tomar la altura restante) ⭐️ */
+    /* ⭐️ FIX: Swiper Container (Debe tomar la altura restante) ⭐️ */
     #detalle-swiper-mobile {
         height: 100%;
     }
@@ -124,19 +128,21 @@
     
     /* 6. Footer */
     footer {
-        position: relative !important; bottom: auto;
-        margin-top: 40px; padding: 20px 5px; background: var(--color-bg); width: 100%;
+        position: fixed !important; bottom: 0; /* ⬅️ FIX: Forzar el footer fijo en móvil */
+        margin-top: 0; padding: 20px 5px; 
+        background: var(--color-bg); width: 100%;
     }
     
     ::-webkit-scrollbar { width: 4px; }
 
     /* --------------------------------------------------------------------- */
-    /* ⭐️ SWIPER VERTICAL MÓVIL ⭐️ */
+    /* ⭐️ SWIPER VERTICAL MÓVIL (NAVEGACIÓN) ⭐️ */
     /* --------------------------------------------------------------------- */
 
     #nav-swiper-mobile {
         height: auto !important; 
-        min-height: calc(100vh - var(--header-height) - 40px); 
+        /* ⭐️ FIX: Constreñir la altura total del Swiper a la zona entre Header y Footer ⭐️ */
+        min-height: calc(100vh - var(--header-height) - var(--footer-height) - 20px); 
         width: 100%; position: relative;
         overflow: hidden; 
     }
