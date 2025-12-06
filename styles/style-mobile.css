@@ -54,7 +54,7 @@
         width: 100% !important; 
         height: 100vh !important; /* Restaurar 100vh */
         
-        z-index: 1000 !important;
+        z-index: 1000 !important; /* ⬅️ ESTE ES EL VALOR QUE DEBERÍA REDUCIRSE */
         
         overflow-y: auto !important; /* Restaurar scroll aquí */
         
