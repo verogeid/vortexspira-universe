@@ -1,9 +1,10 @@
 /* --- styles/style-footer.css --- */
 
 footer { 
-    position: fixed; bottom: 0; padding: 5px; width: 100%;
+    position: fixed; 
+    bottom: 0; padding: 5px; width: 100%;
     color: var(--color-footer-text); text-align: center;
-    background: var(--color-header-bg); z-index: 100;
+    background: var(--color-header-bg); z-index: 100; /* Igual que el header */
     display: flex; justify-content: center; align-items: center; flex-wrap: wrap; 
     height: var(--footer-height); box-sizing: border-box; 
     /* Fuente adaptable */
@@ -51,7 +52,13 @@ footer a.footer-social-link:hover::before {
 
 /* ⭐️ OCULTAR AUTOR EN MÓVIL ⭐️ */
 @media (max-width: 600px) {
-    footer { position: relative !important; bottom: auto; margin-top: 40px; padding: 20px 5px; background: var(--color-bg); }
+    /* ⭐️ FIX: Forzamos position: fixed y bottom: 0 ⭐️ */
+    footer { 
+        position: fixed !important; bottom: 0; 
+        margin-top: 0; padding: 20px 5px; 
+        background: var(--color-header-bg); /* Usar color del header/fixed */
+        width: 100%; 
+    }
     
     .footer-author-text, .footer-separator {
         display: none;
