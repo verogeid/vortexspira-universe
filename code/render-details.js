@@ -88,7 +88,7 @@ export function _mostrarDetalle(cursoId) {
     // ⭐️ 2. CONSTRUCCIÓN DE SLIDES ⭐️
     let slidesHtml = '';
     
-    // --- A. Slides Específicos de MÓVIL (Breadcrumb y Volver) ---
+    // --- A. Slide Fijo de MÓVIL (Breadcrumb y Volver) ---
     if (isMobile) {
         const breadcrumbHtml = `
             <div class="card card-breadcrumb-vertical" 
@@ -99,10 +99,11 @@ export function _mostrarDetalle(cursoId) {
                 <h3>${parentName}</h3>
             </div>
         `;
-        slidesHtml += `<div class="swiper-slide detail-mobile-fixed-slide">${breadcrumbHtml}</div>`;
         
+        // Solo añadir el botón Volver si NO estamos en el nivel raíz
+        let volverHtml = '';
         if (parentLevelState && parentLevelState.levelId) { 
-            const volverHtml = `
+            volverHtml = `
                 <div class="card card-volver-vertical" 
                          role="button" 
                          tabindex="0" 
@@ -111,44 +112,74 @@ export function _mostrarDetalle(cursoId) {
                     <h3>${data.LOGO_VOLVER} Volver</h3>
                 </div>
             `;
-            slidesHtml += `<div class="swiper-slide detail-mobile-fixed-slide">${volverHtml}</div>`;
         }
+        
+        // ⭐️ FIX CLAVE: Agrupar Breadcrumb y Volver en un solo slide para móvil ⭐️
+        slidesHtml += `
+            <div class="swiper-slide detail-mobile-fixed-slide">
+                ${breadcrumbHtml}
+                ${volverHtml}
+            </div>
+        `;
     }
     
-    // --- B. Slide del Título ---
-    slidesHtml += `
-        <div class="swiper-slide">
-            <h2 class="detail-title-slide" tabindex="0">${curso.titulo}</h2>
-        </div>
-    `;
-
-
-    // --- C. Slides de Fragmentos de Descripción ---
+    // --- B. Slide del Título y el Primer Fragmento ---
     const description = curso.descripcion || 'No hay descripción disponible.';
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = description.trim();
     
-    Array.from(tempDiv.childNodes).forEach((node, index) => {
-        if (node.nodeType === 1 && (node.tagName === 'P' || node.tagName === 'UL' || node.tagName === 'OL' || node.tagName === 'DIV')) {
-            const fragmentContent = `<div class="content-wrapper">${node.outerHTML}</div>`;
-            slidesHtml += `
-                <div class="swiper-slide">
-                    <div class="detail-text-fragment" data-index="${index}" role="document" tabindex="0">
-                        ${fragmentContent}
-                    </div>
-                </div>
-            `;
-        } else if (node.nodeType === 3 && node.textContent.trim().length > 0) {
-             const fragmentContent = `<div class="content-wrapper"><p>${node.textContent}</p></div>`;
-            slidesHtml += `
-                <div class="swiper-slide">
-                    <div class="detail-text-fragment" data-index="${index}" role="document" tabindex="0">
-                        ${fragmentContent}
-                    </div>
-                </div>
-            `;
+    // Filtramos nodos de texto significativos y elementos HTML
+    const fragments = Array.from(tempDiv.childNodes).filter(node => 
+        (node.nodeType === 1 && (node.tagName === 'P' || node.tagName === 'UL' || node.tagName === 'OL' || node.tagName === 'DIV')) || 
+        (node.nodeType === 3 && node.textContent.trim().length > 0)
+    );
+    
+    let firstFragmentContent = '';
+    let descriptionNodesStart = 0;
+    
+    // Procesar el primer fragmento (si existe)
+    if (fragments.length > 0) {
+        const firstNode = fragments[0];
+        if (firstNode.nodeType === 1) {
+            firstFragmentContent = firstNode.outerHTML;
+        } else if (firstNode.nodeType === 3) {
+            firstFragmentContent = `<p>${firstNode.textContent}</p>`;
         }
-    });
+        descriptionNodesStart = 1; // La descripción comienza desde el segundo fragmento
+    }
+
+    // ⭐️ FIX CLAVE: Agrupar Título y Primer Fragmento en un solo slide ⭐️
+    slidesHtml += `
+        <div class="swiper-slide">
+            <h2 class="detail-title-slide" tabindex="0">${curso.titulo}</h2>
+            <div class="detail-text-fragment" data-index="0" role="document" tabindex="0">
+                <div class="content-wrapper">${firstFragmentContent}</div>
+            </div>
+        </div>
+    `;
+
+
+    // --- C. Slides de Fragmentos de Descripción Restantes ---
+    
+    // Iterar sobre los fragmentos restantes
+    for (let i = descriptionNodesStart; i < fragments.length; i++) {
+        const node = fragments[i];
+        let fragmentContent = '';
+        
+        if (node.nodeType === 1) {
+            fragmentContent = node.outerHTML;
+        } else if (node.nodeType === 3) {
+            fragmentContent = `<p>${node.textContent}</p>`;
+        }
+        
+        slidesHtml += `
+            <div class="swiper-slide">
+                <div class="detail-text-fragment" data-index="${i}" role="document" tabindex="0">
+                    <div class="content-wrapper">${fragmentContent}</div>
+                </div>
+            </div>
+        `;
+    }
 
     // --- D. Slides de Acciones ---
     if (curso.enlaces && curso.enlaces.length > 0) {
@@ -209,8 +240,8 @@ export function _mostrarDetalle(cursoId) {
     _initDetailCarousel(appInstance, swiperId, initialSlideIndex);
 
     // ⭐️ 5. Attaching listeners for Text Fragments ⭐️
-    const fragments = appInstance.DOM.detalleTrack.querySelectorAll('.detail-text-fragment');
-    fragments.forEach(fragment => {
+    const fragmentsEl = appInstance.DOM.detalleTrack.querySelectorAll('.detail-text-fragment');
+    fragmentsEl.forEach(fragment => {
         // Fix A: Manually handle click/focus on fragments (1st click focus)
         fragment.addEventListener('click', (e) => {
             const swiper = appInstance.STATE.detailCarouselInstance;
