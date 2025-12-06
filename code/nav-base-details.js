@@ -29,16 +29,41 @@ export function _updateDetailFocusState(appInstance) {
         slide.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2');
         
         // El contenido real que queremos desenfocar/enfocar está dentro de la diapositiva.
-        const content = slide.querySelector('.detail-text-fragment, .detail-action-item, .detail-title-slide, .card-volver-vertical, .card-breadcrumb-vertical');
+        // ⭐️ FIX 1.2: Excluir .card-breadcrumb-vertical ya que tiene tabindex="-1" y no debe recibir foco JS ⭐️
+        const focusableSelector = '.detail-text-fragment, .detail-action-item, .detail-title-slide, .card-volver-vertical';
+        const contentElements = Array.from(slide.querySelectorAll(focusableSelector));
+
+        let content = null;
+        
+        if (diff === 0) {
+            // En el slide enfocado, buscamos el primer elemento con tabindex="0" o más
+            content = contentElements.find(el => el.tabIndex >= 0);
+            
+            // Si no se encuentra un foco lógico (e.g., el slide solo tiene el breadcrumb tabindex="-1"), 
+            // usamos el primer elemento para las clases visuales de nitidez.
+            if (!content && contentElements.length > 0) {
+                 content = contentElements[0]; 
+            }
+        } else {
+             // En slides no enfocados, usamos el primer elemento para aplicar el blur
+             content = contentElements[0]; 
+        }
+        
         if (content) {
             content.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2');
             content.classList.remove('focus-current-hover'); // Limpiar hover por si acaso
 
             if (diff === 0) {
-                content.classList.add('focus-current');
-                // Forzamos el foco del teclado al contenido real dentro de la slide.
-                // ⭐️ FIX CLAVE: Añadir { preventScroll: true } para evitar el scroll nativo si Swiper ya ha posicionado el slide. ⭐️
-                content.focus({ preventScroll: true }); 
+                // ⭐️ CLAVE: Solo enfocar si el elemento es realmente enfocable por teclado (tabIndex >= 0) ⭐️
+                if (content.tabIndex >= 0) {
+                   content.classList.add('focus-current');
+                   // Forzamos el foco del teclado al contenido real dentro de la slide.
+                   content.focus({ preventScroll: true }); 
+                } else {
+                   // Aplicamos la clase visual para la nitidez, pero no llamamos a focus().
+                   content.classList.add('focus-current'); 
+                }
+
                 // Aplicar clase al slide para estilos de contenedor si es necesario
                 slide.classList.add('focus-current'); 
 
@@ -53,6 +78,7 @@ export function _updateDetailFocusState(appInstance) {
     // 3. Aplicar clases binarias (para máscaras globales)
     const focusedSlide = slides[focusedIndex];
     if (focusedSlide) {
+        // La detección del modo se hace buscando los elementos principales
         const isTextFocus = focusedSlide.querySelector('.detail-text-fragment') || focusedSlide.querySelector('.detail-title-slide');
         const isActionFocus = focusedSlide.querySelector('.detail-action-item');
 
