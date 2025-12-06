@@ -148,10 +148,10 @@ export function _mostrarDetalle(cursoId) {
         descriptionNodesStart = 1; // La descripción comienza desde el segundo fragmento
     }
 
-    // ⭐️ FIX CLAVE: Agrupar Título y Primer Fragmento en un solo slide ⭐️
+    // ⭐️ FIX 2.1: Quitar tabindex="0" del título ⭐️
     slidesHtml += `
         <div class="swiper-slide">
-            <h2 class="detail-title-slide" tabindex="0">${curso.titulo}</h2>
+            <h2 class="detail-title-slide">${curso.titulo}</h2>
             <div class="detail-text-fragment" data-index="0" role="document" tabindex="0">
                 <div class="content-wrapper">${firstFragmentContent}</div>
             </div>
@@ -249,6 +249,7 @@ export function _mostrarDetalle(cursoId) {
             const targetIndex = swiper ? swiper.slides.indexOf(slide) : -1;
             
             if (swiper && targetIndex > -1 && targetIndex !== swiper.activeIndex) {
+                // ⭐️ FIX 3: Prevenir el comportamiento nativo al llamar a slideTo ⭐️
                 e.preventDefault(); 
                 swiper.slideTo(targetIndex, 300); 
             } else {
