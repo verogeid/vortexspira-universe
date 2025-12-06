@@ -54,9 +54,9 @@
         width: 100% !important; 
         height: 100vh !important; /* Restaurar 100vh */
         
-        z-index: 1000 !important; /* ⬅️ ESTE ES EL VALOR QUE DEBERÍA REDUCIRSE */
+        z-index: 99 !important; /* ⬅️ FIX 4.3: Reducido para que el header (z-index: 100) lo cubra. */
         
-        overflow-y: auto !important; /* Restaurar scroll aquí */
+        overflow-y: hidden !important; /* ⬅️ FIX 4.1: Swiper maneja el scroll interno */
         
         /* CORRECCIÓN POSICIONAMIENTO: Quitar padding-top en contenedor fixed */
         padding-top: 0; 
@@ -85,14 +85,21 @@
         box-sizing: border-box;
     }
     
-    /* ⬇️ RESTAURACIÓN CLAVE: Aplicar margin-top al contenido scrollable interno ⬇️ */
+    /* ⬇️ FIX 4.1: Contenedor interno que define el área de scroll de Swiper ⬇️ */
     #detalle-contenido-mobile {
         /* ⭐️ FIX POSICIONAMIENTO: Empujar el contenido completo bajo el header ⭐️ */
         margin-top: var(--header-height); 
         width: 100%; 
-        height: auto;
+        /* ⭐️ FIX CLAVE: Altura restante para que Swiper pueda hacer scroll interno ⭐️ */
+        height: calc(100vh - var(--header-height)); 
+        overflow: hidden; /* Swiper maneja el overflow/scroll */
     }
-    /* ⬆️ FIN RESTAURACIÓN ⬆️ */
+    
+    /* ⭐️ FIX 4.1: Swiper Container (Debe tomar la altura restante) ⭐️ */
+    #detalle-swiper-mobile {
+        height: 100%;
+    }
+    /* ⬆️ FIN FIX ⬆️ */
 
     /* Contenedor del botón Volver (Sticky) */
     .mobile-back-header {
@@ -213,4 +220,4 @@
     }
 }
 
-/* --- styles/style-mobile.css --- */
+/* --- styles/style-mobile.css ---
