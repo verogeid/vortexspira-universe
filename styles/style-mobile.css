@@ -55,11 +55,10 @@
         width: 100% !important; 
         height: 100vh !important;
         
-        /* ⭐️ FIX: z-index para superponerse a los elementos de contenido, pero no al header/footer ⭐️ */
-        z-index: 101 !important; 
+        /* ⭐️ FIX: z-index reducido a 99 para que el header (100) lo cubra ⭐️ */
+        z-index: 99 !important; 
         
-        /* ⭐️ FIX: Swiper maneja el scroll interno ⭐️ */
-        overflow-y: hidden !important; 
+        overflow-y: hidden !important;
         
         padding-top: 0; 
         padding-bottom: 10px;
@@ -94,9 +93,11 @@
         overflow: hidden;
     }
     
-    /* ⭐️ FIX: Swiper Container (Debe tomar la altura restante) ⭐️ */
+    /* ⭐️ FIX: Swiper Container (Debe tomar la altura restante y manejar el scroll) ⭐️ */
     #detalle-swiper-mobile {
         height: 100%;
+        /* ⭐️ FIX: Forzar overflow-y: auto para habilitar drag/scroll si hay contenido oculto ⭐️ */
+        overflow-y: auto !important;
     }
     /* ⬆️ FIN FIX ⬆️ */
 
@@ -141,6 +142,9 @@
         min-height: calc(100vh - var(--header-height) - var(--footer-height) - 20px); 
         width: 100%; position: relative;
         overflow: hidden; 
+        
+        /* ⭐️ FIX: Aplicar overflow-y: auto para habilitar el drag/scroll si hay slides fuera de viewport ⭐️ */
+        overflow-y: auto !important; 
     }
 
     #nav-swiper-mobile .swiper-wrapper {
