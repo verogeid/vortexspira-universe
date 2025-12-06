@@ -61,12 +61,13 @@
     opacity: 1 !important;
 
     /* 2. Aplicar el borde y sombra sutil (menos desplazado y más tenue) */
-    border-bottom-color: var(--color-primary);
+    /* ⭐️ CORRECCIÓN CLAVE: Usar color de texto para el borde (no es un enlace de acción) ⭐️ */
+    border-bottom-color: var(--color-text);
     
     /* ⭐️ AJUSTE SUTILEZA ⭐️ */
     box-shadow: 
-        0 1px 0 0 rgba(0, 123, 255, 0.1), /* Borde más fino */
-        0 1px 3px var(--color-shadow-primary); 
+        0 1px 0 0 rgba(0, 0, 0, 0.1), /* Borde más fino */
+        0 1px 3px var(--color-text-muted); /* Sombra tenue */
     
     background-color: transparent; 
 }
