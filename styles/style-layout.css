@@ -9,7 +9,8 @@ body {
     box-sizing: border-box;
     min-height: 100vh;
     padding-top: var(--header-height);
-    padding-bottom: var(--footer-height);
+    /* ⭐️ FIX: Padding-bottom para el footer fijo en todas las vistas ⭐️ */
+    padding-bottom: var(--footer-height); 
 }
 
 header {
