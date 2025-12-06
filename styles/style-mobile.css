@@ -2,29 +2,28 @@
 
 @media (max-width: 600px) {
     
-    /* 1. Scroll nativo y Header fijo (Aseguramos que el Header esté por encima de todo) */
+    /* 1. Scroll nativo y Header/Footer fijo */
     body {
         overflow-y: auto !important; 
         height: auto; min-height: 100vh; 
-        /* ⭐️ FIX: Añadir padding-bottom para el footer fijo ⭐️ */
+        /* El padding-bottom se gestiona en style-layout.css */
         padding-bottom: var(--footer-height); 
     }
     
     header { 
-        position: fixed; /* Asegura que el header permanece fijo y en capa superior */
+        position: fixed; 
     }
 
     /* 2. Layout fluido */
     #app-container {
+        /* El min-height debe respetar el footer. Lo gestionamos en el swipe container. */
         height: auto !important;
         min-height: calc(100vh - var(--header-height)); 
         padding-top: 10px !important;
         display: flex; flex-direction: column;
         padding-left: 0px; padding-right: 0px; 
-        /* ⭐️ FIX: Usar el gap como padding-bottom, el footer es fijo. ⭐️ */
         padding-bottom: 10px; 
         gap: 15px; overflow: visible;
-        /* DEBUG desactivado */
     }
 
     /* 3. Vista central */
@@ -32,7 +31,6 @@
         width: 100%; position: relative; 
         height: auto !important; overflow: visible !important;
         display: block; 
-        /* DEBUG desactivado */
     }
     
     /* Ocultar vistas inactivas */
@@ -49,25 +47,24 @@
         display: none !important;
     }
     
-    /* 5. Vista de detalle full-screen (Asegura que el scroll empieza DEBAJO del header) */
+    /* 5. Vista de detalle full-screen */
     #vista-detalle-mobile {
-        /* ⭐️ RESTAURACIÓN CLAVE: Volver a posición fija y 100vh ⭐️ */
         position: fixed !important; 
         top: 0 !important; 
         left: 0 !important; 
         width: 100% !important; 
-        height: 100vh !important; /* Restaurar 100vh */
+        height: 100vh !important;
         
-        z-index: 99 !important; /* ⬅️ FIX: Reducido para que el header (z-index: 100) lo cubra. */
+        /* ⭐️ FIX: z-index para superponerse a los elementos de contenido, pero no al header/footer ⭐️ */
+        z-index: 101 !important; 
         
-        overflow-y: hidden !important; /* ⬅️ FIX: Swiper maneja el scroll interno */
+        /* ⭐️ FIX: Swiper maneja el scroll interno ⭐️ */
+        overflow-y: hidden !important; 
         
-        /* CORRECCIÓN POSICIONAMIENTO: Quitar padding-top en contenedor fixed */
         padding-top: 0; 
         padding-bottom: 10px;
         box-sizing: border-box; 
         
-        /* Scrollbar azul en detalle */
         scrollbar-width: thin;
         scrollbar-color: var(--color-primary) transparent;
         display: flex; flex-direction: column; 
@@ -84,19 +81,17 @@
 
 
     .vista-mobile-fullscreen .contenido-curso { 
-        /* ⭐️ CORRECCIÓN: Eliminar padding lateral (5px) para evitar el desborde (Consistencia) ⭐️ */
-        padding: 0 0 20px 0; /* Padding vertical, sin lateral */
+        padding: 0 0 20px 0; 
         box-sizing: border-box;
     }
     
     /* ⬇️ FIX: Contenedor interno que define el área de scroll de Swiper (Detalle) ⬇️ */
     #detalle-contenido-mobile {
-        /* ⭐️ FIX POSICIONAMIENTO: Empujar el contenido completo bajo el header ⭐️ */
         margin-top: var(--header-height); 
         width: 100%; 
-        /* ⭐️ FIX CLAVE: Sustraer el footer fijo de la altura disponible ⭐️ */
+        /* ⭐️ FIX CLAVE: Altura = 100vh - Header - Footer ⭐️ */
         height: calc(100vh - var(--header-height) - var(--footer-height)); 
-        overflow: hidden; /* Swiper maneja el overflow/scroll */
+        overflow: hidden;
     }
     
     /* ⭐️ FIX: Swiper Container (Debe tomar la altura restante) ⭐️ */
@@ -128,9 +123,10 @@
     
     /* 6. Footer */
     footer {
-        position: fixed !important; bottom: 0; /* ⬅️ FIX: Forzar el footer fijo en móvil */
+        position: fixed !important; bottom: 0; 
         margin-top: 0; padding: 20px 5px; 
-        background: var(--color-bg); width: 100%;
+        background: var(--color-bg); 
+        width: 100%;
     }
     
     ::-webkit-scrollbar { width: 4px; }
@@ -152,7 +148,7 @@
         gap: 10px; 
         width: 100%; height: auto !important; 
         padding-bottom: 15vh; 
-        padding-top: 15px !important; /* ⭐️ FIX: Padding Superior Interno (Interior del swipe) ⭐️ */
+        padding-top: 15px !important; 
     }
 
     /* Los slides contienen las tarjetas */
@@ -161,17 +157,14 @@
         display: flex; 
         flex-direction: column;
         align-items: center;
-        /* ⭐️ CORRECCIÓN DESBORDAMIENTO: Incluir padding dentro del 100% del width ⭐️ */
         box-sizing: border-box; 
         
-        /* ⭐️ CORRECCIÓN MARGEN DERECHO: 6% para absorber el zoom (1.03) ⭐️ */
         padding: 0 6%; 
     }
 
     /* ⭐️ AÑADIDO: Las tarjetas deben usar todo el ancho disponible del slide ⭐️ */
     #nav-swiper-mobile .swiper-slide .card {
         width: 100%;
-        /* ⭐️ CLAVE: Asegurar que la tarjeta también respete el box-sizing ⭐️ */
         box-sizing: border-box; 
     }
 
@@ -185,10 +178,9 @@
     /* ⭐️ BOTONES DE DETALLE MÓVIL (CORRECCIÓN DESBORDE) ⭐️ */
     /* --------------------------------------------------------------------- */
     .detail-actions-list {
-        /* ⭐️ FIX HORIZONTAL: Neutralizamos el padding lateral del list container ⭐️ */
         padding-left: 0;
         padding-right: 0;
-        width: 100%; /* Asegura que no se expande */
+        width: 100%; 
     }
     
     .detail-action-item {
@@ -199,18 +191,16 @@
 
     /* Estilos de Breadcrumb y Volver (Contenidos en mobile-back-header) */
     .card-breadcrumb-vertical, .card-volver-vertical {
-        /* DEBUG desactivado */
     }
     
     /* Foco en fragmentos de detalle */
     .detail-text-fragment, .detail-action-item {
-        /* DEBUG desactivado */
     }
 
 
     /* ⭐️ AÑADIDO: Estilos específicos para Breadcrumb y Volver fijo ⭐️ */
     .card-breadcrumb-vertical {
-        position: relative; /* Dentro de mobile-back-header */
+        position: relative; 
         top: auto; 
         z-index: auto; 
         box-shadow: none;
@@ -219,7 +209,7 @@
     }
 
     .card-volver-vertical {
-        position: relative; /* Dentro de mobile-back-header */
+        position: relative; 
         top: auto;
         z-index: auto;
         margin-bottom: 5px; 
