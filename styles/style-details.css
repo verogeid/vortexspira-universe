@@ -328,12 +328,6 @@ button.detail-action-btn {
 }
 
 /* Ajustes Padding */
-/* ⭐️ BLOQUE ELIMINADO: ESTA REGLA DESTRUE EL CALCULO DE ALTURA DE style-mobile.css ⭐️
-@media (max-width: 600px) {
-    #detalle-contenido-mobile {
-        overflow-y: visible !important; height: auto !important; max-height: none !important;
-    }
-}
-*/
+/* ⭐️ SE HA ELIMINADO EL MEDIA QUERY CONFLICTIVO AQUÍ ⭐️ */
 
-/* --- styles/style-details.css ---
+/* --- styles/style-details.css --- */
