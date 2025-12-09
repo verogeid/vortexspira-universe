@@ -96,8 +96,8 @@
     /* ⭐️ FIX: Swiper Container (Debe tomar la altura restante y manejar el scroll) ⭐️ */
     #detalle-swiper-mobile {
         height: 100%;
-        /* ⭐️ FIX: Forzar overflow-y: auto para habilitar drag/scroll si hay contenido oculto ⭐️ */
-        overflow-y: auto !important;
+        /* ⭐️ FIX: Cambiado a hidden para devolver el control al Swiper ⭐️ */
+        overflow-y: hidden !important; 
     }
     /* ⬆️ FIN FIX ⬆️ */
 
@@ -143,8 +143,8 @@
         width: 100%; position: relative;
         overflow: hidden; 
         
-        /* ⭐️ FIX: Aplicar overflow-y: auto para habilitar el drag/scroll si hay slides fuera de viewport ⭐️ */
-        overflow-y: auto !important; 
+        /* ⭐️ FIX: Cambiado a hidden para devolver el control al Swiper ⭐️ */
+        overflow-y: hidden !important; 
     }
 
     #nav-swiper-mobile .swiper-wrapper {
@@ -221,3 +221,4 @@
 }
 
 /* --- styles/style-mobile.css ---
+
