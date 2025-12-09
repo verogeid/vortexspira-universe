@@ -27,7 +27,7 @@ export const DEBUG_CONFIG = {
     nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
 
     nav_mouse_details: DEBUG_LEVELS.DISABLED,
-    nav_mouse_swipe: DEBUG_LEVELS.DISABLED,
+    nav_mouse_swipe: DEBUG_LEVELS.DEEP,
     
     render_base: DEBUG_LEVELS.DISABLED,
     render_details: DEBUG_LEVELS.DISABLED,

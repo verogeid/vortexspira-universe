@@ -34,7 +34,7 @@ export function setupTouchListeners() {
         swiper.on('slideChangeTransitionStart', swiper._slideChangeStartHandler);
         swiper.on('slideChangeTransitionEnd', swiper._slideChangeEndHandler);
         
-        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "Listeners de Swiper (táctil) configurados.");
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "Listeners de Swiper (táctil/rueda) configurados.");
     }
 };
 
@@ -55,20 +55,25 @@ export function handleSlideChangeStart(swiper) {
             _swipeDirection = 'prev';
         }
     }
+    debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Transición iniciada. Dirección: ${_swipeDirection}. Activo: ${swiper.activeIndex}`);
 };
 
 
-// ⭐️ 3. HANDLER: Comprobar contenido y saltar si está vacío ⭐️
+// ⭐️ 3. HANDLER: Comprobar contenido, saltar si está vacío y aplicar snap-to-center ⭐️
 export function handleSlideChangeEnd(swiper) {
     // 'this' es la instancia de App
     
-    // ❗️ 1. COMPROBAR LA BANDERA DEL TECLADO ❗️
+    // ❗️ 1. PASO 2: Manejar el final de una transición FORZADA (por salto o re-centrado) ❗️
     if (this.STATE.keyboardNavInProgress) {
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "FIN de transición forzada (Centrado o Salto). Aplicando foco definitivo.");
         this.STATE.keyboardNavInProgress = false;
-        return;
+        // La transición forzada ha terminado. Aplicamos el foco definitivo y salimos.
+        this._updateFocus(false);
+        return; 
     }
 
-    // --- El resto es la lógica de SWIPE TÁCTIL (o Rueda de Ratón) ---
+    // --- PASO 1: Inicio de un nuevo gesto (Swipe o Rueda de Ratón) ---
+    debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "INICIO de nuevo gesto. Evaluando columna.");
     
     const { currentFocusIndex, itemsPorColumna } = this.STATE;
     const screenWidth = window.innerWidth;
@@ -76,67 +81,70 @@ export function handleSlideChangeEnd(swiper) {
     
     let targetRow;
     if (isMobile) {
-        // En móvil (1xN), el targetRow es siempre 0.
         targetRow = 0; 
     } else {
-        // En Desktop/Tablet, calculamos la fila objetivo.
         targetRow = currentFocusIndex % itemsPorColumna;
     }
+    debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Target Row (Fila de origen): ${targetRow}. Swiper Index: ${swiper.activeIndex}`);
 
     const activeSlideEl = swiper.slides[swiper.activeIndex];
-    if (!activeSlideEl) return;
+    if (!activeSlideEl) {
+        debug.logError('nav_mouse_swipe', "Error: Slide activo no encontrado.");
+        return;
+    }
 
-    // En móvil, la columna de tarjetas es directamente el swiper-slide
     const columnCards = Array.from(activeSlideEl.querySelectorAll('.card'));
     if (columnCards.length === 0) return;
 
-    // Asumimos que findBestFocusInColumn es un helper delegado en la instancia
+    // Busca la mejor tarjeta para enfocar en la columna activa (targetRow es la fila de origen)
     const newFocusCard = this.findBestFocusInColumn(columnCards, targetRow);
 
 
-    // ⭐️ 2. LÓGICA DE SALTO (SI ESTÁ VACÍO) ⭐️
-    if (!newFocusCard && !isMobile) { // Solo saltamos automáticamente en Desktop/Tablet
-        debug.logWarn('nav_mouse_swipe', "Columna vacía, saltando a la siguiente...");
-        // ⭐️ FIX CLAVE: Eliminamos el setTimeout para forzar un salto inmediato y continuo ⭐️
+    // ⭐️ 2. LÓGICA DE SALTO (Desktop/Tablet: Si la columna NO tiene elementos enfocables) ⭐️
+    if (!newFocusCard && !isMobile) { 
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "Columna actual VACÍA. Forzando salto a la siguiente/anterior.");
+        // Si no se encuentra un elemento enfocable, forzamos el movimiento a la siguiente columna.
         if (_swipeDirection === 'next') {
             swiper.slideNext(data.SWIPE_SLIDE_SPEED);
         } else {
             swiper.slidePrev(data.SWIPE_SLIDE_SPEED);
         }
+        // No aplicamos foco. El nuevo slideChangeTransitionEnd continuará la evaluación.
         return; 
     }
     
-    // Si estamos en móvil y no hay tarjeta enfocable, simplemente no hacemos nada (el foco se queda donde estaba)
-    if (!newFocusCard && isMobile) return; 
+    // Si no hay tarjeta enfocable (sólo debería ocurrir si estamos en el modo raíz y solo quedan rellenos)
+    if (!newFocusCard) {
+         debug.logWarn('nav_mouse_swipe', "No hay tarjetas enfocables en el track. No se aplica foco.");
+         return; 
+    }
 
-    // 3. Encontrar el índice GLOBAL de esta nueva tarjeta
+    // 3. ENCONTRAR ÍNDICE GLOBAL Y GESTIONAR FOCO/CENTRALIDAD
     const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
     const newGlobalIndex = allCards.findIndex(card => card === newFocusCard);
 
     if (newGlobalIndex > -1) {
-        // 4. Actualizar el estado y el foco
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, `Tarjeta enfocable encontrada. Índice global: ${newGlobalIndex}`);
         this.STATE.currentFocusIndex = newGlobalIndex;
 
-        // ⭐️ FIX CLAVE: Forzar el re-centrado del slide si es necesario, lo que garantiza que la columna 
-        // esté en el centro de la vista y mejora la sensación de snap. ⭐️
-        const itemsPerColumn = this.STATE.itemsPorColumna;
-        // targetSwiperSlide es 1-based (0 es el slide de relleno inicial que Swiper usa en loop)
-        const targetSwiperSlide = Math.floor(newGlobalIndex / itemsPerColumn) + 1;
-        
-        // Si la posición es incorrecta (y NO es móvil) forzamos el re-centrado
-        if (!isMobile && swiper.realIndex !== targetSwiperSlide) {
-            this.STATE.keyboardNavInProgress = true; 
-            // Usamos slideToLoop para asegurar que el centrado se haga con animación.
-            swiper.slideToLoop(targetSwiperSlide, data.SWIPE_SLIDE_SPEED); 
+        if (!isMobile) {
+            const targetSwiperSlide = Math.floor(newGlobalIndex / itemsPorColumna) + 1; // +1 por el slide de relleno inicial
             
-            // Aplicar el foco visual inmediatamente para feedback
-            this._updateFocus(false);
+            // ⭐️ CENTRADO FORZADO: Forzamos slideToLoop para garantizar el snap-to-center. ⭐️
+            // Esto asegura que la columna queda perfectamente en el centro de la vista, independientemente de la precisión del arrastre.
+            debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Forzando centrado a slide: ${targetSwiperSlide}. Current realIndex: ${swiper.realIndex}`);
+
+            // 1. Marcar la bandera (para el Paso 2).
+            this.STATE.keyboardNavInProgress = true; 
+            // 2. Forzar el centrado. El foco se aplicará en el próximo slideChangeTransitionEnd (Paso 2).
+            swiper.slideToLoop(targetSwiperSlide, data.SWIPE_SLIDE_SPEED);
             return; 
         } 
         
-        // Si la posición es correcta (o es móvil), solo sincronizamos el foco.
+        // 4. APLICAR FOCO FINAL EN MÓVIL: Si es móvil, aplicamos el foco inmediatamente.
         this._updateFocus(false); // Método delegado
+    } else {
+         debug.logError('nav_mouse_swipe', "Error: Tarjeta enfocable encontrada en el slide, pero no en la lista global.");
     }
 };
-
 // --- code/nav-mouse-swipe.js ---
