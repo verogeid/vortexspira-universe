@@ -255,7 +255,8 @@ export function _handleVolverClick() {
         
         this.renderNavegacion(); 
         
-        // ⬇️ MODIFICACIÓN CLAVE: Clear activeCourseId AQUI después del renderizado ⬇️
+        // ⬇️ MODIFICACIÓN: Restaurar foco después de salir de detalle (Usa el foco guardado por renderNavegacion) ⬇️
+        this._updateFocus(true); // ⭐️ FIX: Forzar slide/foco al índice guardado de la pila. ⭐️
         this.STATE.activeCourseId = null;
         
     } 
@@ -264,12 +265,10 @@ export function _handleVolverClick() {
         this.stackPop(); // Método delegado
         this.renderNavegacion(); // Método delegado
         
-         if (!isMobile && !isTablet && this.DOM.cardVolverFijaElemento.classList.contains('visible')) { 
-             this.DOM.cardVolverFijaElemento.focus();
-         } else if (isMobile || isTablet) {
-             const firstCard = this.DOM.track.querySelector('[data-id]:not([data-tipo="relleno"])');
-             if (firstCard) firstCard.focus();
-         }
+        // ⬇️ MODIFICACIÓN: Restaurar foco después de salir del submenú (Usa el foco guardado por renderNavegacion) ⬇️
+        this._updateFocus(true); // ⭐️ FIX: Forzar slide/foco al índice guardado de la pila. ⭐️
+        return;
+        
     } else {
          debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Volver bloqueado: Ya estamos en el nivel raíz.');
     }
