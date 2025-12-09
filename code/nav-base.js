@@ -215,9 +215,21 @@ export function _updateFocusImpl(shouldSlide = true) {
                 carouselInstance.slideToLoop(targetSwiperSlide, 400); // Velocidad: 400ms
             }
         } else if (isMobile && carouselInstance && shouldSlide) {
+             // ⬇️ FIX CLAVE: Calcular el offset para los slides prepended (Breadcrumb y Volver) ⬇️
+             let offset = 0;
+             const isSubLevel = this.STATE.historyStack.length > 1;
+
+             if (isSubLevel) {
+                 // Breadcrumb (1) + Volver (1) = 2 slides prepended
+                 offset = 2;
+             }
+             
+             const targetSlideIndex = normalizedIndex + offset;
+             debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, `Mobile Slide. Target Index: ${targetSlideIndex} (Saved Focus: ${normalizedIndex})`);
+             
              this.STATE.keyboardNavInProgress = true; 
-             // En móvil, deslizamos al índice de la tarjeta directamente
-             carouselInstance.slideTo(normalizedIndex, data.SWIPE_SLIDE_SPEED); 
+             // En móvil, deslizamos al índice de la tarjeta directamente (incluyendo offset)
+             carouselInstance.slideTo(targetSlideIndex, data.SWIPE_SLIDE_SPEED); 
         }
     }
 };
@@ -239,8 +251,6 @@ export function _handleCardClick(id, tipo, parentFocusIndex) {
 export function _handleVolverClick() {
     // 'this' es la instancia de App
     debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'Acción Volver iniciada.');
-    const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
-    const isTablet = window.innerWidth >= data.TABLET_MIN_WIDTH && window.innerWidth <= data.TABLET_MAX_WIDTH;
     
     if (this.DOM.vistaDetalle.classList.contains('active')) {
         // Salir de detalle
