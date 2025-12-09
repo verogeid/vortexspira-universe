@@ -66,9 +66,7 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
     
     debug.log('render_mobile', debug.DEBUG_LEVELS.BASIC, `Swiper vertical inicializado en ${swiperId}. Slide inicial: ${initialSwiperSlide}`);
 
-    if (typeof this.setupTouchListeners === 'function') {
-        this.setupTouchListeners(); 
-    }
+    // Eliminada la llamada a this.setupTouchListeners() ya que es innecesaria y causa conflictos.
 };
 
 // --- code/render-mobile.js ---
