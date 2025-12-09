@@ -74,7 +74,7 @@ export function handleSlideChangeEnd(swiper) {
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "FIN de transición forzada (Centrado o Salto). Aplicando foco definitivo.");
         this.STATE.keyboardNavInProgress = false;
         // La transición forzada ha terminado. Aplicamos el foco definitivo y salimos.
-        this._updateFocus(false);
+        this._updateFocus(false); 
         return; 
     }
 
@@ -116,11 +116,11 @@ export function handleSlideChangeEnd(swiper) {
         } else {
             swiper.slidePrev(data.SWIPE_SLIDE_SPEED);
         }
-        // Retornamos. El próximo slideChangeTransitionEnd continuará la evaluación (se repetirá el Paso 1).
+        // Retornamos. El próximo slideChangeTransitionEnd continuará la evaluación.
         return; 
     }
     
-    // Si no hay tarjeta enfocable (sólo debería ocurrir en el modo raíz si el contenido está vacío)
+    // Si no hay tarjeta enfocable (sólo debería ocurrir si estamos en el modo raíz si el contenido está vacío)
     if (!newFocusCard) {
          debug.logWarn('nav_mouse_swipe', "No hay tarjetas enfocables en la columna de destino.");
          return; 
@@ -135,20 +135,28 @@ export function handleSlideChangeEnd(swiper) {
         this.STATE.currentFocusIndex = newGlobalIndex;
 
         if (!isMobile) {
-            // El slide que debe estar perfectamente centrado
             const targetSwiperSlide = Math.floor(newGlobalIndex / itemsPorColumna) + 1; // +1 por el slide de relleno inicial
             
-            // ⭐️ CENTRADO FORZADO: Forzamos slideToLoop para garantizar el snap-to-center. ⭐️
-            debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Forzando centrado a slide: ${targetSwiperSlide}. Current realIndex: ${swiper.realIndex}`);
+            // ⭐️ LÓGICA DE ESTABILIDAD: Si es inestable, forzamos SNAP. Si es estable, caemos al paso 4. ⭐️
+            if (swiper.realIndex !== targetSwiperSlide) {
+                 
+                // ⭐️ FIX CLAVE: Aplicamos foco inmediatamente antes de forzar el snap. ⭐️
+                this._updateFocus(false); 
 
-            // 1. Marcar la bandera (para el Paso 2).
-            this.STATE.keyboardNavInProgress = true; 
-            // 2. Forzar el centrado. El foco se aplicará en el próximo slideChangeTransitionEnd (Paso 2).
-            swiper.slideToLoop(targetSwiperSlide, data.SWIPE_SLIDE_SPEED);
-            return; 
+                debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Snap requerido. Forzando centrado a slide: ${targetSwiperSlide}. Current realIndex: ${swiper.realIndex}`);
+
+                // 1. Marcar la bandera.
+                this.STATE.keyboardNavInProgress = true; 
+                // 2. Forzar el centrado. El foco se reaplicará en el próximo evento (Paso 2).
+                swiper.slideToLoop(targetSwiperSlide, data.SWIPE_SLIDE_SPEED);
+                return; 
+            }
+             
+            // STABLE: Si el realIndex ya es el correcto, la columna es estable.
+             debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, 'Columna estable. Aplicando foco inmediato.');
         } 
         
-        // 4. APLICAR FOCO FINAL EN MÓVIL: Si es móvil, aplicamos el foco inmediatamente.
+        // 4. APLICAR FOCO FINAL (Para móvil o columna estable en desktop/tablet)
         this._updateFocus(false); // Método delegado
     } else {
          debug.logError('nav_mouse_swipe', "Error: Tarjeta enfocable encontrada en el slide, pero no en la lista global.");
