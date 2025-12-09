@@ -88,10 +88,8 @@
     
     /* ⬇️ Contenedor interno de Swiper (Detalle) ⬇️ */
     #detalle-contenido-mobile {
-        /* Eliminado el margin-top ya que la vista padre (vista-detalle-mobile) ya tiene el top corregido */
         margin-top: 0; 
         width: 100%; 
-        /* Altura 100% de la vista padre */
         height: 100%; 
         overflow: hidden;
     }
@@ -99,10 +97,14 @@
     /* ⭐️ Swiper Container (Detalle) ⭐️ */
     #detalle-swiper-mobile {
         height: 100%;
-        /* Aplicar auto para que FreeMode funcione correctamente al exceder */
         overflow-y: auto !important;
         /* ⭐️ FIX: touch-action se añade para mejorar el arrastre con un dedo ⭐️ */
         touch-action: pan-y !important;
+    }
+    
+    /* ⭐️ FIX: Padding para el último elemento visible en Detalles ⭐️ */
+    #detalle-swiper-mobile .swiper-wrapper {
+        padding-bottom: 15vh;
     }
     /* ⬆️ FIN FIX ⬆️ */
 
@@ -149,7 +151,7 @@
         overflow: hidden; 
         
         /* Aplicar auto para que FreeMode funcione correctamente al exceder */
-        overflow-y: auto !important;
+        overflow-y: auto !important; 
         /* ⭐️ FIX: touch-action se añade para mejorar el arrastre con un dedo ⭐️ */
         touch-action: pan-y !important;
     }
