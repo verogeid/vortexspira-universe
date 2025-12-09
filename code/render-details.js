@@ -28,8 +28,9 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
         keyboard: { enabled: false }, // Lo manejamos en nav-keyboard-details
         speed: 300, // Velocidad de snap
         
-        freeMode: false, 
-        freeModeMomentum: false,
+        // ⭐️ CORRECCIÓN: Habilitar arrastre libre (freeMode) para permitir ver todos los elementos ⭐️
+        freeMode: true, 
+        freeModeMomentum: true,
     };
 
     appInstance.STATE.detailCarouselInstance = new Swiper(document.querySelector(swiperId), swiperConfig);
@@ -269,7 +270,7 @@ export function _mostrarDetalle(cursoId) {
     });
 
 
-    // ⭐️ 4. ACTIVACIÓN Y UI (Desktop/Tablet) ⭐️
+    // 4. ACTIVACIÓN Y UI (Desktop/Tablet) ⭐️
     if (appInstance.DOM.vistaNav) { 
         appInstance.DOM.vistaNav.classList.remove('active'); 
     }
