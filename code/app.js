@@ -65,6 +65,9 @@ class VortexSpiraApp {
         this._initCarousel_Swipe = render_swipe._initCarousel_Swipe;
         this._initCarousel_Mobile = render_mobile._initCarousel_Mobile;
         this._destroyCarousel = render_swipe._destroyCarouselImpl;
+        
+        // ⭐️ CORRECCIÓN CLAVE AÑADIDA: Delegación de Listeners de Swipe/Rueda ⭐️
+        this.setupTouchListeners = nav_mouse_swipe.setupTouchListeners;
 
         // ⭐️ FIX: Delegar la función principal de renderizado ⭐️
         this.renderNavegacion = render_base.renderNavegacion; 
