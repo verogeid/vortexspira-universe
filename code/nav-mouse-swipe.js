@@ -116,8 +116,25 @@ export function handleSlideChangeEnd(swiper) {
     if (newGlobalIndex > -1) {
         // 4. Actualizar el estado y el foco
         this.STATE.currentFocusIndex = newGlobalIndex;
+
+        // ⭐️ FIX CLAVE: Forzar el re-centrado del slide si es necesario, lo que garantiza que la columna 
+        // esté en el centro de la vista y mejora la sensación de snap. ⭐️
+        const itemsPerColumn = this.STATE.itemsPorColumna;
+        // targetSwiperSlide es 1-based (0 es el slide de relleno inicial que Swiper usa en loop)
+        const targetSwiperSlide = Math.floor(newGlobalIndex / itemsPerColumn) + 1;
         
-        // El deslizamiento YA ocurrió (drag o rueda). Solo sincronizamos el foco.
+        // Si la posición es incorrecta (y NO es móvil) forzamos el re-centrado
+        if (!isMobile && swiper.realIndex !== targetSwiperSlide) {
+            this.STATE.keyboardNavInProgress = true; 
+            // Usamos slideToLoop para asegurar que el centrado se haga con animación.
+            swiper.slideToLoop(targetSwiperSlide, data.SWIPE_SLIDE_SPEED); 
+            
+            // Aplicar el foco visual inmediatamente para feedback
+            this._updateFocus(false);
+            return; 
+        } 
+        
+        // Si la posición es correcta (o es móvil), solo sincronizamos el foco.
         this._updateFocus(false); // Método delegado
     }
 };
