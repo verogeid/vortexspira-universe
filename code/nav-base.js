@@ -2,10 +2,9 @@
 
 import * as debug from './debug.js';
 import * as data from './data.js';
-// ⬇️ MODIFICACIÓN: Importar los nuevos módulos de detalles y mouse para su inicialización ⬇️
+
 import * as nav_base_details from './nav-base-details.js'; 
 import * as nav_mouse_details from './nav-mouse-details.js';
-// ⬆️ FIN MODIFICACIÓN ⬆️
 
 
 // ⭐️ 1. SETUP LISTENERS ⭐️
@@ -26,13 +25,12 @@ export function setupListeners() {
       this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
   }
   
-  // ⬇️ MODIFICACIÓN: Delegamos la configuración de handlers de foco y mouse de detalle ⬇️
+  // ⬇️ Delegamos la configuración de handlers de foco y mouse de detalle ⬇️
   _setupDetailFocusHandler.call(this); 
   nav_mouse_details._setupDetailMouseListeners(this);
-  // ⬆️ FIN MODIFICACIÓN ⬆️
 };
 
-// ⬇️ MODIFICACIÓN: Lógica de inicialización del listener de foco en la vista de detalle. ⬇️
+// ⬇️ Lógica de inicialización del listener de foco en la vista de detalle. ⬇️
 /**
  * Lógica de inicialización del listener de foco en la vista de detalle.
  */
@@ -64,7 +62,6 @@ function _setupDetailFocusHandler() {
         }
     });
 };
-// ⬆️ FIN MODIFICACIÓN ⬆️
 
 
 // ⭐️ 2. POINTER LISTENERS (Adjuntar listeners programáticos a los tracks) ⭐️
@@ -265,7 +262,7 @@ export function _handleVolverClick() {
         
         this.renderNavegacion(); 
         
-        // ⬇️ MODIFICACIÓN: Restaurar foco después de salir de detalle (Usa el foco guardado por renderNavegacion) ⬇️
+        // ⬇️ Restaurar foco después de salir de detalle (Usa el foco guardado por renderNavegacion) ⬇️
         this._updateFocus(true); // ⭐️ FIX: Forzar slide/foco al índice guardado de la pila. ⭐️
         this.STATE.activeCourseId = null;
         
@@ -275,7 +272,7 @@ export function _handleVolverClick() {
         this.stackPop(); // Método delegado
         this.renderNavegacion(); // Método delegado
         
-        // ⬇️ MODIFICACIÓN: Restaurar foco después de salir del submenú (Usa el foco guardado por renderNavegacion) ⬇️
+        // ⬇️ Restaurar foco después de salir del submenú (Usa el foco guardado por renderNavegacion) ⬇️
         this._updateFocus(true); // ⭐️ FIX: Forzar slide/foco al índice guardado de la pila. ⭐️
         return;
         
