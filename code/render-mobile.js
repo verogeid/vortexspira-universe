@@ -60,13 +60,18 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
         mousewheel: { sensitivity: 1, releaseOnEdges: true }, 
         keyboard: { enabled: false }, 
         speed: data.SWIPE_SLIDE_SPEED,
+        // ⭐️ CORRECCIÓN: Habilitar arrastre libre (freeMode) para permitir ver todos los elementos ⭐️
+        freeMode: true, 
+        freeModeMomentum: true,
     };
 
     this.STATE.carouselInstance = new Swiper(document.querySelector(swiperId), swiperConfig);
     
     debug.log('render_mobile', debug.DEBUG_LEVELS.BASIC, `Swiper vertical inicializado en ${swiperId}. Slide inicial: ${initialSwiperSlide}`);
 
-    // Eliminada la llamada a this.setupTouchListeners() ya que es innecesaria y causa conflictos.
+    if (typeof this.setupTouchListeners === 'function') {
+        this.setupTouchListeners(); 
+    }
 };
 
 // --- code/render-mobile.js ---
