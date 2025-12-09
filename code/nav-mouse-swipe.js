@@ -11,11 +11,15 @@ let _swipeDirection = 'next';
  * Se llama con .call(this) desde _initCarousel_Swipe.
  */
 export function setupTouchListeners() {
+    // ⭐️ DIAGNÓSTICO CLAVE: Si ves este log, la función se está llamando. ⭐️
+    debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "DIAGNÓSTICO: setupTouchListeners llamado.");
+    
     // 'this' es la instancia de App
     const screenWidth = window.innerWidth;
     const isMobile = screenWidth <= data.MOBILE_MAX_WIDTH;
 
     if (this.STATE.carouselInstance) {
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, "Swiper instance FOUND. Attaching listeners.");
         const swiper = this.STATE.carouselInstance;
 
         // --- Limpiar listeners antiguos ---
@@ -35,6 +39,8 @@ export function setupTouchListeners() {
         swiper.on('slideChangeTransitionEnd', swiper._slideChangeEndHandler);
         
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "Listeners de Swiper (táctil/rueda) configurados.");
+    } else {
+        debug.logError('nav_mouse_swipe', "ERROR: this.STATE.carouselInstance es NULL. Los listeners no se adjuntaron.");
     }
 };
 
@@ -83,6 +89,7 @@ export function handleSlideChangeEnd(swiper) {
     if (isMobile) {
         targetRow = 0; 
     } else {
+        // En Desktop/Tablet, calculamos la fila objetivo (mantener la misma fila relativa).
         targetRow = currentFocusIndex % itemsPorColumna;
     }
     debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Target Row (Fila de origen): ${targetRow}. Swiper Index: ${swiper.activeIndex}`);
@@ -96,26 +103,26 @@ export function handleSlideChangeEnd(swiper) {
     const columnCards = Array.from(activeSlideEl.querySelectorAll('.card'));
     if (columnCards.length === 0) return;
 
-    // Busca la mejor tarjeta para enfocar en la columna activa (targetRow es la fila de origen)
+    // Busca la mejor tarjeta para enfocar en la columna activa 
     const newFocusCard = this.findBestFocusInColumn(columnCards, targetRow);
 
 
     // ⭐️ 2. LÓGICA DE SALTO (Desktop/Tablet: Si la columna NO tiene elementos enfocables) ⭐️
     if (!newFocusCard && !isMobile) { 
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "Columna actual VACÍA. Forzando salto a la siguiente/anterior.");
-        // Si no se encuentra un elemento enfocable, forzamos el movimiento a la siguiente columna.
+        
         if (_swipeDirection === 'next') {
             swiper.slideNext(data.SWIPE_SLIDE_SPEED);
         } else {
             swiper.slidePrev(data.SWIPE_SLIDE_SPEED);
         }
-        // No aplicamos foco. El nuevo slideChangeTransitionEnd continuará la evaluación.
+        // Retornamos. El próximo slideChangeTransitionEnd continuará la evaluación (se repetirá el Paso 1).
         return; 
     }
     
-    // Si no hay tarjeta enfocable (sólo debería ocurrir si estamos en el modo raíz y solo quedan rellenos)
+    // Si no hay tarjeta enfocable (sólo debería ocurrir en el modo raíz si el contenido está vacío)
     if (!newFocusCard) {
-         debug.logWarn('nav_mouse_swipe', "No hay tarjetas enfocables en el track. No se aplica foco.");
+         debug.logWarn('nav_mouse_swipe', "No hay tarjetas enfocables en la columna de destino.");
          return; 
     }
 
@@ -128,10 +135,10 @@ export function handleSlideChangeEnd(swiper) {
         this.STATE.currentFocusIndex = newGlobalIndex;
 
         if (!isMobile) {
+            // El slide que debe estar perfectamente centrado
             const targetSwiperSlide = Math.floor(newGlobalIndex / itemsPorColumna) + 1; // +1 por el slide de relleno inicial
             
             // ⭐️ CENTRADO FORZADO: Forzamos slideToLoop para garantizar el snap-to-center. ⭐️
-            // Esto asegura que la columna queda perfectamente en el centro de la vista, independientemente de la precisión del arrastre.
             debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Forzando centrado a slide: ${targetSwiperSlide}. Current realIndex: ${swiper.realIndex}`);
 
             // 1. Marcar la bandera (para el Paso 2).
@@ -147,4 +154,5 @@ export function handleSlideChangeEnd(swiper) {
          debug.logError('nav_mouse_swipe', "Error: Tarjeta enfocable encontrada en el slide, pero no en la lista global.");
     }
 };
+
 // --- code/nav-mouse-swipe.js ---
