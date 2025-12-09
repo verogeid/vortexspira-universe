@@ -50,18 +50,20 @@
     /* 5. Vista de detalle full-screen */
     #vista-detalle-mobile {
         position: fixed !important; 
-        top: 0 !important; 
+        /* ⭐️ FIX CRÍTICO: Inicia justo debajo del header ⭐️ */
+        top: var(--header-height) !important; 
         left: 0 !important; 
         width: 100% !important; 
-        height: 100vh !important;
         
-        /* ⭐️ FIX: z-index reducido a 99 para que el header (100) lo cubra ⭐️ */
+        /* ⭐️ FIX CRÍTICO: Altura calculada para terminar justo antes del footer ⭐️ */
+        height: calc(100vh - var(--header-height) - var(--footer-height)) !important;
+        
         z-index: 99 !important; 
         
         overflow-y: hidden !important;
         
         padding-top: 0; 
-        padding-bottom: 10px;
+        padding-bottom: 0; /* Eliminar padding aquí, la altura es exacta */
         box-sizing: border-box; 
         
         scrollbar-width: thin;
@@ -84,20 +86,23 @@
         box-sizing: border-box;
     }
     
-    /* ⬇️ FIX: Contenedor interno que define el área de scroll de Swiper (Detalle) ⬇️ */
+    /* ⬇️ Contenedor interno de Swiper (Detalle) ⬇️ */
     #detalle-contenido-mobile {
-        margin-top: var(--header-height); 
+        /* Eliminado el margin-top ya que la vista padre (vista-detalle-mobile) ya tiene el top corregido */
+        margin-top: 0; 
         width: 100%; 
-        /* ⭐️ FIX CLAVE: Altura = 100vh - Header - Footer ⭐️ */
-        height: calc(100vh - var(--header-height) - var(--footer-height)); 
+        /* Altura 100% de la vista padre */
+        height: 100%; 
         overflow: hidden;
     }
     
-    /* ⭐️ FIX: Swiper Container (Debe tomar la altura restante y manejar el scroll) ⭐️ */
+    /* ⭐️ Swiper Container (Detalle) ⭐️ */
     #detalle-swiper-mobile {
         height: 100%;
-        /* ⭐️ FIX: Forzar overflow-y: auto para habilitar drag/scroll si hay contenido oculto ⭐️ */
+        /* Aplicar auto para que FreeMode funcione correctamente al exceder */
         overflow-y: auto !important;
+        /* ⭐️ FIX: touch-action se añade para mejorar el arrastre con un dedo ⭐️ */
+        touch-action: pan-y !important;
     }
     /* ⬆️ FIN FIX ⬆️ */
 
@@ -143,8 +148,10 @@
         width: 100%; position: relative;
         overflow: hidden; 
         
-        /* ⭐️ FIX: Aplicar overflow-y: auto para habilitar el drag/scroll si hay slides fuera de viewport ⭐️ */
-        overflow-y: auto !important; 
+        /* Aplicar auto para que FreeMode funcione correctamente al exceder */
+        overflow-y: auto !important;
+        /* ⭐️ FIX: touch-action se añade para mejorar el arrastre con un dedo ⭐️ */
+        touch-action: pan-y !important;
     }
 
     #nav-swiper-mobile .swiper-wrapper {
