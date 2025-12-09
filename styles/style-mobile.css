@@ -99,13 +99,13 @@
         height: 100%;
         overflow-y: auto !important;
         /* ⭐️ FIX: touch-action para arrastre con un dedo ⭐️ */
-        touch-action: pan-y !important; 
+        touch-action: pan-y !important;
     }
     
-    /* ⭐️ FIX: Wrapper de Detalles para Padding Horizontal (Breadcrumb/Botones) y Vertical (último elemento) ⭐️ */
+    /* ⭐️ FIX: Wrapper de Detalles para Padding Horizontal y Vertical (último elemento visible) ⭐️ */
     #detalle-swiper-mobile .swiper-wrapper {
         padding-bottom: 15vh; 
-        padding-top: 0;
+        padding-top: 15px; // Añadir padding-top para separación del header
         padding-left: 6%; 
         padding-right: 6%; 
     }
