@@ -102,15 +102,16 @@
         touch-action: pan-y !important;
     }
     
-    /* ⭐️ FIX: Wrapper de Detalles para Padding Horizontal y Vertical (último elemento visible) ⭐️ */
+    /* ⭐️ FIX: Wrapper de Detalles para Padding Vertical (último elemento visible) ⭐️ */
     #detalle-swiper-mobile .swiper-wrapper {
         padding-bottom: 15vh; 
-        padding-top: 15px; // Añadir padding-top para separación del header
-        padding-left: 6%; 
-        padding-right: 6%; 
+        padding-top: 15px; 
+        
+        padding-left: 6%; /* Horizontal padding */
+        padding-right: 6%;
     }
     
-    /* FIX: Remover el padding del slide de Detalle ya que lo lleva el wrapper */
+    /* FIX: Los slides de Detalle no necesitan padding horizontal ya que lo lleva el wrapper */
     #detalle-swiper-mobile .swiper-slide {
         padding: 0 !important; 
     }
@@ -164,7 +165,7 @@
         touch-action: pan-y !important;
     }
 
-    /* ⭐️ FIX: Wrapper de Navegación para Padding Horizontal y Vertical ⭐️ */
+    /* ⭐️ FIX: Wrapper de Navegación - SOLO Padding Vertical (El horizontal va en el slide) ⭐️ */
     #nav-swiper-mobile .swiper-wrapper {
         display: flex !important; flex-direction: column; 
         gap: 10px; 
@@ -172,8 +173,7 @@
         padding-bottom: 15vh; 
         padding-top: 15px !important; 
         
-        padding-left: 6%; 
-        padding-right: 6%;
+        /* REMOVED: padding-left/right (Vuelve al slide) */
     }
 
     /* Los slides contienen las tarjetas */
@@ -184,8 +184,8 @@
         align-items: center;
         box-sizing: border-box; 
         
-        /* FIX: Remover el padding del slide de Navegación ya que lo lleva el wrapper */
-        padding: 0 !important; 
+        /* ⭐️ FIX CRÍTICO: Revertir padding horizontal al slide (SOLUCIONA EL DESBORDE) ⭐️ */
+        padding: 0 6% !important; 
     }
 
     /* ⭐️ AÑADIDO: Las tarjetas deben usar todo el ancho disponible del slide ⭐️ */
