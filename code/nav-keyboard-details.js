@@ -9,13 +9,13 @@ export function _handleDetailNavigation(key) {
     const swiper = app.STATE.detailCarouselInstance;
     if (!swiper) return;
 
-    // Usamos el índice del slide activo como índice de foco.
-    let currentIndex = swiper.activeIndex;
+    // ⭐️ FIX CLAVE: Usar el índice de foco guardado, que es síncrono. ⭐️
+    let currentIndex = app.STATE.lastDetailFocusIndex; 
     let newIndex = currentIndex;
     const totalSlides = swiper.slides.length; 
     
     debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, `--- INICIO: _handleDetailNavigation (Key: ${key}) ---`);
-    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, `Current Slide Index: ${currentIndex}, Total Slides: ${totalSlides}`);
+    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, `Current Focus Index (State): ${currentIndex}, Total Slides: ${totalSlides}`);
     
     switch (key) {
         case 'ArrowUp':
