@@ -27,7 +27,7 @@ export function setupListeners() {
   
   // ⬇️ Delegamos la configuración de handlers de foco y mouse de detalle ⬇️
   _setupDetailFocusHandler.call(this); 
-  nav_mouse_details._setupDetailMouseListeners(this);
+  // nav_mouse_details._setupDetailMouseListeners(this); // ⭐️ ELIMINADO: Se mueve a nav-keyboard-base.js ⭐️
 };
 
 // ⬇️ Lógica de inicialización del listener de foco en la vista de detalle. ⬇️
@@ -263,7 +263,7 @@ export function _handleVolverClick() {
         this.renderNavegacion(); 
         
         // ⬇️ Restaurar foco después de salir de detalle (DELAY para permitir a Swiper inicializarse) ⬇️
-        setTimeout(() => { // ⭐️ AÑADIR DELAY PARA SWIPER ⭐️
+        setTimeout(() => { // ⭐️ FIX: AÑADIR DELAY PARA SWIPER ⭐️
              this._updateFocus(true); 
         }, data.SWIPE_SLIDE_SPEED); 
         this.STATE.activeCourseId = null;
@@ -275,7 +275,7 @@ export function _handleVolverClick() {
         this.renderNavegacion(); // Método delegado
         
         // ⬇️ Restaurar foco después de salir del submenú (DELAY para permitir a Swiper inicializarse) ⬇️
-        setTimeout(() => { // ⭐️ AÑADIR DELAY PARA SWIPER ⭐️
+        setTimeout(() => { // ⭐️ FIX: AÑADIR DELAY PARA SWIPER ⭐️
              this._updateFocus(true); 
         }, data.SWIPE_SLIDE_SPEED);
         return;

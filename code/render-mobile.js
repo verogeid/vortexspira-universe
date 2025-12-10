@@ -57,7 +57,7 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
         touchRatio: 1, 
         simulateTouch: true, 
         centeredSlides: false, 
-        mousewheel: { sensitivity: 1, releaseOnEdges: true }, 
+        mousewheel: { enabled: false }, // ⭐️ FIX CLAVE: Deshabilitar la rueda nativa de Swiper ⭐️
         keyboard: { enabled: false }, 
         speed: data.SWIPE_SLIDE_SPEED,
         // ⭐️ CORRECCIÓN: Habilitar arrastre libre (freeMode) para permitir ver todos los elementos ⭐️

@@ -249,9 +249,9 @@ export function _mostrarDetalle(cursoId) {
             const slide = e.currentTarget.closest('.swiper-slide');
             const targetIndex = swiper ? swiper.slides.indexOf(slide) : -1;
             
+            e.preventDefault(); // ⭐️ FIX CLAVE: Asegurar que el clic se procesa primero ⭐️
+            
             if (swiper && targetIndex > -1 && targetIndex !== swiper.activeIndex) {
-                // ⭐️ FIX 3: Prevenir el comportamiento nativo al llamar a slideTo ⭐️
-                e.preventDefault(); 
                 swiper.slideTo(targetIndex, 300); 
             } else {
                  // ⭐️ FIX CLAVE: Si ya es el slide activo, forzamos el foco nativo (sin scroll) y el refresh del blur/foco. ⭐️

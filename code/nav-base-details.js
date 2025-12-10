@@ -129,6 +129,8 @@ export function _getFocusableDetailElements(appInstance) {
 export function _handleActionRowClick(e) {
     // Apuntamos a la fila, ya que es el elemento secuencial enfocable.
     // Con Swiper, debemos encontrar el slide padre y saltar a él.
+    e.preventDefault(); // ⭐️ FIX CLAVE: Prevenir la acción por defecto (si la hay) ⭐️
+    
     const slide = e.currentTarget.closest('.swiper-slide');
     if (slide) {
         const swiper = App.STATE.detailCarouselInstance;

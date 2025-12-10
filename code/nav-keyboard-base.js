@@ -5,7 +5,7 @@ import * as data from './data.js';
 import * as nav_base_details from './nav-base-details.js'; 
 import * as nav_keyboard_details from './nav-keyboard-details.js'; 
 import * as nav_keyboard_swipe from './nav-keyboard-swipe.js'; 
-import * as nav_base from './nav-base.js'; // Necesario para _updateFocusImpl
+import * as nav_base from './nav-base.js'; 
 
 /**
  * Función de inicialización de los controles de teclado (Entry Point).
@@ -51,8 +51,7 @@ export function initKeyboardControls() {
         // Lógica para footer
         const isFooterActive = document.activeElement.closest('footer');
         if (isFooterActive) {
-            if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) { // Incluir las flechas para poder prevenirlas
-                // PREVENIR el scroll por defecto del navegador
+            if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) { 
                 e.preventDefault(); 
                 _handleFooterNavigation.call(app, e.key);
             }
@@ -73,20 +72,68 @@ export function initKeyboardControls() {
         if (isNavActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault(); 
-                // ⬇️ Delegamos a nav-keyboard-swipe ⬇️
                 nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
-                // ⬆️ FIN DELEGACIÓN ⬆️
             }
         } 
         else if (isDetailActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault();
-                // Delegamos al módulo de detalles de teclado
                 nav_keyboard_details._handleDetailNavigation.call(app, e.key);
             }
         }
     });
+    
+    // ⭐️ AÑADIDO: Inicializar el listener global de rueda de ratón ⭐️
+    _setupWheelListener.call(this);
 };
+
+// ⭐️ AÑADIDO: Handler centralizado para la rueda del ratón (Mouse Wheel) ⭐️
+function _setupWheelListener() {
+    // 'this' es la instancia de App
+    if (this.DOM.appContainer) {
+        // Adjuntamos al contenedor principal de la app para asegurar la captura
+        this.DOM.appContainer.addEventListener('wheel', _handleGlobalWheel.bind(this), { passive: false });
+    }
+};
+
+/**
+ * Handler para el evento de rueda de ratón.
+ * Delega la navegación de teclado si estamos en móvil.
+ */
+function _handleGlobalWheel(e) {
+    // 'this' es la instancia de App
+    const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
+    if (!isMobile) return; 
+
+    const isNavActive = this.DOM.vistaNav && this.DOM.vistaNav.classList.contains('active');
+    const isDetailActive = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active');
+    
+    if (!isNavActive && !isDetailActive) return;
+
+    // Solo actuamos si el evento se origina dentro de las vistas de carrusel móvil
+    const targetIsNavContent = e.target.closest('#nav-swiper-mobile'); 
+    const targetIsDetailContent = e.target.closest('#detalle-swiper-mobile');
+
+    if (targetIsNavContent || targetIsDetailContent) {
+        
+        // ⭐️ CORRECCIÓN CLAVE: Interceptamos el scroll nativo ⭐️
+        if (e.deltaY !== 0) {
+            e.preventDefault(); 
+            
+            const key = e.deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
+
+            if (isNavActive) {
+                // Navegación de menú móvil (Foco secuencial)
+                nav_keyboard_swipe._handleSwipeNavigation(key, this);
+            } else if (isDetailActive) {
+                 // Navegación de detalle (Salto de slide)
+                 nav_keyboard_details._handleDetailNavigation.call(this, key);
+            }
+            return;
+        }
+    }
+};
+
 
 export function _handleInfoNavigation(key) {
     // 'this' es la instancia de App
