@@ -97,7 +97,8 @@
     /* ⭐️ Swiper Container (Detalle) ⭐️ */
     #detalle-swiper-mobile {
         height: 100%;
-        overflow-y: auto !important;
+        /* ❌ FIX: Quitar overflow-y: auto !important para que Swiper FreeMode lo maneje ❌ */
+        overflow-y: hidden !important;
         /* ⭐️ FIX: touch-action para arrastre con un dedo ⭐️ */
         touch-action: pan-y !important;
     }
@@ -114,8 +115,8 @@
     
     /* ⭐️ FIX CRÍTICO: Añadir padding horizontal al SLIDE de Detalle (Soluciona desborde) ⭐️ */
     #detalle-swiper-mobile .swiper-slide {
-        padding: 0 6% !important; /* <--- FIX CLAVE */
-        box-sizing: border-box; /* Asegurar box-sizing: border-box */
+        padding: 0 6% !important; 
+        box-sizing: border-box; 
     }
     /* ⬆️ FIN FIX ⬆️ */
 
@@ -159,10 +160,10 @@
         /* ⭐️ FIX: Constreñir la altura total del Swiper a la zona entre Header y Footer ⭐️ */
         min-height: calc(100vh - var(--header-height) - var(--footer-height) - 20px); 
         width: 100%; position: relative;
+        
+        /* ❌ FIX CLAVE: Quitar el overflow-y: auto; para que Swiper lo maneje. ❌ */
         overflow: hidden; 
         
-        /* Aplicar auto para que FreeMode funcione correctamente al exceder */
-        overflow-y: auto !important; 
         /* ⭐️ FIX: touch-action para arrastre con un dedo ⭐️ */
         touch-action: pan-y !important;
     }

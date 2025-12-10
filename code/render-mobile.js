@@ -63,6 +63,7 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
         // ⭐️ CORRECCIÓN: Habilitar arrastre libre (freeMode) para permitir ver todos los elementos ⭐️
         freeMode: true, 
         freeModeMomentum: true,
+        freeModeSticky: true, // ⭐️ FIX CLAVE: Añadir snap al modo free (Harmoniza con detalle) ⭐️
     };
 
     this.STATE.carouselInstance = new Swiper(document.querySelector(swiperId), swiperConfig);
