@@ -9,36 +9,51 @@ export function _handleDetailNavigation(key) {
     const swiper = app.STATE.detailCarouselInstance;
     if (!swiper) return;
 
-    const focusedSlide = swiper.slides[swiper.activeIndex];
-    const focusedContent = focusedSlide ? focusedSlide.querySelector('.detail-text-fragment, .detail-action-item, .detail-title-slide') : null;
-
+    // Usamos el índice del slide activo como índice de foco.
+    let currentIndex = swiper.activeIndex;
+    let newIndex = currentIndex;
+    const totalSlides = swiper.slides.length; 
+    
     switch (key) {
         case 'ArrowUp':
-            // Llama a slidePrev para mover el foco/snap al elemento adyacente anterior.
-            swiper.slidePrev(); // ⭐️ FIX: Eliminado el speed parameter ⭐️
-            return;
+            newIndex = currentIndex - 1;
+            // No hacemos wrap. Nos quedamos en el primer slide.
+            if (newIndex < 0) newIndex = 0; 
+            break;
         case 'ArrowDown':
-            // Llama a slideNext para mover el foco/snap al elemento adyacente siguiente.
-            swiper.slideNext(); // ⭐️ FIX: Eliminado el speed parameter ⭐️
-            return;
+            newIndex = currentIndex + 1;
+            // No hacemos wrap. Nos quedamos en el último slide.
+            if (newIndex >= totalSlides) newIndex = totalSlides - 1; 
+            break;
         case 'ArrowLeft':
         case 'ArrowRight':
-            // Ignoramos el movimiento lateral en la vista de detalle
+            // Ignoramos el movimiento lateral.
             return; 
         case 'Enter':
         case ' ':
-            // Si está sobre una acción, la activamos.
+            // Lógica para Enter/Space 
+            const focusedSlide = swiper.slides[swiper.activeIndex];
+            const focusedContent = focusedSlide ? focusedSlide.querySelector('.detail-action-item, .detail-text-fragment') : null;
+            
             if (focusedContent && focusedContent.classList.contains('detail-action-item')) {
                 const btn = focusedContent.querySelector('.detail-action-btn');
                 if (btn && !btn.classList.contains('disabled')) {
                     btn.click(); 
                     return;
                 }
-            } else if (focusedContent && (focusedContent.classList.contains('detail-title-slide') || focusedContent.classList.contains('detail-text-fragment'))) {
-                 // Si está sobre el título/fragmento, avanzamos al siguiente slide (simula la lectura).
-                 swiper.slideNext(); // ⭐️ FIX: Eliminado el speed parameter ⭐️
+            } else if (focusedContent) {
+                 // Si está sobre texto/título, simula el avance al siguiente slide.
+                 newIndex = currentIndex + 1;
+                 if (newIndex >= totalSlides) return; // Si es el último, no hacer nada.
+            } else {
+                 return; // No hay nada enfocable en el slide actual
             }
             break;
+    }
+
+    if (newIndex !== currentIndex) {
+        // La clave es usar slideTo para forzar el snap, lo cual llama a slideChangeTransitionEnd y _updateDetailFocusState.
+        swiper.slideTo(newIndex, 300);
     }
 }
 

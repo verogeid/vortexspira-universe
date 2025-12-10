@@ -57,10 +57,10 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
         touchRatio: 1, 
         simulateTouch: true, 
         centeredSlides: false, 
-        mousewheel: { enabled: false }, // ⭐️ FIX CLAVE: Deshabilitar la rueda nativa de Swiper ⭐️
+        mousewheel: { enabled: false }, // ⭐️ Deshabilitar la rueda nativa de Swiper ⭐️
         keyboard: { enabled: false }, 
         speed: data.SWIPE_SLIDE_SPEED,
-        // ⭐️ CORRECCIÓN: Habilitar arrastre libre (freeMode) para permitir ver todos los elementos ⭐️
+        // ⭐️ Habilitar arrastre libre (freeMode) para permitir ver todos los elementos ⭐️
         freeMode: true, 
         freeModeMomentum: true,
         freeModeSticky: true, // ⭐️ FIX CLAVE: Añadir snap al modo free (Harmoniza con detalle) ⭐️
