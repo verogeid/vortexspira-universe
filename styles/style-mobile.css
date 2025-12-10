@@ -102,18 +102,20 @@
         touch-action: pan-y !important;
     }
     
-    /* ⭐️ FIX: Wrapper de Detalles para Padding Vertical (último elemento visible) ⭐️ */
+    /* ⭐️ FIX: Wrapper de Detalles - Eliminar Padding Horizontal ⭐️ */
     #detalle-swiper-mobile .swiper-wrapper {
         padding-bottom: 15vh; 
         padding-top: 15px; 
         
-        padding-left: 6%; /* Horizontal padding */
-        padding-right: 6%;
+        /* FIX CLAVE: Mover padding al slide */
+        padding-left: 0; 
+        padding-right: 0;
     }
     
-    /* FIX: Los slides de Detalle no necesitan padding horizontal ya que lo lleva el wrapper */
+    /* ⭐️ FIX CRÍTICO: Añadir padding horizontal al SLIDE de Detalle (Soluciona desborde) ⭐️ */
     #detalle-swiper-mobile .swiper-slide {
-        padding: 0 !important; 
+        padding: 0 6% !important; /* <--- FIX CLAVE */
+        box-sizing: border-box; /* Asegurar box-sizing: border-box */
     }
     /* ⬆️ FIN FIX ⬆️ */
 

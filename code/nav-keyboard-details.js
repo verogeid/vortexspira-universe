@@ -15,11 +15,11 @@ export function _handleDetailNavigation(key) {
     switch (key) {
         case 'ArrowUp':
             // Llama a slidePrev para mover el foco/snap al elemento adyacente anterior.
-            swiper.slidePrev(300);
+            swiper.slidePrev(); // ⭐️ FIX: Eliminado el speed parameter ⭐️
             return;
         case 'ArrowDown':
             // Llama a slideNext para mover el foco/snap al elemento adyacente siguiente.
-            swiper.slideNext(300);
+            swiper.slideNext(); // ⭐️ FIX: Eliminado el speed parameter ⭐️
             return;
         case 'ArrowLeft':
         case 'ArrowRight':
@@ -36,7 +36,7 @@ export function _handleDetailNavigation(key) {
                 }
             } else if (focusedContent && (focusedContent.classList.contains('detail-title-slide') || focusedContent.classList.contains('detail-text-fragment'))) {
                  // Si está sobre el título/fragmento, avanzamos al siguiente slide (simula la lectura).
-                 swiper.slideNext(300);
+                 swiper.slideNext(); // ⭐️ FIX: Eliminado el speed parameter ⭐️
             }
             break;
     }

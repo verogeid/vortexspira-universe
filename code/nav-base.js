@@ -262,8 +262,10 @@ export function _handleVolverClick() {
         
         this.renderNavegacion(); 
         
-        // ⬇️ Restaurar foco después de salir de detalle (Usa el foco guardado por renderNavegacion) ⬇️
-        this._updateFocus(true); // ⭐️ FIX: Forzar slide/foco al índice guardado de la pila. ⭐️
+        // ⬇️ Restaurar foco después de salir de detalle (DELAY para permitir a Swiper inicializarse) ⬇️
+        setTimeout(() => { // ⭐️ AÑADIR DELAY PARA SWIPER ⭐️
+             this._updateFocus(true); 
+        }, data.SWIPE_SLIDE_SPEED); 
         this.STATE.activeCourseId = null;
         
     } 
@@ -272,8 +274,10 @@ export function _handleVolverClick() {
         this.stackPop(); // Método delegado
         this.renderNavegacion(); // Método delegado
         
-        // ⬇️ Restaurar foco después de salir del submenú (Usa el foco guardado por renderNavegacion) ⬇️
-        this._updateFocus(true); // ⭐️ FIX: Forzar slide/foco al índice guardado de la pila. ⭐️
+        // ⬇️ Restaurar foco después de salir del submenú (DELAY para permitir a Swiper inicializarse) ⬇️
+        setTimeout(() => { // ⭐️ AÑADIR DELAY PARA SWIPER ⭐️
+             this._updateFocus(true); 
+        }, data.SWIPE_SLIDE_SPEED);
         return;
         
     } else {
