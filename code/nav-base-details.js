@@ -20,12 +20,15 @@ function _clearAllFocusClasses(track) {
 export function _updateDetailFocusState(appInstance) {
     const swiper = appInstance.STATE.detailCarouselInstance; 
     if (!swiper) return;
-
+    
+    debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, '--- INICIO: _updateDetailFocusState ---');
+    
     const detailContainer = appInstance.DOM.vistaDetalle; 
     const slides = swiper.slides;
     
     // 1. Obtener el índice del slide enfocado (gestionado por Swiper)
     const focusedIndex = swiper.activeIndex;
+    debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, `Swiper Active Index: ${focusedIndex}`);
     
     // ⭐️ Guardar el índice del elemento enfocado para la función de retorno del foco ⭐️
     appInstance.STATE.lastDetailFocusIndex = focusedIndex; 
@@ -68,9 +71,11 @@ export function _updateDetailFocusState(appInstance) {
                    content.classList.add('focus-current');
                    // Forzamos el foco del teclado al contenido real dentro de la slide.
                    content.focus({ preventScroll: true }); 
+                   debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, `Foco aplicado al contenido en slide ${index}.`);
                 } else {
                    // Aplicamos la clase visual para la nitidez, pero no llamamos a focus().
                    content.classList.add('focus-current'); 
+                   debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, `Clase 'focus-current' aplicada visualmente en slide ${index}.`);
                 }
 
                 // Aplicar clase al slide para estilos de contenedor si es necesario
@@ -95,10 +100,13 @@ export function _updateDetailFocusState(appInstance) {
         
         if (isActionFocus) {
             detailContainer.classList.add('mode-focus-actions');
+            debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 'Modo de máscara: Actions');
         } else {
             detailContainer.classList.add('mode-focus-text');
+            debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 'Modo de máscara: Text');
         }
     }
+    debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, '--- FIN: _updateDetailFocusState ---');
 };
 
 /**
@@ -127,6 +135,8 @@ export function _getFocusableDetailElements(appInstance) {
 
 // ⭐️ HELPER: Clic en fila -> Solo pone foco (NO click) ⭐️
 export function _handleActionRowClick(e) {
+    debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 'Acción: _handleActionRowClick (Click en Fila de Detalle)');
+    
     // Apuntamos a la fila, ya que es el elemento secuencial enfocable.
     // Con Swiper, debemos encontrar el slide padre y saltar a él.
     e.preventDefault(); // ⭐️ FIX CLAVE: Prevenir la acción por defecto (si la hay) ⭐️
@@ -137,6 +147,8 @@ export function _handleActionRowClick(e) {
         const slides = swiper.slides;
         const targetIndex = swiper ? slides.indexOf(slide) : -1;
         
+        debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, `Target Slide Index para Click: ${targetIndex}, Active Index: ${swiper.activeIndex}`);
+        
         if (swiper && targetIndex > -1 && targetIndex !== swiper.activeIndex) {
              // Si el slide no está activo, deslizamos a él.
              
@@ -144,11 +156,13 @@ export function _handleActionRowClick(e) {
              _clearAllFocusClasses(App.DOM.detalleTrack);
              
              swiper.slideTo(targetIndex, data.SWIPE_SLIDE_SPEED);
+             debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, `SlideTo ejecutado.`);
              // El foco se actualizará en el evento 'slideChangeTransitionEnd'
         } else if (e.currentTarget) {
              // ⭐️ FIX CLAVE: Si ya estamos en el slide, forzamos el foco nativo (sin scroll) y el refresh del blur/foco. ⭐️
              e.currentTarget.focus({ preventScroll: true });
              _updateDetailFocusState(App);
+             debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, `Foco forzado y estado de foco actualizado (ya en el slide).`);
         }
     }
 };
@@ -157,6 +171,7 @@ export function _handleActionRowClick(e) {
  * Maneja el evento de cambio de slide de Swiper y sincroniza el foco.
  */
 export function _handleSlideChangeEnd(swiper, appInstance) {
+    debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 'Evento: slideChangeTransitionEnd capturado.');
     _updateDetailFocusState(appInstance);
 }
 

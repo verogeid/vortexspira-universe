@@ -20,6 +20,8 @@ export function initKeyboardControls() {
         const isNavActive = app.DOM.vistaNav.classList.contains('active');
         const isDetailActive = app.DOM.vistaDetalle.classList.contains('active');
 
+        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Tecla: ${e.key}. Nav Active: ${isNavActive}, Detail Active: ${isDetailActive}`);
+
         if (e.key === 'Tab') {
             e.preventDefault();
             if (isNavActive) {
@@ -78,6 +80,8 @@ export function initKeyboardControls() {
         else if (isDetailActive) {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', ' '].includes(e.key)) {
                 e.preventDefault();
+                // ⬇️ Delegamos al módulo de detalles de teclado ⬇️
+                debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Delegando tecla ${e.key} a nav_keyboard_details.`);
                 nav_keyboard_details._handleDetailNavigation.call(app, e.key);
             }
         }
@@ -121,6 +125,8 @@ function _handleGlobalWheel(e) {
             e.preventDefault(); 
             
             const key = e.deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
+            debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Rueda de ratón capturada. Tecla simulada: ${key}.`);
+
 
             if (isNavActive) {
                 // Navegación de menú móvil (Foco secuencial)
@@ -175,10 +181,8 @@ export function _handleFooterNavigation(key) {
             newIndex = currentIndex + 1;
             if (newIndex >= focusableElements.length) newIndex = 0;
             break;
-        // ⭐️ MODIFICACIÓN CLAVE: Ignoramos ArrowUp y ArrowDown para la navegación interna del footer. ⭐️
         case 'ArrowUp':
         case 'ArrowDown':
-            // Prevenimos cualquier acción o scroll y volvemos.
             return; 
     }
 
