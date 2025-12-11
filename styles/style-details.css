@@ -142,22 +142,15 @@
 
 
 /* --- MÁSCARAS (Controladas por las clases binarias mode-focus-text/actions) --- */
+/* ⭐️ FIX CLAVE: ELIMINACIÓN DE REGLAS BASADAS EN MÁSCARAS BINARIAS ⭐️ */
 
-/* Foco en Texto -> Desenfoque de ACCIONES (Mismo nivel que el texto más lejano) */
 .mode-focus-text #detalle-bloque-acciones {
-    /* Las reglas de BLUR y OPACITY se definen en .detail-action-item por defecto (2px, 0.4) */
-    /* ⭐️ CORRECCIÓN: Quitar pointer-events: none; para permitir hover/click ⭐️ */
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
+    /* Las reglas de mask-image se han eliminado */
 }
 
-
-/* Foco en Acciones -> Desenfoque de TEXTO (Uniforme al nivel de desenfoque base) */
-/* Las reglas de BLUR y OPACITY se definen en .detail-text-fragment por defecto (2px, 0.4) */
+/* Foco en Acciones -> Desenfoque de TEXTO */
 .mode-focus-actions .detail-text-fragment {
-    /* ⭐️ CORRECCIÓN: Quitar pointer-events: none; para permitir hover/click ⭐️ */
-    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
-    mask-image: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.1) 100%);
+    /* Las reglas de mask-image se han eliminado */
 }
 .mode-focus-actions #detalle-bloque-acciones { 
     filter: none; opacity: 1; -webkit-mask-image: none; mask-image: none; 
@@ -326,8 +319,5 @@ button.detail-action-btn {
     font-weight: bold; aspect-ratio: auto; font-size: 1.1rem;
     background: var(--color-card-bg); 
 }
-
-/* Ajustes Padding */
-/* ⭐️ SE HA ELIMINADO EL MEDIA QUERY CONFLICTIVO AQUÍ ⭐️ */
 
 /* --- styles/style-details.css --- */

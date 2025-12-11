@@ -10,8 +10,11 @@ export function _handleDetailNavigation(key) {
     const swiper = app.STATE.detailCarouselInstance;
     if (!swiper) return;
 
-    // ⭐️ FIX CLAVE 1: Ya no necesitamos la bandera keyboardNavInProgress aquí, ya que el movimiento es síncrono.
-    // La bandera se gestionará en nav-keyboard-base.js para la rueda de ratón (que es asíncrona).
+    // La bandera se utiliza en nav-keyboard-base.js para el bloqueo de la rueda de ratón.
+    if (app.STATE.keyboardNavInProgress) {
+        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Transición en curso (Bloqueo de Rueda de Ratón). Bloqueado.');
+        return;
+    }
     
     const focusableElements = nav_base_details._getFocusableDetailElements(app);
     const totalElements = focusableElements.length;
@@ -33,13 +36,13 @@ export function _handleDetailNavigation(key) {
     switch (key) {
         case 'ArrowUp':
             newIndex = currentIndex - 1;
-            // No hacemos wrap. Nos quedamos en el primer elemento.
-            if (newIndex < 0) newIndex = 0; 
+            // ⭐️ FIX CLAVE: Wrap-around para ArrowUp ⭐️
+            if (newIndex < 0) newIndex = totalElements - 1; 
             break;
         case 'ArrowDown':
             newIndex = currentIndex + 1;
-            // No hacemos wrap. Nos quedamos en el último elemento.
-            if (newIndex >= totalElements) newIndex = totalElements - 1; 
+            // ⭐️ FIX CLAVE: Wrap-around para ArrowDown ⭐️
+            if (newIndex >= totalElements) newIndex = 0; 
             break;
         case 'ArrowLeft':
         case 'ArrowRight':
@@ -73,8 +76,9 @@ export function _handleDetailNavigation(key) {
                     newIndex = currentIndex + 1;
                     debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Enter/Space: Avanzando al siguiente fragmento.');
                     if (newIndex >= totalElements) {
-                        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Enter/Space: Ya es el último fragmento. Retornando.');
-                        return; // Si es el último, no hacer nada.
+                        // ⭐️ FIX CLAVE: Wrap-around en Enter/Space ⭐️
+                        newIndex = 0; 
+                        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Enter/Space: Saltando al primer fragmento.');
                     }
                 }
             } else {

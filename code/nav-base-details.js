@@ -20,9 +20,8 @@ export function _getFocusableDetailElements(appInstance) {
     if (!appInstance.DOM.detalleTrack) return [];
     
     // Obtener todos los elementos enfocables por Swiper (contenidos reales)
-    // Se mapea la lista de slides para obtener el elemento enfocable principal de cada uno.
     const slideContents = Array.from(appInstance.DOM.detalleTrack.querySelectorAll('.swiper-slide')).map(slide => 
-        // Solo puede haber un elemento principal enfocable por slide (el fragmento, el botón de volver, o la fila de acción)
+        // Se busca el elemento que tenga tabIndex="0" para incluir texto, acciones y volver vertical (en móvil)
         slide.querySelector('.detail-text-fragment[tabindex="0"], .detail-action-item[tabindex="0"], .detail-title-slide + .detail-text-fragment[tabindex="0"], .card-volver-vertical[tabindex="0"]')
     ).filter(el => el && el.tabIndex !== -1); 
 
@@ -72,11 +71,11 @@ export function _updateDetailFocusState(appInstance) {
 
     const focusedIndex = focusableElements.indexOf(focusedElement);
     
-    // ⭐️ Guardar el índice del elemento enfocado para la navegación y el focus trap ⭐️
+    // ⭐️ Guardar el índice del elemento enfocado ⭐️
     appInstance.STATE.lastDetailFocusIndex = focusedIndex; 
 
-    // 2. Limpiar clases de todos los elementos enfocables (debe incluir TODOS los elementos de contenido en el track)
-    const allContent = appInstance.DOM.detalleTrack.querySelectorAll('.detail-text-fragment, .detail-action-item, .detail-title-slide + .detail-text-fragment, .card-volver-vertical');
+    // 2. Limpiar clases de todos los elementos enfocables (DEBEMOS LIMPIAR TODOS LOS ELEMENTOS DEL DOM, NO SOLO LOS FOCUSABLES)
+    const allContent = appInstance.DOM.detalleTrack.querySelectorAll('.detail-text-fragment, .detail-action-item, .card-volver-vertical');
     allContent.forEach(el => {
         el.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2', 'focus-current-hover');
     });
@@ -87,7 +86,7 @@ export function _updateDetailFocusState(appInstance) {
     }
 
 
-    // 3. Proximidad y aplicación de clases
+    // 3. Proximidad y aplicación de clases (UNIFICADO)
     focusableElements.forEach((content, index) => {
         const diff = Math.abs(index - focusedIndex);
 
@@ -101,18 +100,9 @@ export function _updateDetailFocusState(appInstance) {
         // Para diff >= 3, la clase base ya aplica el filtro.
     });
 
-    // 4. Aplicar clases binarias (para máscaras globales)
-    const isActionFocus = focusedElement.classList.contains('detail-action-item');
-
+    // 4. Aplicar clases binarias (eliminado)
     detailContainer.classList.remove('mode-focus-actions', 'mode-focus-text');
-    
-    if (isActionFocus) {
-        detailContainer.classList.add('mode-focus-actions');
-        debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 'Modo de máscara: Actions');
-    } else {
-        detailContainer.classList.add('mode-focus-text');
-        debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 'Modo de máscara: Text');
-    }
+    debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 'Modo de máscara: UNIFICADO (Blur por Proximidad)');
     
     debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, '--- FIN: _updateDetailFocusState ---');
 };
@@ -123,7 +113,7 @@ export function _updateDetailFocusState(appInstance) {
 export function _handleSlideChangeEnd(swiper, appInstance) {
     debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 'Evento: slideChangeTransitionEnd capturado.');
     
-    // ⭐️ FIX CLAVE: Resetear la bandera de navegación UNIFICADA para permitir la siguiente pulsación. ⭐️
+    // ⭐️ FIX CLAVE: Resetear la bandera de navegación UNIFICADA ⭐️
     appInstance.STATE.keyboardNavInProgress = false; 
     
     // Re-aplicar el foco al elemento que tiene el foco lógico guardado
@@ -149,11 +139,14 @@ export function _handleActionRowClick(e) {
     const targetIndex = focusableElements.indexOf(targetElement);
 
     if (targetIndex > -1) {
-        // 1. Forzar el foco sincrónicamente.
-        targetElement.focus();
+        // Si el elemento clicado no es el foco actual, lo forzamos.
+        if (appInstance.STATE.lastDetailFocusIndex !== targetIndex) {
+            // 1. Forzar el foco sincrónicamente.
+            targetElement.focus();
+            // 2. Actualizar el estado de blur.
+            _updateDetailFocusState(appInstance);
+        }
         
-        // 2. Actualizar el estado de blur.
-        _updateDetailFocusState(appInstance);
     }
 };
 

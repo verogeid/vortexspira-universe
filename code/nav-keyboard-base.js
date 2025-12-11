@@ -112,7 +112,7 @@ function _handleGlobalWheel(e) {
     const isNavActive = this.DOM.vistaNav && this.DOM.vistaNav.classList.contains('active');
     const isDetailActive = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active');
     
-    // ⭐️ FIX: Si la navegación está en curso (teclado/rueda), salimos inmediatamente ⭐️
+    // ⭐️ FIX CLAVE: Si la navegación está en curso, salimos inmediatamente. ⭐️
     if (this.STATE.keyboardNavInProgress) return; 
 
     if (!isNavActive && !isDetailActive) return;
@@ -136,11 +136,14 @@ function _handleGlobalWheel(e) {
             if (isNavActive) {
                 // Navegación de menú móvil (Foco secuencial)
                 nav_keyboard_swipe._handleSwipeNavigation(key, this);
+                // El reset de keyboardNavInProgress ocurre en nav-mouse-swipe.js (Asíncrono)
             } else if (isDetailActive) {
-                 // Navegación de detalle (Salto de slide)
+                 // Navegación de detalle (Foco secuencial, síncrono)
                  nav_keyboard_details._handleDetailNavigation.call(this, key);
+                 // ⭐️ FIX CLAVE: Como la navegación de detalle es SÍNCRONA, reseteamos el bloqueo inmediatamente. ⭐️
+                 this.STATE.keyboardNavInProgress = false;
             }
-            // El reset de keyboardNavInProgress se hace en handleSlideChangeEnd (nav-base-details.js / nav-mouse-swipe.js)
+            
             return;
         }
     }
@@ -280,12 +283,34 @@ export function _handleFocusTrap(e, viewType) {
     if (viewType === 'detail' && detailContentLinks && nextGroup.length === detailContentLinks.length) {
         
         const lastIndex = this.STATE.lastDetailFocusIndex || 0;
-        let restoredElement = detailContentLinks[lastIndex];
-
+        // El índice guardado (lastDetailFocusIndex) es el índice en la lista general de enfocables.
+        // Necesitamos mapearlo al índice dentro de detailContentLinks.
+        let restoredElement = detailContentLinks[0]; // Fallback
+        
+        const restoredIndexInFullList = lastIndex;
+        
+        // El elemento de contenido es el que está después del botón volver fijo (si existe)
+        if (!isMobile) {
+            const volverElement = this.DOM.cardVolverFijaElemento;
+            const volverIndex = (volverElement && volverElement.classList.contains('visible')) ? 1 : 0;
+            const contentStartIndex = volverIndex; 
+            
+            if (restoredIndexInFullList >= contentStartIndex) {
+                 restoredElement = detailContentLinks[restoredIndexInFullList - contentStartIndex];
+            } else {
+                 restoredElement = detailContentLinks[0];
+            }
+            
+        } else {
+            // En móvil, detailContentLinks incluye todos los elementos.
+             if (restoredIndexInFullList > -1 && restoredIndexInFullList < detailContentLinks.length) {
+                 restoredElement = detailContentLinks[restoredIndexInFullList];
+             }
+        }
+        
         if (restoredElement) {
             elementToFocus = restoredElement;
         } else {
-            // Fallback al primer elemento
             elementToFocus = detailContentLinks[0];
         }
     }
