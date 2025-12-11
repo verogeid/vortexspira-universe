@@ -10,27 +10,19 @@ export function _handleDetailNavigation(key) {
     const swiper = app.STATE.detailCarouselInstance;
     if (!swiper) return;
 
-    // ⭐️ FIX CLAVE 1: Bloquear si ya hay una transición en curso (UNIFICADO) ⭐️
-    if (app.STATE.keyboardNavInProgress) {
-        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Transición en curso. Bloqueado.');
-        return;
-    }
+    // ⭐️ FIX CLAVE 1: Ya no necesitamos la bandera keyboardNavInProgress aquí, ya que el movimiento es síncrono.
+    // La bandera se gestionará en nav-keyboard-base.js para la rueda de ratón (que es asíncrona).
     
-    // ⭐️ Nuevo: Obtener todos los elementos enfocables (Element Index) ⭐️
     const focusableElements = nav_base_details._getFocusableDetailElements(app);
     const totalElements = focusableElements.length;
     if (totalElements === 0) return;
     
-    // ⭐️ Nuevo: Determinar el índice actual basado en el elemento activo ⭐️
-    let currentElement = document.activeElement;
-    let currentIndex = focusableElements.indexOf(currentElement);
+    // ⭐️ Nuevo: Determinar el índice actual basado en el índice guardado (que es el índice en la lista enfocable) ⭐️
+    let currentIndex = app.STATE.lastDetailFocusIndex || 0;
     
-    if (currentIndex === -1) {
-        // Si se perdió el foco, intentamos restaurar desde el índice guardado
-        currentIndex = app.STATE.lastDetailFocusIndex || 0;
-        if (currentIndex < 0 || currentIndex >= totalElements) {
-             currentIndex = 0;
-        }
+    // Validación de índice guardado
+    if (currentIndex < 0 || currentIndex >= totalElements) {
+         currentIndex = 0;
     }
 
     let newIndex = currentIndex;
@@ -81,13 +73,13 @@ export function _handleDetailNavigation(key) {
                     newIndex = currentIndex + 1;
                     debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Enter/Space: Avanzando al siguiente fragmento.');
                     if (newIndex >= totalElements) {
-                        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Enter/Space: Ya es el último slide. Retornando.');
+                        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Enter/Space: Ya es el último fragmento. Retornando.');
                         return; // Si es el último, no hacer nada.
                     }
                 }
             } else {
-                 debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Enter/Space: No hay contenido enfocable en el slide actual.');
-                 return; // No hay nada enfocable en el slide actual
+                 debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Enter/Space: No hay contenido enfocable en el índice actual.');
+                 return; 
             }
             break;
     }
