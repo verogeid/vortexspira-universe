@@ -36,10 +36,9 @@ class VortexSpiraApp {
             resizeObserver: null,    
             currentFocusIndex: 0,    
             initialRenderComplete: false, 
-            keyboardNavInProgress: false,
+            keyboardNavInProgress: false, // ⭐️ ESTADO ÚNICO DE BLOQUEO ⭐️
             activeCourseId: null, 
             lastDetailFocusIndex: 0, 
-            detailNavInProgress: false, // ⭐️ FIX CLAVE: Bandera para sincronizar el foco de detalle ⭐️
         };
         
         // ⭐️ Exposición temporal para onclick en HTML (patrón mixto) ⭐️

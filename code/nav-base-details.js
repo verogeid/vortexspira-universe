@@ -154,7 +154,7 @@ export function _handleActionRowClick(e) {
              // ⭐️ FIX CRÍTICO: Limpiar foco visual inmediatamente para dar feedback de que la acción se recibió ⭐️
              _clearAllFocusClasses(App.DOM.detalleTrack);
              
-             App.STATE.detailNavInProgress = true; // Bloquear teclado mientras Swiper mueve
+             App.STATE.keyboardNavInProgress = true; // ⭐️ USAR EL BLOQUEO UNIFICADO ⭐️
              swiper.slideTo(targetIndex, data.SWIPE_SLIDE_SPEED);
              debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, `SlideTo ejecutado.`);
              // El foco se actualizará en el evento 'slideChangeTransitionEnd'
@@ -173,8 +173,8 @@ export function _handleActionRowClick(e) {
 export function _handleSlideChangeEnd(swiper, appInstance) {
     debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 'Evento: slideChangeTransitionEnd capturado.');
     
-    // ⭐️ FIX CLAVE: Resetear la bandera de navegación en detalle para permitir la siguiente pulsación. ⭐️
-    appInstance.STATE.detailNavInProgress = false; 
+    // ⭐️ FIX CLAVE: Resetear la bandera de navegación UNIFICADA para permitir la siguiente pulsación. ⭐️
+    appInstance.STATE.keyboardNavInProgress = false; 
     
     _updateDetailFocusState(appInstance);
 }

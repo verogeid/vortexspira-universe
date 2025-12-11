@@ -112,6 +112,9 @@ function _handleGlobalWheel(e) {
     const isNavActive = this.DOM.vistaNav && this.DOM.vistaNav.classList.contains('active');
     const isDetailActive = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active');
     
+    // ⭐️ FIX: Si la navegación está en curso (teclado/rueda), salimos inmediatamente ⭐️
+    if (this.STATE.keyboardNavInProgress) return; 
+
     if (!isNavActive && !isDetailActive) return;
 
     // Solo actuamos si el evento se origina dentro de las vistas de carrusel móvil
@@ -127,6 +130,8 @@ function _handleGlobalWheel(e) {
             const key = e.deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
             debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Rueda de ratón capturada. Tecla simulada: ${key}.`);
 
+            // ⭐️ FIX: Bloquear y delegar el evento ⭐️
+            this.STATE.keyboardNavInProgress = true; 
 
             if (isNavActive) {
                 // Navegación de menú móvil (Foco secuencial)
@@ -135,6 +140,7 @@ function _handleGlobalWheel(e) {
                  // Navegación de detalle (Salto de slide)
                  nav_keyboard_details._handleDetailNavigation.call(this, key);
             }
+            // El reset de keyboardNavInProgress se hace en handleSlideChangeEnd (nav-base-details.js / nav-mouse-swipe.js)
             return;
         }
     }

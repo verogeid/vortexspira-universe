@@ -10,8 +10,8 @@ export function _handleDetailNavigation(key) {
     const swiper = app.STATE.detailCarouselInstance;
     if (!swiper) return;
 
-    // ⭐️ FIX CLAVE: Bloquear si ya hay una transición en curso ⭐️
-    if (app.STATE.detailNavInProgress) {
+    // ⭐️ FIX CLAVE: Bloquear si ya hay una transición en curso (USANDO BANDERA UNIFICADA) ⭐️
+    if (app.STATE.keyboardNavInProgress) {
         debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Transición en curso. Bloqueado.');
         return;
     }
@@ -71,16 +71,16 @@ export function _handleDetailNavigation(key) {
     if (newIndex !== currentIndex) {
         debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, `FORZANDO SLIDE. Nuevo Índice: ${newIndex}`);
         
-        // ⭐️ FIX CLAVE 1: Marcar la transición como activa ⭐️
-        app.STATE.detailNavInProgress = true; 
+        // ⭐️ FIX CLAVE 1: Marcar la transición como activa (UNIFICADO) ⭐️
+        app.STATE.keyboardNavInProgress = true; 
         
         // La clave es usar slideTo para forzar el snap.
         swiper.slideTo(newIndex, 300);
         
         // ⭐️ FIX CLAVE 2: Reset de seguridad (por si Swiper falla al disparar el evento) ⭐️
         setTimeout(() => {
-            if (app.STATE.detailNavInProgress) {
-                 app.STATE.detailNavInProgress = false;
+            if (app.STATE.keyboardNavInProgress) {
+                 app.STATE.keyboardNavInProgress = false;
                  debug.logWarn('nav_keyboard_details', 'Advertencia: Bloqueo de navegación de detalle reseteado por timeout de seguridad.');
             }
         }, 300 + 50); // Velocidad (300ms) + 50ms de margen
