@@ -2,6 +2,7 @@
 
 import * as nav_base_details from './nav-base-details.js'; 
 import * as debug from './debug.js'; 
+import * as data from './data.js'; // Necesario para data.SWIPE_SLIDE_SPEED
 
 export function _handleDetailNavigation(key) {
     // 'this' es la instancia de App
@@ -9,6 +10,12 @@ export function _handleDetailNavigation(key) {
     const swiper = app.STATE.detailCarouselInstance;
     if (!swiper) return;
 
+    // ⭐️ FIX CLAVE: Bloquear si ya hay una transición en curso ⭐️
+    if (app.STATE.detailNavInProgress) {
+        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Transición en curso. Bloqueado.');
+        return;
+    }
+    
     // ⭐️ FIX CLAVE: Usar el índice de foco guardado, que es síncrono. ⭐️
     let currentIndex = app.STATE.lastDetailFocusIndex; 
     let newIndex = currentIndex;
@@ -63,8 +70,21 @@ export function _handleDetailNavigation(key) {
 
     if (newIndex !== currentIndex) {
         debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, `FORZANDO SLIDE. Nuevo Índice: ${newIndex}`);
-        // La clave es usar slideTo para forzar el snap, lo cual llama a slideChangeTransitionEnd y _updateDetailFocusState.
+        
+        // ⭐️ FIX CLAVE 1: Marcar la transición como activa ⭐️
+        app.STATE.detailNavInProgress = true; 
+        
+        // La clave es usar slideTo para forzar el snap.
         swiper.slideTo(newIndex, 300);
+        
+        // ⭐️ FIX CLAVE 2: Reset de seguridad (por si Swiper falla al disparar el evento) ⭐️
+        setTimeout(() => {
+            if (app.STATE.detailNavInProgress) {
+                 app.STATE.detailNavInProgress = false;
+                 debug.logWarn('nav_keyboard_details', 'Advertencia: Bloqueo de navegación de detalle reseteado por timeout de seguridad.');
+            }
+        }, 300 + 50); // Velocidad (300ms) + 50ms de margen
+        
     } else {
         debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Índice sin cambios. No se llama a slideTo.');
     }

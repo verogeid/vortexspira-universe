@@ -37,8 +37,9 @@ class VortexSpiraApp {
             currentFocusIndex: 0,    
             initialRenderComplete: false, 
             keyboardNavInProgress: false,
-            activeCourseId: null, // ⭐️ NUEVO: Guarda el ID del curso activo para el resize ⭐️
-            lastDetailFocusIndex: 0, // ⭐️ AÑADIDO: Guarda el último índice de foco en Detalle ⭐️
+            activeCourseId: null, 
+            lastDetailFocusIndex: 0, 
+            detailNavInProgress: false, // ⭐️ FIX CLAVE: Bandera para sincronizar el foco de detalle ⭐️
         };
         
         // ⭐️ Exposición temporal para onclick en HTML (patrón mixto) ⭐️
@@ -226,7 +227,7 @@ class VortexSpiraApp {
         this.DOM.toast = document.getElementById('toast-notification');
         this.DOM.appContainer = document.getElementById('app-container');
         
-        // ⬇️ MODIFICACIÓN: Inicializar vistaNav si es posible (solo en caso de que init NO lo haga) ⬇️
+        // ⬇️ MODIFICACIÓN: Inicializar vistaNav de forma segura para Deep Link ⬇️
         const isDesktop = window.innerWidth > data.TABLET_LANDSCAPE_MAX_WIDTH
         const isTabletLandscape = window.innerWidth > data.TABLET_PORTRAIT_MAX_WIDTH && window.innerWidth <= data.TABLET_LANDSCAPE_MAX_WIDTH;
         const isTabletPortrait = window.innerWidth > data.MOBILE_MAX_WIDTH && window.innerWidth <= data.TABLET_PORTRAIT_MAX_WIDTH;

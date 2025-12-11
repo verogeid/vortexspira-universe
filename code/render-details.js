@@ -31,7 +31,7 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
         // ⭐️ CORRECCIÓN: Habilitar arrastre libre (freeMode) para permitir ver todos los elementos ⭐️
         freeMode: true, 
         freeModeMomentum: true,
-        freeModeSticky: true, // ⭐️ FIX CLAVE: Fuerza el snap a la posición de un slide al finalizar el arrastre/rueda ⭐️
+        freeModeSticky: true, // ⭐️ FIX CLAVE: Añadir snap al modo free (Harmoniza con menú) ⭐️
     };
 
     appInstance.STATE.detailCarouselInstance = new Swiper(document.querySelector(swiperId), swiperConfig);
@@ -250,9 +250,9 @@ export function _mostrarDetalle(cursoId) {
             const slide = e.currentTarget.closest('.swiper-slide');
             const targetIndex = swiper ? swiper.slides.indexOf(slide) : -1;
             
-            e.preventDefault(); // ⭐️ FIX CLAVE: Asegurar que el clic se procesa primero ⭐️
-            
             if (swiper && targetIndex > -1 && targetIndex !== swiper.activeIndex) {
+                // ⭐️ FIX 3: Prevenir el comportamiento nativo al llamar a slideTo ⭐️
+                e.preventDefault(); 
                 swiper.slideTo(targetIndex, 300); 
             } else {
                  // ⭐️ FIX CLAVE: Si ya es el slide activo, forzamos el foco nativo (sin scroll) y el refresh del blur/foco. ⭐️
