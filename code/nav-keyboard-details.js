@@ -10,11 +10,13 @@ export function _handleDetailNavigation(key) {
     const swiper = app.STATE.detailCarouselInstance;
     if (!swiper) return;
 
-    // La bandera se utiliza en nav-keyboard-base.js para el bloqueo de la rueda de ratón.
+    // ⭐️ FIX CLAVE 1: ELIMINAR EL BLOQUEO SÍNCRONO. La bandera solo se usa para la rueda de ratón en nav-keyboard-base.js ⭐️
+    /*
     if (app.STATE.keyboardNavInProgress) {
         debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Transición en curso (Bloqueo de Rueda de Ratón). Bloqueado.');
         return;
     }
+    */
     
     const focusableElements = nav_base_details._getFocusableDetailElements(app);
     const totalElements = focusableElements.length;
