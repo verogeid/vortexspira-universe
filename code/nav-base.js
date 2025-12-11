@@ -44,20 +44,18 @@ function _setupDetailFocusHandler() {
             // La lógica de blur/foco ya no necesita el focusedEl. La actualiza Swiper. 
             // ⭐️ FIX: Evitamos la llamada directa a _updateDetailFocusState para prevenir el error. ⭐️
             
-            const focusedIsContent = focusedEl.closest('.detail-text-fragment, .detail-action-item, .detail-title-slide, .card-volver-vertical, .card-breadcrumb-vertical');
+            const focusedIsContent = focusedEl.closest('.detail-text-fragment, .detail-action-item, .detail-title-slide, .card-volver-vertical, #card-volver-fija-elemento');
             
             if (focusedIsContent) {
-                // Si el elemento enfocado está dentro de un slide, el Swiper debe encargarse de deslizarlo a la vista
-                const slide = focusedIsContent.closest('.swiper-slide');
+                // Si el elemento enfocado es parte de la vista de detalle, actualizamos el estado de foco.
                 const swiper = this.STATE.detailCarouselInstance;
                 
-                if (swiper && slide) {
-                    const targetIndex = swiper.slides.indexOf(slide);
-                    if (targetIndex > -1 && targetIndex !== swiper.activeIndex) {
-                         // Solo deslizar, el evento 'slideChangeTransitionEnd' llamará a _updateDetailFocusState.
-                         swiper.slideTo(targetIndex, 300);
-                    }
+                if (swiper) {
+                    // Actualizamos el estado de foco/blur inmediatamente. El scroll lo maneja el foco nativo.
+                    nav_base_details._updateDetailFocusState(this);
                 }
+                
+                // ⭐️ ELIMINADO: Lógica swiper.slideTo para evitar la interrupción del scroll. ⭐️
             }
         }
     });
