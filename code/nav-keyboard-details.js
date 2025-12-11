@@ -22,15 +22,12 @@ export function _handleDetailNavigation(key) {
     if (totalElements === 0) return;
     
     // ⭐️ Nuevo: Determinar el índice actual basado en el elemento activo ⭐️
-    // Si el foco no está en un elemento enfocable, usamos el índice guardado como fallback.
     let currentElement = document.activeElement;
     let currentIndex = focusableElements.indexOf(currentElement);
     
     if (currentIndex === -1) {
-        // Usar el índice guardado (que es el índice en la lista enfocable, no el índice del slide)
+        // Si se perdió el foco, intentamos restaurar desde el índice guardado
         currentIndex = app.STATE.lastDetailFocusIndex || 0;
-        
-        // Fallback: Asegurarse de que el índice es válido si el foco se perdió
         if (currentIndex < 0 || currentIndex >= totalElements) {
              currentIndex = 0;
         }

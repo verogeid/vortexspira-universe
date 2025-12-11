@@ -250,14 +250,13 @@ export function _mostrarDetalle(cursoId) {
             const slide = e.currentTarget.closest('.swiper-slide');
             const targetIndex = swiper ? swiper.slides.indexOf(slide) : -1;
             
-            if (swiper && targetIndex > -1 && targetIndex !== swiper.activeIndex) {
-                // ⭐️ FIX 3: Prevenir el comportamiento nativo al llamar a slideTo ⭐️
+            if (swiper && targetIndex > -1) {
+                // ⭐️ FIX 3: Prevenir el comportamiento nativo al llamar a focus/slideTo ⭐️
                 e.preventDefault(); 
-                swiper.slideTo(targetIndex, 300); 
-            } else {
-                 // ⭐️ FIX CLAVE: Si ya es el slide activo, forzamos el foco nativo (sin scroll) y el refresh del blur/foco. ⭐️
-                 e.currentTarget.focus({ preventScroll: true });
-                 nav_base_details._updateDetailFocusState(appInstance);
+                
+                // Si ya estamos en el slide, forzamos el foco nativo (sin scroll) y el refresh del blur/foco. ⭐️
+                e.currentTarget.focus();
+                nav_base_details._updateDetailFocusState(appInstance);
             }
         });
         
@@ -279,6 +278,30 @@ export function _mostrarDetalle(cursoId) {
         appInstance.DOM.vistaDetalle.classList.add('active');
     }
     
+    // ⭐️ LÓGICA DE FOCO INICIAL Y RESET DE ESTADO ⭐️
+    const focusableElements = nav_base_details._getFocusableDetailElements(appInstance);
+    
+    if (focusableElements.length > 0) {
+        // 1. Resetear el lastDetailFocusIndex al primero (0) al entrar en detalle.
+        // Si no es la primera carga (resize, por ejemplo), usamos el guardado.
+        const initialFocusIndex = appInstance.STATE.lastDetailFocusIndex || 0;
+        let elementToFocus = focusableElements[initialFocusIndex];
+        
+        // Si no es un elemento focable válido (ej. si el índice guardado es para un elemento que ya no existe), forzamos el primero.
+        if (!elementToFocus || elementToFocus.tabIndex < 0) {
+             elementToFocus = focusableElements[0];
+             appInstance.STATE.lastDetailFocusIndex = 0;
+        }
+
+        // 2. Aplicar el foco nativo al elemento.
+        // Usamos focus() sin preventScroll para que Swiper, al tener freeMode, desplace la vista.
+        // El focusin handler en nav-base.js manejará el estado visual.
+        elementToFocus.focus();
+        
+        // 3. Forzar el estado visual inicial (blur/sharpness)
+        nav_base_details._updateDetailFocusState(appInstance);
+    }
+    
     if (!isMobile) { 
         // DESKTOP/TABLET Sidebar UI
         // La lógica de verificación del DOM se ha fortalecido aquí.
@@ -297,9 +320,6 @@ export function _mostrarDetalle(cursoId) {
             appInstance.DOM.cardVolverFijaElemento.tabIndex = 0;
         }
         
-        // Ejecutar el enfoque/blur después de la inicialización de Swiper
-        nav_base_details._updateDetailFocusState(appInstance);
-        
     } else { 
         // MÓVIL
         if (appInstance.DOM.infoAdicional) {
@@ -309,8 +329,6 @@ export function _mostrarDetalle(cursoId) {
             appInstance.DOM.cardVolverFija.classList.remove('visible');
         }
         
-        // Ejecutar el enfoque/blur después de la inicialización de Swiper
-        nav_base_details._updateDetailFocusState(appInstance);
     }
 };
 
