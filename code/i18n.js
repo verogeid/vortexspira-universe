@@ -5,11 +5,12 @@ import * as data from './data.js';
 
 export const STRINGS = {
     'es': {
-        'version': '1.0.92',
+        'version': '1.0.93',
 
         // Meta y Títulos
         'pageTitle': 'VortexSpira® Universe: Selector de Cursos',
-        'headerTitle': 'VortexSpira® Universe: Tu Mentor de Audio-Aprendizaje Técnico',
+        'headerTitle': 'VortexSpira® Universe:',
+        'headerSubtitle': 'Audio-Aprendizaje Técnico Inmersivo',
 
         // Botones y Controles
         'btnBack': '↩ Volver', 
@@ -77,7 +78,16 @@ export function applyStrings(appInstance) {
     for (const id in elementsById) {
         const el = document.getElementById(id);
         if (el) {
-            el.innerHTML = getString(elementsById[id]);
+            let content = getString(elementsById[id]);
+            
+            // ⭐️ FIX CLAVE: Lógica de subtítulo para el H1 ⭐️
+            if (id === 'main-header-title') {
+                const subtitle = getString('headerSubtitle'); // Obtenemos el subtítulo
+                content = `${content}<small>${subtitle}</small>`;
+            }
+            // ⭐️ FIN FIX CLAVE ⭐️
+
+            el.innerHTML = content;
         } else {
             debug.logWarn('i18n', `Elemento no encontrado por ID: #${id}`);
         }
