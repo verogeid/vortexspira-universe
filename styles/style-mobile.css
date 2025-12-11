@@ -14,6 +14,10 @@
         position: fixed; 
     }
 
+    #main-header-subtitle {
+        display: none; 
+    }
+
     /* 2. Layout fluido */
     #app-container {
         /* El min-height debe respetar el footer. Lo gestionamos en el swipe container. */

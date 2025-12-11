@@ -5,11 +5,11 @@ import * as data from './data.js';
 
 export const STRINGS = {
     'es': {
-        'version': '1.0.94',
+        'version': '1.0.95',
 
         // Meta y Títulos
         'pageTitle': 'VortexSpira® Universe: Selector de Cursos',
-        'headerTitle': 'VortexSpira® Universe:',
+        'headerTitle': 'VortexSpira® Universe',
         'headerSubtitle': 'Audio-Aprendizaje Técnico Inmersivo',
 
         // Botones y Controles
@@ -83,7 +83,7 @@ export function applyStrings(appInstance) {
             // ⭐️ FIX CLAVE: Lógica de subtítulo para el H1 ⭐️
             if (id === 'main-header-title') {
                 const subtitle = getString('headerSubtitle'); // Obtenemos el subtítulo
-                content = `${content}<small>${subtitle}</small>`;
+                content = `${content}<small id="main-header-subtitle">${subtitle}</small>`;
             }
             // ⭐️ FIN FIX CLAVE ⭐️
 

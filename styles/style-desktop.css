@@ -15,6 +15,11 @@
     :root {
         --card-height-calc: calc( (100% - (2 * var(--card-gap))) / 3 );
     }
+
+    #main-header-subtitle {
+        display: inline-block;
+    }
+
     #nav-swiper {
         height: 100%; width: 100%; overflow: hidden; 
         position: relative; z-index: 1; touch-action: pan-y;
