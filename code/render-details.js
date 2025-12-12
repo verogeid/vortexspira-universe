@@ -245,9 +245,9 @@ export function _mostrarDetalle(cursoId) {
     let initialSlideIndex = 0;
     if (focusableElements.length > 0) {
         const elementToFocus = focusableElements[initialFocusIndex];
-        const slide = elementToFocus.closest('.swiper-slide');
+        const slide = elementToFocus ? elementToFocus.closest('.swiper-slide') : null;
         const swiperSlides = Array.from(appInstance.DOM.detalleTrack.querySelectorAll('.swiper-slide'));
-        initialSlideIndex = swiperSlides.indexOf(slide);
+        initialSlideIndex = slide ? swiperSlides.indexOf(slide) : 0;
         if(initialSlideIndex === -1) initialSlideIndex = 0;
     }
     
@@ -268,8 +268,8 @@ export function _mostrarDetalle(cursoId) {
                 e.preventDefault(); 
                 swiper.slideTo(targetIndex, 300); 
             } else {
-                 // Si ya es el slide activo, forzamos el foco nativo (sin scroll) y el refresh del blur/foco.
-                 e.currentTarget.focus({ preventScroll: true });
+                 // ⭐️ FIX CLAVE: Si ya es el slide activo, forzamos el foco nativo (CON SCROLL) y el refresh del blur/foco. ⭐️
+                 e.currentTarget.focus(); // <-- REMOVED { preventScroll: true }
                  nav_base_details._updateDetailFocusState(appInstance);
             }
         });

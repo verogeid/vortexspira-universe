@@ -22,7 +22,7 @@ export function _getFocusableDetailElements(appInstance) {
     // Obtener todos los elementos enfocables por Swiper (contenidos reales)
     const slideContents = Array.from(appInstance.DOM.detalleTrack.querySelectorAll('.swiper-slide')).map(slide => 
         // Se busca el elemento que tenga tabIndex="0" para incluir texto, acciones y volver vertical (en móvil)
-        slide.querySelector('.detail-text-fragment[tabindex="0"], .detail-action-item[tabindex="0"], .detail-title-slide + .detail-text-fragment[tabindex="0"], .card-volver-vertical[tabindex="0"]')
+        slide.querySelector('.detail-text-fragment[tabindex="0"], .detail-action-item[tabindex="0"], .detail-title-slide + .detail-text-fragment[tabindex="0"], .card-volver-vertical[tabIndex="0"]')
     ).filter(el => el && el.tabIndex !== -1); 
 
     let elements = [];

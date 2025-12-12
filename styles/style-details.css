@@ -143,14 +143,13 @@
 
 /* --- MÁSCARAS (Controladas por las clases binarias mode-focus-text/actions) --- */
 /* ⭐️ FIX CLAVE: ELIMINACIÓN DE REGLAS BASADAS EN MÁSCARAS BINARIAS ⭐️ */
+/* Se mantiene solo la lógica de proximidad */
 
 .mode-focus-text #detalle-bloque-acciones {
-    /* Las reglas de mask-image se han eliminado */
 }
 
 /* Foco en Acciones -> Desenfoque de TEXTO */
 .mode-focus-actions .detail-text-fragment {
-    /* Las reglas de mask-image se han eliminado */
 }
 .mode-focus-actions #detalle-bloque-acciones { 
     filter: none; opacity: 1; -webkit-mask-image: none; mask-image: none; 

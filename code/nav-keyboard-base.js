@@ -106,14 +106,15 @@ function _setupWheelListener() {
  */
 function _handleGlobalWheel(e) {
     // 'this' es la instancia de App
+    const app = this;
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
     if (!isMobile) return; 
 
-    const isNavActive = this.DOM.vistaNav && this.DOM.vistaNav.classList.contains('active');
-    const isDetailActive = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active');
+    const isNavActive = app.DOM.vistaNav && app.DOM.vistaNav.classList.contains('active');
+    const isDetailActive = app.DOM.vistaDetalle && app.DOM.vistaDetalle.classList.contains('active');
     
     // ⭐️ FIX CLAVE: Si la navegación está en curso, salimos inmediatamente. ⭐️
-    if (this.STATE.keyboardNavInProgress) return; 
+    if (app.STATE.keyboardNavInProgress) return; 
 
     if (!isNavActive && !isDetailActive) return;
 
@@ -131,17 +132,16 @@ function _handleGlobalWheel(e) {
             debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Rueda de ratón capturada. Tecla simulada: ${key}.`);
 
             // ⭐️ FIX: Bloquear y delegar el evento ⭐️
-            this.STATE.keyboardNavInProgress = true; 
+            app.STATE.keyboardNavInProgress = true; 
 
             if (isNavActive) {
-                // Navegación de menú móvil (Foco secuencial)
-                nav_keyboard_swipe._handleSwipeNavigation(key, this);
-                // El reset de keyboardNavInProgress ocurre en nav-mouse-swipe.js (Asíncrono)
+                // Navegación de menú móvil (Asíncrono - se resetea en nav-mouse-swipe.js)
+                nav_keyboard_swipe._handleSwipeNavigation(key, app);
             } else if (isDetailActive) {
-                 // Navegación de detalle (Foco secuencial, síncrono)
-                 nav_keyboard_details._handleDetailNavigation.call(this, key);
+                 // Navegación de detalle (Síncrono - se resetea aquí inmediatamente)
+                 nav_keyboard_details._handleDetailNavigation.call(app, key);
                  // ⭐️ FIX CLAVE: Como la navegación de detalle es SÍNCRONA, reseteamos el bloqueo inmediatamente. ⭐️
-                 this.STATE.keyboardNavInProgress = false;
+                 app.STATE.keyboardNavInProgress = false;
             }
             
             return;
