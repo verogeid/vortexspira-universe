@@ -10,13 +10,8 @@ export function _handleDetailNavigation(key) {
     const swiper = app.STATE.detailCarouselInstance;
     if (!swiper) return;
 
-    // ⭐️ FIX CLAVE 1: ELIMINAR EL BLOQUEO SÍNCRONO. La bandera solo se gestiona en nav-keyboard-base.js ⭐️
-    /*
-    if (app.STATE.keyboardNavInProgress) {
-        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Transición en curso (Bloqueo de Rueda de Ratón). Bloqueado.');
-        return;
-    }
-    */
+    // ⭐️ El bloqueo de la bandera fue eliminado aquí ya que la navegación es síncrona. ⭐️
+    // La bandera solo se verifica y se gestiona en nav-keyboard-base.js para la rueda de ratón.
     
     const focusableElements = nav_base_details._getFocusableDetailElements(app);
     const totalElements = focusableElements.length;
