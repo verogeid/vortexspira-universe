@@ -260,17 +260,38 @@ export function _mostrarDetalle(cursoId) {
         // Fix A: Manually handle click/focus on fragments (1st click focus)
         fragment.addEventListener('click', (e) => {
             const swiper = appInstance.STATE.detailCarouselInstance;
-            const slide = e.currentTarget.closest('.swiper-slide');
-            const targetIndex = swiper ? swiper.slides.indexOf(slide) : -1;
+            const clickedElement = e.currentTarget;
+            const slide = clickedElement.closest('.swiper-slide');
+            const targetSlideIndex = swiper ? swiper.slides.indexOf(slide) : -1;
             
-            if (swiper && targetIndex > -1 && targetIndex !== swiper.activeIndex) {
-                // Si el slide no está activo, deslizamos a él.
-                e.preventDefault(); 
-                swiper.slideTo(targetIndex, 300); 
+            e.preventDefault(); 
+
+            // Find index within the master focusable list
+            const focusableElements = nav_base_details._getFocusableDetailElements(appInstance);
+            const targetElementIndex = focusableElements.indexOf(clickedElement);
+
+            if (targetElementIndex === -1) {
+                debug.logWarn('render_details', 'Clicked fragment not found in focusable list, ignoring click action.');
+                return;
+            }
+
+            if (swiper && targetSlideIndex > -1 && targetSlideIndex !== swiper.activeIndex) {
+                // 1. Element is in a different slide. Move to slide.
+                // Actualizamos el estado antes del slide para que el evento slideChangeTransitionEnd sepa dónde poner el foco.
+                appInstance.STATE.lastDetailFocusIndex = targetElementIndex;
+                swiper.slideTo(targetSlideIndex, 300); 
+                
             } else {
-                 // ⭐️ FIX CLAVE: Si ya es el slide activo, forzamos el foco nativo (CON SCROLL) y el refresh del blur/foco. ⭐️
-                 e.currentTarget.focus(); // <-- REMOVED { preventScroll: true }
-                 nav_base_details._updateDetailFocusState(appInstance);
+                // 2. Element is in the active slide or fixed sidebar. Focus directly.
+                // Esto es lo que resuelve el problema de las teclas de cursor. Lo aplicamos aquí también para el clic.
+                
+                appInstance.STATE.lastDetailFocusIndex = targetElementIndex;
+                
+                // a) Aplicar foco nativo (PERMITIENDO SCROLL COMPLETO)
+                clickedElement.focus(); 
+                
+                // b) Forzar actualización visual del blur
+                nav_base_details._updateDetailFocusState(appInstance);
             }
         });
         
@@ -332,5 +353,4 @@ export function _mostrarDetalle(cursoId) {
         nav_base_details._updateDetailFocusState(appInstance);
     }
 };
-
 // --- code/render-details.js ---
