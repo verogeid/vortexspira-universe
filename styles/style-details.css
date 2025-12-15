@@ -64,14 +64,14 @@
     filter: none !important; 
     opacity: 1 !important;
     
-    /* ⭐️ FIX CLAVE 1: Borde izquierdo nítido (color deshabilitado) ⭐️ */
-    border-left: 4px solid var(--color-card-border-disabled) !important;
+    /* ⭐️ CORRECCIÓN CLAVE: Usar var(--color-text) para un borde nítido (el mismo color del texto y del foco de botón deshabilitado) ⭐️ */
+    border-left: 4px solid var(--color-text) !important;
     
     /* ⭐️ FIX CLAVE 2: Sombra direccional a la izquierda (Ajuste fino) ⭐️ */
     box-shadow: 
         -5px 0 10px -5px var(--color-shadow-disabled); /* Sombra estricta a la izquierda */
         
-    /* ⭐️ CORRECCIÓN CLAVE: MANTENER el color del texto original y asegurar nitidez ⭐️ */
+    /* Mantenemos el color del texto original */
     color: var(--color-text) !important; 
     
     background-color: transparent; 
@@ -92,7 +92,6 @@
     box-shadow: 
         -5px 0 10px -5px var(--color-shadow-disabled); 
         
-    /* ⭐️ CORRECCIÓN CLAVE: MANTENER el color del texto original y asegurar nitidez ⭐️ */
     color: var(--color-text) !important; 
 }
 
@@ -112,7 +111,6 @@
     box-shadow: none !important;
     filter: none !important; 
     opacity: 1 !important; 
-    /* CORRECCIÓN: Permitir herencia (mantiene color de texto) */
     color: inherit; 
 }
 .detail-action-item:hover { /* ⭐️ CORRECCIÓN: Hover de la fila de acción (anula blur siempre) ⭐️ */
@@ -121,7 +119,6 @@
     box-shadow: none !important;
     filter: none !important; /* Asegura la nitidez en hover */
     opacity: 1 !important; /* Asegura la nitidez en hover */
-    /* CORRECCIÓN: Permitir herencia (mantiene color de texto) */
     color: inherit; 
 }
 
