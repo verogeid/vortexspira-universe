@@ -57,7 +57,9 @@ export function injectHeaderLogo() {
     document.head.appendChild(faviconLink);
 
     const header = document.getElementById('app-header');
-    if (header) {
+    const wrapper = document.getElementById('header-content-wrapper'); // ⭐️ NUEVO: Capturar el wrapper ⭐️
+
+    if (header && wrapper) {
         const logoSVG = createVortexSpiraSVG(PRIMARY_COLOR, SECONDARY_COLOR, 'header-logo');
         const h1 = header.querySelector('h1');
 
@@ -69,14 +71,14 @@ export function injectHeaderLogo() {
         if (h1) {
             h1.insertBefore(svgElement, h1.firstChild);
             
-            // ⭐️ FIX CLAVE 1: Mover la inyección del SVG de Obras fuera del H1 ⭐️
+            // ⭐️ FIX CLAVE 1: Inyectar el SVG de Obras en el Wrapper ⭐️
             if (!debug.IS_PRODUCTION) {
                 // Crear el elemento que contendrá el SVG de Obras
                 const obrasSpan = document.createElement('span');
                 obrasSpan.className = 'icon-obras-header';
                 
-                // ✅ NUEVO: Insertar el obrasSpan ANTES del H1 en el HEADER
-                header.insertBefore(obrasSpan, h1);
+                // ✅ NUEVO: Insertar el obrasSpan ANTES del H1 en el WRAPPER
+                wrapper.insertBefore(obrasSpan, h1);
             }
         }
         

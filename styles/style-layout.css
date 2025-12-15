@@ -14,23 +14,35 @@ body {
 }
 
 header {
-    /* ⭐️ CORRECCIÓN CLAVE: position: fixed para asegurar que siempre está arriba ⭐️ */
+    /* ⭐️ CORRECCIÓN CLAVE: Restauramos la posición fija y la altura ⭐️ */
     position: fixed; 
-    top: 0; width: 100%; padding: 10px;
+    top: 0; width: 100%; 
     text-align: center; background: var(--color-header-bg);
     color: var(--color-header-text); z-index: 100; box-sizing: border-box;
     height: var(--header-height);
+    
+    /* El header YA NO GESTIONA FLEX. Ahora lo hace el WRAPPER. */
+    display: block; 
+    padding: 0; /* Quitamos el padding del header y lo movemos al wrapper */
+}
 
-    /* ⭐️ CORRECCIÓN: Usar space-between para empujar el Icono (izq) y el Botón (der) a los extremos ⭐️ */
+/* ⭐️ NUEVO: Contenedor Wrapper para Flex y Posicionamiento ⭐️ */
+#header-content-wrapper {
+    position: relative; /* Contexto para el h1 absoluto */
+    width: 100%;
+    height: 100%;
+    
+    /* Aplicamos los estilos de Flex y Espacio aquí */
     display: flex;
     align-items: center;
     justify-content: space-between; 
     gap: 8px; 
-    padding-left: 15px; 
-    padding-right: 15px; 
+    padding: 10px 15px; /* Restauramos el padding horizontal y vertical */
+    box-sizing: border-box;
 }
+
 header h1 { 
-    /* ⭐️ CORRECCIÓN CLAVE: Posicionamiento absoluto para centrado del título ⭐️ */
+    /* ⭐️ Posicionamiento absoluto para centrado del título (respecto al WRAPPER relativo) ⭐️ */
     position: absolute; 
     left: 50%; 
     transform: translateX(-50%); 
@@ -39,6 +51,7 @@ header h1 {
     display: flex;
     align-items: center;
     justify-content: center; 
+    flex-wrap: wrap; /* Permite que el subtítulo salte de línea */
     
     /* ⭐️ CORRECCIÓN: Usar una fuente mínima más pequeña y centrar el contenido ⭐️ */
     font-size: clamp(1.2rem, 2.8vw, 2.2rem); 
@@ -48,10 +61,19 @@ header h1 {
     
     /* Para evitar solapamiento con los elementos de los extremos */
     max-width: 60%;
-    white-space: nowrap; 
+    white-space: normal; /* Permitir salto de línea para el subtítulo */
     text-overflow: ellipsis; 
     overflow: hidden; 
     z-index: 99; 
+}
+
+/* ⭐️ CORRECCIÓN SUBTÍTULO: Debe ocupar toda la línea dentro del h1 (Soluciona desborde) ⭐️ */
+#main-header-title small {
+    display: block; 
+    width: 100%; 
+    text-align: center;
+    font-size: 0.5em; /* Más pequeño relativo al título */
+    opacity: 0.8;
 }
 
 /* ⭐️ AÑADIDO: Asegurar que el SVG del logo sea fluido en el header ⭐️ */
@@ -78,8 +100,8 @@ header h1 svg {
     mask-size: contain;
     flex-shrink: 0;
     margin-right: 8px;
-    /* Se posiciona a la izquierda del h1 en data.js */
-    z-index: 101; /* Asegura que esté por encima del h1 */
+    /* ⭐️ Es un elemento flex, alineado a la izquierda por space-between ⭐️ */
+    z-index: 101; 
 }
 
 /* ⭐️ NUEVO: Clase para el icono de Obras en las tarjetas ⭐️ */
@@ -119,16 +141,16 @@ header h1 svg {
 
 /* ⭐️ FIX BOTÓN DE ACCESIBILIDAD (Engranaje) ⭐️ */
 #btn-config-accesibilidad {
-    /* El justify-content: space-between lo posiciona en el extremo derecho */
-    position: static; /* Quitar el absolute */
+    /* Es un elemento flex, alineado a la derecha por space-between */
+    position: static; 
     border: none; 
-    background: transparent; /* Fondo transparente */
+    background: transparent; 
     color: var(--color-header-text); 
     font-size: 1.5rem;
     padding: 5px; 
     flex-shrink: 0;
     line-height: 1; 
-    z-index: 101; /* Asegura que esté por encima del h1 */
+    z-index: 101; 
 }
 
 
