@@ -41,7 +41,12 @@ header h1 svg {
     flex-shrink: 0; 
 }
 
-
+header button #btn-config-accesibilidad {
+    position: absolute; right: 15px; border: none; background: none; 
+    cursor: pointer; color: var(--color-header-text); 
+    font-size: 1.5rem; padding: 5px; 
+    display: flex; align-items: center; justify-content: center;
+}
 /* GRID RESPONSIVE */
 
 /* ⭐️ REGLA GENERAL PARA COLUMNAS ⭐️ */

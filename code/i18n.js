@@ -5,7 +5,7 @@ import * as data from './data.js';
 
 export const STRINGS = {
     'es': {
-        'version': '1.1.04',
+        'version': '1.1.05',
 
         // Meta y Títulos
         'pageTitle': 'VortexSpira® Universe: Selector de Cursos',
@@ -67,6 +67,7 @@ export function applyStrings(appInstance) {
 
     const elementsById = {
         'main-header-title': 'headerTitle',
+        'btn-config-accesibilidad': data.LOGO_A11Y,
         'btn-volver-navegacion': 'btnBack',
         'info-adicional-titulo-ayuda': 'helpTitle',
         'info-adicional-ayuda-gira': 'helpRotate',
