@@ -14,13 +14,16 @@ body {
 }
 
 header {
-    /* ⭐️ CORRECCIÓN CLAVE: position: relative para que el h1 se posicione respecto a él ⭐️ */
-    position: relative; 
+    /* ⭐️ CORRECCIÓN CLAVE: position: fixed para asegurar que siempre está arriba ⭐️ */
+    position: fixed; 
     top: 0; width: 100%; padding: 10px;
     text-align: center; background: var(--color-header-bg);
     color: var(--color-header-text); z-index: 100; box-sizing: border-box;
     height: var(--header-height);
     
+    /* Añadimos position: relative aquí para que el H1 pueda usar position: absolute */
+    position: relative; 
+
     /* ⭐️ CORRECCIÓN: Usar space-between para empujar el Icono (izq) y el Botón (der) a los extremos ⭐️ */
     display: flex;
     align-items: center;
