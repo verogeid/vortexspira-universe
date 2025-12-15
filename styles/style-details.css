@@ -40,12 +40,10 @@
     padding: 10px; 
     border-radius: 4px;
     
-    border-bottom-color: transparent; 
-    border-bottom-style: solid;
-    border-bottom-width: 2px;
+    border: none;
     
     /* ⭐️ Borde izquierdo (por defecto transparente) ⭐️ */
-    border-left: 4px solid transparent; 
+    border-left: 2px solid transparent; 
     padding-left: 6px; 
     
     transition: all 0.2s ease, filter 0.5s ease;
@@ -65,7 +63,7 @@
     opacity: 1 !important;
     
     /* ⭐️ CORRECCIÓN CLAVE: Usar var(--color-text) para un borde nítido (el mismo color del texto y del foco de botón deshabilitado) ⭐️ */
-    border-left: 4px solid var(--color-text) !important;
+    border-left: 2px solid var(--color-text) !important;
     
     /* ⭐️ FIX CLAVE 2: Sombra direccional a la izquierda (Ajuste fino) ⭐️ */
     box-shadow: 

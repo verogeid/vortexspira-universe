@@ -20,9 +20,6 @@ header {
     text-align: center; background: var(--color-header-bg);
     color: var(--color-header-text); z-index: 100; box-sizing: border-box;
     height: var(--header-height);
-    
-    /* Añadimos position: relative aquí para que el H1 pueda usar position: absolute */
-    position: relative; 
 
     /* ⭐️ CORRECCIÓN: Usar space-between para empujar el Icono (izq) y el Botón (der) a los extremos ⭐️ */
     display: flex;
