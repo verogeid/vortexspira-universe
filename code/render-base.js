@@ -250,8 +250,10 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
     // LÓGICA DE ICONOS RESTAURADA
     if (tipo === 'categoria') {
         if (!estaActivo) {
-            // FIX ICONO: Usar LOGO_DISABLED para categorías deshabilitadas
-            displayTitle = data.LOGO_DISABLED + ' ' + displayTitle; 
+            // ⭐️ CORRECCIÓN CLAVE: Usar el span SVG para categorías deshabilitadas ⭐️
+            const svgSpan = '<span class="icon-disabled-card"></span>';
+            displayTitle = svgSpan + ' ' + displayTitle;
+            
         } else {
             displayTitle = data.LOGO_CARPETA + ' ' + displayTitle;
         }

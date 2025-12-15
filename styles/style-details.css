@@ -71,6 +71,7 @@
     box-shadow: 
         -5px 0 10px -5px var(--color-shadow-disabled); /* Sombra estricta a la izquierda */
         
+    /* ⭐️ CORRECCIÓN CLAVE: MANTENER el color del texto original y asegurar nitidez ⭐️ */
     color: var(--color-text) !important; 
     
     background-color: transparent; 
@@ -90,6 +91,9 @@
     /* ⭐️ FIX CLAVE 3: Sombra direccional a la izquierda en hover ⭐️ */
     box-shadow: 
         -5px 0 10px -5px var(--color-shadow-disabled); 
+        
+    /* ⭐️ CORRECCIÓN CLAVE: MANTENER el color del texto original y asegurar nitidez ⭐️ */
+    color: var(--color-text) !important; 
 }
 
 /* 3. EFECTO BLUR CON GRADIENTE DE PROXIMIDAD */
@@ -108,6 +112,8 @@
     box-shadow: none !important;
     filter: none !important; 
     opacity: 1 !important; 
+    /* CORRECCIÓN: Permitir herencia (mantiene color de texto) */
+    color: inherit; 
 }
 .detail-action-item:hover { /* ⭐️ CORRECCIÓN: Hover de la fila de acción (anula blur siempre) ⭐️ */
     outline: none !important;
@@ -115,6 +121,8 @@
     box-shadow: none !important;
     filter: none !important; /* Asegura la nitidez en hover */
     opacity: 1 !important; /* Asegura la nitidez en hover */
+    /* CORRECCIÓN: Permitir herencia (mantiene color de texto) */
+    color: inherit; 
 }
 
 
@@ -183,7 +191,8 @@
 /* Texto de la acción (Izquierda) */
 .detail-action-text {
     font-size: 1rem; font-weight: 500; 
-    color: var(--color-text); /* ⭐️ FIJO: Nunca cambia de color ⭐️ */
+    /* ⭐️ CORRECCIÓN: Ahora hereda el color del padre (detail-action-item) ⭐️ */
+    color: inherit; 
     text-align: left; margin-right: 15px; flex-grow: 1;
 }
 

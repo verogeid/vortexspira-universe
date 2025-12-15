@@ -6,7 +6,7 @@ export const LOGO_CARPETA = '📂';
 export const LOGO_CURSO = '📚';
 export const LOGO_VOLVER = '↩';
 export const LOGO_BUY = '🛒';
-export const LOGO_DISABLED = '🔒​'; //'💤​'; //'🚫';
+export const LOGO_DISABLED = '🔒​';
 export const LOGO_A11Y = '🌐';
 
 export const PRIMARY_COLOR = '#999';
@@ -69,12 +69,14 @@ export function injectHeaderLogo() {
         if (h1) {
             h1.insertBefore(svgElement, h1.firstChild);
             
-            // ⭐️ FIX CLAVE 1: Inserción del SVG de Obras (máscara CSS) ⭐️
+            // ⭐️ FIX CLAVE 1: Mover la inyección del SVG de Obras fuera del H1 ⭐️
             if (!debug.IS_PRODUCTION) {
                 // Crear el elemento que contendrá el SVG de Obras
                 const obrasSpan = document.createElement('span');
                 obrasSpan.className = 'icon-obras-header';
-                h1.insertBefore(obrasSpan, h1.firstChild);
+                
+                // ✅ NUEVO: Insertar el obrasSpan ANTES del H1 en el HEADER
+                header.insertBefore(obrasSpan, h1);
             }
         }
         
