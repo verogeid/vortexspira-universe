@@ -91,9 +91,6 @@ header h1 svg {
     padding: 5px; 
     flex-shrink: 0;
     line-height: 1; 
-    
-    /* El emoji no debe estar envuelto por el tag <button> en el HTML, 
-       pero si lo está, estos estilos corrigen el layout. */
 }
 
 
