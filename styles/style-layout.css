@@ -51,8 +51,7 @@ header h1 {
     display: flex;
     align-items: center;
     justify-content: center; 
-    /* ⭐️ CORRECCIÓN: Mantiene título y subtítulo en línea ⭐️ */
-    flex-wrap: nowrap; 
+    flex-wrap: nowrap; /* Mantiene título y subtítulo en línea */
     
     /* ⭐️ CORRECCIÓN: Usar una fuente mínima más pequeña y centrar el contenido ⭐️ */
     font-size: clamp(1.2rem, 2.8vw, 2.2rem); 
