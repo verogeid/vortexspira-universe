@@ -14,7 +14,7 @@ body {
 }
 
 header {
-    /* ⭐️ CORRECCIÓN CLAVE: Restauramos la posición fija y la altura ⭐️ */
+    /* ⭐️ CORRECCIÓN CLAVE: position: fixed para asegurar que siempre está arriba ⭐️ */
     position: fixed; 
     top: 0; width: 100%; 
     text-align: center; background: var(--color-header-bg);
@@ -51,7 +51,8 @@ header h1 {
     display: flex;
     align-items: center;
     justify-content: center; 
-    flex-wrap: wrap; /* Permite que el subtítulo salte de línea */
+    /* ⭐️ CORRECCIÓN: Revertir a nowrap para que el subtítulo esté a la derecha del título ⭐️ */
+    flex-wrap: nowrap; 
     
     /* ⭐️ CORRECCIÓN: Usar una fuente mínima más pequeña y centrar el contenido ⭐️ */
     font-size: clamp(1.2rem, 2.8vw, 2.2rem); 
@@ -60,20 +61,31 @@ header h1 {
     flex-grow: 0; 
     
     /* Para evitar solapamiento con los elementos de los extremos */
-    max-width: 60%;
-    white-space: normal; /* Permitir salto de línea para el subtítulo */
+    /* ⭐️ CORRECCIÓN: Aumentar el max-width para dar más espacio y evitar el desborde ⭐️ */
+    max-width: 75%;
+    /* ⭐️ Aseguramos el flujo inline (o trunca el título) ⭐️ */
+    white-space: nowrap; 
     text-overflow: ellipsis; 
     overflow: hidden; 
     z-index: 99; 
 }
 
-/* ⭐️ CORRECCIÓN SUBTÍTULO: Debe ocupar toda la línea dentro del h1 (Soluciona desborde) ⭐️ */
+/* ⭐️ CORRECCIÓN SUBTÍTULO: Debe ser inline-block para aparecer a la derecha del título ⭐️ */
 #main-header-title small {
-    display: block; 
-    width: 100%; 
-    text-align: center;
-    font-size: 0.5em; /* Más pequeño relativo al título */
+    display: inline-block; 
+    width: auto; 
+    text-align: left;
+    
+    /* Ajustar el tamaño para que sea un subtítulo */
+    font-size: 0.6em; 
     opacity: 0.8;
+    vertical-align: top;
+    margin-left: 8px;
+    
+    /* Reglas para asegurar que trunca si el h1 es muy estrecho */
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 /* ⭐️ AÑADIDO: Asegurar que el SVG del logo sea fluido en el header ⭐️ */
