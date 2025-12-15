@@ -67,7 +67,6 @@ export function applyStrings(appInstance) {
 
     const elementsById = {
         'main-header-title': 'headerTitle',
-        'btn-config-accesibilidad': data.LOGO_A11Y,
         'btn-volver-navegacion': 'btnBack',
         'info-adicional-titulo-ayuda': 'helpTitle',
         'info-adicional-ayuda-gira': 'helpRotate',
