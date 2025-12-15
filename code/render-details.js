@@ -283,14 +283,13 @@ export function _mostrarDetalle(cursoId) {
                 
             } else {
                 // 2. Element is in the active slide or fixed sidebar. Focus directly.
-                // Esto es lo que resuelve el problema de las teclas de cursor. Lo aplicamos aquí también para el clic.
                 
                 appInstance.STATE.lastDetailFocusIndex = targetElementIndex;
                 
-                // a) Aplicar foco nativo (PERMITIENDO SCROLL COMPLETO)
+                // ⭐️ FIX CLAVE: Aplicar foco nativo (PERMITIENDO SCROLL COMPLETO) ⭐️
                 clickedElement.focus(); 
                 
-                // b) Forzar actualización visual del blur
+                // Forzar actualización visual del blur
                 nav_base_details._updateDetailFocusState(appInstance);
             }
         });
