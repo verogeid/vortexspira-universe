@@ -35,6 +35,7 @@
         width: 100%; position: relative; 
         height: auto !important; overflow: visible !important;
         display: block; 
+        flex-grow: 1; /* ⭐️ CORRECCIÓN CLAVE: Ocupa el espacio vertical restante para evitar el colapso ⭐️ */
     }
     
     /* Ocultar vistas inactivas */
