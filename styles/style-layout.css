@@ -50,7 +50,8 @@ header h1 svg {
     display: inline-block;
     width: 25px; 
     height: 25px;
-    background-color: currentColor; /* Usa el color del texto (var(--color-header-text)) */
+    /* ⭐️ CORRECCIÓN: Usar el color temático para Obras en lugar de currentColor ⭐️ */
+    background-color: var(--color-icon-obras); 
     -webkit-mask-image: var(--icon-obras);
     mask-image: var(--icon-obras);
     -webkit-mask-repeat: no-repeat;

@@ -24,6 +24,9 @@
     --color-toast-bg: #222;
     --color-toast-text: #fff;
 
+    /* ⭐️ AÑADIDO: Color para el icono de Obras (Orange/Yellow en modo claro) ⭐️ */
+    --color-icon-obras: #F89707; /* Orange/Yellow (Default/Claro) */
+
     /* ⭐️ Variables añadidas para el control dinámico del filtro SVG ⭐️ */
     --shadow-color-hex: #969696; /* Color puro de la sombra Ghost (gris por defecto) */
     --shadow-opacity: 0.8;       /* Opacidad base de la sombra Ghost */
@@ -54,6 +57,9 @@
         --color-toast-bg: #222;
         --color-toast-text: #fff;
 
+        /* ⭐️ CORRECCIÓN: Amarillo brillante para Obras en Modo Oscuro ⭐️ */
+        --color-icon-obras: #FFC107; /* Amarillo Brillante */
+
         /* ⭐️ Variables añadidas para el control dinámico del filtro SVG (Dark Mode) ⭐️ */
         --shadow-color-hex: #888888;
     }
@@ -81,6 +87,9 @@
         /* Footer/Header */
         --color-header-bg: #000000;
         --color-footer-text: #FFFFFF;
+        
+        /* ⭐️ CORRECCIÓN: Amarillo de alto contraste para Obras ⭐️ */
+        --color-icon-obras: #FFFF00; /* Amarillo Puro (Alto Contraste) */
         
         /* Eliminamos las sombras en las variables */
         --color-shadow-disabled: transparent;
