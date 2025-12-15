@@ -39,10 +39,16 @@
     outline: none;
     padding: 10px; /* Padding interno para el fragmento */
     border-radius: 4px;
-    /* Cambiamos a border-bottom-color para que no haya conflicto visual */
+    
+    /* ⭐️ ELIMINACIÓN DE LA LÍNEA INFERIOR ⭐️ */
     border-bottom-color: transparent; 
     border-bottom-style: solid;
     border-bottom-width: 2px;
+    
+    /* ⭐️ AÑADIDO: Borde izquierdo para foco (por defecto transparente) ⭐️ */
+    border-left: 4px solid transparent; 
+    padding-left: 6px; /* Ajuste para compensar el borde de 4px */
+    
     transition: all 0.2s ease, filter 0.5s ease;
     will-change: filter, opacity;
     cursor: text;
@@ -53,32 +59,40 @@
     pointer-events: auto;
 }
 
-/* ⭐️ FOCO: Asegurar nitidez al recibir foco (teclado/clic) ⭐️ */
+/* ⭐️ FOCO (focus-current / focus-visible): ESTILO GRIS Y BORDE IZQUIERDO ⭐️ */
 .detail-text-fragment:focus-visible,
 .detail-text-fragment.focus-current { 
     /* 1. Resetear el filtro para nitidez inmediata */
     filter: none !important; 
     opacity: 1 !important;
-
-    /* 2. Aplicar el borde y sombra sutil (menos desplazado y más tenue) */
-    /* ⭐️ CORRECCIÓN CLAVE: Usar color de texto para el borde (no es un enlace de acción) ⭐️ */
-    border-bottom-color: var(--color-text);
     
-    /* ⭐️ AJUSTE SUTILEZA ⭐️ */
+    /* ⭐️ FIX CLAVE: Borde izquierdo más grueso (gris/deshabilitado) ⭐️ */
+    border-left: 4px solid var(--color-card-border-disabled) !important;
+    
+    /* ⭐️ APLICAR SOMBRA DE DESHABILITADO ⭐️ */
     box-shadow: 
-        0 1px 0 0 rgba(0, 0, 0, 0.1), /* Borde más fino */
-        0 1px 3px var(--color-text-muted); /* Sombra tenue */
+        0 1px 0 0 rgba(0, 0, 0, 0.05),
+        0 0 10px var(--color-shadow-disabled); /* Sombra tenue gris */
+    
+    /* ⭐️ Asegurar que el texto es nítido ⭐️ */
+    color: var(--color-text) !important; 
     
     background-color: transparent; 
 }
 
-/* ⭐️ CORRECCIÓN: Hover de texto (nítido sin borde inferior accent) ⭐️ */
+/* ⭐️ HOVER (focus-current-hover / :hover): ESTILO GRIS Y SOMBRA ⭐️ */
 .detail-text-fragment.focus-current-hover, 
-.detail-text-fragment:hover { /* ⭐️ CORRECCIÓN: Quita blur/grayscale en hover siempre ⭐️ */
+.detail-text-fragment:hover { 
     filter: none !important; 
     opacity: 1 !important;
-    border-bottom-color: transparent !important; /* Asegurar que el hover NO añade la línea accent */
-    box-shadow: none !important; /* Evitar sombra */
+    
+    /* Mantener el borde izquierdo invisible si no tiene foco activo (focus-current) */
+    border-left-color: transparent !important; 
+    
+    /* ⭐️ APLICAR SOMBRA DE DESHABILITADO ⭐️ */
+    box-shadow: 
+        0 1px 0 0 rgba(0, 0, 0, 0.05),
+        0 0 10px var(--color-shadow-disabled); /* Sombra tenue gris */
 }
 
 
@@ -91,7 +105,7 @@
     opacity: 1;
 }
 
-/* ⭐️ CORRECCIÓN: Evitar que la fila de acción aplique su propio foco visual, y quitar blur en hover ⭐️ */
+/* ⭐️ CORRECCIÓN: Estilos de la fila de acción ⭐️ */
 .detail-action-item.focus-current {
     outline: none !important;
     border: none !important;
@@ -99,12 +113,13 @@
     filter: none !important; 
     opacity: 1 !important; 
 }
-.detail-action-item:hover { /* ⭐️ CORRECCIÓN: Hover de la fila de acción (anula blur siempre) ⭐️ */
+/* CORRECCIÓN: Hover de la fila de acción (anula blur siempre) */
+.detail-action-item:hover { 
     outline: none !important;
     border: none !important;
     box-shadow: none !important;
-    filter: none !important; /* Asegura la nitidez en hover */
-    opacity: 1 !important; /* Asegura la nitidez en hover */
+    filter: none !important; 
+    opacity: 1 !important; 
 }
 
 
@@ -122,17 +137,14 @@
     opacity: 0.6;
 }
 
-/* ⭐️ BASE BLUR para las acciones (CORRECCIÓN: Nivel base Distancia 2) ⭐️ */
+/* ⭐️ BASE BLUR para las acciones y fragmentos (Nivel base Distancia 2) ⭐️ */
 .detail-action-item {
     transition: filter 0.5s ease, opacity 0.5s ease;
-    filter: blur(1.5px) grayscale(40%); /* CORRECCIÓN */
-    opacity: 0.6; /* CORRECCIÓN */
+    filter: blur(1.5px) grayscale(40%); 
+    opacity: 0.6; 
     pointer-events: auto;
     
-    /* ⭐️ CORRECCIÓN: Asegurar que el focus de la fila no tiene estilos visuales ⭐️ */
     outline: none;
-    
-    /* ⭐️ AÑADIDO: Box-sizing para evitar desbordes de elementos con padding/border internos ⭐️ */
     box-sizing: border-box; 
 }
 /* Re-habilitar clic en el botón solo si el contenedor tiene el foco actual */
@@ -142,13 +154,8 @@
 
 
 /* --- MÁSCARAS (Controladas por las clases binarias mode-focus-text/actions) --- */
-/* ⭐️ FIX CLAVE: ELIMINACIÓN DE REGLAS BASADAS EN MÁSCARAS BINARIAS ⭐️ */
-/* Se mantiene solo la lógica de proximidad */
-
 .mode-focus-text #detalle-bloque-acciones {
 }
-
-/* Foco en Acciones -> Desenfoque de TEXTO */
 .mode-focus-actions .detail-text-fragment {
 }
 .mode-focus-actions #detalle-bloque-acciones { 
@@ -174,7 +181,7 @@
 /* Texto de la acción (Izquierda) */
 .detail-action-text {
     font-size: 1rem; font-weight: 500; 
-    color: var(--color-text); /* ⭐️ FIJO: Nunca cambia de color ⭐️ */
+    color: var(--color-text); 
     text-align: left; margin-right: 15px; flex-grow: 1;
 }
 
@@ -182,14 +189,12 @@
 /* 5. BOTÓN DE ACCIÓN - ESTILO GHOST (Derecha) */
 .detail-action-btn {
     display: flex; justify-content: center; align-items: center;
-    /* ⭐️ TAMAÑO ESTÁNDAR (38px) ⭐️ */
     width: 38px; 
     height: 38px; 
     background: transparent; 
-    border: 2px solid var(--color-card-border); /* Borde Gris por defecto */
-    border-radius: 50%; /* ⭐️ HABILITADO: REDONDO ⭐️ */
+    border: 2px solid var(--color-card-border); 
+    border-radius: 50%; 
     
-    /* Color de texto/icono por defecto */
     color: var(--color-text); 
     font-size: 1.2rem; line-height: 1;
     
@@ -199,44 +204,37 @@
     overflow: hidden; 
 }
 
-/* ⭐️ REQUISITO 3: Estado HOVER / FOCUS (Enabled) -> AZUL ⭐️ */
-/* HOVER: Solo Borde/Sombra, NO texto/icono color */
+/* ⭐️ ESTADO HABILITADO (Enabled) -> AZUL ⭐️ */
 .detail-action-btn:not(.disabled):hover,
 .detail-action-item:hover .detail-action-btn:not(.disabled) { 
     border-color: var(--color-primary);
     box-shadow: 0 0 15px var(--color-shadow-primary);
     transform: scale(1.1);
-    color: var(--color-text); /* CLAVE: Mantiene el color del texto original en hover/label hover */
+    color: var(--color-text); 
     outline: none;
 }
-/* FOCUS: Borde/Sombra + Color de texto/icono */
 .detail-action-btn:not(.disabled):focus-visible,
-/* ⭐️ CORRECCIÓN: Aplicar el foco visual (azul) cuando la fila padre tiene el foco lógico ⭐️ */
 .detail-action-item.focus-current .detail-action-btn:not(.disabled) { 
     border-color: var(--color-primary);   
-    color: var(--color-primary) !important;          /* ⭐️ Asegura el color AZUL en focus ⭐️ */
+    color: var(--color-primary) !important;          
     box-shadow: 0 0 15px var(--color-shadow-primary);
     transform: scale(1.1);
     outline: none;
 }
 
-/* ----------------------------------------------------- */
-/* ⭐️ ESTADO DISABLED: CUADRADO CON BORDES REDONDEADOS + 🚫 ⭐️ */
-/* ----------------------------------------------------- */
+/* ⭐️ ESTADO DISABLED -> GRIS/DESHABILITADO ⭐️ */
 
 .detail-action-btn.disabled {
     color: var(--color-text-muted); 
-    border: 2px solid var(--color-card-border-disabled); /* Borde gris visible */
+    border: 2px solid var(--color-card-border-disabled); 
     background: transparent;
     cursor: default; 
     
-    /* ⭐️ CORRECCIÓN TAMAÑO: COINCIDIR CON HABILITADO (38px) ⭐️ */
     width: 38px; 
     height: 38px;
     border-radius: 8px; 
     
-    /* ESTILO DEL EMOJI */
-    font-size: 1.6rem; /* Ajustado para caber en 38px */
+    font-size: 1.6rem; 
     line-height: 1;
     
     filter: none; 
@@ -245,42 +243,37 @@
     pointer-events: auto; 
 }
 
-/* Aseguramos que solo se muestre el SVG del conjunto vacío (<i>) */
+/* Lógica de Iconos (sin cambios) */
 .detail-action-btn.disabled .triangulo-svg,
 .detail-action-btn.disabled .icon-wrapper,
-/* ⭐️ FIX: Asegurar que el icono SVG (<i>) SÍ se muestra ⭐️ */
 .detail-action-btn.disabled > i:not(.icon-vacio) { 
     display: none !important; 
 }
-.detail-action-btn.disabled > i.icon-vacio { /* Muestra solo el SVG del conjunto vacío */
+.detail-action-btn.disabled > i.icon-vacio { 
     display: block !important;
 }
 
 
-/* Hover: Zoom + Sombra (y cambio de color a accent/gris) */
+/* Hover/Focus de botón deshabilitado */
 .detail-action-btn.disabled:hover,
-.detail-action-item:hover .detail-action-btn.disabled { /* <== Añadido hover en label */
+.detail-action-item:hover .detail-action-btn.disabled { 
     outline: none;
     transform: scale(1.03); 
     border-color: var(--color-card-border); 
     box-shadow: 0 0 10px var(--color-shadow-disabled);
-    /* ⭐️ CAMBIO CLAVE: Usar color: var(--color-text) en hover para el acento gris ⭐️ */
-    color: var(--color-text); /* Color del icono cambia a color de texto (accent/gris) */
+    color: var(--color-text); 
 }
-
-/* Focus: Zoom + Foco Color (cambiar a accent/gris) */
-/* ⭐️ CORRECCIÓN: Aplicar el foco visual (gris) cuando la fila padre tiene el foco lógico ⭐️ */
 .detail-action-btn.disabled:focus-visible,
 .detail-action-item.focus-current .detail-action-btn.disabled { 
     outline: none;
     transform: scale(1.03); 
     border-color: var(--color-text); 
     box-shadow: 0 0 15px var(--color-shadow-disabled); 
-    color: var(--color-text); /* Color del icono cambia a color de texto */
+    color: var(--color-text); 
 }
 
 
-/* 6. ICONOS SVG */
+/* 6. ICONOS SVG y 7. Estilos Específicos (Sin cambios) */
 .action-icon {
     display: inline-block; width: 20px; height: 20px;
     background-color: currentColor; 
@@ -288,29 +281,23 @@
     -webkit-mask-position: center; mask-position: center;
     -webkit-mask-size: contain; mask-size: contain;
 }
-/* Flecha de Descarga (PWA) */
 .icon-download { 
     -webkit-mask-image: var(--icon-download); 
     mask-image: var(--icon-download); 
 }
-/* Enlace externo */
 .icon-link { 
     -webkit-mask-image: var(--icon-link); 
     mask-image: var(--icon-link); 
 }
-/* Carrito de compra (aunque se usa emoji, esta es la definición de máscara) */
 .icon-buy { 
     -webkit-mask-image: var(--icon-buy); 
     mask-image: var(--icon-buy); 
 }
-
-/* Empty set (for disabled button) */
 .icon-vacio { 
     -webkit-mask-image: var(--icon-vacio); 
     mask-image: var(--icon-vacio); 
 }
 
-/* 7. Estilo Específico Botón Volver Móvil (Píldora) */
 button.detail-action-btn {
     width: auto !important; height: auto !important;
     padding: 0.5rem 1rem !important; 

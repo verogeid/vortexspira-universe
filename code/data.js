@@ -6,7 +6,7 @@ export const LOGO_CARPETA = '📂';
 export const LOGO_CURSO = '📚';
 export const LOGO_VOLVER = '↩';
 export const LOGO_BUY = '🛒';
-export const LOGO_DISABLED = '🔒​'; //'💤​'; //'🚫';
+export const LOGO_DISABLED = '🔒​';
 export const LOGO_A11Y = '🌐';
 
 export const PRIMARY_COLOR = '#999';
