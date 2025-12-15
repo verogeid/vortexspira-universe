@@ -6,7 +6,7 @@ export const LOGO_CARPETA = '📂';
 export const LOGO_CURSO = '📚';
 export const LOGO_VOLVER = '↩';
 export const LOGO_BUY = '🛒';
-export const LOGO_DISABLED = '🔒​';
+export const LOGO_DISABLED = '🔒​'; //'💤​'; //'🚫';
 export const LOGO_A11Y = '🌐';
 
 export const PRIMARY_COLOR = '#999';
@@ -68,9 +68,21 @@ export function injectHeaderLogo() {
 
         if (h1) {
             h1.insertBefore(svgElement, h1.firstChild);
+            
+            // ⭐️ FIX CLAVE 1: Inserción del SVG de Obras (máscara CSS) ⭐️
             if (!debug.IS_PRODUCTION) {
-                h1.insertBefore(document.createTextNode(LOGO_OBRAS), h1.firstChild);
+                // Crear el elemento que contendrá el SVG de Obras
+                const obrasSpan = document.createElement('span');
+                obrasSpan.className = 'icon-obras-header';
+                h1.insertBefore(obrasSpan, h1.firstChild);
             }
+        }
+        
+        // ⭐️ FIX CLAVE 2: Asegurar que el botón de accesibilidad usa el emoji 🌐 ⭐️
+        const btnA11y = document.getElementById('btn-config-accesibilidad');
+        if (btnA11y) {
+            // Reemplazar el contenido actual (que puede ser ⚙️) por el emoji 🌐
+            btnA11y.innerHTML = LOGO_A11Y;
         }
     }
 }

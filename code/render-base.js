@@ -256,7 +256,14 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
             displayTitle = data.LOGO_CARPETA + ' ' + displayTitle;
         }
     } else {
-        displayTitle = data.LOGO_CURSO + ' ' + displayTitle; 
+        // ⭐️ FIX CLAVE: Si el curso está en obras (contiene el emoji 🚧) ⭐️
+        if (displayTitle.includes(data.LOGO_OBRAS)) {
+             // Reemplazar el emoji por el <span> SVG para que sea tematizable (coherencia con el patrón de máscara)
+             const svgSpan = '<span class="icon-obras-card"></span>';
+             displayTitle = svgSpan + ' ' + displayTitle.replace(data.LOGO_OBRAS, "").trim(); 
+        } else {
+             displayTitle = data.LOGO_CURSO + ' ' + displayTitle; 
+        }
     }
     
     const ariaLabel = `${tipo === 'curso' ? 'Curso' : 'Categoría'}: ${nodo.nombre || nodo.titulo || 'Sin Título'}. ${estaActivo ? 'Seleccionar para entrar.' : 'Contenido no disponible.'}`;

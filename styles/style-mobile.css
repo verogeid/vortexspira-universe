@@ -105,7 +105,7 @@
         overflow-y: hidden !important;
         /* ⭐️ FIX: touch-action para arrastre con un dedo ⭐️ */
         touch-action: pan-y !important;
-        padding-bottom: 15vh;
+        padding-bottom: 5vh;
     }
     
     /* ⭐️ FIX: Wrapper de Detalles - Eliminar Padding Horizontal ⭐️ */

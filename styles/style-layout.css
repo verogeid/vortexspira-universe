@@ -18,10 +18,13 @@ header {
     text-align: center; background: var(--color-header-bg);
     color: var(--color-header-text); z-index: 100; box-sizing: border-box;
     height: var(--header-height);
-    /* ⭐️ CORRECCIÓN: Centrado vertical y horizontal del contenido ⭐️ */
+    /* ⭐️ FIX LAYOUT HEADER: Usar espacio entre elementos (space-between) ⭐️ */
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between; /* Espacia el contenido del H1 y el botón de accesibilidad */
+    gap: 8px; 
+    padding-left: 15px; 
+    padding-right: 15px; 
 }
 header h1 { 
     /* ⭐️ CORRECCIÓN: Usar una fuente mínima más pequeña y centrar el contenido ⭐️ */
@@ -31,6 +34,7 @@ header h1 {
     align-items: center;
     justify-content: center;
     gap: 8px; 
+    flex-grow: 1; /* Permite que el título ocupe el espacio central */
 }
 
 /* ⭐️ AÑADIDO: Asegurar que el SVG del logo sea fluido en el header ⭐️ */
@@ -41,11 +45,58 @@ header h1 svg {
     flex-shrink: 0; 
 }
 
-header button #btn-config-accesibilidad {
-    position: absolute; right: 15px; border: none; background: none; 
-    cursor: pointer; color: var(--color-header-text); 
-    font-size: 1.5rem; padding: 5px; 
+/* ⭐️ NUEVO: Clase para el icono de Obras en el Header (SVG) ⭐️ */
+.icon-obras-header {
+    display: inline-block;
+    width: 25px; 
+    height: 25px;
+    background-color: currentColor; /* Usa el color del texto (var(--color-header-text)) */
+    -webkit-mask-image: var(--icon-obras);
+    mask-image: var(--icon-obras);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    flex-shrink: 0;
+    margin-right: 8px;
+    /* Se posiciona a la izquierda del h1 en data.js */
 }
+
+/* ⭐️ NUEVO: Clase para el icono de Obras en las tarjetas ⭐️ */
+.icon-obras-card {
+    display: inline-block;
+    width: 1.2em; 
+    height: 1.2em;
+    background-color: currentColor; 
+    -webkit-mask-image: var(--icon-obras);
+    mask-image: var(--icon-obras);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    vertical-align: middle;
+}
+
+/* ⭐️ FIX BOTÓN DE ACCESIBILIDAD (Engranaje) ⭐️ */
+#btn-config-accesibilidad {
+    position: static; /* Quitar el absolute */
+    border: none; 
+    background: transparent; /* Fondo transparente */
+    color: var(--color-header-text); 
+    font-size: 1.5rem;
+    padding: 5px; 
+    flex-shrink: 0;
+    line-height: 1; 
+    
+    /* El emoji no debe estar envuelto por el tag <button> en el HTML, 
+       pero si lo está, estos estilos corrigen el layout. */
+}
+
+
 /* GRID RESPONSIVE */
 
 /* ⭐️ REGLA GENERAL PARA COLUMNAS ⭐️ */

@@ -2,10 +2,15 @@
 
 footer { 
     position: fixed; 
-    bottom: 0; padding: 5px; width: 100%;
+    bottom: 0; 
+    /* ⭐️ FIX CLAVE: Eliminar el padding vertical (de 5px) y mantener solo el horizontal. ⭐️ */
+    padding: 0 5px; 
+    width: 100%;
     color: var(--color-footer-text); text-align: center;
     background: var(--color-header-bg); z-index: 100; /* Igual que el header */
-    display: flex; justify-content: center; align-items: center; flex-wrap: wrap; 
+    display: flex; justify-content: center; 
+    align-items: center; /* Esto centra el elemento SMALL verticalmente */
+    flex-wrap: wrap; 
     height: var(--footer-height); box-sizing: border-box; 
     /* Fuente adaptable */
     font-size: clamp(0.8rem, 2vw, 1.2rem);
@@ -14,6 +19,8 @@ footer {
 footer small { 
     display: flex; align-items: center; gap: 15px; 
     width: 100%; justify-content: center;
+    /* ⭐️ FIX CLAVE: Asegurar que SMALL ocupa la altura completa para centrado robusto ⭐️ */
+    height: 100%; 
 }
 
 footer a { 
@@ -55,7 +62,9 @@ footer a.footer-social-link:hover::before {
     /* ⭐️ FIX: Forzamos position: fixed y bottom: 0 ⭐️ */
     footer { 
         position: fixed !important; bottom: 0; 
-        margin-top: 0; padding: 5px 5px; 
+        margin-top: 0; 
+        /* ⭐️ FIX CLAVE: Ajustar padding en móvil también ⭐️ */
+        padding: 0 5px !important; 
         background: var(--color-header-bg); /* Usar color del header/fixed */
         width: 100%; 
     }
