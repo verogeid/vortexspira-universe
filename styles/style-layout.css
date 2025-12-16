@@ -42,11 +42,6 @@ header {
 }
 
 header h1 { 
-    /* ⭐️ Posicionamiento absoluto para centrado del título (respecto al WRAPPER relativo) ⭐️ */
-    position: absolute; 
-    left: 50%; 
-    transform: translateX(-50%); 
-    
     /* Aseguramos que el contenido (Logo/Título/Subtítulo) se centre internamente */
     display: flex;
     align-items: center;
@@ -75,13 +70,18 @@ header h1 {
     
     font-size: 0.6em; /* Mantenemos pequeño */
     opacity: 0.8;
-    vertical-align: top;
+    vertical-align:middle;
     margin-left: 8px;
     
     /* Aseguramos que el subtítulo no fuerce su propio truncado */
     white-space: normal; 
     text-overflow: initial;
     overflow: initial;
+}
+@media (max-width: 600px) {
+    #main-header-title h1 small {
+        display: none;
+    }
 }
 
 /* ⭐️ AÑADIDO: Asegurar que el SVG del logo sea fluido en el header ⭐️ */
@@ -172,7 +172,6 @@ header h1 svg {
   height: 100%; 
   position: relative; 
   
-  /* ⭐️ FIX CLAVE: Ocultar el desbordamiento horizontal (Borde Amarillo 🟨) ⭐️ */
   overflow-x: hidden; 
   
   overflow-y: hidden; 
