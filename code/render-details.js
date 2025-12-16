@@ -264,9 +264,6 @@ export function _mostrarDetalle(cursoId) {
             const slide = clickedElement.closest('.swiper-slide');
             const targetSlideIndex = swiper ? swiper.slides.indexOf(slide) : -1;
             
-            // ❌ CORRECCIÓN CLAVE: Eliminar e.preventDefault() para permitir el cambio de foco nativo ❌
-            // e.preventDefault(); 
-
             // Find index within the master focusable list
             const focusableElements = nav_base_details._getFocusableDetailElements(appInstance);
             const targetElementIndex = focusableElements.indexOf(clickedElement);
@@ -341,16 +338,36 @@ export function _mostrarDetalle(cursoId) {
         }
     }
     
-    // ⭐️ LÓGICA DE FOCO INICIAL ⭐️
+    // ⭐️ LÓGICA DE FOCO INICIAL (IMPLEMENTACIÓN ROBUSTA) ⭐️
     // 1. Obtener el elemento que debe tener el foco
-    const elementToFocus = focusableElements[initialFocusIndex];
-    
-    if (elementToFocus) {
-        // 2. Aplicar el foco nativo (sin preventScroll)
-        elementToFocus.focus();
-        
-        // 3. Forzar el estado visual inicial (blur/sharpness)
-        nav_base_details._updateDetailFocusState(appInstance);
+    const elementToFocusInitially = focusableElements[initialFocusIndex];
+
+    if (elementToFocusInitially) {
+        // Función auxiliar para intentar aplicar el foco de forma robusta
+        const tryFocus = (element, attemptsLeft) => {
+            if (attemptsLeft <= 0) {
+                debug.logWarn('render_details', 'Fallo al establecer el foco inicial después de múltiples intentos.');
+                return;
+            }
+
+            // Intentar aplicar el foco
+            element.focus();
+
+            // Comprobar si el foco fue realmente aplicado
+            if (document.activeElement === element) {
+                // Foco aplicado con éxito
+                appInstance.STATE.lastDetailFocusIndex = initialFocusIndex;
+                nav_base_details._updateDetailFocusState(appInstance);
+                debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 'Foco inicial aplicado con éxito.');
+            } else {
+                // El foco falló, intentar de nuevo después de un pequeño retraso (100ms)
+                setTimeout(() => tryFocus(element, attemptsLeft - 1), 100);
+            }
+        };
+
+        // Iniciar el intento de foco (máximo 10 intentos = 1 segundo de espera)
+        tryFocus(elementToFocusInitially, 10);
     }
 };
+
 // --- code/render-details.js ---

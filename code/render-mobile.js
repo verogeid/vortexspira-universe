@@ -56,9 +56,9 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
 
         touchRatio: 1, 
         // ⬇️ MODIFICACIONES PARA ASEGURAR EL CONTROL DEL ARRASTRE VERTICAL EN MÓVIL (FreeMode) ⬇️
-        simulateTouch: false, // Se deshabilita la simulación de ratón, mejorando el control táctil real.
+        simulateTouch: true, // ⭐️ CORRECCIÓN CLAVE: Restaurar a TRUE para alinear con la vista de detalle que sí funciona.
         touchStartPreventDefault: false, // Permite clics normales antes de un arrastre.
-        touchMoveStopPropagation: true, // CLAVE: Impide que el evento de movimiento se propague y active el scroll nativo del body.
+        touchMoveStopPropagation: true, // Mantenemos TRUE para evitar que el evento se propague al body.
         grabCursor: true, 
         // ⬆️ FIN MODIFICACIONES ⬆️
         centeredSlides: false, 
