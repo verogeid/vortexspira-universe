@@ -338,13 +338,16 @@ export function _mostrarDetalle(cursoId) {
         }
     }
     
-    // ⭐️ LÓGICA DE FOCO INICIAL (IMPLEMENTACIÓN ROBUSTA) ⭐️
+    // ⭐️ LÓGICA DE FOCO INICIAL (IMPLEMENTACIÓN ROBUSTA CON DEBUG) ⭐️
     // 1. Obtener el elemento que debe tener el foco
     const elementToFocusInitially = focusableElements[initialFocusIndex];
 
     if (elementToFocusInitially) {
         // Función auxiliar para intentar aplicar el foco de forma robusta
         const tryFocus = (element, attemptsLeft) => {
+            const elementName = element.id || element.className || element.tagName;
+            debug.log('render_details', debug.DEBUG_LEVELS.DEEP, `Intento de foco #${11 - attemptsLeft}: Elemento: ${elementName}`); // ⭐️ DEBUG PROFUNDO ⭐️
+            
             if (attemptsLeft <= 0) {
                 debug.logWarn('render_details', 'Fallo al establecer el foco inicial después de múltiples intentos.');
                 return;
@@ -360,6 +363,7 @@ export function _mostrarDetalle(cursoId) {
                 nav_base_details._updateDetailFocusState(appInstance);
                 debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 'Foco inicial aplicado con éxito.');
             } else {
+                debug.log('render_details', debug.DEBUG_LEVELS.DEEP, `Foco fallido. ActiveElement: ${document.activeElement.id || document.activeElement.className || document.activeElement.tagName}. Intentando de nuevo.`); // ⭐️ DEBUG PROFUNDO ⭐️
                 // El foco falló, intentar de nuevo después de un pequeño retraso (100ms)
                 setTimeout(() => tryFocus(element, attemptsLeft - 1), 100);
             }
