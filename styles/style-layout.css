@@ -59,8 +59,8 @@ header h1 {
     gap: 8px; 
     flex-grow: 0; 
     
-    /* ⭐️ CORRECCIÓN CLAVE: Aumentar el max-width para dar más espacio y evitar el desborde ⭐️ */
-    max-width: 90%;
+    /* ⭐️ CORRECCIÓN CLAVE: Aumentar el max-width para dar el máximo espacio posible ⭐️ */
+    max-width: 90%; 
     white-space: nowrap; /* Aseguramos que trunca el bloque entero */
     text-overflow: ellipsis; 
     overflow: hidden; 

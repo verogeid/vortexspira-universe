@@ -188,7 +188,10 @@ export function renderNavegacion() {
     
     // Sincronización de foco (solo si la navegación está visible)
     if (!isDetailActive) {
-        this._updateFocus(false); 
+        // ⭐️ FIX CLAVE: Añadir un pequeño retraso para asegurar que Swiper y el DOM están listos antes de buscar la tarjeta enfocable. ⭐️
+        setTimeout(() => {
+            this._updateFocus(false); 
+        }, data.SWIPE_SLIDE_SPEED / 2);
     }
     
     if (typeof debug.log === 'function') {
