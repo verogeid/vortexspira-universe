@@ -15,7 +15,7 @@
     }
 
     #main-header-subtitle {
-        display: none; 
+        display: none !important; 
     }
 
     /* 2. Layout fluido */
@@ -222,16 +222,6 @@
         padding: 10px 0; 
         width: 100%;
     }
-
-
-    /* Estilos de Breadcrumb y Volver (Contenidos en mobile-back-header) */
-    .card-breadcrumb-vertical, .card-volver-vertical {
-    }
-    
-    /* Foco en fragmentos de detalle */
-    .detail-text-fragment, .detail-action-item {
-    }
-
 
     /* ⭐️ AÑADIDO: Estilos específicos para Breadcrumb y Volver fijo ⭐️ */
     .card-breadcrumb-vertical {

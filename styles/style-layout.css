@@ -78,11 +78,6 @@ header h1 {
     text-overflow: initial;
     overflow: initial;
 }
-@media (max-width: 600px) {
-    #main-header-title h1 small {
-        display: none;
-    }
-}
 
 /* ⭐️ AÑADIDO: Asegurar que el SVG del logo sea fluido en el header ⭐️ */
 header h1 svg {
