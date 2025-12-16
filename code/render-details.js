@@ -346,7 +346,7 @@ export function _mostrarDetalle(cursoId) {
         // Función auxiliar para intentar aplicar el foco de forma robusta
         const tryFocus = (element, attemptsLeft) => {
             const elementName = element.id || element.className || element.tagName;
-            debug.log('render_details', debug.DEBUG_LEVELS.DEEP, `Intento de foco #${11 - attemptsLeft}: Elemento: ${elementName}`); // ⭐️ DEBUG PROFUNDO ⭐️
+            debug.log('render_details', debug.DEBUG_LEVELS.DEEP, `Intento de foco #${11 - attemptsLeft}: Elemento: ${elementName}`);
             
             if (attemptsLeft <= 0) {
                 debug.logWarn('render_details', 'Fallo al establecer el foco inicial después de múltiples intentos.');
@@ -360,10 +360,15 @@ export function _mostrarDetalle(cursoId) {
             if (document.activeElement === element) {
                 // Foco aplicado con éxito
                 appInstance.STATE.lastDetailFocusIndex = initialFocusIndex;
-                nav_base_details._updateDetailFocusState(appInstance);
+                
+                // ⭐️ FIX CLAVE: Aplicar la actualización visual con un ligero delay para sincronizar con el motor de renderizado ⭐️
+                setTimeout(() => {
+                    nav_base_details._updateDetailFocusState(appInstance);
+                }, 50); 
+                
                 debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 'Foco inicial aplicado con éxito.');
             } else {
-                debug.log('render_details', debug.DEBUG_LEVELS.DEEP, `Foco fallido. ActiveElement: ${document.activeElement.id || document.activeElement.className || document.activeElement.tagName}. Intentando de nuevo.`); // ⭐️ DEBUG PROFUNDO ⭐️
+                debug.log('render_details', debug.DEBUG_LEVELS.DEEP, `Foco fallido. ActiveElement: ${document.activeElement.id || document.activeElement.className || document.activeElement.tagName}. Intentando de nuevo.`);
                 // El foco falló, intentar de nuevo después de un pequeño retraso (100ms)
                 setTimeout(() => tryFocus(element, attemptsLeft - 1), 100);
             }
