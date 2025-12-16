@@ -120,7 +120,8 @@ function _handleGlobalWheel(e) {
 
     // Solo actuamos si el evento se origina dentro de las vistas de carrusel móvil
     const targetIsNavContent = e.target.closest('#nav-swiper-mobile'); 
-    const targetIsDetailContent = e.target.closest('#detalle-swiper-mobile');
+    // ⭐️ CORRECCIÓN CLAVE: Ampliar el área de intercepción del mouse wheel para la vista de detalle ⭐️
+    const targetIsDetailContent = e.target.closest('#vista-detalle-mobile');
 
     if (targetIsNavContent || targetIsDetailContent) {
         
