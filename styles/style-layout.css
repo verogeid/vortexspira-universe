@@ -61,7 +61,7 @@ header h1 {
     
     /* ⭐️ CORRECCIÓN CLAVE: Aumentar el max-width para dar el máximo espacio posible ⭐️ */
     width: calc(100% - 120px);
-    max-width: 95%;
+    max-width: 90%;
     
     white-space: nowrap; /* Aseguramos que trunca el bloque entero */
     text-overflow: ellipsis; 
