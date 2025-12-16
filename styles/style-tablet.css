@@ -20,6 +20,13 @@
         display: inline-block;
     }
 
+    #vista-navegacion-tablet {
+      display: block;
+    }
+    #vista-navegacion-desktop {
+      display: none;
+    }
+
     /* TABLET PORTRAIT (601px - 800px): 2 COLUMNAS */
     @media (min-width: 601px) and (max-width: 800px) {
         #app-container {

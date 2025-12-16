@@ -240,8 +240,8 @@ header h1 svg {
     #info-adicional.visible { display: none !important; }
 }
 
-/* TABLET LANDSCAPE (801px - 1024px) Y DESKTOP (> 1025px): 3 COLUMNAS */
-@media (min-width: 801px) and (max-width: 1024px) {
+/* TABLET LANDSCAPE (801px - 1023px) Y DESKTOP (> 1024px): 3 COLUMNAS */
+@media (min-width: 801px) and (max-width: 1023px) {
     #app-container {
         /* Aseguramos display: grid aquí */
         display: grid;
@@ -250,8 +250,8 @@ header h1 svg {
     }
 }
 
-/* DESKTOP (> 1025px) */
-@media (min-width: 1025px) {
+/* DESKTOP (> 1024px) */
+@media (min-width: 1024px) {
     #app-container {
         /* Aseguramos display: grid aquí */
         display: grid;

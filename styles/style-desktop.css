@@ -20,6 +20,13 @@
         display: inline-block;
     }
 
+    #vista-navegacion-desktop {
+      display: block;
+    }
+    #vista-navegacion-tablet {
+      display: none;
+    }
+
     #nav-swiper {
         height: 100%; width: 100%; overflow: hidden; 
         position: relative; z-index: 1; touch-action: pan-y;
@@ -49,6 +56,7 @@
         /* Ya utiliza la variable, sin cambios necesarios */
         height: var(--card-height-calc); min-height: var(--card-height-calc);
     }
+
     #vista-navegacion-desktop .carousel-mask {
       position: absolute; width: 100%; height: 100%; 
       top: 0; left: 0;
