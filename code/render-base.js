@@ -1,10 +1,10 @@
 // --- code/render-base.js ---
 
-import * as debug from './debug.js'; // AÑADIDO: Importar debug
+import * as debug from './debug.js'; 
 import * as data from './data.js';
 
 let _lastMode = 'desktop'; 
-let _lastWidth = window.innerWidth; // Añadido para detectar el cambio Landscape/Portrait
+let _lastWidth = window.innerWidth; 
 
 // ⭐️ 1. FUNCIÓN DE RENDERIZADO PRINCIPAL ⭐️
 /**
@@ -18,12 +18,12 @@ export function renderNavegacion() {
     
     if (!this.STATE.fullData) {
         if (typeof debug.logError === 'function') {
-            debug.logError('render_base', "No se puede renderizar: Datos no cargados."); // FIX: debug.logError
+            debug.logError('render_base', "No se puede renderizar: Datos no cargados."); 
         }
         return;
     }
 
-    const currentLevelState = this.stackGetCurrent(); // Método delegado
+    const currentLevelState = this.stackGetCurrent(); 
     if (!currentLevelState) return;
 
     const currentLevelId = currentLevelState.levelId;
@@ -34,11 +34,14 @@ export function renderNavegacion() {
     const isMobile = screenWidth <= data.MOBILE_MAX_WIDTH;
     
     // ⭐️ Detección de rangos para Tablet Landscape y Portrait ⭐️
-    const isTabletLandscape = screenWidth > data.TABLET_PORTRAIT_MAX_WIDTH && screenWidth <= data.TABLET_LANDSCAPE_MAX_WIDTH;
-    const isTabletPortrait = screenWidth > data.MOBILE_MAX_WIDTH && screenWidth <= data.TABLET_PORTRAIT_MAX_WIDTH;
-    const isDesktop = screenWidth > data.TABLET_LANDSCAPE_MAX_WIDTH;
+    // ⭐️ CORRECCIÓN CLAVE: isDesktop debe empezar en TABLET_LANDSCAPE_MAX_WIDTH (1024px) ⭐️
+    const isDesktop = screenWidth >= data.TABLET_LANDSCAPE_MAX_WIDTH; 
     
-    const isTablet = isTabletPortrait || isTabletLandscape; // Booleano general para Tablet
+    // isTabletLandscape se reajusta para terminar en 1023px.
+    const isTabletLandscape = screenWidth > data.TABLET_PORTRAIT_MAX_WIDTH && screenWidth < data.TABLET_LANDSCAPE_MAX_WIDTH; // 801px - 1023px
+    const isTabletPortrait = screenWidth > data.MOBILE_MAX_WIDTH && screenWidth <= data.TABLET_PORTRAIT_MAX_WIDTH; // 601px - 800px
+    
+    const isTablet = isTabletPortrait || isTabletLandscape; // Ahora cubre 601px - 1023px
 
     let renderHtmlFn;
     let initCarouselFn;
@@ -54,27 +57,27 @@ export function renderNavegacion() {
     // -------------------------------------------------------------
     
     if (isMobile) {
-        renderHtmlFn = this._generateCardHTML_Mobile; // Método delegado
-        initCarouselFn = this._initCarousel_Mobile;   // Método delegado
+        renderHtmlFn = this._generateCardHTML_Mobile; 
+        initCarouselFn = this._initCarousel_Mobile;   
         calculatedItemsPerColumn = 1;
 
         swiperId = '#nav-swiper-mobile';
         this.DOM.vistaNav = mobileView;
         this.DOM.track = document.getElementById('track-mobile'); 
-        this.DOM.inactiveTrack = null; // Ya no se necesita un track inactivo
-        debug.log('render_base', debug.DEBUG_LEVELS.DEEP, 'Modo Móvil. Track activo: #track-mobile'); // FIX: debug.log
+        this.DOM.inactiveTrack = null; 
+        debug.log('render_base', debug.DEBUG_LEVELS.DEEP, 'Modo Móvil. Track activo: #track-mobile'); 
     } else {
-        renderHtmlFn = this._generateCardHTML_Carousel; // Método delegado
-        initCarouselFn = this._initCarousel_Swipe;     // Método delegado
+        renderHtmlFn = this._generateCardHTML_Carousel; 
+        initCarouselFn = this._initCarousel_Swipe;     
         
         // FIX BREAKPOINT: Priorizar DESKTOP (3 COL) y luego TABLET (2 COL)
-        if (isDesktop) {
+        if (isDesktop) { // <-- Ahora incluye 1024px
             calculatedItemsPerColumn = 3; 
             swiperId = '#nav-swiper';
             this.DOM.vistaNav = desktopView;
             this.DOM.track = document.getElementById('track-desktop'); 
-        } else if (isTablet) { // Cubre isTabletLandscape (801-1024) y isTabletPortrait (601-800)
-            calculatedItemsPerColumn = 2; // <-- CORRECCIÓN: 2 items por columna en Tablet.
+        } else if (isTablet) { // Cubre 601px - 1023px
+            calculatedItemsPerColumn = 2; 
             swiperId = '#nav-swiper-tablet';
             this.DOM.vistaNav = tabletView;
             this.DOM.track = document.getElementById('track-tablet'); 
@@ -86,7 +89,7 @@ export function renderNavegacion() {
     // ⭐️ Obtención de Datos y Renderizado de Navegación ⭐️
     // -------------------------------------------------------------
 
-    const nodoActual = this._findNodoById(currentLevelId, this.STATE.fullData.navegacion); // Método delegado
+    const nodoActual = this._findNodoById(currentLevelId, this.STATE.fullData.navegacion); 
     let itemsDelNivel = [];
 
     // ... (lógica de obtención de datos y construcción de itemsDelNivel) ...
@@ -106,7 +109,7 @@ export function renderNavegacion() {
             itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
         }
         
-        let breadcrumbText = this.getString('breadcrumbRoot'); // Método delegado
+        let breadcrumbText = this.getString('breadcrumbRoot'); 
         if (isSubLevel && nodoActual) {
             breadcrumbText = nodoActual.nombre || nodoActual.titulo || this.getString('breadcrumbRoot');
         }
@@ -124,7 +127,7 @@ export function renderNavegacion() {
     let isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
                            document.getElementById('vista-detalle-mobile').classList.contains('active');
 
-    debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `renderNavigation: isDetailActive: ${isDetailActive}, activeCourseId: ${this.STATE.activeCourseId}`); // FIX: debug.log
+    debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `renderNavigation: isDetailActive: ${isDetailActive}, activeCourseId: ${this.STATE.activeCourseId}`); 
                            
     // ⭐️ Limpiar todas las vistas de Navegación + Detalle ⭐️
     desktopView.classList.remove('active');
@@ -143,22 +146,22 @@ export function renderNavegacion() {
         if (this.STATE.activeCourseId) {
             // Llamamos a _mostrarDetalle. Esto reinyecta el HTML en el contenedor correcto (this.DOM.detalleContenido) y lo activa.
             this._mostrarDetalle(this.STATE.activeCourseId); 
-            debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `Detalle re-renderizado para curso: ${this.STATE.activeCourseId}`); // FIX: debug.log
+            debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `Detalle re-renderizado para curso: ${this.STATE.activeCourseId}`); 
         } else {
             // Si el ID se perdió, volvemos a la navegación
-            isDetailActive = false; // Línea 154 (Ahora es let)
-            debug.logWarn('render_base', "activeCourseId perdido durante resize, volviendo a navegación."); // FIX: debug.logWarn
+            isDetailActive = false; 
+            debug.logWarn('render_base', "activeCourseId perdido durante resize, volviendo a navegación."); 
         }
     } 
     
     if (!isDetailActive) {
         // Solo renderizamos si NO estamos en detalle (o acabamos de salir)
-        this._destroyCarousel(); // Método delegado
-        let htmlContent = renderHtmlFn.call(this, itemsDelNivel, this.STATE.itemsPorColumna); // Invocación con 'call(this)'
+        this._destroyCarousel(); 
+        let htmlContent = renderHtmlFn.call(this, itemsDelNivel, this.STATE.itemsPorColumna); 
         this.DOM.track.innerHTML = htmlContent;
 
         let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
-        initCarouselFn.call(this, initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId); // Invocación con 'call(this)'
+        initCarouselFn.call(this, initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId); 
         
         if (typeof this.setupTrackPointerListeners === 'function') {
             this.setupTrackPointerListeners();
@@ -175,7 +178,7 @@ export function renderNavegacion() {
             }
         } else if (isTablet) {
             tabletView.classList.add('active');
-        } else { 
+        } else { // Ahora incluye >= 1024px
             desktopView.classList.add('active');
         }
     }
@@ -189,11 +192,11 @@ export function renderNavegacion() {
     }
     
     if (typeof debug.log === 'function') {
-        debug.log('render_base', debug.DEBUG_LEVELS.BASIC, 'Renderizado completado.'); // FIX: debug.log
+        debug.log('render_base', debug.DEBUG_LEVELS.BASIC, 'Renderizado completado.'); 
     }
     
     if (!this.STATE.resizeObserver) {
-        _setupResizeObserver.call(this); // Invocación con 'call(this)'
+        _setupResizeObserver.call(this); 
     }
 };
 
@@ -299,7 +302,7 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
     } else { 
         // Tablet y Desktop
         
-        // Lógica clave: Mostrar info-adicional solo en Desktop (>1025) y Tablet Landscape (801-1024)
+        // Lógica clave: Mostrar info-adicional solo en Desktop (>=1024) y Tablet Landscape (801-1023)
         const shouldShowInfoAdicional = isDesktop || isTabletLandscape;
         
         if (shouldShowInfoAdicional) {
@@ -355,7 +358,7 @@ export function _setupResizeObserver() {
         let isDetailActive = document.getElementById('vista-detalle-desktop').classList.contains('active') ||
                                document.getElementById('vista-detalle-mobile').classList.contains('active');
 
-        debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `ResizeObserver detectó cambio: Nuevo ancho = ${newWidth}px, Modo = ${newMode}, Detalle activo = ${isDetailActive}`); // FIX: debug.log
+        debug.log('render_base', debug.DEBUG_LEVELS.DEEP, `ResizeObserver detectó cambio: Nuevo ancho = ${newWidth}px, Modo = ${newMode}, Detalle activo = ${isDetailActive}`); 
 
         // Lógica de activación:
         const shouldRenderForLayout = 
