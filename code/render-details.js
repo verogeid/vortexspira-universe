@@ -264,7 +264,8 @@ export function _mostrarDetalle(cursoId) {
             const slide = clickedElement.closest('.swiper-slide');
             const targetSlideIndex = swiper ? swiper.slides.indexOf(slide) : -1;
             
-            e.preventDefault(); 
+            // ❌ CORRECCIÓN CLAVE: Eliminar e.preventDefault() para permitir el cambio de foco nativo ❌
+            // e.preventDefault(); 
 
             // Find index within the master focusable list
             const focusableElements = nav_base_details._getFocusableDetailElements(appInstance);
