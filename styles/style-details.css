@@ -157,12 +157,6 @@
 /* --- MÁSCARAS (Controladas por las clases binarias mode-focus-text/actions) --- */
 /* Se eliminó la lógica binaria para favorecer el blur por proximidad */
 
-.mode-focus-text #detalle-bloque-acciones {
-}
-
-/* Foco en Acciones -> Desenfoque de TEXTO */
-.mode-focus-actions .detail-text-fragment {
-}
 .mode-focus-actions #detalle-bloque-acciones { 
     filter: none; opacity: 1; -webkit-mask-image: none; mask-image: none; 
 }

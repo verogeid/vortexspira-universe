@@ -21,7 +21,7 @@
     }
 
     #vista-navegacion-tablet {
-      display: block;
+      display: flex;
     }
     #vista-navegacion-desktop {
       display: none;

@@ -1,11 +1,11 @@
 /* --- styles/style-desktop.css --- */
 
-/* DESKTOP (> 1025px): 3 Columnas (Izq - Centro - Der) */
+/* ⭐️ CORRECCIÓN CLAVE: DESKTOP (>= 1024px): 3 Columnas (Izq - Centro - Der) ⭐️ */
 @media (min-width: 1024px) {
     #app-container {
       height: calc(100vh - var(--header-height) - var(--footer-height)); 
       width: 100%; max-width: 1600px; margin: 0 auto;
-      display: grid; /* Asegurar que el display grid está activo */
+      display: grid; 
       /* ⭐️ COLUMNAS: 1fr (Volver/Fijo) 3fr (Carrusel) 1fr (Info Adicional) ⭐️ */
       grid-template-columns: 1fr 3fr 1fr; 
       gap: 20px; padding: 20px; box-sizing: border-box;
@@ -20,11 +20,13 @@
         display: inline-block;
     }
 
+    /* Aseguramos que la vista correcta está visible */
     #vista-navegacion-desktop {
-      display: block;
+        display: flex !important;
+        z-index: 10;
     }
     #vista-navegacion-tablet {
-      display: none;
+        display: none !important;
     }
 
     #nav-swiper {
@@ -56,7 +58,6 @@
         /* Ya utiliza la variable, sin cambios necesarios */
         height: var(--card-height-calc); min-height: var(--card-height-calc);
     }
-
     #vista-navegacion-desktop .carousel-mask {
       position: absolute; width: 100%; height: 100%; 
       top: 0; left: 0;
