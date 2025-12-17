@@ -24,12 +24,12 @@ export const DEBUG_CONFIG = {
     nav_base_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para el foco/blur después del slide ⭐️
     
     // Módulos de Teclado (Enfocados)
-    nav_keyboard_base: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para ver el listener keydown global ⭐️
+    nav_keyboard_base: DEBUG_LEVELS.DEEP, // ⭐️ DEEP: Para ver el listener keydown global ⭐️
     nav_keyboard_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para la lógica de cursor en detalle ⭐️
     
     // Módulos Excluidos (Para evitar ruido)
     nav_keyboard_swipe: DEBUG_LEVELS.DISABLED, // Excluir menús
-    nav_mouse_details: DEBUG_LEVELS.DISABLED, // Excluir rueda de ratón en detalle
+    nav_mouse_details: DEBUG_LEVELS.DEEP, // Excluir rueda de ratón en detalle
     nav_mouse_swipe: DEBUG_LEVELS.DISABLED,   // Excluir arrastre en menús
     
     render_base: DEBUG_LEVELS.DISABLED,
