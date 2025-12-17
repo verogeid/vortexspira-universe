@@ -11,9 +11,10 @@ export function setupTouchListeners() {
     if (this.STATE.carouselInstance) {
         const swiper = this.STATE.carouselInstance;
 
-        // FIX PARA MÓVIL: Permitir arrastre con un solo dedo y evitar bloqueos
+        // ⭐️ FIX: Habilitar arrastre con un solo dedo y evitar conflictos de scroll ⭐️
         swiper.params.touchStartPreventDefault = false;
-        swiper.params.threshold = 5; // Sensibilidad de arrastre
+        swiper.params.threshold = 10; // Evita que micro-movimientos disparen el slide
+        swiper.params.touchMoveStopPropagation = true;
 
         if (swiper._slideChangeStartHandler) swiper.off('slideChangeTransitionStart', swiper._slideChangeStartHandler);
         if (swiper._slideChangeEndHandler) swiper.off('slideChangeTransitionEnd', swiper._slideChangeEndHandler);
@@ -33,7 +34,7 @@ export function handleSlideChangeStart(swiper) {
 };
 
 export function handleSlideChangeEnd(swiper) {
-    // 1. Manejar fin de transición forzada
+    // 1. Manejar fin de transición forzada (Snap o Salto)
     if (this.STATE.keyboardNavInProgress) {
         this.STATE.keyboardNavInProgress = false;
         this._updateFocus(false); 
@@ -43,19 +44,20 @@ export function handleSlideChangeEnd(swiper) {
     const { itemsPorColumna } = this.STATE;
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
     
-    // 2. Lógica específica para MÓVIL (Rueda/Arrastre)
+    // 2. Lógica para MÓVIL (Rueda/Arrastre): Sincronizar foco con slide actual
     if (isMobile) {
         let offset = (this.STATE.historyStack.length > 1) ? 2 : 0;
         const newGlobalIndex = swiper.activeIndex - offset;
         
         if (newGlobalIndex >= 0) {
             this.STATE.currentFocusIndex = newGlobalIndex;
+            // No usamos shouldSlide=true para no entrar en bucle con Swiper
             this._updateFocus(false);
         }
         return;
     }
 
-    // 3. Lógica para Desktop/Tablet (Snap a columna)
+    // 3. Lógica para Desktop/Tablet (Snap a columna central)
     const targetRow = this.STATE.currentFocusIndex % itemsPorColumna;
     const activeSlideEl = swiper.slides[swiper.activeIndex];
     if (!activeSlideEl) return;
@@ -85,3 +87,5 @@ export function handleSlideChangeEnd(swiper) {
         }
     }
 };
+
+// --- code/nav-mouse-swipe.js ---
