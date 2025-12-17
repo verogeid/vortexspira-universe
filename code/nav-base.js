@@ -22,6 +22,7 @@ export function setupListeners() {
 };
 
 function _setupDetailFocusHandler() {
+    // Listener global de foco para la vista de detalle
     document.addEventListener('focusin', (e) => {
         const focusedEl = e.target;
         const isDetailView = this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active'); 
@@ -34,6 +35,7 @@ function _setupDetailFocusHandler() {
         }
     });
 
+    // FIX: Captura de foco por CLIC en Desktop/Tablet (Detalles)
     const handleDetailClick = (e) => {
         const focusable = e.target.closest('.detail-text-fragment, .detail-action-item');
         if (focusable) {
@@ -46,8 +48,12 @@ function _setupDetailFocusHandler() {
         }
     };
 
-    if (this.DOM.vistaDetalleDesktop) this.DOM.vistaDetalleDesktop.addEventListener('click', handleDetailClick);
-    if (this.DOM.vistaDetalleMobile) this.DOM.vistaDetalleMobile.addEventListener('click', handleDetailClick);
+    if (this.DOM.vistaDetalleDesktop) {
+        this.DOM.vistaDetalleDesktop.addEventListener('click', handleDetailClick);
+    }
+    if (this.DOM.vistaDetalleMobile) {
+        this.DOM.vistaDetalleMobile.addEventListener('click', handleDetailClick);
+    }
 };
 
 export function setupTrackPointerListeners() { 
@@ -60,9 +66,12 @@ export function setupTrackPointerListeners() {
         if (!isMobile) {
             this.DOM.track._clickListener = this._handleTrackClick.bind(this);
             this.DOM.track.addEventListener('click', this.DOM.track._clickListener);
+            this.DOM.track._mouseoverListener = this._handleTrackMouseOver.bind(this);
+            this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
+        } else {
+            this.DOM.track._mouseoverListener = this._handleTrackMouseOver.bind(this);
+            this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
         }
-        this.DOM.track._mouseoverListener = this._handleTrackMouseOver.bind(this);
-        this.DOM.track.addEventListener('mouseover', this.DOM.track._mouseoverListener);
     }
 };
 
@@ -72,6 +81,7 @@ export function _handleTrackClick(e) {
   
   const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
   const newIndex = allCards.findIndex(c => c === tarjeta);
+  
   if (newIndex === -1) return;
 
   const parentFocusIndex = this.STATE.currentFocusIndex;
@@ -111,7 +121,10 @@ export function _updateFocusImpl(shouldSlide = true) {
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
     const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
     
-    allCardsInTrack.forEach(card => { card.classList.remove('focus-visible'); card.tabIndex = -1; });
+    allCardsInTrack.forEach(card => {
+        card.classList.remove('focus-visible');
+        card.tabIndex = -1; 
+    });
     
     const allCards = Array.from(this.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
     if (allCards.length === 0) return;
@@ -125,6 +138,7 @@ export function _updateFocusImpl(shouldSlide = true) {
     if (nextFocusedCard) {
         nextFocusedCard.classList.add('focus-visible');
         nextFocusedCard.tabIndex = 0; 
+        
         if (shouldSlide) nextFocusedCard.focus(); 
         else nextFocusedCard.focus({ preventScroll: true }); 
         
