@@ -8,7 +8,7 @@ export const DEBUG_LEVELS = {
     DISABLED: 0,  // No se muestra nada
     BASIC: 1,     // Muestra logs de eventos principales
     DEEP: 2,      // Muestra logs detallados (para depuración intensa)
-    TELEMETHRY: 3 // Para mensajes que se enviarían a un servidor en producción
+    TELEMETRY: 3 // Para mensajes que se enviarían a un servidor en producción
 };
 
 export const DEBUG_CONFIG = {
