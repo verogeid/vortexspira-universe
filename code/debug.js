@@ -12,7 +12,7 @@ export const DEBUG_LEVELS = {
 };
 
 export const DEBUG_CONFIG = {
-    global: DEBUG_LEVELS.BASIC,
+    global: DEBUG_LEVELS.DEEP,
     
     app: DEBUG_LEVELS.DISABLED,
     data: DEBUG_LEVELS.DISABLED,
@@ -42,43 +42,6 @@ export function logClear() {
         console.clear();
     }
 };
-
-/**
- * Función de intercepción de consola (Monkey-patching).
- * Debe llamarse antes de inicializar bibliotecas externas.
- */
-export function setupConsoleInterceptor() {
-    const originalConsoleWarn = console.warn;
-    const originalConsoleLog = console.log;
-
-    // Patrón de la advertencia de Swiper
-    const SWIPER_WARNING_PATTERN = /Swiper Loop Warning/;
-    // Patrón del mensaje de aviso de limpieza de consola
-    const CLEAR_CONSOLE_AVOIDED_PATTERN = /console\.clear\(\) se ha evitado/;
-
-    console.warn = function(...args) {
-        const message = args.join(' ');
-        if (SWIPER_WARNING_PATTERN.test(message)) {
-            // Suprimir la advertencia específica de Swiper
-            return;
-        }
-        // Llamar a la función original para otras advertencias
-        originalConsoleWarn.apply(console, args);
-    };
-
-    // Sobreescribir console.log para suprimir el mensaje de limpieza de consola si es necesario
-    console.log = function(...args) {
-        const message = args.join(' ');
-        if (CLEAR_CONSOLE_AVOIDED_PATTERN.test(message)) {
-            // Suprimir el mensaje de "console.clear() se ha evitado"
-            return;
-        }
-        // Llamar a la función original para otros logs
-        originalConsoleLog.apply(console, args);
-    };
-    
-    // Nota: La intercepción de los logs de la propia aplicación está manejada por la lógica de IS_PRODUCTION.
-}
 
 /**
  * Función de logging centralizada.
@@ -117,6 +80,19 @@ export function logWarn(moduleName, ...args) {
 }
 
 /**
+ * Muestra una stack trace. Las trazas se muestran si el nivel es BASIC o superior.
+ * @param {string} moduleName - El nombre del módulo.
+ * @param {...any} args - Los mensajes a mostrar.
+ */
+export function logTrace(moduleName, ...args) {
+    if (DEBUG_CONFIG[moduleName] >= DEBUG_LEVELS.BASIC) {
+        if (!IS_PRODUCTION) {
+            console.trace(`[${moduleName}]`, ...args);
+        }
+    }
+}
+
+/**
  * Muestra un error. Los errores se muestran SIEMPRE, independientemente del nivel de depuración del módulo.
  * @param {string} moduleName - El nombre del módulo.
  * @param {...any} args - Los mensajes a mostrar.
@@ -149,6 +125,119 @@ export function logGroupEnd(moduleName, requiredLevel) {
     if (DEBUG_CONFIG[moduleName] >= requiredLevel && !IS_PRODUCTION) {
         console.groupEnd();
     }
+}
+
+/**
+ * Monitoriza cambios de foco globalmente en el documento.
+ * Útil para detectar qué elemento "roba" el foco inesperadamente.
+ */
+export function _setupFocusTracker() {
+    if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) return;
+
+    document.addEventListener('focusin', () => {
+        log('global', DEBUG_LEVELS.DEEP, 'Foco movido a:', {
+            tag: document.activeElement.tagName,
+            id: document.activeElement.id,
+            class: document.activeElement.className,
+            focusable: document.activeElement.tabIndex
+        });
+    });
+}
+
+/**
+ * Crea un interceptor para un flag de estado.
+ * Avisa mediante trace cada vez que el flag cambia de valor.
+ * @param {Object} stateObj - El objeto de estado (ej. app.STATE).
+ * @param {string} propName - El nombre de la propiedad (ej. 'keyboardNavInProgress').
+ */
+export function _watchFlag(stateObj, propName) {
+    if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) return;
+
+    let value = stateObj[propName];
+    Object.defineProperty(stateObj, propName, {
+        get: () => value,
+        set: (newValue) => {
+            if (value !== newValue) {
+                logTrace('global', `Flag [${propName}] cambiado: ${value} -> ${newValue}`);
+                value = newValue;
+            }
+        },
+        configurable: true
+    });
+}
+
+/**
+ * Intercepta llamadas a .focus() para ver quién lo solicita.
+ */
+export function _setupFocusMethodInterceptor() {
+    if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) return;
+
+    const originalFocus = HTMLElement.prototype.focus;
+    HTMLElement.prototype.focus = function(...args) {
+        log('global', DEBUG_LEVELS.DEEP, `Solicitado .focus() sobre:`, this);
+        logTrace('global', 'Origen de la solicitud de foco:');
+        return originalFocus.apply(this, args);
+    };
+}
+
+/**
+ * Configura el listener de clic global para depuración.
+ */
+export function _setupGlobalClickListener() {
+    if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) return;
+
+    document.addEventListener('click', function(e) {
+        if (typeof log === 'function') {
+            const targetElement = e.target;
+            const closestCard = targetElement.closest('.card');
+            
+            log('global', DEBUG_LEVELS.DEEP, '❌ CLIC GLOBAL CAPTURADO ❌');
+            log('global', DEBUG_LEVELS.DEEP, 'Origen (e.target):', targetElement.tagName, targetElement.id, targetElement.className);
+            
+            if (closestCard) {
+                log('global', DEBUG_LEVELS.DEEP, 'Elemento Clicado es una Tarjeta.', 'Card ID:', closestCard.dataset.id);
+            }
+        }
+    }, true); // El 'true' activa la fase de CAPTURA.
+}
+
+/**
+ * Función de intercepción de consola (Monkey-patching).
+ * Debe llamarse antes de inicializar bibliotecas externas.
+ */
+export function _setupConsoleInterceptor() {
+    if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) return;
+
+    const originalConsoleWarn = console.warn;
+    const originalConsoleLog = console.log;
+
+    // Patrón de la advertencia de Swiper
+    const SWIPER_WARNING_PATTERN = /Swiper Loop Warning/;
+    // Patrón del mensaje de aviso de limpieza de consola
+    const CLEAR_CONSOLE_AVOIDED_PATTERN = /console\.clear\(\) se ha evitado/;
+
+    console.warn = function(...args) {
+        const message = args.join(' ');
+        if (SWIPER_WARNING_PATTERN.test(message)) {
+            // Suprimir la advertencia específica de Swiper
+            return;
+        }
+        // Llamar a la función original para otras advertencias
+        originalConsoleWarn.apply(console, args);
+    };
+
+    // Sobreescribir console.log para suprimir el mensaje de limpieza de consola si es necesario
+    console.log = function(...args) {
+        const message = args.join(' ');
+        if (CLEAR_CONSOLE_AVOIDED_PATTERN.test(message)) {
+            // Suprimir el mensaje de "console.clear() se ha evitado"
+            return;
+        }
+        // Llamar a la función original para otros logs
+        originalConsoleLog.apply(console, args);
+    };
+    
+    // Nota: La intercepción de los logs de la propia aplicación está manejada por la lógica de IS_PRODUCTION.
 }
 
 // --- code/debug.js ---

@@ -25,7 +25,7 @@ import * as render_mobile from './render-mobile.js';
 class VortexSpiraApp {
     
     constructor() {
-        debug.setupConsoleInterceptor();
+        debug._setupConsoleInterceptor();
 
         this.DOM = {}; 
         this.STATE = {
@@ -90,7 +90,15 @@ class VortexSpiraApp {
 
         debug.log('app', debug.DEBUG_LEVELS.BASIC, "App: Iniciando orquestación (POO)...");
         
-        this._setupGlobalDebugListeners();
+        debug._setupGlobalClickListener();
+        //debug._setupConsoleInterceptor();
+        debug._setupFocusTracker();           // Vigilancia de cambios de foco
+        debug._setupFocusMethodInterceptor();  // Vigilancia de llamadas a .focus()
+        
+        // Vigilancia del flag específico
+        debug._watchFlag(App.STATE, 'keyboardNavInProgress');
+
+
         this._cacheDOM();
         
         // ⬇️ MODIFICACIÓN CLAVE: Inicializar vistaNav de forma segura para Deep Link ⬇️
@@ -244,26 +252,7 @@ class VortexSpiraApp {
         // ⬆️ FIN MODIFICACIÓN ⬆️
     }
     
-    /**
-     * Configura el listener de clic global para depuración.
-     */
-    _setupGlobalDebugListeners() {
-        if (debug.DEBUG_CONFIG.global >= debug.DEBUG_LEVELS.DEEP) {
-            document.addEventListener('click', function(e) {
-                if (typeof debug.log === 'function') {
-                    const targetElement = e.target;
-                    const closestCard = targetElement.closest('.card');
-                    
-                    debug.log('global', debug.DEBUG_LEVELS.DEEP, '❌ CLIC GLOBAL CAPTURADO ❌');
-                    debug.log('global', debug.DEBUG_LEVELS.DEEP, 'Origen (e.target):', targetElement.tagName, targetElement.id, targetElement.className);
-                    
-                    if (closestCard) {
-                        debug.log('global', debug.DEBUG_LEVELS.DEEP, 'Elemento Clicado es una Tarjeta.', 'Card ID:', closestCard.dataset.id);
-                    }
-                }
-            }, true); // El 'true' activa la fase de CAPTURA.
-        }
-    }
+    
 }
 
 // -------------------------------------------------------------

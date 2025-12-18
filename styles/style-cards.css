@@ -44,7 +44,7 @@
     background: transparent; min-height: 50px; /* ⭐️ AJUSTADO: 60px -> 50px ⭐️ */
     opacity: 0.8;
     font-size: 1rem; cursor: default; text-align: center;
-    justify-content: center; pointer-events: none;
+    justify-content: center; pointer-events: none !important;
 }
 .card.card-volver-vertical { 
     min-height: 50px; /* ⭐️ AJUSTADO: 80px -> 50px ⭐️ */

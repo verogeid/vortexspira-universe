@@ -203,7 +203,7 @@
         box-sizing: border-box; 
     }
 
-    .swiper-slide .card:not(.disabled):not([data-tipo="relleno"]) {
+    .swiper-slide .card:not(.disabled):not([data-tipo="relleno"]):not(.card-breadcrumb-vertical) {
         cursor: pointer !important;
         pointer-events: auto !important; 
         touch-action: manipulation; 
