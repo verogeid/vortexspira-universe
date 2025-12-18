@@ -5,7 +5,7 @@ import * as data from './data.js';
 
 export const STRINGS = {
     'es': {
-        'version': '1.1.45',
+        'version': '1.1.46',
 
         // Meta y Títulos
         'pageTitle': 'VortexSpira® Universe: Selector de Cursos',
@@ -32,8 +32,8 @@ export const STRINGS = {
         
         // "Acerca de"
         'aboutTitle': 'Acerca de VortexSpira®',
-        'aboutSummary': 'Plataforma de audio-aprendizaje inmersivo diseñada para ingenieros, con foco en la accesibilidad cognitiva y cero ansiedad.',
-        'aboutLinkLanding': 'Visita la Landing Page',
+        'aboutSummary': 'Plataforma de audio-aprendizaje inmersivo',
+        'aboutLinkLanding': 'Hazte Fundador y obten tu 60% OFF',
         'aboutLinkDiary': 'Lee el Dev Diary en GitHub',
 
         // Footer

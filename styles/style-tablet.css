@@ -73,12 +73,12 @@
         height: var(--card-height-calc); min-height: var(--card-height-calc); 
         margin-bottom: 0; 
     }
-    #card-volver-fija {
+    #vista-volver {
         min-width: 0;
     }
     /* ⭐️ CORRECCIÓN: Usar la variable unificada de altura ⭐️ */
-    #card-volver-fija #card-nivel-actual,
-    #card-volver-fija #card-volver-fija-elemento {
+    #vista-volver #card-nivel-actual,
+    #vista-volver #card-volver-fija-elemento {
         height: var(--card-height-calc); min-height: var(--card-height-calc);
     }
     #vista-navegacion-tablet .carousel-mask {

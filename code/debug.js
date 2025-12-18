@@ -12,7 +12,10 @@ export const DEBUG_LEVELS = {
 };
 
 export const DEBUG_CONFIG = {
-    global: DEBUG_LEVELS.DEEP,
+    global: DEBUG_LEVELS.BASIC,
+    global_focus: DEBUG_LEVELS.DEEP,
+    global_key: DEBUG_LEVELS.DEEP,
+    global_mouse: DEBUG_LEVELS.DISABLED,
     
     app: DEBUG_LEVELS.DISABLED,
     data: DEBUG_LEVELS.DISABLED,
@@ -24,16 +27,16 @@ export const DEBUG_CONFIG = {
     nav_base_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para el foco/blur después del slide ⭐️
     
     // Módulos de Teclado (Enfocados)
-    nav_keyboard_base: DEBUG_LEVELS.DEEP, // ⭐️ DEEP: Para ver el listener keydown global ⭐️
+    nav_keyboard_base: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para ver el listener keydown global ⭐️
     nav_keyboard_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para la lógica de cursor en detalle ⭐️
     
     // Módulos Excluidos (Para evitar ruido)
     nav_keyboard_swipe: DEBUG_LEVELS.DISABLED, // Excluir menús
-    nav_mouse_details: DEBUG_LEVELS.DEEP, // Excluir rueda de ratón en detalle
+    nav_mouse_details: DEBUG_LEVELS.DISABLED, // Excluir rueda de ratón en detalle
     nav_mouse_swipe: DEBUG_LEVELS.DISABLED,   // Excluir arrastre en menús
     
     render_base: DEBUG_LEVELS.DISABLED,
-    render_details: DEBUG_LEVELS.DEEP, // ⭐️ DEEP: Para inicialización de Swiper de detalle ⭐️
+    render_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para inicialización de Swiper de detalle ⭐️
     render_swipe: DEBUG_LEVELS.DISABLED
 };
 
@@ -128,14 +131,13 @@ export function logGroupEnd(moduleName, requiredLevel) {
 }
 
 /**
- * Monitoriza cambios de foco globalmente en el documento.
- * Útil para detectar qué elemento "roba" el foco inesperadamente.
+ * WATCHDOG: Intercepta llamadas imperativas a .focus().
  */
 export function _setupFocusTracker() {
-    if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) return;
+    if (DEBUG_CONFIG.global_focus < DEBUG_LEVELS.DEEP) return;
 
     document.addEventListener('focusin', () => {
-        log('global', DEBUG_LEVELS.DEEP, 'Foco movido a:', {
+        log('global_focus', DEBUG_LEVELS.DEEP, 'Foco movido a:', {
             tag: document.activeElement.tagName,
             id: document.activeElement.id,
             class: document.activeElement.className,
@@ -145,10 +147,7 @@ export function _setupFocusTracker() {
 }
 
 /**
- * Crea un interceptor para un flag de estado.
- * Avisa mediante trace cada vez que el flag cambia de valor.
- * @param {Object} stateObj - El objeto de estado (ej. app.STATE).
- * @param {string} propName - El nombre de la propiedad (ej. 'keyboardNavInProgress').
+ * WATCHDOG: Intercepta mutaciones de flags de estado críticos.
  */
 export function _watchFlag(stateObj, propName) {
     if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) return;
@@ -167,38 +166,55 @@ export function _watchFlag(stateObj, propName) {
 }
 
 /**
- * Intercepta llamadas a .focus() para ver quién lo solicita.
+ * WATCHDOG: Monitoriza cambios de foco globalmente.
  */
 export function _setupFocusMethodInterceptor() {
-    if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) return;
+    if (DEBUG_CONFIG.global_focus < DEBUG_LEVELS.DEEP) return;
 
     const originalFocus = HTMLElement.prototype.focus;
     HTMLElement.prototype.focus = function(...args) {
-        log('global', DEBUG_LEVELS.DEEP, `Solicitado .focus() sobre:`, this);
-        logTrace('global', 'Origen de la solicitud de foco:');
+        log('global_focus', DEBUG_LEVELS.DEEP, `Solicitado .focus() sobre:`, this);
+        logTrace('global_focus', 'Origen de la solicitud de foco:');
         return originalFocus.apply(this, args);
     };
 }
 
 /**
- * Configura el listener de clic global para depuración.
+ * WATCHDOG: Monitoriza clics globalmente.
  */
 export function _setupGlobalClickListener() {
-    if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) return;
+    if (DEBUG_CONFIG.global_mouse < DEBUG_LEVELS.DEEP) return;
 
     document.addEventListener('click', function(e) {
         if (typeof log === 'function') {
             const targetElement = e.target;
             const closestCard = targetElement.closest('.card');
             
-            log('global', DEBUG_LEVELS.DEEP, '❌ CLIC GLOBAL CAPTURADO ❌');
-            log('global', DEBUG_LEVELS.DEEP, 'Origen (e.target):', targetElement.tagName, targetElement.id, targetElement.className);
+            log('global_mouse', DEBUG_LEVELS.DEEP, '❌ CLIC GLOBAL CAPTURADO ❌');
+            log('global_mouse', DEBUG_LEVELS.DEEP, 'Origen (e.target):', targetElement.tagName, targetElement.id, targetElement.className);
             
             if (closestCard) {
-                log('global', DEBUG_LEVELS.DEEP, 'Elemento Clicado es una Tarjeta.', 'Card ID:', closestCard.dataset.id);
+                log('global_mouse', DEBUG_LEVELS.DEEP, 'Elemento Clicado es una Tarjeta.', 'Card ID:', closestCard.dataset.id);
             }
         }
     }, true); // El 'true' activa la fase de CAPTURA.
+}
+
+/**
+ * WATCHDOG: Captura pulsaciones de teclas para depurar el flujo del foco.
+ * Muestra la tecla pulsada y el elemento que tenía el foco en ese instante.
+ */
+export function _setupKeyTracker() {
+    if (DEBUG_CONFIG.global_key < DEBUG_LEVELS.DEEP) return;
+
+    document.addEventListener('keydown', (e) => {
+        log('global_key', DEBUG_LEVELS.DEEP, `⌨️ TECLA PULSADA: [${e.key}]`, {
+            focusEn: document.activeElement.tagName,
+            id: document.activeElement.id,
+            class: document.activeElement.className,
+            tabIndex: document.activeElement.tabIndex
+        });
+    }, true); // Usamos fase de captura para verlo antes que los handlers de la app
 }
 
 /**

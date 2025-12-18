@@ -1,7 +1,10 @@
 // --- code/nav-keyboard-swipe.js ---
 
+import * as data from './data.js';
+
 /**
- * Maneja la navegación por teclado (flechas y Enter/Espacio) en la vista de Navegación (Swipe).
+ * Maneja la navegación por teclado en la vista de Swipe (Menús).
+ * Garantiza navegación vertical interna en columnas antes de saltar lateralmente.
  */
 export function _handleSwipeNavigation(key, appInstance) {
     const app = appInstance;
@@ -13,41 +16,53 @@ export function _handleSwipeNavigation(key, appInstance) {
     const totalCards = allCards.length;
     if (totalCards === 0) return;
 
+    // Determinamos posición en la rejilla
+    const currentColumn = Math.floor(currentIndex / itemsPorColumna);
+    const currentRow = currentIndex % itemsPorColumna;
+
     switch (key) {
         case 'ArrowUp':
-            newIndex = currentIndex - 1;
-            if (newIndex < 0) newIndex = totalCards - 1;
+            // Intentar subir en la misma columna
+            if (currentRow > 0) {
+                newIndex = currentIndex - 1;
+            } else {
+                // Si estamos arriba, saltar al final de la columna anterior
+                newIndex = currentIndex - 1;
+                if (newIndex < 0) newIndex = totalCards - 1; // Bucle al final
+            }
             break;
+
         case 'ArrowDown':
-            newIndex = currentIndex + 1;
-            if (newIndex >= totalCards) newIndex = 0;
+            // Intentar bajar en la misma columna
+            const isLastInColumn = (currentRow === itemsPorColumna - 1);
+            if (!isLastInColumn && (currentIndex + 1) < totalCards) {
+                newIndex = currentIndex + 1;
+            } else {
+                // Si estamos abajo o no hay más en esta columna, saltar a la siguiente
+                newIndex = currentIndex + 1;
+                if (newIndex >= totalCards) newIndex = 0; // Bucle al principio
+            }
             break;
+
         case 'ArrowLeft':
+            // Salto lateral a la columna anterior (misma fila)
             newIndex = currentIndex - itemsPorColumna;
-            if (newIndex < 0) newIndex = totalCards - 1; 
+            if (newIndex < 0) newIndex = (currentIndex === 0) ? totalCards - 1 : 0;
             break;
+
         case 'ArrowRight':
+            // Salto lateral a la siguiente columna (misma fila)
             newIndex = currentIndex + itemsPorColumna;
-            if (newIndex >= totalCards) newIndex = 0;
+            if (newIndex >= totalCards) newIndex = (currentIndex === totalCards - 1) ? 0 : totalCards - 1;
             break;
+
         case 'Enter':
         case ' ':
-            if (allCards[currentIndex]) {
-                const tarjeta = allCards[currentIndex];
-                if (tarjeta.dataset.tipo === 'volver-vertical') {
-                     if (typeof app._handleVolverClick === 'function') {
-                        app._handleVolverClick();
-                     }
-                    return;
-                }
-                if (tarjeta.classList.contains('disabled')) return;
-
-                const id = tarjeta.dataset.id;
-                const tipo = tarjeta.dataset.tipo;
-                
-                if (typeof app._handleCardClick === 'function') {
-                    app._handleCardClick(id, tipo); 
-                }
+            const tarjeta = allCards[currentIndex];
+            if (tarjeta && !tarjeta.classList.contains('disabled')) {
+                const { id, tipo } = tarjeta.dataset;
+                if (tipo === 'volver-vertical') app._handleVolverClick();
+                else app._handleCardClick(id, tipo);
             }
             return; 
     }
@@ -55,9 +70,14 @@ export function _handleSwipeNavigation(key, appInstance) {
     if (newIndex !== currentIndex) {
         app.STATE.keyboardNavInProgress = true; 
         app.STATE.currentFocusIndex = newIndex;
-        // Delegamos a _updateFocusImpl en nav_base
-        app._updateFocus(true);
+        
+        // Determinar si el movimiento requiere que Swiper cambie de slide lateralmente
+        const newColumn = Math.floor(newIndex / itemsPorColumna);
+        const needsSlide = (newColumn !== currentColumn);
+        
+        // Pasamos needsSlide a updateFocus para evitar el desplazamiento lateral si seguimos en la misma columna
+        app._updateFocus(needsSlide);
     }
-};
+}
 
 // --- code/nav-keyboard-swipe.js ---

@@ -50,11 +50,11 @@
     #nav-swiper .cards-column-group .card {
         flex: none; height: var(--card-height-calc); min-height: var(--card-height-calc); margin-bottom: 0; 
     }
-    #card-volver-fija {
+    #vista-volver {
         min-width: 0;
     }
-    #card-volver-fija #card-nivel-actual,
-    #card-volver-fija #card-volver-fija-elemento {
+    #vista-volver #card-nivel-actual,
+    #vista-volver #card-volver-fija-elemento {
         /* Ya utiliza la variable, sin cambios necesarios */
         height: var(--card-height-calc); min-height: var(--card-height-calc);
     }
