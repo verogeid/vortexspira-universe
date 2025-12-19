@@ -9,93 +9,77 @@ body {
     box-sizing: border-box;
     min-height: 100vh;
     padding-top: var(--header-height);
-    /* ⭐️ FIX: Padding-bottom para el footer fijo en todas las vistas ⭐️ */
     padding-bottom: var(--footer-height); 
 }
 
 header {
-    /* ⭐️ CORRECCIÓN CLAVE: position: fixed para asegurar que siempre está arriba ⭐️ */
     position: fixed; 
     top: 0; width: 100%; 
     text-align: center; background: var(--color-header-bg);
     color: var(--color-header-text); z-index: 100; box-sizing: border-box;
     height: var(--header-height);
-
-    /* El header YA NO GESTIONA FLEX. Ahora lo hace el WRAPPER. */
     display: block; 
-    padding: 0; /* Quitamos el padding del header y lo movemos al wrapper */
+    padding: 0;
+    overflow: visible; /* Permitimos que el glow del foco sobresalga */
 }
 
-/* ⭐️ NUEVO: Contenedor Wrapper para Flex y Posicionamiento ⭐️ */
 #header-content-wrapper {
-    position: relative; /* Contexto para el h1 absoluto */
+    position: relative;
     width: 100%;
     height: 100%;
-
-    /* Aplicamos los estilos de Flex y Espacio aquí */
     display: flex;
     align-items: center;
     justify-content: space-between; 
     gap: 8px; 
-    padding: 10px 15px; /* Restauramos el padding horizontal y vertical */
+    padding: 0 15px;
     box-sizing: border-box;
 }
 
 header h1 { 
-    /* ⭐️ Posicionamiento absoluto para centrado del título (respecto al WRAPPER relativo) ⭐️ */
     position: absolute; 
     left: 50%; 
     transform: translateX(-50%); 
-
-    /* Aseguramos que el contenido (Logo/Título/Subtítulo) se centre internamente */
     display: flex;
     align-items: center;
     justify-content: center; 
-    flex-wrap: nowrap; /* Mantiene título y subtítulo en línea */
-
-    /* ⭐️ CORRECCIÓN: Usar una fuente mínima más pequeña y centrar el contenido ⭐️ */
+    flex-wrap: nowrap;
     font-size: clamp(1.2rem, 2.8vw, 2.2rem); 
     margin: 0; padding: 0; line-height: 1.2; 
-    gap: 10px; /* Ligeramente aumentado para compensar el logo pequeño */
+    gap: 0.5em; /* Separación elástica */
     flex-grow: 0; 
-
-    /* ⭐️ CORRECCIÓN CLAVE: Aumentar el max-width para dar el máximo espacio posible ⭐️ */
     width: calc(100% - 120px);
     max-width: 90%;
-
-    white-space: nowrap; /* Aseguramos que trunca el bloque entero */
+    white-space: nowrap; 
     text-overflow: ellipsis; 
     overflow: hidden; 
     z-index: 99; 
 }
 
-/* ⭐️ CORRECCIÓN SUBTÍTULO: Debe ser INLINE y más pequeño, alineado a la derecha del título ⭐️ */
 #main-header-title small {
     display: inline-block; 
     width: auto; 
     text-align: left;
-
-    font-size: 0.6em; /* Mantenemos pequeño */
+    font-size: 0.6em;
     opacity: 0.8;
     vertical-align: top;
-    margin-left: 8px;
-
-    /* Aseguramos que el subtítulo no fuerce su propio truncado */
+    margin-left: 0.5em;
     white-space: normal; 
     text-overflow: initial;
     overflow: initial;
 }
 
-/* ⭐️ AJUSTE: SVG del logo reducido al tamaño de la letra del h1 con interactividad ⭐️ */
+/* ⭐️ LOGO RESPONSIVE E INTERACTIVO ⭐️ */
 header h1 svg {
-    height: 1.1em !important; 
+    height: 1.2em !important; /* Altura proporcional al texto del h1 */
     width: auto;
     flex-shrink: 0; 
     cursor: pointer;
-    padding: 4px;
-    border: 2px solid transparent;
-    border-radius: 8px;
+    padding: 0.2em 0.4em;
+    border: 1.5px solid var(--color-card-border);
+    border-radius: 0.4em;
     transition: all 0.2s ease;
+    box-sizing: border-box;
+    vertical-align: middle;
 }
 
 header h1 svg:hover {
@@ -111,82 +95,44 @@ header h1 svg:focus-visible {
     box-shadow: 0 0 12px var(--color-primary);
 }
 
-/* ⭐️ NUEVO: Clase para el icono de Obras en el Header (SVG) ⭐️ */
+/* ⭐️ ICONO OBRAS HEADER ⭐️ */
 .icon-obras-header {
     display: inline-block;
-    width: 25px; 
-    height: 25px;
-    background-color: var(--color-icon-obras); /* Usa el color temático para Obras */
+    width: 1.5em; 
+    height: 1.5em;
+    background-color: var(--color-icon-obras);
     -webkit-mask-image: var(--icon-obras);
     mask-image: var(--icon-obras);
     -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
     -webkit-mask-position: center;
-    mask-position: center;
     -webkit-mask-size: contain;
-    mask-size: contain;
     flex-shrink: 0;
-    margin-right: 8px;
-    /* ⭐️ Es un elemento flex, alineado a la izquierda por space-between ⭐️ */
+    margin-right: 0.5em;
     z-index: 101; 
 }
 
-/* ⭐️ NUEVO: Clase para el icono de Obras en las tarjetas ⭐️ */
-.icon-obras-card {
-    display: inline-block;
-    width: 1.2em; 
-    height: 1.2em;
-    background-color: currentColor; 
-    -webkit-mask-image: var(--icon-obras);
-    mask-image: var(--icon-obras);
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    vertical-align: middle;
-}
-
-/* ⭐️ AÑADIDO: Clase para el icono de Categoría Deshabilitada (Usa --icon-vacio) ⭐️ */
-.icon-disabled-card {
-    display: inline-block;
-    width: 1.2em; 
-    height: 1.2em;
-    background-color: currentColor; /* Hereda el color del texto (gris en disabled) */
-    -webkit-mask-image: var(--icon-vacio); /* Usar el SVG de vacío/disabled */
-    mask-image: var(--icon-vacio);
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    vertical-align: middle;
-}
-
-/* ⭐️ AJUSTE: Botón A11y con estados interactivos del tema ⭐️ */
+/* ⭐️ BOTÓN ACCESIBILIDAD RESPONSIVE E INTERACTIVO ⭐️ */
 #btn-config-accesibilidad {
     position: static; 
-    border: 2px solid transparent; 
-    border-radius: 8px; 
-    background-color: var(--color-header-text); 
-    width: 30px; 
-    height: 30px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 2.2em; 
+    height: 2.2em;
     padding: 0;
-    flex-shrink: 0;
-    z-index: 101; 
+    border: 1.5px solid var(--color-card-border);
+    border-radius: 0.5em;
+    background-color: var(--color-header-text); 
     cursor: pointer;
     transition: all 0.2s ease;
     outline: none;
+    z-index: 101; 
 
     -webkit-mask-image: var(--icono-a11y);
     mask-image: var(--icono-a11y);
     -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
     -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: 85%;
+    -webkit-mask-size: 75%;
 }
 
 #btn-config-accesibilidad:hover {
@@ -198,16 +144,14 @@ header h1 svg:focus-visible {
     background-color: var(--color-primary); 
     border-color: var(--color-primary);
     box-shadow: 0 0 12px var(--color-primary);
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
-/* GRID RESPONSIVE */
+/* --- RESTO DEL GRID Y VISTAS --- */
 
 #vista-central {
   grid-column: 2 / 3; 
-  width: 100%; 
-  height: 100%; 
-  position: relative; 
+  width: 100%; height: 100%; position: relative; 
   overflow-x: hidden; 
   overflow-y: hidden; 
   display: flex; 
@@ -215,7 +159,6 @@ header h1 svg:focus-visible {
 
 .vista {
   position: absolute; width: 100%; height: 100%; top: 0; left: 0;
-  display: flex; flex-direction: column; justify-content: start; 
   display: none;             
   z-index: 1;                
   pointer-events: none;      
@@ -223,44 +166,32 @@ header h1 svg:focus-visible {
   opacity: 0;
 }
 .vista.active { 
-    display: flex; 
+    display: flex; flex-direction: column;
     z-index: 10;                 
     pointer-events: auto;        
     opacity: 1;
-    width: 100%; height: 100%; 
 } 
 
 #vista-volver {
     grid-column: 1 / 2; 
     position: relative; z-index: 50; 
-    display: none; flex-direction: column; justify-content: flex-start; 
+    display: none; flex-direction: column;
     height: 100%; gap: var(--card-gap); 
     padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
-    margin-right: 0; border: none; background: transparent;
-    box-shadow: none; box-sizing: border-box;
+    box-sizing: border-box;
 }
 #vista-volver.visible { display: flex; }
-#columna-volver-relleno { flex-grow: 1; width: 100%; border: none; }
 
 #info-adicional {
     grid-column: 3 / 4; 
     width: 100%; 
     border-radius: 12px; border: 2px dashed var(--color-border-placeholder); 
     background: var(--color-card-bg); display: none; 
-    box-sizing: border-box; margin-left: 0; 
+    box-sizing: border-box; 
     padding: var(--nav-carousel-top-offset) 15px 15px 15px;
     height: 100%; overflow-y: auto; 
 }
 #info-adicional.visible { display: block !important; }
-
-#info-adicional-link-landing::before {
-    -webkit-mask-image: var(--icon-link-landing);
-    mask-image: var(--icon-link-landing);
-}
-#info-adicional-link-diary::before {
-    -webkit-mask-image: var(--icon-link-diary);
-    mask-image: var(--icon-link-diary);
-}
 
 /* MEDIA QUERIES */
 
@@ -269,7 +200,6 @@ header h1 svg:focus-visible {
         display: grid;
         grid-template-columns: 1fr 3fr; 
     }
-    #info-adicional.visible { display: none !important; }
 }
 
 @media (min-width: 801px) and (max-width: 1023px) {
@@ -282,12 +212,21 @@ header h1 svg:focus-visible {
 @media (min-width: 1024px) {
     #app-container {
         display: grid;
+        grid-template-columns: 1fr 3fr 1fr;
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .mask-left, .mask-right { -webkit-backdrop-filter: none; backdrop-filter: none; }
-  .vista { transition: none !important; }
+footer {
+    width: 100%;
+    height: var(--footer-height);
+    background-color: var(--color-header-bg);
+    color: var(--color-footer-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 0;
+    z-index: 100;
 }
 
 /* --- styles/style-layout.css --- */
