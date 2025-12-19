@@ -15,7 +15,7 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
         html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, estaActivo, esRelleno)}</div>`; 
     }
 
-    // ÚNICA INSERCIÓN: Tarjeta de relleno transparente
+    // ⭐️ INSERCIÓN: Tarjeta de relleno al final ⭐️
     html += `<div class="swiper-slide card-relleno-final" style="height: 80px !important;"></div>`;
 
     return html;
