@@ -1,6 +1,7 @@
 /* --- styles/style-mobile.css --- */
 
 @media (max-width: 600px) {
+    /* 1. Reset de pantalla */
     body {
         overflow: hidden !important; 
         height: 100vh; 
@@ -14,86 +15,61 @@
         position: fixed; 
         z-index: 100;
         top: 0;
-        left: 0;
         width: 100%;
     }
 
-    #main-header-subtitle {
-        display: none !important; 
-    }
-
+    /* 2. Contenedor principal pegado al header */
     #app-container {
         height: calc(100vh - var(--header-height) - var(--footer-height)) !important;
         margin-top: var(--header-height);
-        /* ⭐️ AJUSTE: Eliminamos el padding superior para que empiece pegado al header ⭐️ */
-        padding: 0 !important; 
+        padding: 0 !important; /* Eliminamos el hueco de 10px superior */
         display: flex; 
         flex-direction: column;
-        overflow: hidden; 
+        overflow: hidden;
     }
 
-    #vista-central {
+    /* 3. Vistas */
+    #vista-central, .vista {
         width: 100%; 
         position: relative; 
         height: 100% !important; 
         overflow: hidden !important;
-        display: block; 
-        flex-grow: 1; 
     }
 
     .vista:not(.active) { display: none !important; }
-    .vista { position: relative; height: 100% !important; overflow: hidden !important; }
 
-    #card-volver-fija, #info-adicional { display: none !important; }
+    /* 4. Swipers */
+    #nav-swiper-mobile, #detalle-swiper-mobile {
+        height: 100% !important;
+        width: 100%;
+        touch-action: none !important;
+    }
 
+    #nav-swiper-mobile .swiper-wrapper, 
+    #detalle-swiper-mobile .swiper-wrapper {
+        padding-top: 5px !important;
+        padding-bottom: 10px !important; /* El espacio real lo da la card inyectada */
+    }
+
+    #nav-swiper-mobile .swiper-slide,
+    #detalle-swiper-mobile .swiper-slide {
+        height: auto !important; /* Permite varias tarjetas por pantalla */
+        padding: 0 6% !important;
+        box-sizing: border-box;
+    }
+
+    /* 5. Vista de Detalle */
     #vista-detalle-mobile {
         position: fixed !important; 
         top: var(--header-height) !important; 
         left: 0; width: 100%; 
         height: calc(100vh - var(--header-height) - var(--footer-height)) !important;
         z-index: 99; 
-        overflow: hidden !important;
-        display: flex; flex-direction: column; 
         background: var(--color-bg);
+        display: flex; flex-direction: column;
     }
 
-    #detalle-swiper-mobile {
-        height: 100% !important;
-        touch-action: none !important;
-    }
-
-    /* ⭐️ Estilos para las nuevas cards de relleno ⭐️ */
-    .card-relleno-final, .detail-filler-slide {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        outline: none !important;
-    }
-
-    #nav-swiper-mobile {
-        height: 100% !important; 
-        width: 100%; 
-        touch-action: none !important;
-    }
-
-    #nav-swiper-mobile .swiper-wrapper, 
-    #detalle-swiper-mobile .swiper-wrapper {
-        display: flex !important; 
-        flex-direction: column; 
-        gap: 10px; 
-        width: 100%; 
-        padding-top: 5px !important; 
-        /* Reducimos el padding de CSS porque ahora hay una card física de relleno */
-        padding-bottom: 20px !important; 
-    }
-
-    #nav-swiper-mobile .swiper-slide,
-    #detalle-swiper-mobile .swiper-slide {
-        width: 100% !important; 
-        padding: 0 6% !important; 
-        box-sizing: border-box; 
-    }
-
+    /* 6. Footer */
     footer {
         position: fixed !important; 
         bottom: 0; left: 0;
