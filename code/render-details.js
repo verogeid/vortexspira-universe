@@ -1,4 +1,4 @@
-// --- code/render-details.js ---
+/* --- code/render-details.js --- */
 
 import * as debug from './debug.js';
 import * as data from './data.js';
@@ -28,33 +28,36 @@ export function _mostrarDetalle(cursoId) {
     appInstance.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop'); 
     const swiperId = isMobile ? '#detalle-swiper-mobile' : '#detalle-swiper-desktop';
 
-    const parent = appInstance.stackGetCurrent();
-    let parentName = appInstance.getString('breadcrumbRoot');
-    if (parent?.levelId) {
-        const pNodo = appInstance._findNodoById(parent.levelId, appInstance.STATE.fullData.navegacion);
-        if (pNodo) parentName = pNodo.nombre || pNodo.titulo || parentName;
-    }
-
     let slidesHtml = '';
+    
+    // Header Breadcrumb (Mobile)
     if (isMobile) {
+        const parent = appInstance.stackGetCurrent();
+        let parentName = appInstance.getString('breadcrumbRoot');
+        if (parent?.levelId) {
+            const pNodo = appInstance._findNodoById(parent.levelId, appInstance.STATE.fullData.navegacion);
+            if (pNodo) parentName = pNodo.nombre || pNodo.titulo || parentName;
+        }
         let vHtml = parent?.levelId ? `<div class="card card-volver-vertical" role="button" tabindex="0" onclick="App._handleVolverClick()"><h3>${data.LOGO_VOLVER} Volver</h3></div>` : '';
         slidesHtml += `<div class="swiper-slide"><div class="card card-breadcrumb-vertical" tabindex="-1"><h3>${parentName}</h3></div>${vHtml}</div>`;
     }
     
+    // Contenido del curso
     const desc = curso.descripcion || '';
     const temp = document.createElement('div'); temp.innerHTML = desc.trim();
-    const frags = Array.from(temp.childNodes).filter(n => (n.nodeType === 1 && ['P', 'UL', 'OL', 'DIV'].includes(n.tagName)) || (n.nodeType === 3 && n.textContent.trim().length > 0));
+    const frags = Array.from(temp.childNodes).filter(n => n.nodeType === 1 || (n.nodeType === 3 && n.textContent.trim().length > 0));
 
-    if (frags.length > 0) {
-        let first = frags[0].nodeType === 1 ? frags[0].outerHTML : `<p>${frags[0].textContent}</p>`;
-        // ⭐️ FIX: Foco manual al clicar párrafo ⭐️
-        slidesHtml += `<div class="swiper-slide"><h2 class="detail-title-slide">${curso.titulo}</h2><div class="detail-text-fragment" data-index="0" role="document" tabindex="0" onclick="this.focus()"><div class="content-wrapper">${first}</div></div></div>`;
-        for (let i = 1; i < frags.length; i++) {
-            let c = frags[i].nodeType === 1 ? frags[i].outerHTML : `<p>${frags[i].textContent}</p>`;
-            slidesHtml += `<div class="swiper-slide"><div class="detail-text-fragment" data-index="${i}" role="document" tabindex="0" onclick="this.focus()"><div class="content-wrapper">${c}</div></div></div>`;
+    frags.forEach((frag, i) => {
+        let content = frag.nodeType === 1 ? frag.outerHTML : `<p>${frag.textContent}</p>`;
+        // ⭐️ FIX: Foco manual al clicar párrafo y título ⭐️
+        if (i === 0) {
+            slidesHtml += `<div class="swiper-slide"><h2 class="detail-title-slide">${curso.titulo}</h2><div class="detail-text-fragment" data-index="0" role="document" tabindex="0" onclick="this.focus()"><div class="content-wrapper">${content}</div></div></div>`;
+        } else {
+            slidesHtml += `<div class="swiper-slide"><div class="detail-text-fragment" data-index="${i}" role="document" tabindex="0" onclick="this.focus()"><div class="content-wrapper">${content}</div></div></div>`;
         }
-    }
+    });
 
+    // Enlaces
     if (curso.enlaces) {
         curso.enlaces.forEach(e => {
             const icon = (e.type === 'c') ? 'icon-buy' : (e.type === 'd' ? 'icon-download' : 'icon-link');
@@ -62,8 +65,8 @@ export function _mostrarDetalle(cursoId) {
         });
     }
 
-    // ⭐️ AJUSTE: Card de relleno invisible al final de detalles ⭐️
-    slidesHtml += `<div class="swiper-slide detail-filler-slide" style="height: 120px; pointer-events: none;"></div>`;
+    // ⭐️ INYECCIÓN QUIRÚRGICA: Relleno final en Detalles ⭐️
+    slidesHtml += `<div class="swiper-slide" style="height: 150px !important; background: transparent !important; border: none !important; box-shadow: none !important; pointer-events: none;"></div>`;
 
     if (appInstance.DOM.detalleTrack) appInstance.DOM.detalleTrack.innerHTML = slidesHtml;
     _initDetailCarousel(appInstance, swiperId, 0);
@@ -72,4 +75,4 @@ export function _mostrarDetalle(cursoId) {
     if (appInstance.DOM.vistaDetalle) appInstance.DOM.vistaDetalle.classList.add('active');
 }
 
-// --- code/render-details.js ---
+/* --- code/render-details.js --- */
