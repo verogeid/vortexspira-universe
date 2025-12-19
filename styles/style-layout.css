@@ -20,7 +20,7 @@ header {
     text-align: center; background: var(--color-header-bg);
     color: var(--color-header-text); z-index: 100; box-sizing: border-box;
     height: var(--header-height);
-    
+
     /* El header YA NO GESTIONA FLEX. Ahora lo hace el WRAPPER. */
     display: block; 
     padding: 0; /* Quitamos el padding del header y lo movemos al wrapper */
@@ -31,7 +31,7 @@ header {
     position: relative; /* Contexto para el h1 absoluto */
     width: 100%;
     height: 100%;
-    
+
     /* Aplicamos los estilos de Flex y Espacio aquí */
     display: flex;
     align-items: center;
@@ -46,23 +46,23 @@ header h1 {
     position: absolute; 
     left: 50%; 
     transform: translateX(-50%); 
-    
+
     /* Aseguramos que el contenido (Logo/Título/Subtítulo) se centre internamente */
     display: flex;
     align-items: center;
     justify-content: center; 
     flex-wrap: nowrap; /* Mantiene título y subtítulo en línea */
-    
+
     /* ⭐️ CORRECCIÓN: Usar una fuente mínima más pequeña y centrar el contenido ⭐️ */
     font-size: clamp(1.2rem, 2.8vw, 2.2rem); 
     margin: 0; padding: 0; line-height: 1.2; 
-    gap: 8px; 
+    gap: 10px; /* ⭐️ Ligeramente aumentado para compensar el logo pequeño ⭐️ */
     flex-grow: 0; 
-    
+
     /* ⭐️ CORRECCIÓN CLAVE: Aumentar el max-width para dar el máximo espacio posible ⭐️ */
     width: calc(100% - 120px);
     max-width: 90%;
-    
+
     white-space: nowrap; /* Aseguramos que trunca el bloque entero */
     text-overflow: ellipsis; 
     overflow: hidden; 
@@ -74,22 +74,21 @@ header h1 {
     display: inline-block; 
     width: auto; 
     text-align: left;
-    
+
     font-size: 0.6em; /* Mantenemos pequeño */
     opacity: 0.8;
     vertical-align: top;
     margin-left: 8px;
-    
+
     /* Aseguramos que el subtítulo no fuerce su propio truncado */
     white-space: normal; 
     text-overflow: initial;
     overflow: initial;
 }
 
-/* ⭐️ AÑADIDO: Asegurar que el SVG del logo sea fluido en el header ⭐️ */
+/* ⭐️ AJUSTE: SVG del logo reducido al tamaño de la letra del h1 ⭐️ */
 header h1 svg {
-    height: calc(var(--header-height) - 30px);
-    max-height: 1.5em; /* Limite de fuente */
+    height: 1.1em !important; /* ⭐️ Reducido para igualar altura de texto ⭐️ */
     width: auto;
     flex-shrink: 0; 
 }
@@ -149,18 +148,26 @@ header h1 svg {
 }
 
 
-/* ⭐️ FIX BOTÓN DE ACCESIBILIDAD (Engranaje) ⭐️ */
+/* ⭐️ FIX BOTÓN DE ACCESIBILIDAD USANDO SVG VARIABLE ⭐️ */
 #btn-config-accesibilidad {
-    /* Es un elemento flex, alineado a la derecha por space-between */
     position: static; 
     border: none; 
-    background: transparent; 
-    color: var(--color-header-text); 
-    font-size: 1.5rem;
-    padding: 5px; 
+    background-color: var(--color-header-text); /* El color del SVG se controla con el bg al usar mask */
+    width: 25px; 
+    height: 25px;
+    padding: 0;
     flex-shrink: 0;
-    line-height: 1; 
     z-index: 101; 
+
+    /* Inyección del icono a11y mediante máscara para que sea reactivo al color del texto */
+    -webkit-mask-image: var(--icono-a11y);
+    mask-image: var(--icono-a11y);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
 }
 
 
@@ -173,10 +180,10 @@ header h1 svg {
   width: 100%; 
   height: 100%; 
   position: relative; 
-  
+
   /* ⭐️ FIX CLAVE: Ocultar el desbordamiento horizontal (Borde Amarillo 🟨) ⭐️ */
   overflow-x: hidden; 
-  
+
   overflow-y: hidden; 
   display: flex; 
 }
@@ -185,12 +192,12 @@ header h1 svg {
 .vista {
   position: absolute; width: 100%; height: 100%; top: 0; left: 0;
   display: flex; flex-direction: column; justify-content: start; 
-  
+
   /* ❌ OCULTACIÓN POR DEFECTO Y Z-INDEX BAJO ❌ */
   display: none;             /* Oculta por defecto (no ocupa espacio) */
   z-index: 1;                /* Z-index bajo cuando está inactiva */
   pointer-events: none;      /* No interceptar clics */
-  
+
   transition: opacity 0.3s ease; 
   opacity: 0;
 }
