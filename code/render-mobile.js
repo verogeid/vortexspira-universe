@@ -18,7 +18,7 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
         html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, estaActivo, esRelleno)}</div>`; 
     }
 
-    // ⭐️ INYECCIÓN QUIRÚRGICA: Card de relleno (height de botón/card) ⭐️
+    // ⭐️ INYECCIÓN QUIRÚRGICA: Card de relleno ⭐️
     html += `<div class="swiper-slide card-relleno-final" style="height: 80px !important;"></div>`;
 
     return html;
@@ -40,7 +40,9 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
 
         touchRatio: 1, 
         simulateTouch: true, 
-        touchStartPreventDefault: false, 
+        
+        /* ⭐️ FIX DE 1 DEDO: Cambiado a true para evitar competencia con el scroll del navegador ⭐️ */
+        touchStartPreventDefault: true, 
 
         touchMoveStopPropagation: true, 
         grabCursor: true, 
