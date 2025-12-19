@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VortexSpira®: Selector de Cursos</title> 
-    
     <meta name="description" content="VortexSpira® Universe es una plataforma de audio-aprendizaje inmersivo para ingenieros, con foco en la accesibilidad cognitiva y cero ansiedad. Explora cursos de Desarrollo de Software, DevOps y QA.">
-    
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="styles/style-base.css">
 </head>
@@ -22,7 +19,6 @@
     </header>
 
     <main id="app-container">
-
         <div id="vista-volver" role="region" aria-label="Controles de navegación"> 
             <div id="card-nivel-actual" aria-live="polite"></div>
             <div id="card-volver-fija-elemento" role="button"></div>
@@ -39,7 +35,7 @@
                     <div class="swiper-wrapper grid-track" id="track-desktop"></div>
                 </div>
             </div>
-            
+
             <div id="vista-navegacion-tablet" class="vista">
                 <div class="carousel-mask">
                     <div class="mask-left"></div>
@@ -49,7 +45,7 @@
                     <div class="swiper-wrapper grid-track" id="track-tablet"></div>
                 </div>
             </div>
-            
+
             <div id="vista-navegacion-mobile" class="vista">
                 <div id="nav-swiper-mobile" class="swiper carousel-viewport">
                     <div class="swiper-wrapper" id="track-mobile"></div>
@@ -58,15 +54,13 @@
 
             <div id="vista-detalle-desktop" class="vista">
                 <div id="detalle-swiper-desktop" class="swiper detalle-viewport">
-                    <div class="swiper-wrapper" id="detalle-track-desktop">
-                        </div>
+                    <div class="swiper-wrapper" id="detalle-track-desktop"></div>
                 </div>
             </div>
-            
+
             <div id="vista-detalle-mobile" class="vista vista-mobile-fullscreen">
                 <div id="detalle-swiper-mobile" class="swiper detalle-viewport">
-                    <div class="swiper-wrapper" id="detalle-track-mobile">
-                        </div>
+                    <div class="swiper-wrapper" id="detalle-track-mobile"></div>
                 </div>
             </div>
         </div>
@@ -81,37 +75,27 @@
                     </ul>
                 </small>
             </details>
-            
+
             <details id="about-panel"> 
                 <summary id="info-adicional-titulo-acerca"></summary>
                 <small>
                     <p id="info-adicional-summary"></p>
-                    <ul id="info-adicional-lista-acerca">
-                        <li><a href="#" id="info-adicional-link-landing" target="_top">Visita la Landing Page</a></li>
-                        <li><a href="#" id="info-adicional-link-diary" target="_blank">Lee el Dev Diary en GitHub</a></li>
-                    </ul>
-                </small>
+                    </small>
             </details>
         </div>
 
         <div id="toast-notification" class="toast" role="status" aria-live="polite"></div>
-
     </main>
 
     <button id="btn-volver-navegacion" tabindex="-1">↩️ Volver</button>
 
     <footer><small id="footer-content"></small></footer>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    
     <script type="module" src="code/app.js"></script> 
-
     <script type="module">
-        // ⭐️ 3. Importación de las funciones re-exportadas ⭐️
         import * as app from './code/app.js';
-
         document.addEventListener('DOMContentLoaded', () => {
-            // Llamadas usando las funciones importadas
             if (app.applyStrings) { app.applyStrings(); }
             if (app.injectHeaderLogo) { app.injectHeaderLogo(); }
             if (app.injectFooterContent) { app.injectFooterContent(); }
