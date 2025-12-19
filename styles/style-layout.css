@@ -20,11 +20,9 @@ header {
     height: var(--header-height);
     display: block; 
     padding: 0;
-    /* ⭐️ IMPORTANTE: Permitir que el borde y glow del foco sean visibles en los extremos ⭐️ */
     overflow: visible; 
 }
 
-/* ⭐️ WRAPPER: Reducción de Gap y ajuste de Padding ⭐️ */
 #header-content-wrapper {
     position: relative;
     width: 100%;
@@ -32,8 +30,8 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between; 
-    gap: 4px; /* Gap mínimo para priorizar el espacio del título central */
-    padding: 0 12px; /* Espacio lateral para que el botón A11y no toque el borde del cristal */
+    gap: 4px; 
+    padding: 0 12px; 
     box-sizing: border-box;
 }
 
@@ -47,7 +45,6 @@ header h1 {
     flex-wrap: nowrap;
     font-size: clamp(1.1rem, 2.6vw, 2rem); 
     margin: 0; padding: 0; line-height: 1.2; 
-    /* ⭐️ PROXIMIDAD: Reducimos el gap para pegar el logo al texto ⭐️ */
     gap: 0.3em; 
     flex-grow: 0; 
     width: auto;
@@ -70,13 +67,11 @@ header h1 {
     overflow: initial;
 }
 
-/* ⭐️ LOGO RESPONSIVE: Con borde visible y proximidad ⭐️ */
 header h1 svg {
     height: 1.15em !important; 
     width: auto;
     flex-shrink: 0; 
     cursor: pointer;
-    /* Reducción de padding lateral para mayor cercanía */
     padding: 0.15em 0.3em;
     border: 1.5px solid var(--color-card-border);
     border-radius: 0.45em;
@@ -98,7 +93,6 @@ header h1 svg:focus-visible {
     box-shadow: 0 0 10px var(--color-primary);
 }
 
-/* ⭐️ ICONO OBRAS HEADER ⭐️ */
 .icon-obras-header {
     display: inline-block;
     width: 1.6em; 
@@ -113,7 +107,6 @@ header h1 svg:focus-visible {
     z-index: 101; 
 }
 
-/* ⭐️ BOTÓN ACCESIBILIDAD: Borde redondeado visible y responsive ⭐️ */
 #btn-config-accesibilidad {
     position: relative; 
     display: flex !important;
@@ -122,7 +115,6 @@ header h1 svg:focus-visible {
     width: 2.1em; 
     height: 2.1em;
     padding: 0;
-    /* Borde explícito para identificarlo como botón */
     border: 1.5px solid var(--color-card-border) !important;
     border-radius: 0.55em;
     background-color: var(--color-header-text); 
@@ -131,7 +123,6 @@ header h1 svg:focus-visible {
     outline: none;
     z-index: 101; 
     box-sizing: border-box;
-
     -webkit-mask-image: var(--icono-a11y);
     mask-image: var(--icono-a11y);
     -webkit-mask-repeat: no-repeat;
@@ -150,8 +141,6 @@ header h1 svg:focus-visible {
     box-shadow: 0 0 10px var(--color-primary);
     transform: scale(1.05);
 }
-
-/* --- RESTO DEL GRID --- */
 
 #vista-central {
   grid-column: 2 / 3; 
@@ -197,8 +186,6 @@ header h1 svg:focus-visible {
 }
 #info-adicional.visible { display: block !important; }
 
-/* MEDIA QUERIES */
-
 @media (min-width: 601px) and (max-width: 800px) {
     #app-container {
         display: grid;
@@ -206,14 +193,7 @@ header h1 svg:focus-visible {
     }
 }
 
-@media (min-width: 801px) and (max-width: 1023px) {
-    #app-container {
-        display: grid;
-        grid-template-columns: 1fr 3fr 1fr;
-    }
-}
-
-@media (min-width: 1024px) {
+@media (min-width: 801px) {
     #app-container {
         display: grid;
         grid-template-columns: 1fr 3fr 1fr;
@@ -231,6 +211,56 @@ footer {
     position: fixed;
     bottom: 0;
     z-index: 100;
+}
+
+/* ⭐️ ESTILOS ICONOS SOCIALES FOOTER ⭐️ */
+.footer-social-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    vertical-align: middle;
+    margin: 0 8px;
+}
+
+.footer-social-link {
+    display: inline-block;
+    width: 1.4em;
+    height: 1.4em;
+    background-color: var(--color-footer-text);
+    transition: all 0.2s ease;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+}
+
+.link-linkedin {
+    -webkit-mask-image: var(--icon-social-linkedin);
+    mask-image: var(--icon-social-linkedin);
+}
+
+.link-github {
+    -webkit-mask-image: var(--icon-link-diary);
+    mask-image: var(--icon-link-diary);
+}
+
+.link-fire {
+    -webkit-mask-image: var(--icono-fire);
+    mask-image: var(--icono-fire);
+}
+
+.footer-social-link:hover, 
+.footer-social-link:focus-visible {
+    background-color: var(--color-primary) !important;
+    transform: scale(1.15);
+    outline: none;
+}
+
+.footer-separator {
+    opacity: 0.4;
+    margin: 0 4px;
 }
 
 /* --- styles/style-layout.css --- */
