@@ -20,9 +20,11 @@ header {
     height: var(--header-height);
     display: block; 
     padding: 0;
-    overflow: visible; /* Permitimos que el glow del foco sobresalga */
+    /* ⭐️ IMPORTANTE: Permitir que el borde y glow del foco sean visibles en los extremos ⭐️ */
+    overflow: visible; 
 }
 
+/* ⭐️ WRAPPER: Reducción de Gap y ajuste de Padding ⭐️ */
 #header-content-wrapper {
     position: relative;
     width: 100%;
@@ -30,8 +32,8 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between; 
-    gap: 8px; 
-    padding: 0 15px;
+    gap: 4px; /* Gap mínimo para priorizar el espacio del título central */
+    padding: 0 12px; /* Espacio lateral para que el botón A11y no toque el borde del cristal */
     box-sizing: border-box;
 }
 
@@ -43,15 +45,15 @@ header h1 {
     align-items: center;
     justify-content: center; 
     flex-wrap: nowrap;
-    font-size: clamp(1.2rem, 2.8vw, 2.2rem); 
+    font-size: clamp(1.1rem, 2.6vw, 2rem); 
     margin: 0; padding: 0; line-height: 1.2; 
-    gap: 0.5em; /* Separación elástica */
+    /* ⭐️ PROXIMIDAD: Reducimos el gap para pegar el logo al texto ⭐️ */
+    gap: 0.3em; 
     flex-grow: 0; 
-    width: calc(100% - 120px);
-    max-width: 90%;
+    width: auto;
+    max-width: 80%;
     white-space: nowrap; 
     text-overflow: ellipsis; 
-    overflow: hidden; 
     z-index: 99; 
 }
 
@@ -62,21 +64,22 @@ header h1 {
     font-size: 0.6em;
     opacity: 0.8;
     vertical-align: top;
-    margin-left: 0.5em;
+    margin-left: 0.3em;
     white-space: normal; 
     text-overflow: initial;
     overflow: initial;
 }
 
-/* ⭐️ LOGO RESPONSIVE E INTERACTIVO ⭐️ */
+/* ⭐️ LOGO RESPONSIVE: Con borde visible y proximidad ⭐️ */
 header h1 svg {
-    height: 1.2em !important; /* Altura proporcional al texto del h1 */
+    height: 1.15em !important; 
     width: auto;
     flex-shrink: 0; 
     cursor: pointer;
-    padding: 0.2em 0.4em;
+    /* Reducción de padding lateral para mayor cercanía */
+    padding: 0.15em 0.3em;
     border: 1.5px solid var(--color-card-border);
-    border-radius: 0.4em;
+    border-radius: 0.45em;
     transition: all 0.2s ease;
     box-sizing: border-box;
     vertical-align: middle;
@@ -84,7 +87,7 @@ header h1 svg {
 
 header h1 svg:hover {
     border-color: var(--color-primary);
-    box-shadow: 0 0 8px var(--color-shadow-primary);
+    box-shadow: 0 0 6px var(--color-shadow-primary);
 }
 
 header h1 svg:focus-visible {
@@ -92,14 +95,14 @@ header h1 svg:focus-visible {
     border-color: var(--color-primary);
     fill: var(--color-primary) !important;
     color: var(--color-primary) !important; 
-    box-shadow: 0 0 12px var(--color-primary);
+    box-shadow: 0 0 10px var(--color-primary);
 }
 
 /* ⭐️ ICONO OBRAS HEADER ⭐️ */
 .icon-obras-header {
     display: inline-block;
-    width: 1.5em; 
-    height: 1.5em;
+    width: 1.6em; 
+    height: 1.6em;
     background-color: var(--color-icon-obras);
     -webkit-mask-image: var(--icon-obras);
     mask-image: var(--icon-obras);
@@ -107,47 +110,48 @@ header h1 svg:focus-visible {
     -webkit-mask-position: center;
     -webkit-mask-size: contain;
     flex-shrink: 0;
-    margin-right: 0.5em;
     z-index: 101; 
 }
 
-/* ⭐️ BOTÓN ACCESIBILIDAD RESPONSIVE E INTERACTIVO ⭐️ */
+/* ⭐️ BOTÓN ACCESIBILIDAD: Borde redondeado visible y responsive ⭐️ */
 #btn-config-accesibilidad {
-    position: static; 
+    position: relative; 
     display: flex !important;
     align-items: center;
     justify-content: center;
-    width: 2.2em; 
-    height: 2.2em;
+    width: 2.1em; 
+    height: 2.1em;
     padding: 0;
-    border: 1.5px solid var(--color-card-border);
-    border-radius: 0.5em;
+    /* Borde explícito para identificarlo como botón */
+    border: 1.5px solid var(--color-card-border) !important;
+    border-radius: 0.55em;
     background-color: var(--color-header-text); 
     cursor: pointer;
     transition: all 0.2s ease;
     outline: none;
     z-index: 101; 
+    box-sizing: border-box;
 
     -webkit-mask-image: var(--icono-a11y);
     mask-image: var(--icono-a11y);
     -webkit-mask-repeat: no-repeat;
     -webkit-mask-position: center;
-    -webkit-mask-size: 75%;
+    -webkit-mask-size: 70%;
 }
 
 #btn-config-accesibilidad:hover {
     border-color: var(--color-primary);
-    box-shadow: 0 0 8px var(--color-shadow-primary);
+    box-shadow: 0 0 6px var(--color-shadow-primary);
 }
 
 #btn-config-accesibilidad:focus-visible {
     background-color: var(--color-primary); 
     border-color: var(--color-primary);
-    box-shadow: 0 0 12px var(--color-primary);
+    box-shadow: 0 0 10px var(--color-primary);
     transform: scale(1.05);
 }
 
-/* --- RESTO DEL GRID Y VISTAS --- */
+/* --- RESTO DEL GRID --- */
 
 #vista-central {
   grid-column: 2 / 3; 
