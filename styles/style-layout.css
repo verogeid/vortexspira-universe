@@ -56,7 +56,7 @@ header h1 {
     /* ⭐️ CORRECCIÓN: Usar una fuente mínima más pequeña y centrar el contenido ⭐️ */
     font-size: clamp(1.2rem, 2.8vw, 2.2rem); 
     margin: 0; padding: 0; line-height: 1.2; 
-    gap: 10px; /* ⭐️ Ligeramente aumentado para compensar el logo pequeño ⭐️ */
+    gap: 10px; /* Ligeramente aumentado para compensar el logo pequeño */
     flex-grow: 0; 
 
     /* ⭐️ CORRECCIÓN CLAVE: Aumentar el max-width para dar el máximo espacio posible ⭐️ */
@@ -86,11 +86,29 @@ header h1 {
     overflow: initial;
 }
 
-/* ⭐️ AJUSTE: SVG del logo reducido al tamaño de la letra del h1 ⭐️ */
+/* ⭐️ AJUSTE: SVG del logo reducido al tamaño de la letra del h1 con interactividad ⭐️ */
 header h1 svg {
-    height: 1.1em !important; /* ⭐️ Reducido para igualar altura de texto ⭐️ */
+    height: 1.1em !important; 
     width: auto;
     flex-shrink: 0; 
+    cursor: pointer;
+    padding: 4px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+header h1 svg:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 8px var(--color-shadow-primary);
+}
+
+header h1 svg:focus-visible {
+    outline: none;
+    border-color: var(--color-primary);
+    fill: var(--color-primary) !important;
+    color: var(--color-primary) !important; 
+    box-shadow: 0 0 12px var(--color-primary);
 }
 
 /* ⭐️ NUEVO: Clase para el icono de Obras en el Header (SVG) ⭐️ */
@@ -147,71 +165,72 @@ header h1 svg {
     vertical-align: middle;
 }
 
-
-/* ⭐️ FIX BOTÓN DE ACCESIBILIDAD USANDO SVG VARIABLE ⭐️ */
+/* ⭐️ AJUSTE: Botón A11y con estados interactivos del tema ⭐️ */
 #btn-config-accesibilidad {
     position: static; 
-    border: none; 
-    background-color: var(--color-header-text); /* El color del SVG se controla con el bg al usar mask */
-    width: 25px; 
-    height: 25px;
+    border: 2px solid transparent; 
+    border-radius: 8px; 
+    background-color: var(--color-header-text); 
+    width: 30px; 
+    height: 30px;
     padding: 0;
     flex-shrink: 0;
     z-index: 101; 
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
 
-    /* Inyección del icono a11y mediante máscara para que sea reactivo al color del texto */
     -webkit-mask-image: var(--icono-a11y);
     mask-image: var(--icono-a11y);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     -webkit-mask-position: center;
     mask-position: center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
+    -webkit-mask-size: 85%;
 }
 
+#btn-config-accesibilidad:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 8px var(--color-shadow-primary);
+}
+
+#btn-config-accesibilidad:focus-visible {
+    background-color: var(--color-primary); 
+    border-color: var(--color-primary);
+    box-shadow: 0 0 12px var(--color-primary);
+    transform: scale(1.1);
+}
 
 /* GRID RESPONSIVE */
 
-/* ⭐️ REGLA GENERAL PARA COLUMNAS ⭐️ */
 #vista-central {
-  /* Ocupa la columna central por defecto */
   grid-column: 2 / 3; 
   width: 100%; 
   height: 100%; 
   position: relative; 
-
-  /* ⭐️ FIX CLAVE: Ocultar el desbordamiento horizontal (Borde Amarillo 🟨) ⭐️ */
   overflow-x: hidden; 
-
   overflow-y: hidden; 
   display: flex; 
 }
 
-/* ⭐️ CONTROL DE VISIBILIDAD, DISPLAY Y CAPAS CENTRALIZADO ⭐️ */
 .vista {
   position: absolute; width: 100%; height: 100%; top: 0; left: 0;
   display: flex; flex-direction: column; justify-content: start; 
-
-  /* ❌ OCULTACIÓN POR DEFECTO Y Z-INDEX BAJO ❌ */
-  display: none;             /* Oculta por defecto (no ocupa espacio) */
-  z-index: 1;                /* Z-index bajo cuando está inactiva */
-  pointer-events: none;      /* No interceptar clics */
-
+  display: none;             
+  z-index: 1;                
+  pointer-events: none;      
   transition: opacity 0.3s ease; 
   opacity: 0;
 }
 .vista.active { 
-    /* ✅ MOSTRAR CUANDO ESTÁ ACTIVA ✅ */
     display: flex; 
-    z-index: 10;                 /* Z-index alto para la navegación */
-    pointer-events: auto;        /* Permitir clics */
+    z-index: 10;                 
+    pointer-events: auto;        
     opacity: 1;
     width: 100%; height: 100%; 
 } 
 
 #vista-volver {
-    /* ⭐️ Asignación de columna Izquierda (1/2) ⭐️ */
     grid-column: 1 / 2; 
     position: relative; z-index: 50; 
     display: none; flex-direction: column; justify-content: flex-start; 
@@ -224,7 +243,6 @@ header h1 svg {
 #columna-volver-relleno { flex-grow: 1; width: 100%; border: none; }
 
 #info-adicional {
-    /* ⭐️ Asignación de columna Derecha (3/4) ⭐️ */
     grid-column: 3 / 4; 
     width: 100%; 
     border-radius: 12px; border: 2px dashed var(--color-border-placeholder); 
@@ -244,36 +262,28 @@ header h1 svg {
     mask-image: var(--icon-link-diary);
 }
 
-/* TABLET PORTRAIT (601px - 800px): 2 COLUMNAS */
+/* MEDIA QUERIES */
+
 @media (min-width: 601px) and (max-width: 800px) {
     #app-container {
         display: grid;
-        /* 1fr (Volver/Fijo) 3fr (Carrusel) */
         grid-template-columns: 1fr 3fr; 
     }
-    /* Ocultar la columna de información adicional */
     #info-adicional.visible { display: none !important; }
 }
 
-/* ⭐️ CORRECCIÓN CLAVE: El límite superior se ajusta a 1023px ⭐️ */
-/* TABLET LANDSCAPE (801px - 1023px): 3 COLUMNAS */
 @media (min-width: 801px) and (max-width: 1023px) {
     #app-container {
-        /* Aseguramos display: grid aquí */
         display: grid;
-        /* 1fr (Volver/Fijo) 3fr (Carrusel) 1fr (Info Adicional) */
         grid-template-columns: 1fr 3fr 1fr;
     }
 }
 
-/* DESKTOP (>= 1024px) - La regla de style-desktop debe empezar aquí */
 @media (min-width: 1024px) {
     #app-container {
-        /* Aseguramos display: grid aquí */
         display: grid;
     }
 }
-
 
 @media (prefers-reduced-motion: reduce) {
   .mask-left, .mask-right { -webkit-backdrop-filter: none; backdrop-filter: none; }
