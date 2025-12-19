@@ -5,7 +5,7 @@ import * as data from './data.js';
 
 export const STRINGS = {
     'es': {
-        'version': '1.1.60',
+        'version': '1.1.61',
 
         // Meta y Títulos
         'pageTitle': 'VortexSpira® Universe: Selector de Cursos',
