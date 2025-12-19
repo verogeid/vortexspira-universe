@@ -4,11 +4,9 @@
 
     /* 1. Scroll nativo y Header/Footer fijo */
     body {
-        /* ⭐️ FIX 1 DEDO: Cambiado de auto a hidden para que el navegador no bloquee el swipe ⭐️ */
-        overflow: hidden !important; 
-        height: 100vh; 
-        position: fixed;
-        width: 100%;
+        overflow-y: auto !important; 
+        height: auto; min-height: 100vh; 
+        /* El padding-bottom se gestiona en style-layout.css */
         padding-bottom: var(--footer-height); 
     }
 
@@ -22,6 +20,7 @@
 
     /* 2. Layout fluido */
     #app-container {
+        /* El min-height debe respetar el footer. Lo gestionamos en el swipe container. */
         height: auto !important;
         min-height: calc(100vh - var(--header-height)); 
         padding-top: 10px !important;
@@ -36,9 +35,10 @@
         width: 100%; position: relative; 
         height: auto !important; overflow: visible !important;
         display: block; 
-        flex-grow: 1; 
+        flex-grow: 1; /* ⭐️ CORRECCIÓN CLAVE: Ocupa el espacio vertical restante para evitar el colapso ⭐️ */
     }
 
+    /* Ocultar vistas inactivas */
     .vista:not(.active) {
         display: none !important;
     }
@@ -55,31 +55,43 @@
     /* 5. Vista de detalle full-screen */
     #vista-detalle-mobile {
         position: fixed !important; 
+        /* ⭐️ FIX CRÍTICO: Inicia justo debajo del header ⭐️ */
         top: var(--header-height) !important; 
         left: 0 !important; 
         width: 100% !important; 
+
+        /* ⭐️ FIX CRÍTICO: Altura calculada para terminar justo antes del footer ⭐️ */
         height: calc(100vh - var(--header-height) - var(--footer-height)) !important;
+
         z-index: 99 !important; 
+
         overflow-y: hidden !important;
+
         padding-top: 0; 
-        padding-bottom: 0; 
+        padding-bottom: 0; /* Eliminar padding aquí, la altura es exacta */
         box-sizing: border-box; 
+
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-primary) transparent;
         display: flex; flex-direction: column; 
     }
     #vista-detalle-mobile::-webkit-scrollbar-thumb {
         background-color: var(--color-primary);
     }
 
+    /* Aseguramos que la vista de detalle móvil inactiva está oculta y no interfiere */
     #vista-detalle-mobile:not(.active) {
         display: none !important; 
         z-index: 1;
     }
+
 
     .vista-mobile-fullscreen .contenido-curso { 
         padding: 0 0 20px 0; 
         box-sizing: border-box;
     }
 
+    /* ⬇️ Contenedor interno de Swiper (Detalle) ⬇️ */
     #detalle-contenido-mobile {
         margin-top: 0; 
         width: 100%; 
@@ -87,26 +99,34 @@
         overflow: hidden;
     }
 
+    /* ⭐️ Swiper Container (Detalle) ⭐️ */
     #detalle-swiper-mobile {
         height: 100%;
+        /* ❌ FIX: Quitar overflow-y: auto !important para que Swiper FreeMode lo maneje ❌ */
         overflow-y: hidden !important;
-        /* ⭐️ FIX 1 DEDO: touch-action none para asegurar captura inmediata ⭐️ */
+        /* ⭐️ AJUSTE: touch-action none para captura inmediata de 1 dedo ⭐️ */
         touch-action: none !important;
         padding-bottom: 5vh;
     }
 
+    /* ⭐️ FIX: Wrapper de Detalles - Eliminar Padding Horizontal ⭐️ */
     #detalle-swiper-mobile .swiper-wrapper {
         padding-bottom: 15vh; 
         padding-top: 15px; 
+
+        /* FIX CLAVE: Mover padding al slide */
         padding-left: 0; 
         padding-right: 0;
     }
 
+    /* ⭐️ FIX CRÍTICO: Añadir padding horizontal al SLIDE de Detalle (Soluciona desborde) ⭐️ */
     #detalle-swiper-mobile .swiper-slide {
         padding: 0 6% !important; 
         box-sizing: border-box; 
     }
+    /* ⬆️ FIN FIX ⬆️ */
 
+    /* Contenedor del botón Volver (Sticky) */
     .mobile-back-header {
         position: relative; 
         top: auto; 
@@ -115,15 +135,19 @@
         padding: 5px 10px; 
         background: transparent; 
         width: 100%; 
+
         margin-bottom: 15px !important; 
         margin-top: 5px !important;
+
         text-align: left;
+        width: 100%;
     }
 
     #detalle-contenido-mobile .contenido-curso {
         padding-top: 0px; 
     }
 
+    /* 6. Footer */
     footer {
         position: fixed !important; bottom: 0; 
         margin-top: 0; padding: 20px 5px; 
@@ -133,32 +157,47 @@
 
     ::-webkit-scrollbar { width: 4px; }
 
+    /* --------------------------------------------------------------------- */
+    /* ⭐️ SWIPER VERTICAL MÓVIL (NAVEGACIÓN) ⭐️ */
+    /* --------------------------------------------------------------------- */
+
     #nav-swiper-mobile {
         height: auto !important; 
+        /* ⭐️ FIX: Constreñir la altura total del Swiper a la zona entre Header y Footer ⭐️ */
         min-height: calc(100vh - var(--header-height) - var(--footer-height) - 20px); 
         width: 100%; position: relative;
+
+        /* ❌ FIX CLAVE: Quitar el overflow-y: auto; para que Swiper lo maneje. ❌ */
         overflow: hidden; 
-        /* ⭐️ FIX 1 DEDO: touch-action none ⭐️ */
+
+        /* ⭐️ AJUSTE: touch-action none para captura inmediata de 1 dedo ⭐️ */
         touch-action: none !important;
     }
 
+    /* ⭐️ FIX: Wrapper de Navegación - SOLO Padding Vertical (El horizontal va en el slide) ⭐️ */
     #nav-swiper-mobile .swiper-wrapper {
         display: flex !important; flex-direction: column; 
         gap: 10px; 
         width: 100%; height: auto !important; 
         padding-bottom: 15vh; 
         padding-top: 15px !important; 
+
+        /* REMOVED: padding-left/right (Vuelve al slide) */
     }
 
+    /* Los slides contienen las tarjetas */
     #nav-swiper-mobile .swiper-slide {
         width: 100% !important; height: auto !important; 
         display: flex; 
         flex-direction: column;
         align-items: center;
         box-sizing: border-box; 
+
+        /* ⭐️ FIX CRÍTICO: Revertir padding horizontal al slide (SOLUCIONA EL DESBORDE) ⭐️ */
         padding: 0 6% !important; 
     }
 
+    /* ⭐️ AÑADIDO: Las tarjetas deben usar todo el ancho disponible del slide ⭐️ */
     #nav-swiper-mobile .swiper-slide .card {
         width: 100%;
         box-sizing: border-box; 
@@ -170,14 +209,9 @@
         touch-action: manipulation; 
     }
 
-    /* Card de relleno transparente */
-    .card-relleno-final {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        pointer-events: none !important;
-    }
-
+    /* --------------------------------------------------------------------- */
+    /* ⭐️ BOTONES DE DETALLE MÓVIL (CORRECCIÓN DESBORDE) ⭐️ */
+    /* --------------------------------------------------------------------- */
     .detail-actions-list {
         padding-left: 0;
         padding-right: 0;
@@ -189,6 +223,7 @@
         width: 100%;
     }
 
+    /* ⭐️ AÑADIDO: Estilos específicos para Breadcrumb y Volver fijo ⭐️ */
     .card-breadcrumb-vertical {
         position: relative; 
         top: auto; 
