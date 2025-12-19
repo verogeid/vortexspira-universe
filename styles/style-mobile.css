@@ -4,18 +4,21 @@
 
     /* 1. Scroll nativo y Header/Footer fijo */
     body {
-        /* AJUSTE: Ocultamos el scroll del body para que no compita con el Swiper */
+        /* Ocultamos el scroll del body para que no compita con el Swiper */
         overflow: hidden !important; 
         height: 100vh; 
         position: fixed; 
         width: 100%;
-        /* El padding se gestiona internamente en los contenedores de scroll */
-        padding-bottom: 0; 
+        margin: 0;
+        padding: 0;
     }
 
     header { 
         position: fixed; 
         z-index: 100;
+        top: 0;
+        left: 0;
+        width: 100%;
     }
 
     #main-header-subtitle {
@@ -24,14 +27,14 @@
 
     /* 2. Layout fluido y contenedor principal */
     #app-container {
-        /* ⭐️ AJUSTE: Altura calculada para encajar entre Header y Footer ⭐️ */
+        /* ⭐️ AJUSTE QUIRÚRGICO: Altura exacta y posición inmediata bajo header ⭐️ */
         height: calc(100vh - var(--header-height) - var(--footer-height)) !important;
         min-height: calc(100vh - var(--header-height) - var(--footer-height)) !important;
         margin-top: var(--header-height);
-        padding: 10px 0 0 0 !important;
+        padding: 0 !important; /* Eliminado el top de 10px que bajaba el swipe */
         display: flex; 
         flex-direction: column;
-        overflow: hidden; /* El scroll lo gestiona el Swiper interno */
+        overflow: hidden; 
     }
 
     /* 3. Vista central */
@@ -63,14 +66,11 @@
     /* 5. Vista de detalle full-screen */
     #vista-detalle-mobile {
         position: fixed !important; 
-        /* Inicia justo debajo del header */
         top: var(--header-height) !important; 
         left: 0 !important; 
         width: 100% !important; 
-
-        /* ⭐️ AJUSTE: Altura exacta para terminar antes del footer ⭐️ */
+        /* Altura exacta para no quedar bajo el footer */
         height: calc(100vh - var(--header-height) - var(--footer-height)) !important;
-
         z-index: 99 !important; 
         overflow: hidden !important;
         display: flex; 
@@ -82,7 +82,6 @@
         display: none !important; 
     }
 
-    /* Contenedor interno de Swiper (Detalle) */
     #detalle-contenido-mobile {
         width: 100%; 
         height: 100%; 
@@ -92,14 +91,13 @@
     #detalle-swiper-mobile {
         height: 100% !important;
         overflow: hidden !important;
-        /* touch-action: none para asegurar 1 solo dedo */
         touch-action: none !important;
     }
 
     #detalle-swiper-mobile .swiper-wrapper {
-        /* ⭐️ AJUSTE: Padding inferior generoso para que el final no quede bajo el footer ⭐️ */
-        padding-bottom: 100px !important; 
-        padding-top: 15px; 
+        /* ⭐️ AJUSTE: Padding inferior para que el final respire sobre el footer ⭐️ */
+        padding-bottom: 120px !important; 
+        padding-top: 5px !important; 
     }
 
     #detalle-swiper-mobile .swiper-slide {
@@ -116,8 +114,6 @@
         width: 100%; 
         position: relative;
         overflow: hidden; 
-
-        /* ⭐️ AJUSTE QUIRÚRGICO: Bloqueamos gestos nativos para 1 solo dedo ⭐️ */
         touch-action: none !important;
     }
 
@@ -127,9 +123,9 @@
         gap: 10px; 
         width: 100%; 
         height: auto !important; 
-        /* ⭐️ AJUSTE: Padding inferior para que la última tarjeta respire sobre el footer ⭐️ */
-        padding-bottom: 80px !important; 
-        padding-top: 15px !important; 
+        /* ⭐️ AJUSTE: Padding superior mínimo y espacio final para el footer ⭐️ */
+        padding-top: 5px !important; 
+        padding-bottom: 120px !important; 
     }
 
     #nav-swiper-mobile .swiper-slide {
@@ -156,7 +152,10 @@
         width: 100%;
         z-index: 101;
         height: var(--footer-height);
-        padding: 10px 5px;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         box-sizing: border-box;
     }
 
