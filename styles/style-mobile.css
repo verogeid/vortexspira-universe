@@ -131,7 +131,7 @@
         padding: 0 6% !important; 
     }
 
-    /* Estilos para las nuevas cards de relleno transparentes */
+    /* ÚNICA ADICIÓN: Clase para asegurar que el relleno sea invisible */
     .card-relleno-final {
         background: transparent !important;
         border: none !important;
