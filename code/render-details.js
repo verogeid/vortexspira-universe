@@ -132,7 +132,7 @@ export function _mostrarDetalle(cursoId) {
         });
     }
 
-    // ⭐️ INYECCIÓN QUIRÚRGICA: Card de relleno (height de botón/card) ⭐️
+    // ⭐️ INYECCIÓN QUIRÚRGICA: Card de relleno ⭐️
     slidesHtml += `<div class="swiper-slide card-relleno-final" style="height: 80px !important;"></div>`;
 
     if (appInstance.DOM.detalleTrack) {
