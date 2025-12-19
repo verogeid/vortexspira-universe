@@ -3,43 +3,24 @@
 import * as debug from './debug.js';
 import * as data from './data.js';
 
-// ⭐️ 1. FUNCIÓN DE GENERACIÓN DE HTML ESPECÍFICA PARA MÓVIL ⭐️
-/**
- * Genera el HTML para la vista móvil (lista vertical).
- * Se llama con .call(this) desde renderNavegacion.
- */
 export function _generateCardHTML_Mobile(items, itemsPerColumna) {
-    // 'this' es la instancia de App
     let html = '';
-
-    // En móvil, es una lista vertical simple.
     for (const nodo of items) {
-
         if (nodo.tipoEspecial === 'volver-vertical' || nodo.tipoEspecial === 'breadcrumb-vertical') {
-            html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, true, false, nodo.tipoEspecial)}</div>`; // Método delegado
+            html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, true, false, nodo.tipoEspecial)}</div>`; 
             continue;
         }
-
         const esRelleno = nodo.tipo === 'relleno';
-        const estaActivo = esRelleno ? false : this._tieneContenidoActivo(nodo.id); // Método delegado
-
-        html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, estaActivo, esRelleno)}</div>`; // Método delegado
+        const estaActivo = esRelleno ? false : this._tieneContenidoActivo(nodo.id); 
+        html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, estaActivo, esRelleno)}</div>`; 
     }
-
     if (this.DOM.track) {
          this.DOM.track.style.gridTemplateRows = '';
     }
     return html;
 };
 
-// ⭐️ 2. FUNCIÓN DE INICIALIZACIÓN MÓVIL (SWIPER VERTICAL) ⭐️
-/**
- * Inicializa la instancia de Swiper vertical para móvil.
- * Se llama con .call(this) desde renderNavegacion.
- */
 export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobile, swiperId) {
-    // 'this' es la instancia de App
-
     if (!isMobile) return;
 
     if (this.STATE.carouselInstance) {
@@ -51,29 +32,31 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
         slidesPerView: 'auto', 
         slidesPerGroup: 1, 
         loop: false, 
-        
         initialSlide: initialSwiperSlide, 
 
         touchRatio: 1, 
-        // ⬇️ MODIFICACIONES PARA ASEGURAR EL CONTROL DEL ARRASTRE VERTICAL EN MÓVIL (FreeMode) ⬇️
-        simulateTouch: true, // ⭐️ CORRECCIÓN CLAVE: Restaurar a TRUE para alinear con la vista de detalle que sí funciona.
-        touchStartPreventDefault: false, // Permite clics normales antes de un arrastre.
-        touchMoveStopPropagation: true, // Mantenemos TRUE para evitar que el evento se propague al body.
+        simulateTouch: true, 
+        
+        /* ⭐️ CAMBIO QUIRÚRGICO: Bloqueamos el inicio del scroll nativo ⭐️ */
+        /* Esto permite que un solo dedo arrastre la lista inmediatamente */
+        touchStartPreventDefault: true, 
+
+        touchMoveStopPropagation: true, 
         grabCursor: true, 
-        // ⬆️ FIN MODIFICACIONES ⬆️
         centeredSlides: false, 
-        mousewheel: { enabled: false }, // ⭐️ Deshabilitar la rueda nativa de Swiper ⭐️
+        mousewheel: { enabled: false }, 
         keyboard: { enabled: false }, 
         speed: data.SWIPE_SLIDE_SPEED,
-        // ⭐️ Habilitar arrastre libre (freeMode) para permitir ver todos los elementos ⭐️
         freeMode: true, 
         freeModeMomentum: true,
-        freeModeSticky: true, // ⭐️ FIX CLAVE: Añadir snap al modo free (Harmoniza con detalle) ⭐️
+        freeModeSticky: true, 
     };
 
-    this.STATE.carouselInstance = new Swiper(document.querySelector(swiperId), swiperConfig);
-    
-    debug.log('render_mobile', debug.DEBUG_LEVELS.BASIC, `Swiper vertical inicializado en ${swiperId}. Slide inicial: ${initialSwiperSlide}`);
+    const container = document.querySelector(swiperId);
+    if (container) {
+        this.STATE.carouselInstance = new Swiper(container, swiperConfig);
+        debug.log('render_mobile', debug.DEBUG_LEVELS.BASIC, `Swiper vertical (1 dedo) inicializado en ${swiperId}`);
+    }
 
     if (typeof this.setupTouchListeners === 'function') {
         this.setupTouchListeners(); 
