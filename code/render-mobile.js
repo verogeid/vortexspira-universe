@@ -1,32 +1,25 @@
-/* --- code/render-mobile.js --- */
+// --- code/render-mobile.js ---
 
 import * as debug from './debug.js';
 import * as data from './data.js';
 
-/**
- * Genera el HTML para los slides del carrusel vertical móvil.
- */
 export function _generateCardHTML_Mobile(items, itemsPerColumna) {
     let html = '';
-
     for (const nodo of items) {
         if (nodo.tipoEspecial === 'volver-vertical' || nodo.tipoEspecial === 'breadcrumb-vertical') {
             html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, true, false, nodo.tipoEspecial)}</div>`; 
             continue;
         }
-
         const esRelleno = nodo.tipo === 'relleno';
         const estaActivo = esRelleno ? false : this._tieneContenidoActivo(nodo.id); 
-
         html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, estaActivo, esRelleno)}</div>`; 
     }
-
+    if (this.DOM.track) {
+         this.DOM.track.style.gridTemplateRows = '';
+    }
     return html;
 };
 
-/**
- * Inicializa la instancia de Swiper vertical para móvil.
- */
 export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobile, swiperId) {
     if (!isMobile) return;
 
@@ -44,7 +37,8 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
         touchRatio: 1, 
         simulateTouch: true, 
         
-        /* ⭐️ CAMBIO QUIRÚRGICO: Habilitar captura de 1 dedo ⭐️ */
+        /* ⭐️ CAMBIO QUIRÚRGICO: Bloqueamos el inicio del scroll nativo ⭐️ */
+        /* Esto permite que un solo dedo arrastre la lista inmediatamente */
         touchStartPreventDefault: true, 
 
         touchMoveStopPropagation: true, 
@@ -55,12 +49,13 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
         speed: data.SWIPE_SLIDE_SPEED,
         freeMode: true, 
         freeModeMomentum: true,
-        freeModeSticky: true,
+        freeModeSticky: true, 
     };
 
     const container = document.querySelector(swiperId);
     if (container) {
         this.STATE.carouselInstance = new Swiper(container, swiperConfig);
+        debug.log('render_mobile', debug.DEBUG_LEVELS.BASIC, `Swiper vertical (1 dedo) inicializado en ${swiperId}`);
     }
 
     if (typeof this.setupTouchListeners === 'function') {
@@ -68,4 +63,4 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
     }
 };
 
-/* --- code/render-mobile.js --- */
+// --- code/render-mobile.js ---
