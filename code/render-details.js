@@ -45,16 +45,16 @@ export function _mostrarDetalle(cursoId) {
     const appInstance = this;
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
     const curso = appInstance._findNodoById(cursoId, appInstance.STATE.fullData.navegacion); 
-    
+
     if (!curso) return;
 
     appInstance.DOM.vistaDetalle = isMobile ? document.getElementById('vista-detalle-mobile') : document.getElementById('vista-detalle-desktop');
     appInstance.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop'); 
-    
+
     const swiperId = isMobile ? '#detalle-swiper-mobile' : '#detalle-swiper-desktop';
 
     let slidesHtml = '';
-    
+
     if (isMobile) {
         const parent = appInstance.stackGetCurrent();
         let parentName = appInstance.getString('breadcrumbRoot');
@@ -94,10 +94,11 @@ export function _mostrarDetalle(cursoId) {
 
     if (fragments.length > 0) {
         let firstContent = fragments[0].nodeType === 1 ? fragments[0].outerHTML : `<p>${fragments[0].textContent}</p>`;
+        // ⭐️ FIX: onclick="this.focus()" para permitir foco en móvil ⭐️
         slidesHtml += `
             <div class="swiper-slide">
                 <h2 class="detail-title-slide">${curso.titulo}</h2>
-                <div class="detail-text-fragment" data-index="0" role="document" tabindex="0">
+                <div class="detail-text-fragment" data-index="0" role="document" tabindex="0" onclick="this.focus()">
                     <div class="content-wrapper">
                         ${firstContent}
                     </div>
@@ -107,9 +108,10 @@ export function _mostrarDetalle(cursoId) {
 
         for (let i = 1; i < fragments.length; i++) {
             let content = fragments[i].nodeType === 1 ? fragments[i].outerHTML : `<p>${fragments[i].textContent}</p>`;
+            // ⭐️ FIX: onclick="this.focus()" para permitir foco en móvil ⭐️
             slidesHtml += `
                 <div class="swiper-slide">
-                    <div class="detail-text-fragment" data-index="${i}" role="document" tabindex="0">
+                    <div class="detail-text-fragment" data-index="${i}" role="document" tabindex="0" onclick="this.focus()">
                         <div class="content-wrapper">
                             ${content}
                         </div>
@@ -134,6 +136,11 @@ export function _mostrarDetalle(cursoId) {
                 </div>
             `;
         });
+    }
+
+    /* ⭐️ INSERCIÓN QUIRÚRGICA: Card de relleno solo en móvil ⭐️ */
+    if (isMobile) {
+        slidesHtml += `<div class="swiper-slide card-relleno-final" style="height: 100px !important; pointer-events: none;"></div>`;
     }
 
     if (appInstance.DOM.detalleTrack) {
