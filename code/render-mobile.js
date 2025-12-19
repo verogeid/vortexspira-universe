@@ -14,6 +14,10 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
         const estaActivo = esRelleno ? false : this._tieneContenidoActivo(nodo.id); 
         html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, estaActivo, esRelleno)}</div>`; 
     }
+
+    /* ⭐️ INSERCIÓN QUIRÚRGICA: Card de relleno para el final del menú ⭐️ */
+    html += `<div class="swiper-slide card-relleno-final" style="height: 100px !important; pointer-events: none;"></div>`;
+
     if (this.DOM.track) {
          this.DOM.track.style.gridTemplateRows = '';
     }
@@ -26,7 +30,7 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
     if (this.STATE.carouselInstance) {
         this._destroyCarousel();
     }
-    
+
     const swiperConfig = {
         direction: 'vertical', 
         slidesPerView: 'auto', 
@@ -36,7 +40,7 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
 
         touchRatio: 1, 
         simulateTouch: true, 
-        
+
         /* ⭐️ CAMBIO QUIRÚRGICO: Bloqueamos el inicio del scroll nativo ⭐️ */
         /* Esto permite que un solo dedo arrastre la lista inmediatamente */
         touchStartPreventDefault: true, 
