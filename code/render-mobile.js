@@ -1,4 +1,4 @@
-// --- code/render-mobile.js ---
+/* --- code/render-mobile.js --- */
 
 import * as debug from './debug.js';
 import * as data from './data.js';
@@ -16,8 +16,8 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
         html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, estaActivo, esRelleno)}</div>`;
     }
 
-    // ⭐️ AJUSTE: Card de relleno invisible para superar el footer ⭐️
-    html += `<div class="swiper-slide card-relleno-final" style="height: 100px; pointer-events: none;"></div>`;
+    // ⭐️ INYECCIÓN QUIRÚRGICA: Card de relleno para evitar que el footer tape la última info ⭐️
+    html += `<div class="swiper-slide" style="height: 120px !important; background: transparent !important; border: none !important; box-shadow: none !important; pointer-events: none;"></div>`;
 
     return html;
 };
@@ -27,15 +27,26 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
     if (this.STATE.carouselInstance) this._destroyCarousel();
     
     const swiperConfig = {
-        direction: 'vertical', slidesPerView: 'auto', loop: false, 
-        initialSlide: initialSwiperSlide, touchRatio: 1, simulateTouch: true, 
-        touchStartPreventDefault: true, touchMoveStopPropagation: true, 
-        speed: data.SWIPE_SLIDE_SPEED, freeMode: true, freeModeMomentum: true, freeModeSticky: true, 
+        direction: 'vertical',
+        slidesPerView: 'auto',
+        slidesPerGroup: 1,
+        loop: false,
+        initialSlide: initialSwiperSlide,
+        touchRatio: 1,
+        simulateTouch: true,
+        touchStartPreventDefault: true,
+        touchMoveStopPropagation: true,
+        speed: data.SWIPE_SLIDE_SPEED,
+        freeMode: true,
+        freeModeMomentum: true,
+        freeModeSticky: true,
     };
 
     const container = document.querySelector(swiperId);
-    if (container) this.STATE.carouselInstance = new Swiper(container, swiperConfig);
+    if (container) {
+        this.STATE.carouselInstance = new Swiper(container, swiperConfig);
+    }
     if (typeof this.setupTouchListeners === 'function') this.setupTouchListeners(); 
 };
 
-// --- code/render-mobile.js ---
+/* --- code/render-mobile.js --- */
