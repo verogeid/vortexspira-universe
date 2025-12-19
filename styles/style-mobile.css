@@ -1,83 +1,142 @@
 /* --- styles/style-mobile.css --- */
 
 @media (max-width: 600px) {
-    /* 1. Reset de pantalla */
+
+    /* 1. Scroll nativo y Header/Footer fijo */
     body {
-        overflow: hidden !important; 
-        height: 100vh; 
-        position: fixed; 
-        width: 100%;
-        margin: 0;
-        padding: 0;
+        overflow-y: auto !important; 
+        height: auto; min-height: 100vh; 
+        padding-bottom: var(--footer-height); 
     }
 
     header { 
         position: fixed; 
-        z-index: 100;
-        top: 0;
-        width: 100%;
     }
 
-    /* 2. Contenedor principal pegado al header */
+    #main-header-subtitle {
+        display: none !important; 
+    }
+
+    /* 2. Layout fluido */
     #app-container {
-        height: calc(100vh - var(--header-height) - var(--footer-height)) !important;
-        margin-top: var(--header-height);
-        padding: 0 !important; /* Eliminamos el hueco de 10px superior */
-        display: flex; 
-        flex-direction: column;
-        overflow: hidden;
+        height: auto !important;
+        min-height: calc(100vh - var(--header-height)); 
+        padding-top: 10px !important;
+        display: flex; flex-direction: column;
+        padding-left: 0px; padding-right: 0px; 
+        padding-bottom: 10px; 
+        gap: 15px; overflow: visible;
     }
 
-    /* 3. Vistas */
-    #vista-central, .vista {
-        width: 100%; 
-        position: relative; 
-        height: 100% !important; 
-        overflow: hidden !important;
+    /* 3. Vista central */
+    #vista-central {
+        width: 100%; position: relative; 
+        height: auto !important; overflow: visible !important;
+        display: block; 
+        flex-grow: 1; 
     }
 
-    .vista:not(.active) { display: none !important; }
-
-    /* 4. Swipers */
-    #nav-swiper-mobile, #detalle-swiper-mobile {
-        height: 100% !important;
-        width: 100%;
-        touch-action: none !important;
+    .vista:not(.active) {
+        display: none !important;
     }
 
-    #nav-swiper-mobile .swiper-wrapper, 
-    #detalle-swiper-mobile .swiper-wrapper {
-        padding-top: 5px !important;
-        padding-bottom: 10px !important; /* El espacio real lo da la card inyectada */
+    .vista {
+        position: relative; height: auto !important; overflow: visible !important;
     }
 
-    #nav-swiper-mobile .swiper-slide,
-    #detalle-swiper-mobile .swiper-slide {
-        height: auto !important; /* Permite varias tarjetas por pantalla */
-        padding: 0 6% !important;
-        box-sizing: border-box;
+    /* 4. Ocultar sidebars innecesarios */
+    #card-volver-fija, #info-adicional {
+        display: none !important;
     }
 
-    /* 5. Vista de Detalle */
+    /* 5. Vista de detalle full-screen */
     #vista-detalle-mobile {
         position: fixed !important; 
         top: var(--header-height) !important; 
-        left: 0; width: 100%; 
+        left: 0 !important; 
+        width: 100% !important; 
         height: calc(100vh - var(--header-height) - var(--footer-height)) !important;
-        z-index: 99; 
-        background: var(--color-bg);
-        display: flex; flex-direction: column;
+        z-index: 99 !important; 
+        overflow-y: hidden !important;
+        padding-top: 0; 
+        padding-bottom: 0; 
+        box-sizing: border-box; 
+        display: flex; flex-direction: column; 
+    }
+
+    #vista-detalle-mobile:not(.active) {
+        display: none !important; 
+    }
+
+    #detalle-contenido-mobile {
+        margin-top: 0; 
+        width: 100%; 
+        height: 100%; 
+        overflow: hidden;
+    }
+
+    #detalle-swiper-mobile {
+        height: 100%;
+        overflow-y: hidden !important;
+        touch-action: pan-y !important;
+        padding-bottom: 5vh;
+    }
+
+    #detalle-swiper-mobile .swiper-wrapper {
+        padding-bottom: 15vh; 
+        padding-top: 15px; 
+        padding-left: 0; 
+        padding-right: 0;
+    }
+
+    #detalle-swiper-mobile .swiper-slide {
+        padding: 0 6% !important; 
+        box-sizing: border-box; 
     }
 
     /* 6. Footer */
     footer {
-        position: fixed !important; 
-        bottom: 0; left: 0;
+        position: fixed !important; bottom: 0; 
+        margin-top: 0; padding: 20px 5px; 
         background: var(--color-bg); 
         width: 100%;
-        z-index: 101;
-        height: var(--footer-height);
-        display: flex; align-items: center; justify-content: center;
+    }
+
+    /* --------------------------------------------------------------------- */
+    /* SWIPER VERTICAL MÓVIL (NAVEGACIÓN) */
+    /* --------------------------------------------------------------------- */
+
+    #nav-swiper-mobile {
+        height: auto !important; 
+        min-height: calc(100vh - var(--header-height) - var(--footer-height) - 20px); 
+        width: 100%; position: relative;
+        overflow: hidden; 
+        touch-action: pan-y !important;
+    }
+
+    #nav-swiper-mobile .swiper-wrapper {
+        display: flex !important; flex-direction: column; 
+        gap: 10px; 
+        width: 100%; height: auto !important; 
+        padding-bottom: 15vh; 
+        padding-top: 15px !important; 
+    }
+
+    #nav-swiper-mobile .swiper-slide {
+        width: 100% !important; height: auto !important; 
+        display: flex; 
+        flex-direction: column;
+        align-items: center;
+        box-sizing: border-box; 
+        padding: 0 6% !important; 
+    }
+
+    /* Estilos para las nuevas cards de relleno transparentes */
+    .card-relleno-final {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        pointer-events: none !important;
     }
 }
 
