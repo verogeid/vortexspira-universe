@@ -104,6 +104,13 @@
         box-sizing: border-box; 
     }
 
+    /* ⭐️ ESTILO PARA LA CARD DE RELLENO ⭐️ */
+    .card-relleno-final {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
     /* 6. Footer */
     footer {
         position: fixed !important; bottom: 0; 
