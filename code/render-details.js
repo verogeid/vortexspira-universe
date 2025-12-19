@@ -4,6 +4,9 @@ import * as debug from './debug.js';
 import * as data from './data.js';
 import * as nav_base_details from './nav-base-details.js';
 
+/**
+ * Inicializa el Swiper de la vista de detalle.
+ */
 function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
     if (appInstance.STATE.detailCarouselInstance) {
         appInstance.STATE.detailCarouselInstance.destroy(true, true);
@@ -35,6 +38,9 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
     }
 }
 
+/**
+ * Muestra el detalle de un curso específico.
+ */
 export function _mostrarDetalle(cursoId) {
     const appInstance = this;
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
@@ -88,11 +94,10 @@ export function _mostrarDetalle(cursoId) {
 
     if (fragments.length > 0) {
         let firstContent = fragments[0].nodeType === 1 ? fragments[0].outerHTML : `<p>${fragments[0].textContent}</p>`;
-        // ⭐️ ADICIÓN: onclick="this.focus()" ⭐️
         slidesHtml += `
             <div class="swiper-slide">
                 <h2 class="detail-title-slide">${curso.titulo}</h2>
-                <div class="detail-text-fragment" data-index="0" role="document" tabindex="0" onclick="this.focus()">
+                <div class="detail-text-fragment" data-index="0" role="document" tabindex="0">
                     <div class="content-wrapper">
                         ${firstContent}
                     </div>
@@ -102,10 +107,9 @@ export function _mostrarDetalle(cursoId) {
 
         for (let i = 1; i < fragments.length; i++) {
             let content = fragments[i].nodeType === 1 ? fragments[i].outerHTML : `<p>${fragments[i].textContent}</p>`;
-            // ⭐️ ADICIÓN: onclick="this.focus()" ⭐️
             slidesHtml += `
                 <div class="swiper-slide">
-                    <div class="detail-text-fragment" data-index="${i}" role="document" tabindex="0" onclick="this.focus()">
+                    <div class="detail-text-fragment" data-index="${i}" role="document" tabindex="0">
                         <div class="content-wrapper">
                             ${content}
                         </div>
@@ -131,9 +135,6 @@ export function _mostrarDetalle(cursoId) {
             `;
         });
     }
-
-    // ⭐️ INYECCIÓN QUIRÚRGICA: Card de relleno ⭐️
-    slidesHtml += `<div class="swiper-slide card-relleno-final" style="height: 80px !important;"></div>`;
 
     if (appInstance.DOM.detalleTrack) {
         appInstance.DOM.detalleTrack.innerHTML = slidesHtml;
