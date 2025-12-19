@@ -88,7 +88,7 @@ header h1 {
 
 /* ⭐️ AÑADIDO: Asegurar que el SVG del logo sea fluido en el header ⭐️ */
 header h1 svg {
-    height: calc(var(--header-height) - 25px); /* 20px para compensar el padding de 10px arriba y abajo */
+    height: calc(var(--header-height) - 30px);
     max-height: 1.8em; /* Limite de fuente */
     width: auto;
     flex-shrink: 0; 
