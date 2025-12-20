@@ -1,21 +1,21 @@
 {
   "navegacion": [
     {
-      "id": "s-01",
+      "id": "s-ds",
       "nombre": "Desarrollo de Software",
       "subsecciones": [
         {
-          "id": "ss-01-01",
+          "id": "s-ds-be",
           "nombre": "Back-End",
           "subsecciones": [
             {
-              "id": "ss-01-01-01",
+              "id": "s-ds-be-api",
               "nombre": "API",
               "subsecciones": [],
               "cursos": []
             },
             {
-              "id": "ss-01-01-02",
+              "id": "s-ds-be-db",
               "nombre": "Bases de Datos",
               "subsecciones": [],
               "cursos": []
@@ -24,12 +24,12 @@
           "cursos": []
         },
         {
-          "id": "ss-01-02",
+          "id": "s-ds-fe",
           "nombre": "Front-End",
           "subsecciones": [],
           "cursos": [
             {
-              "id": "c-01-02-01",
+              "id": "c-cfwp",
               "titulo": "Arquitecto Web",
               "descripcion": "Acabo de salir del Kick-off del nuevo e-commerce y tú eres mi refuerzo. Olvida los tutoriales de 'Hola Mundo'; aquí trabajamos con metodología Shift Left. No vamos a tirar líneas de código, vamos a construir un edificio.<br><ul><li>Sprint 1 (HTML5): Los cimientos semánticos y accesibles. Sin esto, el proyecto se hunde.</li><li>Sprint 2 (CSS3): La fachada, el diseño responsivo y la identidad visual.</li><li>Sprint 3 (JavaScript): La maquinaria interna, la lógica y la interactividad.</li></ul>Al terminar, no solo tendrás una app; tendrás la mentalidad para levantar cualquier proyecto web desde cero sin deuda técnica.",
               "enlaces": [
@@ -43,13 +43,13 @@
           ]
         },
         {
-          "id": "ss-01-03",
+          "id": "s-ds-lg",
           "nombre": "Fundamentos y Lenguajes",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "ss-01-04",
+          "id": "s-ds-ia",
           "nombre": "Inteligencia Artificial",
           "subsecciones": [],
           "cursos": []
@@ -58,23 +58,23 @@
       "cursos": []
     },
     {
-      "id": "s-02",
+      "id": "s-ds-dev",
       "nombre": "DevOps y CI/CD",
       "subsecciones": [
         {
-          "id": "ss-02-01",
+          "id": "s-ds-dev-dk",
           "nombre": "Contenedores y Orquestación",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "ss-02-02",
+          "id": "s-ds-dev-cv",
           "nombre": "Control de Versiones",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "ss-02-03",
+          "id": "s-ds-dev-cicd",
           "nombre": "Integración Continua (CI/CD)",
           "subsecciones": [],
           "cursos": []
@@ -83,17 +83,17 @@
       "cursos": []
     },
     {
-      "id": "s-03",
+      "id": "s-ds-doc",
       "nombre": "Documentación y Modelado",
       "subsecciones": [
         {
-          "id": "ss-03-01",
+          "id": "s-ds-doc-dgr",
           "nombre": "Diagramas y Modelado",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "ss-03-02",
+          "id": "s-ds-doc-tool",
           "nombre": "Herramientas y Lenguajes",
           "subsecciones": [],
           "cursos": []
@@ -102,41 +102,41 @@
       "cursos": []
     },
     {
-      "id": "s-04",
+      "id": "s-ds-qa",
       "nombre": "Pruebas de Software (QA)",
       "subsecciones": [
         {
-          "id": "ss-04-01",
+          "id": "s-ds-qa-a11y",
           "nombre": "Accesibilidad (A11y)",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "ss-04-02",
+          "id": "s-ds-qa-atm",
           "nombre": "Automatización",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "ss-04-03",
+          "id": "s-ds-qa-fun",
           "nombre": "Fundamentos y Gestión",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "ss-04-04",
+          "id": "s-ds-qa-prf",
           "nombre": "Performance",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "ss-04-05",
+          "id": "s-ds-qa-seg",
           "nombre": "Seguridad",
           "subsecciones": [],
           "cursos": [
             {
-              "id": "c-04-05-02",
-              "titulo": "Cyberseguridad para QA",
+              "id": "c-cseg-qa",
+              "titulo": "Cyberseguridad Beyond-OWASP para QA",
               "descripcion": "Hoy es tu primer día como becario en la empresa. El experto en ciberseguridad es tu mentor y te va a enseñar todo lo que sabe.<br>Una simulación con la que entenderás no solo el qué y el cómo, sino el porqué. Aprenderás a auditar una web, y hasta tu propia red doméstica o empresarial. Porque la superficie de ataque está en todas partes. Una simulación que va más allá del típico libro de texto.<br>Anticípate al hacker o al desastre natural o digital.",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#", "type": "d" },
@@ -149,16 +149,28 @@
       "cursos": []
     },
     {
-      "id": "s-05",
+      "id": "s-rec",
       "nombre": "Recursos Adicionales",
       "subsecciones": [],
       "cursos": [
         {
-          "id": "c-05-01",
-          "titulo": "🚧 Inglés: De A2 a C1",
-          "descripcion": "Aprendizaje inmersivo. Aprende a leer el código IPA fácilmente. Aprenderás a verbalizar correctamente mientras escuchas una voz nativa diciendo exactamente lo mismo. Mientras, tu visión periférica aprenderá cómo se escribe. La ciencia cognitiva a tu disposición para aprender idiomas.",
+          "id": "c-ing",
+          "titulo": "🚧 Inglés: De A0 a C1+",
+          "descripcion": "Aprendizaje inmersivo.
+<br>
+La ciencia cognitiva a tu disposición para aprender idiomas.
+<br>
+Aprende a leer el código IPA fácilmente.
+<ul>
+<li>Aprenderás a verbalizar correctamente</li>
+<li>Escuchas una voz nativa diciendo exactamente lo mismo.</li>
+<li>Tuu visión periférica aprenderá cómo se escribe.</li>
+</ul>",
           "enlaces": [
             { "texto": "Prueba el freemium", "url": "#" },
+            { "texto": "Adquirir A0 a A1+", "url": "#" }
+            { "texto": "Adquirir A2 a B1+", "url": "#" }
+            { "texto": "Adquirir B2 a C1+", "url": "#" }
             { "texto": "Adquirir pack completo", "url": "#" }
           ]
         }
