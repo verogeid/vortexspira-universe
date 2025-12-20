@@ -1,6 +1,6 @@
 /* --- styles/style-cards.css --- */
 
-/* Estilos Base */
+/* Estilos Base de la Tarjeta */
 .card {
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
@@ -9,45 +9,91 @@
   border-radius: 12px;
   transition: all 0.2s ease;
   cursor: pointer;
-  
-  display: flex; flex-direction: column; justify-content: center; align-items: center;
-  
-  box-sizing: border-box; height: auto; min-height: 150px; 
+
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center;
+
+  box-sizing: border-box; 
+  height: auto; 
+  min-height: 150px; 
 }
 
-/* ⭐️ CORRECCIÓN: Texto fluido SIN romper palabras ⭐️ */
+/* ⭐️ Texto fluido SIN romper palabras ⭐️ */
 .card h3 { 
-    margin: 0; width: 100%;
-    
+    margin: 0; 
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+
     /* Fuente fluida: Mínimo pequeño (0.8rem) para encajar títulos largos */
     font-size: clamp(0.8rem, 4vw, 1.4rem); 
-    
+
     line-height: 1.2;
     transition: color 0.2s ease; 
-    
+
     /* REGLAS ESTRICTAS DE NO-RUPTURA */
     white-space: normal;       /* Permitir saltos de línea naturales */
     word-break: normal;        /* NUNCA romper una palabra por la mitad */
     overflow-wrap: normal;     /* Comportamiento estándar */
-    -webkit-hyphens: none;    /* Sin guiones automáticos */
+    -webkit-hyphens: none;     /* Sin guiones automáticos */
     hyphens: none;             /* Sin guiones automáticos */
-    
+
     /* Mostrar todo el texto posible */
     max-height: 100%;
-    overflow: hidden;          /* Si aún así desborda, ocultar (mejor editar JSON) */
+    overflow: hidden;          
     text-overflow: ellipsis; 
+}
+
+/* ⭐️ ICONOS DE TARJETA (Máscaras SVG) ⭐️ */
+
+.icon-vacio-card {
+    display: inline-block;
+    width: 1.1em;
+    height: 1.1em;
+    background-color: currentColor; /* Hereda gris si está disabled, azul si tiene foco */
+    -webkit-mask-image: var(--icon-vacio);
+    mask-image: var(--icon-vacio);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.icon-obras-card {
+    display: inline-block;
+    width: 1.1em;
+    height: 1.1em;
+    background-color: var(--color-icon-obras); /* Naranja/Amarillo de obras */
+    -webkit-mask-image: var(--icon-obras);
+    mask-image: var(--icon-obras);
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    -webkit-mask-size: contain;
+    vertical-align: middle;
+    flex-shrink: 0;
 }
 
 /* Tipos Especiales */
 .card.card-breadcrumb-vertical {
-    border-style: dashed; border-color: var(--color-border-placeholder);
-    background: transparent; min-height: 50px; /* ⭐️ AJUSTADO: 60px -> 50px ⭐️ */
+    border-style: dashed; 
+    border-color: var(--color-border-placeholder);
+    background: transparent; 
+    min-height: 50px; 
     opacity: 0.8;
-    font-size: 1rem; cursor: default; text-align: center;
-    justify-content: center; pointer-events: none !important;
+    font-size: 1rem; 
+    cursor: default; 
+    text-align: center;
+    justify-content: center; 
+    pointer-events: none !important;
 }
+
 .card.card-volver-vertical { 
-    min-height: 50px; /* ⭐️ AJUSTADO: 80px -> 50px ⭐️ */
+    min-height: 50px; 
     text-align: center; 
 }
 
@@ -57,44 +103,53 @@
 .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]).focus-visible:hover,
-/* ⭐️ FIX CLAVE: Incluir .focus-current para que el foco visual se aplique al card-volver-vertical ⭐️ */
 .card:not(.disabled):not([data-tipo="relleno"]).focus-current { 
-  outline: none; border-color: var(--color-primary);
-  background: var(--color-card-bg); transform: scale(1.03);
+  outline: none; 
+  border-color: var(--color-primary);
+  background: var(--color-card-bg); 
+  transform: scale(1.03);
   box-shadow: 0 0 25px var(--color-shadow-primary); 
   color: var(--color-primary); 
 }
 
-/* ⭐️ Habilitadas -> HOVER (SIN CAMBIO DE COLOR DE TEXTO) ⭐️ */
+/* ⭐️ Habilitadas -> HOVER (Mantiene color de texto original) ⭐️ */
 .card:not(.disabled):not([data-tipo="relleno"]):hover {
-  outline: none; border-color: var(--color-primary);
-  background: var(--color-card-bg); transform: scale(1.03);
+  outline: none; 
+  border-color: var(--color-primary);
+  background: var(--color-card-bg); 
+  transform: scale(1.03);
   box-shadow: 0 0 25px var(--color-shadow-primary); 
-  color: var(--color-text); /* Mantiene el color por defecto si NO tiene foco */
+  color: var(--color-text); 
 }
 
 /* Deshabilitadas -> GRIS */
 .card.disabled {
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);
-  color: var(--color-text); opacity: 0.6; 
+  color: var(--color-text); 
+  opacity: 0.6; 
 }
-.card.disabled span { font-size: 0.9rem; color: inherit; }
 
 .card.disabled.focus-visible, 
 .card.disabled:hover, 
 .card.disabled:focus-visible {
-  outline: none; border-color: var(--color-card-border); 
-  background: var(--color-card-bg); transform: scale(1.03);
+  outline: none; 
+  border-color: var(--color-card-border); 
+  background: var(--color-card-bg); 
+  transform: scale(1.03);
   box-shadow: 0 0 15px var(--color-shadow-disabled); 
-  opacity: 1; color: var(--color-card-border); 
+  opacity: 1; 
+  color: var(--color-card-border); 
 }
 
 /* Relleno */
 .card[data-tipo="relleno"] {
     border: 2px dashed var(--color-border-placeholder); 
-    background: transparent; pointer-events: none; cursor: default;
-    transform: none; box-shadow: none;
+    background: transparent; 
+    pointer-events: none; 
+    cursor: default;
+    transform: none; 
+    box-shadow: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
