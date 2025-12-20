@@ -27,7 +27,7 @@ export function renderNavegacion() {
     let initCarouselFn;
     let calculatedItemsPerColumn;
     let swiperId = null;
-    
+
     if (isMobile) {
         renderHtmlFn = this._generateCardHTML_Mobile; 
         initCarouselFn = this._initCarousel_Mobile;   
@@ -71,14 +71,14 @@ export function renderNavegacion() {
         this.DOM.track.innerHTML = renderHtmlFn.call(this, itemsDelNivel, this.STATE.itemsPorColumna);
         let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
         initCarouselFn.call(this, initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId); 
-        
+
         if (isMobile) document.getElementById('vista-navegacion-mobile').classList.add('active');
         else if (isTablet) document.getElementById('vista-navegacion-tablet').classList.add('active');
         else document.getElementById('vista-navegacion-desktop').classList.add('active');
     }
 
     _updateNavViews.call(this, isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual); 
-    
+
     if (!isDetailActive) {
         setTimeout(() => this._updateFocus(false), data.SWIPE_SLIDE_SPEED / 2);
     }
@@ -99,11 +99,12 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
     const isCourse = !!nodo.titulo;
     const tipo = isCourse ? 'curso' : 'categoria';
     let displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
-    
-    // RESTAURACIÓN DE LOGOS ORIGINALES (SVG)
+
+    // ⭐️ FIX: Restauración de logos y detección de icono-vacio ⭐️
     if (tipo === 'categoria') {
         if (!estaActivo) {
-            displayTitle = '<span class="icon-disabled-card"></span> ' + displayTitle;
+            // Se usa la clase específica vinculada a --icon-vacio
+            displayTitle = '<span class="icon-vacio-card"></span> ' + displayTitle;
         } else {
             displayTitle = data.LOGO_CARPETA + ' ' + displayTitle;
         }
@@ -135,7 +136,7 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
         vistaVolver.classList.add('visible'); 
         this.DOM.cardNivelActual.classList.add('visible');
         this.DOM.cardNivelActual.innerHTML = `<h3>${isSubLevel ? (nodoActual?.nombre || nodoActual?.titulo || 'Nivel') : this.getString('breadcrumbRoot')}</h3>`;
-        
+
         if (isSubLevel) {
             this.DOM.cardVolverFijaElemento.classList.add('visible'); 
             this.DOM.cardVolverFijaElemento.innerHTML = `<h3>${data.LOGO_VOLVER}</h3>`; 
@@ -152,7 +153,7 @@ export function _setupResizeObserver() {
         const newWidth = window.innerWidth;
         const getMode = (w) => w <= data.MOBILE_MAX_WIDTH ? 'mobile' : (w <= data.TABLET_LANDSCAPE_MAX_WIDTH ? 'tablet' : 'desktop');
         const newMode = getMode(newWidth);
-        
+
         if ((newMode !== _lastMode || (newWidth > data.TABLET_PORTRAIT_MAX_WIDTH && _lastWidth <= data.TABLET_PORTRAIT_MAX_WIDTH)) && this.STATE.initialRenderComplete) {
             _lastMode = newMode;
             _lastWidth = newWidth;
