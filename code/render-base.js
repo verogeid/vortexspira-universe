@@ -68,9 +68,11 @@ export function renderNavegacion() {
         this._mostrarDetalle(this.STATE.activeCourseId); 
     } else {
         this._destroyCarousel(); 
-        this.DOM.track.innerHTML = renderHtmlFn.call(this, itemsDelNivel, this.STATE.itemsPorColumna);
-        let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
-        initCarouselFn.call(this, initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId); 
+        if (this.DOM.track) {
+            this.DOM.track.innerHTML = renderHtmlFn.call(this, itemsDelNivel, this.STATE.itemsPorColumna);
+            let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
+            initCarouselFn.call(this, initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId); 
+        }
 
         if (isMobile) document.getElementById('vista-navegacion-mobile').classList.add('active');
         else if (isTablet) document.getElementById('vista-navegacion-tablet').classList.add('active');
@@ -100,19 +102,19 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
     const tipo = isCourse ? 'curso' : 'categoria';
     let displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
 
-    // ⭐️ FIX: Restauración de logos y detección de icono-vacio ⭐️
     if (tipo === 'categoria') {
         if (!estaActivo) {
-            // Se usa la clase específica vinculada a --icon-vacio
-            displayTitle = '<span class="icon-vacio-card"></span> ' + displayTitle;
+            // ⭐️ USO DE CLASE PARA ICONO VACÍO ⭐️
+            displayTitle = `<span class="icon-vacio-card"></span> ${displayTitle}`;
         } else {
-            displayTitle = data.LOGO_CARPETA + ' ' + displayTitle;
+            displayTitle = `${data.LOGO_CARPETA} ${displayTitle}`;
         }
     } else {
         if (displayTitle.includes(data.LOGO_OBRAS)) {
-             displayTitle = '<span class="icon-obras-card"></span> ' + displayTitle.replace(data.LOGO_OBRAS, "").trim(); 
+             // ⭐️ USO DE CLASE PARA ICONO OBRAS ⭐️
+             displayTitle = `<span class="icon-obras-card"></span> ${displayTitle.replace(data.LOGO_OBRAS, "").trim()}`; 
         } else {
-             displayTitle = data.LOGO_CURSO + ' ' + displayTitle; 
+             displayTitle = `${data.LOGO_CURSO} ${displayTitle}`; 
         }
     }
 
