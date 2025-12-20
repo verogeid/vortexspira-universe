@@ -58,23 +58,23 @@
       "cursos": []
     },
     {
-      "id": "s-ds-dev",
+      "id": "s-dev",
       "nombre": "DevOps y CI/CD",
       "subsecciones": [
         {
-          "id": "s-ds-dev-dk",
+          "id": "s-dev-dk",
           "nombre": "Contenedores y Orquestación",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "s-ds-dev-cv",
+          "id": "s-dev-cv",
           "nombre": "Control de Versiones",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "s-ds-dev-cicd",
+          "id": "s-dev-cicd",
           "nombre": "Integración Continua (CI/CD)",
           "subsecciones": [],
           "cursos": []
@@ -83,7 +83,7 @@
       "cursos": []
     },
     {
-      "id": "s-ds-doc",
+      "id": "s-doc",
       "nombre": "Documentación y Modelado",
       "subsecciones": [
         {
@@ -93,7 +93,7 @@
           "cursos": []
         },
         {
-          "id": "s-ds-doc-tool",
+          "id": "s-doc-tool",
           "nombre": "Herramientas y Lenguajes",
           "subsecciones": [],
           "cursos": []
@@ -102,40 +102,40 @@
       "cursos": []
     },
     {
-      "id": "s-ds-qa",
+      "id": "s-qa",
       "nombre": "Pruebas de Software (QA)",
       "subsecciones": [
         {
-          "id": "s-ds-qa-a11y",
+          "id": "s-qa-a11y",
           "nombre": "Accesibilidad (A11y)",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "s-ds-qa-atm",
+          "id": "s-qa-atm",
           "nombre": "Automatización",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "s-ds-qa-fun",
+          "id": "s-qa-fun",
           "nombre": "Fundamentos y Gestión",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "s-ds-qa-prf",
+          "id": "s-qa-pfm",
           "nombre": "Performance",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "s-ds-qa-seg",
+          "id": "s-qa-seg",
           "nombre": "Seguridad",
           "subsecciones": [],
           "cursos": [
             {
-              "id": "c-cseg-qa",
+              "id": "c-cseg",
               "titulo": "Cyberseguridad Beyond-OWASP para QA",
               "descripcion": "Hoy es tu primer día como becario en la empresa. El experto en ciberseguridad es tu mentor y te va a enseñar todo lo que sabe.<br>Una simulación con la que entenderás no solo el qué y el cómo, sino el porqué. Aprenderás a auditar una web, y hasta tu propia red doméstica o empresarial. Porque la superficie de ataque está en todas partes. Una simulación que va más allá del típico libro de texto.<br>Anticípate al hacker o al desastre natural o digital.",
               "enlaces": [
