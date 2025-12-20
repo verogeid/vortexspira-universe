@@ -156,21 +156,12 @@
         {
           "id": "c-ing",
           "titulo": "🚧 Inglés: De A0 a C1+",
-          "descripcion": "Aprendizaje inmersivo.
-<br>
-La ciencia cognitiva a tu disposición para aprender idiomas.
-<br>
-Aprende a leer el código IPA fácilmente.
-<ul>
-<li>Aprenderás a verbalizar correctamente</li>
-<li>Escuchas una voz nativa diciendo exactamente lo mismo.</li>
-<li>Tuu visión periférica aprenderá cómo se escribe.</li>
-</ul>",
+          "descripcion": "Aprendizaje inmersivo.<br>La ciencia cognitiva a tu disposición para aprender idiomas.<br>Aprende a leer el código IPA fácilmente.<ul><li>Aprenderás a verbalizar correctamente</li><li>Escuchas una voz nativa diciendo exactamente lo mismo.</li><li>Tu visión periférica aprenderá cómo se escribe.</li></ul>",
           "enlaces": [
             { "texto": "Prueba el freemium", "url": "#" },
-            { "texto": "Adquirir A0 a A1+", "url": "#" }
-            { "texto": "Adquirir A2 a B1+", "url": "#" }
-            { "texto": "Adquirir B2 a C1+", "url": "#" }
+            { "texto": "Adquirir A0 a A1+", "url": "#" },
+            { "texto": "Adquirir A2 a B1+", "url": "#" },
+            { "texto": "Adquirir B2 a C1+", "url": "#" },
             { "texto": "Adquirir pack completo", "url": "#" }
           ]
         }
