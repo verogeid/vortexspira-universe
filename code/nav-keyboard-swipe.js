@@ -1,6 +1,7 @@
 // --- code/nav-keyboard-swipe.js ---
 
 import * as data from './data.js';
+import * as debug from './debug.js';
 
 /**
  * Maneja la navegación por teclado en la vista de Swipe (Menús).
@@ -14,46 +15,46 @@ export function _handleSwipeNavigation(key, appInstance) {
 
     const allCards = Array.from(app.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
     const totalCards = allCards.length;
+
+    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, `RADAR: Tecla ${key} | Foco: ${currentIndex} | Total: ${totalCards}`);
+
     if (totalCards === 0) return;
 
-    // Determinamos posición en la rejilla
     const currentColumn = Math.floor(currentIndex / itemsPorColumna);
     const currentRow = currentIndex % itemsPorColumna;
 
     switch (key) {
         case 'ArrowUp':
-            // Intentar subir en la misma columna
             if (currentRow > 0) {
                 newIndex = currentIndex - 1;
             } else {
-                // Si estamos arriba, saltar al final de la columna anterior
                 newIndex = currentIndex - 1;
-                if (newIndex < 0) newIndex = totalCards - 1; // Bucle al final
+                if (newIndex < 0) newIndex = totalCards - 1;
+                debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, "CILINDRO: Bucle superior.");
             }
             break;
 
         case 'ArrowDown':
-            // Intentar bajar en la misma columna
             const isLastInColumn = (currentRow === itemsPorColumna - 1);
             if (!isLastInColumn && (currentIndex + 1) < totalCards) {
                 newIndex = currentIndex + 1;
             } else {
-                // Si estamos abajo o no hay más en esta columna, saltar a la siguiente
                 newIndex = currentIndex + 1;
-                if (newIndex >= totalCards) newIndex = 0; // Bucle al principio
+                if (newIndex >= totalCards) newIndex = 0;
+                debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, "CILINDRO: Bucle inferior.");
             }
             break;
 
         case 'ArrowLeft':
-            // Salto lateral a la columna anterior (misma fila)
             newIndex = currentIndex - itemsPorColumna;
             if (newIndex < 0) newIndex = (currentIndex === 0) ? totalCards - 1 : 0;
+            debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, "LATERAL: Izquierda.");
             break;
 
         case 'ArrowRight':
-            // Salto lateral a la siguiente columna (misma fila)
             newIndex = currentIndex + itemsPorColumna;
             if (newIndex >= totalCards) newIndex = (currentIndex === totalCards - 1) ? 0 : totalCards - 1;
+            debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, "LATERAL: Derecha.");
             break;
 
         case 'Enter':
@@ -61,6 +62,7 @@ export function _handleSwipeNavigation(key, appInstance) {
             const tarjeta = allCards[currentIndex];
             if (tarjeta && !tarjeta.classList.contains('disabled')) {
                 const { id, tipo } = tarjeta.dataset;
+                debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, `ACCION: Ejecutando ${id}`);
                 if (tipo === 'volver-vertical') app._handleVolverClick();
                 else app._handleCardClick(id, tipo);
             }
@@ -71,11 +73,10 @@ export function _handleSwipeNavigation(key, appInstance) {
         app.STATE.keyboardNavInProgress = true; 
         app.STATE.currentFocusIndex = newIndex;
         
-        // Determinar si el movimiento requiere que Swiper cambie de slide lateralmente
         const newColumn = Math.floor(newIndex / itemsPorColumna);
         const needsSlide = (newColumn !== currentColumn);
         
-        // Pasamos needsSlide a updateFocus para evitar el desplazamiento lateral si seguimos en la misma columna
+        debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, `UPDATE: Nuevo Index ${newIndex} | Mover Slide: ${needsSlide}`);
         app._updateFocus(needsSlide);
     }
 }

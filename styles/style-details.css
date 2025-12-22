@@ -1,108 +1,75 @@
 /* --- styles/style-details.css --- */
 
 /* 1. Scroll interno y Contenedores */
-/* Aplica tanto al contenedor de escritorio como al de móvil */
 #detalle-contenido-desktop, 
 #detalle-contenido-mobile {
     max-height: 100%; 
     overflow-y: auto; 
-    padding-right: 10px;
+    /* ⭐️ UNIFICACIÓN: Padding lateral y superior coincidente con el layout global ⭐️ */
+    padding: 20px; 
+    box-sizing: border-box;
+    
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) transparent;
-    /* Asegura comportamiento suave */
     scroll-behavior: smooth;
 }
 
 /* ⭐️ CORRECCIÓN CRÍTICA PARA SWIPER VERTICAL DE DETALLE ⭐️ */
-/* Asegura que los slides en el carrusel de detalle solo midan lo que mide su contenido */
 #detalle-swiper-desktop .swiper-slide,
 #detalle-swiper-mobile .swiper-slide {
-    height: auto !important; /* CLAVE: Deja que la altura se ajuste al contenido */
+    height: auto !important; 
     max-height: none !important;
-    margin-bottom: 0px; /* Espacio entre fragmentos */
-    flex-shrink: 0; /* Asegura que no se encoja */
+    margin-bottom: 0px; 
+    flex-shrink: 0; 
 }
 
-
 /* 2. BLOQUE DE TEXTO Y FRAGMENTOS */
-
-/* Contenedor principal de texto (Ahora solo un wrapper) */
 #detalle-bloque-texto {
-    /* Eliminamos el borde de foco del contenedor principal */
     outline: none;
     border: none;
     padding: 0; 
 }
 
-/* ⭐️ NUEVO: Contenedor para cada fragmento enfocable ⭐️ */
 .detail-text-fragment {
     outline: none;
     padding: 10px; 
     border-radius: 4px;
-    
     border: none;
-    
-    /* ⭐️ Borde izquierdo (por defecto transparente) ⭐️ */
     border-left: 2px solid transparent; 
     padding-left: 6px; 
-    
     transition: all 0.2s ease, filter 0.5s ease;
     will-change: filter, opacity;
     cursor: text;
-    
     filter: blur(1.5px) grayscale(40%); 
     opacity: 0.6; 
     pointer-events: auto;
 }
 
-/* ⭐️ FOCO (focus-current / focus-visible): BORDE IZQUIERDO NÍTIDO Y SOMBRA SOLO A LA IZQUIERDA ⭐️ */
 .detail-text-fragment:focus-visible,
 .detail-text-fragment.focus-current { 
-    /* 1. Nitidez Completa */
     filter: none !important; 
     opacity: 1 !important;
-    
-    /* ⭐️ CORRECCIÓN CLAVE: Usar var(--color-text) para un borde nítido (el mismo color del texto y del foco de botón deshabilitado) ⭐️ */
     border-left: 2px solid var(--color-text) !important;
-    
-    /* ⭐️ FIX CLAVE 2: Sombra direccional a la izquierda (Ajuste fino) ⭐️ */
-    box-shadow: 
-        -5px 0 10px -5px var(--color-shadow-disabled); /* Sombra estricta a la izquierda */
-        
-    /* Mantenemos el color del texto original */
+    box-shadow: -5px 0 10px -5px var(--color-shadow-disabled); 
     color: var(--color-text) !important; 
-    
     background-color: transparent; 
 }
 
-/* ⭐️ HOVER (focus-current-hover / :hover): SOLO SOMBRA IZQUIERDA (Suma sin quitar borde) ⭐️ */
 .detail-text-fragment.focus-current-hover, 
 .detail-text-fragment:hover { 
-    /* 1. Nitidez Completa */
     filter: none !important; 
     opacity: 1 !important;
-    
-    /* Si no tiene foco activo, el borde izquierdo es transparente. 
-       Si tiene foco (focus-current), la regla superior mantiene el borde. */
     border-left-color: transparent; 
-    
-    /* ⭐️ FIX CLAVE 3: Sombra direccional a la izquierda en hover ⭐️ */
-    box-shadow: 
-        -5px 0 10px -5px var(--color-shadow-disabled); 
-        
+    box-shadow: -5px 0 10px -5px var(--color-shadow-disabled); 
     color: var(--color-text) !important; 
 }
 
 /* 3. EFECTO BLUR CON GRADIENTE DE PROXIMIDAD */
-/* ---------------------------------------------------- */
-
-/* ⭐️ Foco Actual (Nitidez Completa) ⭐️ */
 .detail-text-fragment.focus-current {
     filter: none;
     opacity: 1;
 }
 
-/* ⭐️ CORRECCIÓN: Evitar que la fila de acción aplique su propio foco visual, y quitar blur en hover ⭐️ */
 .detail-action-item.focus-current {
     outline: none !important;
     border: none !important;
@@ -111,56 +78,39 @@
     opacity: 1 !important; 
     color: inherit; 
 }
-.detail-action-item:hover { /* ⭐️ CORRECCIÓN: Hover de la fila de acción (anula blur siempre) ⭐️ */
+.detail-action-item:hover { 
     outline: none !important;
     border: none !important;
     box-shadow: none !important;
-    filter: none !important; /* Asegura la nitidez en hover */
-    opacity: 1 !important; /* Asegura la nitidez en hover */
+    filter: none !important; 
+    opacity: 1 !important; 
     color: inherit; 
 }
 
-
-/* ⭐️ Fragmento/Acción Adyacente 1 (Mínimo desenfoque: 0.5px) ⭐️ */
 .detail-text-fragment.focus-adj-1,
 .detail-action-item.focus-adj-1 {
     filter: blur(0.5px) grayscale(20%); 
     opacity: 0.9;
 }
 
-/* ⭐️ Fragmento/Acción Adyacente 2 (Desenfoque intermedio: 1.5px) ⭐️ */
 .detail-text-fragment.focus-adj-2,
 .detail-action-item.focus-adj-2 {
     filter: blur(1.5px) grayscale(40%); 
     opacity: 0.6;
 }
 
-/* ⭐️ BASE BLUR para las acciones (CORRECCIÓN: Nivel base Distancia 2) ⭐️ */
 .detail-action-item {
     transition: filter 0.5s ease, opacity 0.5s ease;
-    filter: blur(1.5px) grayscale(40%); /* CORRECCIÓN */
-    opacity: 0.6; /* CORRECCIÓN */
+    filter: blur(1.5px) grayscale(40%); 
+    opacity: 0.6; 
     pointer-events: auto;
-    
-    /* ⭐️ CORRECCIÓN: Asegurar que el focus de la fila no tiene estilos visuales ⭐️ */
     outline: none;
-    
-    /* ⭐️ AÑADIDO: Box-sizing para evitar desbordes de elementos con padding/border internos ⭐️ */
     box-sizing: border-box; 
 }
-/* Re-habilitar clic en el botón solo si el contenedor tiene el foco actual */
+
 .detail-action-item.focus-current .detail-action-btn {
     pointer-events: auto;
 }
-
-
-/* --- MÁSCARAS (Controladas por las clases binarias mode-focus-text/actions) --- */
-/* Se eliminó la lógica binaria para favorecer el blur por proximidad */
-
-.mode-focus-actions #detalle-bloque-acciones { 
-    filter: none; opacity: 1; -webkit-mask-image: none; mask-image: none; 
-}
-
 
 /* 4. LISTA DE ACCIONES */
 .detail-actions-list {
@@ -177,114 +127,88 @@
 }
 .detail-action-item:hover { background-color: rgba(255, 255, 255, 0.05); }
 
-/* Texto de la acción (Izquierda) */
 .detail-action-text {
     font-size: 1rem; font-weight: 500; 
-    /* ⭐️ CORRECCIÓN: Ahora hereda el color del padre (detail-action-item) ⭐️ */
     color: inherit; 
     text-align: left; margin-right: 15px; flex-grow: 1;
 }
 
-
-/* 5. BOTÓN DE ACCIÓN - ESTILO GHOST (Derecha) */
+/* 5. BOTÓN DE ACCIÓN - ESTILO GHOST */
 .detail-action-btn {
     display: flex; justify-content: center; align-items: center;
-    /* ⭐️ TAMAÑO ESTÁNDAR (38px) ⭐️ */
     width: 38px; 
     height: 38px; 
     background: transparent; 
-    border: 2px solid var(--color-card-border); /* Borde Gris por defecto */
-    border-radius: 50%; /* ⭐️ HABILITADO: REDONDO ⭐️ */
-    
-    /* Color de texto/icono por defecto */
+    border: 2px solid var(--color-card-border); 
+    border-radius: 50%; 
     color: var(--color-text); 
     font-size: 1.2rem; line-height: 1;
-    
     text-decoration: none; cursor: pointer;
     transition: all 0.2s ease; flex-shrink: 0; 
     position: relative; 
     overflow: hidden; 
 }
 
-/* ⭐️ REQUISITO 3: Estado HOVER / FOCUS (Enabled) -> AZUL ⭐️ */
-/* HOVER: Solo Borde/Sombra, NO texto/icono color */
 .detail-action-btn:not(.disabled):hover,
 .detail-action-item:hover .detail-action-btn:not(.disabled) { 
     border-color: var(--color-primary);
     box-shadow: 0 0 15px var(--color-shadow-primary);
     transform: scale(1.1);
-    color: var(--color-text); /* CLAVE: Mantiene el color del texto original en hover/label hover */
+    color: var(--color-text); 
     outline: none;
 }
-/* FOCUS: Borde/Sombra + Color de texto/icono */
+
 .detail-action-btn:not(.disabled):focus-visible,
 .detail-action-item.focus-current .detail-action-btn:not(.disabled) { 
     border-color: var(--color-primary);   
-    color: var(--color-primary) !important;          /* ⭐️ Asegura el color AZUL en focus ⭐️ */
+    color: var(--color-primary) !important; 
     box-shadow: 0 0 15px var(--color-shadow-primary);
     transform: scale(1.1);
     outline: none;
 }
 
-/* ----------------------------------------------------- */
-/* ⭐️ ESTADO DISABLED: CUADRADO CON BORDES REDONDEADOS + 🚫 ⭐️ */
-/* ----------------------------------------------------- */
-
 .detail-action-btn.disabled {
     color: var(--color-text-muted); 
-    border: 2px solid var(--color-card-border-disabled); /* Borde gris visible */
+    border: 2px solid var(--color-card-border-disabled); 
     background: transparent;
     cursor: default; 
-    
-    /* ⭐️ CORRECCIÓN TAMAÑO: COINCIDIR CON HABILITADO (38px) ⭐️ */
     width: 38px; 
     height: 38px;
     border-radius: 8px; 
-    
-    /* ESTILO DEL EMOJI */
-    font-size: 1.6rem; /* Ajustado para caber en 38px */
+    font-size: 1.6rem; 
     line-height: 1;
-    
     filter: none; 
     transform: none; 
     transition: all 0.2s ease; 
     pointer-events: auto; 
 }
 
-/* Aseguramos que solo se muestre el SVG del conjunto vacío (<i>) */
 .detail-action-btn.disabled .triangulo-svg,
 .detail-action-btn.disabled .icon-wrapper,
-/* ⭐️ FIX: Asegurar que el icono SVG (<i>) SÍ se muestra ⭐️ */
 .detail-action-btn.disabled > i:not(.icon-vacio) { 
     display: none !important; 
 }
-.detail-action-btn.disabled > i.icon-vacio { /* Muestra solo el SVG del conjunto vacío */
+.detail-action-btn.disabled > i.icon-vacio { 
     display: block !important;
 }
 
-
-/* Hover: Zoom + Sombra (y cambio de color a accent/gris) */
 .detail-action-btn.disabled:hover,
-.detail-action-item:hover .detail-action-btn.disabled { /* <== Añadido hover en label */
+.detail-action-item:hover .detail-action-btn.disabled { 
     outline: none;
     transform: scale(1.03); 
     border-color: var(--color-card-border); 
     box-shadow: 0 0 10px var(--color-shadow-disabled);
-    /* ⭐️ CAMBIO CLAVE: Usar color: var(--color-text) en hover para el acento gris ⭐️ */
-    color: var(--color-text); /* Color del icono cambia a color de texto (accent/gris) */
+    color: var(--color-text); 
 }
 
-/* Focus: Zoom + Foco Color (cambiar a accent/gris) */
-/* ⭐️ CORRECCIÓN: Aplicar el foco visual (gris) cuando la fila padre tiene el foco lógico ⭐️ */
 .detail-action-btn.disabled:focus-visible,
 .detail-action-item.focus-current .detail-action-btn.disabled { 
     outline: none;
     transform: scale(1.03); 
     border-color: var(--color-text); 
     box-shadow: 0 0 15px var(--color-shadow-disabled); 
-    color: var(--color-text); /* Color del icono cambia a color de texto */
+    color: var(--color-text); 
 }
-
 
 /* 6. ICONOS SVG */
 .action-icon {
@@ -294,29 +218,24 @@
     -webkit-mask-position: center; mask-position: center;
     -webkit-mask-size: contain; mask-size: contain;
 }
-/* Flecha de Descarga (PWA) */
 .icon-download { 
     -webkit-mask-image: var(--icon-download); 
     mask-image: var(--icon-download); 
 }
-/* Enlace externo */
 .icon-link { 
     -webkit-mask-image: var(--icon-link); 
     mask-image: var(--icon-link); 
 }
-/* Carrito de compra (aunque se usa emoji, esta es la definición de máscara) */
 .icon-buy { 
     -webkit-mask-image: var(--icon-buy); 
     mask-image: var(--icon-buy); 
 }
-
-/* Empty set (for disabled button) */
 .icon-vacio { 
     -webkit-mask-image: var(--icon-vacio); 
     mask-image: var(--icon-vacio); 
 }
 
-/* 7. Estilo Específico Botón Volver Móvil (Píldora) */
+/* 7. Estilo Específico Botón Volver Móvil */
 button.detail-action-btn {
     width: auto !important; height: auto !important;
     padding: 0.5rem 1rem !important; 
@@ -324,8 +243,5 @@ button.detail-action-btn {
     font-weight: bold; aspect-ratio: auto; font-size: 1.1rem;
     background: var(--color-card-bg); 
 }
-
-/* Ajustes Padding */
-/* ⭐️ SE HA ELIMINADO EL MEDIA QUERY CONFLICTIVO AQUÍ ⭐️ */
 
 /* --- styles/style-details.css --- */

@@ -47,8 +47,8 @@ header h1 {
     margin: 0; padding: 0; line-height: 1.2; 
     gap: 0.3em; 
     flex-grow: 0; 
-    width: auto;
-    max-width: 80%;
+    width: 88%;
+    max-width: 88%;
     white-space: nowrap; 
     text-overflow: ellipsis; 
     z-index: 99; 
@@ -101,8 +101,11 @@ header h1 svg:focus-visible {
     -webkit-mask-image: var(--icon-obras);
     mask-image: var(--icon-obras);
     -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
     -webkit-mask-position: center;
+    mask-position: center;
     -webkit-mask-size: contain;
+    mask-size: contain;
     flex-shrink: 0;
     z-index: 101; 
 }
@@ -126,8 +129,11 @@ header h1 svg:focus-visible {
     -webkit-mask-image: var(--icono-a11y);
     mask-image: var(--icono-a11y);
     -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
     -webkit-mask-position: center;
+    mask-position: center;
     -webkit-mask-size: 70%;
+    mask-size: 70%;
 }
 
 #btn-config-accesibilidad:hover {

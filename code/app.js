@@ -1,4 +1,4 @@
-// --- code/app.js ---
+/* --- code/app.js --- */
 
 import * as debug from './debug.js';
 import * as data from './data.js';
@@ -29,6 +29,7 @@ class VortexSpiraApp {
             keyboardNavInProgress: false,
             activeCourseId: null, 
             lastDetailFocusIndex: 0, 
+            isNavigatingBack: false, // Bloqueo para evitar repeticiones en el "Volver"
         };
         window.App = this; 
         
@@ -64,10 +65,10 @@ class VortexSpiraApp {
         debug._setupFocusMethodInterceptor();
         debug._setupKeyTracker?.(); 
         debug._watchFlag(this.STATE, 'keyboardNavInProgress');
+        debug._watchFlag(this.STATE, 'isNavigatingBack');
 
         this._cacheDOM();
         
-        // Asegurar una vista activa por defecto para evitar errores de clase en la carga
         this.DOM.vistaNav = this.DOM.vistaNav || document.getElementById('vista-navegacion-desktop'); 
 
         try {
@@ -141,7 +142,6 @@ class VortexSpiraApp {
         this.DOM.header = document.getElementById('app-header');
         this.DOM.btnA11y = document.getElementById('btn-config-accesibilidad');
         
-        // ACTUALIZACIÓN: Referencia a la nueva Vista-Volver
         this.DOM.cardVolverFija = document.getElementById('vista-volver') || document.getElementById('card-volver-fija'); 
         this.DOM.cardVolverFijaElemento = document.getElementById('card-volver-fija-elemento'); 
         
@@ -172,4 +172,4 @@ export const injectHeaderLogo = () => data.injectHeaderLogo(appInstance);
 export const injectFooterContent = () => data.injectFooterContent(appInstance);
 export const App = appInstance;
 
-// --- code/app.js ---
+/* --- code/app.js --- */

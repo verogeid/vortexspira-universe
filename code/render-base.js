@@ -1,4 +1,4 @@
-// --- code/render-base.js ---
+/* --- code/render-base.js --- */
 
 import * as debug from './debug.js'; 
 import * as data from './data.js';
@@ -6,6 +6,9 @@ import * as data from './data.js';
 let _lastMode = 'desktop'; 
 let _lastWidth = window.innerWidth; 
 
+/**
+ * Motor principal de renderizado de menús.
+ */
 export function renderNavegacion() {
     if (!this.STATE.fullData) return;
 
@@ -13,7 +16,10 @@ export function renderNavegacion() {
     if (!currentLevelState) return;
 
     const currentLevelId = currentLevelState.levelId;
+    debug.log('render_base', debug.DEBUG_LEVELS.BASIC, `RENDER: Procesando Nivel ID: ${currentLevelId || 'Raíz'}`);
+
     const isSubLevel = !!currentLevelId;
+    const isReturning = currentLevelState.focusIndex > 0;
     this.STATE.currentFocusIndex = currentLevelState.focusIndex;
 
     const screenWidth = window.innerWidth;
@@ -69,8 +75,20 @@ export function renderNavegacion() {
     } else {
         this._destroyCarousel(); 
         if (this.DOM.track) {
+            this.DOM.track.innerHTML = ''; 
             this.DOM.track.innerHTML = renderHtmlFn.call(this, itemsDelNivel, this.STATE.itemsPorColumna);
-            let initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
+            
+            // ⭐️ CÁLCULO PREVENTIVO: El Swiper debe nacer en su sitio ⭐️
+            let initialSlideIndex;
+            if (isMobile) {
+                initialSlideIndex = !isReturning ? 0 : this.STATE.currentFocusIndex;
+                if (isSubLevel && isReturning) initialSlideIndex += 2; // Offset especial mobile
+                if (!isReturning) this.STATE.currentFocusIndex = 0;
+            } else {
+                initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
+            }
+
+            debug.log('render_base', debug.DEBUG_LEVELS.BASIC, `RENDER: Creando Swiper en slide ${initialSlideIndex}`);
             initCarouselFn.call(this, initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId); 
         }
 
@@ -82,10 +100,22 @@ export function renderNavegacion() {
     _updateNavViews.call(this, isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual); 
 
     if (!isDetailActive) {
-        setTimeout(() => this._updateFocus(false), data.SWIPE_SLIDE_SPEED / 2);
+        requestAnimationFrame(() => {
+            // Frame 1: Foco síncrono (el slide ya está en su sitio)
+            this._updateFocus(isReturning);
+            
+            requestAnimationFrame(() => {
+                // Frame 2: Apertura segura del semáforo
+                this.STATE.isNavigatingBack = false; 
+                debug.log('render_base', debug.DEBUG_LEVELS.BASIC, `RENDER: Ciclo completado.`);
+            });
+        });
     }
 };
 
+/**
+ * Genera el HTML de una tarjeta individual.
+ */
 export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tipoEspecialArg = null) {
     const tipoEspecial = tipoEspecialArg || nodo.tipoEspecial;
     if (esRelleno) return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1" aria-hidden="true"></article>`;
@@ -95,35 +125,38 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
     }
 
     if (tipoEspecial === 'volver-vertical') {
-        return `<article class="card card-volver-vertical" data-id="volver-nav" data-tipo="volver-vertical" role="button" tabindex="0" onclick="App._handleVolverClick()"><h3>${data.LOGO_VOLVER}</h3></article>`;
+        return `<article class="card card-volver-vertical" data-id="volver-nav" data-tipo="volver-vertical" role="button" tabindex="0"><h3>${data.LOGO_VOLVER}</h3></article>`;
     }
 
     const isCourse = !!nodo.titulo;
     const tipo = isCourse ? 'curso' : 'categoria';
     let displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
+    let iconHTML = ''; 
 
     if (tipo === 'categoria') {
         if (!estaActivo) {
-            // ⭐️ USO DE CLASE PARA ICONO VACÍO ⭐️
-            displayTitle = `<span class="icon-vacio-card"></span> ${displayTitle}`;
+            iconHTML = `<span class="icon-vacio-card"></span>`;
         } else {
-            displayTitle = `${data.LOGO_CARPETA} ${displayTitle}`;
+            iconHTML = `<span class="card-icon-lead">${data.LOGO_CARPETA}</span>`;
         }
     } else {
         if (displayTitle.includes(data.LOGO_OBRAS)) {
-             // ⭐️ USO DE CLASE PARA ICONO OBRAS ⭐️
-             displayTitle = `<span class="icon-obras-card"></span> ${displayTitle.replace(data.LOGO_OBRAS, "").trim()}`; 
+             iconHTML = `<span class="icon-obras-card"></span>`;
+             displayTitle = displayTitle.replace(data.LOGO_OBRAS, "").trim(); 
         } else {
-             displayTitle = `${data.LOGO_CURSO} ${displayTitle}`; 
+             iconHTML = `<span class="card-icon-lead">${data.LOGO_CURSO}</span>`; 
         }
     }
 
     return `
-        <article class="card ${estaActivo ? '' : 'disabled'}" data-id="${nodo.id}" data-tipo="${tipo}" role="button" tabindex="0" onclick="App._handleTrackClick(event)">
-            <h3>${displayTitle}</h3>
+        <article class="card ${estaActivo ? '' : 'disabled'}" data-id="${nodo.id}" data-tipo="${tipo}" role="button" tabindex="0">
+            <h3>${iconHTML}<span class="card-text-content">${displayTitle}</span></h3>
         </article>`;
 };
 
+/**
+ * Actualiza la visibilidad de las vistas auxiliares de navegación.
+ */
 export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual) {
     const vistaVolver = this.DOM.cardVolverFija; 
     if (!vistaVolver) return;
@@ -150,6 +183,9 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
     }
 };
 
+/**
+ * Inicializa el observador de cambios de tamaño de pantalla.
+ */
 export function _setupResizeObserver() {
     this.STATE.resizeObserver = new ResizeObserver(() => {
         const newWidth = window.innerWidth;
@@ -166,4 +202,4 @@ export function _setupResizeObserver() {
     this.STATE.resizeObserver.observe(document.body);
 };
 
-// --- code/render-base.js ---
+/* --- code/render-base.js --- */

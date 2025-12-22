@@ -3,100 +3,153 @@
 .card {
   border: 2px solid var(--color-card-border);
   background: var(--color-card-bg);
-  padding: 0.5rem; 
+  padding: 1rem; 
   border-radius: 12px;
   transition: all 0.2s ease;
   cursor: pointer;
-  display: flex; flex-direction: column; justify-content: center; align-items: center;
-  box-sizing: border-box; height: auto; min-height: 150px; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: flex-start; 
+  box-sizing: border-box; 
+  height: 100%; 
+  min-height: 150px; 
+  width: 100%;
+  overflow: hidden; 
 }
 
 .card h3 { 
-    margin: 0; width: 100%;
-    font-size: clamp(0.8rem, 4vw, 1.4rem); 
-    line-height: 1.2;
-    transition: color 0.2s ease; 
-    white-space: normal;       
-    word-break: normal;        
-    overflow-wrap: normal;     
-    -webkit-hyphens: none;    
-    hyphens: none;             
-    max-height: 100%;
-    overflow: hidden;          
-    text-overflow: ellipsis; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4em;
+    margin: 0; 
+    width: 100%;
+    text-align: left;
+    display: block; 
 }
 
-/* ⭐️ DEFINICIÓN DE ICONOS ⭐️ */
+/* ⭐️ ICONO: Siempre arriba e independiente ⭐️ */
+.card h3 .card-icon-lead,
+.card h3 .icon-vacio-card,
+.card h3 .icon-obras-card {
+    display: block;
+    margin-bottom: 0.5em;
+    font-size: 1.4em;
+    width: 1.1em;
+    height: 1.1em;
+}
+
+/* ⭐️ TEXTO: Truncado atómico (Breadcrumb Style) ⭐️ */
+.card h3 .card-text-content,
+.card.card-breadcrumb-vertical h3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 4; 
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    font-size: clamp(0.7rem, 2.5vw, 1.1rem); 
+    line-height: 1.3;
+    
+    word-break: normal; 
+    overflow-wrap: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ⭐️ DEFINICIÓN DE ICONOS (Sintaxis Completa VSC) ⭐️ */
 .icon-vacio-card {
-    display: inline-block;
-    width: 1.1em; height: 1.1em;
     background-color: currentColor;
     -webkit-mask-image: var(--icon-vacio);
     mask-image: var(--icon-vacio);
     -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: left center;
+    mask-position: left center;
     -webkit-mask-size: contain;
-    vertical-align: middle;
+    mask-size: contain;
 }
 
 .icon-obras-card {
-    display: inline-block;
-    width: 1.1em; height: 1.1em;
     background-color: var(--color-icon-obras);
     -webkit-mask-image: var(--icon-obras);
     mask-image: var(--icon-obras);
     -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: left center;
+    mask-position: left center;
     -webkit-mask-size: contain;
-    vertical-align: middle;
+    mask-size: contain;
 }
 
 /* Tipos Especiales */
 .card.card-breadcrumb-vertical {
-    border-style: dashed; border-color: var(--color-border-placeholder);
-    background: transparent; min-height: 50px;
-    opacity: 0.8; font-size: 1rem; cursor: default; text-align: center;
-    justify-content: center; pointer-events: none !important;
+    border-style: dashed; 
+    border-color: var(--color-border-placeholder);
+    background: transparent; 
+    min-height: 50px;
+    opacity: 0.8; 
+    font-size: 0.9rem; 
+    cursor: default; 
+    text-align: left;
+    justify-content: center; 
+    pointer-events: none !important;
 }
-.card.card-volver-vertical { min-height: 50px; text-align: center; }
+
+.card.card-breadcrumb-vertical h3 {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+}
+
+.card.card-volver-vertical { 
+    min-height: 50px; 
+    align-items: center; 
+}
+
+.card.card-volver-vertical h3 {
+    text-align: center;
+}
 
 /* Estados de Foco */
 .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]).focus-current { 
-  outline: none; border-color: var(--color-primary);
-  background: var(--color-card-bg); transform: scale(1.03);
+  outline: none; 
+  border-color: var(--color-primary);
+  background: var(--color-card-bg); 
+  transform: scale(1.03);
   box-shadow: 0 0 25px var(--color-shadow-primary); 
-  color: var(--color-primary); 
+  color: var(--color-primary) !important; 
 }
 
 .card:not(.disabled):not([data-tipo="relleno"]):hover {
-  outline: none; border-color: var(--color-primary);
-  background: var(--color-card-bg); transform: scale(1.03);
+  outline: none; 
+  border-color: var(--color-primary);
+  background: var(--color-card-bg); 
+  transform: scale(1.03);
   box-shadow: 0 0 25px var(--color-shadow-primary); 
-  color: var(--color-text); 
 }
 
+/* Card Deshabilitada */
 .card.disabled {
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);
-  color: var(--color-text); opacity: 0.6; 
+  color: var(--color-text); 
+  opacity: 0.5;
 }
 
-.card.disabled.focus-visible, .card.disabled:hover, .card.disabled:focus-visible {
-  outline: none; border-color: var(--color-card-border); 
-  background: var(--color-card-bg); transform: scale(1.03);
+.card.disabled.focus-visible, 
+.card.disabled:hover, 
+.card.disabled:focus-visible {
+  outline: none; 
+  border-color: var(--color-card-border); 
+  background: var(--color-card-bg); 
+  transform: scale(1.02);
   box-shadow: 0 0 15px var(--color-shadow-disabled); 
-  opacity: 1; color: var(--color-card-border); 
+  opacity: 0.9; 
+  color: var(--color-text) !important;
 }
 
 .card[data-tipo="relleno"] {
     border: 2px dashed var(--color-border-placeholder); 
-    background: transparent; pointer-events: none; cursor: default;
+    background: transparent; 
+    pointer-events: none; 
+    cursor: default;
 }
 
 /* --- styles/style-cards.css --- */
