@@ -55,8 +55,8 @@
         z-index: 99 !important; 
         overflow-y: hidden !important;
         display: flex; flex-direction: column; 
-        /* ⭐️ AÑADIDO: Padding lateral del 6% para unificar con el carrusel de tarjetas ⭐️ */
-        padding: 10px 6%;
+        /* ⭐️ CORRECCIÓN: Padding 0. Delegamos el espaciado al wrapper/slide para igualar la navegación ⭐️ */
+        padding: 0;
         box-sizing: border-box;
     }
 
@@ -64,15 +64,16 @@
         display: none !important; 
     }
 
-    /* ⭐️ SWIPER VERTICAL MÓVIL (NAVEGACIÓN) ⭐️ */
-    #nav-swiper-mobile {
+    /* ⭐️ UNIFICACIÓN: Aplicamos las reglas a AMBOS carruseles (Nav y Detalle) ⭐️ */
+    #nav-swiper-mobile, #detalle-swiper-mobile {
         height: calc(100vh - var(--header-height) - var(--footer-height) - 20px) !important; 
         width: 100%; position: relative;
         overflow: hidden; 
         touch-action: none !important;
     }
 
-    #nav-swiper-mobile .swiper-wrapper {
+    /* ⭐️ ALINEACIÓN VERTICAL: Ambos wrappers tienen 15px de padding superior ⭐️ */
+    #nav-swiper-mobile .swiper-wrapper, #detalle-swiper-mobile .swiper-wrapper {
         display: flex !important; flex-direction: column; 
         gap: 10px; 
         width: 100%; height: auto !important; 
@@ -80,7 +81,8 @@
         padding-top: 15px !important; 
     }
 
-    #nav-swiper-mobile .swiper-slide {
+    /* ⭐️ ALINEACIÓN HORIZONTAL: Ambos slides tienen 6% de padding lateral ⭐️ */
+    #nav-swiper-mobile .swiper-slide, #detalle-swiper-mobile .swiper-slide {
         width: 100% !important; height: auto !important; 
         display: flex; 
         flex-direction: column;
@@ -89,7 +91,7 @@
         padding: 0 6% !important; 
     }
 
-    #nav-swiper-mobile .swiper-slide .card {
+    #nav-swiper-mobile .swiper-slide .card, #detalle-swiper-mobile .swiper-slide .card {
         width: 100%;
         box-sizing: border-box; 
     }
@@ -107,5 +109,4 @@
         z-index: 100;
     }
 }
-
 /* --- styles/style-mobile.css --- */

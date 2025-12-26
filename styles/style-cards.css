@@ -25,7 +25,6 @@
     display: block; 
 }
 
-/* ⭐️ ICONO: Siempre arriba e independiente ⭐️ */
 .card h3 .card-icon-lead,
 .card h3 .icon-vacio-card,
 .card h3 .icon-obras-card {
@@ -36,7 +35,6 @@
     height: 1.1em;
 }
 
-/* ⭐️ TEXTO: Truncado atómico (Breadcrumb Style) ⭐️ */
 .card h3 .card-text-content,
 .card.card-breadcrumb-vertical h3 {
     display: -webkit-box;
@@ -52,7 +50,6 @@
     text-overflow: ellipsis;
 }
 
-/* ⭐️ DEFINICIÓN DE ICONOS (Sintaxis Completa VSC) ⭐️ */
 .icon-vacio-card {
     background-color: currentColor;
     -webkit-mask-image: var(--icon-vacio);
@@ -105,7 +102,7 @@
     text-align: center;
 }
 
-/* Estados de Foco */
+/* Estados de Foco (Tus estilos originales) */
 .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]).focus-current { 
@@ -125,7 +122,6 @@
   box-shadow: 0 0 25px var(--color-shadow-primary); 
 }
 
-/* Card Deshabilitada */
 .card.disabled {
   border: 2px solid var(--color-card-border-disabled); 
   background: var(--color-card-bg);
@@ -151,5 +147,4 @@
     pointer-events: none; 
     cursor: default;
 }
-
 /* --- styles/style-cards.css --- */

@@ -4,9 +4,6 @@ import * as debug from './debug.js';
 import * as data from './data.js';
 import * as nav_base_details from './nav-base-details.js';
 
-/**
- * Inicializa el Swiper de la vista de detalle.
- */
 function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
     if (appInstance.STATE.detailCarouselInstance) {
         appInstance.STATE.detailCarouselInstance.destroy(true, true);
@@ -38,9 +35,6 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
     }
 }
 
-/**
- * Muestra el detalle de un curso específico.
- */
 export function _mostrarDetalle(cursoId) {
     const appInstance = this;
     const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
@@ -67,18 +61,20 @@ export function _mostrarDetalle(cursoId) {
 
         let volverHtml = '';
         if (parent && parent.levelId) {
+            /* ⭐️ CORRECCIÓN HTML: Estructura idéntica al menú (Article, sin texto extra) ⭐️ */
             volverHtml = `
-                <div class="card card-volver-vertical" role="button" tabindex="0" onclick="App._handleVolverClick()">
-                    <h3>${data.LOGO_VOLVER} Volver</h3>
-                </div>
+                <article class="card card-volver-vertical" role="button" tabindex="0" onclick="App._handleVolverClick()">
+                    <h3>${data.LOGO_VOLVER}</h3>
+                </article>
             `;
         }
 
+        /* ⭐️ AGRUPACIÓN: Breadcrumb y Volver en el mismo slide para visibilidad conjunta ⭐️ */
         slidesHtml += `
             <div class="swiper-slide">
-                <div class="card card-breadcrumb-vertical" tabindex="-1">
+                <article class="card card-breadcrumb-vertical" tabindex="-1" style="margin-bottom: 10px;">
                     <h3>${parentName}</h3>
-                </div>
+                </article>
                 ${volverHtml}
             </div>
         `;
@@ -94,7 +90,6 @@ export function _mostrarDetalle(cursoId) {
 
     if (fragments.length > 0) {
         let firstContent = fragments[0].nodeType === 1 ? fragments[0].outerHTML : `<p>${fragments[0].textContent}</p>`;
-        // ⭐️ FIX: onclick="this.focus()" para permitir foco en móvil ⭐️
         slidesHtml += `
             <div class="swiper-slide">
                 <h2 class="detail-title-slide">${curso.titulo}</h2>
@@ -108,7 +103,6 @@ export function _mostrarDetalle(cursoId) {
 
         for (let i = 1; i < fragments.length; i++) {
             let content = fragments[i].nodeType === 1 ? fragments[i].outerHTML : `<p>${fragments[i].textContent}</p>`;
-            // ⭐️ FIX: onclick="this.focus()" para permitir foco en móvil ⭐️
             slidesHtml += `
                 <div class="swiper-slide">
                     <div class="detail-text-fragment" data-index="${i}" role="document" tabindex="0" onclick="this.focus()">
@@ -138,7 +132,6 @@ export function _mostrarDetalle(cursoId) {
         });
     }
 
-    /* ⭐️ INSERCIÓN QUIRÚRGICA: Card de relleno solo en móvil ⭐️ */
     if (isMobile) {
         slidesHtml += `<div class="swiper-slide card-relleno-final" style="height: 100px !important; pointer-events: none;"></div>`;
     }
@@ -151,6 +144,13 @@ export function _mostrarDetalle(cursoId) {
 
     if (appInstance.DOM.vistaNav) appInstance.DOM.vistaNav.classList.remove('active');
     if (appInstance.DOM.vistaDetalle) appInstance.DOM.vistaDetalle.classList.add('active');
-}
 
+    /* ⭐️ CORRECCIÓN FOCO: Asegurar que el foco vaya al botón Volver al entrar ⭐️ */
+    setTimeout(() => {
+        const firstFocusable = appInstance.DOM.detalleTrack.querySelector('.card-volver-vertical');
+        if (firstFocusable) {
+            firstFocusable.focus({ preventScroll: true });
+        }
+    }, 150);
+}
 /* --- code/render-details.js --- */

@@ -1,21 +1,44 @@
-// --- code/render-mobile.js ---
+/* --- code/render-mobile.js --- */
 
 import * as debug from './debug.js';
 import * as data from './data.js';
 
 export function _generateCardHTML_Mobile(items, itemsPerColumna) {
     let html = '';
-    for (const nodo of items) {
+    
+    for (let i = 0; i < items.length; i++) {
+        const nodo = items[i];
+
+        // ⭐️ AGRUPACIÓN: Si es Breadcrumb y el siguiente es Volver, van juntos ⭐️
+        if (nodo.tipoEspecial === 'breadcrumb-vertical') {
+            if (i + 1 < items.length && items[i+1].tipoEspecial === 'volver-vertical') {
+                const volverNode = items[i+1];
+                
+                // Inyectamos style="margin-bottom: 10px;" al string HTML del breadcrumb para separarlo
+                let breadcrumbHtml = this._generarTarjetaHTML(nodo, true, false, nodo.tipoEspecial);
+                breadcrumbHtml = breadcrumbHtml.replace('class="card', 'style="margin-bottom: 10px;" class="card');
+
+                html += `<div class="swiper-slide">
+                    ${breadcrumbHtml}
+                    ${this._generarTarjetaHTML(volverNode, true, false, volverNode.tipoEspecial)}
+                </div>`;
+                
+                i++; // Saltamos el nodo Volver porque ya lo hemos pintado
+                continue;
+            }
+        }
+
+        // Caso fallback por si aparecen sueltos
         if (nodo.tipoEspecial === 'volver-vertical' || nodo.tipoEspecial === 'breadcrumb-vertical') {
             html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, true, false, nodo.tipoEspecial)}</div>`; 
             continue;
         }
+
         const esRelleno = nodo.tipo === 'relleno';
         const estaActivo = esRelleno ? false : this._tieneContenidoActivo(nodo.id); 
         html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, estaActivo, esRelleno)}</div>`; 
     }
 
-    /* ⭐️ INSERCIÓN QUIRÚRGICA: Card de relleno para el final del menú ⭐️ */
     html += `<div class="swiper-slide card-relleno-final" style="height: 100px !important; pointer-events: none;"></div>`;
 
     if (this.DOM.track) {
@@ -40,11 +63,7 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
 
         touchRatio: 1, 
         simulateTouch: true, 
-
-        /* ⭐️ CAMBIO QUIRÚRGICO: Bloqueamos el inicio del scroll nativo ⭐️ */
-        /* Esto permite que un solo dedo arrastre la lista inmediatamente */
-        touchStartPreventDefault: true, 
-
+        touchStartPreventDefault: false, // Permitir clic nativo
         touchMoveStopPropagation: true, 
         grabCursor: true, 
         centeredSlides: false, 
@@ -66,5 +85,4 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
         this.setupTouchListeners(); 
     }
 };
-
-// --- code/render-mobile.js ---
+/* --- code/render-mobile.js --- */

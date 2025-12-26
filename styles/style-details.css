@@ -5,7 +5,6 @@
 #detalle-contenido-mobile {
     max-height: 100%; 
     overflow-y: auto; 
-    /* ⭐️ UNIFICACIÓN: Padding lateral y superior coincidente con el layout global ⭐️ */
     padding: 20px; 
     box-sizing: border-box;
     
@@ -14,7 +13,13 @@
     scroll-behavior: smooth;
 }
 
-/* ⭐️ CORRECCIÓN CRÍTICA PARA SWIPER VERTICAL DE DETALLE ⭐️ */
+/* ⭐️ CORRECCIÓN: Eliminamos el padding duplicado en móvil aquí. El slide manda (style-mobile.css) ⭐️ */
+@media (max-width: 600px) {
+    #detalle-contenido-mobile {
+        padding: 0; 
+    }
+}
+
 #detalle-swiper-desktop .swiper-slide,
 #detalle-swiper-mobile .swiper-slide {
     height: auto !important; 
@@ -106,6 +111,8 @@
     pointer-events: auto;
     outline: none;
     box-sizing: border-box; 
+    /* ⭐️ CORRECCIÓN: Forzamos ancho completo para que funcione el justify-between ⭐️ */
+    width: 100%;
 }
 
 .detail-action-item.focus-current .detail-action-btn {
@@ -243,5 +250,4 @@ button.detail-action-btn {
     font-weight: bold; aspect-ratio: auto; font-size: 1.1rem;
     background: var(--color-card-bg); 
 }
-
 /* --- styles/style-details.css --- */

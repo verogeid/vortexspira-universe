@@ -6,9 +6,6 @@ import * as data from './data.js';
 let _lastMode = 'desktop'; 
 let _lastWidth = window.innerWidth; 
 
-/**
- * Motor principal de renderizado de menús.
- */
 export function renderNavegacion() {
     if (!this.STATE.fullData) return;
 
@@ -78,11 +75,10 @@ export function renderNavegacion() {
             this.DOM.track.innerHTML = ''; 
             this.DOM.track.innerHTML = renderHtmlFn.call(this, itemsDelNivel, this.STATE.itemsPorColumna);
             
-            // ⭐️ CÁLCULO PREVENTIVO: El Swiper debe nacer en su sitio ⭐️
             let initialSlideIndex;
             if (isMobile) {
+                /* ⭐️ CORRECCIÓN: Eliminamos el offset +2. Ahora la alineación es directa. ⭐️ */
                 initialSlideIndex = !isReturning ? 0 : this.STATE.currentFocusIndex;
-                if (isSubLevel && isReturning) initialSlideIndex += 2; // Offset especial mobile
                 if (!isReturning) this.STATE.currentFocusIndex = 0;
             } else {
                 initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
@@ -101,11 +97,8 @@ export function renderNavegacion() {
 
     if (!isDetailActive) {
         requestAnimationFrame(() => {
-            // Frame 1: Foco síncrono (el slide ya está en su sitio)
             this._updateFocus(isReturning);
-            
             requestAnimationFrame(() => {
-                // Frame 2: Apertura segura del semáforo
                 this.STATE.isNavigatingBack = false; 
                 debug.log('render_base', debug.DEBUG_LEVELS.BASIC, `RENDER: Ciclo completado.`);
             });
@@ -113,9 +106,6 @@ export function renderNavegacion() {
     }
 };
 
-/**
- * Genera el HTML de una tarjeta individual.
- */
 export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tipoEspecialArg = null) {
     const tipoEspecial = tipoEspecialArg || nodo.tipoEspecial;
     if (esRelleno) return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1" aria-hidden="true"></article>`;
@@ -125,7 +115,7 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
     }
 
     if (tipoEspecial === 'volver-vertical') {
-        return `<article class="card card-volver-vertical" data-id="volver-nav" data-tipo="volver-vertical" role="button" tabindex="0"><h3>${data.LOGO_VOLVER}</h3></article>`;
+        return `<article class="card card-volver-vertical" data-id="volver-nav" data-tipo="volver-vertical" role="button" tabindex="0" onclick="App._handleVolverClick()"><h3>${data.LOGO_VOLVER}</h3></article>`;
     }
 
     const isCourse = !!nodo.titulo;
@@ -154,9 +144,6 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
         </article>`;
 };
 
-/**
- * Actualiza la visibilidad de las vistas auxiliares de navegación.
- */
 export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual) {
     const vistaVolver = this.DOM.cardVolverFija; 
     if (!vistaVolver) return;
@@ -183,9 +170,6 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
     }
 };
 
-/**
- * Inicializa el observador de cambios de tamaño de pantalla.
- */
 export function _setupResizeObserver() {
     this.STATE.resizeObserver = new ResizeObserver(() => {
         const newWidth = window.innerWidth;

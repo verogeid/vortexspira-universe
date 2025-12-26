@@ -4,9 +4,6 @@ import * as debug from './debug.js';
 import * as data from './data.js';
 import * as nav_base_details from './nav-base-details.js'; 
 
-/**
- * Configura los listeners globales de navegación.
- */
 export function setupListeners() {
   if (this.DOM.cardVolverFijaElemento) { 
       this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
@@ -14,9 +11,6 @@ export function setupListeners() {
   _setupDetailFocusHandler.call(this); 
 };
 
-/**
- * Manejador interno para el foco en la vista de detalle.
- */
 function _setupDetailFocusHandler() {
     document.addEventListener('focusin', (e) => {
         if (this.DOM.vistaDetalle?.classList.contains('active')) {
@@ -26,9 +20,6 @@ function _setupDetailFocusHandler() {
     });
 };
 
-/**
- * Sube un nivel en la navegación o cierra el detalle.
- */
 export function _handleVolverClick() {
     if (this.STATE.isNavigatingBack) return; 
     
@@ -49,9 +40,6 @@ export function _handleVolverClick() {
     }
 };
 
-/**
- * Actualiza el foco visual y sincroniza la posición del Swiper.
- */
 export function _updateFocusImpl(shouldSlide = true) {
     const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
     const validCards = allCardsInTrack.filter(c => c.dataset.tipo !== 'relleno');
@@ -78,14 +66,18 @@ export function _updateFocusImpl(shouldSlide = true) {
             
             let slideTarget;
             if (isMobile) {
-                slideTarget = idx + (this.STATE.historyStack.length > 1 ? 2 : 0);
+                /* ⭐️ CORRECCIÓN: Detección dinámica del slide en móvil (robusto ante agrupación) ⭐️ */
+                const slide = target.closest('.swiper-slide');
+                if (slide && swiper.slides) {
+                    slideTarget = Array.from(swiper.slides).indexOf(slide);
+                } else {
+                    slideTarget = 0;
+                }
             } else {
-                // Prioridad 1: Localización física (ideal para clic y evitar clones)
                 const parentSlide = target.closest('.swiper-slide');
                 if (parentSlide && parentSlide.dataset.swiperSlideIndex !== undefined) {
                     slideTarget = parseInt(parentSlide.dataset.swiperSlideIndex, 10);
                 } else {
-                    // Prioridad 2: Cálculo matemático (fallback para teclado)
                     slideTarget = Math.floor(idx / this.STATE.itemsPorColumna);
                 }
             }
@@ -94,8 +86,6 @@ export function _updateFocusImpl(shouldSlide = true) {
             debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, `FOCUS: Moviendo carrusel al slide lógico ${slideTarget} para índice ${idx}`);
 
             if (typeof swiper.slideToLoop === 'function') {
-                // ⭐️ RED DE SEGURIDAD PARA EL FOCO ⭐️
-                // Si Swiper reajusta el loop, el foco puede caer al BODY. Lo recuperamos al terminar.
                 const onTransitionEnd = () => {
                     swiper.off('transitionEnd', onTransitionEnd);
                     if (document.activeElement === document.body || !document.activeElement.classList.contains('card')) {
@@ -112,9 +102,6 @@ export function _updateFocusImpl(shouldSlide = true) {
     }
 }
 
-/**
- * Maneja el evento de click centralizado en el track.
- */
 export function _handleTrackClick(e) {
     if (this.STATE.isNavigatingBack) return;
 
@@ -131,9 +118,6 @@ export function _handleTrackClick(e) {
     this._handleCardClick(tarjeta.dataset.id, tarjeta.dataset.tipo);
 }
 
-/**
- * Procesa la acción de clic en una tarjeta según su tipo.
- */
 export function _handleCardClick(id, tipo) {
     if (tipo === 'categoria') { 
         this.stackPush(id, this.STATE.currentFocusIndex); 
@@ -143,11 +127,11 @@ export function _handleCardClick(id, tipo) {
         this.STATE.activeCourseId = id;
         this._mostrarDetalle(id);
     }
+    else if (tipo === 'volver-vertical') {
+        this._handleVolverClick();
+    }
 }
 
-/**
- * Busca un nodo en la estructura de datos por su ID.
- */
 export function _findNodoById(id, nodos) {
     if (!nodos || !id) return null;
     for (const n of nodos) {
@@ -164,9 +148,6 @@ export function _findNodoById(id, nodos) {
     return null;
 }
 
-/**
- * Determina si un nodo tiene contenido navegable activo.
- */
 export function _tieneContenidoActivoImpl(nodoId) {
     const nodo = this._findNodoById(nodoId, this.STATE.fullData.navegacion);
     if (!nodo) return false;
@@ -174,9 +155,6 @@ export function _tieneContenidoActivoImpl(nodoId) {
     return (nodo.subsecciones || []).some(sub => this._tieneContenidoActivo(sub.id));
 }
 
-/**
- * Busca la mejor tarjeta para enfocar en una columna.
- */
 export function findBestFocusInColumn(columnCards, targetRow) {
     const isValid = (card) => card && card.dataset.id && card.dataset.tipo !== 'relleno';
     
