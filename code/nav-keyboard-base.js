@@ -1,4 +1,4 @@
-// --- code/nav-keyboard-base.js ---
+/* --- code/nav-keyboard-base.js --- */
 
 import * as debug from './debug.js';
 import * as data from './data.js';
@@ -7,6 +7,18 @@ import * as nav_keyboard_details from './nav-keyboard-details.js';
 import * as nav_keyboard_swipe from './nav-keyboard-swipe.js'; 
 
 export function initKeyboardControls() {
+    /* ⭐️ NUEVO: Listener para limpiar el Ghost cuando el foco se va fuera del track ⭐️ */
+    document.addEventListener('focusin', (e) => {
+        const app = this;
+        if (!app.DOM.track) return;
+
+        // Si el nuevo elemento enfocado NO es una tarjeta ni está dentro del track
+        if (!app.DOM.track.contains(e.target)) {
+            const ghosts = app.DOM.track.querySelectorAll('.card.focus-visible');
+            ghosts.forEach(c => c.classList.remove('focus-visible'));
+        }
+    });
+
     document.addEventListener('keydown', (e) => {
         const app = this; 
         if (!app?.DOM?.vistaNav) return; 
@@ -15,14 +27,14 @@ export function initKeyboardControls() {
         const isDetailActive = app.DOM.vistaDetalle.classList.contains('active');
         const focused = document.activeElement;
 
-        // 1. ESCAPE: Acciona volver siempre
+        // 1. ESCAPE
         if (e.key === 'Escape') {
             e.preventDefault();
             app._handleVolverClick?.(); 
             return;
         }
 
-        // 2. TAB: Focus Trap entre secciones visibles
+        // 2. TAB
         if (e.key === 'Tab') {
             e.preventDefault();
             if (isDetailActive) nav_base_details._clearDetailVisualStates(app);
@@ -30,7 +42,7 @@ export function initKeyboardControls() {
             return; 
         }
 
-        // 3. ENTER / SPACE: Activación local
+        // 3. ENTER / SPACE
         if (e.key === 'Enter' || e.key === ' ') {
             const isInSwipe = focused.closest('#track-desktop, #track-tablet, #track-mobile');
             const isInDetail = focused.closest('#detalle-track-desktop, #detalle-track-mobile');
@@ -45,26 +57,29 @@ export function initKeyboardControls() {
             }
         }
 
-        // 4. CURSORES: Navegación local ESTRICTA
+        // 4. CURSORES
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
             const isInCentralTrack = focused.closest('#track-desktop, #track-tablet, #track-mobile, #detalle-track-desktop, #detalle-track-mobile');
 
             if (isInCentralTrack) {
                 e.preventDefault();
                 app.STATE.keyboardNavInProgress = true;
-                // Delegación atómica: el foco salta directamente al destino
                 if (isNavActive) nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
                 else nav_keyboard_details._handleDetailNavigation.call(app, e.key);
-                
-                // Liberación del flag tras el salto
                 setTimeout(() => { app.STATE.keyboardNavInProgress = false; }, 50);
             } else {
-                // Navegación local en secciones periféricas (Header, Footer, Info, Vista-Volver)
                 const section = focused.closest('#info-adicional, footer, #app-header, #card-volver-fija, #vista-volver');
                 if (section) {
                     e.preventDefault();
                     _handleLocalSectionNavigation(e.key, section);
                     if (isDetailActive) nav_base_details._clearDetailVisualStates(app);
+                } else if (document.activeElement === document.body) {
+                    /* Rescate de cursores si el foco está en el body */
+                    e.preventDefault();
+                    app.STATE.keyboardNavInProgress = true;
+                    if (isNavActive) nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
+                    else if (isDetailActive) nav_keyboard_details._handleDetailNavigation.call(app, e.key);
+                    setTimeout(() => { app.STATE.keyboardNavInProgress = false; }, 50);
                 }
             }
         }
@@ -137,7 +152,10 @@ export function _handleFocusTrap(e, viewType) {
         central: () => {
             if (viewType === 'nav') {
                 const cards = Array.from(app.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
-                return [cards[app.STATE.currentFocusIndex]].filter(isVisible);
+                const current = cards[app.STATE.currentFocusIndex];
+                if (isVisible(current)) return [current];
+                const fallback = cards.find(isVisible);
+                return fallback ? [fallback] : [];
             }
             return nav_base_details._getFocusableDetailElements(app).filter(el => !el.classList.contains('card-volver-vertical') && isVisible(el));
         },
@@ -163,4 +181,4 @@ export function _handleFocusTrap(e, viewType) {
     if (target) target.focus();
 }
 
-// --- code/nav-keyboard-base.js ---
+/* --- code/nav-keyboard-base.js --- */

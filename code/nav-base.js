@@ -9,6 +9,7 @@ export function setupListeners() {
       this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
   }
   _setupDetailFocusHandler.call(this); 
+  _setupGlobalClickRecovery.call(this); 
 };
 
 function _setupDetailFocusHandler() {
@@ -19,6 +20,42 @@ function _setupDetailFocusHandler() {
         }
     });
 };
+
+/* ⭐️ CORRECCIÓN: Gestión inteligente de clics en Zonas y Elementos ⭐️ */
+function _setupGlobalClickRecovery() {
+    document.addEventListener('click', (e) => {
+        const target = e.target;
+
+        // 1. Si clicamos en algo interactivo, FORZAMOS el foco para asegurar respuesta
+        const interactive = target.closest('a, button, input, textarea, select, summary, [tabindex]:not([tabindex="-1"])');
+        if (interactive) {
+            interactive.focus({ preventScroll: true });
+            return;
+        }
+
+        // 2. Si clicamos en una ZONA (Header, Footer, Info), llevamos el foco a su interior
+        const header = target.closest('#app-header');
+        const footer = target.closest('footer');
+        const info = target.closest('#info-adicional');
+        const volver = target.closest('#vista-volver');
+
+        const zone = header || footer || info || volver;
+        if (zone) {
+            // Buscamos el primer elemento focusable de esa zona
+            const focusable = zone.querySelector('a, button, input, textarea, select, summary, [tabindex]:not([tabindex="-1"])');
+            if (focusable) {
+                focusable.focus({ preventScroll: true });
+                return; 
+            }
+        }
+
+        // 3. Fallback: Solo si clicamos en el "limbo" (body/fondo) y la nav está activa, recuperamos foco al track
+        const isNavActive = this.DOM.vistaNav && this.DOM.vistaNav.classList.contains('active');
+        if (isNavActive && (document.activeElement === document.body || !document.activeElement)) {
+             this._updateFocus(false);
+        }
+    });
+}
 
 export function _handleVolverClick() {
     if (this.STATE.isNavigatingBack) return; 
@@ -66,7 +103,6 @@ export function _updateFocusImpl(shouldSlide = true) {
             
             let slideTarget;
             if (isMobile) {
-                /* ⭐️ CORRECCIÓN: Detección dinámica del slide en móvil (robusto ante agrupación) ⭐️ */
                 const slide = target.closest('.swiper-slide');
                 if (slide && swiper.slides) {
                     slideTarget = Array.from(swiper.slides).indexOf(slide);

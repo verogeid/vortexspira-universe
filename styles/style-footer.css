@@ -40,7 +40,7 @@ footer a:hover, footer a:focus-visible {
 
 /* ICONOS SVG */
 .footer-social-link { font-size: 0; }
-.footer-social-link::before, #info-adicional-lista-acerca a::before {
+.footer-social-link::before {
     content: ''; display: inline-block; width: 16px; height: 16px;
     transition: background-color 0.2s ease;
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
