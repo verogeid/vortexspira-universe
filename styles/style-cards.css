@@ -16,6 +16,14 @@
   min-height: 150px; 
   width: 100%;
   overflow: hidden; 
+
+  transition: 
+        transform var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease,
+        border-color var(--transition-speed) ease,
+        opacity 0.5s ease;
+
+  filter: none !important;
 }
 
 .card h3 { 
@@ -41,8 +49,8 @@
     -webkit-line-clamp: 4; 
     line-clamp: 4;
     -webkit-box-orient: vertical;
-    font-size: clamp(0.7rem, 2.5vw, 1.1rem); 
-    line-height: 1.3;
+    font-size: clamp(1.2rem, 3vw);
+    line-height: 1.2;
     
     word-break: normal; 
     overflow-wrap: normal;
@@ -102,6 +110,13 @@
     text-align: center;
 }
 
+/* Cuando la tarjeta NO tiene el foco y no es la activa, 
+   dejamos que el contenedor slide mande sobre la opacidad */
+.card:not(.focus-visible) {
+    /* Opcional: un ligero desaturado sin llegar al grayscale molesto */
+    filter: saturate(0.8);
+}
+
 /* Estados de Foco (Tus estilos originales) */
 .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
@@ -120,6 +135,12 @@
   background: var(--color-card-bg); 
   transform: scale(1.03);
   box-shadow: 0 0 25px var(--color-shadow-primary); 
+}
+
+.card.focus-visible {
+    opacity: 1 !important;
+    filter: saturate(1) !important;
+    /* Tu estilo de borde Ghost ya existente */
 }
 
 .card.disabled {

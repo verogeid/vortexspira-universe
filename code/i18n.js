@@ -31,8 +31,6 @@ export const STRINGS = {
         'helpBack': '<b>Vuelve</b>: Pulsa [Esc] o el botón "Volver".',
         
         // "Acerca de"
-        'aboutTitle': 'Acerca de VortexSpira®',
-        'aboutSummary': 'Plataforma de audio-aprendizaje inmersivo',
         'aboutLinkLanding': 'Hazte Fundador y obten tu 60% OFF',
         'aboutLinkDiary': 'Lee el Dev Diary en GitHub',
 
@@ -70,9 +68,7 @@ export function applyStrings(appInstance) {
         'btn-volver-navegacion': 'btnBack',
         'info-adicional-titulo-ayuda': 'helpTitle',
         'info-adicional-ayuda-gira': 'helpRotate',
-        'info-adicional-ayuda-vuelve': 'helpBack',
-        'info-adicional-titulo-acerca': 'aboutTitle',
-        'info-adicional-summary': 'aboutSummary'
+        'info-adicional-ayuda-vuelve': 'helpBack'
     };
 
     for (const id in elementsById) {

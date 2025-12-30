@@ -9,12 +9,13 @@ let _lastWidth = window.innerWidth;
 export function renderNavegacion() {
     if (!this.STATE.fullData) return;
 
+    // 1. Refrescar referencias del DOM para el modo actual (Mobile/Tablet/Desktop)
+    this._cacheDOM();
+
     const currentLevelState = this.stackGetCurrent(); 
     if (!currentLevelState) return;
 
     const currentLevelId = currentLevelState.levelId;
-    debug.log('render_base', debug.DEBUG_LEVELS.BASIC, `RENDER: Procesando Nivel ID: ${currentLevelId || 'Raíz'}`);
-
     const isSubLevel = !!currentLevelId;
     const isReturning = currentLevelState.focusIndex > 0;
     this.STATE.currentFocusIndex = currentLevelState.focusIndex;
@@ -26,6 +27,13 @@ export function renderNavegacion() {
     const isTabletPortrait = screenWidth > data.MOBILE_MAX_WIDTH && screenWidth <= data.TABLET_PORTRAIT_MAX_WIDTH;
     const isTablet = isTabletPortrait || isTabletLandscape;
 
+    // 2. Comprobar estado de detalle antes de limpiar
+    const isDetailActive = this.DOM.vistaDetalleDesktop?.classList.contains('active') || 
+                           this.DOM.vistaDetalleMobile?.classList.contains('active');
+
+    // ⭐️ LIMPIEZA ATÓMICA: Evita duplicidad de vistas ocultando TODO ⭐️
+    document.querySelectorAll('.vista').forEach(v => v.classList.remove('active'));
+
     let renderHtmlFn;
     let initCarouselFn;
     let calculatedItemsPerColumn;
@@ -36,18 +44,15 @@ export function renderNavegacion() {
         initCarouselFn = this._initCarousel_Mobile;   
         calculatedItemsPerColumn = 1;
         swiperId = '#nav-swiper-mobile';
-        this.DOM.track = document.getElementById('track-mobile'); 
     } else {
         renderHtmlFn = this._generateCardHTML_Carousel; 
         initCarouselFn = this._initCarousel_Swipe;     
         if (isDesktop) {
             calculatedItemsPerColumn = 3; 
             swiperId = '#nav-swiper';
-            this.DOM.track = document.getElementById('track-desktop'); 
         } else {
             calculatedItemsPerColumn = 2; 
             swiperId = '#nav-swiper-tablet';
-            this.DOM.track = document.getElementById('track-tablet'); 
         }
     }
     this.STATE.itemsPorColumna = calculatedItemsPerColumn;
@@ -55,21 +60,19 @@ export function renderNavegacion() {
     const nodoActual = this._findNodoById(currentLevelId, this.STATE.fullData.navegacion); 
     let itemsDelNivel = !isSubLevel ? this.STATE.fullData.navegacion : (nodoActual?.subsecciones || []).concat(nodoActual?.cursos || []);
 
+    // Preparar elementos especiales para mobile
     if (isMobile && isSubLevel) {
         itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
         let breadcrumbText = nodoActual?.nombre || nodoActual?.titulo || this.getString('breadcrumbRoot');
         itemsDelNivel = [{ id: 'breadcrumb-nav', tipoEspecial: 'breadcrumb-vertical', texto: breadcrumbText }].concat(itemsDelNivel);
     }
 
-    const isDetailActive = this.DOM.vistaDetalleDesktop.classList.contains('active') || this.DOM.vistaDetalleMobile.classList.contains('active');
-
-    document.getElementById('vista-navegacion-desktop').classList.remove('active');
-    document.getElementById('vista-navegacion-tablet').classList.remove('active');
-    document.getElementById('vista-navegacion-mobile').classList.remove('active');
-
     if (isDetailActive && this.STATE.activeCourseId) {
+        // Restaurar vista de detalle
+        debug.log('render_base', debug.DEBUG_LEVELS.BASIC, `RENDER: Restaurando Detalle ID: ${this.STATE.activeCourseId}`);
         this._mostrarDetalle(this.STATE.activeCourseId); 
     } else {
+        // Renderizar carrusel de navegación
         this._destroyCarousel(); 
         if (this.DOM.track) {
             this.DOM.track.innerHTML = ''; 
@@ -77,7 +80,6 @@ export function renderNavegacion() {
             
             let initialSlideIndex;
             if (isMobile) {
-                /* ⭐️ CORRECCIÓN: Eliminamos el offset +2. Ahora la alineación es directa. ⭐️ */
                 initialSlideIndex = !isReturning ? 0 : this.STATE.currentFocusIndex;
                 if (!isReturning) this.STATE.currentFocusIndex = 0;
             } else {
@@ -88,11 +90,11 @@ export function renderNavegacion() {
             initCarouselFn.call(this, initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId); 
         }
 
-        if (isMobile) document.getElementById('vista-navegacion-mobile').classList.add('active');
-        else if (isTablet) document.getElementById('vista-navegacion-tablet').classList.add('active');
-        else document.getElementById('vista-navegacion-desktop').classList.add('active');
+        // Activar la vista de navegación correspondiente
+        if (this.DOM.vistaNav) this.DOM.vistaNav.classList.add('active');
     }
 
+    // ⭐️ SIEMPRE actualizamos vistas laterales (Independiente de si es detalle o menú) ⭐️
     _updateNavViews.call(this, isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual); 
 
     if (!isDetailActive) {
@@ -146,14 +148,18 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
 
 export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual) {
     const vistaVolver = this.DOM.cardVolverFija; 
-    if (!vistaVolver) return;
+    const infoAdicional = this.DOM.infoAdicional;
+    if (!vistaVolver || !infoAdicional) return;
 
     if (isMobile) { 
         vistaVolver.classList.remove('visible'); 
-        this.DOM.infoAdicional.classList.remove('visible'); 
+        infoAdicional.classList.remove('visible'); 
     } else { 
-        if (isDesktop || isTabletLandscape) this.DOM.infoAdicional.classList.add('visible'); 
-        else this.DOM.infoAdicional.classList.remove('visible');
+        if (isDesktop || isTabletLandscape) {
+            infoAdicional.classList.add('visible'); 
+        } else {
+            infoAdicional.classList.remove('visible');
+        }
 
         vistaVolver.classList.add('visible'); 
         this.DOM.cardNivelActual.classList.add('visible');
@@ -176,11 +182,18 @@ export function _setupResizeObserver() {
         const getMode = (w) => w <= data.MOBILE_MAX_WIDTH ? 'mobile' : (w <= data.TABLET_LANDSCAPE_MAX_WIDTH ? 'tablet' : 'desktop');
         const newMode = getMode(newWidth);
 
-        if ((newMode !== _lastMode || (newWidth > data.TABLET_PORTRAIT_MAX_WIDTH && _lastWidth <= data.TABLET_PORTRAIT_MAX_WIDTH)) && this.STATE.initialRenderComplete) {
+        // Detectamos cambio de modo o cruce de umbral crítico de tablet
+        const modeChanged = newMode !== _lastMode;
+        const tabletThresholdCrossed = (newWidth > data.TABLET_PORTRAIT_MAX_WIDTH && _lastWidth <= data.TABLET_PORTRAIT_MAX_WIDTH) ||
+                                       (newWidth <= data.TABLET_PORTRAIT_MAX_WIDTH && _lastWidth > data.TABLET_PORTRAIT_MAX_WIDTH);
+
+        if ((modeChanged || tabletThresholdCrossed) && this.STATE.initialRenderComplete) {
+            debug.log('render_base', debug.DEBUG_LEVELS.BASIC, `DEBUG_RESIZE: Cambio de modo/umbral detectado. Modo: ${newMode}`);
             _lastMode = newMode;
             _lastWidth = newWidth;
-            if (this.STATE.activeCourseId) this._mostrarDetalle(this.STATE.activeCourseId); 
-            else this.renderNavegacion(); 
+            
+            // Centralizamos todo en renderNavegacion, que ahora es capaz de limpiar y decidir qué vista mostrar
+            this.renderNavegacion(); 
         }
     });
     this.STATE.resizeObserver.observe(document.body);

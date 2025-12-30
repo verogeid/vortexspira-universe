@@ -13,11 +13,11 @@ export const DEBUG_LEVELS = {
 
 export const DEBUG_CONFIG = {
     global: DEBUG_LEVELS.BASIC,
-    global_focus: DEBUG_LEVELS.DEEP,
+    global_focus: DEBUG_LEVELS.DISABLED,
     global_key: DEBUG_LEVELS.DISABLED,
-    global_mouse: DEBUG_LEVELS.DEEP,
+    global_mouse: DEBUG_LEVELS.DISABLED,
     
-    app: DEBUG_LEVELS.DISABLED,
+    app: DEBUG_LEVELS.BASIC,
     data: DEBUG_LEVELS.DISABLED,
     i18n: DEBUG_LEVELS.DISABLED,
     nav_stack: DEBUG_LEVELS.DISABLED,
@@ -35,7 +35,7 @@ export const DEBUG_CONFIG = {
     nav_mouse_details: DEBUG_LEVELS.DISABLED, // Excluir rueda de ratón en detalle
     nav_mouse_swipe: DEBUG_LEVELS.DISABLED,   // Excluir arrastre en menús
     
-    render_base: DEBUG_LEVELS.DISABLED,
+    render_base: DEBUG_LEVELS.BASIC,
     render_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para inicialización de Swiper de detalle ⭐️
     render_swipe: DEBUG_LEVELS.DISABLED
 };

@@ -35,19 +35,25 @@
     padding: 0; 
 }
 
+.detail-title-slide {
+    font-size: clamp(0.9rem, 2.5vw, 1.8rem);
+}
+
 .detail-text-fragment {
     outline: none;
-    padding: 10px; 
+    padding: 10px;
     border-radius: 4px;
     border: none;
     border-left: 2px solid transparent; 
     padding-left: 6px; 
-    transition: all 0.2s ease, filter 0.5s ease;
-    will-change: filter, opacity;
+    transition: all 0.2s ease, opacity 0.5s ease;
+    will-change: opacity;
     cursor: text;
-    filter: blur(1.5px) grayscale(40%); 
-    opacity: 0.6; 
+    filter: none !important;
+    opacity: 0.3; 
     pointer-events: auto;
+    font-size: clamp(0.7rem, 2.5vw, 1.4rem);
+    width: 100%;
 }
 
 .detail-text-fragment:focus-visible,
@@ -94,24 +100,23 @@
 
 .detail-text-fragment.focus-adj-1,
 .detail-action-item.focus-adj-1 {
-    filter: blur(0.5px) grayscale(20%); 
-    opacity: 0.9;
+    filter: none !important;
+    opacity: 0.6;
 }
 
 .detail-text-fragment.focus-adj-2,
 .detail-action-item.focus-adj-2 {
-    filter: blur(1.5px) grayscale(40%); 
-    opacity: 0.6;
+    filter: none !important;
+    opacity: 0.3;
 }
 
 .detail-action-item {
-    transition: filter 0.5s ease, opacity 0.5s ease;
-    filter: blur(1.5px) grayscale(40%); 
-    opacity: 0.6; 
+    transition: opacity 0.5s ease;
+    filter: none !important;
+    opacity: 0.3; 
     pointer-events: auto;
     outline: none;
     box-sizing: border-box; 
-    /* ⭐️ CORRECCIÓN: Forzamos ancho completo para que funcione el justify-between ⭐️ */
     width: 100%;
 }
 
@@ -123,7 +128,6 @@
 .detail-actions-list {
     display: flex; flex-direction: column; gap: 0; 
     margin-top: 15px; width: 100%; max-width: 100%; 
-    border-top: 1px solid var(--color-border-placeholder); 
 }
 
 .detail-action-item {
@@ -135,7 +139,7 @@
 .detail-action-item:hover { background-color: rgba(255, 255, 255, 0.05); }
 
 .detail-action-text {
-    font-size: 1rem; font-weight: 500; 
+    font-size: clamp(0.7rem, 2.5vw, 1.4rem); font-weight: 500; 
     color: inherit; 
     text-align: left; margin-right: 15px; flex-grow: 1;
 }
@@ -143,13 +147,13 @@
 /* 5. BOTÓN DE ACCIÓN - ESTILO GHOST */
 .detail-action-btn {
     display: flex; justify-content: center; align-items: center;
-    width: 38px; 
-    height: 38px; 
+    width: clamp(38px, 2.5vw, 76px);
+    height: clamp(38px, 2.5vw, 76px);
     background: transparent; 
     border: 2px solid var(--color-card-border); 
     border-radius: 50%; 
     color: var(--color-text); 
-    font-size: 1.2rem; line-height: 1;
+    font-size: clamp(0.7rem, 2.5vw, 1.4rem); line-height: 1;
     text-decoration: none; cursor: pointer;
     transition: all 0.2s ease; flex-shrink: 0; 
     position: relative; 
@@ -179,10 +183,10 @@
     border: 2px solid var(--color-card-border-disabled); 
     background: transparent;
     cursor: default; 
-    width: 38px; 
-    height: 38px;
+    width: clamp(38px, 2.5vw, 76px); 
+    height: clamp(38px, 2.5vw, 76px);
     border-radius: 8px; 
-    font-size: 1.6rem; 
+    font-size: clamp(0.7rem, 2.5vw, 1.4rem);
     line-height: 1;
     filter: none; 
     transform: none; 
@@ -219,7 +223,7 @@
 
 /* 6. ICONOS SVG */
 .action-icon {
-    display: inline-block; width: 20px; height: 20px;
+    display: inline-block; width: 1.5rem; height: 1.5rem;
     background-color: currentColor; 
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
@@ -247,7 +251,7 @@ button.detail-action-btn {
     width: auto !important; height: auto !important;
     padding: 0.5rem 1rem !important; 
     border-radius: 20px !important; margin-bottom: 0; 
-    font-weight: bold; aspect-ratio: auto; font-size: 1.1rem;
+    font-weight: bold; aspect-ratio: auto; font-size: clamp(1.1rem, 2.5vw, 2rem);
     background: var(--color-card-bg); 
 }
 /* --- styles/style-details.css --- */

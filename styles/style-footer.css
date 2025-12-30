@@ -13,7 +13,7 @@ footer {
     flex-wrap: wrap; 
     height: var(--footer-height); box-sizing: border-box; 
     /* Fuente adaptable */
-    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    font-size: clamp(0.8rem, 2vw, 5rem);
 }
 
 footer small { 
@@ -36,7 +36,7 @@ footer a:hover, footer a:focus-visible {
     color: var(--color-primary); 
 }
 
-.footer-license-link img { height: 16px; width: auto; vertical-align: middle; }
+.footer-license-link img { height: clamp(16px, 2.5vw, 32px); width: auto; vertical-align: middle; }
 
 /* ICONOS SVG */
 .footer-social-link { font-size: 0; }

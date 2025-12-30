@@ -90,14 +90,13 @@
     #vista-navegacion-tablet .mask-left, #vista-navegacion-tablet .mask-right {
       position: absolute; 
       top: 0; width: 33%; height: 100%;
-      -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); 
-      background: linear-gradient(to right, var(--color-mask-gradient) 0%, transparent 60%); 
+      background: linear-gradient(to right, var(--color-bg), transparent);
       z-index: 10;
     }
     #vista-navegacion-tablet .mask-left { left: 0; }
     #vista-navegacion-tablet .mask-right {
       right: 0; 
-      background: linear-gradient(to left, var(--color-mask-gradient) 0%, transparent 60%);
+      background: linear-gradient(to left, var(--color-bg), transparent);
     }
     @media (prefers-reduced-motion: reduce) {
       #vista-navegacion-tablet .mask-left, 

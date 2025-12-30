@@ -132,27 +132,31 @@ class VortexSpiraApp {
     }
     
     _cacheDOM() {
-        const isMobileInit = window.innerWidth <= data.MOBILE_MAX_WIDTH;
+        const width = window.innerWidth;
+        const isMobile = width <= data.MOBILE_MAX_WIDTH;
+        const isDesktop = width >= data.TABLET_LANDSCAPE_MAX_WIDTH;
         
+        // Logs de depuración para confirmar el refresco
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, `DEBUG_DOM: Refrescando caché. Ancho: ${width}`);
+
         this.DOM.vistaDetalleDesktop = document.getElementById('vista-detalle-desktop');
         this.DOM.vistaDetalleMobile = document.getElementById('vista-detalle-mobile');
-        this.DOM.vistaDetalle = isMobileInit ? this.DOM.vistaDetalleMobile : this.DOM.vistaDetalleDesktop;
-        this.DOM.detalleTrack = isMobileInit ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop');
         
+        // ⭐️ CLAVE: La referencia 'vistaDetalle' debe cambiar según el modo ⭐️
+        this.DOM.vistaDetalle = isMobile ? this.DOM.vistaDetalleMobile : this.DOM.vistaDetalleDesktop;
+        this.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop');
+        
+        // Referencias fijas
         this.DOM.header = document.getElementById('app-header');
         this.DOM.btnA11y = document.getElementById('btn-config-accesibilidad');
-        
-        this.DOM.cardVolverFija = document.getElementById('vista-volver') || document.getElementById('card-volver-fija'); 
-        this.DOM.cardVolverFijaElemento = document.getElementById('card-volver-fija-elemento'); 
-        
-        this.DOM.infoAdicional = document.getElementById('info-adicional'); 
+        this.DOM.cardVolverFija = document.getElementById('vista-volver');
+        this.DOM.cardVolverFijaElemento = document.getElementById('card-volver-fija-elemento');
+        this.DOM.infoAdicional = document.getElementById('info-adicional');
         this.DOM.cardNivelActual = document.getElementById('card-nivel-actual');
-        this.DOM.toast = document.getElementById('toast-notification');
         this.DOM.appContainer = document.getElementById('app-container');
-        
-        const isDesktop = window.innerWidth >= data.TABLET_LANDSCAPE_MAX_WIDTH;
 
-        if (isMobileInit) {
+        // ⭐️ CLAVE: Actualizar a qué track y vistaNav apuntamos ⭐️
+        if (isMobile) {
             this.DOM.vistaNav = document.getElementById('vista-navegacion-mobile');
             this.DOM.track = document.getElementById('track-mobile');
         } else if (isDesktop) {

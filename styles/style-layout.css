@@ -44,7 +44,7 @@ header h1 {
     justify-content: center; 
     flex-wrap: nowrap;
     /* Tamaño del título/logo principal */
-    font-size: clamp(1.5rem, 4vw, 2.5rem); 
+    font-size: clamp(1.5rem, 4vw, 5rem); 
     margin: 0; padding: 0; line-height: 1.2; 
     gap: 0.3em; 
     flex-grow: 0; 
@@ -100,8 +100,8 @@ header h1 a:focus-visible svg {
 .icon-obras-header {
     display: inline-block;
     /* ⭐️ RESPONSIVE AJUSTADO: Más reactivo al viewport (5vmin) ⭐️ */
-    width: clamp(1.5rem, 5vmin, 2.5rem);
-    height: clamp(1.5rem, 5vmin, 2.5rem);
+    width: clamp(1.5rem, 5vmin, 5rem);
+    height: clamp(1.5rem, 5vmin, 5rem);
     background-color: var(--color-icon-obras);
     -webkit-mask-image: var(--icon-obras);
     mask-image: var(--icon-obras);
@@ -121,8 +121,8 @@ header h1 a:focus-visible svg {
     align-items: center;
     justify-content: center;
     /* ⭐️ RESPONSIVE AJUSTADO: Más grande y reactivo (6vmin) ⭐️ */
-    width: clamp(2rem, 6vmin, 3rem);
-    height: clamp(2rem, 6vmin, 3rem);
+    width: clamp(2rem, 6vmin, 5rem);
+    height: clamp(2rem, 6vmin, 5rem);
     padding: 0;
     border: 1.5px solid var(--color-card-border) !important;
     border-radius: 0.55em;
@@ -236,8 +236,8 @@ footer {
 
 .footer-social-link {
     display: inline-block;
-    width: clamp(1rem, 2.5vmin, 1.5rem);
-    height: clamp(1rem, 2.5vmin, 1.5rem);
+    width: clamp(1rem, 2.5vmin, 5rem);
+    height: clamp(1rem, 2.5vmin, 5rem);
     background-color: var(--color-footer-text);
     transition: all 0.2s ease;
     -webkit-mask-repeat: no-repeat;
