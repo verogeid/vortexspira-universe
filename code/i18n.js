@@ -12,9 +12,6 @@ export const STRINGS = {
         'headerTitle': 'VortexSpira® Universe',
         'headerSubtitle': 'Audio-Aprendizaje Técnico Inmersivo',
 
-        // Botones y Controles
-        'btnBack': '↩ Volver', 
-
         // Labels de Accesibilidad (ARIA)
         'ariaSelfUrl': 'URL de VortexSpira',
         'ariaNavRegion': 'Navegación principal de cursos',
@@ -28,7 +25,7 @@ export const STRINGS = {
         // Ayuda Rápida
         'helpTitle': 'Ayuda Rápida:',
         'helpRotate': '<b>Gira</b>: Arrastra, usa la rueda del ratón o las flechas del teclado.',
-        'helpBack': '<b>Vuelve</b>: Pulsa [Esc] o el botón "Volver".',
+        'helpBack': `<b>Vuelve</b>: Pulsa [Esc] o el botón "${data.LOGO.VOLVER}".`,
         
         // "Acerca de"
         'aboutLinkLanding': 'Hazte Fundador y obten tu 60% OFF',
@@ -65,7 +62,6 @@ export function applyStrings(appInstance) {
 
     const elementsById = {
         'main-header-title': 'headerTitle',
-        'btn-volver-navegacion': 'btnBack',
         'info-adicional-titulo-ayuda': 'helpTitle',
         'info-adicional-ayuda-gira': 'helpRotate',
         'info-adicional-ayuda-vuelve': 'helpBack'
@@ -90,8 +86,8 @@ export function applyStrings(appInstance) {
     }
 
     const linksById = {
-        'info-adicional-link-landing': { key: 'aboutLinkLanding', url: data.LANDING_PAGE_URL },
-        'info-adicional-link-diary': { key: 'aboutLinkDiary', url: data.DEV_DIARY_URL }
+        'info-adicional-link-landing': { key: 'aboutLinkLanding', url: data.URL.LANDING_PAGE },
+        'info-adicional-link-diary': { key: 'aboutLinkDiary', url: data.URL.DEV_DIARY }
     };
 
     for (const id in linksById) {

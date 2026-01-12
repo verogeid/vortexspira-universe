@@ -1,4 +1,4 @@
-// --- code/render-swipe.js ---
+/* --- code/render-swipe.js --- */
 
 import * as debug from './debug.js';
 import * as data from './data.js';
@@ -13,7 +13,7 @@ export function _generateCardHTML_Carousel(items, itemsPerSlide) {
 
     const totalItems = items.length;
     let totalSlotsDeseados = Math.ceil(totalItems / itemsPerSlide) * itemsPerSlide; 
-    if (totalSlotsDeseados < (6 * itemsPerSlide)) totalSlotsDeseados = (6 * itemsPerSlide);
+    if (totalSlotsDeseados < (data.SWIPER.NEEDED_SLIDES_TO_LOOP * itemsPerSlide)) totalSlotsDeseados = (data.SWIPER.NEEDED_SLIDES_TO_LOOP * itemsPerSlide);
 
     const itemsConRelleno = [...items];
     for (let i = totalItems; i < totalSlotsDeseados; i++) {
@@ -27,68 +27,84 @@ export function _generateCardHTML_Carousel(items, itemsPerSlide) {
             if (item) {
                 const esRelleno = item.tipo === 'relleno';
                 const activo = !esRelleno && this._tieneContenidoActivo(item.id);
-                slideContent += this._generarTarjetaHTML(item, activo, esRelleno);
+                
+                let cardHtml = this._generarTarjetaHTML(item, activo, esRelleno);
+                
+                if (!esRelleno) {
+                    const logicalIndex = i + j; 
+                    cardHtml = cardHtml.replace('class="card', `data-pos="${logicalIndex}" class="card`);
+                }
+                
+                slideContent += cardHtml;
             }
         }
         html += `<div class="swiper-slide"><div class="cards-column-group">${slideContent}</div></div>`;
     }
     return html;
-};
-
-export function renderSwipe(app, data) {
-    const container = app.DOM.app;
-    if (!container) return;
-
-    const itemsPorColumna = app.STATE.itemsPorColumna;
-    const initialSlide = Math.floor(app.STATE.currentFocusIndex / itemsPorColumna);
-    const html = app._generateCardHTML_Carousel(data.items, itemsPorColumna);
-    
-    container.innerHTML = `
-        <div id="nav-swiper" class="swiper">
-            <div class="swiper-wrapper" id="cards-track">
-                ${html}
-            </div>
-        </div>
-    `;
-
-    app.DOM.track = document.getElementById('cards-track');
-    app._initCarousel_Swipe(initialSlide, itemsPorColumna, false, '#nav-swiper');
 }
 
-export function _initCarousel_Swipe(initialSwiperSlide, itemsPorColumna, isMobile, swiperId) {
+export function _initCarousel_Swipe(initialSwiperSlide, itemsPorColumna, isMobile, swiperId, isStable = false) {
     this._destroyCarousel();
+
+    const slidesCount = document.querySelectorAll(`${swiperId} .swiper-slide`).length;
+    const isLoopViable = slidesCount >= data.SWIPER.NEEDED_SLIDES_TO_LOOP;
 
     const swiperConfig = {
         direction: 'horizontal',
-        slidesPerView: 3,
+        slidesPerView: data.SWIPER.SLIDES_PER_VIEW, 
         slidesPerGroup: 1,
+        spaceBetween: data.SWIPER.CARD_GAP_PX,
+        
         loop: true,
-        initialSlide: initialSwiperSlide + 1,
         centeredSlides: true,
-        mousewheel: { sensitivity: 1 },
-        keyboard: { enabled: false },
-        speed: data.SWIPE_SLIDE_SPEED,
-        // AAA: Rescate automático ante cambios de grid
+        initialSlide: initialSwiperSlide, 
+        
+        speed: data.SWIPER.SLIDE_SPEED,
+        roundLengths: true,
         observer: true,
         observeParents: true,
-        observeSlideChildren: true
+        observeSlideChildren: true,
+        resizeObserver: true,
+        updateOnWindowResize: true,
+        
+        // Desactivación total de controles nativos conflictivos
+        mousewheel: false,
+        keyboard: { enabled: false }
     };
 
-    this.STATE.carouselInstance = new Swiper(swiperId, swiperConfig);
+    debug.log('render_swipe', debug.DEBUG_LEVELS.BASIC, `SWIPE: Init ${swiperId} | Loop=${swiperConfig.loop}`);
+    
+    try {
+        this.STATE.carouselInstance = new Swiper(swiperId, swiperConfig);
 
-    if (this.STATE.carouselInstance) {
-        if (typeof this.setupTouchListeners === 'function') {
-            this.setupTouchListeners();
+        if (this.STATE.carouselInstance) {
+            const targetIndex = this.STATE.currentFocusIndex;
+            const targetCard = this.DOM.track.querySelector(`.card[data-pos="${targetIndex}"]`);
+            
+            if (targetCard) {
+                const targetSlide = targetCard.closest('.swiper-slide');
+                if (targetSlide && targetSlide.dataset.swiperSlideIndex !== undefined) {
+                    const realIndex = parseInt(targetSlide.dataset.swiperSlideIndex, 10);
+                    debug.log('render_swipe', debug.DEBUG_LEVELS.BASIC, `SWIPE: Posicionando en data-pos="${targetIndex}" (Slide Lógico ${realIndex})`);
+                    this.STATE.carouselInstance.slideToLoop(realIndex, 0, false);
+                }
+            }
+
+            if (typeof this.setupTouchListeners === 'function') {
+                this.setupTouchListeners();
+            }
+            this._updateFocus(false);
         }
-        this._updateFocus(false);
+    } catch (error) {
+        debug.logError('render_swipe', 'Error al inicializar Swiper:', error);
     }
-};
+}
 
 export function _destroyCarouselImpl() {
     if (this.STATE.carouselInstance) {
         this.STATE.carouselInstance.destroy(true, true);
         this.STATE.carouselInstance = null;
     }
-};
+}
 
-// --- code/render-swipe.js ---
+/* --- code/render-swipe.js --- */

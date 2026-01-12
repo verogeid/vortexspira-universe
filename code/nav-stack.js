@@ -1,20 +1,18 @@
-// --- code/nav-stack.js ---
+/* --- code/nav-stack.js --- */
 
 import * as debug from './debug.js';
 
 /**
  * Inicializa la pila de navegación con el nivel raíz.
+ * Cambiamos focusIndex por focusId para persistencia robusta.
  */
 export function stackInitialize() {
     this.STATE.historyStack = [
-        { levelId: null, focusIndex: 0 } // Nivel raíz
+        { levelId: null, focusId: null } 
     ];
-    debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, 'Pila de navegación inicializada.');
+    debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, 'Pila de navegación inicializada (Mode: ID).');
 };
 
-/**
- * Obtiene el estado del nivel actual (el último de la pila).
- */
 export function stackGetCurrent() {
     if (!this.STATE.historyStack || this.STATE.historyStack.length === 0) {
         debug.logError('nav_stack', 'La pila está vacía. Inicializando.');
@@ -23,9 +21,6 @@ export function stackGetCurrent() {
     return this.STATE.historyStack[this.STATE.historyStack.length - 1];
 };
 
-/**
- * Sube un nivel (maneja la acción de "Volver").
- */
 export function stackPop() {
     if (this.STATE.historyStack.length <= 1) {
         debug.logWarn('nav_stack', 'Intento de pop en el nivel raíz.');
@@ -37,41 +32,38 @@ export function stackPop() {
 };
 
 /**
- * Entra en un nuevo nivel (al hacer clic en una categoría).
+ * Entra en un nuevo nivel.
+ * Ya no necesita el índice actual, porque se asume guardado por stackUpdateCurrentFocus previamente.
  */
-export function stackPush(newLevelId, currentFocusIndex) {
+export function stackPush(newLevelId) {
     const currentLevel = this.stackGetCurrent();
     
-    // ⭐️ FILTRO DE IDENTIDAD: Si ya estamos en ese nivel, abortamos el push ⭐️
     if (currentLevel && currentLevel.levelId === newLevelId) {
         debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, `PUSH RECHAZADO: Ya estás en el nivel "${newLevelId}".`);
         return; 
     }
-
-    if (currentLevel) {
-        currentLevel.focusIndex = currentFocusIndex;
-        debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, `Guardando foco ${currentFocusIndex} para nivel ${currentLevel.levelId}`);
-    }
     
+    // El nuevo nivel comienza sin foco específico (se resolverá a 0 en el render)
     this.STATE.historyStack.push({
         levelId: newLevelId,
-        focusIndex: 0 
+        focusId: null 
     });
-    debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, `Nivel pusheado: ${newLevelId}. Profundidad actual: ${this.STATE.historyStack.length}`);
+    debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, `Nivel pusheado: ${newLevelId}.`);
 };
 
 /**
- * Actualiza el índice de foco del nivel ACTIVO actual.
+ * Actualiza el ID del elemento enfocado en el nivel actual.
+ * @param {string} focusId - El data-id de la tarjeta enfocada.
  */
-export function stackUpdateCurrentFocus(newFocusIndex) {
+export function stackUpdateCurrentFocus(focusId) {
     const currentLevel = this.stackGetCurrent();
     if (currentLevel) {
-        currentLevel.focusIndex = newFocusIndex;
+        currentLevel.focusId = focusId;
     }
 };
 
 /**
- * (Para Query Params) Busca un nodo y construye la pila de historial hasta él.
+ * Reconstruye la pila para Deep Linking usando IDs.
  */
 export function stackBuildFromId(targetId, fullData) {
     if (!targetId || !fullData || !fullData.navegacion) return false;
@@ -91,12 +83,23 @@ export function stackBuildFromId(targetId, fullData) {
     }
 
     if (findPath(fullData.navegacion, [])) {
-        const newStack = [{ levelId: null, focusIndex: 0 }];
-        for (const node of path) {
-            newStack.push({ levelId: node.id, focusIndex: 0 });
+        // Reconstruimos la pila asignando a cada nivel el focusId que lleva al siguiente
+        const newStack = [{ 
+            levelId: null, 
+            focusId: path.length > 0 ? path[0].id : null 
+        }];
+
+        for (let i = 0; i < path.length; i++) {
+            const node = path[i];
+            const nextNode = path[i+1]; // El nodo hijo que será el foco en este nivel
+            
+            newStack.push({ 
+                levelId: node.id, 
+                focusId: nextNode ? nextNode.id : null 
+            });
         }
         this.STATE.historyStack = newStack;
-        debug.log('nav_stack', debug.DEBUG_LEVELS.IMPORTANT, `Pila reconstruida: ${newStack.length}`);
+        debug.log('nav_stack', debug.DEBUG_LEVELS.IMPORTANT, `Pila reconstruida por ID: ${newStack.length}`);
         return true;
     }
     return false;

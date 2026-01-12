@@ -13,7 +13,6 @@
     scroll-behavior: smooth;
 }
 
-/* ⭐️ CORRECCIÓN: Eliminamos el padding duplicado en móvil aquí. El slide manda (style-mobile.css) ⭐️ */
 @media (max-width: 600px) {
     #detalle-contenido-mobile {
         padding: 0; 
@@ -36,7 +35,9 @@
 }
 
 .detail-title-slide {
-    font-size: clamp(0.9rem, 2.5vw, 1.8rem);
+    /* ⭐️ A11Y FIX */
+    font-size: clamp(1.2rem, 1rem + 2vw, 2rem);
+    margin-top: 0;
 }
 
 .detail-text-fragment {
@@ -52,7 +53,11 @@
     filter: none !important;
     opacity: 0.3; 
     pointer-events: auto;
-    font-size: clamp(0.7rem, 2.5vw, 1.4rem);
+    
+    /* ⭐️ A11Y FIX CRÍTICO: Texto base legible (1rem) + crecimiento */
+    font-size: clamp(1rem, 0.95rem + 1vw, 1.4rem);
+    line-height: 1.6;
+    
     width: 100%;
 }
 
@@ -139,12 +144,14 @@
 .detail-action-item:hover { background-color: rgba(255, 255, 255, 0.05); }
 
 .detail-action-text {
-    font-size: clamp(0.7rem, 2.5vw, 1.4rem); font-weight: 500; 
+    /* ⭐️ A11Y FIX */
+    font-size: clamp(1rem, 0.9rem + 1vw, 1.4rem);
+    font-weight: 500; 
     color: inherit; 
     text-align: left; margin-right: 15px; flex-grow: 1;
 }
 
-/* 5. BOTÓN DE ACCIÓN - ESTILO GHOST */
+/* 5. BOTÓN DE ACCIÓN */
 .detail-action-btn {
     display: flex; justify-content: center; align-items: center;
     width: clamp(38px, 2.5vw, 76px);
@@ -153,7 +160,7 @@
     border: 2px solid var(--color-card-border); 
     border-radius: 50%; 
     color: var(--color-text); 
-    font-size: clamp(0.7rem, 2.5vw, 1.4rem); line-height: 1;
+    font-size: clamp(1rem, 2.5vw, 1.4rem); line-height: 1;
     text-decoration: none; cursor: pointer;
     transition: all 0.2s ease; flex-shrink: 0; 
     position: relative; 
@@ -186,7 +193,7 @@
     width: clamp(38px, 2.5vw, 76px); 
     height: clamp(38px, 2.5vw, 76px);
     border-radius: 8px; 
-    font-size: clamp(0.7rem, 2.5vw, 1.4rem);
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
     line-height: 1;
     filter: none; 
     transform: none; 
@@ -221,7 +228,6 @@
     color: var(--color-text); 
 }
 
-/* 6. ICONOS SVG */
 .action-icon {
     display: inline-block; width: 1.5rem; height: 1.5rem;
     background-color: currentColor; 
@@ -229,29 +235,20 @@
     -webkit-mask-position: center; mask-position: center;
     -webkit-mask-size: contain; mask-size: contain;
 }
-.icon-download { 
-    -webkit-mask-image: var(--icon-download); 
-    mask-image: var(--icon-download); 
-}
-.icon-link { 
-    -webkit-mask-image: var(--icon-link); 
-    mask-image: var(--icon-link); 
-}
-.icon-buy { 
-    -webkit-mask-image: var(--icon-buy); 
-    mask-image: var(--icon-buy); 
-}
-.icon-vacio { 
-    -webkit-mask-image: var(--icon-vacio); 
-    mask-image: var(--icon-vacio); 
-}
+.icon-download { -webkit-mask-image: var(--icon-download); mask-image: var(--icon-download); }
+.icon-link { -webkit-mask-image: var(--icon-link); mask-image: var(--icon-link); }
+.icon-buy { -webkit-mask-image: var(--icon-buy); mask-image: var(--icon-buy); }
+.icon-vacio { -webkit-mask-image: var(--icon-vacio); mask-image: var(--icon-vacio); }
 
 /* 7. Estilo Específico Botón Volver Móvil */
 button.detail-action-btn {
     width: auto !important; height: auto !important;
     padding: 0.5rem 1rem !important; 
     border-radius: 20px !important; margin-bottom: 0; 
-    font-weight: bold; aspect-ratio: auto; font-size: clamp(1.1rem, 2.5vw, 2rem);
+    font-weight: bold; aspect-ratio: auto; 
+    /* ⭐️ A11Y FIX */
+    font-size: clamp(1.2rem, 1rem + 2vw, 2rem);
     background: var(--color-card-bg); 
 }
+
 /* --- styles/style-details.css --- */

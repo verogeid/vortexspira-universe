@@ -49,7 +49,11 @@
     -webkit-line-clamp: 4; 
     line-clamp: 4;
     -webkit-box-orient: vertical;
-    font-size: clamp(1.2rem, 3vw);
+    
+    /* ⭐️ A11Y FIX: Corregido clamp incompleto y mezclado rem+vw */
+    /* Antes: clamp(1.2rem, 3vw); -> Sintaxis inválida */
+    font-size: clamp(1rem, 0.9rem + 1vw, 1.4rem);
+    
     line-height: 1.2;
     
     word-break: normal; 
@@ -110,14 +114,11 @@
     text-align: center;
 }
 
-/* Cuando la tarjeta NO tiene el foco y no es la activa, 
-   dejamos que el contenedor slide mande sobre la opacidad */
 .card:not(.focus-visible) {
-    /* Opcional: un ligero desaturado sin llegar al grayscale molesto */
     filter: saturate(0.8);
 }
 
-/* Estados de Foco (Tus estilos originales) */
+/* Estados de Foco */
 .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]).focus-current { 
@@ -133,14 +134,12 @@
   outline: none; 
   border-color: var(--color-primary);
   background: var(--color-card-bg); 
-  transform: scale(1.03);
   box-shadow: 0 0 25px var(--color-shadow-primary); 
 }
 
 .card.focus-visible {
     opacity: 1 !important;
     filter: saturate(1) !important;
-    /* Tu estilo de borde Ghost ya existente */
 }
 
 .card.disabled {
@@ -151,12 +150,20 @@
 }
 
 .card.disabled.focus-visible, 
-.card.disabled:hover, 
 .card.disabled:focus-visible {
   outline: none; 
   border-color: var(--color-card-border); 
   background: var(--color-card-bg); 
   transform: scale(1.02);
+  box-shadow: 0 0 15px var(--color-shadow-disabled); 
+  opacity: 0.9; 
+  color: var(--color-text) !important;
+}
+
+.card.disabled:hover {
+    outline: none; 
+  border-color: var(--color-card-border); 
+  background: var(--color-card-bg); 
   box-shadow: 0 0 15px var(--color-shadow-disabled); 
   opacity: 0.9; 
   color: var(--color-text) !important;
@@ -168,4 +175,5 @@
     pointer-events: none; 
     cursor: default;
 }
+
 /* --- styles/style-cards.css --- */

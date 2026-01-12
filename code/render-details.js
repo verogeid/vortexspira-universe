@@ -5,8 +5,10 @@ import * as data from './data.js';
 import * as nav_base_details from './nav-base-details.js';
 
 function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
+    // Seguridad: Limpieza previa si existiera
     if (appInstance.STATE.detailCarouselInstance) {
         appInstance.STATE.detailCarouselInstance.destroy(true, true);
+        appInstance.STATE.detailCarouselInstance = null;
     }
 
     const swiperConfig = {
@@ -37,14 +39,40 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
 
 export function _mostrarDetalle(cursoId) {
     const appInstance = this;
-    const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
+    const isMobile = window.innerWidth <= data.MAX_WIDTH.MOBILE;
     const curso = appInstance._findNodoById(cursoId, appInstance.STATE.fullData.navegacion); 
 
     if (!curso) return;
 
-    appInstance.DOM.vistaDetalle = isMobile ? document.getElementById('vista-detalle-mobile') : document.getElementById('vista-detalle-desktop');
-    appInstance.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop'); 
+    // 🗑️ LIMPIEZA TOTAL DE NAVEGACIÓN (AHORRO DE MEMORIA) 🗑️
+    // 1. Destruir instancia Swiper del menú
+    if (typeof appInstance._destroyCarousel === 'function') {
+        appInstance._destroyCarousel();
+    }
+    
+    // 2. Ocultar y limpiar DOM de navegación para evitar conflictos
+    ['vista-navegacion-desktop', 'vista-navegacion-tablet', 'vista-navegacion-mobile'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.classList.remove('active');
+            el.style.display = 'none';
+            // Opcional: el.innerHTML = ''; // Si quieres ser extremo con la memoria
+        }
+    });
 
+    // Limpieza de vistas de detalle cruzadas (por si cambio de modo)
+    const desktopView = document.getElementById('vista-detalle-desktop');
+    const mobileView = document.getElementById('vista-detalle-mobile');
+    
+    if (desktopView) { desktopView.classList.remove('active'); desktopView.style.display = 'none'; }
+    if (mobileView) { mobileView.classList.remove('active'); mobileView.style.display = 'none'; }
+
+    // Asignación y activación de la vista correcta
+    appInstance.DOM.vistaDetalle = isMobile ? mobileView : desktopView;
+    appInstance.DOM.vistaDetalle.style.display = 'flex'; 
+    appInstance.DOM.vistaDetalle.classList.add('active');
+
+    appInstance.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop'); 
     const swiperId = isMobile ? '#detalle-swiper-mobile' : '#detalle-swiper-desktop';
 
     let slidesHtml = '';
@@ -61,15 +89,13 @@ export function _mostrarDetalle(cursoId) {
 
         let volverHtml = '';
         if (parent && parent.levelId) {
-            /* ⭐️ CORRECCIÓN HTML: Estructura idéntica al menú (Article, sin texto extra) ⭐️ */
             volverHtml = `
                 <article class="card card-volver-vertical" role="button" tabindex="0" onclick="App._handleVolverClick()">
-                    <h3>${data.LOGO_VOLVER}</h3>
+                    <h3>${data.LOGO.VOLVER}</h3>
                 </article>
             `;
         }
 
-        /* ⭐️ AGRUPACIÓN: Breadcrumb y Volver en el mismo slide para visibilidad conjunta ⭐️ */
         slidesHtml += `
             <div class="swiper-slide">
                 <article class="card card-breadcrumb-vertical" tabindex="-1" style="margin-bottom: 10px;">
@@ -142,15 +168,24 @@ export function _mostrarDetalle(cursoId) {
 
     _initDetailCarousel(appInstance, swiperId, 0);
 
-    if (appInstance.DOM.vistaNav) appInstance.DOM.vistaNav.classList.remove('active');
-    if (appInstance.DOM.vistaDetalle) appInstance.DOM.vistaDetalle.classList.add('active');
-
-    /* ⭐️ CORRECCIÓN FOCO: Asegurar que el foco vaya al botón Volver al entrar ⭐️ */
     setTimeout(() => {
-        const firstFocusable = appInstance.DOM.detalleTrack.querySelector('.card-volver-vertical');
-        if (firstFocusable) {
-            firstFocusable.focus({ preventScroll: true });
+        let targetElement = null;
+
+        if (isMobile) {
+            targetElement = appInstance.DOM.detalleTrack.querySelector('.card-volver-vertical');
+            if (!targetElement) {
+                targetElement = appInstance.DOM.detalleTrack.querySelector('.detail-text-fragment[data-index="0"]');
+            }
+        } else {
+            targetElement = appInstance.DOM.detalleTrack.querySelector('.detail-text-fragment[data-index="0"]');
         }
-    }, 150);
+
+        if (targetElement) {
+            targetElement.focus({ preventScroll: true });
+            if (nav_base_details && typeof nav_base_details._updateDetailFocusState === 'function') {
+                nav_base_details._updateDetailFocusState(appInstance);
+            }
+        }
+    }, 200);
 }
 /* --- code/render-details.js --- */

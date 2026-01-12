@@ -6,6 +6,10 @@ import * as data from './data.js';
 export function _generateCardHTML_Mobile(items, itemsPerColumna) {
     let html = '';
     
+    // ⭐️ Nuevo contador para posiciones lógicas de foco ⭐️
+    // Usamos esto en lugar de 'i' para que el Breadcrumb no consuma un índice.
+    let logicalPos = 0; 
+    
     for (let i = 0; i < items.length; i++) {
         const nodo = items[i];
 
@@ -14,29 +18,49 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
             if (i + 1 < items.length && items[i+1].tipoEspecial === 'volver-vertical') {
                 const volverNode = items[i+1];
                 
-                // Inyectamos style="margin-bottom: 10px;" al string HTML del breadcrumb para separarlo
+                // 1. Renderizamos Breadcrumb
+                // 🛑 NO le inyectamos data-pos. El sistema de navegación lo ignorará.
                 let breadcrumbHtml = this._generarTarjetaHTML(nodo, true, false, nodo.tipoEspecial);
                 breadcrumbHtml = breadcrumbHtml.replace('class="card', 'style="margin-bottom: 10px;" class="card');
 
+                // 2. Renderizamos Volver
+                // ✅ LE inyectamos data-pos con el logicalPos actual (será 0).
+                let volverHtml = this._generarTarjetaHTML(volverNode, true, false, volverNode.tipoEspecial);
+                volverHtml = volverHtml.replace('class="card', `data-pos="${logicalPos}" class="card`);
+
                 html += `<div class="swiper-slide">
                     ${breadcrumbHtml}
-                    ${this._generarTarjetaHTML(volverNode, true, false, volverNode.tipoEspecial)}
+                    ${volverHtml}
                 </div>`;
                 
-                i++; // Saltamos el nodo Volver porque ya lo hemos pintado
+                // Avanzamos índices
+                logicalPos++; // Solo sumamos 1 al foco (por el botón Volver)
+                i++; // Saltamos el nodo Volver del array original (i)
                 continue;
             }
         }
 
-        // Caso fallback por si aparecen sueltos
-        if (nodo.tipoEspecial === 'volver-vertical' || nodo.tipoEspecial === 'breadcrumb-vertical') {
-            html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, true, false, nodo.tipoEspecial)}</div>`; 
+        // Caso fallback (Breadcrumb suelto, por si acaso)
+        if (nodo.tipoEspecial === 'breadcrumb-vertical') {
+            let bHtml = this._generarTarjetaHTML(nodo, true, false, nodo.tipoEspecial);
+            // Sin data-pos
+            html += `<div class="swiper-slide">${bHtml}</div>`; 
             continue;
         }
 
+        // Caso fallback (Volver suelto) o Tarjeta Normal
         const esRelleno = nodo.tipo === 'relleno';
         const estaActivo = esRelleno ? false : this._tieneContenidoActivo(nodo.id); 
-        html += `<div class="swiper-slide">${this._generarTarjetaHTML(nodo, estaActivo, esRelleno)}</div>`; 
+        
+        let cardHtml = this._generarTarjetaHTML(nodo, estaActivo, esRelleno);
+
+        // Si es una tarjeta válida, le asignamos su posición lógica y aumentamos el contador
+        if (!esRelleno) {
+            cardHtml = cardHtml.replace('class="card', `data-pos="${logicalPos}" class="card`);
+            logicalPos++;
+        }
+
+        html += `<div class="swiper-slide">${cardHtml}</div>`; 
     }
 
     html += `<div class="swiper-slide card-relleno-final" style="height: 100px !important; pointer-events: none;"></div>`;
@@ -47,6 +71,7 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
     return html;
 };
 
+// ... (El resto del archivo _initCarousel_Mobile se mantiene igual)
 export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobile, swiperId) {
     if (!isMobile) return;
 
@@ -63,13 +88,13 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
 
         touchRatio: 1, 
         simulateTouch: true, 
-        touchStartPreventDefault: false, // Permitir clic nativo
+        touchStartPreventDefault: false, 
         touchMoveStopPropagation: true, 
         grabCursor: true, 
         centeredSlides: false, 
         mousewheel: { enabled: false }, 
         keyboard: { enabled: false }, 
-        speed: data.SWIPE_SLIDE_SPEED,
+        speed: data.SWIPER.SLIDE_SPEED,
         freeMode: true, 
         freeModeMomentum: true,
         freeModeSticky: true, 

@@ -27,6 +27,12 @@
         gap: 15px; overflow: visible;
     }
 
+    #vista-volver, 
+    #card-volver-fija,
+    #info-adicional {
+        display: none !important; 
+    }
+
     #vista-central {
         width: 100%; position: relative; 
         height: auto !important; overflow: visible !important;
@@ -40,10 +46,6 @@
 
     .vista {
         position: relative; height: auto !important; overflow: visible !important;
-    }
-
-    #card-volver-fija, #info-adicional {
-        display: none !important;
     }
 
     #vista-detalle-mobile {
@@ -103,8 +105,7 @@
     }
 
     footer {
-        position: fixed !important; bottom: 0; 
-        background: var(--color-bg); 
+        position: fixed !important; bottom: 0;  
         width: 100%;
         z-index: 100;
     }

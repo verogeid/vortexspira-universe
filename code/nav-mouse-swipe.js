@@ -22,8 +22,12 @@ export function detachSwiperEvents(swiper) {
 }
 
 export function handleSlideChangeStart(swiper) {
-    if (this.STATE.keyboardNavInProgress || this.STATE.isNavigatingBack) return; 
-    _swipeDirection = swiper.activeIndex > swiper.previousIndex ? 'next' : 'prev';
+    if (this.STATE.isNavigatingBack) return; 
+    
+    if (swiper.activeIndex !== swiper.previousIndex) {
+        _swipeDirection = swiper.activeIndex > swiper.previousIndex ? 'next' : 'prev';
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `⚡️ START SlideChange. Dir: ${_swipeDirection} | Prev: ${swiper.previousIndex} -> Act: ${swiper.activeIndex}`);
+    }
 };
 
 /**
@@ -32,40 +36,83 @@ export function handleSlideChangeStart(swiper) {
 export function handleSlideChangeEnd(swiper) {
     if (!this.STATE.carouselInstance || this.STATE.isNavigatingBack) return; 
 
-    const { currentFocusIndex, itemsPorColumna } = this.STATE;
-    const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
-    
-    // ⭐️ CORRECCIÓN: Buscamos el slide activo REAL en el DOM, no por índice de Swiper
-    const activeSlideEl = swiper.el.querySelector('.swiper-slide-active');
-    
-    if (!activeSlideEl) return;
-
-    // Filtramos tarjetas reales
-    const allCardsInside = Array.from(activeSlideEl.querySelectorAll('.card'));
-    const columnCards = allCardsInside.filter(c => c.dataset.id && c.dataset.tipo !== 'relleno');
-
-    debug.logGroupCollapsed('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "SWIPE: Inspeccionando Slide Activo REAL");
-    debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "Elemento:", activeSlideEl);
-    debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "Data-Index:", activeSlideEl.dataset.swiperSlideIndex);
-    debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "IDs encontrados:", columnCards.map(c => c.dataset.id));
-    debug.logGroupEnd('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC);
-
-    if (columnCards.length === 0 && !isMobile) { 
-        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "SWIPE: Columna vacía. Corrigiendo...");
-        _swipeDirection === 'next' ? swiper.slideNext(data.SWIPE_SLIDE_SPEED) : swiper.slidePrev(data.SWIPE_SLIDE_SPEED);
+    // 🛡️ LÓGICA DE PROTECCIÓN SELECTIVA 🛡️
+    // Solo bloqueamos si el teclado declaró explícitamente que tiene el control del foco exacto.
+    // En Loops o giros vacíos, dejamos pasar para que el Skipper resuelva el destino.
+    if (swiper.isKeyboardLockedFocus) {
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "🔒 SWIPE: Foco bloqueado por teclado. Ignorando mouse logic.");
+        swiper.isKeyboardLockedFocus = false; // Reset del candado
         return; 
     }
 
-    let targetRow = isMobile ? 0 : currentFocusIndex % itemsPorColumna;
+    debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `🏁 END SlideChange. RealIdx: ${swiper.realIndex} | ActiveIdx: ${swiper.activeIndex}`);
+
+    const { currentFocusIndex, itemsPorColumna } = this.STATE;
+    const isMobile = window.innerWidth <= data.MAX_WIDTH.MOBILE;
+    
+    // ⭐️ FIX: Usar la referencia interna de Swiper para saber qué slide es el activo visualmente
+    const activeSlideEl = swiper.slides[swiper.activeIndex];
+    
+    if (!activeSlideEl) {
+        debug.logWarn('nav_mouse_swipe', 'No se encontró slide activo en swiper.slides');
+        return;
+    }
+
+    // Filtramos tarjetas reales dentro del slide activo
+    const columnCards = Array.from(activeSlideEl.querySelectorAll('.card[data-id]:not([data-tipo="relleno"])'));
+    debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Cards en slide activo: ${columnCards.length}`);
+
+    // ⭐️ SKIPPER ⭐️
+    // Si la columna está vacía (relleno puro), saltamos automáticamente a la siguiente
+    if (columnCards.length === 0 && !isMobile) { 
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, `SWIPE: Columna vacía. Saltando (${_swipeDirection})...`);
+        _swipeDirection === 'next' ? swiper.slideNext(data.SWIPER.SLIDE_SPEED) : swiper.slidePrev(data.SWIPER.SLIDE_SPEED);
+        return; 
+    }
+
+    // ⭐️ CÁLCULO DE FOCO DESTINO ⭐️
+    let targetRow;
+
+    if (this.STATE.forceFocusRow !== undefined && this.STATE.forceFocusRow !== null) {
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Usando forceFocusRow: ${this.STATE.forceFocusRow}`);
+        if (this.STATE.forceFocusRow === 'last') {
+            targetRow = columnCards.length - 1; 
+        } else {
+            targetRow = this.STATE.forceFocusRow; 
+        }
+        this.STATE.forceFocusRow = null; 
+    } else {
+        targetRow = isMobile ? 0 : currentFocusIndex % itemsPorColumna;
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Calculando targetRow: idx(${currentFocusIndex}) % cols(${itemsPorColumna}) = ${targetRow}`);
+    }
+
     const newFocusCard = this.findBestFocusInColumn(columnCards, targetRow);
     
     if (newFocusCard) {
         const allValidCards = Array.from(this.DOM.track.querySelectorAll('.card:not([data-tipo="relleno"])'));
         const newGlobalIndex = allValidCards.indexOf(newFocusCard);
-        if (newGlobalIndex > -1 && this.STATE.currentFocusIndex !== newGlobalIndex) {
-            this.STATE.currentFocusIndex = newGlobalIndex;
+        
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Candidato Foco: ID=${newFocusCard.dataset.id} | GlobalIdx=${newGlobalIndex} | CurrentIdx=${this.STATE.currentFocusIndex}`);
+        
+        if (newGlobalIndex > -1) {
+            // ⭐️ FIX CRÍTICO DE BUCLE / FLUIDEZ ⭐️
+            // Aunque el índice lógico sea el mismo (ej. 0), la tarjeta FÍSICA ha cambiado (es un clon o está en otro slide).
+            // SIEMPRE debemos forzar la actualización física (_updateFocus) para traer el "halo" y el foco del navegador a la nueva tarjeta.
+            
+            if (this.STATE.currentFocusIndex !== newGlobalIndex) {
+                debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.IMPORTANT, `🚨 CORRIGIENDO FOCO: ${this.STATE.currentFocusIndex} -> ${newGlobalIndex}`);
+                this.STATE.currentFocusIndex = newGlobalIndex;
+            } else {
+                debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Foco estable (Lógico). Re-sincronizando físico.`);
+            }
+
+            // Llamamos a _updateFocus(false) para mover la clase .focus-visible y el foco nativo .focus()
+            // sin provocar otro slide (false).
             this._updateFocus(false); 
         }
+    } else {
+        debug.logWarn('nav_mouse_swipe', 'No se encontró tarjeta candidata en el slide activo.');
     }
 };
+
 /* --- code/nav-mouse-swipe.js --- */

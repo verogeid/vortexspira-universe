@@ -10,6 +10,19 @@ body {
     min-height: 100vh;
     padding-top: var(--header-height);
     padding-bottom: var(--footer-height); 
+    
+    /* ⭐️ A11Y: Aseguramos base 100% para respetar ajustes de navegador */
+    font-size: 100%; 
+    line-height: 1.5;
+
+    /* ⭐️ FIX CLS/FLASH: El cuerpo inicia invisible para evitar parpadeos de Swiper */
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Clase que se añade vía JS cuando todo está listo */
+body.app-loaded {
+    opacity: 1;
 }
 
 header {
@@ -43,8 +56,10 @@ header h1 {
     align-items: center;
     justify-content: center; 
     flex-wrap: nowrap;
-    /* Tamaño del título/logo principal */
-    font-size: clamp(1.5rem, 4vw, 5rem); 
+    
+    /* ⭐️ A11Y FIX: calc(1rem + Xvw) permite escalar con el texto del SO */
+    font-size: clamp(1.2rem, 1rem + 3vw, 3rem); 
+    
     margin: 0; padding: 0; line-height: 1.2; 
     gap: 0.3em; 
     flex-grow: 0; 
@@ -58,19 +73,6 @@ header h1 {
 header h1 a {
     outline: none;
     text-decoration: none;
-}
-
-#main-header-title small {
-    display: inline-block; 
-    width: auto; 
-    text-align: left;
-    font-size: 0.6em;
-    opacity: 0.8;
-    vertical-align: top;
-    margin-left: 0.3em;
-    white-space: normal; 
-    text-overflow: initial;
-    overflow: initial;
 }
 
 header h1 svg {
@@ -99,7 +101,6 @@ header h1 a:focus-visible svg {
 
 .icon-obras-header {
     display: inline-block;
-    /* ⭐️ RESPONSIVE AJUSTADO: Más reactivo al viewport (5vmin) ⭐️ */
     width: clamp(1.5rem, 5vmin, 5rem);
     height: clamp(1.5rem, 5vmin, 5rem);
     background-color: var(--color-icon-obras);
@@ -120,7 +121,6 @@ header h1 a:focus-visible svg {
     display: flex !important;
     align-items: center;
     justify-content: center;
-    /* ⭐️ RESPONSIVE AJUSTADO: Más grande y reactivo (6vmin) ⭐️ */
     width: clamp(2rem, 6vmin, 5rem);
     height: clamp(2rem, 6vmin, 5rem);
     padding: 0;
@@ -152,7 +152,7 @@ header h1 a:focus-visible svg {
     background-color: var(--color-primary); 
     border-color: var(--color-primary);
     box-shadow: 0 0 10px var(--color-primary);
-    transform: scale(1.05);
+    transform: scale(1.15);
 }
 
 #vista-central {
@@ -188,28 +188,52 @@ header h1 a:focus-visible svg {
 }
 #vista-volver.visible { display: flex; }
 
-#info-adicional {
-    grid-column: 3 / 4; 
-    width: 100%; 
-    border-radius: 12px; border: 2px dashed var(--color-border-placeholder); 
-    background: var(--color-card-bg); display: none; 
-    box-sizing: border-box; 
-    padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
-    height: 100%; overflow-y: auto; 
-}
-#info-adicional.visible { display: block !important; }
-
-@media (min-width: 601px) and (max-width: 800px) {
+@media (min-width: 600px) and (max-width: 800px) {
     #app-container {
         display: grid;
         grid-template-columns: 1fr 3fr; 
     }
 }
 
-@media (min-width: 801px) {
+@media (max-width: 800px) {
+    #info-adicional {
+        display: none !important; 
+    }
+    #info-adicional.visible { display: none !important; }
+
+    #main-header-title small {
+        display: none !important;
+    }
+}
+
+@media (min-width: 800px) {
     #app-container {
         display: grid;
         grid-template-columns: 1fr 3fr 1fr;
+    }
+
+    #info-adicional {
+        grid-column: 3 / 4; 
+        width: 100%; 
+        border-radius: 12px; border: 2px dashed var(--color-border-placeholder); 
+        background: var(--color-card-bg); display: none; 
+        box-sizing: border-box; 
+        padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
+        height: 100%; overflow-y: auto; 
+    }
+    #info-adicional.visible { display: block !important; }
+
+    #main-header-title small {
+        display: inline-block; 
+        width: auto; 
+        text-align: left;
+        font-size: 0.5em; /* Relativo al padre, escala bien */
+        opacity: 0.8;
+        vertical-align: top;
+        margin-left: 0.3em;
+        white-space: normal; 
+        text-overflow: initial;
+        overflow: initial;
     }
 }
 
@@ -274,6 +298,11 @@ footer {
 .footer-separator {
     opacity: 0.4;
     margin: 0 4px;
+}
+
+.resize-animation-stopper * {
+    animation: none !important;
+    transition: none !important;
 }
 
 /* --- styles/style-layout.css --- */

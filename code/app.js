@@ -105,6 +105,14 @@ class VortexSpiraApp {
         
         this.STATE.initialRenderComplete = true; 
         debug.log('app', debug.DEBUG_LEVELS.BASIC, "Carga inicial completada.");
+
+        // ⭐️ FIX FLASH/CLS: Revelamos la app suavemente una vez renderizada ⭐️
+        // Usamos doble RAF + Timeout para asegurar que el DOM y Swiper se han pintado
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                document.body.classList.add('app-loaded');
+            }, 100); 
+        });
     }
 
     _updateFocus(shouldSlide) { nav_base._updateFocusImpl.call(this, shouldSlide); }
@@ -133,8 +141,8 @@ class VortexSpiraApp {
     
     _cacheDOM() {
         const width = window.innerWidth;
-        const isMobile = width <= data.MOBILE_MAX_WIDTH;
-        const isDesktop = width >= data.TABLET_LANDSCAPE_MAX_WIDTH;
+        const isMobile = width <= data.MAX_WIDTH.MOBILE;
+        const isDesktop = width >= data.MAX_WIDTH.TABLET_LANDSCAPE;
         
         // Logs de depuración para confirmar el refresco
         debug.log('app', debug.DEBUG_LEVELS.BASIC, `DEBUG_DOM: Refrescando caché. Ancho: ${width}`);

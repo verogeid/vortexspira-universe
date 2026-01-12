@@ -7,18 +7,20 @@ import * as nav_keyboard_details from './nav-keyboard-details.js';
 import * as nav_keyboard_swipe from './nav-keyboard-swipe.js'; 
 
 export function initKeyboardControls() {
-    /* ⭐️ NUEVO: Listener para limpiar el Ghost cuando el foco se va fuera del track ⭐️ */
+    debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 'Inicializando controles de teclado (CAPTURE Mode)');
+
+    /* Listener para limpiar el Ghost cuando el foco se va fuera del track */
     document.addEventListener('focusin', (e) => {
         const app = this;
         if (!app.DOM.track) return;
-
-        // Si el nuevo elemento enfocado NO es una tarjeta ni está dentro del track
         if (!app.DOM.track.contains(e.target)) {
             const ghosts = app.DOM.track.querySelectorAll('.card.focus-visible');
             ghosts.forEach(c => c.classList.remove('focus-visible'));
         }
     });
 
+    // ⭐️ LISTENER PRINCIPAL EN FASE DE CAPTURA ⭐️
+    // Interceptamos antes de que llegue a los hijos (Swiper)
     document.addEventListener('keydown', (e) => {
         const app = this; 
         if (!app?.DOM?.vistaNav) return; 
@@ -27,9 +29,13 @@ export function initKeyboardControls() {
         const isDetailActive = app.DOM.vistaDetalle.classList.contains('active');
         const focused = document.activeElement;
 
+        // Log para ver quién recibe la tecla
+        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Key: ${e.key} | Target: ${e.target.tagName}`);
+
         // 1. ESCAPE
         if (e.key === 'Escape') {
             e.preventDefault();
+            e.stopPropagation(); // Stop bubbling
             app._handleVolverClick?.(); 
             return;
         }
@@ -49,6 +55,8 @@ export function initKeyboardControls() {
 
             if (isInSwipe || isInDetail) {
                 e.preventDefault();
+                e.stopPropagation(); // Bloqueamos para que Swiper no haga clic o slide
+                
                 app.STATE.keyboardNavInProgress = true;
                 if (isNavActive) nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
                 else nav_keyboard_details._handleDetailNavigation.call(app, e.key);
@@ -57,24 +65,32 @@ export function initKeyboardControls() {
             }
         }
 
-        // 4. CURSORES
+        // 4. CURSORES (FLECHAS)
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
             const isInCentralTrack = focused.closest('#track-desktop, #track-tablet, #track-mobile, #detalle-track-desktop, #detalle-track-mobile');
 
             if (isInCentralTrack) {
+                debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Flecha interceptada en track central. Bloqueando propagación.`);
+                
+                // ⭐️ EL MURO: Detenemos todo para que Swiper no reciba la tecla ⭐️
                 e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+
                 app.STATE.keyboardNavInProgress = true;
                 if (isNavActive) nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
                 else nav_keyboard_details._handleDetailNavigation.call(app, e.key);
+                
                 setTimeout(() => { app.STATE.keyboardNavInProgress = false; }, 50);
             } else {
+                // Navegación periférica
                 const section = focused.closest('#info-adicional, footer, #app-header, #card-volver-fija, #vista-volver');
                 if (section) {
                     e.preventDefault();
                     _handleLocalSectionNavigation(e.key, section);
                     if (isDetailActive) nav_base_details._clearDetailVisualStates(app);
                 } else if (document.activeElement === document.body) {
-                    /* Rescate de cursores si el foco está en el body */
+                    // Rescate
                     e.preventDefault();
                     app.STATE.keyboardNavInProgress = true;
                     if (isNavActive) nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
@@ -83,7 +99,7 @@ export function initKeyboardControls() {
                 }
             }
         }
-    });
+    }, { capture: true }); // <--- IMPORTANTE: capture: true
     
     _setupInfoAccordion.call(this);
     _setupWheelListener.call(this);
@@ -116,23 +132,30 @@ function _setupInfoAccordion() {
 }
 
 function _setupWheelListener() {
+    // ⭐️ WHEEL también en modo CAPTURE ⭐️
     this.DOM.appContainer?.addEventListener('wheel', _handleGlobalWheel.bind(this), { passive: false, capture: true });
 }
 
 function _handleGlobalWheel(e) {
     const app = this;
-    const isMobile = window.innerWidth <= data.MOBILE_MAX_WIDTH;
     const isNavActive = app.DOM.vistaNav?.classList.contains('active');
     const isDetailActive = app.DOM.vistaDetalle?.classList.contains('active');
     
     if (app.STATE.keyboardNavInProgress || (!isNavActive && !isDetailActive)) return;
+    
     const targetIsCentral = e.target.closest('#vista-central, .carousel-viewport, .detalle-viewport');
-    if (!targetIsCentral || (!isMobile && isNavActive)) return;
+    if (!targetIsCentral) return;
 
     if (e.deltaY !== 0) {
+        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Wheel: ${e.deltaY}. Bloqueando propagación.`);
+        
+        // Bloqueo total del evento de rueda
         e.preventDefault(); 
         e.stopPropagation();
+        e.stopImmediatePropagation();
+
         const key = e.deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
+        
         app.STATE.keyboardNavInProgress = true; 
         if (isNavActive) nav_keyboard_swipe._handleSwipeNavigation(key, app);
         else nav_keyboard_details._handleDetailNavigation.call(app, key);
@@ -143,9 +166,9 @@ function _handleGlobalWheel(e) {
 export function _handleFocusTrap(e, viewType) {
     const app = this;
     const width = window.innerWidth;
-    const isMobile = width <= data.MOBILE_MAX_WIDTH;
-    const isDesktop = width >= data.TABLET_LANDSCAPE_MAX_WIDTH;
-    const isTabletLS = width > data.TABLET_PORTRAIT_MAX_WIDTH && width < data.TABLET_LANDSCAPE_MAX_WIDTH;
+    const isMobile = width <= data.MAX_WIDTH.MOBILE;
+    const isDesktop = width >= data.MAX_WIDTH.TABLET_LANDSCAPE;
+    const isTabletLS = width > data.MAX_WIDTH.TABLET_PORTRAIT && width < data.MAX_WIDTH.TABLET_LANDSCAPE;
     const isVisible = (el) => el && el.offsetParent !== null;
 
     const sections = {

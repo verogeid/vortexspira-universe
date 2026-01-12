@@ -1,109 +1,90 @@
 /* --- styles/style-tablet.css --- */
 
-/* TABLET (601px - 1024px): 2 Columnas de Tarjetas */
-@media ((min-width: 601px) and (max-width: 1024px)) {
+@media ((min-width: 601px) and (max-width: 1023.99px)) {
     #app-container {
         height: calc(100vh - var(--header-height) - var(--footer-height)); 
-        width: 100%; max-width: 1600px; margin: 0 auto;
-        display: grid; 
-        
-        gap: 15px; padding: 15px; box-sizing: border-box;
-        align-items: start; 
-        background: var(--color-bg);
+        width: 100%; max-width: 1023.99px; margin: 0 auto;
+        display: grid; gap: 15px; padding: 15px; box-sizing: border-box;
+        align-items: start; background: var(--color-bg);
     }
     
     :root {
         --card-height-calc: calc( (100% - var(--card-gap)) / 2 );
     }
 
-    #main-header-subtitle {
-        display: inline-block;
+    #main-header-subtitle { display: inline-block; }
+
+    #vista-navegacion-desktop {
+        /* Gestionado por JS (limpieza de DOM) */
     }
 
     #vista-navegacion-tablet {
-      display: flex;
-    }
-    #vista-navegacion-desktop {
-      display: none;
+        display: flex; z-index: 10; min-width: 0; overflow: hidden;
+        transition: opacity 0.4s ease;
     }
 
-    /* TABLET PORTRAIT (601px - 800px): 2 COLUMNAS */
     @media (min-width: 601px) and (max-width: 800px) {
-        #app-container {
-            grid-template-columns: 1fr 3fr; 
-        }
-        /* Ocultar la columna de información adicional */
+        #app-container { grid-template-columns: 1fr 3fr; }
         #info-adicional.visible { display: none !important; }
     }
-
-    /* ⭐️ TABLET LANDSCAPE (801px - 1024px) y DESKTOP: 3 COLUMNAS ⭐️ */
     @media (min-width: 801px) {
-        #app-container {
-            grid-template-columns: 1fr 3fr 1fr; 
-        }
-        /* Mostrar la columna de información adicional (se mantiene la regla .visible) */
-        #info-adicional.visible { display: block !important; }
+        #app-container { grid-template-columns: 1fr 3fr 1fr; }
+        #info-adicional { display: block !important; }
+    }
+
+    .carousel-viewport {
+        width: 100% !important; max-width: 100% !important;
+        overflow: hidden !important;
+        /* SIN contain: paint */
     }
 
     #nav-swiper-tablet {
-        height: 100%; width: 100%; 
-        overflow: hidden; position: relative; 
-        z-index: 1; 
-        touch-action: pan-y; 
+        height: 100% !important; width: 100%; 
+        min-height: 200px !important; overflow: hidden; 
+        position: relative; z-index: 1; touch-action: pan-y; display: block;
     }
+
     #nav-swiper-tablet .swiper-wrapper {
-      display: flex !important; 
-      height: 100% !important; 
-      gap: 0; align-items: start;
+        display: flex !important; height: 100% !important; gap: 0; align-items: start;
     }
+
     #nav-swiper-tablet .swiper-slide {
-      width: calc(100% / 3) !important; height: 100% !important; 
-      margin: 0 !important;
-      border: none !important; background: transparent !important; 
-      padding: 0 !important; 
+        height: 100% !important; width: calc(100% / 3) !important;
+        margin: 0 !important;
+        border: none !important; background: transparent !important; 
+        padding: 0 !important; box-sizing: border-box;
     }
+
     #nav-swiper-tablet .cards-column-group {
         display: flex; flex-direction: column; justify-content: flex-start; 
         height: calc(100% - var(--nav-carousel-top-offset)); width: 100%;
         gap: var(--card-gap); padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
         box-sizing: border-box; 
     }
+
     #nav-swiper-tablet .cards-column-group .card {
-        flex: none; 
-        height: var(--card-height-calc); min-height: var(--card-height-calc); 
-        margin-bottom: 0; 
+        flex: none; height: var(--card-height-calc); min-height: var(--card-height-calc); margin-bottom: 0; 
     }
-    #vista-volver {
-        min-width: 0;
-    }
-    /* ⭐️ CORRECCIÓN: Usar la variable unificada de altura ⭐️ */
+
+    #vista-volver { min-width: 0; }
     #vista-volver #card-nivel-actual,
     #vista-volver #card-volver-fija-elemento {
         height: var(--card-height-calc); min-height: var(--card-height-calc);
     }
+    #vista-volver #card-volver-fija-elemento.visible { display: flex; }
+
     #vista-navegacion-tablet .carousel-mask {
-      position: absolute; 
-      width: 100%; height: 100%; top: 0; left: 0;
-      z-index: 10; 
-      pointer-events: none; overflow: hidden; 
+        position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+        z-index: 10; pointer-events: none; overflow: hidden; 
     }
     #vista-navegacion-tablet .mask-left, #vista-navegacion-tablet .mask-right {
-      position: absolute; 
-      top: 0; width: 33%; height: 100%;
-      background: linear-gradient(to right, var(--color-bg), transparent);
-      z-index: 10;
+        position: absolute; top: 0; width: 33%; height: 100%;
+        background: linear-gradient(to right, var(--color-bg), transparent);
+        z-index: 10;
     }
     #vista-navegacion-tablet .mask-left { left: 0; }
     #vista-navegacion-tablet .mask-right {
-      right: 0; 
-      background: linear-gradient(to left, var(--color-bg), transparent);
-    }
-    @media (prefers-reduced-motion: reduce) {
-      #vista-navegacion-tablet .mask-left, 
-      #vista-navegacion-tablet .mask-right { 
-        -webkit-backdrop-filter: none; backdrop-filter: none; 
-      }
+        right: 0; background: linear-gradient(to left, var(--color-bg), transparent);
     }
 }
-
 /* --- styles/style-tablet.css --- */
