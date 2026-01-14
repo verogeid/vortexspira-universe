@@ -36,6 +36,33 @@
     --card-gap: 3vh; 
     --nav-desktop-height: calc(100% - 0px); 
     --nav-carousel-top-offset: 2vh; 
+
+    /* ⭐️ VARIABLES DE TIPOGRAFÍA DINÁMICA (A11Y) ⭐️ */
+    /* Valores por defecto */
+    --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-scale: 1;          /* 1 = 100% del sistema */
+    --line-height-base: 1.5;
+    --paragraph-spacing: 1.5em; /* Relativo al tamaño de fuente */
+    
+    /* Variable para fuentes específicas */
+    --font-dyslexic: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+    --font-serif: 'Georgia', 'Times New Roman', serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Aplicación de las variables al documento */
+html {
+    /* Esto escala todo el rem de la aplicación */
+    font-size: calc(100% * var(--font-scale)); 
+}
+
+body {
+    font-family: var(--font-family-base);
+    line-height: var(--line-height-base);
+}
+
+p {
+    margin-bottom: var(--paragraph-spacing);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -147,15 +174,6 @@
         forced-color-adjust: none;
         background-color: CanvasText !important; /* Tinta Normal */
     }
-
-    /* Iconos en Foco -> Tinta AZUL */
-    /*.card:not(.disabled).focus-visible .icon-vacio-card, 
-    .card:not(.disabled).focus-visible .card-icon-lead, 
-    .card:not(.disabled).focus-visible .icon-obras-card,
-    #card-volver-fija-elemento:focus-visible h3,
-    #card-volver-fija-elemento.focus-visible h3 {
-        background-color: Highlight !important;
-    }*/
 
     /* Iconos Deshabilitados -> Tinta GRIS */
     .card.disabled .icon-vacio-card,

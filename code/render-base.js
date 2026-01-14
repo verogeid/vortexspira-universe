@@ -8,6 +8,9 @@ let _lastWidth = window.innerWidth;
 let _resizeTimer; 
 
 export function renderNavegacion() {
+    // 🔍 Nivel EXTREME para el flujo detallado paso a paso
+    debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 01. START renderNavegacion. FullData:${!!this.STATE.fullData} Hydrating:${this.STATE.isHydrating}`);
+    
     if (!this.STATE.fullData) return;
     if (this.STATE.isHydrating) return;
 
@@ -55,6 +58,7 @@ export function renderNavegacion() {
     this.STATE.itemsPorColumna = isMobile ? 1 : (isDesktop ? data.SWIPER.ELEMENTS_PER_COLUMN_DESKTOP : data.SWIPER.ELEMENTS_PER_COLUMN_TABLET);
 
     if (!this.DOM.track) {
+        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 🛑 ABORT. Track element not found.`);
         this.STATE.isNavigatingBack = false;
         return;
     }
@@ -77,61 +81,80 @@ export function renderNavegacion() {
         itemsDelNivel = [{ id: 'breadcrumb-nav', tipoEspecial: 'breadcrumb-vertical', texto: breadcrumbText }].concat(itemsDelNivel);
     }
 
+    // Usamos el nombre correcto de la función
     const renderHtmlFn = isMobile ? this._generateCardHTML_Mobile : this._generateCardHTML_Carousel;
     this.DOM.track.innerHTML = renderHtmlFn.call(this, itemsDelNivel, this.STATE.itemsPorColumna);
 
     const isReturning = this.STATE.isNavigatingBack;
     
-    // ⭐️ LOGICA MAESTRA DE RESTAURACIÓN DE FOCO (RESIZE) ⭐️
+    // ⭐️ LOGICA MAESTRA DE RESTAURACIÓN DE FOCO (SNAPSHOT BASED) ⭐️
     let shouldFocusTrack = true;
     let explicitExternalFocus = null;
 
-    if (this.STATE.resizeContext) {
-        const ctx = this.STATE.resizeContext;
-        debug.log('render_base', debug.DEBUG_LEVELS.BASIC, `RESIZE: Contexto de foco detectado: ${ctx.type} (ID: ${ctx.id})`);
+    if (this.STATE.resizeSnapshot) {
+        const snap = this.STATE.resizeSnapshot;
+        // 🔍 TRAZA EXTREMA DE DECISIÓN
+        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 02. Processing Snapshot. Type:${snap.type} Value:${snap.value}`);
 
-        if (ctx.type === 'EXTERNAL_KEEP') {
-            // El foco estaba fuera y sigue visible -> No robamos el foco
+        // 1. Intentar encontrar elemento exacto (ID o Selector)
+        let foundEl = null;
+        if (snap.type === 'ID') foundEl = document.getElementById(snap.value);
+        else if (snap.type === 'SELECTOR') foundEl = document.querySelector(snap.value);
+
+        if (foundEl) {
+            debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 03A. Exact Match Found: ${snap.value}. Setting explicitExternalFocus.`);
+            explicitExternalFocus = foundEl;
             shouldFocusTrack = false;
+            this.STATE.currentFocusIndex = -1;
         } 
-        else if (ctx.type === 'RESET_TO_TRACK') {
-            // El foco estaba en un elemento que se ha ocultado -> Volver al inicio del track
-            this.STATE.currentFocusIndex = 0;
-            shouldFocusTrack = true;
-        }
-        else if (ctx.type === 'TRACK_ID') {
-            const targetId = ctx.id;
-            
-            // 1. Buscamos el ID en el nuevo track generado
+        else if (snap.type === 'DATA_ID') {
+            // 2. Si era una tarjeta (data-id), buscarla en el track
+            const targetId = snap.value;
             const rawIndex = itemsDelNivel.findIndex(item => item.id === targetId);
 
             if (rawIndex !== -1) {
-                // Caso: Existe en el track (ej. curso normal, o 'volver-nav' en Mobile)
-                // Calculamos índice lógico ignorando breadcrumbs/rellenos
+                // Está en el track -> Calcular nuevo índice
                 let logicalIndex = 0;
                 for (let i = 0; i < rawIndex; i++) {
                     const it = itemsDelNivel[i];
-                    if (it.tipo !== 'relleno' && it.tipoEspecial !== 'breadcrumb-vertical') {
-                        logicalIndex++;
-                    }
+                    if (it.tipo !== 'relleno' && it.tipoEspecial !== 'breadcrumb-vertical') logicalIndex++;
                 }
                 this.STATE.currentFocusIndex = logicalIndex;
-                shouldFocusTrack = true;
-            } 
-            else {
-                // Caso: No existe en el track (ej. 'volver-nav' al pasar a Desktop)
-                if (targetId === 'volver-nav' && this.DOM.cardVolverFijaElemento) {
-                    explicitExternalFocus = this.DOM.cardVolverFijaElemento;
-                    shouldFocusTrack = false;
+                shouldFocusTrack = true; // Dejamos que _updateFocus haga su trabajo
+                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 03B. Card found in track (Index: ${logicalIndex}).`);
+            } else {
+                // No está en el track -> ¿Era volver-nav?
+                if (targetId === 'volver-nav') {
+                    const volverFijoRef = this.DOM.cardVolverFijaElemento || document.getElementById('card-volver-fija-elemento');
+                    if (volverFijoRef) {
+                        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 03C. 'volver-nav' remapped to fixed button.`);
+                        explicitExternalFocus = volverFijoRef;
+                        shouldFocusTrack = false;
+                        this.STATE.currentFocusIndex = -1;
+                    }
                 } else {
-                    // Fallback por seguridad
+                    debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 03D. ID lost. Resetting to 0.`);
                     this.STATE.currentFocusIndex = 0;
                     shouldFocusTrack = true;
                 }
             }
+        } 
+        else if (snap.type === 'ID' && snap.value === 'card-volver-fija-elemento') {
+             // Caso especial: Era botón fijo y ahora quizás es tarjeta volver-nav
+             const rawIndex = itemsDelNivel.findIndex(item => item.id === 'volver-nav');
+             if (rawIndex !== -1) {
+                 debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 03E. Fixed button remapped to track 'volver-nav'.`);
+                 let logicalIndex = 0;
+                 for (let i = 0; i < rawIndex; i++) {
+                     const it = itemsDelNivel[i];
+                     if (it.tipo !== 'relleno' && it.tipoEspecial !== 'breadcrumb-vertical') logicalIndex++;
+                 }
+                 this.STATE.currentFocusIndex = logicalIndex;
+                 shouldFocusTrack = true;
+             }
         }
-        
-        this.STATE.resizeContext = null; // Limpiamos el contexto
+
+        this.STATE.resizeSnapshot = null;
 
     } else if (!isReturning) {
         this.STATE.currentFocusIndex = 0; 
@@ -156,32 +179,23 @@ export function renderNavegacion() {
         }
     }
 
-    // ⭐️ CÁLCULO DE INITIAL SLIDE PARA VISIBILIDAD ⭐️
     let initialSlideIndex = 0;
+    const safeFocusIndex = Math.max(0, this.STATE.currentFocusIndex);
 
     if (isMobile) {
-        // En Mobile, buscamos físicamente en qué slide está la tarjeta enfocada.
-        // data-pos es tu índice lógico, pero el slide puede ser distinto (por breadcrumbs, etc.)
         const track = this.DOM.track;
         if (track) {
-            // Buscamos la tarjeta que tiene el foco asignado
-            const targetCard = track.querySelector(`.card[data-pos="${this.STATE.currentFocusIndex}"]`);
-            
+            const targetCard = track.querySelector(`.card[data-pos="${safeFocusIndex}"]`);
             if (targetCard) {
-                // Buscamos su contenedor swiper-slide directo
                 const targetSlide = targetCard.closest('.swiper-slide');
-                
                 if (targetSlide) {
-                    // Calculamos su índice visual real entre todos los slides
-                    // Convertimos a Array para usar indexOf
                     const allSlides = Array.from(track.children);
                     initialSlideIndex = allSlides.indexOf(targetSlide);
                 }
             }
         }
     } else {
-        // En Desktop/Tablet es cálculo matemático de rejilla
-        initialSlideIndex = Math.floor(this.STATE.currentFocusIndex / this.STATE.itemsPorColumna);
+        initialSlideIndex = Math.floor(safeFocusIndex / this.STATE.itemsPorColumna) + 1;
     }
     
     try {
@@ -195,27 +209,149 @@ export function renderNavegacion() {
                 this.STATE.isNavigatingBack = false;
                 this.STATE.isHydrating = false;
 
-                // ⭐️ APLICACIÓN FINAL DEL FOCO ⭐️
+                // Limpieza preventiva
+                const volverFijoRef = this.DOM.cardVolverFijaElemento || document.getElementById('card-volver-fija-elemento');
+                if (volverFijoRef) volverFijoRef.classList.remove('focus-visible');
+
+                // 🔍 TRAZA FINAL
+                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 04. Finally Block. Explicit: ${!!explicitExternalFocus}, Track: ${shouldFocusTrack}`);
+
                 if (explicitExternalFocus) {
-                     // Caso especial: De track móvil a botón fijo desktop
-                     explicitExternalFocus.focus();
+                     debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESTORE-DEBUG] 05. Scheduling external focus for ${explicitExternalFocus.id}`);
+                     
+                     // ⭐️ FUNCIÓN DE RESTAURACIÓN ROBUSTA ⭐️
+                     const performRestoration = () => {
+                        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESTORE-DEBUG] 07. performRestoration EXECUTING.`);
+                        explicitExternalFocus.focus();
+                        explicitExternalFocus.classList.add('focus-visible');
+                        
+                        explicitExternalFocus.addEventListener('blur', function cleanup() {
+                            explicitExternalFocus.classList.remove('focus-visible');
+                            explicitExternalFocus.removeEventListener('blur', cleanup);
+                        }, { once: true });
+                     };
+
+                     // Primer intento
+                     setTimeout(() => {
+                        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESTORE-DEBUG] 06. Timeout 50ms triggered.`);
+                        performRestoration();
+
+                        // 🛡️ RE-CHECK (50ms después) 🛡️
+                        setTimeout(() => {
+                            const isFocused = document.activeElement === explicitExternalFocus;
+                            const hasClass = explicitExternalFocus.classList.contains('focus-visible');
+                            
+                            debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESTORE-DEBUG] 08. Re-Check: IsFocused=${isFocused}, HasClass=${hasClass}`);
+
+                            if (!isFocused || !hasClass) {
+                                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESTORE-DEBUG] 09. Restoration Failed. Retrying...`);
+                                performRestoration();
+                            }
+                        }, 50);
+                     }, 50);
+
                 } else if (shouldFocusTrack) {
-                     // Caso normal: Foco dentro del carrusel
-                     this._updateFocus(isReturning);
+                     debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESTORE-DEBUG] 05-Track. Scheduling track restoration.`);
+                     setTimeout(() => {
+                        this._updateFocus(isReturning);
+                     }, 50);
                 }
-                // Si es EXTERNAL_KEEP, no hacemos nada y el navegador mantiene el foco.
                 
-                debug.log('render_base', debug.DEBUG_LEVELS.BASIC, `RENDER: Ciclo de Navegación completado.`);
+                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 10. renderNavegacion END.`);
             }
         });
     } catch (e) {
         this.STATE.isNavigatingBack = false;
         this.STATE.isHydrating = false;
+        debug.logError('render_base', '[RENDER-FLOW] Exception in rAF', e);
     }
 
     _updateNavViews.call(this, !!currentLevelState.levelId, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual); 
 }
 
+function _getUniqueSelector(el) {
+    if (!el || el === document.body || el === document.documentElement) return null;
+    
+    if (el.id) return { type: 'ID', value: el.id };
+    if (el.dataset.id) return { type: 'DATA_ID', value: el.dataset.id };
+    
+    let selector = el.tagName.toLowerCase();
+    if (el.getAttribute('role')) selector += `[role="${el.getAttribute('role')}"]`;
+    if (el.getAttribute('aria-label')) selector += `[aria-label="${el.getAttribute('aria-label')}"]`;
+    
+    if (el.className && typeof el.className === 'string') {
+        const classes = el.className.split(' ').filter(c => c !== 'focus-visible' && c !== 'active');
+        if (classes.length > 0) selector += `.${classes[0]}`;
+    }
+    
+    return { type: 'SELECTOR', value: selector };
+}
+
+export function _setupResizeObserver() {
+    // ⭐️ 1. LISTENER DE FOCO GLOBAL (Para tener histórico)
+    document.addEventListener('focusin', (e) => {
+        if (e.target && e.target !== document.body) {
+            this.STATE.lastFocusedElement = e.target;
+            debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `🔍 [FOCUS-TRACKER] Captured: ${e.target.tagName}#${e.target.id}`);
+        }
+    }, { passive: true });
+
+    this.STATE.resizeObserver = new ResizeObserver(() => {
+        const newWidth = window.innerWidth;
+        const getMode = (w) => w <= data.MAX_WIDTH.MOBILE ? 'mobile' : (w <= data.MAX_WIDTH.TABLET_LANDSCAPE ? 'tablet' : 'desktop');
+        const newMode = getMode(newWidth);
+
+        const modeChanged = newMode !== _lastMode;
+        const tabletThresholdCrossed = (newWidth > data.MAX_WIDTH.TABLET_PORTRAIT && _lastWidth <= data.MAX_WIDTH.TABLET_PORTRAIT) ||
+                                       (newWidth <= data.MAX_WIDTH.TABLET_PORTRAIT && _lastWidth > data.MAX_WIDTH.TABLET_PORTRAIT);
+
+        // 🔍 TRAZA EXTREMA: Tick del Observer
+        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[OBSERVER-TICK] Width:${newWidth} Mode:${newMode} Changed:${modeChanged} Crossed:${tabletThresholdCrossed}`);
+
+        document.body.classList.add('resize-animation-stopper');
+        clearTimeout(_resizeTimer);
+        _resizeTimer = setTimeout(() => {
+            document.body.classList.remove('resize-animation-stopper');
+        }, 400);
+
+        if ((modeChanged || tabletThresholdCrossed) && this.STATE.initialRenderComplete) {
+            debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESIZE-LOGIC] Condition Met. Starting logic.`);
+            _lastMode = newMode;
+            _lastWidth = newWidth;
+            
+            const isInDetails = !!this.STATE.activeCourseId;
+
+            if (isInDetails) {
+                 debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESIZE-LOGIC] In Details. Refreshing.`);
+                 this._mostrarDetalle(this.STATE.activeCourseId);
+            } else {
+                 // ⭐️ SNAPSHOT BASADO EN HISTÓRICO ⭐️
+                 let activeElement = document.activeElement;
+                 debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESIZE-LOGIC] ActiveEl: ${activeElement ? activeElement.tagName : 'null'}. LastFocused: ${this.STATE.lastFocusedElement ? this.STATE.lastFocusedElement.id : 'null'}`);
+                 
+                 if (!activeElement || activeElement === document.body || activeElement === document.documentElement) {
+                     if (this.STATE.lastFocusedElement) {
+                         debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESIZE-LOGIC] Focus lost. Using History: ${this.STATE.lastFocusedElement.id}`);
+                         activeElement = this.STATE.lastFocusedElement;
+                     } else {
+                         debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESIZE-LOGIC] Focus lost & No history. Fallback to track.`);
+                         if (this.DOM.track) {
+                             activeElement = this.DOM.track.querySelector(`.card[data-pos="${this.STATE.currentFocusIndex}"]`);
+                         }
+                     }
+                 }
+
+                 this.STATE.resizeSnapshot = _getUniqueSelector(activeElement);
+                 debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESIZE-LOGIC] Snapshot Created:`, this.STATE.resizeSnapshot);
+                 
+                 this.renderNavegacion(); 
+            }
+        }
+    });
+    this.STATE.resizeObserver.observe(document.body);
+};
+
+// ⭐️ MANTENEMOS EL NOMBRE CORRECTO QUE USA APP.JS
 export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tipoEspecialArg = null) {
     const tipoEspecial = tipoEspecialArg || nodo.tipoEspecial;
     if (esRelleno) return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1" aria-hidden="true"></article>`;
@@ -277,76 +413,4 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
         }
     }
 };
-
-export function _setupResizeObserver() {
-    this.STATE.resizeObserver = new ResizeObserver(() => {
-        const newWidth = window.innerWidth;
-        const getMode = (w) => w <= data.MAX_WIDTH.MOBILE ? 'mobile' : (w <= data.MAX_WIDTH.TABLET_LANDSCAPE ? 'tablet' : 'desktop');
-        const newMode = getMode(newWidth);
-
-        const modeChanged = newMode !== _lastMode;
-        const tabletThresholdCrossed = (newWidth > data.MAX_WIDTH.TABLET_PORTRAIT && _lastWidth <= data.MAX_WIDTH.TABLET_PORTRAIT) ||
-                                       (newWidth <= data.MAX_WIDTH.TABLET_PORTRAIT && _lastWidth > data.MAX_WIDTH.TABLET_PORTRAIT);
-
-        document.body.classList.add('resize-animation-stopper');
-        clearTimeout(_resizeTimer);
-        _resizeTimer = setTimeout(() => {
-            document.body.classList.remove('resize-animation-stopper');
-        }, 400);
-
-        if ((modeChanged || tabletThresholdCrossed) && this.STATE.initialRenderComplete) {
-            debug.log('render_base', debug.DEBUG_LEVELS.BASIC, `DEBUG_RESIZE: Cambio de modo/umbral detectado. Modo: ${newMode}`);
-            _lastMode = newMode;
-            _lastWidth = newWidth;
-            
-            const isInDetails = !!this.STATE.activeCourseId;
-
-            if (isInDetails) {
-                 debug.log('render_base', debug.DEBUG_LEVELS.BASIC, `DEBUG_RESIZE: En detalles. Reajustando vista...`);
-                 this._mostrarDetalle(this.STATE.activeCourseId);
-            } else {
-                 // ⭐️ CAPTURA DE CONTEXTO DE FOCO ⭐️
-                 let resizeContext = { type: 'RESET_TO_TRACK' }; 
-                 const active = document.activeElement;
-
-                 // Detectar dónde estamos
-                 const isInfo = active.closest('#info-adicional');
-                 const isTrack = active.closest('.card[data-id]'); // Tarjeta del track
-                 const isVolverFijo = active.closest('#card-volver-fija-elemento');
-                 
-                 // Predecir visibilidad futura
-                 const infoWillBeHidden = newWidth <= data.MAX_WIDTH.TABLET_PORTRAIT;
-
-                 if (isInfo) {
-                     // Si estamos en Info y se va a ocultar -> Forzar vuelta al Track
-                     if (infoWillBeHidden) resizeContext = { type: 'RESET_TO_TRACK' };
-                     // Si estamos en Info y seguirá visible -> Dejar quieto
-                     else resizeContext = { type: 'EXTERNAL_KEEP' };
-                 } 
-                 else if (isTrack && active.dataset.id) {
-                     // Estamos en una tarjeta -> Intentar mantener la misma ID
-                     resizeContext = { type: 'TRACK_ID', id: active.dataset.id };
-                 } 
-                 else if (isVolverFijo) {
-                     // Estamos en botón fijo -> Mantener ID 'volver-nav' (se mapeará a track o botón según corresponda)
-                     resizeContext = { type: 'TRACK_ID', id: 'volver-nav' };
-                 } 
-                 else if (active === document.body) {
-                     // Foco perdido -> Reset
-                     resizeContext = { type: 'RESET_TO_TRACK' };
-                 } 
-                 else {
-                     // Otros elementos externos (Header, Footer, etc.)
-                     // Asumimos que persisten y no se ocultan por CSS en estos breakpoints críticos
-                     resizeContext = { type: 'EXTERNAL_KEEP' };
-                 }
-
-                 this.STATE.resizeContext = resizeContext;
-                 this.renderNavegacion(); 
-            }
-        }
-    });
-    this.STATE.resizeObserver.observe(document.body);
-};
-
 /* --- code/render-base.js --- */

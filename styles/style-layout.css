@@ -86,7 +86,48 @@ header h1 svg {
     vertical-align: middle;
 }
 
-header h1 a:hover svg {
+/* ⭐️ NUEVO: Logo con DOBLE CAPA (Static + Dynamic) ⭐️ */
+.header-logo {
+    display: inline-block;
+    width: clamp(3rem, 5vmin, 5rem);
+    height: clamp(3rem, 5vmin, 5rem);
+    position: relative; /* Contenedor de las capas */
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+/* Capa 1: Parte ESTÁTICA (Gris #999 fijo) */
+.header-logo::before {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    
+    background-color: #999; /* 🛑 COLOR FIJO (PRIMARY) */
+    
+    -webkit-mask-image: var(--logo-base-static);
+    mask-image: var(--logo-base-static);
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center; mask-position: center;
+    -webkit-mask-size: contain; mask-size: contain;
+}
+
+/* Capa 2: Parte DINÁMICA (Variable según tema/hover) */
+.header-logo::after {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    
+    background-color: var(--color-icon-obras); /* 🎨 COLOR VARIABLE (SECONDARY) */
+    
+    -webkit-mask-image: var(--logo-base-dynamic);
+    mask-image: var(--logo-base-dynamic);
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center; mask-position: center;
+    -webkit-mask-size: contain; mask-size: contain;
+}
+
+/* Efectos Hover/Focus: Cambia SOLO la parte dinámica a Azul */
+header h1 a:hover .header-logo::after,
+header h1 a:focus-visible .header-logo::after {
+    background-color: var(--color-primary); 
     filter: drop-shadow(0 0 6px var(--color-shadow-primary));
 }
 
@@ -98,6 +139,7 @@ header h1 a:hover svg #XMLID_150_ {
 header h1 a:focus-visible svg {
     filter: drop-shadow(0 0 5px var(--color-primary));
 }
+
 
 .icon-obras-header {
     display: inline-block;
@@ -204,6 +246,10 @@ header h1 a:focus-visible svg {
     #main-header-title small {
         display: none !important;
     }
+
+    span.footer-author-text {
+        display: none !important;
+    }
 }
 
 @media (min-width: 800px) {
@@ -234,6 +280,10 @@ header h1 a:focus-visible svg {
         white-space: normal; 
         text-overflow: initial;
         overflow: initial;
+    }
+
+    span.footer-author-text {
+        display: solid !important;
     }
 }
 

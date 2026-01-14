@@ -14,6 +14,7 @@
 @import url('style-details.css');
 @import url('style-footer.css');
 @import url('style-components.css');
+@import url('style-a11y.css');
 
 /* 4. Reglas Específicas por Dispositivo (Carruseles) */
 @import url('style-desktop.css');

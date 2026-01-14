@@ -8,7 +8,8 @@ export const DEBUG_LEVELS = {
     DISABLED: 0,  // No se muestra nada
     BASIC: 1,     // Muestra logs de eventos principales
     DEEP: 2,      // Muestra logs detallados (para depuración intensa)
-    TELEMETRY: 3 // Para mensajes que se enviarían a un servidor en producción
+    EXTREME: 3,   // Muestra losgs detallados (para depuración granular)
+    TELEMETRY: 4  // Para mensajes que se enviarían a un servidor en producción
 };
 
 export const DEBUG_CONFIG = {
@@ -20,7 +21,7 @@ export const DEBUG_CONFIG = {
     app: DEBUG_LEVELS.DISABLED,
     data: DEBUG_LEVELS.DISABLED,
     i18n: DEBUG_LEVELS.DISABLED,
-    nav_stack: DEBUG_LEVELS.DEEP,
+    nav_stack: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Detalle
     nav_base: DEBUG_LEVELS.DEEP,
@@ -29,16 +30,31 @@ export const DEBUG_CONFIG = {
     // Módulos de Teclado
     nav_keyboard_base: DEBUG_LEVELS.DEEP, // ⭐️ DEEP: Para ver el listener keydown global ⭐️
     nav_keyboard_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para la lógica de cursor en detalle ⭐️
-    nav_keyboard_swipe: DEBUG_LEVELS.DEEP,
+    nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Mouse
     nav_mouse_details: DEBUG_LEVELS.DISABLED, // Excluir rueda de ratón en detalle
-    nav_mouse_swipe: DEBUG_LEVELS.DEEP,   // Excluir arrastre en menús
+    nav_mouse_swipe: DEBUG_LEVELS.DISABLED,   // Excluir arrastre en menús
     
-    render_base: DEBUG_LEVELS.DISABLED,
+    render_base: DEBUG_LEVELS.EXTREME,
     render_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para inicialización de Swiper de detalle ⭐️
-    render_swipe: DEBUG_LEVELS.BASIC
+    render_swipe: DEBUG_LEVELS.DISABLED
 };
+
+export function logDebugLevels() {
+    logGroupCollapsed('global', DEBUG_LEVELS.BASIC, 'Configured DEBUG levels:');
+
+    for (const idKey in DEBUG_CONFIG) {
+        const numericValue = DEBUG_CONFIG[idKey];
+
+        // ⭐️ BÚSQUEDA INVERSA: Buscamos la etiqueta (ej: 'BASIC') que coincida con el valor (1)
+        const stringLabel = Object.keys(DEBUG_LEVELS).find(key => DEBUG_LEVELS[key] === numericValue) || numericValue;
+        
+        log('global', DEBUG_LEVELS.BASIC, `${idKey} : ${stringLabel}`);
+    }
+
+    logGroupEnd('global', DEBUG_LEVELS.BASIC);
+}
 
 export function logClear() {
     if (CLEAR_CONSOLE_ON_START) {

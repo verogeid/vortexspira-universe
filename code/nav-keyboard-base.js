@@ -9,7 +9,6 @@ import * as nav_keyboard_swipe from './nav-keyboard-swipe.js';
 export function initKeyboardControls() {
     debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 'Inicializando controles de teclado (CAPTURE Mode)');
 
-    /* Listener para limpiar el Ghost cuando el foco se va fuera del track */
     document.addEventListener('focusin', (e) => {
         const app = this;
         if (!app.DOM.track) return;
@@ -20,22 +19,89 @@ export function initKeyboardControls() {
     });
 
     // ⭐️ LISTENER PRINCIPAL EN FASE DE CAPTURA ⭐️
-    // Interceptamos antes de que llegue a los hijos (Swiper)
     document.addEventListener('keydown', (e) => {
         const app = this; 
+
+        // ============================================================
+        // 🛑 TRAMPA DE FOCO Y NAVEGACIÓN MODAL A11Y 🛑
+        // ============================================================
+        const modalOverlay = document.getElementById('a11y-modal-overlay');
+        const isModalOpen = modalOverlay && modalOverlay.classList.contains('active');
+
+        if (isModalOpen) {
+            // 1. CERRAR
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                e.stopPropagation();
+                const closeBtn = document.getElementById('a11y-close');
+                if (closeBtn) closeBtn.click();
+                return;
+            }
+
+            // 2. NAVEGACIÓN INTERNA (Tab + Flechas)
+            const isTab = e.key === 'Tab';
+            const isArrow = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key);
+
+            if (isTab || isArrow) {
+                const focusables = Array.from(modalOverlay.querySelectorAll('button, input, [href], [tabindex]:not([tabindex="-1"])'));
+                if (focusables.length === 0) return;
+
+                const first = focusables[0];
+                const last = focusables[focusables.length - 1];
+                const current = document.activeElement;
+                const currentIndex = focusables.indexOf(current);
+
+                // EXCEPCIÓN SLIDER: Si estamos en un range, Izq/Der ajustan valor, no foco.
+                if (current.type === 'range' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+                    // Dejamos pasar el evento al input nativo
+                    return; 
+                }
+
+                e.preventDefault(); // Bloqueamos scroll o tab por defecto
+                e.stopPropagation();
+
+                let nextIndex;
+
+                if (e.shiftKey && isTab) { 
+                    // Shift + Tab -> Atrás
+                    nextIndex = currentIndex <= 0 ? focusables.length - 1 : currentIndex - 1;
+                } else if (isTab) { 
+                    // Tab -> Adelante
+                    nextIndex = currentIndex >= focusables.length - 1 ? 0 : currentIndex + 1;
+                } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                    // Flechas Atrás
+                    nextIndex = currentIndex <= 0 ? focusables.length - 1 : currentIndex - 1;
+                } else {
+                    // Flechas Adelante (Down/Right)
+                    nextIndex = currentIndex >= focusables.length - 1 ? 0 : currentIndex + 1;
+                }
+
+                focusables[nextIndex].focus();
+            }
+
+            // Bloqueamos cualquier otra tecla para que no afecte a la app de fondo
+            if (e.key !== 'F5' && e.key !== 'F12') { 
+                e.stopPropagation();
+            }
+            return; 
+        }
+        // ============================================================
+        // 🏁 FIN TRAMPA DE FOCO 🏁
+        // ============================================================
+
+
         if (!app?.DOM?.vistaNav) return; 
 
         const isNavActive = app.DOM.vistaNav.classList.contains('active');
         const isDetailActive = app.DOM.vistaDetalle.classList.contains('active');
         const focused = document.activeElement;
 
-        // Log para ver quién recibe la tecla
         debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Key: ${e.key} | Target: ${e.target.tagName}`);
 
         // 1. ESCAPE
         if (e.key === 'Escape') {
             e.preventDefault();
-            e.stopPropagation(); // Stop bubbling
+            e.stopPropagation(); 
             app._handleVolverClick?.(); 
             return;
         }
@@ -49,13 +115,13 @@ export function initKeyboardControls() {
         }
 
         // 3. ENTER / SPACE
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (e.key === 'Enter' || e.key === ' ' || e.code === 'Space') {
             const isInSwipe = focused.closest('#track-desktop, #track-tablet, #track-mobile');
             const isInDetail = focused.closest('#detalle-track-desktop, #detalle-track-mobile');
 
             if (isInSwipe || isInDetail) {
                 e.preventDefault();
-                e.stopPropagation(); // Bloqueamos para que Swiper no haga clic o slide
+                e.stopPropagation(); 
                 
                 app.STATE.keyboardNavInProgress = true;
                 if (isNavActive) nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
@@ -63,16 +129,16 @@ export function initKeyboardControls() {
                 app.STATE.keyboardNavInProgress = false;
                 return;
             }
+            
+            _handleActionKeys(e); 
         }
 
-        // 4. CURSORES (FLECHAS)
+        // 4. CURSORES (FLECHAS) - Navegación Principal
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
             const isInCentralTrack = focused.closest('#track-desktop, #track-tablet, #track-mobile, #detalle-track-desktop, #detalle-track-mobile');
 
             if (isInCentralTrack) {
                 debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Flecha interceptada en track central. Bloqueando propagación.`);
-                
-                // ⭐️ EL MURO: Detenemos todo para que Swiper no reciba la tecla ⭐️
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
@@ -83,14 +149,12 @@ export function initKeyboardControls() {
                 
                 setTimeout(() => { app.STATE.keyboardNavInProgress = false; }, 50);
             } else {
-                // Navegación periférica
                 const section = focused.closest('#info-adicional, footer, #app-header, #card-volver-fija, #vista-volver');
                 if (section) {
                     e.preventDefault();
                     _handleLocalSectionNavigation(e.key, section);
                     if (isDetailActive) nav_base_details._clearDetailVisualStates(app);
                 } else if (document.activeElement === document.body) {
-                    // Rescate
                     e.preventDefault();
                     app.STATE.keyboardNavInProgress = true;
                     if (isNavActive) nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
@@ -99,10 +163,31 @@ export function initKeyboardControls() {
                 }
             }
         }
-    }, { capture: true }); // <--- IMPORTANTE: capture: true
+    }, { capture: true }); 
     
     _setupInfoAccordion.call(this);
     _setupWheelListener.call(this);
+}
+
+export function _handleActionKeys(e) {
+    const el = document.activeElement;
+    if (!el || el === document.body) return;
+
+    const isSpace = (e.key === ' ' || e.code === 'Space');
+    const isEnter = (e.key === 'Enter' || e.code === 'Enter');
+
+    if (isSpace || isEnter) {
+        const tagName = el.tagName;
+        if (tagName === 'BUTTON' || tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT') return;
+
+        const role = el.getAttribute('role');
+        const isInteractive = role === 'button' || role === 'link' || tagName === 'A' || el.classList.contains('card');
+
+        if (isInteractive) {
+            if (isSpace) e.preventDefault(); 
+            el.click();
+        }
+    }
 }
 
 function _handleLocalSectionNavigation(key, container) {
@@ -132,7 +217,6 @@ function _setupInfoAccordion() {
 }
 
 function _setupWheelListener() {
-    // ⭐️ WHEEL también en modo CAPTURE ⭐️
     this.DOM.appContainer?.addEventListener('wheel', _handleGlobalWheel.bind(this), { passive: false, capture: true });
 }
 
@@ -148,8 +232,6 @@ function _handleGlobalWheel(e) {
 
     if (e.deltaY !== 0) {
         debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Wheel: ${e.deltaY}. Bloqueando propagación.`);
-        
-        // Bloqueo total del evento de rueda
         e.preventDefault(); 
         e.stopPropagation();
         e.stopImmediatePropagation();
@@ -184,7 +266,7 @@ export function _handleFocusTrap(e, viewType) {
         },
         info: () => Array.from(app.DOM.infoAdicional?.querySelectorAll('summary, a') || []).filter(isVisible),
         footer: () => Array.from(document.querySelectorAll('footer a')).filter(isVisible),
-        header: () => [app.DOM.btnA11y].filter(isVisible),
+        header: () => Array.from(app.DOM.header.querySelectorAll('a, button')).filter(isVisible),
         volver: () => {
             if (isMobile && viewType === 'detail') return [app.DOM.detalleTrack.querySelector('.card-volver-vertical')].filter(isVisible);
             return [app.DOM.cardVolverFijaElemento].filter(isVisible);

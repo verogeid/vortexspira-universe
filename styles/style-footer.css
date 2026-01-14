@@ -11,7 +11,6 @@ footer {
     align-items: center; 
     flex-wrap: wrap; 
     height: var(--footer-height); box-sizing: border-box; 
-    /* ⭐️ A11Y FIX: calc(rem + vw) */
     font-size: clamp(0.8rem, 0.6rem + 1vw, 1.2rem);
 }
 
@@ -21,6 +20,7 @@ footer small {
     height: 100%; 
 }
 
+/* Estilos Genéricos para Enlaces */
 footer a { 
     color: var(--color-footer-text); text-decoration: none; 
     transition: all 0.2s ease; display: inline-block; padding: 0.2rem 0.5rem;
@@ -28,32 +28,30 @@ footer a {
 }
 footer a:focus { outline: none; }
 
+/* Efecto Hover Genérico (Aplica borde y sombra a todos) */
 footer a:hover, footer a:focus-visible {
-    border-color: var(--color-primary); background: var(--color-card-bg);
-    transform: scale(1.03); box-shadow: 0 0 25px var(--color-shadow-primary);
+    border-color: var(--color-primary); 
+    background: var(--color-card-bg); /* Fondo por defecto (se quitará en la licencia) */
+    transform: scale(1.03); 
+    box-shadow: 0 0 25px var(--color-shadow-primary);
     color: var(--color-primary); 
 }
 
 .footer-license-link img { height: clamp(16px, 2.5vw, 32px); width: auto; vertical-align: middle; }
 
-/* ICONOS SVG */
+/* ⭐️ AJUSTE LICENCIA: Sin padding y sin fondo, pero MANTENIENDO borde y sombra ⭐️ */
+footer a.footer-license-link {
+    padding: 0; /* Quitamos el padding para que el borde abrace la imagen */
+}
+
+footer a.footer-license-link:hover, 
+footer a.footer-license-link:focus-visible {
+    background: transparent !important; /* 🛑 Solo eliminamos el fondo */
+    /* Borde, Sombra y Transform se heredan de la regla genérica de arriba */
+}
+
+/* Limpieza de estilos antiguos de iconos (ya movidos a style-layout.css) */
 .footer-social-link { font-size: 0; }
-.footer-social-link::before {
-    content: ''; display: inline-block; width: 16px; height: 16px;
-    transition: background-color 0.2s ease;
-    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-    -webkit-mask-position: center; mask-position: center;
-    -webkit-mask-size: contain; mask-size: contain;
-}
-.footer-social-link::before {
-    background-color: var(--color-footer-text);
-    -webkit-mask-image: var(--icon-social-linkedin);
-    mask-image: var(--icon-social-linkedin);
-}
-footer a.footer-social-link:focus-visible::before, 
-footer a.footer-social-link:hover::before {
-    background-color: var(--color-primary);
-}
 
 @media (max-width: 600px) {
     footer { 

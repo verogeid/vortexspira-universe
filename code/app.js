@@ -3,6 +3,7 @@
 import * as debug from './debug.js';
 import * as data from './data.js';
 import * as i18n from './i18n.js';
+import * as a11y from './a11y.js';
 import * as nav_stack from './nav-stack.js';
 import * as nav_base from './nav-base.js';
 import * as nav_base_details from './nav-base-details.js'; 
@@ -29,7 +30,7 @@ class VortexSpiraApp {
             keyboardNavInProgress: false,
             activeCourseId: null, 
             lastDetailFocusIndex: 0, 
-            isNavigatingBack: false, // Bloqueo para evitar repeticiones en el "Volver"
+            isNavigatingBack: false, 
         };
         window.App = this; 
         
@@ -60,6 +61,8 @@ class VortexSpiraApp {
 
     async init() {
         debug.logClear();
+        debug.logDebugLevels();
+        
         debug._setupGlobalClickListener();
         debug._setupFocusTracker();
         debug._setupFocusMethodInterceptor();
@@ -67,16 +70,57 @@ class VortexSpiraApp {
         debug._watchFlag(this.STATE, 'keyboardNavInProgress');
         debug._watchFlag(this.STATE, 'isNavigatingBack');
 
+        a11y.initA11y();
+
         this._cacheDOM();
         
         this.DOM.vistaNav = this.DOM.vistaNav || document.getElementById('vista-navegacion-desktop'); 
 
+        // 1. DETECTAR IDIOMA
+        let targetLang = i18n.detectBrowserLanguage(); 
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, `Idioma detectado: ${targetLang}`);
+
+        // 2. INTENTAR CARGAR TEXTOS Y DATOS EN PARALELO
+        let loadSuccess = false;
+
         try {
-            this.STATE.fullData = await data.loadData(); 
-        } catch (error) {
-            debug.logError('app', "ERROR: Carga de datos fallida. " + error.message);
-            return;
+            // Intentamos cargar strings y cursos del idioma detectado
+            const [stringsLoaded, coursesData] = await Promise.all([
+                i18n.loadStrings(targetLang),
+                data.loadData(targetLang)
+            ]);
+
+            if (stringsLoaded && coursesData) {
+                this.STATE.fullData = coursesData;
+                loadSuccess = true;
+            } else {
+                throw new Error("Carga parcial fallida");
+            }
+
+        } catch (e) {
+            debug.logWarn('app', `Fallo cargando idioma '${targetLang}'. Reintentando con 'es' (Default).`, e);
+            
+            // 3. FALLBACK A ESPAÑOL
+            if (targetLang !== 'es') {
+                try {
+                    await i18n.loadStrings('es');
+                    this.STATE.fullData = await data.loadData('es');
+                    targetLang = 'es'; 
+                    loadSuccess = true;
+                } catch (errFatal) {
+                    debug.logError('app', "CRITICAL: No se pudo cargar ni el idioma detectado ni el español.", errFatal);
+                    return; 
+                }
+            }
         }
+
+        if (!loadSuccess) return;
+
+        // 4. APLICAR TEXTOS Y RENDERIZAR
+        this.applyStrings(); 
+        
+        if (data.injectHeaderLogo) data.injectHeaderLogo(this);
+        if (data.injectFooterContent) data.injectFooterContent(this);
 
         const urlParams = new URLSearchParams(window.location.search);
         const targetId = urlParams.get('id');
@@ -106,8 +150,6 @@ class VortexSpiraApp {
         this.STATE.initialRenderComplete = true; 
         debug.log('app', debug.DEBUG_LEVELS.BASIC, "Carga inicial completada.");
 
-        // ⭐️ FIX FLASH/CLS: Revelamos la app suavemente una vez renderizada ⭐️
-        // Usamos doble RAF + Timeout para asegurar que el DOM y Swiper se han pintado
         requestAnimationFrame(() => {
             setTimeout(() => {
                 document.body.classList.add('app-loaded');
@@ -144,17 +186,14 @@ class VortexSpiraApp {
         const isMobile = width <= data.MAX_WIDTH.MOBILE;
         const isDesktop = width >= data.MAX_WIDTH.TABLET_LANDSCAPE;
         
-        // Logs de depuración para confirmar el refresco
         debug.log('app', debug.DEBUG_LEVELS.BASIC, `DEBUG_DOM: Refrescando caché. Ancho: ${width}`);
 
         this.DOM.vistaDetalleDesktop = document.getElementById('vista-detalle-desktop');
         this.DOM.vistaDetalleMobile = document.getElementById('vista-detalle-mobile');
         
-        // ⭐️ CLAVE: La referencia 'vistaDetalle' debe cambiar según el modo ⭐️
         this.DOM.vistaDetalle = isMobile ? this.DOM.vistaDetalleMobile : this.DOM.vistaDetalleDesktop;
         this.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop');
         
-        // Referencias fijas
         this.DOM.header = document.getElementById('app-header');
         this.DOM.btnA11y = document.getElementById('btn-config-accesibilidad');
         this.DOM.cardVolverFija = document.getElementById('vista-volver');
@@ -162,8 +201,8 @@ class VortexSpiraApp {
         this.DOM.infoAdicional = document.getElementById('info-adicional');
         this.DOM.cardNivelActual = document.getElementById('card-nivel-actual');
         this.DOM.appContainer = document.getElementById('app-container');
+        this.DOM.toast = document.getElementById('toast-notification'); 
 
-        // ⭐️ CLAVE: Actualizar a qué track y vistaNav apuntamos ⭐️
         if (isMobile) {
             this.DOM.vistaNav = document.getElementById('vista-navegacion-mobile');
             this.DOM.track = document.getElementById('track-mobile');

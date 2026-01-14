@@ -31,7 +31,7 @@
             {
               "id": "c-cfwp",
               "titulo": "Arquitecto Web",
-              "descripcion": "Acabo de salir del Kick-off del nuevo e-commerce y tú eres mi refuerzo. Olvida los tutoriales de 'Hola Mundo'; aquí trabajamos con metodología Shift Left. No vamos a tirar líneas de código, vamos a construir un edificio.<br><ul><li>Sprint 1 (HTML5): Los cimientos semánticos y accesibles. Sin esto, el proyecto se hunde.</li><li>Sprint 2 (CSS3): La fachada, el diseño responsivo y la identidad visual.</li><li>Sprint 3 (JavaScript): La maquinaria interna, la lógica y la interactividad.</li></ul>Al terminar, no solo tendrás una app; tendrás la mentalidad para levantar cualquier proyecto web desde cero sin deuda técnica.",
+              "descripcion": "Acabo de salir del Kick-off del nuevo e-commerce y tú eres mi refuerzo. Olvida los tutoriales de 'Hola Mundo'; aquí trabajamos con metodología Shift Left. No vamos a tirar líneas de código, vamos a construir un edificio.<br><ul><li>Sprint 1 (HTML5): Los cimientos semánticos y accesibles. Sin esto, el proyecto se hunde.</li></ul><ul><li>Sprint 2 (CSS3): La fachada, el diseño responsivo y la identidad visual.</li></ul><ul><li>Sprint 3 (JavaScript): La maquinaria interna, la lógica y la interactividad.</li></ul>Al terminar, no solo tendrás una app; tendrás la mentalidad para levantar cualquier proyecto web desde cero sin deuda técnica.",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#a", "type": "d" },
                 { "texto": "Adquirir Módulo HTML5", "url": "#a", "type": "c" },

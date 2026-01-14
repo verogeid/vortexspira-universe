@@ -1,0 +1,22 @@
+{
+    "version": "1.0.01",
+    "pageTitle": "VortexSpira® Universe: Selector de Cursos",
+    "headerTitle": "VortexSpira® Universe",
+    "headerSubtitle": "Audio-Aprendizaje Técnico Inmersivo",
+    "ariaSelfUrl": "URL de VortexSpira",
+    "ariaNavRegion": "Navegación principal de cursos",
+    "ariaBackLevel": "Volver al nivel anterior",
+    "ariaLicense": "Descripción de la licencia CC BY-NC-ND 4.0",
+    "ariaLinkedIn": "Perfil de LinkedIn de Diego González Fernández",
+    "ariaGitHub": "GitHub Dev Diary",
+    "ariaLanding": "Landing Page",
+    "breadcrumbRoot": "Nivel Raíz",
+    "helpTitle": "Ayuda Rápida:",
+    "helpRotate": "<b>Gira</b>: Arrastra, usa la rueda del ratón o las flechas del teclado.",
+    "helpBack": "<b>Vuelve</b>: Pulsa [Esc] o el botón \"↩\".",
+    "aboutLinkLanding": "Hazte Fundador y obten tu 60% OFF",
+    "aboutLinkDiary": "Lee el Dev Diary en GitHub",
+    "footerCopyright": "©2025 VortexSpira®",
+    "footerAuthor": "Desarrollado por <span style=\"white-space: nowrap\">Diego González Fernández</span>",
+    "toastErrorId": "Curso no encontrado. Pruebe a buscarlo manualmente."
+}
