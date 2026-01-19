@@ -55,8 +55,7 @@ function _applyPreferences() {
     if (_prefs.fontType === 'dyslexic') fontVar = 'var(--font-dyslexic)';
     root.style.setProperty('--font-family-base', fontVar);
 
-    // 2. Escala (La clave de todo)
-    // 100% es el tamaño base del sistema del usuario.
+    // 2. Escala
     const scale = _prefs.fontSizePct / 100;
     root.style.setProperty('--font-scale', scale);
 
@@ -65,6 +64,9 @@ function _applyPreferences() {
     root.style.setProperty('--paragraph-spacing', `${_prefs.paragraphSpacing}em`);
 
     _updateModalUI();
+
+    // ⭐️ Disparar evento de resize para que app.js recalcule el layout inmediatamente
+    window.dispatchEvent(new Event('resize'));
 }
 
 /**

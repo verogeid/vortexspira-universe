@@ -247,10 +247,13 @@ function _handleGlobalWheel(e) {
 
 export function _handleFocusTrap(e, viewType) {
     const app = this;
-    const width = window.innerWidth;
-    const isMobile = width <= data.MAX_WIDTH.MOBILE;
-    const isDesktop = width >= data.MAX_WIDTH.TABLET_LANDSCAPE;
-    const isTabletLS = width > data.MAX_WIDTH.TABLET_PORTRAIT && width < data.MAX_WIDTH.TABLET_LANDSCAPE;
+
+    // Usar data-layout en lugar de innerWidth
+    const layout = document.body.getAttribute('data-layout') || 'desktop';
+    const isMobile = layout === 'mobile';
+    const isDesktop = layout === 'desktop';
+    const isTabletLS = layout === 'tablet-landscape';
+
     const isVisible = (el) => el && el.offsetParent !== null;
 
     const sections = {

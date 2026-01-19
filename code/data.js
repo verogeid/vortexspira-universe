@@ -50,7 +50,6 @@ export function createVortexSpiraSVG(primaryColor, accentColor = COLOR.SECONDARY
 
 export async function loadData(lang) {
     try {
-        // ⭐️ Carga dinámica del JSON según el idioma
         const filename = `./data/cursos_${lang}.json`;
         debug.log('data', debug.DEBUG_LEVELS.BASIC, `Cargando datos de cursos: ${filename}`);
         
@@ -59,49 +58,74 @@ export async function loadData(lang) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const jsonData = await response.json();
-        debug.log('data', debug.DEBUG_LEVELS.BASIC, "Datos de cursos cargados con éxito.");
-        return jsonData;
+        // Lógica de filtrado de modos (Producción vs Marketing)
+        const fullJson = await response.json();
+        const urlParams = new URLSearchParams(window.location.search);
+        const mode = urlParams.get('mode');
+
+        let dataSelected;
+        if (mode === 'dev') {
+            debug.log('data', debug.DEBUG_LEVELS.BASIC, '🧪 MODO DEV ACTIVO');
+            dataSelected = fullJson.dev || [];
+        } else {
+            dataSelected = fullJson.prod || [];
+        }
+
+        return { navegacion: dataSelected };
+
     } catch (e) {
-        debug.logError('data', "No se pudo cargar el archivo de cursos.", e);
+        debug.logError('data', "Error crítico cargando cursos.", e);
         throw e;
     }
 }
 
-export function injectHeaderLogo(appInstance) {
-    const FAVICON_SVG_STRING = createVortexSpiraSVG(COLOR.PRIMARY, COLOR.SECONDARY, 'favicon-icon');
-    const FAVICON_SVG_DATA_URI = `data:image/svg+xml,${encodeURIComponent(FAVICON_SVG_STRING)}`;
-
-    const faviconLink = document.createElement('link');
-    faviconLink.rel = 'icon';
-    faviconLink.href = FAVICON_SVG_DATA_URI;
-    faviconLink.type = 'image/svg+xml';
-    document.head.appendChild(faviconLink);
-
+export function injectHeaderContent(appInstance) {
     const header = document.getElementById('app-header');
     const wrapper = document.getElementById('header-content-wrapper');
 
     if (header && wrapper) {
-        const logoSVG = createVortexSpiraSVG(COLOR.PRIMARY, COLOR.SECONDARY, 'header-logo');
         const h1 = header.querySelector('h1');
 
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = `<a href="${URL.WEBPAGE}" target="_self" 
-                aria-label="${appInstance.getString('ariaSelfUrl')}">${logoSVG}</a>`;
-        const svgElement = tempDiv.firstChild;
-
         if (h1) {
-            h1.insertBefore(svgElement, h1.firstChild);
+            debug.log('data', debug.DEBUG_LEVELS.DEEP, 'Insertando enlace en Header');
+
+            // 2. HEADER LOGO: Creamos el enlace y el span con la clase CSS
+            // El CSS .header-logo se encarga de pintar el SVG con máscaras.
+            const logoLink = document.createElement('a');
+            logoLink.href = URL.WEBPAGE;
+            logoLink.target = "_self";
+            logoLink.setAttribute('aria-label', appInstance.getString('ariaSelfUrl'));
+            
+            // Elemento vacío que recibirá el estilo CSS del logo
+            const logoDiv = document.createElement('span');
+            logoDiv.className = 'header-logo'; 
+            
+            logoLink.appendChild(logoDiv);
+
+            // Insertamos al principio del H1 (antes del texto del título)
+            h1.insertBefore(logoLink, h1.firstChild);
+
+            // 3. DEBUG ICON (OBRAS): Solo insertamos el span con la clase
             if (!debug.IS_PRODUCTION) {
+                debug.log('data', debug.DEBUG_LEVELS.DEEP, 'Insertando Icono de Obras');
+
                 const obrasSpan = document.createElement('span');
-                obrasSpan.className = 'icon-obras-header';
+                obrasSpan.className = 'icon-obras-header'; // CSS pinta el icono
                 wrapper.insertBefore(obrasSpan, h1);
             }
         }
 
+        // 4. BOTÓN A11Y: Limpiamos contenido
+        // Como ahora tiene una máscara CSS, no debe tener texto/emoji dentro para no ensuciar.
         const btnA11y = document.getElementById('btn-config-accesibilidad');
         if (btnA11y) {
-            btnA11y.innerHTML = LOGO.A11Y;
+            debug.log('data', debug.DEBUG_LEVELS.DEEP, 'Estableciendo texto aria-label del botón a11y.');
+            
+            btnA11y.innerHTML = ''; // Vaciar emoji antiguo
+            // Aseguramos que tenga label accesible ya que es visualmente un icono
+            if (!btnA11y.getAttribute('aria-label')) {
+                btnA11y.setAttribute('aria-label', 'Configuración de Accesibilidad');
+            }
         }
     }
 }
@@ -110,7 +134,7 @@ export function injectFooterContent(appInstance) {
     const footerContent = document.getElementById('footer-content');
 
     if (footerContent) {
-        // ⭐️ Usamos appInstance.getString para TODO, incluidos los ARIA labels nuevos
+        // Usamos appInstance.getString para TODO, incluidos los ARIA labels nuevos
         footerContent.innerHTML = `
             <span class="footer-copyright">
                 ${appInstance.getString('footerCopyright')}

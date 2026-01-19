@@ -4,7 +4,6 @@ import * as debug from './debug.js';
 import * as data from './data.js';
 
 let _lastMode = 'desktop'; 
-let _lastWidth = window.innerWidth; 
 let _resizeTimer; 
 
 export function renderNavegacion() {
@@ -27,11 +26,12 @@ export function renderNavegacion() {
         }
     });
 
-    const screenWidth = window.innerWidth;
-    const isMobile = screenWidth <= data.MAX_WIDTH.MOBILE;
-    const isDesktop = screenWidth >= data.MAX_WIDTH.TABLET_LANDSCAPE; 
-    const isTabletLandscape = screenWidth > data.MAX_WIDTH.TABLET_PORTRAIT && screenWidth < data.MAX_WIDTH.TABLET_LANDSCAPE;
-    const isTabletPortrait = screenWidth > data.MAX_WIDTH.MOBILE && screenWidth <= data.MAX_WIDTH.TABLET_PORTRAIT;
+    const layoutMode = document.body.getAttribute('data-layout') || 'desktop';
+
+    const isMobile = layoutMode === 'mobile';
+    const isTabletPortrait = layoutMode === 'tablet-portrait';
+    const isTabletLandscape = layoutMode === 'tablet-landscape';
+    const isDesktop = layoutMode === 'desktop';
 
     const targetViewId = isMobile ? 'vista-navegacion-mobile' : 
                          (isDesktop ? 'vista-navegacion-desktop' : 'vista-navegacion-tablet');
@@ -64,6 +64,8 @@ export function renderNavegacion() {
     }
 
     this._destroyCarousel(); 
+
+    // Limpiamos TODOS los tracks para evitar duplicados fantasma
     ['track-desktop', 'track-tablet', 'track-mobile'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = '';
@@ -288,53 +290,43 @@ function _getUniqueSelector(el) {
 }
 
 export function _setupResizeObserver() {
-    // ⭐️ 1. LISTENER DE FOCO GLOBAL (Para tener histórico)
     document.addEventListener('focusin', (e) => {
         if (e.target && e.target !== document.body) {
             this.STATE.lastFocusedElement = e.target;
-            debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `🔍 [FOCUS-TRACKER] Captured: ${e.target.tagName}#${e.target.id}`);
         }
     }, { passive: true });
 
     this.STATE.resizeObserver = new ResizeObserver(() => {
-        const newWidth = window.innerWidth;
-        const getMode = (w) => w <= data.MAX_WIDTH.MOBILE ? 'mobile' : (w <= data.MAX_WIDTH.TABLET_LANDSCAPE ? 'tablet' : 'desktop');
-        const newMode = getMode(newWidth);
-
+        // En lugar de calcular modos aquí, llamamos a la lógica centralizada de App
+        // para asegurar consistencia
+        if (typeof this._updateLayoutMode === 'function') {
+             this._updateLayoutMode();
+        }
+        
+        // Pero para detectar cambios usamos el atributo que acabamos de actualizar (o no)
+        const newMode = document.body.getAttribute('data-layout') || 'desktop';
+        
         const modeChanged = newMode !== _lastMode;
-        const tabletThresholdCrossed = (newWidth > data.MAX_WIDTH.TABLET_PORTRAIT && _lastWidth <= data.MAX_WIDTH.TABLET_PORTRAIT) ||
-                                       (newWidth <= data.MAX_WIDTH.TABLET_PORTRAIT && _lastWidth > data.MAX_WIDTH.TABLET_PORTRAIT);
-
-        // 🔍 TRAZA EXTREMA: Tick del Observer
-        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[OBSERVER-TICK] Width:${newWidth} Mode:${newMode} Changed:${modeChanged} Crossed:${tabletThresholdCrossed}`);
-
+        
         document.body.classList.add('resize-animation-stopper');
         clearTimeout(_resizeTimer);
         _resizeTimer = setTimeout(() => {
             document.body.classList.remove('resize-animation-stopper');
         }, 400);
 
-        if ((modeChanged || tabletThresholdCrossed) && this.STATE.initialRenderComplete) {
-            debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESIZE-LOGIC] Condition Met. Starting logic.`);
+        if (modeChanged && this.STATE.initialRenderComplete) {
             _lastMode = newMode;
-            _lastWidth = newWidth;
             
             const isInDetails = !!this.STATE.activeCourseId;
 
             if (isInDetails) {
-                 debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESIZE-LOGIC] In Details. Refreshing.`);
                  this._mostrarDetalle(this.STATE.activeCourseId);
             } else {
-                 // ⭐️ SNAPSHOT BASADO EN HISTÓRICO ⭐️
                  let activeElement = document.activeElement;
-                 debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESIZE-LOGIC] ActiveEl: ${activeElement ? activeElement.tagName : 'null'}. LastFocused: ${this.STATE.lastFocusedElement ? this.STATE.lastFocusedElement.id : 'null'}`);
-                 
                  if (!activeElement || activeElement === document.body || activeElement === document.documentElement) {
                      if (this.STATE.lastFocusedElement) {
-                         debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESIZE-LOGIC] Focus lost. Using History: ${this.STATE.lastFocusedElement.id}`);
                          activeElement = this.STATE.lastFocusedElement;
                      } else {
-                         debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESIZE-LOGIC] Focus lost & No history. Fallback to track.`);
                          if (this.DOM.track) {
                              activeElement = this.DOM.track.querySelector(`.card[data-pos="${this.STATE.currentFocusIndex}"]`);
                          }
@@ -342,8 +334,6 @@ export function _setupResizeObserver() {
                  }
 
                  this.STATE.resizeSnapshot = _getUniqueSelector(activeElement);
-                 debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESIZE-LOGIC] Snapshot Created:`, this.STATE.resizeSnapshot);
-                 
                  this.renderNavegacion(); 
             }
         }

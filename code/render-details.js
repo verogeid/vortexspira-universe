@@ -17,6 +17,9 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
         loop: false,
         initialSlide: initialSlideIndex,
         touchRatio: 1,
+
+        touchStartPreventDefault: false,
+        
         simulateTouch: true,
         mousewheel: {
             sensitivity: 1,
@@ -38,36 +41,37 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
 }
 
 export function _mostrarDetalle(cursoId) {
+    debug.log('render_details', debug.DEBUG_LEVELS.BASIC, `Mostrando detalle para: ${cursoId}`);
+    
     const appInstance = this;
-    const isMobile = window.innerWidth <= data.MAX_WIDTH.MOBILE;
+    
+    // ⭐️ FIX: Usar la verdad única del layout (zoom-aware)
+    const layoutMode = document.body.getAttribute('data-layout') || 'desktop';
+    const isMobile = layoutMode === 'mobile';
+    
     const curso = appInstance._findNodoById(cursoId, appInstance.STATE.fullData.navegacion); 
 
     if (!curso) return;
 
-    // 🗑️ LIMPIEZA TOTAL DE NAVEGACIÓN (AHORRO DE MEMORIA) 🗑️
-    // 1. Destruir instancia Swiper del menú
+    // 🗑️ LIMPIEZA TOTAL DE NAVEGACIÓN
     if (typeof appInstance._destroyCarousel === 'function') {
         appInstance._destroyCarousel();
     }
     
-    // 2. Ocultar y limpiar DOM de navegación para evitar conflictos
     ['vista-navegacion-desktop', 'vista-navegacion-tablet', 'vista-navegacion-mobile'].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.classList.remove('active');
             el.style.display = 'none';
-            // Opcional: el.innerHTML = ''; // Si quieres ser extremo con la memoria
         }
     });
 
-    // Limpieza de vistas de detalle cruzadas (por si cambio de modo)
     const desktopView = document.getElementById('vista-detalle-desktop');
     const mobileView = document.getElementById('vista-detalle-mobile');
     
     if (desktopView) { desktopView.classList.remove('active'); desktopView.style.display = 'none'; }
     if (mobileView) { mobileView.classList.remove('active'); mobileView.style.display = 'none'; }
 
-    // Asignación y activación de la vista correcta
     appInstance.DOM.vistaDetalle = isMobile ? mobileView : desktopView;
     appInstance.DOM.vistaDetalle.style.display = 'flex'; 
     appInstance.DOM.vistaDetalle.classList.add('active');
@@ -75,6 +79,48 @@ export function _mostrarDetalle(cursoId) {
     appInstance.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop'); 
     const swiperId = isMobile ? '#detalle-swiper-mobile' : '#detalle-swiper-desktop';
 
+    // ⭐️ FIX: Gestión de paneles laterales (Volver e Info) para Desktop/Tablet
+    const vistaVolver = document.getElementById('vista-volver');
+    const infoAdicional = document.getElementById('info-adicional');
+    const cardVolverFija = document.getElementById('card-volver-fija-elemento');
+    const cardNivelActual = document.getElementById('card-nivel-actual');
+
+    if (!isMobile) {
+        // 1. Mostrar panel izquierdo (Volver)
+        if (vistaVolver) vistaVolver.classList.add('visible');
+        
+        // 2. Configurar botón volver
+        if (cardVolverFija) {
+            cardVolverFija.classList.add('visible');
+            cardVolverFija.innerHTML = `<h3>${data.LOGO.VOLVER}</h3>`; 
+            cardVolverFija.tabIndex = 0;
+            // Asegurar el clic usando la función del appInstance
+            cardVolverFija.onclick = () => appInstance._handleVolverClick(); 
+        }
+
+        // 3. Configurar título del nivel (Raíz por defecto en deep-link)
+        if (cardNivelActual) {
+            cardNivelActual.classList.add('visible');
+            // Intentamos obtener breadcrumb, si no, fallback
+            const bcText = appInstance.getString ? appInstance.getString('breadcrumbRoot') : 'Nivel Raíz';
+            cardNivelActual.innerHTML = `<h3>${bcText}</h3>`;
+        }
+
+        // 4. Panel Info (Derecha) - Ocultar en Tablet Portrait
+        if (infoAdicional) {
+            if (layoutMode === 'tablet-portrait') {
+                infoAdicional.classList.remove('visible');
+            } else {
+                infoAdicional.classList.add('visible');
+            }
+        }
+    } else {
+        // En móvil ocultar paneles laterales
+        if (vistaVolver) vistaVolver.classList.remove('visible');
+        if (infoAdicional) infoAdicional.classList.remove('visible');
+    }
+
+    // --- Renderizado de Slides (Tu lógica original intacta) ---
     let slidesHtml = '';
 
     if (isMobile) {
@@ -88,13 +134,12 @@ export function _mostrarDetalle(cursoId) {
         }
 
         let volverHtml = '';
-        if (parent && parent.levelId) {
-            volverHtml = `
-                <article class="card card-volver-vertical" role="button" tabindex="0" onclick="App._handleVolverClick()">
-                    <h3>${data.LOGO.VOLVER}</h3>
-                </article>
-            `;
-        }
+        // En móvil siempre ponemos el volver
+        volverHtml = `
+            <article class="card card-volver-vertical" role="button" tabindex="0" onclick="App._handleVolverClick()">
+                <h3>${data.LOGO.VOLVER}</h3>
+            </article>
+        `;
 
         slidesHtml += `
             <div class="swiper-slide">
@@ -109,31 +154,60 @@ export function _mostrarDetalle(cursoId) {
     const descripcion = curso.descripcion || '';
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = descripcion.trim();
-    const fragments = Array.from(tempDiv.childNodes).filter(node => 
-        (node.nodeType === 1 && ['P', 'UL', 'OL', 'DIV'].includes(node.tagName)) || 
-        (node.nodeType === 3 && node.textContent.trim().length > 0)
-    );
 
-    if (fragments.length > 0) {
-        let firstContent = fragments[0].nodeType === 1 ? fragments[0].outerHTML : `<p>${fragments[0].textContent}</p>`;
+    // ⭐️ LOGICA DE AGRUPACIÓN (FIX DEFINITIVO)
+    // En lugar de filtrar, acumulamos contenido inline hasta encontrar un bloque
+    const slidesContent = [];
+    let inlineBuffer = '';
+
+    const flushBuffer = () => {
+        if (inlineBuffer.trim().length > 0) {
+            // Si es texto suelto sin <p>, lo envolvemos para mantener estilo, 
+            // a menos que ya empiece por una etiqueta de bloque (raro en este buffer)
+            slidesContent.push(`<p>${inlineBuffer}</p>`);
+        }
+        inlineBuffer = '';
+    };
+
+    Array.from(tempDiv.childNodes).forEach(node => {
+        // ¿Es un elemento de Bloque que merece su propio slide?
+        // Añade aquí cualquier etiqueta que quieras que fuerce un salto de slide
+        const isBlock = (node.nodeType === 1) && ['P', 'UL', 'OL', 'DIV', 'BLOCKQUOTE', 'H3', 'H4', 'TABLE'].includes(node.tagName);
+        const isEmptyText = (node.nodeType === 3) && node.textContent.trim().length === 0;
+
+        if (isEmptyText) return; // Ignoramos espacios vacíos entre etiquetas
+
+        if (isBlock) {
+            flushBuffer(); // Si teníamos texto acumulado (ej: título suelto), lo soltamos antes
+            slidesContent.push(node.outerHTML); // Añadimos el bloque completo
+        } else {
+            // Es Inline (Text, STRONG, SPAN, A...) -> Lo guardamos en el buffer
+            inlineBuffer += (node.nodeType === 1 ? node.outerHTML : node.textContent);
+        }
+    });
+    flushBuffer(); // Soltar lo que quede al final
+
+    // Renderizar los slides procesados
+    if (slidesContent.length > 0) {
+        // Slide 1: Título + Primer contenido
         slidesHtml += `
             <div class="swiper-slide">
                 <h2 class="detail-title-slide">${curso.titulo}</h2>
                 <div class="detail-text-fragment" data-index="0" role="document" tabindex="0" onclick="this.focus()">
                     <div class="content-wrapper">
-                        ${firstContent}
+                        ${slidesContent[0]}
                     </div>
                 </div>
             </div>
         `;
 
-        for (let i = 1; i < fragments.length; i++) {
-            let content = fragments[i].nodeType === 1 ? fragments[i].outerHTML : `<p>${fragments[i].textContent}</p>`;
+        // Resto de Slides
+        for (let i = 1; i < slidesContent.length; i++) {
             slidesHtml += `
                 <div class="swiper-slide">
                     <div class="detail-text-fragment" data-index="${i}" role="document" tabindex="0" onclick="this.focus()">
                         <div class="content-wrapper">
-                            ${content}
+                            ${slidesContent[i]}
                         </div>
                     </div>
                 </div>
@@ -149,7 +223,7 @@ export function _mostrarDetalle(cursoId) {
                     <div class="detail-action-item" onclick="App._handleActionRowClick(event)" tabindex="0" role="listitem">
                         <span class="detail-action-text">${enlace.texto}</span>
                         <a ${!enlace.url || enlace.url === '#' ? '' : `href="${enlace.url}" target="_blank"`} 
-                           class="detail-action-btn ${!enlace.url || enlace.url === '#' ? 'disabled' : ''}">
+                            class="detail-action-btn ${!enlace.url || enlace.url === '#' ? 'disabled' : ''}">
                             <i class="action-icon ${!enlace.url || enlace.url === '#' ? 'icon-vacio' : iconClass}"></i>
                         </a>
                     </div>
@@ -188,4 +262,5 @@ export function _mostrarDetalle(cursoId) {
         }
     }, 200);
 }
+
 /* --- code/render-details.js --- */

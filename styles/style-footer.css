@@ -39,7 +39,7 @@ footer a:hover, footer a:focus-visible {
 
 .footer-license-link img { height: clamp(16px, 2.5vw, 32px); width: auto; vertical-align: middle; }
 
-/* ⭐️ AJUSTE LICENCIA: Sin padding y sin fondo, pero MANTENIENDO borde y sombra ⭐️ */
+/* AJUSTE LICENCIA: Sin padding y sin fondo, pero MANTENIENDO borde y sombra */
 footer a.footer-license-link {
     padding: 0; /* Quitamos el padding para que el borde abrace la imagen */
 }
@@ -53,17 +53,17 @@ footer a.footer-license-link:focus-visible {
 /* Limpieza de estilos antiguos de iconos (ya movidos a style-layout.css) */
 .footer-social-link { font-size: 0; }
 
-@media (max-width: 600px) {
-    footer { 
+    /* @media (max-width: 600px) */
+    body[data-layout="mobile"] footer { 
         position: fixed !important; bottom: 0; 
         margin-top: 0; 
         padding: 0 5px !important; 
         width: 100%; 
     }
     
-    .footer-author-text, .footer-separator {
+    body[data-layout="mobile"] .footer-author-text, 
+    body[data-layout="mobile"] .footer-separator {
         display: none;
     }
-}
 
 /* --- styles/style-footer.css --- */

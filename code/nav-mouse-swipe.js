@@ -8,7 +8,9 @@ let _swipeDirection = 'next';
 export function setupTouchListeners() {
     if (this.STATE.carouselInstance) {
         const swiper = this.STATE.carouselInstance;
+
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "SWIPE: Vinculando listeners.");
+
         swiper.on('slideChangeTransitionStart', handleSlideChangeStart.bind(this));
         swiper.on('slideChangeTransitionEnd', handleSlideChangeEnd.bind(this));
     }
@@ -17,6 +19,7 @@ export function setupTouchListeners() {
 
 export function detachSwiperEvents(swiper) {
     if (!swiper) return;
+
     swiper.off('slideChangeTransitionStart');
     swiper.off('slideChangeTransitionEnd');
 }
@@ -26,6 +29,7 @@ export function handleSlideChangeStart(swiper) {
     
     if (swiper.activeIndex !== swiper.previousIndex) {
         _swipeDirection = swiper.activeIndex > swiper.previousIndex ? 'next' : 'prev';
+
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `⚡️ START SlideChange. Dir: ${_swipeDirection} | Prev: ${swiper.previousIndex} -> Act: ${swiper.activeIndex}`);
     }
 };
@@ -41,6 +45,7 @@ export function handleSlideChangeEnd(swiper) {
     // En Loops o giros vacíos, dejamos pasar para que el Skipper resuelva el destino.
     if (swiper.isKeyboardLockedFocus) {
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, "🔒 SWIPE: Foco bloqueado por teclado. Ignorando mouse logic.");
+
         swiper.isKeyboardLockedFocus = false; // Reset del candado
         return; 
     }
@@ -48,9 +53,10 @@ export function handleSlideChangeEnd(swiper) {
     debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `🏁 END SlideChange. RealIdx: ${swiper.realIndex} | ActiveIdx: ${swiper.activeIndex}`);
 
     const { currentFocusIndex, itemsPorColumna } = this.STATE;
-    const isMobile = window.innerWidth <= data.MAX_WIDTH.MOBILE;
-    
-    // ⭐️ FIX: Usar la referencia interna de Swiper para saber qué slide es el activo visualmente
+
+    const isMobile = document.body.getAttribute('data-layout') === 'mobile';
+
+    // Usar la referencia interna de Swiper para saber qué slide es el activo visualmente
     const activeSlideEl = swiper.slides[swiper.activeIndex];
     
     if (!activeSlideEl) {
@@ -60,12 +66,14 @@ export function handleSlideChangeEnd(swiper) {
 
     // Filtramos tarjetas reales dentro del slide activo
     const columnCards = Array.from(activeSlideEl.querySelectorAll('.card[data-id]:not([data-tipo="relleno"])'));
+
     debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Cards en slide activo: ${columnCards.length}`);
 
     // ⭐️ SKIPPER ⭐️
     // Si la columna está vacía (relleno puro), saltamos automáticamente a la siguiente
     if (columnCards.length === 0 && !isMobile) { 
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, `SWIPE: Columna vacía. Saltando (${_swipeDirection})...`);
+
         _swipeDirection === 'next' ? swiper.slideNext(data.SWIPER.SLIDE_SPEED) : swiper.slidePrev(data.SWIPER.SLIDE_SPEED);
         return; 
     }
@@ -75,6 +83,7 @@ export function handleSlideChangeEnd(swiper) {
 
     if (this.STATE.forceFocusRow !== undefined && this.STATE.forceFocusRow !== null) {
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Usando forceFocusRow: ${this.STATE.forceFocusRow}`);
+
         if (this.STATE.forceFocusRow === 'last') {
             targetRow = columnCards.length - 1; 
         } else {
@@ -83,6 +92,7 @@ export function handleSlideChangeEnd(swiper) {
         this.STATE.forceFocusRow = null; 
     } else {
         targetRow = isMobile ? 0 : currentFocusIndex % itemsPorColumna;
+
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Calculando targetRow: idx(${currentFocusIndex}) % cols(${itemsPorColumna}) = ${targetRow}`);
     }
 
@@ -95,12 +105,12 @@ export function handleSlideChangeEnd(swiper) {
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Candidato Foco: ID=${newFocusCard.dataset.id} | GlobalIdx=${newGlobalIndex} | CurrentIdx=${this.STATE.currentFocusIndex}`);
         
         if (newGlobalIndex > -1) {
-            // ⭐️ FIX CRÍTICO DE BUCLE / FLUIDEZ ⭐️
             // Aunque el índice lógico sea el mismo (ej. 0), la tarjeta FÍSICA ha cambiado (es un clon o está en otro slide).
             // SIEMPRE debemos forzar la actualización física (_updateFocus) para traer el "halo" y el foco del navegador a la nueva tarjeta.
             
             if (this.STATE.currentFocusIndex !== newGlobalIndex) {
                 debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.IMPORTANT, `🚨 CORRIGIENDO FOCO: ${this.STATE.currentFocusIndex} -> ${newGlobalIndex}`);
+
                 this.STATE.currentFocusIndex = newGlobalIndex;
             } else {
                 debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, `Foco estable (Lógico). Re-sincronizando físico.`);

@@ -14,31 +14,32 @@ export const DEBUG_LEVELS = {
 
 export const DEBUG_CONFIG = {
     global: DEBUG_LEVELS.BASIC,
-    global_focus: DEBUG_LEVELS.DEEP,
-    global_key: DEBUG_LEVELS.DEEP,
+    global_focus: DEBUG_LEVELS.BASIC,
+    global_key: DEBUG_LEVELS.BASIC,
     global_mouse: DEBUG_LEVELS.DISABLED,
     
-    app: DEBUG_LEVELS.DISABLED,
-    data: DEBUG_LEVELS.DISABLED,
+    app: DEBUG_LEVELS.BASIC,
+    data: DEBUG_LEVELS.BASIC,
     i18n: DEBUG_LEVELS.DISABLED,
-    nav_stack: DEBUG_LEVELS.DISABLED,
+    ally: DEBUG_LEVELS.BASIC,
+    nav_stack: DEBUG_LEVELS.BASIC,
 
     // Módulos de Detalle
     nav_base: DEBUG_LEVELS.DEEP,
-    nav_base_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para el foco/blur después del slide ⭐️
+    nav_base_details: DEBUG_LEVELS.BASIC, // ⭐️ DEEP: Para el foco/blur después del slide ⭐️
     
     // Módulos de Teclado
-    nav_keyboard_base: DEBUG_LEVELS.DEEP, // ⭐️ DEEP: Para ver el listener keydown global ⭐️
-    nav_keyboard_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para la lógica de cursor en detalle ⭐️
-    nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
+    nav_keyboard_base: DEBUG_LEVELS.BASIC, // ⭐️ DEEP: Para ver el listener keydown global ⭐️
+    nav_keyboard_details: DEBUG_LEVELS.BASIC, // ⭐️ DEEP: Para la lógica de cursor en detalle ⭐️
+    nav_keyboard_swipe: DEBUG_LEVELS.BASIC,
 
     // Módulos de Mouse
     nav_mouse_details: DEBUG_LEVELS.DISABLED, // Excluir rueda de ratón en detalle
-    nav_mouse_swipe: DEBUG_LEVELS.DISABLED,   // Excluir arrastre en menús
+    nav_mouse_swipe: DEBUG_LEVELS.DEEP,   // Excluir arrastre en menús
     
-    render_base: DEBUG_LEVELS.EXTREME,
-    render_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para inicialización de Swiper de detalle ⭐️
-    render_swipe: DEBUG_LEVELS.DISABLED
+    render_base: DEBUG_LEVELS.BASIC,
+    render_details: DEBUG_LEVELS.BASIC, // ⭐️ DEEP: Para inicialización de Swiper de detalle ⭐️
+    render_swipe: DEBUG_LEVELS.BASIC
 };
 
 export function logDebugLevels() {

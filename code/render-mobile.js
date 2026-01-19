@@ -88,8 +88,10 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
 
         touchRatio: 1, 
         simulateTouch: true, 
+
         touchStartPreventDefault: false, 
         touchMoveStopPropagation: true, 
+        
         grabCursor: true, 
         centeredSlides: false, 
         mousewheel: { enabled: false }, 

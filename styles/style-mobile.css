@@ -1,113 +1,201 @@
 /* --- styles/style-mobile.css --- */
 
-@media (max-width: 600px) {
-    body {
-        overflow: hidden !important; 
-        height: 100vh; 
-        position: fixed; 
-        width: 100%;
-        padding-bottom: var(--footer-height); 
-    }
+/* @media (max-width: 600px) */
+body[data-layout="mobile"] {
+    /* ⭐️ MAPEO DE VARIABLES: Usamos los valores mobile definidos en theme */
+    --header-title-size: var(--mobile-header-title-size);
+    --header-logo-size: var(--mobile-header-logo-size);
+    --header-icon-size: var(--mobile-header-icon-size);
+    --header-obras-size: 0; /* Oculto en móvil */
+    
+    /* Override altura header flexible */
+    --header-height: auto; 
 
-    header { 
-        position: fixed; 
-    }
+    overflow: hidden !important; 
+    height: 100vh; 
+    position: fixed; 
+    width: 100%;
+    padding-bottom: var(--footer-height); 
+}
 
-    #main-header-subtitle {
-        display: none !important; 
-    }
+body[data-layout="mobile"] header { 
+    position: fixed; 
+    min-height: 50px; /* Asegura tamaño mínimo */
+}
 
-    #app-container {
+body[data-layout="mobile"] #main-header-subtitle {
+    display: none !important; 
+}
+
+body[data-layout="mobile"] #app-container {
+    height: auto !important;
+    min-height: calc(100vh - var(--header-height)); 
+
+    padding-top: calc(var(--header-height) + 15px) !important;
+    padding-left: 0px; padding-right: 0px; 
+    padding-bottom: var(--footer-height) !important;
+
+    display: flex; flex-direction: column;
+    gap: 15px; overflow: visible;
+}
+
+body[data-layout="mobile"] #vista-volver, 
+body[data-layout="mobile"] #card-volver-fija,
+body[data-layout="mobile"] #info-adicional {
+    display: none !important; 
+}
+
+body[data-layout="mobile"] #vista-central {
+    width: 100%; position: relative; 
+    height: auto !important; overflow: visible !important;
+    display: block; 
+    flex-grow: 1; 
+}
+
+body[data-layout="mobile"] .vista:not(.active) {
+    display: none !important;
+}
+
+body[data-layout="mobile"] .vista {
+    position: relative; height: auto !important; overflow: visible !important;
+}
+
+body[data-layout="mobile"] #vista-detalle-mobile {
+    position: fixed !important; 
+    top: var(--header-height) !important; 
+    left: 0 !important; 
+    width: 100% !important; 
+    height: calc(100vh - var(--header-height) - var(--footer-height)) !important;
+    z-index: 99 !important; 
+    overflow-y: hidden !important;
+    display: flex; flex-direction: column; 
+    /* ⭐️ CORRECCIÓN: Padding 0. Delegamos el espaciado al wrapper/slide para igualar la navegación ⭐️ */
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body[data-layout="mobile"] #vista-detalle-mobile:not(.active) {
+    display: none !important; 
+}
+
+/* ⭐️ UNIFICACIÓN: Aplicamos las reglas a AMBOS carruseles (Nav y Detalle) ⭐️ */
+body[data-layout="mobile"] #nav-swiper-mobile, 
+body[data-layout="mobile"] #detalle-swiper-mobile {
+    height: calc(100vh - var(--header-height) - var(--footer-height) - 20px) !important; 
+    width: 100%; position: relative;
+    overflow: hidden; 
+    touch-action: pan-y pinch-zoom !important; /* none important!;*/
+}
+
+/* ⭐️ ALINEACIÓN VERTICAL: Ambos wrappers tienen 15px de padding superior ⭐️ */
+body[data-layout="mobile"] #nav-swiper-mobile .swiper-wrapper, 
+body[data-layout="mobile"] #detalle-swiper-mobile .swiper-wrapper {
+    display: flex !important; flex-direction: column; 
+    gap: 10px; 
+    width: 100%; height: auto !important; 
+    padding-bottom: 15vh; 
+    padding-top: 15px !important; 
+}
+
+/* ⭐️ ALINEACIÓN HORIZONTAL: Ambos slides tienen 6% de padding lateral ⭐️ */
+body[data-layout="mobile"] #nav-swiper-mobile .swiper-slide, 
+body[data-layout="mobile"] #detalle-swiper-mobile .swiper-slide {
+    width: 100% !important; height: auto !important; 
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box; 
+    padding: 0 6% !important; 
+}
+
+body[data-layout="mobile"] #nav-swiper-mobile .swiper-slide .card, 
+body[data-layout="mobile"] #detalle-swiper-mobile .swiper-slide .card {
+    width: 100%;
+    box-sizing: border-box; 
+}
+
+body[data-layout="mobile"] .card-relleno-final {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+body[data-layout="mobile"] footer {
+    position: fixed !important; bottom: 0;  
+    width: 100%;
+    z-index: 100;
+}
+
+/* ============================================================
+   🚨 MODO DE SEGURIDAD PARA ZOOM EXTREMO (Reflow WCAG 1.4.10) 🚨
+   Cuando la altura del viewport es crítica (< 500px debido al zoom),
+   desactivamos el layout "Fijo" y pasamos a layout "Scroll Vertical".
+   ============================================================ */
+@media (max-height: 500px) {
+    
+    /* 1. Liberamos el BODY para permitir scroll nativo */
+    body[data-layout="mobile"] {
+        position: static !important;
+        overflow-y: auto !important; 
         height: auto !important;
-        min-height: calc(100vh - var(--header-height)); 
-        padding-top: 10px !important;
-        display: flex; flex-direction: column;
-        padding-left: 0px; padding-right: 0px; 
-        padding-bottom: 10px; 
-        gap: 15px; overflow: visible;
+        padding-top: 0 !important; /* El padding lo darán los elementos ahora estáticos */
+        padding-bottom: 0 !important;
     }
 
-    #vista-volver, 
-    #card-volver-fija,
-    #info-adicional {
-        display: none !important; 
+    /* 2. Header y Footer dejan de flotar y fluyen con el documento */
+    body[data-layout="mobile"] header,
+    body[data-layout="mobile"] footer {
+        position: relative !important; /* Se mueven con el scroll */
+        height: auto !important;       /* Crecen según el tamaño de la letra */
+        min-height: auto !important;
+        padding: 10px !important;
+        z-index: 10;
     }
 
-    #vista-central {
-        width: 100%; position: relative; 
-        height: auto !important; overflow: visible !important;
-        display: block; 
-        flex-grow: 1; 
+    /* Permitir que el contenido del header se reacomode si no cabe */
+    body[data-layout="mobile"] #header-content-wrapper {
+        flex-wrap: wrap; 
+        height: auto !important;
+        justify-content: center;
+        gap: 15px;
     }
 
-    .vista:not(.active) {
-        display: none !important;
+    /* El título h1 deja de ser absoluto para ocupar espacio real */
+    body[data-layout="mobile"] header h1 {
+        position: relative !important;
+        left: auto !important;
+        transform: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        white-space: normal !important; /* Permitir salto de línea en título gigante */
     }
 
-    .vista {
-        position: relative; height: auto !important; overflow: visible !important;
+    /* 3. El Contenedor Principal fluye entre header y footer */
+    body[data-layout="mobile"] #app-container {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        display: block !important; /* Quitamos flex/grid complejos */
+        padding: 10px !important;
     }
 
-    #vista-detalle-mobile {
-        position: fixed !important; 
-        top: var(--header-height) !important; 
-        left: 0 !important; 
-        width: 100% !important; 
-        height: calc(100vh - var(--header-height) - var(--footer-height)) !important;
-        z-index: 99 !important; 
-        overflow-y: hidden !important;
-        display: flex; flex-direction: column; 
-        /* ⭐️ CORRECCIÓN: Padding 0. Delegamos el espaciado al wrapper/slide para igualar la navegación ⭐️ */
-        padding: 0;
-        box-sizing: border-box;
+    /* 4. Soltamos el Swiper para que se muestre como lista vertical simple */
+    body[data-layout="mobile"] #nav-swiper-mobile, 
+    body[data-layout="mobile"] #detalle-swiper-mobile {
+        height: auto !important;
+        overflow: visible !important;
     }
 
-    #vista-detalle-mobile:not(.active) {
-        display: none !important; 
+    body[data-layout="mobile"] .swiper-wrapper {
+        height: auto !important;
+        padding-bottom: 20px !important;
+        padding-top: 0 !important;
     }
 
-    /* ⭐️ UNIFICACIÓN: Aplicamos las reglas a AMBOS carruseles (Nav y Detalle) ⭐️ */
-    #nav-swiper-mobile, #detalle-swiper-mobile {
-        height: calc(100vh - var(--header-height) - var(--footer-height) - 20px) !important; 
-        width: 100%; position: relative;
-        overflow: hidden; 
-        touch-action: none !important;
-    }
-
-    /* ⭐️ ALINEACIÓN VERTICAL: Ambos wrappers tienen 15px de padding superior ⭐️ */
-    #nav-swiper-mobile .swiper-wrapper, #detalle-swiper-mobile .swiper-wrapper {
-        display: flex !important; flex-direction: column; 
-        gap: 10px; 
-        width: 100%; height: auto !important; 
-        padding-bottom: 15vh; 
-        padding-top: 15px !important; 
-    }
-
-    /* ⭐️ ALINEACIÓN HORIZONTAL: Ambos slides tienen 6% de padding lateral ⭐️ */
-    #nav-swiper-mobile .swiper-slide, #detalle-swiper-mobile .swiper-slide {
-        width: 100% !important; height: auto !important; 
-        display: flex; 
-        flex-direction: column;
-        align-items: center;
-        box-sizing: border-box; 
-        padding: 0 6% !important; 
-    }
-
-    #nav-swiper-mobile .swiper-slide .card, #detalle-swiper-mobile .swiper-slide .card {
-        width: 100%;
-        box-sizing: border-box; 
-    }
-
-    .card-relleno-final {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-    }
-
-    footer {
-        position: fixed !important; bottom: 0;  
-        width: 100%;
-        z-index: 100;
+    body[data-layout="mobile"] .swiper-slide {
+        height: auto !important;
+        margin-bottom: 20px !important; /* Separación manual entre cards */
     }
 }
+
 /* --- styles/style-mobile.css --- */

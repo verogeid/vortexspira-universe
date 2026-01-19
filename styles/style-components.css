@@ -125,7 +125,10 @@
     flex-shrink: 0; 
     background-color: var(--color-text); 
 }
-#info-adicional-lista-acerca a:hover::before, #info-adicional-lista-acerca a:focus-visible::before { background-color: var(--color-primary); }
+#info-adicional-lista-acerca a:hover::before, 
+#info-adicional-lista-acerca a:focus-visible::before { 
+    background-color: var(--color-primary); 
+}
 
 .toast {
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);

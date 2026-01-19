@@ -13,11 +13,10 @@
     scroll-behavior: smooth;
 }
 
-@media (max-width: 600px) {
-    #detalle-contenido-mobile {
+    /* @media (max-width: 600px) */ 
+    body[data-layout="mobile"] #detalle-contenido-mobile {
         padding: 0; 
     }
-}
 
 #detalle-swiper-desktop .swiper-slide,
 #detalle-swiper-mobile .swiper-slide {
@@ -54,7 +53,7 @@
     opacity: 0.3; 
     pointer-events: auto;
     
-    /* ⭐️ A11Y FIX CRÍTICO: Texto base legible (1rem) + crecimiento */
+    /* A11Y FIX CRÍTICO: Texto base legible (1rem) + crecimiento */
     font-size: clamp(1rem, 0.95rem + 1vw, 1.4rem);
     line-height: 1.6;
     
@@ -144,7 +143,7 @@
 .detail-action-item:hover { background-color: rgba(255, 255, 255, 0.05); }
 
 .detail-action-text {
-    /* ⭐️ A11Y FIX */
+    /* A11Y FIX */
     font-size: clamp(1rem, 0.9rem + 1vw, 1.4rem);
     font-weight: 500; 
     color: inherit; 
@@ -158,7 +157,7 @@
     height: clamp(38px, 2.5vw, 76px);
     background: transparent; 
     border: 2px solid var(--color-card-border); 
-    border-radius: 50%; 
+    border-radius: 8px;  
     color: var(--color-text); 
     font-size: clamp(1rem, 2.5vw, 1.4rem); line-height: 1;
     text-decoration: none; cursor: pointer;
@@ -192,7 +191,7 @@
     cursor: default; 
     width: clamp(38px, 2.5vw, 76px); 
     height: clamp(38px, 2.5vw, 76px);
-    border-radius: 8px; 
+    border-radius: 50%;
     font-size: clamp(1rem, 2.5vw, 1.4rem);
     line-height: 1;
     filter: none; 
@@ -246,7 +245,7 @@ button.detail-action-btn {
     padding: 0.5rem 1rem !important; 
     border-radius: 20px !important; margin-bottom: 0; 
     font-weight: bold; aspect-ratio: auto; 
-    /* ⭐️ A11Y FIX */
+    /* A11Y FIX */
     font-size: clamp(1.2rem, 1rem + 2vw, 2rem);
     background: var(--color-card-bg); 
 }

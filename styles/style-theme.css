@@ -31,20 +31,43 @@
     --shadow-color-hex: #969696; /* Color puro de la sombra Ghost (gris por defecto) */
     --shadow-opacity: 0.8;       /* Opacidad base de la sombra Ghost */
 
+    /* 📐 VARIABLES ESTRUCTURALES BASE */
     --header-height: 9vh;
     --footer-height: 6vh;
     --card-gap: 3vh; 
     --nav-desktop-height: calc(100% - 0px); 
-    --nav-carousel-top-offset: 2vh; 
+    --nav-carousel-top-offset: 2vh;
 
-    /* ⭐️ VARIABLES DE TIPOGRAFÍA DINÁMICA (A11Y) ⭐️ */
-    /* Valores por defecto */
+    /* 📐 VARIABLES DE FUENTE HEADER (Valores por defecto / Desktop) */
+    --header-title-size: clamp(1.2rem, 1rem + 3vw, 3rem);
+    --header-logo-size: clamp(3rem, 5vmin, 5rem);
+    --header-icon-size: clamp(2rem, 6vmin, 5rem);
+    --header-obras-size: clamp(1.5rem, 5vmin, 5rem);
+
+    /* 📐 VARIABLES DE MÓVIL (Overrides para style-mobile.css) */
+    /* Ajustados para que quepan en 320px sin romper layout */
+    --mobile-header-title-size: clamp(0.9rem, 4vh, 1.2rem); 
+    --mobile-header-logo-size: 1.8rem;
+    --mobile-header-icon-size: 2rem;
+
+    /* 📐 VARIABLES DE TABLET PORTRAIT (Overrides para style-tablet.css) */
+    --tab-port-header-title-size: clamp(1rem, 4.5vh, 1.4rem);
+    --tab-port-header-logo-size: 2.2rem;
+    --tab-port-header-icon-size: 2.2rem;
+    --tab-port-obras-size: 1.8rem;
+
+    /* 📐 VARIABLES DE TABLET LANDSCAPE (Overrides para style-tablet.css) */
+    --tab-land-header-title-size: clamp(1.2rem, 5vh, 1.6rem);
+    --tab-land-header-logo-size: 2.5rem;
+    --tab-land-header-icon-size: 2.5rem;
+    --tab-land-obras-size: 2rem;
+
+    /* Tipografía Dinámica */
     --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-scale: 1;          /* 1 = 100% del sistema */
+    --font-scale: 1;
     --line-height-base: 1.5;
-    --paragraph-spacing: 1.5em; /* Relativo al tamaño de fuente */
+    --paragraph-spacing: 1.5em;
     
-    /* Variable para fuentes específicas */
     --font-dyslexic: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
     --font-serif: 'Georgia', 'Times New Roman', serif;
     --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

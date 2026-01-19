@@ -9,7 +9,8 @@ export function _handleSwipeNavigation(key, appInstance) {
     
     if (!swiper) return;
 
-    const isMobile = window.innerWidth <= data.MAX_WIDTH.MOBILE;
+    const isMobile = document.body.getAttribute('data-layout') === 'mobile';
+    
     const allValidCards = Array.from(app.DOM.track.querySelectorAll('.card:not([data-tipo="relleno"])'));
 
     // --- LÓGICA MOBILE (Lista Vertical con Loop) ---

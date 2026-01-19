@@ -1,29 +1,29 @@
 /* --- styles/style-cards.css --- */
 
 .card {
-  border: 2px solid var(--color-card-border);
-  background: var(--color-card-bg);
-  padding: 1rem; 
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  cursor: pointer;
-  display: flex; 
-  flex-direction: column; 
-  justify-content: center; 
-  align-items: flex-start; 
-  box-sizing: border-box; 
-  height: 100%; 
-  min-height: 150px; 
-  width: 100%;
-  overflow: hidden; 
+    border: 2px solid var(--color-card-border);
+    background: var(--color-card-bg);
+    padding: 1rem; 
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: flex-start; 
+    box-sizing: border-box; 
+    height: 100%; 
+    min-height: 150px; 
+    width: 100%;
+    overflow: hidden; 
 
-  transition: 
-        transform var(--transition-speed) ease,
-        box-shadow var(--transition-speed) ease,
-        border-color var(--transition-speed) ease,
-        opacity 0.5s ease;
+    transition: 
+            transform var(--transition-speed) ease,
+            box-shadow var(--transition-speed) ease,
+            border-color var(--transition-speed) ease,
+            opacity 0.5s ease;
 
-  filter: none !important;
+    filter: none !important;
 }
 
 .card h3 { 
@@ -50,8 +50,6 @@
     line-clamp: 4;
     -webkit-box-orient: vertical;
     
-    /* ⭐️ A11Y FIX: Corregido clamp incompleto y mezclado rem+vw */
-    /* Antes: clamp(1.2rem, 3vw); -> Sintaxis inválida */
     font-size: clamp(1rem, 0.9rem + 1vw, 1.4rem);
     
     line-height: 1.2;
@@ -122,19 +120,19 @@
 .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]).focus-current { 
-  outline: none; 
-  border-color: var(--color-primary);
-  background: var(--color-card-bg); 
-  transform: scale(1.03);
-  box-shadow: 0 0 25px var(--color-shadow-primary); 
-  color: var(--color-primary) !important; 
+    outline: none; 
+    border: 3px solid var(--color-primary);
+    background: var(--color-card-bg); 
+    transform: scale(1.03);
+    box-shadow: 0 0 25px var(--color-shadow-primary); 
+    color: var(--color-primary) !important; 
 }
 
 .card:not(.disabled):not([data-tipo="relleno"]):hover {
-  outline: none; 
-  border-color: var(--color-primary);
-  background: var(--color-card-bg); 
-  box-shadow: 0 0 25px var(--color-shadow-primary); 
+    outline: none; 
+    border-color: var(--color-primary);
+    background: var(--color-card-bg); 
+    box-shadow: 0 0 25px var(--color-shadow-primary); 
 }
 
 .card.focus-visible {
@@ -143,30 +141,30 @@
 }
 
 .card.disabled {
-  border: 2px solid var(--color-card-border-disabled); 
-  background: var(--color-card-bg);
-  color: var(--color-text); 
-  opacity: 0.5;
+    border: 2px solid var(--color-card-border-disabled); 
+    background: var(--color-card-bg);
+    color: var(--color-text); 
+    opacity: 0.5;
 }
 
 .card.disabled.focus-visible, 
 .card.disabled:focus-visible {
-  outline: none; 
-  border-color: var(--color-card-border); 
-  background: var(--color-card-bg); 
-  transform: scale(1.02);
-  box-shadow: 0 0 15px var(--color-shadow-disabled); 
-  opacity: 0.9; 
-  color: var(--color-text) !important;
+    outline: none; 
+    border: 3px solid var(--color-card-border); 
+    background: var(--color-card-bg); 
+    transform: scale(1.02);
+    box-shadow: 0 0 15px var(--color-shadow-disabled); 
+    opacity: 0.9; 
+    color: var(--color-text) !important;
 }
 
 .card.disabled:hover {
     outline: none; 
-  border-color: var(--color-card-border); 
-  background: var(--color-card-bg); 
-  box-shadow: 0 0 15px var(--color-shadow-disabled); 
-  opacity: 0.9; 
-  color: var(--color-text) !important;
+    border-color: var(--color-card-border); 
+    background: var(--color-card-bg); 
+    box-shadow: 0 0 15px var(--color-shadow-disabled); 
+    opacity: 0.9; 
+    color: var(--color-text) !important;
 }
 
 .card[data-tipo="relleno"] {

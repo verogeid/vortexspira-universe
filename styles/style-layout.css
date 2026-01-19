@@ -57,8 +57,8 @@ header h1 {
     justify-content: center; 
     flex-wrap: nowrap;
     
-    /* ⭐️ A11Y FIX: calc(1rem + Xvw) permite escalar con el texto del SO */
-    font-size: clamp(1.2rem, 1rem + 3vw, 3rem); 
+    /* ⭐️ VARIABLE: Tamaño de fuente del título */
+    font-size: var(--header-title-size); 
     
     margin: 0; padding: 0; line-height: 1.2; 
     gap: 0.3em; 
@@ -73,25 +73,21 @@ header h1 {
 header h1 a {
     outline: none;
     text-decoration: none;
+    display: inline-flex; /* Vital: permite que el span interno tenga tamaño */
+    align-items: center;
+    pointer-events: auto; /* Reactivamos clicks para el enlace */
+    height: 100%; /* Asegurar altura */
 }
 
-header h1 svg {
-    height: 1.15em !important; 
-    width: auto;
-    flex-shrink: 0; 
-    cursor: pointer;
-    padding: 0.15em 0.3em;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
-    vertical-align: middle;
-}
-
-/* ⭐️ NUEVO: Logo con DOBLE CAPA (Static + Dynamic) ⭐️ */
+/* LOGO */
 .header-logo {
     display: inline-block;
-    width: clamp(3rem, 5vmin, 5rem);
-    height: clamp(3rem, 5vmin, 5rem);
-    position: relative; /* Contenedor de las capas */
+    
+    /* ⭐️ VARIABLE: Tamaño del logo */
+    width: var(--header-logo-size);
+    height: var(--header-logo-size);
+    
+    position: relative; 
     flex-shrink: 0;
     transition: all 0.2s ease;
 }
@@ -131,57 +127,49 @@ header h1 a:focus-visible .header-logo::after {
     filter: drop-shadow(0 0 6px var(--color-shadow-primary));
 }
 
-header h1 a:focus-visible svg #XMLID_150_,
-header h1 a:hover svg #XMLID_150_ {
-    fill: var(--color-primary) !important;
-}
-
-header h1 a:focus-visible svg {
-    filter: drop-shadow(0 0 5px var(--color-primary));
-}
-
-
+/* ICONO OBRAS */
 .icon-obras-header {
     display: inline-block;
-    width: clamp(1.5rem, 5vmin, 5rem);
-    height: clamp(1.5rem, 5vmin, 5rem);
+    
+    /* ⭐️ VARIABLE: Tamaño icono obras */
+    width: var(--header-obras-size);
+    height: var(--header-obras-size);
+    
     background-color: var(--color-icon-obras);
-    -webkit-mask-image: var(--icon-obras);
-    mask-image: var(--icon-obras);
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
+    -webkit-mask-image: var(--icon-obras); mask-image: var(--icon-obras);
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center; mask-position: center;
+    -webkit-mask-size: contain; mask-size: contain;
     flex-shrink: 0;
     z-index: 101; 
 }
 
+/* BOTÓN A11Y */
 #btn-config-accesibilidad {
     position: relative; 
     display: flex !important;
     align-items: center;
     justify-content: center;
-    width: clamp(2rem, 6vmin, 5rem);
-    height: clamp(2rem, 6vmin, 5rem);
+    
+    /* ⭐️ VARIABLE: Tamaño botón a11y */
+    width: var(--header-icon-size);
+    height: var(--header-icon-size);
+    
     padding: 0;
     border: 1.5px solid var(--color-card-border) !important;
     border-radius: 0.55em;
     background-color: var(--color-header-text); 
+
     cursor: pointer;
     transition: all 0.2s ease;
     outline: none;
     z-index: 101; 
     box-sizing: border-box;
-    -webkit-mask-image: var(--icono-a11y);
-    mask-image: var(--icono-a11y);
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: 70%;
-    mask-size: 70%;
+
+    -webkit-mask-image: var(--icono-a11y); mask-image: var(--icono-a11y);
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center; mask-position: center;
+    -webkit-mask-size: 70%; mask-size: 70%;
 }
 
 #btn-config-accesibilidad:hover {
@@ -198,20 +186,20 @@ header h1 a:focus-visible svg {
 }
 
 #vista-central {
-  grid-column: 2 / 3; 
-  width: 100%; height: 100%; position: relative; 
-  overflow-x: hidden; 
-  overflow-y: hidden; 
-  display: flex; 
+    grid-column: 2 / 3; 
+    width: 100%; height: 100%; position: relative; 
+    overflow-x: hidden; 
+    overflow-y: hidden; 
+    display: flex; 
 }
 
 .vista {
-  position: absolute; width: 100%; height: 100%; top: 0; left: 0;
-  display: none;             
-  z-index: 1;                
-  pointer-events: none;      
-  transition: opacity 0.3s ease; 
-  opacity: 0;
+    position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+    display: none;             
+    z-index: 1;                
+    pointer-events: none;      
+    transition: opacity 0.3s ease; 
+    opacity: 0;
 }
 .vista.active { 
     display: flex; flex-direction: column;
@@ -230,35 +218,38 @@ header h1 a:focus-visible svg {
 }
 #vista-volver.visible { display: flex; }
 
-@media (min-width: 600px) and (max-width: 800px) {
-    #app-container {
+    /* @media (min-width: 600px) and (max-width: 800px) */
+    body[data-layout="tablet-portrait"] #app-container {
         display: grid;
         grid-template-columns: 1fr 3fr; 
     }
-}
 
-@media (max-width: 800px) {
-    #info-adicional {
+    /* @media (max-width: 800px) */ 
+    body[data-layout="mobile"] #info-adicional,
+    body[data-layout="tablet-portrait"] #info-adicional {
         display: none !important; 
     }
-    #info-adicional.visible { display: none !important; }
-
-    #main-header-title small {
+    body[data-layout="mobile"] #info-adicional.visible,
+    body[data-layout="tablet-portrait"] #info-adicional.visible { 
+        display: none !important; 
+    }
+    body[data-layout="mobile"] #main-header-title small,
+    body[data-layout="tablet-portrait"] #main-header-title small {
+        display: none !important;
+    }
+    body[data-layout="mobile"] span.footer-author-text,
+    body[data-layout="tablet-portrait"] span.footer-author-text {
         display: none !important;
     }
 
-    span.footer-author-text {
-        display: none !important;
-    }
-}
-
-@media (min-width: 800px) {
-    #app-container {
+    /* @media (min-width: 800px) */
+    body[data-layout="tablet-landscape"] #app-container,
+    body[data-layout="desktop"] #app-container {
         display: grid;
         grid-template-columns: 1fr 3fr 1fr;
     }
-
-    #info-adicional {
+    body[data-layout="tablet-landscape"] #info-adicional,
+    body[data-layout="desktop"] #info-adicional {
         grid-column: 3 / 4; 
         width: 100%; 
         border-radius: 12px; border: 2px dashed var(--color-border-placeholder); 
@@ -267,9 +258,12 @@ header h1 a:focus-visible svg {
         padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
         height: 100%; overflow-y: auto; 
     }
-    #info-adicional.visible { display: block !important; }
-
-    #main-header-title small {
+    body[data-layout="tablet-landscape"] #info-adicional.visible,
+    body[data-layout="desktop"] #info-adicional.visible { 
+        display: block !important; 
+    }
+    body[data-layout="tablet-landscape"] #main-header-title small,
+    body[data-layout="desktop"] #main-header-title small {
         display: inline-block; 
         width: auto; 
         text-align: left;
@@ -281,11 +275,10 @@ header h1 a:focus-visible svg {
         text-overflow: initial;
         overflow: initial;
     }
-
-    span.footer-author-text {
+    body[data-layout="tablet-landscape"] span.footer-author-text,
+    body[data-layout="desktop"] span.footer-author-text {
         display: solid !important;
     }
-}
 
 footer {
     width: 100%;

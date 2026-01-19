@@ -67,6 +67,8 @@ export function _initCarousel_Swipe(initialSwiperSlide, itemsPorColumna, isMobil
         resizeObserver: true,
         updateOnWindowResize: true,
         
+        touchStartPreventDefault: false,
+        
         // Desactivación total de controles nativos conflictivos
         mousewheel: false,
         keyboard: { enabled: false }

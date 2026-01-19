@@ -116,32 +116,92 @@ export function _updateFocusImpl(shouldSlide = true) {
         target.classList.add('focus-visible');
         target.tabIndex = 0;
         
-        // Foco físico
-        target.focus({ preventScroll: true }); 
+        // 🛠️ DETECCIÓN DE LAYOUT (Zoom Aware) 🛠️
+        const layout = document.body.getAttribute('data-layout') || 'desktop';
+        const isMobile = layout === 'mobile';
 
-        // Movimiento del Slide
-        if (this.STATE.carouselInstance && shouldSlide) {
-            const swiper = this.STATE.carouselInstance;
+        if (isMobile) {
+            target.focus(); 
 
-            if (targetSlideIndex > -1) {
-                // ⭐️ FIX FLUIDEZ: Usamos slideTo directo al índice calculado ⭐️
-                // Esto evita que slideToLoop nos devuelva al slide original causando un salto visual.
-                // Al ir al targetSlideIndex (que puede ser un clon), el movimiento es siempre corto y suave.
-                swiper.slideTo(targetSlideIndex, data.SWIPER.SLIDE_SPEED);
-            } 
-            else {
-                // Fallback para lógica antigua (móvil o sin clones detectados)
-                const isMobile = window.innerWidth <= data.MAX_WIDTH.MOBILE;
-                let slideTarget;
+            if (this.STATE.carouselInstance) {
+                const swiper = this.STATE.carouselInstance;
+                const headerHeight = document.getElementById('app-header')?.offsetHeight || 0;
+                const footerHeight = document.querySelector('footer')?.offsetHeight || 0;
+                const viewHeight = window.innerHeight;
+                const bottomLimit = viewHeight - footerHeight;
+
+                const cardRect = target.getBoundingClientRect();
                 
-                if (isMobile) {
-                    const slide = target.closest('.swiper-slide');
-                    slideTarget = (slide && swiper.slides) ? Array.from(swiper.slides).indexOf(slide) : 0;
-                    swiper.slideTo(slideTarget, data.SWIPER.SLIDE_SPEED);
+                // 1. Identificar Techo Real (Breadcrumb en Idx=0)
+                let topRef = cardRect.top;
+                if (targetPos === 0) {
+                    const bc = target.previousElementSibling;
+                    if (bc && bc.classList.contains('card-breadcrumb-vertical')) {
+                        topRef = bc.getBoundingClientRect().top;
+                    }
+                }
+
+                // 2. Comprobación estricta de obstrucción
+                const isObstructedTop = topRef < (headerHeight + 2);
+                const isObstructedBottom = cardRect.bottom > (bottomLimit - 2);
+
+                if (isObstructedTop || isObstructedBottom) {
+                    let delta = 0;
+                    const margin = 15; 
+
+                    if (isObstructedTop) {
+                        delta = (headerHeight + margin) - topRef;
+                    } else if (isObstructedBottom) {
+                        delta = (bottomLimit - margin) - cardRect.bottom;
+                    }
+
+                    // 3. CÁLCULO DE TRANSLATE PERMISIVO (No bloquea si Bounds es 0)
+                    let newTrans = swiper.translate + delta;
+                    
+                    // Límite Superior: Arriba NUNCA permitimos hueco (tope en 0)
+                    newTrans = Math.min(newTrans, 0);
+
+                    // Límite Inferior: Solo aplicamos si Swiper detecta scroll real
+                    const maxL = swiper.maxTranslate();
+                    if (maxL < 0) {
+                        newTrans = Math.max(newTrans, maxL);
+                    }
+
+                    debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
+                        `MÓVIL FIX: Idx=${targetPos} | Delta=${delta.toFixed(1)} | NewTrans=${newTrans.toFixed(1)} | Bounds=[${maxL.toFixed(0)}, 0]`);
+
+                    // 4. Aplicación física segura
+                    swiper.setTransition(0);
+                    swiper.setTranslate(newTrans);
+                    swiper.updateProgress(); 
+                    
+                    // Capturamos instancia para el frame
+                    const sw = swiper; 
+                    requestAnimationFrame(() => {
+                        if (sw && !sw.destroyed && sw.params) {
+                            sw.setTransition(data.SWIPER.SLIDE_SPEED);
+                            sw.setTranslate(newTrans);
+                        }
+                    });
+                }
+            }
+        } else {
+            // Foco físico
+            target.focus({ preventScroll: true }); 
+
+            // Movimiento del Slide
+            if (this.STATE.carouselInstance && shouldSlide) {
+                const swiper = this.STATE.carouselInstance;
+
+                if (targetSlideIndex > -1) {
+                    // ⭐️ FIX FLUIDEZ: Usamos slideTo directo al índice calculado ⭐️
+                    // Esto evita que slideToLoop nos devuelva al slide original causando un salto visual.
+                    // Al ir al targetSlideIndex (que puede ser un clon), el movimiento es siempre corto y suave.
+                    swiper.slideTo(targetSlideIndex, data.SWIPER.SLIDE_SPEED);
                 } 
                 else {
                     // En grid desktop sin loop complejo, slideToLoop suele estar bien
-                     if (typeof swiper.slideToLoop === 'function') {
+                    if (typeof swiper.slideToLoop === 'function') {
                         // Recalcular índice lógico si no lo tenemos
                         const fallbackTarget = Math.floor(targetPos / this.STATE.itemsPorColumna);
                         swiper.slideToLoop(fallbackTarget, data.SWIPER.SLIDE_SPEED);
@@ -151,7 +211,10 @@ export function _updateFocusImpl(shouldSlide = true) {
                     }
                 }
             }
-            swiper.update(); 
+
+            if (this.STATE.carouselInstance) {
+                this.STATE.carouselInstance.update(); 
+            }
         }
     }
 }

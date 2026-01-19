@@ -72,19 +72,24 @@ class VortexSpiraApp {
 
         a11y.initA11y();
 
+        // 1. CONFIGURAR SMART RESIZE
+        this._setupSmartResize();
+
+        // Cálculo inicial de layout
+        this._updateLayoutMode();
+
         this._cacheDOM();
         
         this.DOM.vistaNav = this.DOM.vistaNav || document.getElementById('vista-navegacion-desktop'); 
 
-        // 1. DETECTAR IDIOMA
+        // DETECTAR IDIOMA
         let targetLang = i18n.detectBrowserLanguage(); 
         debug.log('app', debug.DEBUG_LEVELS.BASIC, `Idioma detectado: ${targetLang}`);
 
-        // 2. INTENTAR CARGAR TEXTOS Y DATOS EN PARALELO
+        // CARGAR TEXTOS Y DATOS
         let loadSuccess = false;
 
         try {
-            // Intentamos cargar strings y cursos del idioma detectado
             const [stringsLoaded, coursesData] = await Promise.all([
                 i18n.loadStrings(targetLang),
                 data.loadData(targetLang)
@@ -99,8 +104,6 @@ class VortexSpiraApp {
 
         } catch (e) {
             debug.logWarn('app', `Fallo cargando idioma '${targetLang}'. Reintentando con 'es' (Default).`, e);
-            
-            // 3. FALLBACK A ESPAÑOL
             if (targetLang !== 'es') {
                 try {
                     await i18n.loadStrings('es');
@@ -108,7 +111,7 @@ class VortexSpiraApp {
                     targetLang = 'es'; 
                     loadSuccess = true;
                 } catch (errFatal) {
-                    debug.logError('app', "CRITICAL: No se pudo cargar ni el idioma detectado ni el español.", errFatal);
+                    debug.logError('app', "CRITICAL: Fallo total de carga.", errFatal);
                     return; 
                 }
             }
@@ -116,10 +119,8 @@ class VortexSpiraApp {
 
         if (!loadSuccess) return;
 
-        // 4. APLICAR TEXTOS Y RENDERIZAR
         this.applyStrings(); 
-        
-        if (data.injectHeaderLogo) data.injectHeaderLogo(this);
+        if (data.injectHeaderContent) data.injectHeaderContent(this);
         if (data.injectFooterContent) data.injectFooterContent(this);
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -145,7 +146,9 @@ class VortexSpiraApp {
 
         nav_base.setupListeners.call(this);
         nav_keyboard_base.initKeyboardControls.call(this); 
-        render_base._setupResizeObserver.call(this); 
+        
+        // ❌ ELIMINADO: render_base._setupResizeObserver.call(this); 
+        // Ya usamos _setupSmartResize() que maneja el layout y el zoom.
         
         this.STATE.initialRenderComplete = true; 
         debug.log('app', debug.DEBUG_LEVELS.BASIC, "Carga inicial completada.");
@@ -181,12 +184,71 @@ class VortexSpiraApp {
         setTimeout(() => this.DOM.toast.classList.remove('active'), 2000);
     }
     
+    // Calcula el modo basado en zoom + ancho
+    _setupSmartResize() {
+        let resizeTimer;
+
+        const handleResize = () => {
+            this._updateLayoutMode();
+            this._cacheDOM(); 
+            
+            if (this.STATE.fullData) {
+                // ⭐️ FIX: Lógica condicional para no cerrar detalles al redimensionar
+                if (this.STATE.activeCourseId) {
+                    debug.log('app', debug.DEBUG_LEVELS.BASIC, `SmartResize: Manteniendo vista detalle (${this.STATE.activeCourseId})`);
+                    
+                    // Re-ejecutamos mostrarDetalle para que recalcule swipers/layouts sin salir
+                    requestAnimationFrame(() => {
+                        this._mostrarDetalle(this.STATE.activeCourseId);
+                    });
+                } else {
+                    debug.log('app', debug.DEBUG_LEVELS.BASIC, `SmartResize: Refrescando menú navegación.`);
+                    requestAnimationFrame(() => {
+                        this.renderNavegacion();
+                    });
+                }
+            }
+        };
+
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(handleResize, 100); 
+        });
+    }
+
+    _updateLayoutMode() {
+        const rootStyle = getComputedStyle(document.documentElement);
+        const scale = parseFloat(rootStyle.getPropertyValue('--font-scale')) || 1;
+        const realWidth = window.innerWidth;
+        const effectiveWidth = realWidth / scale;
+
+        let mode = 'desktop';
+
+        if (effectiveWidth <= data.MAX_WIDTH.MOBILE) { 
+            mode = 'mobile';
+        } else if (effectiveWidth <= data.MAX_WIDTH.TABLET_PORTRAIT) { 
+            mode = 'tablet-portrait';
+        } else if (effectiveWidth <= data.MAX_WIDTH.TABLET_LANDSCAPE) { 
+            mode = 'tablet-landscape';
+        } else { 
+            mode = 'desktop';
+        }
+
+        const currentMode = document.body.getAttribute('data-layout');
+        if (currentMode !== mode) {
+            document.body.setAttribute('data-layout', mode);
+            debug.log('app', debug.DEBUG_LEVELS.BASIC, `Layout: ${effectiveWidth.toFixed(0)}px (Scale ${scale}) -> [${mode}]`);
+        }
+    }
+    
     _cacheDOM() {
-        const width = window.innerWidth;
-        const isMobile = width <= data.MAX_WIDTH.MOBILE;
-        const isDesktop = width >= data.MAX_WIDTH.TABLET_LANDSCAPE;
+        const layout = document.body.getAttribute('data-layout') || 'desktop';
+        const isMobile = layout === 'mobile';
+        // En caché, agrupamos vistas de escritorio y tablet-landscape/portrait si usan los mismos contenedores "grandes"
+        // Pero para ser estrictos con tu lógica de vistas:
+        const isDesktopView = layout === 'desktop'; 
         
-        debug.log('app', debug.DEBUG_LEVELS.BASIC, `DEBUG_DOM: Refrescando caché. Ancho: ${width}`);
+        debug.log('app', debug.DEBUG_LEVELS.DEEP, `Refrescando caché DOM. Modo: ${layout}`);
 
         this.DOM.vistaDetalleDesktop = document.getElementById('vista-detalle-desktop');
         this.DOM.vistaDetalleMobile = document.getElementById('vista-detalle-mobile');
@@ -203,13 +265,15 @@ class VortexSpiraApp {
         this.DOM.appContainer = document.getElementById('app-container');
         this.DOM.toast = document.getElementById('toast-notification'); 
 
+        // Lógica de vistas de navegación (Coherente con style-layout.css y style-tablet.css)
         if (isMobile) {
             this.DOM.vistaNav = document.getElementById('vista-navegacion-mobile');
             this.DOM.track = document.getElementById('track-mobile');
-        } else if (isDesktop) {
+        } else if (isDesktopView) {
             this.DOM.vistaNav = document.getElementById('vista-navegacion-desktop');
             this.DOM.track = document.getElementById('track-desktop');
-        } else {
+        } else { 
+            // Tablet Portrait y Landscape usan la vista tablet
             this.DOM.vistaNav = document.getElementById('vista-navegacion-tablet');
             this.DOM.track = document.getElementById('track-tablet');
         }
@@ -219,7 +283,7 @@ class VortexSpiraApp {
 const appInstance = new VortexSpiraApp();
 export const init = () => appInstance.init();
 export const applyStrings = () => appInstance.applyStrings();
-export const injectHeaderLogo = () => data.injectHeaderLogo(appInstance);
+export const injectHeaderContent = () => data.injectHeaderContent(appInstance);
 export const injectFooterContent = () => data.injectFooterContent(appInstance);
 export const App = appInstance;
 

@@ -1,73 +1,87 @@
 /* --- styles/style-desktop.css --- */
 
-@media (min-width: 1024px) {
-    #app-container {
-      height: calc(100vh - var(--header-height) - var(--footer-height)); 
-      width: 100%; max-width: 2500px; margin: 0 auto;
-      display: grid; 
-      grid-template-columns: 1fr 3fr 1fr; 
-      gap: 20px; padding: 20px; box-sizing: border-box;
-      align-items: start; background: var(--color-bg);
-    }
-
-    :root {
-        --card-height-calc: calc( (100% - (2 * var(--card-gap))) / 3 );
-    }
-
-    #main-header-subtitle { display: inline-block; }
-
-    #vista-navegacion-desktop { display: flex !important; z-index: 10; }
-    #vista-navegacion-tablet { display: none !important; }
-
-    .carousel-viewport {
-        width: 100% !important; max-width: 100% !important;
-        overflow: hidden !important;
-        /* ❌ ELIMINADO contain: paint */
-    }
-    
-    #nav-swiper, #nav-swiper-tablet {
-        height: 100% !important; min-height: 200px !important; width: 100%;
-        overflow: hidden; position: relative; z-index: 1; touch-action: pan-y;
-        display: block;
-    }
-    
-    #nav-swiper .swiper-wrapper {
-      display: flex !important; height: 100% !important; gap: 0; align-items: start;
-    }
-    #nav-swiper .swiper-slide {
-      width: calc(100% / 3) !important; height: 100% !important; max-width: 100% !important;
-      margin: 0 !important; border: none !important; background: transparent !important; padding: 0 !important; 
-    }
-    #nav-swiper .cards-column-group {
-        display: flex; flex-direction: column; justify-content: flex-start; 
-        height: calc(100% - var(--nav-carousel-top-offset)); width: 100%;
-        gap: var(--card-gap); padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
-        box-sizing: border-box; 
-    }
-    #nav-swiper .cards-column-group .card {
-        flex: none; height: var(--card-height-calc); min-height: var(--card-height-calc); margin-bottom: 0; 
-    }
-    
-    #vista-volver { min-width: 0; }
-    #vista-volver #card-nivel-actual,
-    #vista-volver #card-volver-fija-elemento {
-        height: var(--card-height-calc); min-height: var(--card-height-calc);
-    }
-    
-    #vista-navegacion-desktop .carousel-mask {
-      position: absolute; width: 100%; height: 100%; top: 0; left: 0;
-      z-index: 10; pointer-events: none; overflow: hidden; 
-    }
-    #vista-navegacion-desktop .mask-left, #vista-navegacion-desktop .mask-right {
-      position: absolute; top: 0; width: 33%; height: 100%;
-      background: linear-gradient(to right, var(--color-bg), transparent);
-      z-index: 10;
-    }
-    #vista-navegacion-desktop .mask-left { left: 0; }
-    #vista-navegacion-desktop .mask-right {
-      right: 0; background: linear-gradient(to left, var(--color-bg), transparent);
-    }
-
-    #info-adicional { display: block !important; }
+/* @media (min-width: 1024px) */
+body[data-layout="desktop"] #app-container {
+    height: calc(100vh - var(--header-height) - var(--footer-height)); 
+    width: 100%; max-width: 2500px; margin: 0 auto;
+    display: grid; 
+    grid-template-columns: 1fr 3fr 1fr; 
+    gap: 20px; padding: 20px; box-sizing: border-box;
+    align-items: start; background: var(--color-bg);
 }
+
+body[data-layout="desktop"] {
+    --card-height-calc: calc( (100% - (2 * var(--card-gap))) / 3 );
+}
+
+body[data-layout="desktop"] #main-header-subtitle { 
+    display: inline-block; 
+}
+
+body[data-layout="desktop"] #vista-navegacion-desktop { 
+    display: flex !important; z-index: 10; 
+}
+body[data-layout="desktop"] #vista-navegacion-tablet { 
+    display: none !important; 
+}
+
+body[data-layout="desktop"] .carousel-viewport {
+    width: 100% !important; max-width: 100% !important;
+    overflow: hidden !important;
+    /* ❌ ELIMINADO contain: paint */
+}
+    
+body[data-layout="desktop"] #nav-swiper, 
+body[data-layout="desktop"] #nav-swiper-tablet {
+    height: 100% !important; min-height: 200px !important; width: 100%;
+    overflow: hidden; position: relative; z-index: 1; touch-action: pan-y pinch-zoom !important;
+    display: block;
+}
+    
+body[data-layout="desktop"] #nav-swiper .swiper-wrapper {
+    display: flex !important; height: 100% !important; gap: 0; align-items: start;
+}
+body[data-layout="desktop"] #nav-swiper .swiper-slide {
+    width: calc(100% / 3) !important; height: 100% !important; max-width: 100% !important;
+    margin: 0 !important; border: none !important; background: transparent !important; padding: 0 !important; 
+}
+body[data-layout="desktop"] #nav-swiper .cards-column-group {
+    display: flex; flex-direction: column; justify-content: flex-start; 
+    height: calc(100% - var(--nav-carousel-top-offset)); width: 100%;
+    gap: var(--card-gap); padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
+    box-sizing: border-box; 
+}
+body[data-layout="desktop"] #nav-swiper .cards-column-group .card {
+    flex: none; height: var(--card-height-calc); min-height: var(--card-height-calc); margin-bottom: 0; 
+}
+    
+body[data-layout="desktop"] #vista-volver { 
+  min-width: 0; 
+}
+body[data-layout="desktop"] #vista-volver #card-nivel-actual,
+body[data-layout="desktop"] #vista-volver #card-volver-fija-elemento {
+    height: var(--card-height-calc); min-height: var(--card-height-calc);
+}
+    
+body[data-layout="desktop"] #vista-navegacion-desktop .carousel-mask {
+    position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+    z-index: 10; pointer-events: none; overflow: hidden; 
+}
+body[data-layout="desktop"] #vista-navegacion-desktop .mask-left, 
+body[data-layout="desktop"] #vista-navegacion-desktop .mask-right {
+    position: absolute; top: 0; width: 33%; height: 100%;
+    background: linear-gradient(to right, var(--color-bg), transparent);
+    z-index: 10;
+}
+body[data-layout="desktop"] #vista-navegacion-desktop .mask-left { 
+  left: 0; 
+}
+body[data-layout="desktop"] #vista-navegacion-desktop .mask-right {
+    right: 0; background: linear-gradient(to left, var(--color-bg), transparent);
+}
+
+body[data-layout="desktop"] #info-adicional { 
+  display: block !important; 
+}
+
 /* --- styles/style-desktop.css --- */
