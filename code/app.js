@@ -147,10 +147,40 @@ class VortexSpiraApp {
         nav_base.setupListeners.call(this);
         nav_keyboard_base.initKeyboardControls.call(this); 
         
-        // ❌ ELIMINADO: render_base._setupResizeObserver.call(this); 
-        // Ya usamos _setupSmartResize() que maneja el layout y el zoom.
+        // Sincronización inicial
+        this._updateLayoutMode();
+        this._syncHeaderDimensions();
+
+        // ✅ CORRECCIÓN CRÍTICA: LIVE PREVIEW COMPLETO
+        window.addEventListener('vortex-layout-refresh', () => {
+            // 1. Guardar el modo actual antes de recalcular
+            const prevMode = document.body.getAttribute('data-layout');
+
+            // 2. Recalcular el modo basado en el nuevo tamaño de fuente
+            this._updateLayoutMode();
+            
+            // 3. Obtener el nuevo modo
+            const newMode = document.body.getAttribute('data-layout');
+
+            // 4. Sincronizar márgenes (Header Height)
+            this._syncHeaderDimensions();
+
+            // 5. ⚡️ Si cruzamos un umbral (ej: Tablet -> Mobile), renderizar de inmediato
+            // Esto cambia los Swipers horizontales por verticales al vuelo
+            if (prevMode !== newMode) {
+                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, `A11y Change: Cambio de modo detectado (${prevMode} -> ${newMode}). Renderizando...`);
+                this._cacheDOM();
+                
+                if (this.STATE.activeCourseId) {
+                    this._mostrarDetalle(this.STATE.activeCourseId);
+                } else {
+                    this.renderNavegacion();
+                }
+            }
+        });
         
         this.STATE.initialRenderComplete = true; 
+
         debug.log('app', debug.DEBUG_LEVELS.BASIC, "Carga inicial completada.");
 
         requestAnimationFrame(() => {
@@ -183,13 +213,41 @@ class VortexSpiraApp {
         this.DOM.toast.classList.add('active');
         setTimeout(() => this.DOM.toast.classList.remove('active'), 2000);
     }
-    
+
+    // Mide el DOM real y actualiza el CSS
+    _syncHeaderDimensions() {
+
+        // 1. HEADER
+        const header = document.getElementById('app-header');
+        if (header) {
+            const realHeight = header.offsetHeight;
+            // Inyectamos la altura exacta en el CSS global
+            document.documentElement.style.setProperty('--header-height-real', `${realHeight}px`);
+
+            debug.log('app', debug.DEBUG_LEVELS.DEEP, `A11y Sync: Header mide ${realHeight}px`);
+        }
+
+        // 2. FOOTER (Nuevo)
+        const footer = document.querySelector('footer');
+        if (footer) {
+            const realFooterHeight = footer.offsetHeight;
+            // Inyectamos la altura real del footer
+            document.documentElement.style.setProperty('--footer-height-real', `${realFooterHeight}px`);
+            
+            // debug.log('app', debug.DEBUG_LEVELS.DEEP, `Layout Sync: Header=${header?.offsetHeight}, Footer=${realFooterHeight}`);
+        }
+    }
+
     // Calcula el modo basado en zoom + ancho
     _setupSmartResize() {
         let resizeTimer;
 
         const handleResize = () => {
             this._updateLayoutMode();
+
+            // ✅ Recalcular en cada resize (por si cambia el zoom)
+            this._syncHeaderDimensions();
+
             this._cacheDOM(); 
             
             if (this.STATE.fullData) {

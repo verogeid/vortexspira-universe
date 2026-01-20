@@ -21,8 +21,13 @@ body[data-layout="tablet-landscape"] {
 /* @media ((min-width: 601px) and (max-width: 1023.99px)) */
 body[data-layout="tablet-portrait"] #app-container,
 body[data-layout="tablet-landscape"] #app-container {
-    height: calc(100vh - var(--header-height) - var(--footer-height)); 
-    width: 100%; max-width: 1023.99px; margin: 0 auto;
+    height: calc(100vh - var(--header-height-real, 9dvh) - var(--footer-height-real, 6dvh)); 
+    
+    width: 100%; max-width: 2500px; margin: 0 auto;
+    
+    /*margin-top: var(--header-height-real, 9dvh);*/
+    margin-bottom: var(--footer-height-real, 6dvh);
+
     display: grid; gap: 15px; padding: 15px; box-sizing: border-box;
     align-items: start; background: var(--color-bg);
 }

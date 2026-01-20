@@ -3,15 +3,19 @@
 footer { 
     position: fixed; 
     bottom: 0; 
-    padding: 0 5px; 
+    padding: 5px; 
     width: 100%;
     color: var(--color-footer-text); text-align: center;
     background: var(--color-header-bg); z-index: 100; 
     display: flex; justify-content: center; 
     align-items: center; 
     flex-wrap: wrap; 
-    height: var(--footer-height); box-sizing: border-box; 
-    font-size: clamp(0.8rem, 0.6rem + 1vw, 1.2rem);
+    
+    min-height: var(--footer-height);
+    height: auto;
+
+    box-sizing: border-box; 
+    font-size: var(--footer-font-size);
 }
 
 footer small { 

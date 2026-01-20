@@ -6,7 +6,7 @@ body[data-layout="mobile"] {
     --header-title-size: var(--mobile-header-title-size);
     --header-logo-size: var(--mobile-header-logo-size);
     --header-icon-size: var(--mobile-header-icon-size);
-    --header-obras-size: 0; /* Oculto en móvil */
+    --header-obras-size: var(--mobile-header-obras-size);
     
     /* Override altura header flexible */
     --header-height: auto; 
@@ -20,7 +20,18 @@ body[data-layout="mobile"] {
 
 body[data-layout="mobile"] header { 
     position: fixed; 
-    min-height: 50px; /* Asegura tamaño mínimo */
+    height: auto;
+    min-height: var(--header-height); /*50px; /* Asegura tamaño mínimo */
+}
+
+body[data-layout="mobile"] header h1 {
+    flex-wrap: nowrap;
+    white-space: normal;
+    line-height: 1.1;
+}
+
+body[data-layout="mobile"] header h1 a {
+    flex-shrink: 0; display: inline-flex;
 }
 
 body[data-layout="mobile"] #main-header-subtitle {
@@ -29,14 +40,17 @@ body[data-layout="mobile"] #main-header-subtitle {
 
 body[data-layout="mobile"] #app-container {
     height: auto !important;
-    min-height: calc(100vh - var(--header-height)); 
+    min-height: calc(100vh - var(--header-height-real, 50px) - var(--footer-height-real, 6vh));
 
-    padding-top: calc(var(--header-height) + 15px) !important;
+    margin-top: var(--header-height-real, 50px) !important;
+
+    margin-bottom: var(--footer-height-real, 6dvh) !important;
+
+    padding-top: 15px !important; padding-bottom: 15px !important;
     padding-left: 0px; padding-right: 0px; 
-    padding-bottom: var(--footer-height) !important;
 
     display: flex; flex-direction: column;
-    gap: 15px; overflow: visible;
+    gap: var(--card-gap); overflow: visible;
 }
 
 body[data-layout="mobile"] #vista-volver, 
@@ -81,7 +95,8 @@ body[data-layout="mobile"] #vista-detalle-mobile:not(.active) {
 /* ⭐️ UNIFICACIÓN: Aplicamos las reglas a AMBOS carruseles (Nav y Detalle) ⭐️ */
 body[data-layout="mobile"] #nav-swiper-mobile, 
 body[data-layout="mobile"] #detalle-swiper-mobile {
-    height: calc(100vh - var(--header-height) - var(--footer-height) - 20px) !important; 
+    height: calc(100vh - var(--header-height-real, 50px) - var(--footer-height-real, 6vh) - 10px) !important;
+    
     width: 100%; position: relative;
     overflow: hidden; 
     touch-action: pan-y pinch-zoom !important; /* none important!;*/

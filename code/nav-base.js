@@ -125,6 +125,9 @@ export function _updateFocusImpl(shouldSlide = true) {
 
             if (this.STATE.carouselInstance) {
                 const swiper = this.STATE.carouselInstance;
+                swiper.update(); // Sincronización
+
+                // Leemos las dimensiones reales del DOM (por si el CSS aún no refrescó)
                 const headerHeight = document.getElementById('app-header')?.offsetHeight || 0;
                 const footerHeight = document.querySelector('footer')?.offsetHeight || 0;
                 const viewHeight = window.innerHeight;
@@ -132,7 +135,7 @@ export function _updateFocusImpl(shouldSlide = true) {
 
                 const cardRect = target.getBoundingClientRect();
                 
-                // 1. Identificar Techo Real (Breadcrumb en Idx=0)
+                // 1. Techo Real (Breadcrumb en Idx=0)
                 let topRef = cardRect.top;
                 if (targetPos === 0) {
                     const bc = target.previousElementSibling;
@@ -141,13 +144,13 @@ export function _updateFocusImpl(shouldSlide = true) {
                     }
                 }
 
-                // 2. Comprobación estricta de obstrucción
+                // 2. Detección de Obstrucción
                 const isObstructedTop = topRef < (headerHeight + 2);
                 const isObstructedBottom = cardRect.bottom > (bottomLimit - 2);
 
                 if (isObstructedTop || isObstructedBottom) {
                     let delta = 0;
-                    const margin = 15; 
+                    const margin = 15; // Aire visual
 
                     if (isObstructedTop) {
                         delta = (headerHeight + margin) - topRef;
@@ -155,28 +158,21 @@ export function _updateFocusImpl(shouldSlide = true) {
                         delta = (bottomLimit - margin) - cardRect.bottom;
                     }
 
-                    // 3. CÁLCULO DE TRANSLATE PERMISIVO (No bloquea si Bounds es 0)
+                    // 3. Aplicación Permisiva (Sin Clamping Bloqueante)
                     let newTrans = swiper.translate + delta;
                     
-                    // Límite Superior: Arriba NUNCA permitimos hueco (tope en 0)
+                    // Única regla de oro: No dejar hueco arriba (Idx 0 no baja más de la cuenta)
                     newTrans = Math.min(newTrans, 0);
 
-                    // Límite Inferior: Solo aplicamos si Swiper detecta scroll real
-                    const maxL = swiper.maxTranslate();
-                    if (maxL < 0) {
-                        newTrans = Math.max(newTrans, maxL);
-                    }
-
                     debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
-                        `MÓVIL FIX: Idx=${targetPos} | Delta=${delta.toFixed(1)} | NewTrans=${newTrans.toFixed(1)} | Bounds=[${maxL.toFixed(0)}, 0]`);
+                        `MÓVIL FIX: Idx=${targetPos} | Delta=${delta.toFixed(1)} | NewTrans=${newTrans.toFixed(1)}`);
 
-                    // 4. Aplicación física segura
+                    // 4. Ejecución Física
                     swiper.setTransition(0);
                     swiper.setTranslate(newTrans);
                     swiper.updateProgress(); 
                     
-                    // Capturamos instancia para el frame
-                    const sw = swiper; 
+                    const sw = swiper;
                     requestAnimationFrame(() => {
                         if (sw && !sw.destroyed && sw.params) {
                             sw.setTransition(data.SWIPER.SLIDE_SPEED);

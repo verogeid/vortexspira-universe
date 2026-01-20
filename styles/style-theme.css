@@ -39,25 +39,28 @@
     --nav-carousel-top-offset: 2vh;
 
     /* 📐 VARIABLES DE FUENTE HEADER (Valores por defecto / Desktop) */
-    --header-title-size: clamp(1.2rem, 1rem + 3vw, 3rem);
-    --header-logo-size: clamp(3rem, 5vmin, 5rem);
-    --header-icon-size: clamp(2rem, 6vmin, 5rem);
-    --header-obras-size: clamp(1.5rem, 5vmin, 5rem);
+    --header-title-size: clamp(1.2rem, calc((1rem + 3dvh) * var(--font-scale)), 3rem);
+    --header-logo-size: clamp(3rem, calc(5vmin * var(--font-scale)), 5rem);
+    --header-icon-size: clamp(2rem, calc(6vmin * var(--font-scale)), 5rem);
+    --header-obras-size: clamp(1.5rem, calc(5vmin * var(--font-scale)), 5rem);
+
+    --footer-font-size: clamp(0.8rem, calc((0.6rem + 1dvh) * var(--font-scale)), 1.2rem);
 
     /* 📐 VARIABLES DE MÓVIL (Overrides para style-mobile.css) */
     /* Ajustados para que quepan en 320px sin romper layout */
-    --mobile-header-title-size: clamp(0.9rem, 4vh, 1.2rem); 
+    --mobile-header-title-size: clamp(0.9rem, calc(4dvh * var(--font-scale)), 1.2rem);
     --mobile-header-logo-size: 1.8rem;
     --mobile-header-icon-size: 2rem;
+    --mobile-header-obras-size: 1rem; /*0; /* Oculto en móvil */
 
     /* 📐 VARIABLES DE TABLET PORTRAIT (Overrides para style-tablet.css) */
-    --tab-port-header-title-size: clamp(1rem, 4.5vh, 1.4rem);
+    --tab-port-header-title-size: clamp(1rem, calc(4.5dvh * var(--font-scale)), 1.4rem);
     --tab-port-header-logo-size: 2.2rem;
     --tab-port-header-icon-size: 2.2rem;
     --tab-port-obras-size: 1.8rem;
 
     /* 📐 VARIABLES DE TABLET LANDSCAPE (Overrides para style-tablet.css) */
-    --tab-land-header-title-size: clamp(1.2rem, 5vh, 1.6rem);
+    --tab-land-header-title-size: clamp(1.2rem, calc(5dvh * var(--font-scale)), 1.6rem);
     --tab-land-header-logo-size: 2.5rem;
     --tab-land-header-icon-size: 2.5rem;
     --tab-land-obras-size: 2rem;

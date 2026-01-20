@@ -18,10 +18,10 @@ export const DEBUG_CONFIG = {
     global_key: DEBUG_LEVELS.BASIC,
     global_mouse: DEBUG_LEVELS.DISABLED,
     
-    app: DEBUG_LEVELS.BASIC,
+    app: DEBUG_LEVELS.DEEP,
     data: DEBUG_LEVELS.BASIC,
     i18n: DEBUG_LEVELS.DISABLED,
-    ally: DEBUG_LEVELS.BASIC,
+    ally: DEBUG_LEVELS.DEEP,
     nav_stack: DEBUG_LEVELS.BASIC,
 
     // Módulos de Detalle

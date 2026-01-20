@@ -197,16 +197,19 @@ function _setupListeners() {
         });
     });
 
-    // SLIDER OPTIMIZADO
+    // SLIDER OPTIMIZADO PARA LIVE PREVIEW
     if (_domRefs.rangeSize) {
         // 'input': Se dispara mientras arrastras. Actualizamos visualmente pero NO guardamos.
         _domRefs.rangeSize.addEventListener('input', (e) => {
             const val = parseInt(e.target.value);
             _prefs.fontSizePct = val;
             
-            // Aplicamos CSS en vivo para que el usuario vea el cambio
+            // 1. Aplicar CSS de escala inmediatamente
             document.documentElement.style.setProperty('--font-scale', val / 100);
             _updateSliderLabel(val);
+
+            // 2. NOTIFICAR CAMBIO DE LAYOUT AL INSTANTE
+            window.dispatchEvent(new CustomEvent('vortex-layout-refresh'));
         });
 
         // 'change': Se dispara al soltar. AQUÍ guardamos.
