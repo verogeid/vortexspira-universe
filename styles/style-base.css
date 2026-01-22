@@ -12,6 +12,7 @@
 /* 3. Componentes UI Básicos */
 @import url('style-cards.css');
 @import url('style-details.css');
+@import url('style-header.css');
 @import url('style-footer.css');
 @import url('style-components.css');
 @import url('style-a11y.css');

@@ -32,38 +32,59 @@
     --shadow-opacity: 0.8;       /* Opacidad base de la sombra Ghost */
 
     /* 📐 VARIABLES ESTRUCTURALES BASE */
-    --header-height: 9vh;
-    --footer-height: 6vh;
-    --card-gap: 3vh; 
-    --nav-desktop-height: calc(100% - 0px); 
-    --nav-carousel-top-offset: 2vh;
+    --header-height: 9dvh;
+    --footer-height: 5dvh;
+    --card-gap: 3dvh; 
+    --nav-desktop-height: 100%; 
+    --nav-carousel-top-offset: 2dvh;
 
     /* 📐 VARIABLES DE FUENTE HEADER (Valores por defecto / Desktop) */
-    --header-title-size: clamp(1.2rem, calc((1rem + 3dvh) * var(--font-scale)), 3rem);
-    --header-logo-size: clamp(3rem, calc(5vmin * var(--font-scale)), 5rem);
-    --header-icon-size: clamp(2rem, calc(6vmin * var(--font-scale)), 5rem);
-    --header-obras-size: clamp(1.5rem, calc(5vmin * var(--font-scale)), 5rem);
+    /* Título: Crece con la letra pero frena si la pantalla es bajita */
+    --header-title-size: clamp(0.8rem, 
+                                calc((1rem + 2dvh) * var(--font-scale)), 
+                                3rem);
+    
+    /* LOGICA DE ICONOS: clamp(MÍNIMO_SEGURIDAD, AJUSTE_AL_HUECO_VERTICAL, PROPORCIÓN_TEXTO)
+       - Mínimo: Píxeles fijos para que nunca desaparezca.
+       - Ideal: % de la altura de pantalla (dvh) para que nunca desborde.
+       - Máximo: rem (que escala con el zoom) para que crezca junto al texto hasta topar con el techo.
+    */
+    --header-logo-size: clamp(24px, 8dvh, 4rem);
+    --header-icon-size: clamp(24px, 8dvh, 3.7rem);
+    --header-obras-size: clamp(16px, 6dvh, 3rem);
 
-    --footer-font-size: clamp(0.8rem, calc((0.6rem + 1dvh) * var(--font-scale)), 1.2rem);
+    --footer-font-size: clamp(0.5rem, 
+                                calc((0.1rem + 2dvh) * var(--font-scale)), 
+                                1rem);
 
-    /* 📐 VARIABLES DE MÓVIL (Overrides para style-mobile.css) */
-    /* Ajustados para que quepan en 320px sin romper layout */
-    --mobile-header-title-size: clamp(0.9rem, calc(4dvh * var(--font-scale)), 1.2rem);
-    --mobile-header-logo-size: 1.8rem;
-    --mobile-header-icon-size: 2rem;
-    --mobile-header-obras-size: 1rem; /*0; /* Oculto en móvil */
+    /* 📐 VARIABLES DE TABLET LANDSCAPE */
+    --tab-land-header-title-size: clamp(0.8rem, 
+                                    calc(5dvh * var(--font-scale)), 
+                                    1.8rem);
+    --tab-land-header-logo-size: clamp(24px, 7dvh, 3rem); 
+    --tab-land-header-icon-size: clamp(24px, 7dvh, 2.7rem); 
+    --tab-land-header-obras-size: clamp(16px, 5dvh, 2rem);
 
-    /* 📐 VARIABLES DE TABLET PORTRAIT (Overrides para style-tablet.css) */
-    --tab-port-header-title-size: clamp(1rem, calc(4.5dvh * var(--font-scale)), 1.4rem);
-    --tab-port-header-logo-size: 2.2rem;
-    --tab-port-header-icon-size: 2.2rem;
-    --tab-port-obras-size: 1.8rem;
+    /* 📐 VARIABLES DE TABLET PORTRAIT */
+    --tab-port-header-title-size: clamp(0.8rem, 
+                                    calc(4.5dvh * var(--font-scale)), 
+                                    1.5rem);
+    --tab-port-header-logo-size: clamp(24px, 6dvh, 2.8rem); 
+    --tab-port-header-icon-size: clamp(24px, 6dvh, 2.5rem); 
+    --tab-port-header-obras-size: clamp(16px, 4dvh, 1.8rem);
 
-    /* 📐 VARIABLES DE TABLET LANDSCAPE (Overrides para style-tablet.css) */
-    --tab-land-header-title-size: clamp(1.2rem, calc(5dvh * var(--font-scale)), 1.6rem);
-    --tab-land-header-logo-size: 2.5rem;
-    --tab-land-header-icon-size: 2.5rem;
-    --tab-land-obras-size: 2rem;
+    /* 📐 VARIABLES DE MÓVIL */
+    /* Ajustadas para "Safe Mode" y Zoom 200% */
+    --mobile-header-title-size: clamp(0.8rem, 
+                                    calc(3.5dvh * var(--font-scale)), 
+                                    1.3rem);
+    
+    /* En móvil, el 'dvh' es el rey para evitar que el header coma pantalla */
+    --mobile-header-logo-size: clamp(24px, 8dvh, 2.5rem) !important;
+    --mobile-header-icon-size: clamp(24px, 8dvh, 2.2rem) !important;
+    --mobile-header-obras-size: clamp(16px, 6dvh, 1.5rem) !important;
+
+    --footer-social-link-size: clamp(12px, 2.5dvh, 1rem) !important;
 
     /* Tipografía Dinámica */
     --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -74,6 +95,26 @@
     --font-dyslexic: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
     --font-serif: 'Georgia', 'Times New Roman', serif;
     --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    /* Título Modal: Se reduce en pantallas bajitas */
+    --a11y-title-font-size: clamp(1.1rem, 
+                                    calc((1rem + 1dvh) * var(--font-scale)), 
+                                    2rem);
+    
+    /* Subtítulos (Tipografía, Tamaño...): */
+    --a11y-section-font-size: clamp(0.9rem, 
+                                    calc((0.8rem + 0.5dvh) * var(--font-scale)), 
+                                    1.3rem);
+    
+    /* Botón Cerrar (X): Grande pero controlado */
+    --a11y-close-btn-font-size: clamp(1.2rem, calc((1rem + 1dvh) * var(--font-scale)), 1.8rem);
+    --a11y-close-font-width: clamp(30px, 5dvh, 50px);
+    
+    /* Botones de Opción (Sans, Serif...): Legibles pero compactos */
+    --a11y-option-btn-font-size: clamp(0.8rem, calc((0.75rem + 0.5dvh) * var(--font-scale)), 1.1rem);
+    
+    /* Valor del Slider (100%): */
+    --a11y-range-value-font-size: clamp(0.8rem, calc((0.75rem + 0.5dvh) * var(--font-scale)), 1rem);
 }
 
 /* Aplicación de las variables al documento */

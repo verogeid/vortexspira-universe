@@ -31,7 +31,7 @@
             {
               "id": "c-cfwp",
               "titulo": "Arquitecto Web",
-              "descripcion": "Acabo de salir del Kick-off del nuevo e-commerce y tú eres mi refuerzo. Olvida los tutoriales de 'Hola Mundo'; aquí trabajamos con metodología Shift Left. No vamos a tirar líneas de código, vamos a construir un edificio.<br><ul><li>Sprint 1 (HTML5): Los cimientos semánticos y accesibles. Sin esto, el proyecto se hunde.</li></ul><ul><li>Sprint 2 (CSS3): La fachada, el diseño responsivo y la identidad visual.</li></ul><ul><li>Sprint 3 (JavaScript): La maquinaria interna, la lógica y la interactividad.</li></ul>Al terminar, no solo tendrás una app; tendrás la mentalidad para levantar cualquier proyecto web desde cero sin deuda técnica.",
+              "descripcion": "<p>Acabo de salir del Kick-off del nuevo e-commerce y tú eres mi refuerzo. Olvida los tutoriales de 'Hola Mundo'; aquí trabajamos con metodología Shift Left. No vamos a tirar líneas de código, vamos a construir un edificio.</p><p>🔸Sprint 1 (HTML5): Los cimientos semánticos y accesibles. Sin esto, el proyecto se hunde.</p><p>🔸Sprint 2 (CSS3): La fachada, el diseño responsivo y la identidad visual.</p><p>🔸Sprint 3 (JavaScript): La maquinaria interna, la lógica y la interactividad.</p><p>Al terminar, no solo tendrás una app; tendrás la mentalidad para levantar cualquier proyecto web desde cero sin deuda técnica.</p>",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#", "type": "d" },
                 { "texto": "Adquirir Módulo HTML5", "url": "#", "type": "c" },
@@ -121,7 +121,17 @@
           "id": "s-qa-fun",
           "nombre": "Fundamentos y Gestión",
           "subsecciones": [],
-          "cursos": []
+          "cursos": [
+            {
+              "id": "c-awqa",
+              "titulo": "Arquitecto Web (QA Edition)",
+              "descripcion": "<p>Te han mentido. La interfaz gráfica (UI) es una ilusión; la verdad está en el DOM. Si sigues probando solo 'lo que se ve', tus reportes serán superficiales y tus automatizaciones frágiles.</p><p>Este curso transforma tu perfil de Tester a <strong>Ingeniero de Calidad Holístico</strong>, enseñándote a auditar las tripas de la web (Caja Gris):</p><p>🔸<strong>La Visión (DOM & Consola):</strong> Deja de adivinar. Aprende a interrogar al navegador y destapar bugs ocultos (y mentiras del Frontend) que la UI no muestra.</p><p>🔸<strong>El Selector Indestructible:</strong> ¿Tus tests se rompen si cambian el diseño o el idioma? Normal, estás testeando 'pintura'. Aprenderás a enganchar tus automatizaciones a la <strong>Estructura Invisible</strong> del negocio. Crearás scripts que sobreviven a rediseños completos sin tocar una línea de código.</p><p>🔸<strong>Ingeniería del Caos (Network & Render):</strong> Controla el tráfico. Simula caídas de red, bloquea servicios de terceros y detecta problemas de rendimiento antes de que el usuario sufra.</p>",
+              "enlaces": [
+                { "texto": "Prueba el freemium", "url": "#", "type": "d" },
+                { "texto": "Adquirir Pack Completo", "url": "#", "type": "c" }
+              ]
+            }
+          ]
         },
         {
           "id": "s-qa-pfm",
@@ -136,8 +146,8 @@
           "cursos": [
             {
               "id": "c-cseg",
-              "titulo": "Cyberseguridad Beyond-OWASP para QA",
-              "descripcion": "Hoy es tu primer día como becario en la empresa. El experto en ciberseguridad es tu mentor y te va a enseñar todo lo que sabe.<br>Una simulación con la que entenderás no solo el qué y el cómo, sino el porqué. Aprenderás a auditar una web, y hasta tu propia red doméstica o empresarial. Porque la superficie de ataque está en todas partes. Una simulación que va más allá del típico libro de texto.<br>Anticípate al hacker o al desastre natural o digital.",
+              "titulo": "Cyberseguridad Beyond-OWASP",
+              "descripcion": "<p>Hoy es tu primer día como becario en la empresa. El experto en ciberseguridad es tu mentor y te va a enseñar todo lo que sabe.</p><p>Una simulación con la que entenderás no solo el qué y el cómo, sino el porqué.<br>Aprenderás a auditar una web, y hasta tu propia red doméstica o empresarial. Porque la superficie de ataque está en todas partes.</p><p>Una simulación que va más allá del típico libro de texto.<br>Anticípate al hacker o al desastre natural o digital.</p>",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#", "type": "d" },
                 { "texto": "Adquirir pack completo", "url": "#", "type": "c" }
@@ -188,7 +198,7 @@
             {
               "id": "c-cfwp",
               "titulo": "Arquitecto Web",
-              "descripcion": "Acabo de salir del Kick-off del nuevo e-commerce y tú eres mi refuerzo. Olvida los tutoriales de 'Hola Mundo'; aquí trabajamos con metodología Shift Left. No vamos a tirar líneas de código, vamos a construir un edificio.<br><ul><li>Sprint 1 (HTML5): Los cimientos semánticos y accesibles. Sin esto, el proyecto se hunde.</li></ul><ul><li>Sprint 2 (CSS3): La fachada, el diseño responsivo y la identidad visual.</li></ul><ul><li>Sprint 3 (JavaScript): La maquinaria interna, la lógica y la interactividad.</li></ul>Al terminar, no solo tendrás una app; tendrás la mentalidad para levantar cualquier proyecto web desde cero sin deuda técnica.",
+              "descripcion": "<p>Acabo de salir del Kick-off del nuevo e-commerce y tú eres mi refuerzo. Olvida los tutoriales de 'Hola Mundo'; aquí trabajamos con metodología Shift Left. No vamos a tirar líneas de código, vamos a construir un edificio.</p><p>🔸Sprint 1 (HTML5): Los cimientos semánticos y accesibles. Sin esto, el proyecto se hunde.</p><p>🔸Sprint 2 (CSS3): La fachada, el diseño responsivo y la identidad visual.</p><p>🔸Sprint 3 (JavaScript): La maquinaria interna, la lógica y la interactividad.</p><p>Al terminar, no solo tendrás una app; tendrás la mentalidad para levantar cualquier proyecto web desde cero sin deuda técnica.</p>",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#a", "type": "d" },
                 { "texto": "Adquirir Módulo HTML5", "url": "#a", "type": "c" },
@@ -282,8 +292,9 @@
             {
               "id": "c-awqa",
               "titulo": "Arquitecto Web (QA Edition)",
-              "descripcion": "<p>Te han mentido. La interfaz gráfica (UI) es una ilusión; la verdad está en el DOM. Si sigues probando solo 'lo que se ve', tus reportes serán superficiales y tus automatizaciones frágiles.</p><p>Este curso transforma tu perfil de Tester a <strong>Ingeniero de Calidad Holístico</strong>, enseñándote a auditar las tripas de la web (Caja Gris):</p><ul><li><strong>La Visión (DOM & Consola):</strong> Deja de adivinar. Aprende a interrogar al navegador y destapar bugs ocultos (y mentiras del Frontend) que la UI no muestra.</li></ul><ul><li><strong>El Selector Indestructible:</strong> ¿Tus tests se rompen si cambian el diseño o el idioma? Normal, estás testeando 'pintura'. Aprenderás a enganchar tus automatizaciones a la <strong>Estructura Invisible</strong> del negocio. Crearás scripts que sobreviven a rediseños completos sin tocar una línea de código.</li></ul><ul><li><strong>Ingeniería del Caos (Network & Render):</strong> Controla el tráfico. Simula caídas de red, bloquea servicios de terceros y detecta problemas de rendimiento antes de que el usuario sufra.</li></ul>Deja de pelearte con `xPath` inestables y empieza a hablar el idioma nativo del navegador.","enlaces": [
-                { "texto": "Prueba el freemium (Cap 1 y 2)", "url": "#", "type": "d" },
+              "descripcion": "<p>Te han mentido. La interfaz gráfica (UI) es una ilusión; la verdad está en el DOM. Si sigues probando solo 'lo que se ve', tus reportes serán superficiales y tus automatizaciones frágiles.</p><p>Este curso transforma tu perfil de Tester a <strong>Ingeniero de Calidad Holístico</strong>, enseñándote a auditar las tripas de la web (Caja Gris):</p><p>🔸<strong>La Visión (DOM & Consola):</strong> Deja de adivinar. Aprende a interrogar al navegador y destapar bugs ocultos (y mentiras del Frontend) que la UI no muestra.</p><p>🔸<strong>El Selector Indestructible:</strong> ¿Tus tests se rompen si cambian el diseño o el idioma? Normal, estás testeando 'pintura'. Aprenderás a enganchar tus automatizaciones a la <strong>Estructura Invisible</strong> del negocio. Crearás scripts que sobreviven a rediseños completos sin tocar una línea de código.</p><p>🔸<strong>Ingeniería del Caos (Network & Render):</strong> Controla el tráfico. Simula caídas de red, bloquea servicios de terceros y detecta problemas de rendimiento antes de que el usuario sufra.</p>",
+              "enlaces": [
+                { "texto": "Prueba el freemium", "url": "#", "type": "d" },
                 { "texto": "Adquirir Pack Completo", "url": "#", "type": "c" }
               ]
             }

@@ -27,6 +27,9 @@ export const URL = {
     WEBPAGE: "https://www.vortexspira.com"
 }
 
+// MÍNIMO VITAL: ¿Necesitamos al menos 250px para ver algo útil?
+export const MIN_CONTENT_HEIGHT = 250;
+
 export const MAX_WIDTH = {
     MOBILE: 600,
     TABLET_PORTRAIT: 800,
@@ -144,7 +147,7 @@ export function injectFooterContent(appInstance) {
                 aria-label="${appInstance.getString('ariaLicense')}" class="footer-license-link">
                 <img src="${URL.LICENSE_IMG_SRC}" width=88 height=31 alt="Creative Commons License"/>
             </a>
-            <span class="footer-separator">|</span>
+            <span class="footer-separator-author">|</span>
             <span class="footer-author-text">
                 ${appInstance.getString('footerAuthor')}
             </span> 
@@ -165,7 +168,7 @@ export function injectFooterContent(appInstance) {
             </div>
 
             <span class="footer-separator">|</span> 
-            v${appInstance.getString('version')}
+            <span class="footer-version">v${appInstance.getString('version')}</span>
         `;
     }
 }

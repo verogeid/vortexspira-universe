@@ -6,7 +6,7 @@ body[data-layout="tablet-portrait"] {
     --header-title-size: var(--tab-port-header-title-size);
     --header-logo-size: var(--tab-port-header-logo-size);
     --header-icon-size: var(--tab-port-header-icon-size);
-    --header-obras-size: var(--tab-port-obras-size);
+    --header-obras-size: var(--tab-port-header-obras-size);
 }
 
 /* Tablet Landscape */
@@ -15,7 +15,7 @@ body[data-layout="tablet-landscape"] {
     --header-title-size: var(--tab-land-header-title-size);
     --header-logo-size: var(--tab-land-header-logo-size);
     --header-icon-size: var(--tab-land-header-icon-size);
-    --header-obras-size: var(--tab-land-obras-size);
+    --header-obras-size: var(--tab-land-header-obras-size);
 }
 
 /* @media ((min-width: 601px) and (max-width: 1023.99px)) */
@@ -35,11 +35,6 @@ body[data-layout="tablet-landscape"] #app-container {
 body[data-layout="tablet-portrait"],
 body[data-layout="tablet-landscape"] {
     --card-height-calc: calc( (100% - var(--card-gap)) / 2 );
-}
-
-body[data-layout="tablet-portrait"] #main-header-subtitle,
-body[data-layout="tablet-landscape"] #main-header-subtitle { 
-    display: inline-block; 
 }
 
 body[data-layout="tablet-portrait"] #vista-navegacion-tablet,
@@ -86,9 +81,9 @@ body[data-layout="tablet-landscape"] #nav-swiper-tablet .swiper-wrapper {
 body[data-layout="tablet-portrait"] #nav-swiper-tablet .swiper-slide,
 body[data-layout="tablet-landscape"] #nav-swiper-tablet .swiper-slide {
     height: 100% !important; width: calc(100% / 3) !important;
-    margin: 0 !important;
+    margin: 0 !important; padding: 0 !important;
     border: none !important; background: transparent !important; 
-    padding: 0 !important; box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body[data-layout="tablet-portrait"] #nav-swiper-tablet .cards-column-group,
@@ -101,7 +96,9 @@ body[data-layout="tablet-landscape"] #nav-swiper-tablet .cards-column-group {
 
 body[data-layout="tablet-portrait"] #nav-swiper-tablet .cards-column-group .card,
 body[data-layout="tablet-landscape"] #nav-swiper-tablet .cards-column-group .card {
-    flex: none; height: var(--card-height-calc); min-height: var(--card-height-calc); margin-bottom: 0; 
+    flex: none; 
+    height: var(--card-height-calc); min-height: var(--card-height-calc); 
+    margin-bottom: 0; 
 }
 
 body[data-layout="tablet-portrait"] #vista-volver,

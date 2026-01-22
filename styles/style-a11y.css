@@ -2,10 +2,13 @@
 
 .a11y-modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: var(--color-shadow-modal);
     -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
     z-index: 9998;
-    display: none; justify-content: center; align-items: center;
+
+    display: none; overflow-y: auto;
+    padding: 10px;
+
     opacity: 0; transition: opacity 0.3s ease;
 }
 
@@ -15,15 +18,22 @@
 
 /* ESTILO GHOST PARA EL MODAL */
 .a11y-modal {
+    margin: auto;
+
     background: var(--color-card-bg);
-    border: 2px solid var(--color-card-border); /* Borde Ghost */
+    border: 2px solid var(--color-card-border); 
     color: var(--color-text);
-    width: 90%; max-width: 580px;
+    
     border-radius: 12px;
     padding: 25px;
-    box-shadow: 0 10px 40px var(--color-shadow-modal); /* Sombra Ghost */
+    box-shadow: 0 10px 40px var(--color-shadow-modal); 
     position: relative;
-    max-height: 90vh; overflow-y: auto;
+
+    width: 90%;
+    /* Aseguramos que no se salga horizontalmente */
+    max-width: min(580px, 90vw);
+
+    max-height: none; overflow-y: auto;
     transform: translateY(20px); transition: transform 0.3s ease;
 
     scrollbar-width: thin;
@@ -36,19 +46,49 @@
 }
 
 .a11y-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 20px; border-bottom: 1px solid var(--color-border-placeholder);
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    margin-bottom: 20px; 
+    border-bottom: 1px solid var(--color-border-placeholder);
     padding-bottom: 10px;
+    
+    /* ⭐️ FIX: Evitar desbordamiento del header */
+    width: 100%; max-width: 100%;
+    overflow: hidden; 
 }
 
-.a11y-header h2 { margin: 0; font-size: 1.5rem; }
+.a11y-header h2 { 
+    margin: 0; 
+    /* ⭐️ FIX FUENTE: Limitamos el crecimiento máximo para que no sea gigante */
+    font-size: var(--a11y-title-font-size);
+    
+    /* ⭐️ FIX LAYOUT: Truncar con puntos suspensivos si no cabe */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* Flex child properties */
+    flex: 1; 
+    min-width: 0; /* CRÍTICO: Permite al flex item encogerse por debajo de su contenido */
+    padding-right: 15px; /* Espacio de seguridad con el botón cerrar */
+}
 
 .a11y-close-btn {
-    background: transparent; border: none; font-size: 1.5rem; 
+    background: transparent; border: none; 
+    font-size: var(--a11y-close-btn-font-size);
     cursor: pointer; color: var(--color-text);
-    width: 40px; height: 40px; border-radius: 50%;
+
+    /* Tamaño físico del botón también elástico pero controlado */
+    width: var(--a11y-close-btn-width);
+    height: var(--a11y-close-btn-width);
+    border-radius: 50%;
+
     display: flex; justify-content: center; align-items: center;
     transition: all 0.2s ease;
+    
+    /* ⭐️ FIX: Prohibido encogerse */
+    flex-shrink: 0; 
 }
 
 /* Efecto hover/foco en botón cerrar */
@@ -60,21 +100,47 @@
     box-shadow: 0 0 10px var(--color-shadow-primary);
 }
 
-.a11y-section { margin-bottom: 25px; }
-.a11y-section h3 { font-size: 1rem; margin-bottom: 10px; opacity: 0.9; }
+.a11y-section { 
+    margin-bottom: 25px; 
+    /* ⭐️ FIX: Asegurar que la sección no desborde */
+    width: 100%;
+    overflow: hidden;
+}
+.a11y-section h3 { 
+    font-size: var(--a11y-section-font-size); 
+    margin-bottom: 10px; 
+    opacity: 0.9; 
+
+    /* ⭐️ FIX: Truncar Subtítulos ("Tipografía", "Tamaño del texto...") */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
 
 .a11y-controls-group {
     display: flex; gap: 10px; flex-wrap: wrap;
+    width: 100%;
 }
 
-/* BOTONES DE OPCIÓN (Estilo Ghost Interactivo) */
+/* BOTONES DE OPCIÓN */
 .a11y-option-btn {
     flex: 1; padding: 10px;
     background: transparent;
     border: 2px solid var(--color-card-border);
     border-radius: 8px; color: var(--color-text);
     cursor: pointer; transition: all 0.2s ease;
-    font-size: 0.9rem;
+
+    font-size: var(--a11y-option-btn-font-size);
+    
+    /* ⭐️ FIX: Truncar texto de botones ("Sans", "Compacto") */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* Permite que el botón encoja si es necesario */
+    min-width: 0;
+    max-width: 100%;
 }
 
 .a11y-option-btn:hover { 
@@ -99,6 +165,8 @@
 /* SLIDER */
 .a11y-range-wrapper {
     display: flex; align-items: center; gap: 15px;
+    width: 100%;
+    overflow: hidden; /* Contención */
 }
 input[type=range].a11y-range {
     flex-grow: 1; height: 6px;
@@ -106,6 +174,7 @@ input[type=range].a11y-range {
     border-radius: 5px; outline: none;
     -webkit-appearance: none; appearance: none;
     cursor: pointer;
+    min-width: 50px; /* Mínimo vital para el slider */
 }
 input[type=range].a11y-range:focus-visible {
     box-shadow: 0 0 0 2px var(--color-primary);
@@ -122,12 +191,22 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
 }
 
 .a11y-range-value {
-    min-width: 80px; text-align: right; font-weight: bold; font-size: 0.9rem;
+    min-width: 80px; text-align: right; 
+    font-weight: bold; font-size: var(--a11y-range-value-font-size);
+
+    /* ⭐️ FIX: Truncar valor del porcentaje si crece mucho */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
 }
 
 .font-preview-sans { font-family: var(--font-sans); }
 .font-preview-serif { font-family: var(--font-serif); }
-.font-preview-dyslexic { font-family: var(--font-dyslexic); font-weight: bold; }
+.font-preview-dyslexic { 
+    font-family: var(--font-dyslexic); 
+    font-weight: bold; 
+}
 
 /* SECCIÓN FINAL (Footer del modal) */
 .a11y-footer {
@@ -142,7 +221,7 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
 /* BOTÓN RESET (Icono) */
 #a11y-reset {
     background: transparent; 
-    border: 2px solid var(--color-card-border); /* Borde sutil por defecto */
+    border: 2px solid var(--color-card-border); 
     border-radius: 8px;
     cursor: pointer; 
     width: 60px; 
@@ -152,30 +231,32 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
     justify-content: center;
     transition: all 0.2s ease;
     
-    /* Dibujo del icono usando máscara */
-    background-color: var(--color-text-muted); /* Color grisáceo por defecto */
-    -webkit-mask-image: var(--icon-reset);
-    mask-image: var(--icon-reset);
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: 60%;
-    mask-size: 60%;
+    background-color: var(--color-text-muted); 
+    -webkit-mask-image: var(--icon-reset); mask-image: var(--icon-reset);
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center; mask-position: center;
+    -webkit-mask-size: 60%; mask-size: 60%;
+
+    flex-shrink: 0; /* Protegemos también este botón */
 }
 
-/* Hover / Focus: Se pone ROJO (Danger) y el borde se define */
 #a11y-reset:hover,
 #a11y-reset:focus-visible {
-    background-color: var(--color-danger); /* El icono se vuelve rojo */
-    border-color: var(--color-danger);     /* El borde se vuelve rojo */
+    background-color: var(--color-danger); 
+    border-color: var(--color-danger);     
     box-shadow: 0 0 10px var(--color-danger-bg);
-    transform: rotate(-180deg); /* Pequeña animación de giro al pasar el ratón */
+    transform: rotate(-180deg); 
     outline: none;
 }
 
 @media (forced-colors: active) {
-    #a11y-reset { background-color: ButtonText; border: 2px solid ButtonText; }
-    #a11y-reset:hover { background-color: Highlight; border-color: Highlight; }
+    #a11y-reset { 
+        background-color: ButtonText; 
+        border: 2px solid ButtonText; 
+    }
+    #a11y-reset:hover { 
+        background-color: Highlight; 
+        border-color: Highlight; 
+    }
 }
 /* --- styles/style-a11y.css --- */

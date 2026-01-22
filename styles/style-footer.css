@@ -3,13 +3,17 @@
 footer { 
     position: fixed; 
     bottom: 0; 
-    padding: 5px; 
+
+    /* Padding dinámico (clamp) en lugar de fijo (5px) */
+    /* Si hay poca altura (dvh), el padding baja a 2px para dejar sitio a los iconos */
+    padding: clamp(2px, 1dvh, 5px);
+
     width: 100%;
     color: var(--color-footer-text); text-align: center;
     background: var(--color-header-bg); z-index: 100; 
     display: flex; justify-content: center; 
     align-items: center; 
-    flex-wrap: wrap; 
+    flex-wrap: nowrap; 
     
     min-height: var(--footer-height);
     height: auto;
@@ -19,15 +23,27 @@ footer {
 }
 
 footer small { 
-    display: flex; align-items: center; gap: 15px; 
+    display: flex; align-items: center; 
+
+    gap: clamp(5px, 2vw, 15px); flex-wrap: nowrap;
+
     width: 100%; justify-content: center;
     height: 100%; 
+}
+
+.footer-social-container {
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(4px, 1.5vw, 10px) !important;
+    vertical-align: middle;
+    margin: 0 8px;
 }
 
 /* Estilos Genéricos para Enlaces */
 footer a { 
     color: var(--color-footer-text); text-decoration: none; 
-    transition: all 0.2s ease; display: inline-block; padding: 0.2rem 0.5rem;
+    transition: all 0.2s ease; display: inline-block; 
+    padding: 0.2rem 0.5rem;
     border-radius: 8px; border: 2px solid transparent;
 }
 footer a:focus { outline: none; }
@@ -41,7 +57,10 @@ footer a:hover, footer a:focus-visible {
     color: var(--color-primary); 
 }
 
-.footer-license-link img { height: clamp(16px, 2.5vw, 32px); width: auto; vertical-align: middle; }
+.footer-license-link img { 
+    height: clamp(16px, 2.5vw, 32px); width: auto; 
+    vertical-align: middle; 
+}
 
 /* AJUSTE LICENCIA: Sin padding y sin fondo, pero MANTENIENDO borde y sombra */
 footer a.footer-license-link {
@@ -50,24 +69,92 @@ footer a.footer-license-link {
 
 footer a.footer-license-link:hover, 
 footer a.footer-license-link:focus-visible {
-    background: transparent !important; /* 🛑 Solo eliminamos el fondo */
-    /* Borde, Sombra y Transform se heredan de la regla genérica de arriba */
+    background: transparent !important;
 }
 
-/* Limpieza de estilos antiguos de iconos (ya movidos a style-layout.css) */
-.footer-social-link { font-size: 0; }
+.footer-social-link {
+    display: inline-block;
+    
+    /* FIX: Usamos clamp con dvh para que se reduzca si la pantalla es bajita */
+    width: var(--footer-social-link-size);
+    height: var(--footer-social-link-size);
+    
+    flex-shrink: 0;
 
-    /* @media (max-width: 600px) */
+    background-color: var(--color-footer-text);
+    transition: all 0.2s ease;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center; mask-position: center;
+    -webkit-mask-size: contain; mask-size: contain;
+}
+
+.link-linkedin {
+    -webkit-mask-image: var(--icon-social-linkedin);
+    mask-image: var(--icon-social-linkedin);
+}
+
+.link-github {
+    -webkit-mask-image: var(--icon-link-diary);
+    mask-image: var(--icon-link-diary);
+}
+
+.link-fire {
+    -webkit-mask-image: var(--icono-fire);
+    mask-image: var(--icono-fire);
+    background-color: #FF931E !important; 
+}
+
+.footer-social-link:hover, 
+.footer-social-link:focus-visible {
+    background-color: var(--color-primary) !important;
+    transform: scale(1.15);
+    outline: none;
+}
+
+.footer-separator,
+.footer-separator-author {
+    opacity: 0.4;
+    margin: 0 4px;
+}
+
     body[data-layout="mobile"] footer { 
         position: fixed !important; bottom: 0; 
         margin-top: 0; 
-        padding: 0 5px !important; 
+        /*padding: 0 5px !important; */
         width: 100%; 
     }
     
     body[data-layout="mobile"] .footer-author-text, 
-    body[data-layout="mobile"] .footer-separator {
+    body[data-layout="mobile"] .footer-separator,
+    body[data-layout="mobile"] .footer-version {
         display: none;
     }
+
+    body[data-layout="tablet-landscape"] span.footer-author-text,
+    body[data-layout="tablet-landscape"] span.footer-separator-author,
+    body[data-layout="desktop"] span.footer-author-text,
+    body[data-layout="desktop"] span.footer-separator-author {
+        display: solid !important;
+    }
+
+    body[data-layout="mobile"] span.footer-author-text,
+    body[data-layout="mobile"] span.footer-separator-author,
+    body[data-layout="tablet-portrait"] span.footer-author-text,
+    body[data-layout="tablet-portrait"] span.footer-separator-author {
+        display: none !important;
+    }
+
+/* 🚨 Footer deja de flotar y fluye con el documento */
+body[data-layout="mobile"][data-safe-mode="true"] footer {
+    position: relative !important; /* Se mueven con el scroll */
+    height: auto !important;       /* Crecen según el tamaño de la letra */
+    min-height: auto !important;
+    padding: 10px !important;
+    z-index: 10;
+}
+
+body[data-layout="mobile"][data-safe-mode="true"] .footer-social-container {
+    display: none !important;
+}
 
 /* --- styles/style-footer.css --- */

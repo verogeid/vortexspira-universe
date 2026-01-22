@@ -19,10 +19,6 @@ body[data-layout="desktop"] {
     --card-height-calc: calc( (100% - (2 * var(--card-gap))) / 3 );
 }
 
-body[data-layout="desktop"] #main-header-subtitle { 
-    display: inline-block; 
-}
-
 body[data-layout="desktop"] #vista-navegacion-desktop { 
     display: flex !important; z-index: 10; 
 }
@@ -47,8 +43,10 @@ body[data-layout="desktop"] #nav-swiper .swiper-wrapper {
     display: flex !important; height: 100% !important; gap: 0; align-items: start;
 }
 body[data-layout="desktop"] #nav-swiper .swiper-slide {
-    width: calc(100% / 3) !important; height: 100% !important; max-width: 100% !important;
-    margin: 0 !important; border: none !important; background: transparent !important; padding: 0 !important; 
+    height: 100% !important; width: calc(100% / 3) !important; max-width: 100% !important;
+    margin: 0 !important; padding: 0 !important;
+    border: none !important; background: transparent !important; 
+    box-sizing: border-box;
 }
 body[data-layout="desktop"] #nav-swiper .cards-column-group {
     display: flex; flex-direction: column; justify-content: flex-start; 
@@ -57,7 +55,9 @@ body[data-layout="desktop"] #nav-swiper .cards-column-group {
     box-sizing: border-box; 
 }
 body[data-layout="desktop"] #nav-swiper .cards-column-group .card {
-    flex: none; height: var(--card-height-calc); min-height: var(--card-height-calc); margin-bottom: 0; 
+    flex: none; 
+    height: var(--card-height-calc); min-height: var(--card-height-calc); 
+    margin-bottom: 0; 
 }
     
 body[data-layout="desktop"] #vista-volver { 

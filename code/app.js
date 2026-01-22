@@ -276,10 +276,17 @@ class VortexSpiraApp {
 
     _updateLayoutMode() {
         const rootStyle = getComputedStyle(document.documentElement);
+
+        // 1. Leemos la escala actual
         const scale = parseFloat(rootStyle.getPropertyValue('--font-scale')) || 1;
+
         const realWidth = window.innerWidth;
+        const realHeight = window.innerHeight; // ⭐️ Necesitamos la altura física
+        
+        // 2. Calculamos dimensiones "efectivas" (vistas por el usuario)
         const effectiveWidth = realWidth / scale;
 
+        // --- LÓGICA DE LAYOUT (ANCHO) ---
         let mode = 'desktop';
 
         if (effectiveWidth <= data.MAX_WIDTH.MOBILE) { 
@@ -295,7 +302,40 @@ class VortexSpiraApp {
         const currentMode = document.body.getAttribute('data-layout');
         if (currentMode !== mode) {
             document.body.setAttribute('data-layout', mode);
+
             debug.log('app', debug.DEBUG_LEVELS.BASIC, `Layout: ${effectiveWidth.toFixed(0)}px (Scale ${scale}) -> [${mode}]`);
+        }
+
+        // --- LÓGICA DE SEGURIDAD DINÁMICA (ALTO - Determina Scroll) ---
+        // Medimos si el contenido cabe REALMENTE.
+        const header = document.getElementById('app-header');
+        const footer = document.querySelector('footer');
+        
+        // Medimos cuánto ocupan las barras (si existen)
+        const headerH = header ? header.offsetHeight : 0;
+        const footerH = footer ? footer.offsetHeight : 0;
+        
+        // Espacio libre físico para el contenido
+        const availableSpace = window.innerHeight - headerH - footerH;
+        
+        // Activamos el scroll vertical de emergencia, si tenemos menos del minimo vital
+        const isSafeMode = availableSpace < data.MIN_CONTENT_HEIGHT;
+        
+        const currentSafe = document.body.getAttribute('data-safe-mode') === 'true';
+        
+        if (isSafeMode !== currentSafe) {
+            document.body.setAttribute('data-safe-mode', isSafeMode ? 'true' : 'false');
+            
+            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                `Safe Mode: ${isSafeMode ? 'ACTIVADO' : 'Desactivado'} (Libre: ${availableSpace}px vs Mín: ${data.MIN_CONTENT_HEIGHT}px)`);
+
+            // Protocolo de salida: Restaurar scroll y swiper si volvemos a modo fijo
+            if (!isSafeMode) {
+                window.scrollTo(0, 0);
+                if (this.STATE.carouselInstance) {
+                    requestAnimationFrame(() => this.STATE.carouselInstance.update());
+                }
+            }
         }
     }
     
