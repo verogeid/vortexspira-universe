@@ -11,6 +11,13 @@ const DEFAULTS = {
     paragraphSpacing: 1.5 
 };
 
+// Mapeo para el slider de espaciado: Valor -> [AlturaLinea, Etiqueta]
+const SPACING_MAP = {
+    1: { val: 1.0, label: 'Compacto' },
+    2: { val: 1.5, label: 'Normal' },
+    3: { val: 2.0, label: 'Amplio' }
+};
+
 let _prefs = { ...DEFAULTS };
 let _domRefs = {};
 
@@ -80,31 +87,34 @@ function _updateModalUI() {
         btn.classList.toggle('selected', btn.dataset.font === _prefs.fontType);
     });
 
-    // Botones de Espaciado
-    _domRefs.spacingBtns.forEach(btn => {
-        const val = parseFloat(btn.dataset.spacing);
-        btn.classList.toggle('selected', val === _prefs.lineHeight);
-    });
-
-    // Slider y Texto
+    // Slider Texto
     if (_domRefs.rangeSize) {
         _domRefs.rangeSize.value = _prefs.fontSizePct;
         _updateSliderLabel(_prefs.fontSizePct);
     }
+
+    // Slider Espaciado (Nuevo)
+    if (_domRefs.rangeSpacing) {
+        // Buscar qué paso del slider (1, 2, 3) corresponde al valor actual
+        let step = 2; // Default Normal
+        for (const [key, data] of Object.entries(SPACING_MAP)) {
+            if (data.val === _prefs.lineHeight) step = key;
+        }
+        _domRefs.rangeSpacing.value = step;
+        _updateSpacingLabel(step);
+    }
 }
 
-/**
- * Actualiza solo el texto del porcentaje y los píxeles calculados
- */
 function _updateSliderLabel(pct) {
     if (!_domRefs.rangeVal) return;
-    
-    // TRUCO: Calculamos los píxeles reales actuales.
-    // getComputedStyle devuelve el tamaño final renderizado.
-    // Como ya hemos aplicado la escala, este valor es el resultado final.
     const computedPx = parseFloat(getComputedStyle(document.documentElement).fontSize).toFixed(1);
-    
     _domRefs.rangeVal.textContent = `${pct}% (${computedPx}px)`;
+}
+
+function _updateSpacingLabel(step) {
+    if (!_domRefs.rangeSpacingVal) return;
+    const info = SPACING_MAP[step] || SPACING_MAP[2];
+    _domRefs.rangeSpacingVal.textContent = info.label;
 }
 
 function _injectModalHTML() {
@@ -120,7 +130,7 @@ function _injectModalHTML() {
 
                 <div class="a11y-section">
                     <h3>Tipografía</h3>
-                    <div class="a11y-controls-group">
+                    <div class="a11y-controls-group font-group">
                         <button class="a11y-option-btn font-preview-sans" data-font="sans">Sans</button>
                         <button class="a11y-option-btn font-preview-serif" data-font="serif">Serif</button>
                         <button class="a11y-option-btn font-preview-dyslexic" data-font="dyslexic">Dislexia</button>
@@ -128,7 +138,7 @@ function _injectModalHTML() {
                 </div>
 
                 <div class="a11y-section">
-                    <h3>Tamaño del Texto (Base Sistema)</h3>
+                    <h3>Tamaño Texto</h3>
                     <div class="a11y-range-wrapper">
                         <span style="font-size: 0.8rem" aria-hidden="true">A</span>
                         <input type="range" id="a11y-range-size" class="a11y-range" min="90" max="200" step="5" aria-label="Tamaño de texto">
@@ -139,10 +149,11 @@ function _injectModalHTML() {
 
                 <div class="a11y-section">
                     <h3>Espaciado</h3>
-                    <div class="a11y-controls-group">
-                        <button class="a11y-option-btn" data-spacing="1.0">Compacto</button>
-                        <button class="a11y-option-btn" data-spacing="1.5">Normal</button>
-                        <button class="a11y-option-btn" data-spacing="2.0">Amplio</button>
+                    <div class="a11y-range-wrapper">
+                        <span class="range-icon-small" aria-hidden="true">≡</span>
+                        <input type="range" id="a11y-range-spacing" class="a11y-range" min="1" max="3" step="1" aria-label="Espaciado de línea">
+                        <span class="range-icon-large" aria-hidden="true">≡</span>
+                        <span id="a11y-range-spacing-val" class="a11y-range-value">Normal</span>
                     </div>
                 </div>
 
@@ -162,9 +173,13 @@ function _cacheDOM() {
         closeBtn: document.getElementById('a11y-close'),
         resetBtn: document.getElementById('a11y-reset'),
         fontBtns: document.querySelectorAll('[data-font]'),
+
         rangeSize: document.getElementById('a11y-range-size'),
         rangeVal: document.getElementById('a11y-range-val'),
-        spacingBtns: document.querySelectorAll('[data-spacing]'),
+
+        rangeSpacing: document.getElementById('a11y-range-spacing'),
+        rangeSpacingVal: document.getElementById('a11y-range-spacing-val'),
+
         triggerBtn: document.getElementById('btn-config-accesibilidad')
     };
 }
@@ -197,37 +212,39 @@ function _setupListeners() {
         });
     });
 
-    // SLIDER OPTIMIZADO PARA LIVE PREVIEW
+    // Slider Tamaño (Live Preview)
     if (_domRefs.rangeSize) {
-        // 'input': Se dispara mientras arrastras. Actualizamos visualmente pero NO guardamos.
         _domRefs.rangeSize.addEventListener('input', (e) => {
             const val = parseInt(e.target.value);
             _prefs.fontSizePct = val;
-            
-            // 1. Aplicar CSS de escala inmediatamente
             document.documentElement.style.setProperty('--font-scale', val / 100);
             _updateSliderLabel(val);
-
-            // 2. NOTIFICAR CAMBIO DE LAYOUT AL INSTANTE
             window.dispatchEvent(new CustomEvent('vortex-layout-refresh'));
         });
-
-        // 'change': Se dispara al soltar. AQUÍ guardamos.
-        _domRefs.rangeSize.addEventListener('change', () => {
-            _savePreferences(); // Persistencia
-        });
+        _domRefs.rangeSize.addEventListener('change', () => _savePreferences());
     }
 
-    // Espaciado
-    _domRefs.spacingBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const val = parseFloat(btn.dataset.spacing);
-            _prefs.lineHeight = val;
-            _prefs.paragraphSpacing = val; 
-            _applyPreferences();
+    // Slider Espaciado
+    if (_domRefs.rangeSpacing) {
+        _domRefs.rangeSpacing.addEventListener('input', (e) => {
+            const step = parseInt(e.target.value);
+            const info = SPACING_MAP[step];
+            if (info) {
+                _prefs.lineHeight = info.val;
+                _prefs.paragraphSpacing = info.val;
+                _updateSpacingLabel(step);
+                
+                // Aplicar CSS visualmente sin recargar todo
+                const root = document.documentElement;
+                root.style.setProperty('--line-height-base', _prefs.lineHeight);
+                root.style.setProperty('--paragraph-spacing', `${_prefs.paragraphSpacing}em`);
+            }
+        });
+        _domRefs.rangeSpacing.addEventListener('change', () => {
+            _applyPreferences(); // Asegurar consistencia
             _savePreferences();
         });
-    });
+    }
 }
 
 export function openModal() {

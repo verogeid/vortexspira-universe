@@ -15,8 +15,10 @@ export const DEBUG_LEVELS = {
 export const DEBUG_CONFIG = {
     global: DEBUG_LEVELS.BASIC,
     global_focus: DEBUG_LEVELS.BASIC,
+    global_font: DEBUG_LEVELS.BASIC,
+    global_layout: DEBUG_LEVELS.BASIC,
     global_key: DEBUG_LEVELS.BASIC,
-    global_mouse: DEBUG_LEVELS.DISABLED,
+    global_mouse: DEBUG_LEVELS.DEEP,
     
     app: DEBUG_LEVELS.DEEP,
     data: DEBUG_LEVELS.BASIC,
@@ -42,18 +44,30 @@ export const DEBUG_CONFIG = {
     render_swipe: DEBUG_LEVELS.BASIC
 };
 
+/* ============================================================
+   🛠️ UTILIDAD INTERNA DE FORMATO
+   Fusiona el prefijo [Modulo] con el mensaje para soportar %c
+   ============================================================ */
+function _printWithPrefix(method, moduleName, args) {
+    if (args.length > 0 && typeof args[0] === 'string') {
+        // Si el primer argumento es texto (ej: "%cHola"), le pegamos el prefijo delante.
+        // Así: "[App] %cHola" -> El navegador detecta el %c y aplica los estilos de args[1].
+        const newArgs = [...args];
+        newArgs[0] = `[${moduleName}] ${newArgs[0]}`;
+        method(...newArgs);
+    } else {
+        // Si es un objeto u otra cosa, imprimimos el prefijo por separado
+        method(`[${moduleName}]`, ...args);
+    }
+}
+
 export function logDebugLevels() {
     logGroupCollapsed('global', DEBUG_LEVELS.BASIC, 'Configured DEBUG levels:');
-
     for (const idKey in DEBUG_CONFIG) {
         const numericValue = DEBUG_CONFIG[idKey];
-
-        // ⭐️ BÚSQUEDA INVERSA: Buscamos la etiqueta (ej: 'BASIC') que coincida con el valor (1)
         const stringLabel = Object.keys(DEBUG_LEVELS).find(key => DEBUG_LEVELS[key] === numericValue) || numericValue;
-        
         log('global', DEBUG_LEVELS.BASIC, `${idKey} : ${stringLabel}`);
     }
-
     logGroupEnd('global', DEBUG_LEVELS.BASIC);
 }
 
@@ -65,81 +79,59 @@ export function logClear() {
 
 /**
  * Función de logging centralizada.
- * @param {string} moduleName - El nombre del módulo que llama (ej. 'app', 'ui').
- * @param {number} requiredLevel - El nivel de importancia de este mensaje (ej. DEBUG_LEVELS.DEEP).
- * @param {...any} args - Los mensajes o objetos a mostrar, igual que en console.log.
  */
 export function log(moduleName, requiredLevel, ...args) {
-    // Comprueba si el nivel de depuración configurado para el módulo es suficiente para mostrar este mensaje.
     if (DEBUG_CONFIG[moduleName] >= requiredLevel) {
-        
-        // Si estamos en producción y el mensaje es de telemetría...
         if (IS_PRODUCTION && requiredLevel === DEBUG_LEVELS.TELEMETRY) {
-            // TODO: Implementar el envío al Service Worker.
-            // navigator.serviceWorker.controller?.postMessage({ type: 'LOG', data: args });
-            console.info(`[TELEMETRÍA - ${moduleName} - log]`, ...args); // Simulación por ahora
-        } 
-        // Si no estamos en producción...
-        else if (!IS_PRODUCTION) {
-            console.log(`[${moduleName}]`, ...args);
+            console.info(`[TELEMETRÍA - ${moduleName}]`, ...args);
+        } else if (!IS_PRODUCTION) {
+            _printWithPrefix(console.log, moduleName, args);
         }
     }
 }
 
 /**
- * Muestra una advertencia. Las advertencias se muestran si el nivel es BASIC o superior.
- * @param {string} moduleName - El nombre del módulo.
- * @param {...any} args - Los mensajes a mostrar.
+ * Muestra una advertencia.
  */
 export function logWarn(moduleName, ...args) {
     if (DEBUG_CONFIG[moduleName] >= DEBUG_LEVELS.BASIC) {
         if (!IS_PRODUCTION) {
-            console.warn(`[${moduleName}]`, ...args);
+            _printWithPrefix(console.warn, moduleName, args);
         }
     }
 }
 
 /**
- * Muestra una stack trace. Las trazas se muestran si el nivel es BASIC o superior.
- * @param {string} moduleName - El nombre del módulo.
- * @param {...any} args - Los mensajes a mostrar.
+ * Muestra una stack trace.
  */
 export function logTrace(moduleName, ...args) {
     if (DEBUG_CONFIG[moduleName] >= DEBUG_LEVELS.BASIC) {
         if (!IS_PRODUCTION) {
-            console.trace(`[${moduleName}]`, ...args);
+            _printWithPrefix(console.trace, moduleName, args);
         }
     }
 }
 
 /**
- * Muestra un error. Los errores se muestran SIEMPRE, independientemente del nivel de depuración del módulo.
- * @param {string} moduleName - El nombre del módulo.
- * @param {...any} args - Los mensajes a mostrar.
+ * Muestra un error.
  */
 export function logError(moduleName, ...args) {
-    // Los errores siempre usan el nivel ALLWAYS, ignorando la configuración del módulo.
     if (!IS_PRODUCTION) {
-        console.error(`[${moduleName}]`, ...args);
+        _printWithPrefix(console.error, moduleName, args);
     }
 }
 
 /**
- * Inicia un grupo colapsado en la consola.
- * @param {string} moduleName - El nombre del módulo.
- * @param {number} requiredLevel - El nivel de importancia de este mensaje.
- * @param {...any} args - El título del grupo.
+ * Inicia un grupo colapsado.
  */
 export function logGroupCollapsed(moduleName, requiredLevel, ...args) {
     if (DEBUG_CONFIG[moduleName] >= requiredLevel && !IS_PRODUCTION) {
-        console.groupCollapsed(`[${moduleName}]`, ...args);
+        _printWithPrefix(console.groupCollapsed, moduleName, args);
     }
 }
 
 /**
- * Cierra el grupo actual en la consola.
- * @param {string} moduleName - El nombre del módulo.
- * @param {number} requiredLevel - El nivel de importancia debe coincidir con el del grupo que abrió.
+ * Cierra el grupo actual.
  */
 export function logGroupEnd(moduleName, requiredLevel) {
     if (DEBUG_CONFIG[moduleName] >= requiredLevel && !IS_PRODUCTION) {
@@ -147,12 +139,9 @@ export function logGroupEnd(moduleName, requiredLevel) {
     }
 }
 
-/**
- * WATCHDOG: Intercepta llamadas imperativas a .focus().
- */
+/* ... (Los Watchdogs _setupFocusTracker, _watchFlag, etc. se mantienen igual) ... */
 export function _setupFocusTracker() {
     if (DEBUG_CONFIG.global_focus < DEBUG_LEVELS.DEEP) return;
-
     document.addEventListener('focusin', () => {
         log('global_focus', DEBUG_LEVELS.DEEP, 'Foco movido a:', {
             tag: document.activeElement.tagName,
@@ -163,12 +152,8 @@ export function _setupFocusTracker() {
     });
 }
 
-/**
- * WATCHDOG: Intercepta mutaciones de flags de estado críticos.
- */
 export function _watchFlag(stateObj, propName) {
     if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) return;
-
     let value = stateObj[propName];
     Object.defineProperty(stateObj, propName, {
         get: () => value,
@@ -182,12 +167,8 @@ export function _watchFlag(stateObj, propName) {
     });
 }
 
-/**
- * WATCHDOG: Monitoriza cambios de foco globalmente.
- */
 export function _setupFocusMethodInterceptor() {
     if (DEBUG_CONFIG.global_focus < DEBUG_LEVELS.DEEP) return;
-
     const originalFocus = HTMLElement.prototype.focus;
     HTMLElement.prototype.focus = function(...args) {
         log('global_focus', DEBUG_LEVELS.DEEP, `Solicitado .focus() sobre:`, this);
@@ -196,34 +177,24 @@ export function _setupFocusMethodInterceptor() {
     };
 }
 
-/**
- * WATCHDOG: Monitoriza clics globalmente.
- */
 export function _setupGlobalClickListener() {
     if (DEBUG_CONFIG.global_mouse < DEBUG_LEVELS.DEEP) return;
-
     document.addEventListener('click', function(e) {
         if (typeof log === 'function') {
             const targetElement = e.target;
             const closestCard = targetElement.closest('.card');
-            
-            log('global_mouse', DEBUG_LEVELS.DEEP, '❌ CLIC GLOBAL CAPTURADO ❌');
+            logGroupCollapsed('global_mouse', DEBUG_LEVELS.DEEP, '❌ CLIC GLOBAL CAPTURADO ❌');
             log('global_mouse', DEBUG_LEVELS.DEEP, 'Origen (e.target):', targetElement.tagName, targetElement.id, targetElement.className);
-            
             if (closestCard) {
                 log('global_mouse', DEBUG_LEVELS.DEEP, 'Elemento Clicado es una Tarjeta.', 'Card ID:', closestCard.dataset.id);
             }
+            logGroupEnd('global_mouse', DEBUG_LEVELS.DEEP);
         }
-    }, true); // El 'true' activa la fase de CAPTURA.
+    }, true);
 }
 
-/**
- * WATCHDOG: Captura pulsaciones de teclas para depurar el flujo del foco.
- * Muestra la tecla pulsada y el elemento que tenía el foco en ese instante.
- */
 export function _setupKeyTracker() {
     if (DEBUG_CONFIG.global_key < DEBUG_LEVELS.DEEP) return;
-
     document.addEventListener('keydown', (e) => {
         log('global_key', DEBUG_LEVELS.DEEP, `⌨️ TECLA PULSADA: [${e.key}]`, {
             focusEn: document.activeElement.tagName,
@@ -231,46 +202,203 @@ export function _setupKeyTracker() {
             class: document.activeElement.className,
             tabIndex: document.activeElement.tabIndex
         });
-    }, true); // Usamos fase de captura para verlo antes que los handlers de la app
+    }, true);
 }
 
-/**
- * Función de intercepción de consola (Monkey-patching).
- * Debe llamarse antes de inicializar bibliotecas externas.
- */
 export function _setupConsoleInterceptor() {
     if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) return;
-
     const originalConsoleWarn = console.warn;
     const originalConsoleLog = console.log;
-
-    // Patrón de la advertencia de Swiper
     const SWIPER_WARNING_PATTERN = /Swiper Loop Warning/;
-    // Patrón del mensaje de aviso de limpieza de consola
     const CLEAR_CONSOLE_AVOIDED_PATTERN = /console\.clear\(\) se ha evitado/;
 
     console.warn = function(...args) {
         const message = args.join(' ');
-        if (SWIPER_WARNING_PATTERN.test(message)) {
-            // Suprimir la advertencia específica de Swiper
-            return;
-        }
-        // Llamar a la función original para otras advertencias
+        if (SWIPER_WARNING_PATTERN.test(message)) return;
         originalConsoleWarn.apply(console, args);
     };
 
-    // Sobreescribir console.log para suprimir el mensaje de limpieza de consola si es necesario
     console.log = function(...args) {
         const message = args.join(' ');
-        if (CLEAR_CONSOLE_AVOIDED_PATTERN.test(message)) {
-            // Suprimir el mensaje de "console.clear() se ha evitado"
-            return;
-        }
-        // Llamar a la función original para otros logs
+        if (CLEAR_CONSOLE_AVOIDED_PATTERN.test(message)) return;
         originalConsoleLog.apply(console, args);
     };
+}
+
+/**
+ * DIAGNÓSTICO: Analiza los tamaños de fuente y dimensiones reales.
+ * Detecta vista detalle vs menú mediante clases activas.
+ */
+export function runFontDiagnostics() {
+    if (DEBUG_CONFIG.global_font < DEBUG_LEVELS.BASIC) return;
+
+    // Limpieza manual para asegurar que el grupo es lo primero que se ve
+    console.clear(); 
+
+    logGroupCollapsed('global_font', DEBUG_LEVELS.BASIC, "%c📊 DIAGNÓSTICO DE TAMAÑOS REALES", "background: #222; color: #bada55; font-size: 16px; padding: 4px; border-radius: 4px;");
+
+    const root = document.documentElement;
+    const rootStyle = getComputedStyle(root);
+    const scale = parseFloat(rootStyle.getPropertyValue('--font-scale')) || 1;
     
-    // Nota: La intercepción de los logs de la propia aplicación está manejada por la lógica de IS_PRODUCTION.
+    // 1. Datos del Entorno
+    logGroupCollapsed('global_font', DEBUG_LEVELS.BASIC, "🌍 Entorno");
+    log('global_font', DEBUG_LEVELS.BASIC, `Viewport: %c${window.innerWidth}px x ${window.innerHeight}px`, "color: cyan; font-weight: bold;");
+    log('global_font', DEBUG_LEVELS.BASIC, `Layout Mode (body): %c${document.body.getAttribute('data-layout')}`, "color: magenta; font-weight: bold;");
+    log('global_font', DEBUG_LEVELS.BASIC, `Safe Mode (body): %c${document.body.getAttribute('data-safe-mode')}`, "color: orange; font-weight: bold;");
+    log('global_font', DEBUG_LEVELS.BASIC, `Escala Usuario (A11y): %c${scale}x (${scale * 100}%)`, "color: yellow; font-weight: bold;");
+    log('global_font', DEBUG_LEVELS.BASIC, `Tamaño base '1rem': %c${parseFloat(rootStyle.fontSize)}px`, "color: white; background: red; font-weight: bold; padding: 2px;");
+    logGroupEnd('global_font', DEBUG_LEVELS.BASIC);
+
+    // Función auxiliar: Busca el PRIMER elemento VISIBLE que coincida
+    function medir(selector, nombre) {
+        const elements = document.querySelectorAll(selector);
+        let el = null;
+        
+        // Buscamos el primero que sea visible (tenga offsetParent)
+        for (let i = 0; i < elements.length; i++) {
+            if (elements[i].offsetParent !== null) {
+                el = elements[i];
+                break;
+            }
+        }
+
+        if (!el) {
+            // logWarn('global_font', `❌ ${nombre}: No encontrado visible.`);
+            return false;
+        }
+
+        const st = getComputedStyle(el);
+        const fontSize = parseFloat(st.fontSize);
+        const width = el.offsetWidth;
+        const height = el.offsetHeight;
+
+        logGroupCollapsed('global_font', DEBUG_LEVELS.BASIC, `📏 ${nombre}`);
+        log('global_font', DEBUG_LEVELS.BASIC, `Selector: ${selector}`);
+        log('global_font', DEBUG_LEVELS.BASIC, `Font-Size: %c${fontSize.toFixed(1)}px`, "color: #ff5555; font-weight: bold; font-size: 1.1em");
+        log('global_font', DEBUG_LEVELS.BASIC, `Dimensiones: ${width}px (ancho) x ${height}px (alto)`);
+        log('global_font', DEBUG_LEVELS.BASIC, `Line-Height: ${st.lineHeight}`);
+        logGroupEnd('global_font', DEBUG_LEVELS.BASIC);
+        return true;
+    }
+
+    // 2. Elementos Comunes
+    log('global_font', DEBUG_LEVELS.BASIC, "%c⬇️ ELEMENTOS VISIBLES ⬇️", "color: #ccc; margin-top: 10px;");
+    medir("header h1", "Título Header");
+    
+    // 3. DETECCIÓN DE CONTEXTO
+    // Verificamos si los contenedores de detalle tienen la clase .active
+    const mobileDetail = document.getElementById('vista-detalle-mobile');
+    const desktopDetail = document.getElementById('vista-detalle-desktop');
+    
+    const isDetailActive = (mobileDetail && mobileDetail.classList.contains('active')) || 
+                           (desktopDetail && desktopDetail.classList.contains('active'));
+
+    if (isDetailActive) {
+        log('global_font', DEBUG_LEVELS.BASIC, "%c📄 VISTA DE DETALLE DETECTADA", "background: #004400; color: #fff; padding: 2px;");
+        
+        const titleFound = medir(".detail-title-slide", "Título del Detalle");
+        const textFound = medir(".detail-text-fragment p", "Párrafo del Detalle");
+        const btnFound = medir(".detail-action-btn", "Botón de Acción");
+        
+        if (!titleFound && !textFound) {
+             logWarn('global_font', "Vista detalle activa, pero no encuentro contenido visible (¿Scroll/Swiper?)");
+        }
+
+    } else {
+        log('global_font', DEBUG_LEVELS.BASIC, "%c🃏 VISTA DE MENÚ (CARDS) DETECTADA", "background: #440044; color: #fff; padding: 2px;");
+        
+        // Excluimos las tarjetas de relleno para no medir fantasmas
+        const cardFound = medir(".card:not([data-tipo='relleno'])", "Tarjeta de Contenido");
+        
+        if (cardFound) {
+            medir(".card h3", "Título Tarjeta");
+            medir(".card p", "Descripción Tarjeta");
+        } else {
+            logWarn('global_font', "No encuentro tarjetas de contenido visibles.");
+        }
+    }
+
+    logGroupEnd('global_font', DEBUG_LEVELS.BASIC);
+}
+
+/**
+ * DIAGNÓSTICO FORENSE (CSI): Detecta qué elemento está tapando la pantalla
+ * y verifica el estado crítico de layout (Footer, Safe Mode, Overflow).
+ */
+export function runLayoutDiagnostics() {
+    if (DEBUG_CONFIG.global_layout < DEBUG_LEVELS.BASIC) return;
+    
+    logGroupCollapsed('global_layout', DEBUG_LEVELS.BASIC, "%c🕵️‍♂️ CSI: INSPECCIÓN DE OBSTRUCCIÓN", "background: #000; color: #0f0; font-size: 16px; padding: 5px;");
+
+    // 1. ¿QUÉ HAY EN EL PUNTO DE CORTE?
+    const x = window.innerWidth / 2;
+    const y = window.innerHeight - 50; 
+    const elementoCulpable = document.elementFromPoint(x, y);
+
+    logGroupCollapsed('global_layout', DEBUG_LEVELS.BASIC, "📍 Punto de Inspección (Fondo Pantalla)");
+    log('global_layout', DEBUG_LEVELS.BASIC, `Coordenadas: ${x}px, ${y}px`);
+    if (elementoCulpable) {
+        log('global_layout', DEBUG_LEVELS.BASIC, "Elemento detectado:", elementoCulpable);
+        log('global_layout', DEBUG_LEVELS.BASIC, "ID:", elementoCulpable.id);
+        log('global_layout', DEBUG_LEVELS.BASIC, "Clases:", elementoCulpable.className);
+        log('global_layout', DEBUG_LEVELS.BASIC, "Tag:", elementoCulpable.tagName);
+        const st = getComputedStyle(elementoCulpable);
+        log('global_layout', DEBUG_LEVELS.BASIC, "Color de Fondo:", st.backgroundColor);
+        log('global_layout', DEBUG_LEVELS.BASIC, "Z-Index:", st.zIndex);
+        log('global_layout', DEBUG_LEVELS.BASIC, "Position:", st.position);
+    } else {
+        logWarn('global_layout', "⚠️ Nada detectado (¿Canvas vacío?)");
+    }
+    logGroupEnd('global_layout', DEBUG_LEVELS.BASIC);
+
+    // 2. ESTADO DEL FOOTER
+    const footer = document.querySelector('footer');
+    if (footer) {
+        const st = getComputedStyle(footer);
+        logGroupCollapsed('global_layout', DEBUG_LEVELS.BASIC, "🦶 Estado del Footer");
+        
+        // Check de posición peligroso
+        const posMsg = `Position: ${st.position}`;
+        const posColor = st.position === 'fixed' ? "color: red; font-weight: bold" : "color: green";
+        log('global_layout', DEBUG_LEVELS.BASIC, `%c${posMsg}`, posColor);
+        
+        log('global_layout', DEBUG_LEVELS.BASIC, `Display: ${st.display}`);
+        log('global_layout', DEBUG_LEVELS.BASIC, `Z-Index: ${st.zIndex}`);
+        log('global_layout', DEBUG_LEVELS.BASIC, `Height: ${st.height}`);
+        logGroupEnd('global_layout', DEBUG_LEVELS.BASIC);
+    }
+
+    // 3. ESTADO DEL CONTENEDOR DE DETALLE
+    // Detectamos cuál está activo
+    const detalleMobile = document.getElementById('vista-detalle-mobile');
+    const detalleDesktop = document.getElementById('vista-detalle-desktop');
+    const detalleActivo = (detalleMobile && getComputedStyle(detalleMobile).display !== 'none') ? detalleMobile : detalleDesktop;
+
+    if (detalleActivo) {
+        const st = getComputedStyle(detalleActivo);
+        logGroupCollapsed('global_layout', DEBUG_LEVELS.BASIC, `📄 Contenedor Detalle (${detalleActivo.id})`);
+        
+        log('global_layout', DEBUG_LEVELS.BASIC, `Height: ${st.height}`);
+        
+        const overflowMsg = `Overflow-Y: ${st.overflowY}`;
+        const overflowColor = st.overflowY === 'hidden' ? "color: red; font-weight: bold" : "color: green";
+        log('global_layout', DEBUG_LEVELS.BASIC, `%c${overflowMsg}`, overflowColor);
+        
+        log('global_layout', DEBUG_LEVELS.BASIC, `Padding-Bottom: ${st.paddingBottom}`);
+        logGroupEnd('global_layout', DEBUG_LEVELS.BASIC);
+    } else {
+        logWarn('global_layout', "No se encontró contenedor de detalle activo.");
+    }
+    
+    // 4. VERIFICACIÓN DE SAFE MODE
+    const safeMode = document.body.getAttribute('data-safe-mode');
+    const safeMsg = `🛡️ Safe Mode Activo: ${safeMode}`;
+    const safeColor = safeMode === 'true' ? "color: green; font-weight: bold" : "color: red; font-weight: bold";
+    
+    log('global_layout', DEBUG_LEVELS.BASIC, `%c${safeMsg}`, safeColor);
+    
+    logGroupEnd('global_layout', DEBUG_LEVELS.BASIC);
 }
 
 // --- code/debug.js ---

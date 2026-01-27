@@ -3,7 +3,7 @@
 body {
     background: var(--color-bg);
     color: var(--color-text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-family-base);
     overflow: hidden; 
     margin: 0;
     box-sizing: border-box;
@@ -13,7 +13,7 @@ body {
     
     /* ⭐️ A11Y: Aseguramos base 100% para respetar ajustes de navegador */
     font-size: 100%; 
-    line-height: 1.5;
+    line-height: var(--line-height-base);
 
     /* ⭐️ FIX CLS/FLASH: El cuerpo inicia invisible para evitar parpadeos de Swiper */
     opacity: 0;
@@ -58,28 +58,16 @@ body.app-loaded {
 }
 #vista-volver.visible { display: flex; }
 
-    /* @media (min-width: 600px) and (max-width: 800px) */
     body[data-layout="tablet-portrait"] #app-container {
         display: grid;
         grid-template-columns: 1fr 3fr; 
     }
-
-    /* @media (max-width: 800px) */ 
-    body[data-layout="mobile"] #info-adicional,
-    body[data-layout="tablet-portrait"] #info-adicional {
-        display: none !important; 
-    }
-    body[data-layout="mobile"] #info-adicional.visible,
-    body[data-layout="tablet-portrait"] #info-adicional.visible { 
-        display: none !important; 
-    }
-
-    /* @media (min-width: 800px) */
     body[data-layout="tablet-landscape"] #app-container,
     body[data-layout="desktop"] #app-container {
         display: grid;
         grid-template-columns: 1fr 3fr 1fr;
     }
+
     body[data-layout="tablet-landscape"] #info-adicional,
     body[data-layout="desktop"] #info-adicional {
         grid-column: 3 / 4; 
@@ -89,6 +77,15 @@ body.app-loaded {
         box-sizing: border-box; 
         padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
         height: 100%; overflow-y: auto; 
+    }
+    body[data-layout="mobile"] #info-adicional,
+    body[data-layout="tablet-portrait"] #info-adicional {
+        display: none !important; 
+    }
+    
+    body[data-layout="mobile"] #info-adicional.visible,
+    body[data-layout="tablet-portrait"] #info-adicional.visible { 
+        display: none !important; 
     }
     body[data-layout="tablet-landscape"] #info-adicional.visible,
     body[data-layout="desktop"] #info-adicional.visible { 

@@ -2,12 +2,12 @@
 
 /* @media (min-width: 1024px) */
 body[data-layout="desktop"] #app-container {
-    height: calc(100dvh - var(--header-height-real, 9dvh) - var(--footer-height-real, 6dvh));
+    height: auto !important;
+    min-height: calc(100dvh - var(--header-height-real, 50px) - var(--footer-height-real, --footer-height));;
 
     width: 100%; max-width: 4000px; margin: 0 auto;
 
-    /*margin-top: var(--header-height-real, 9dvh);*/
-    margin-bottom: var(--footer-height-real, 6dvh);
+    margin-top: 0 !important;
 
     display: grid; 
     grid-template-columns: 1fr 3fr 1fr; 
@@ -50,7 +50,7 @@ body[data-layout="desktop"] #nav-swiper .swiper-slide {
 }
 body[data-layout="desktop"] #nav-swiper .cards-column-group {
     display: flex; flex-direction: column; justify-content: flex-start; 
-    height: calc(100% - var(--nav-carousel-top-offset)); width: 100%;
+    height: 100%; /*calc(100% - var(--nav-carousel-top-offset)); */width: 100%;
     gap: var(--card-gap); padding: var(--nav-carousel-top-offset) 15px 15px 15px; 
     box-sizing: border-box; 
 }

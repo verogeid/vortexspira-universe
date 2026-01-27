@@ -1,35 +1,50 @@
 /* --- styles/style-components.css --- */
 
 #card-nivel-actual {
-    flex: 0 0 auto; border: 2px dashed var(--color-border-placeholder);
-    background: transparent; padding: 1.5rem; border-radius: 12px;
-    display: none; flex-direction: column; justify-content: center;
+    flex: 0 0 auto; 
+    
+    padding: 1rem;
+
+    border: 2px dashed var(--color-border-placeholder);
+    background: transparent; border-radius: 12px;
+
+    display: none; 
+    flex-direction: column; justify-content: center;
     box-sizing: border-box; overflow: hidden; 
-    min-width: 0; 
-    height: var(--card-height-calc, calc( (100% - (2 * var(--card-gap))) / 3 )); min-height: 0;
+
+    min-width: 0; min-height: 0;
+    height: var(--card-height-calc, calc( (100% - (2 * var(--card-gap))) / 3 )); 
 }
 #card-nivel-actual.visible { display: flex; }
 #card-nivel-actual h3 {
     margin: 0; 
     /* ⭐️ A11Y FIX */
-    font-size: clamp(0.9rem, 0.8rem + 1vw, 1.5rem);
+    font-size: var(--card-nivel-actual-h3-font-size);
+
     color: var(--color-text); opacity: 0.7;
 
     white-space: normal; 
     overflow: hidden; 
     display: -webkit-box; 
+
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 4; 
-    line-clamp: 4; 
-    line-height: 1.3; 
-    max-height: calc(1.5rem * 1.3 * 4);
+    -webkit-line-clamp: var(--card-nivel-actual-h3-line-clamp); 
+    line-clamp: var(--card-nivel-actual-h3-line-clamp); 
+
+    line-height: var(--card-nivel-actual-h3-line-height); 
+    max-height: calc(var(--card-nivel-actual-h3-font-size) 
+                    * var(--card-nivel-actual-h3-line-height) 
+                    * var(--card-nivel-actual-h3-line-clamp));
     text-overflow: ellipsis;
 }
 
 #card-volver-fija-elemento {
-    flex: 0 0 auto; padding: 1.5rem; 
-    display: none; flex-direction: column; justify-content: center; align-items: center; 
-    margin-bottom: 0; overflow: hidden; box-sizing: border-box; 
+    flex: 0 0 auto; padding: 1rem;
+    
+    display: none; flex-direction: column; 
+    justify-content: center; align-items: center; 
+    margin-bottom: 0; overflow: hidden; 
+    box-sizing: border-box; 
     transition: all 0.2s ease; 
     color: var(--color-text); background: var(--color-card-bg);
     border: 2px solid var(--color-card-border); border-radius: 12px;
@@ -40,7 +55,7 @@
 #card-volver-fija-elemento h3 { 
     margin: 0; 
     /* ⭐️ A11Y FIX */
-    font-size: clamp(1rem, 0.8rem + 2vw, 3rem); 
+    font-size: var(--card-volver-fija-h3-font-size);
     font-weight: bold; text-align: center; 
     display: block; 
 }
@@ -49,7 +64,8 @@
 #card-volver-fija-elemento:hover,
 #card-volver-fija-elemento:focus-visible {
     outline: none; border-color: var(--color-primary); 
-    transform: scale(1.03); box-shadow: 0 0 25px var(--color-shadow-primary); 
+    transform: scale(1.03); 
+    box-shadow: 0 0 25px var(--color-shadow-primary); 
     color: var(--color-primary);
 }
 
@@ -66,7 +82,7 @@
 #info-adicional details { margin-bottom: 1.2rem; }
 #info-adicional summary { 
     /* ⭐️ A11Y FIX */
-    font-size: clamp(0.9rem, 0.8rem + 0.5vw, 1.2rem); 
+    font-size: var(--info-adicional-summary-font-size);
     font-weight: bold; 
     cursor: pointer; 
     list-style: none; 
@@ -89,12 +105,13 @@
 }
 #info-adicional details[open] > summary::before { transform: rotate(90deg); }
 #info-adicional details > small { 
-    display: block; padding: 0.5rem 0.5rem 0.5rem 0.5rem; 
+    display: block; 
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem; 
     color: var(--color-text); 
     opacity: 0.7; 
     /* ⭐️ A11Y FIX: Subido min size */
-    font-size: clamp(0.85rem, 0.75rem + 0.5vw, 1rem); 
-    line-height: 1.5; 
+    font-size: var(--info-adicional-details-small-font-size); 
+    line-height: var(--info-adicional-details-small-line-height);
 }
 #info-adicional-lista-acerca { list-style-type: none; padding-left: 0; }
 #info-adicional-lista-ayuda { list-style-type: disc; padding-left: 15px; }
@@ -104,7 +121,7 @@
     color: var(--color-text); 
     opacity: 0.9; transition: all 0.2s ease; 
     /* ⭐️ A11Y FIX */
-    font-size: clamp(0.9rem, 0.8rem + 0.5vw, 1.2rem);
+    font-size: var(--info-adicional-lista-a-font-size);
 }
 
 #info-adicional-lista-acerca a:hover { 
@@ -131,12 +148,20 @@
 }
 
 .toast {
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    background-color: var(--color-toast-bg); color: var(--color-toast-text);
-    padding: 1rem 2rem; border-radius: 12px; border: 2px solid var(--color-card-border);
+    position: fixed; 
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+
+    background-color: var(--color-toast-bg); 
+    color: var(--color-toast-text);
+
+    padding: 1rem 2rem; 
+    
+    border-radius: 12px; border: 2px solid var(--color-card-border);
     box-shadow: 0 5px 25px var(--color-shadow-modal);
     z-index: 9999; text-align: center; max-width: 80%;
-    opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s ease;
+
+    opacity: 0; visibility: hidden; 
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 .toast.active { opacity: 1; visibility: visible; }
 

@@ -34,6 +34,7 @@ class VortexSpiraApp {
         };
         window.App = this; 
         
+        // Asignación de utilidades que no requieren wrapper
         this.stackInitialize = nav_stack.stackInitialize;
         this.stackGetCurrent = nav_stack.stackGetCurrent;
         this.stackPop = nav_stack.stackPop;
@@ -53,9 +54,7 @@ class VortexSpiraApp {
         this._destroyCarousel = render_swipe._destroyCarouselImpl;
         
         this.setupTouchListeners = nav_mouse_swipe.setupTouchListeners;
-        this.renderNavegacion = render_base.renderNavegacion; 
         this._handleActionRowClick = nav_base_details._handleActionRowClick; 
-        this._mostrarDetalle = render_details._mostrarDetalle;             
         this.clearConsole = debug.logClear;
     }
 
@@ -72,23 +71,16 @@ class VortexSpiraApp {
 
         a11y.initA11y();
 
-        // 1. CONFIGURAR SMART RESIZE
         this._setupSmartResize();
-
-        // Cálculo inicial de layout
         this._updateLayoutMode();
-
         this._cacheDOM();
         
         this.DOM.vistaNav = this.DOM.vistaNav || document.getElementById('vista-navegacion-desktop'); 
 
-        // DETECTAR IDIOMA
         let targetLang = i18n.detectBrowserLanguage(); 
         debug.log('app', debug.DEBUG_LEVELS.BASIC, `Idioma detectado: ${targetLang}`);
 
-        // CARGAR TEXTOS Y DATOS
         let loadSuccess = false;
-
         try {
             const [stringsLoaded, coursesData] = await Promise.all([
                 i18n.loadStrings(targetLang),
@@ -101,9 +93,8 @@ class VortexSpiraApp {
             } else {
                 throw new Error("Carga parcial fallida");
             }
-
         } catch (e) {
-            debug.logWarn('app', `Fallo cargando idioma '${targetLang}'. Reintentando con 'es' (Default).`, e);
+            debug.logWarn('app', `Fallo cargando idioma '${targetLang}'. Reintentando con 'es'.`, e);
             if (targetLang !== 'es') {
                 try {
                     await i18n.loadStrings('es');
@@ -147,28 +138,17 @@ class VortexSpiraApp {
         nav_base.setupListeners.call(this);
         nav_keyboard_base.initKeyboardControls.call(this); 
         
-        // Sincronización inicial
         this._updateLayoutMode();
         this._syncHeaderDimensions();
 
-        // ✅ CORRECCIÓN CRÍTICA: LIVE PREVIEW COMPLETO
         window.addEventListener('vortex-layout-refresh', () => {
-            // 1. Guardar el modo actual antes de recalcular
             const prevMode = document.body.getAttribute('data-layout');
-
-            // 2. Recalcular el modo basado en el nuevo tamaño de fuente
             this._updateLayoutMode();
-            
-            // 3. Obtener el nuevo modo
             const newMode = document.body.getAttribute('data-layout');
-
-            // 4. Sincronizar márgenes (Header Height)
             this._syncHeaderDimensions();
 
-            // 5. ⚡️ Si cruzamos un umbral (ej: Tablet -> Mobile), renderizar de inmediato
-            // Esto cambia los Swipers horizontales por verticales al vuelo
             if (prevMode !== newMode) {
-                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, `A11y Change: Cambio de modo detectado (${prevMode} -> ${newMode}). Renderizando...`);
+                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, `Layout Change (${prevMode} -> ${newMode}). Renderizando...`);
                 this._cacheDOM();
                 
                 if (this.STATE.activeCourseId) {
@@ -177,32 +157,51 @@ class VortexSpiraApp {
                     this.renderNavegacion();
                 }
             }
+            // Diagnóstico tras refresco de layout
+            requestAnimationFrame(() => debug.runFontDiagnostics?.());
         });
         
         this.STATE.initialRenderComplete = true; 
-
         debug.log('app', debug.DEBUG_LEVELS.BASIC, "Carga inicial completada.");
 
         requestAnimationFrame(() => {
             setTimeout(() => {
                 document.body.classList.add('app-loaded');
+                // Diagnóstico inicial
+                debug.runFontDiagnostics?.();
             }, 100); 
         });
     }
 
-    _updateFocus(shouldSlide) { nav_base._updateFocusImpl.call(this, shouldSlide); }
-    _handleTrackClick(e) { nav_base._handleTrackClick.call(this, e); }
+    // ⭐️ WRAPPERS DE NAVEGACIÓN (Para inyectar diagnóstico)
+    
+    renderNavegacion() {
+        render_base.renderNavegacion.call(this);
+        // Ejecutar diagnóstico tras renderizar el menú
+        requestAnimationFrame(() => debug.runFontDiagnostics?.());
+    }
+
+    _mostrarDetalle(cursoId) { 
+        render_details._mostrarDetalle.call(this, cursoId);
+        this.STATE.activeCourseId = cursoId; 
+        // Ejecutar diagnóstico tras renderizar el detalle
+        requestAnimationFrame(() => debug.runFontDiagnostics?.());
+    }
+
     _handleVolverClick() { 
         if (this.DOM.vistaDetalle.classList.contains('active')) {
              this.STATE.lastDetailFocusIndex = 0;
         }
         nav_base._handleVolverClick.call(this); 
+        // Ejecutar diagnóstico al volver
+        requestAnimationFrame(() => debug.runFontDiagnostics?.());
     }
+
+    _updateFocus(shouldSlide) { nav_base._updateFocusImpl.call(this, shouldSlide); }
+    _handleTrackClick(e) { nav_base._handleTrackClick.call(this, e); }
+    
     _handleCardClick(id, tipo, parentFocusIndex) { nav_base._handleCardClick.call(this, id, tipo, parentFocusIndex); }
-    _mostrarDetalle(cursoId) { 
-        this._mostrarDetalle.call(this, cursoId); 
-        this.STATE.activeCourseId = cursoId; 
-    }
+    
     _handleActionRowClick(e) { this._handleActionRowClick.call(this, e); }
     getString(key) { return i18n.getString(key); }
     applyStrings() { i18n.applyStrings(this); }
@@ -214,60 +213,41 @@ class VortexSpiraApp {
         setTimeout(() => this.DOM.toast.classList.remove('active'), 2000);
     }
 
-    // Mide el DOM real y actualiza el CSS
     _syncHeaderDimensions() {
-
-        // 1. HEADER
         const header = document.getElementById('app-header');
         if (header) {
             const realHeight = header.offsetHeight;
-            // Inyectamos la altura exacta en el CSS global
             document.documentElement.style.setProperty('--header-height-real', `${realHeight}px`);
-
             debug.log('app', debug.DEBUG_LEVELS.DEEP, `A11y Sync: Header mide ${realHeight}px`);
         }
-
-        // 2. FOOTER (Nuevo)
         const footer = document.querySelector('footer');
         if (footer) {
             const realFooterHeight = footer.offsetHeight;
-            // Inyectamos la altura real del footer
             document.documentElement.style.setProperty('--footer-height-real', `${realFooterHeight}px`);
-            
-            // debug.log('app', debug.DEBUG_LEVELS.DEEP, `Layout Sync: Header=${header?.offsetHeight}, Footer=${realFooterHeight}`);
         }
     }
 
-    // Calcula el modo basado en zoom + ancho
     _setupSmartResize() {
         let resizeTimer;
-
         const handleResize = () => {
             this._updateLayoutMode();
-
-            // ✅ Recalcular en cada resize (por si cambia el zoom)
             this._syncHeaderDimensions();
-
             this._cacheDOM(); 
             
             if (this.STATE.fullData) {
-                // ⭐️ FIX: Lógica condicional para no cerrar detalles al redimensionar
                 if (this.STATE.activeCourseId) {
-                    debug.log('app', debug.DEBUG_LEVELS.BASIC, `SmartResize: Manteniendo vista detalle (${this.STATE.activeCourseId})`);
-                    
-                    // Re-ejecutamos mostrarDetalle para que recalcule swipers/layouts sin salir
+                    debug.log('app', debug.DEBUG_LEVELS.BASIC, `SmartResize: Manteniendo vista detalle.`);
                     requestAnimationFrame(() => {
                         this._mostrarDetalle(this.STATE.activeCourseId);
                     });
                 } else {
-                    debug.log('app', debug.DEBUG_LEVELS.BASIC, `SmartResize: Refrescando menú navegación.`);
+                    debug.log('app', debug.DEBUG_LEVELS.BASIC, `SmartResize: Refrescando menú.`);
                     requestAnimationFrame(() => {
                         this.renderNavegacion();
                     });
                 }
             }
         };
-
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(handleResize, 100); 
@@ -276,17 +256,13 @@ class VortexSpiraApp {
 
     _updateLayoutMode() {
         const rootStyle = getComputedStyle(document.documentElement);
-
-        // 1. Leemos la escala actual
+        // 1. Detectar el "Elefante" (Zoom de Accesibilidad)
         const scale = parseFloat(rootStyle.getPropertyValue('--font-scale')) || 1;
-
         const realWidth = window.innerWidth;
-        const realHeight = window.innerHeight; // ⭐️ Necesitamos la altura física
+        const realHeight = window.innerHeight;
         
-        // 2. Calculamos dimensiones "efectivas" (vistas por el usuario)
+        // 2. Determinar Modo Horizontal (Mobile / Tablet / Desktop)
         const effectiveWidth = realWidth / scale;
-
-        // --- LÓGICA DE LAYOUT (ANCHO) ---
         let mode = 'desktop';
 
         if (effectiveWidth <= data.MAX_WIDTH.MOBILE) { 
@@ -295,46 +271,56 @@ class VortexSpiraApp {
             mode = 'tablet-portrait';
         } else if (effectiveWidth <= data.MAX_WIDTH.TABLET_LANDSCAPE) { 
             mode = 'tablet-landscape';
-        } else { 
-            mode = 'desktop';
         }
 
         const currentMode = document.body.getAttribute('data-layout');
         if (currentMode !== mode) {
             document.body.setAttribute('data-layout', mode);
-
             debug.log('app', debug.DEBUG_LEVELS.BASIC, `Layout: ${effectiveWidth.toFixed(0)}px (Scale ${scale}) -> [${mode}]`);
         }
 
-        // --- LÓGICA DE SEGURIDAD DINÁMICA (ALTO - Determina Scroll) ---
-        // Medimos si el contenido cabe REALMENTE.
-        const header = document.getElementById('app-header');
-        const footer = document.querySelector('footer');
+        /* --- 🧠 LÓGICA SMART SAFE MODE (Sincronizada con CSS) --- */
         
-        // Medimos cuánto ocupan las barras (si existen)
-        const headerH = header ? header.offsetHeight : 0;
-        const footerH = footer ? footer.offsetHeight : 0;
-        
-        // Espacio libre físico para el contenido
-        const availableSpace = window.innerHeight - headerH - footerH;
-        
-        // Activamos el scroll vertical de emergencia, si tenemos menos del minimo vital
-        const isSafeMode = availableSpace < data.MIN_CONTENT_HEIGHT;
+        // 3. Calcular Altura Efectiva (Lo que "siente" el CSS con em)
+        // Si tienes 600px de alto pero zoom 200%, es como si tuvieras 300px.
+        const effectiveHeight = realHeight / scale;
+
+        // 4. Umbrales exactos de tu CSS (style-safe-mode.css)
+        let safeThreshold;
+
+        switch (mode) {
+            // Mobile: 18.75em = 300px
+            case 'mobile': 
+                safeThreshold = data.MIN_CONTENT_HEIGHT.MOBILE;
+                break;
+
+            // Tablet: 28.125em = 450px
+            case 'tablet-portrait': 
+            case 'tablet-landscape':
+                safeThreshold = data.MIN_CONTENT_HEIGHT.TABLET;
+                break;
+
+            // Desktop: 37.5em = 600px
+            case 'desktop':
+                safeThreshold = data.MIN_CONTENT_HEIGHT.DESKTOP;
+                break;
+        }
+
+        // 5. Decisión: ¿Cabe el contenido?
+        const isSafeMode = effectiveHeight < safeThreshold;
         
         const currentSafe = document.body.getAttribute('data-safe-mode') === 'true';
         
         if (isSafeMode !== currentSafe) {
             document.body.setAttribute('data-safe-mode', isSafeMode ? 'true' : 'false');
             
-            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                `Safe Mode: ${isSafeMode ? 'ACTIVADO' : 'Desactivado'} (Libre: ${availableSpace}px vs Mín: ${data.MIN_CONTENT_HEIGHT}px)`);
-
-            // Protocolo de salida: Restaurar scroll y swiper si volvemos a modo fijo
+            // Log para depurar el "Elefante"
+            debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
+                `🛡️ Safe Mode: ${isSafeMode ? 'ON' : 'OFF'} | Eff.Height: ${effectiveHeight.toFixed(0)}px (Umbral ${mode}: ${safeThreshold}px)`);
+            
             if (!isSafeMode) {
                 window.scrollTo(0, 0);
-                if (this.STATE.carouselInstance) {
-                    requestAnimationFrame(() => this.STATE.carouselInstance.update());
-                }
+                if (this.STATE.carouselInstance) requestAnimationFrame(() => this.STATE.carouselInstance.update());
             }
         }
     }
@@ -342,8 +328,6 @@ class VortexSpiraApp {
     _cacheDOM() {
         const layout = document.body.getAttribute('data-layout') || 'desktop';
         const isMobile = layout === 'mobile';
-        // En caché, agrupamos vistas de escritorio y tablet-landscape/portrait si usan los mismos contenedores "grandes"
-        // Pero para ser estrictos con tu lógica de vistas:
         const isDesktopView = layout === 'desktop'; 
         
         debug.log('app', debug.DEBUG_LEVELS.DEEP, `Refrescando caché DOM. Modo: ${layout}`);
@@ -363,7 +347,6 @@ class VortexSpiraApp {
         this.DOM.appContainer = document.getElementById('app-container');
         this.DOM.toast = document.getElementById('toast-notification'); 
 
-        // Lógica de vistas de navegación (Coherente con style-layout.css y style-tablet.css)
         if (isMobile) {
             this.DOM.vistaNav = document.getElementById('vista-navegacion-mobile');
             this.DOM.track = document.getElementById('track-mobile');
@@ -371,7 +354,6 @@ class VortexSpiraApp {
             this.DOM.vistaNav = document.getElementById('vista-navegacion-desktop');
             this.DOM.track = document.getElementById('track-desktop');
         } else { 
-            // Tablet Portrait y Landscape usan la vista tablet
             this.DOM.vistaNav = document.getElementById('vista-navegacion-tablet');
             this.DOM.track = document.getElementById('track-tablet');
         }

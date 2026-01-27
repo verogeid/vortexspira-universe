@@ -5,7 +5,9 @@
 #detalle-contenido-mobile {
     max-height: 100%; 
     overflow-y: auto; 
-    padding: 20px; 
+
+    padding: var(--detail-vertical-spacing) 15px;
+
     box-sizing: border-box;
     
     scrollbar-width: thin;
@@ -35,13 +37,16 @@
 
 .detail-title-slide {
     /* ⭐️ A11Y FIX */
-    font-size: clamp(1.2rem, 1rem + 2vw, 2rem);
+    font-size: var(--details-title-slide-font-size);
     margin-top: 0;
+
+    margin-bottom: var(--detail-vertical-spacing);
+
+    line-height: 1.2;
 }
 
 .detail-text-fragment {
     outline: none;
-    padding: 10px;
     border-radius: 4px;
     border: none;
     border-left: 2px solid transparent; 
@@ -52,12 +57,26 @@
     filter: none !important;
     opacity: 0.3; 
     pointer-events: auto;
+
+    margin-bottom: 0;
     
     /* A11Y FIX CRÍTICO: Texto base legible (1rem) + crecimiento */
-    font-size: clamp(1rem, 0.95rem + 1vw, 1.4rem);
-    line-height: 1.6;
+    font-size: var(--details-text-fragment-font-size);
+    line-height: var(--details-text-fragment-line-height);
     
     width: 100%;
+}
+
+.detail-text-fragment .content-wrapper {
+    /* El wrapper interno es quien da el aire al texto */
+    padding: var(--detail-vertical-spacing); /* Dinámico */
+}
+.detail-text-fragment p {
+    width: 100%;
+    margin: 0 !important;
+}
+.detail-text-fragment p:last-child {
+    margin-bottom: 0;
 }
 
 .detail-text-fragment:focus-visible,
@@ -140,11 +159,13 @@
     border-bottom: 1px solid var(--color-border-placeholder);
     transition: background-color 0.2s ease;
 }
-.detail-action-item:hover { background-color: rgba(255, 255, 255, 0.05); }
+.detail-action-item:hover { 
+    background-color: var(--color-details-action-item-hover); 
+}
 
 .detail-action-text {
     /* A11Y FIX */
-    font-size: clamp(1rem, 0.9rem + 1vw, 1.4rem);
+    font-size: var(--details-action-text-font-size);
     font-weight: 500; 
     color: inherit; 
     text-align: left; margin-right: 15px; flex-grow: 1;
@@ -153,13 +174,14 @@
 /* 5. BOTÓN DE ACCIÓN */
 .detail-action-btn {
     display: flex; justify-content: center; align-items: center;
-    width: clamp(38px, 2.5vw, 76px);
-    height: clamp(38px, 2.5vw, 76px);
+    width: var(--details-action-btn-size);
+    height: var(--details-action-btn-size);
     background: transparent; 
     border: 2px solid var(--color-card-border); 
     border-radius: 8px;  
     color: var(--color-text); 
-    font-size: clamp(1rem, 2.5vw, 1.4rem); line-height: 1;
+    font-size: var(--details-action-btn-font-size);
+    line-height: 1;
     text-decoration: none; cursor: pointer;
     transition: all 0.2s ease; flex-shrink: 0; 
     position: relative; 
@@ -189,10 +211,10 @@
     border: 2px solid var(--color-card-border-disabled); 
     background: transparent;
     cursor: default; 
-    width: clamp(38px, 2.5vw, 76px); 
-    height: clamp(38px, 2.5vw, 76px);
+    width: var(--details-action-btn-size);
+    height: var(--details-action-btn-size);
     border-radius: 50%;
-    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    font-size: var(--details-action-btn-font-size);
     line-height: 1;
     filter: none; 
     transform: none; 
@@ -228,7 +250,8 @@
 }
 
 .action-icon {
-    display: inline-block; width: 1.5rem; height: 1.5rem;
+    display: inline-block; 
+    width: var(--details-action-icon-size); height: var(--details-action-icon-size);
     background-color: currentColor; 
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
@@ -246,7 +269,7 @@ button.detail-action-btn {
     border-radius: 20px !important; margin-bottom: 0; 
     font-weight: bold; aspect-ratio: auto; 
     /* A11Y FIX */
-    font-size: clamp(1.2rem, 1rem + 2vw, 2rem);
+    font-size: var(--details-volver-btn-font-size);
     background: var(--color-card-bg); 
 }
 

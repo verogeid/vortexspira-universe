@@ -80,8 +80,8 @@
     cursor: pointer; color: var(--color-text);
 
     /* Tamaño físico del botón también elástico pero controlado */
-    width: var(--a11y-close-btn-width);
-    height: var(--a11y-close-btn-width);
+    width: var(--a11y-close-btn-size);
+    height: var(--a11y-close-btn-size);
     border-radius: 50%;
 
     display: flex; justify-content: center; align-items: center;
@@ -119,27 +119,31 @@
 }
 
 .a11y-controls-group {
-    display: flex; gap: 10px; flex-wrap: wrap;
+    display: flex; gap: 10px;
     width: 100%;
+
+    flex-wrap: wrap;
 }
 
 /* BOTONES DE OPCIÓN */
 .a11y-option-btn {
-    flex: 1; padding: 10px;
+    flex: 1 1 auto; /* Crecen y encogen, base automática */
+    
+    padding: 10px;
     background: transparent;
     border: 2px solid var(--color-card-border);
     border-radius: 8px; color: var(--color-text);
     cursor: pointer; transition: all 0.2s ease;
 
     font-size: var(--a11y-option-btn-font-size);
-    
+
     /* ⭐️ FIX: Truncar texto de botones ("Sans", "Compacto") */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     
     /* Permite que el botón encoja si es necesario */
-    min-width: 0;
+    min-width: 120px;
     max-width: 100%;
 }
 
@@ -168,6 +172,19 @@
     width: 100%;
     overflow: hidden; /* Contención */
 }
+
+/* Estilos para los iconos laterales de los sliders (A, ≡) */
+.range-icon-small, .range-icon-large, 
+.a11y-range-wrapper span[aria-hidden="true"] {
+    flex-shrink: 0;
+
+    font-size: var(--a11y-slider-font-size);
+    
+    width: 1.5em; /* Ancho fijo para alineación */
+    text-align: center;
+    line-height: 1;
+}
+
 input[type=range].a11y-range {
     flex-grow: 1; height: 6px;
     background: var(--color-border-placeholder);
@@ -191,7 +208,7 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
 }
 
 .a11y-range-value {
-    min-width: 80px; text-align: right; 
+    min-width: 70px; text-align: right; 
     font-weight: bold; font-size: var(--a11y-range-value-font-size);
 
     /* ⭐️ FIX: Truncar valor del porcentaje si crece mucho */
@@ -259,4 +276,10 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
         border-color: Highlight; 
     }
 }
+
+/* Previews de fuente */
+.font-preview-sans { font-family: var(--font-sans); }
+.font-preview-serif { font-family: var(--font-serif); }
+.font-preview-dyslexic { font-family: var(--font-dyslexic); font-weight: bold; }
+
 /* --- styles/style-a11y.css --- */

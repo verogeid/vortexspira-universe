@@ -213,43 +213,4 @@ body[data-layout="mobile"] header h1 a {
     height: auto; /* Permite crecer */
 }
 
-/* ============================================================
-   🚨 REGLAS SAFE MODE PARA HEADER 🚨
-   Cuando el espacio es crítico, priorizamos la visibilidad del
-   botón A11y sacrificando el texto del título.
-   ============================================================ */
-
-body[data-layout="mobile"][data-safe-mode="true"] #header-content-wrapper {
-    /* Forzamos que no haga wrap para mantener la línea */
-    flex-wrap: nowrap !important;
-    gap: 5px;
-}
-
-body[data-layout="mobile"][data-safe-mode="true"] header h1 {
-    /* Restauramos posición relativa para que fluya */
-    position: relative !important;
-    left: auto !important;
-    transform: none !important;
-    
-    /* FLEXIBILIDAD: Ocupa espacio pero encoge si es necesario */
-    flex: 1 1 auto !important;
-    min-width: 0 !important; /* Vital para que el truncado funcione en Flex */
-    width: auto !important;
-    max-width: none !important;
-    
-    /* Puntos suspensivos forzados */
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    
-    margin: 0 clamp(2px, 1dvh, 5px) !important;
-    display: block !important; /* Comportamiento de bloque para el overflow */
-    padding: 0 !important;     /* Eliminamos padding extra para ganar espacio */
-}
-
-/* Aseguramos que el logo y el texto estén alineados inline dentro del bloque truncado */
-body[data-layout="mobile"][data-safe-mode="true"] header h1 a {
-    display: inline-flex !important;
-    vertical-align: middle;
-}
 /* --- styles/style-header.css --- */

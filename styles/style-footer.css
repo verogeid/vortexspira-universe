@@ -144,17 +144,4 @@ footer a.footer-license-link:focus-visible {
         display: none !important;
     }
 
-/* 🚨 Footer deja de flotar y fluye con el documento */
-body[data-layout="mobile"][data-safe-mode="true"] footer {
-    position: relative !important; /* Se mueven con el scroll */
-    height: auto !important;       /* Crecen según el tamaño de la letra */
-    min-height: auto !important;
-    padding: 10px !important;
-    z-index: 10;
-}
-
-body[data-layout="mobile"][data-safe-mode="true"] .footer-social-container {
-    display: none !important;
-}
-
 /* --- styles/style-footer.css --- */

@@ -30,29 +30,54 @@
     margin: 0; 
     width: 100%;
     text-align: left;
+
+    display: -webkit-box;
     display: block; 
+
+    font-size: var(--card-title-font-size, 1.2rem);
+    line-height: 1.3;
+
+    /* Seguridad extra: cortar si es larguísimo */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    -webkit-line-clamp: var(--card-h3-line-clamp); line-clamp: var(--card-h3-line-clamp);
+    -webkit-box-orient: vertical;
+
+    word-break: normal; 
+    overflow-wrap: normal;
 }
 
 .card h3 .card-icon-lead,
 .card h3 .icon-vacio-card,
 .card h3 .icon-obras-card {
+    float: none !important;
     display: block;
-    margin-bottom: 0.5em;
-    font-size: 1.4em;
+
+    margin-top: 0 !important;
+    /* Pequeña separación con el texto de abajo */
+    margin-bottom: 5px; 
+    margin-right: 0;
+
+    font-size: var(--card-h3-icon);
     width: 1.1em;
     height: 1.1em;
+
+    line-height: 1;
 }
 
 .card h3 .card-text-content,
 .card.card-breadcrumb-vertical h3 {
     display: -webkit-box;
-    -webkit-line-clamp: 4; 
-    line-clamp: 4;
+    display: block;
+
+    -webkit-line-clamp: var(--card-breadcrump-h3-line-clamp); 
+    line-clamp: var(--card-breadcrump-h3-line-clamp);
     -webkit-box-orient: vertical;
     
-    font-size: clamp(1rem, 0.9rem + 1vw, 1.4rem);
+    font-size: var(--card-breadcrump-vertical-h3-font-size);
     
-    line-height: 1.2;
+    line-height: var(--card-breadcrump-h3-line-height);
     
     word-break: normal; 
     overflow-wrap: normal;
@@ -60,28 +85,32 @@
     text-overflow: ellipsis;
 }
 
+/* Descripción / Contenido */
+.card p {
+    margin: 0;
+    line-height: var(--card-p-line-height);
+    color: var(--color-text);
+    
+    /* Usamos la variable controlada */
+    font-size: var(--card-desc-font-size, 1rem);
+}
+
 .icon-vacio-card {
     background-color: currentColor;
-    -webkit-mask-image: var(--icon-vacio);
-    mask-image: var(--icon-vacio);
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: left center;
-    mask-position: left center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
+
+    -webkit-mask-image: var(--icon-vacio); mask-image: var(--icon-vacio);
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: left center; mask-position: left center;
+    -webkit-mask-size: contain; mask-size: contain;
 }
 
 .icon-obras-card {
     background-color: var(--color-icon-obras);
-    -webkit-mask-image: var(--icon-obras);
-    mask-image: var(--icon-obras);
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: left center;
-    mask-position: left center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
+
+    -webkit-mask-image: var(--icon-obras); mask-image: var(--icon-obras);
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: left center; mask-position: left center;
+    -webkit-mask-size: contain; mask-size: contain;
 }
 
 /* Tipos Especiales */
@@ -91,7 +120,7 @@
     background: transparent; 
     min-height: 50px;
     opacity: 0.8; 
-    font-size: 0.9rem; 
+    font-size: var(--card-breadcrump-vertical-font-size);
     cursor: default; 
     text-align: left;
     justify-content: center; 
@@ -99,8 +128,8 @@
 }
 
 .card.card-breadcrumb-vertical h3 {
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
+    -webkit-line-clamp: var(--card-breadcrump-vertical-line-clamp); 
+    line-clamp: var(--card-breadcrump-vertical-line-clamp);
 }
 
 .card.card-volver-vertical { 

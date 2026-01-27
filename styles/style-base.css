@@ -23,5 +23,6 @@
 
 /* 5. Reglas Móviles (Overrides finales) */
 @import url('style-mobile.css');
+@import url('style-safe-mode.css'); /* a11y safe mode */
 
 /* --- styles/style-base.css --- */

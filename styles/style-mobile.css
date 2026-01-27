@@ -17,10 +17,10 @@ body[data-layout="mobile"] {
 
 body[data-layout="mobile"] #app-container {
     height: auto !important;
-    min-height: calc(100vh - var(--header-height-real, 50px) - var(--footer-height-real, 6vh));
+    min-height: calc(100dvh - var(--header-height-real, 50px) - var(--footer-height-real, --footer-height));
 
-    margin-top: var(--header-height-real, 50px) !important;
-    margin-bottom: var(--footer-height-real, 6dvh) !important;
+    margin-top: 0 !important;
+    /*margin-bottom: var(--footer-height-real, --footer-height) !important;*/
 
     padding-top: 15px !important; padding-bottom: 15px !important;
     padding-left: 0px; padding-right: 0px; 
@@ -117,46 +117,43 @@ body[data-layout="mobile"] .card-relleno-final {
     box-shadow: none !important;
 }
 
-/* ============================================================
-   🚨 MODO DE SEGURIDAD UNIFICADO (Reflow WCAG 1.4.10) 🚨
-   Se activa vía JS (data-safe-mode="true")
-   ============================================================ */
-/*@media (max-height: 500px) */
-
-/* 1. Liberamos el BODY para permitir scroll nativo */
-body[data-layout="mobile"][data-safe-mode="true"] {
-    position: static !important;
-    overflow-y: auto !important; 
-    height: auto !important;
-    padding-top: 0 !important; /* El padding lo darán los elementos ahora estáticos */
-    padding-bottom: 0 !important;
-}
-
-/* 3. El Contenedor Principal fluye entre header y footer */
-body[data-layout="mobile"][data-safe-mode="true"] #app-container {
-    height: auto !important;
-    min-height: 0 !important;
-    overflow: visible !important;
-    display: block !important; /* Quitamos flex/grid complejos */
-    padding: 10px !important;
-}
-
-/* 4. Soltamos el Swiper para que se muestre como lista vertical simple */
-body[data-layout="mobile"][data-safe-mode="true"] #nav-swiper-mobile, 
-body[data-layout="mobile"][data-safe-mode="true"] #detalle-swiper-mobile {
-    height: auto !important;
+/* 1. CAMBIO A FLEXBOX: Para crear 2 columnas (Icono | Texto) */
+body[data-layout="mobile"] .card h3 {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important; /* 🎯 CENTRADO VERTICAL */
+    gap: 12px; /* Espacio limpio entre columnas */
+    
+    max-height: none !important; /* Quitamos límite de altura de desktop */
     overflow: visible !important;
 }
 
-body[data-layout="mobile"][data-safe-mode="true"] .swiper-wrapper {
-    height: auto !important;
-    padding-bottom: 20px !important;
-    padding-top: 0 !important;
+/* 2. RESET DEL ICONO: Deja de flotar y se comporta como columna 1 */
+body[data-layout="mobile"] .card h3 .card-icon-lead,
+body[data-layout="mobile"] .card h3 .icon-vacio-card,
+body[data-layout="mobile"] .card h3 .icon-obras-card {
+    float: none !important;
+    margin-top: 0 !important;   /* Sin ajuste óptico, centrado matemático */
+    margin-right: 0 !important; /* El gap del padre controla el espacio */
+
+    /* En móvil podemos hacerlo un pelín más grande si quieres, o dejarlo heredar */
+    font-size: 1.2em !important; 
+    width: 1.2em !important;
+    height: 1.2em !important;
 }
 
-body[data-layout="mobile"][data-safe-mode="true"] .swiper-slide {
-    height: auto !important;
-    margin-bottom: 20px !important; /* Separación manual entre cards */
-}
+/* 3. TEXTO: Bloque con Ellipsis real */
+    body[data-layout="mobile"] .card h3 .card-text-content {
+        display: -webkit-box !important;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3; /* Límite de líneas móvil */
+        line-clamp: 3;
+        
+        overflow: hidden;
+        text-overflow: ellipsis;
+        
+        word-break: normal !important;
+        overflow-wrap: break-word !important;
+    }
 
 /* --- styles/style-mobile.css --- */
