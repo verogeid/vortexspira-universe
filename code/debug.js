@@ -13,35 +13,35 @@ export const DEBUG_LEVELS = {
 };
 
 export const DEBUG_CONFIG = {
-    global: DEBUG_LEVELS.BASIC,
-    global_focus: DEBUG_LEVELS.BASIC,
-    global_font: DEBUG_LEVELS.BASIC,
-    global_layout: DEBUG_LEVELS.BASIC,
-    global_key: DEBUG_LEVELS.BASIC,
-    global_mouse: DEBUG_LEVELS.DEEP,
+    global: DEBUG_LEVELS.DISABLED,
+    global_focus: DEBUG_LEVELS.DISABLED,
+    global_font: DEBUG_LEVELS.DEEP,
+    global_layout: DEBUG_LEVELS.DISABLED,
+    global_key: DEBUG_LEVELS.DISABLED,
+    global_mouse: DEBUG_LEVELS.DISABLED,
     
-    app: DEBUG_LEVELS.DEEP,
-    data: DEBUG_LEVELS.BASIC,
+    app: DEBUG_LEVELS.DISABLED,
+    data: DEBUG_LEVELS.DISABLED,
     i18n: DEBUG_LEVELS.DISABLED,
-    ally: DEBUG_LEVELS.DEEP,
-    nav_stack: DEBUG_LEVELS.BASIC,
+    ally: DEBUG_LEVELS.DISABLED,
+    nav_stack: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Detalle
-    nav_base: DEBUG_LEVELS.DEEP,
-    nav_base_details: DEBUG_LEVELS.BASIC, // ⭐️ DEEP: Para el foco/blur después del slide ⭐️
+    nav_base: DEBUG_LEVELS.DISABLED,
+    nav_base_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para el foco/blur después del slide ⭐️
     
     // Módulos de Teclado
-    nav_keyboard_base: DEBUG_LEVELS.BASIC, // ⭐️ DEEP: Para ver el listener keydown global ⭐️
-    nav_keyboard_details: DEBUG_LEVELS.BASIC, // ⭐️ DEEP: Para la lógica de cursor en detalle ⭐️
-    nav_keyboard_swipe: DEBUG_LEVELS.BASIC,
+    nav_keyboard_base: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para ver el listener keydown global ⭐️
+    nav_keyboard_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para la lógica de cursor en detalle ⭐️
+    nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Mouse
     nav_mouse_details: DEBUG_LEVELS.DISABLED, // Excluir rueda de ratón en detalle
-    nav_mouse_swipe: DEBUG_LEVELS.DEEP,   // Excluir arrastre en menús
+    nav_mouse_swipe: DEBUG_LEVELS.DISABLED,   // Excluir arrastre en menús
     
-    render_base: DEBUG_LEVELS.BASIC,
-    render_details: DEBUG_LEVELS.BASIC, // ⭐️ DEEP: Para inicialización de Swiper de detalle ⭐️
-    render_swipe: DEBUG_LEVELS.BASIC
+    render_base: DEBUG_LEVELS.DISABLED,
+    render_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para inicialización de Swiper de detalle ⭐️
+    render_swipe: DEBUG_LEVELS.DISABLED
 };
 
 /* ============================================================
@@ -232,9 +232,6 @@ export function _setupConsoleInterceptor() {
 export function runFontDiagnostics() {
     if (DEBUG_CONFIG.global_font < DEBUG_LEVELS.BASIC) return;
 
-    // Limpieza manual para asegurar que el grupo es lo primero que se ve
-    console.clear(); 
-
     logGroupCollapsed('global_font', DEBUG_LEVELS.BASIC, "%c📊 DIAGNÓSTICO DE TAMAÑOS REALES", "background: #222; color: #bada55; font-size: 16px; padding: 4px; border-radius: 4px;");
 
     const root = document.documentElement;
@@ -319,6 +316,12 @@ export function runFontDiagnostics() {
         }
     }
 
+    // 4. FOOTER
+    logGroupCollapsed('global_font', DEBUG_LEVELS.BASIC, "%c⬇️ FOOTER ⬇️", "color: #ccc; margin-top: 10px;");
+    medir("footer", "Footer Container");
+    medir(".footer-copyright", "Texto Copyright");
+    medir(".footer-social-link", "Icono Social");
+
     logGroupEnd('global_font', DEBUG_LEVELS.BASIC);
 }
 
@@ -351,6 +354,32 @@ export function runLayoutDiagnostics() {
         logWarn('global_layout', "⚠️ Nada detectado (¿Canvas vacío?)");
     }
     logGroupEnd('global_layout', DEBUG_LEVELS.BASIC);
+
+    /* ⭐️ DIAGNÓSTICO DE HEADER ⭐️ */
+    const header = document.getElementById('app-header');
+    if (header) {
+        const rect = header.getBoundingClientRect();
+        const st = getComputedStyle(header);
+        const varHeight = document.documentElement.style.getPropertyValue('--header-height-real');
+        
+        logGroupCollapsed('global_layout', DEBUG_LEVELS.BASIC, "🎩 Estado del Header");
+        
+        log('global_layout', DEBUG_LEVELS.BASIC, `OffsetHeight (Entero): ${header.offsetHeight}px`);
+        log('global_layout', DEBUG_LEVELS.BASIC, `BoundingRect (Exacto): %c${rect.height.toFixed(2)}px`, "color: cyan; font-weight: bold;");
+        log('global_layout', DEBUG_LEVELS.BASIC, `Bottom Position: ${rect.bottom.toFixed(2)}px (Límite visual)`);
+        log('global_layout', DEBUG_LEVELS.BASIC, `Var CSS (--header-height-real): ${varHeight || 'No definida'}`);
+        
+        log('global_layout', DEBUG_LEVELS.BASIC, `Position: ${st.position}`);
+        log('global_layout', DEBUG_LEVELS.BASIC, `Z-Index: ${st.zIndex}`);
+        
+        if (st.position === 'fixed' || st.position === 'sticky') {
+             log('global_layout', DEBUG_LEVELS.BASIC, "⚠️ Header está FIJO/STICKY. ¿Está tapando contenido?");
+        }
+        
+        logGroupEnd('global_layout', DEBUG_LEVELS.BASIC);
+    } else {
+        logError('global_layout', "❌ Header no encontrado (#app-header)");
+    }
 
     // 2. ESTADO DEL FOOTER
     const footer = document.querySelector('footer');
@@ -391,6 +420,33 @@ export function runLayoutDiagnostics() {
         logWarn('global_layout', "No se encontró contenedor de detalle activo.");
     }
     
+    // 4. VERIFICACIÓN DE info-adicional
+    const info = document.getElementById('info-adicional');
+    if (info) {
+        const style = window.getComputedStyle(info);
+        const isVisible = style.display !== 'none';
+        const layout = document.body.getAttribute('data-layout');
+
+        logGroupCollapsed('global_layout', DEBUG_LEVELS.BASIC, `ℹ️ Panel Info Adicional:`);
+        log('global_layout', DEBUG_LEVELS.BASIC, `Display Computado: ${style.display}`);
+        log('global_layout', DEBUG_LEVELS.BASIC, `Visibilidad Real: ${isVisible ? '✅ VISIBLE' : '❌ OCULTO'}`);
+        
+        if (!isVisible) {
+            if (DEBUG_CONFIG.global_layout >= DEBUG_LEVELS.BASIC) {
+                logWarn('global_layout', `⚠️ El panel está oculto por reglas CSS de [${layout}].`);
+
+                if (layout === 'tablet-portrait') {
+                    logWarn('global_layout', `(En Portrait el grid es de 2 columnas y no hay sitio para el panel)`);
+                }
+            }
+        }
+        logGroupEnd('global_layout', DEBUG_LEVELS.BASIC);
+    } else {
+        if (DEBUG_CONFIG.global_layout >= DEBUG_LEVELS.BASIC) {
+            logError('global_layout', "❌ No se encuentra el elemento #info-adicional");
+        }
+    }
+
     // 4. VERIFICACIÓN DE SAFE MODE
     const safeMode = document.body.getAttribute('data-safe-mode');
     const safeMsg = `🛡️ Safe Mode Activo: ${safeMode}`;

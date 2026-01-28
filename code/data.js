@@ -29,7 +29,7 @@ export const URL = {
 
 // MÍNIMO VITAL: ¿Necesario para ver algo útil?
 export const MIN_CONTENT_HEIGHT = {
-    MOBILE: 300, // Equivale a 18.75em
+    MOBILE: 260, // Equivale a 18.75em
     TABLET: 450, // Equivale a 28.125em
     DESKTOP: 600 // Equivale a 37.5em
 }

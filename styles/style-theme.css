@@ -52,7 +52,7 @@
     --header-icon-size: clamp(24px, 8dvh, 3.7rem);
     --header-obras-size: clamp(16px, 6dvh, 3rem);
 
-    --footer-font-size: clamp(0.5rem, calc((0.1rem + 2dvh) * var(--font-scale)), 1rem);
+    --footer-font-size: clamp(0.6rem, calc(1.5dvh * var(--font-scale)), 0.8rem);
 
     /* 📐 VARIABLES DE TARJETAS (CARDS) */
     --card-p-line-height: 1.4;
@@ -95,7 +95,7 @@
     --tab-port-header-obras-size: clamp(16px, 4dvh, 1.8rem);
 
     /* 📐 VARIABLES DE MÓVIL */
-    --mobile-header-title-size: clamp(0.7rem, calc(2dvh * var(--font-scale)), 1rem);
+    --mobile-header-title-size: clamp(0.85rem, calc(3dvh * var(--font-scale)), 1.2rem);
     --mobile-header-logo-size: clamp(16px, 6dvh, 1.8rem) !important;
     --mobile-header-icon-size: clamp(16px, 6dvh, 1.6rem) !important;
     --mobile-header-obras-size: clamp(12px, 4dvh, 1.2rem) !important;

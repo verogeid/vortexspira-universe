@@ -13,6 +13,9 @@ body[data-layout="mobile"][data-safe-mode="true"] {
     height: auto !important;
     padding-top: 0 !important; /* El padding lo darán los elementos ahora estáticos */
     padding-bottom: 0 !important;
+
+    /* 🟢 VITAL: Define el "techo" lógico para el scroll automático del navegador (focus) */
+    scroll-padding-top: calc(var(--header-height-real, 60px) + 5px) !important;
 }
 
 /* 3. El Contenedor Principal fluye entre header y footer */
@@ -22,7 +25,9 @@ body[data-layout="mobile"][data-safe-mode="true"] #app-container {
     overflow: visible !important;
     display: block !important; /* Quitamos flex/grid complejos */
 
-    padding-top: 2px !important;
+    /* 🟢 VITAL: Espacio físico para que el contenido empiece DEBAJO del header fijo */
+    padding-top: calc(var(--header-height-real, 60px) + 5px) !important;
+
     margin-top: 0 !important;
 }
 
@@ -65,7 +70,7 @@ body[data-layout="mobile"][data-safe-mode="true"] .card.card-breadcrumb-vertical
 }
 
 /* ============================================================
-   🚨 REGLAS SAFE MODE PARA HEADER 🚨
+   🚨 REGLAS SAFE MODE PARA HEADER (SOLO MOBILE) 🚨
    Cuando el espacio es crítico, priorizamos la visibilidad del
    botón A11y sacrificando el texto del título.
    ============================================================ */
@@ -117,10 +122,13 @@ body[data-layout="mobile"][data-safe-mode="true"] .footer-social-container {
     display: none !important;
 }
 
+/* ============================================================
+   🚨 VISTAS DE DETALLE (SOLO MÓVIL) 🚨
+   IMPORTANTE: Restringido a [data-layout="mobile"]
+   ============================================================ */
+
 /* 1. SOLTAR EL CONTENEDOR PRINCIPAL DE LA VISTA */
-/* Antes estaba fixed/absolute. Ahora debe fluir en el documento */
-body[data-safe-mode="true"] #vista-detalle-mobile,
-body[data-safe-mode="true"] #vista-detalle-desktop {
+body[data-safe-mode="true"] #vista-detalle-mobile {
     position: relative !important; /* Vital: deja de flotar sobre todo */
     top: auto !important;
     left: auto !important;
@@ -132,16 +140,14 @@ body[data-safe-mode="true"] #vista-detalle-desktop {
 }
 
 /* 2. SOLTAR EL CONTENEDOR DEL SWIPER */
-body[data-layout="mobile"][data-safe-mode="true"] #detalle-swiper-mobile,
-body[data-safe-mode="true"] #detalle-swiper-desktop {
+body[data-safe-mode="true"] #detalle-swiper-mobile {
     height: auto !important;
     overflow: visible !important;
 }
 
 /* 3. APILAR LOS SLIDES VERTICALMENTE */
 /* Swiper usa flex-row por defecto. Lo forzamos a columna */
-body[data-layout="mobile"][data-safe-mode="true"] #detalle-swiper-mobile .swiper-wrapper,
-body[data-safe-mode="true"] #detalle-swiper-desktop .swiper-wrapper {
+body[data-safe-mode="true"] #detalle-swiper-mobile .swiper-wrapper {
     display: flex !important;
     flex-direction: column !important; /* ⬅️ LA CLAVE: Uno debajo de otro */
     height: auto !important;

@@ -133,52 +133,63 @@ export function _updateFocusImpl(shouldSlide = true) {
                 const viewHeight = window.innerHeight;
                 const bottomLimit = viewHeight - footerHeight;
 
-                const cardRect = target.getBoundingClientRect();
-                
-                // 1. Techo Real (Breadcrumb en Idx=0)
-                let topRef = cardRect.top;
-                if (targetPos === 0) {
-                    const bc = target.previousElementSibling;
-                    if (bc && bc.classList.contains('card-breadcrumb-vertical')) {
-                        topRef = bc.getBoundingClientRect().top;
-                    }
-                }
+                // En lugar de mirar solo la tarjeta, miramos el SLIDE contenedor.
+                // Esto incluye automáticamente el Breadcrumb si está encima de la tarjeta en el mismo slide.
+                const parentSlide = target.closest('.swiper-slide');
 
-                // 2. Detección de Obstrucción
-                const isObstructedTop = topRef < (headerHeight + 2);
-                const isObstructedBottom = cardRect.bottom > (bottomLimit - 2);
+                // Si encontramos el slide, usamos su borde superior. Si no, usamos el de la tarjeta.
+                const topRect = parentSlide ? parentSlide.getBoundingClientRect() : target.getBoundingClientRect();
+                const cardRect = target.getBoundingClientRect(); // Para el fondo seguimos usando la tarjeta
+
+                // 1. Techo Real (Breadcrumb en Idx=0)
+                const topRef = topRect.top;
+                const bottomRef = cardRect.bottom;
+
+                // Detección de Obstrucción
+                // Añadimos margen de seguridad al header
+                const isObstructedTop = topRef < (headerHeight + 5); 
+                const isObstructedBottom = bottomRef > (bottomLimit - 5);
 
                 if (isObstructedTop || isObstructedBottom) {
                     let delta = 0;
-                    const margin = 15; // Aire visual
+                    const margin = 20; // Un buen margen visual (15px padding + 5px extra)
 
                     if (isObstructedTop) {
+                        // Calcular cuánto hay que bajar para que el TOP del slide se vea bajo el header
                         delta = (headerHeight + margin) - topRef;
                     } else if (isObstructedBottom) {
-                        delta = (bottomLimit - margin) - cardRect.bottom;
+                        // Calcular cuánto hay que subir para que el BOTTOM de la tarjeta se vea sobre el footer
+                        delta = (bottomLimit - margin) - bottomRef;
                     }
 
-                    // 3. Aplicación Permisiva (Sin Clamping Bloqueante)
-                    let newTrans = swiper.translate + delta;
-                    
-                    // Única regla de oro: No dejar hueco arriba (Idx 0 no baja más de la cuenta)
-                    newTrans = Math.min(newTrans, 0);
+                    // 🛑 BIFURCACIÓN DE ESTRATEGIA: Safe Mode vs Swiper 🛑
+                    const isSafeMode = document.body.getAttribute('data-safe-mode') === 'true';
 
-                    debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
-                        `MÓVIL FIX: Idx=${targetPos} | Delta=${delta.toFixed(1)} | NewTrans=${newTrans.toFixed(1)}`);
+                    if (isSafeMode) {
+                        // EN SAFE MODE: El CSS bloquea transformaciones. Usamos Scroll Nativo.
+                        // Delta positivo = Queremos bajar el contenido = Scroll UP (-delta)
+                        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
+                            `MÓVIL FIX (SafeMode): Ajustando Scroll Window por ${-delta.toFixed(1)}px`);
+                        
+                        window.scrollBy({
+                            top: -delta,
+                            behavior: 'smooth'
+                        });
+                    } else {
+                        // EN MODO NORMAL: Usamos el motor del Swiper
+                        let newTrans = swiper.translate + delta;
+                        
+                        // Límite físico: No bajar más allá del inicio (0)
+                        newTrans = Math.min(newTrans, 0);
 
-                    // 4. Ejecución Física
-                    swiper.setTransition(0);
-                    swiper.setTranslate(newTrans);
-                    swiper.updateProgress(); 
-                    
-                    const sw = swiper;
-                    requestAnimationFrame(() => {
-                        if (sw && !sw.destroyed && sw.params) {
-                            sw.setTransition(data.SWIPER.SLIDE_SPEED);
-                            sw.setTranslate(newTrans);
-                        }
-                    });
+                        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
+                            `MÓVIL FIX: Idx=${targetPos} | SlideTop=${topRef.toFixed(1)} | Header=${headerHeight} | Delta=${delta.toFixed(1)}`);
+
+                        // Usamos una transición suave para que se vea el ajuste
+                        swiper.setTransition(300);
+                        swiper.setTranslate(newTrans);
+                        swiper.updateProgress(); 
+                    }
                 }
             }
         } else {

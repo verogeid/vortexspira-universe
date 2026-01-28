@@ -158,7 +158,10 @@ class VortexSpiraApp {
                 }
             }
             // Diagnóstico tras refresco de layout
-            requestAnimationFrame(() => debug.runFontDiagnostics?.());
+            requestAnimationFrame(() => {
+                debug.runFontDiagnostics?.();
+                debug.runLayoutDiagnostics?.();
+            });
         });
         
         this.STATE.initialRenderComplete = true; 
@@ -169,6 +172,7 @@ class VortexSpiraApp {
                 document.body.classList.add('app-loaded');
                 // Diagnóstico inicial
                 debug.runFontDiagnostics?.();
+                debug.runLayoutDiagnostics?.();
             }, 100); 
         });
     }
@@ -178,14 +182,20 @@ class VortexSpiraApp {
     renderNavegacion() {
         render_base.renderNavegacion.call(this);
         // Ejecutar diagnóstico tras renderizar el menú
-        requestAnimationFrame(() => debug.runFontDiagnostics?.());
+        requestAnimationFrame(() => {
+            debug.runFontDiagnostics?.();
+            debug.runLayoutDiagnostics?.();
+        });
     }
 
     _mostrarDetalle(cursoId) { 
         render_details._mostrarDetalle.call(this, cursoId);
         this.STATE.activeCourseId = cursoId; 
         // Ejecutar diagnóstico tras renderizar el detalle
-        requestAnimationFrame(() => debug.runFontDiagnostics?.());
+        requestAnimationFrame(() => {
+            debug.runFontDiagnostics?.();
+            debug.runLayoutDiagnostics?.();
+        });
     }
 
     _handleVolverClick() { 
@@ -194,7 +204,10 @@ class VortexSpiraApp {
         }
         nav_base._handleVolverClick.call(this); 
         // Ejecutar diagnóstico al volver
-        requestAnimationFrame(() => debug.runFontDiagnostics?.());
+        requestAnimationFrame(() => {
+            debug.runFontDiagnostics?.();
+            debug.runLayoutDiagnostics?.();
+        });
     }
 
     _updateFocus(shouldSlide) { nav_base._updateFocusImpl.call(this, shouldSlide); }
@@ -261,64 +274,79 @@ class VortexSpiraApp {
         const realWidth = window.innerWidth;
         const realHeight = window.innerHeight;
         
-        // 2. Determinar Modo Horizontal (Mobile / Tablet / Desktop)
+        // 2. Determinar Modo Inicial por ANCHO
         const effectiveWidth = realWidth / scale;
-        let mode = 'desktop';
-
-        if (effectiveWidth <= data.MAX_WIDTH.MOBILE) { 
-            mode = 'mobile';
-        } else if (effectiveWidth <= data.MAX_WIDTH.TABLET_PORTRAIT) { 
-            mode = 'tablet-portrait';
-        } else if (effectiveWidth <= data.MAX_WIDTH.TABLET_LANDSCAPE) { 
-            mode = 'tablet-landscape';
-        }
-
-        const currentMode = document.body.getAttribute('data-layout');
-        if (currentMode !== mode) {
-            document.body.setAttribute('data-layout', mode);
-            debug.log('app', debug.DEBUG_LEVELS.BASIC, `Layout: ${effectiveWidth.toFixed(0)}px (Scale ${scale}) -> [${mode}]`);
-        }
-
-        /* --- 🧠 LÓGICA SMART SAFE MODE (Sincronizada con CSS) --- */
-        
-        // 3. Calcular Altura Efectiva (Lo que "siente" el CSS con em)
-        // Si tienes 600px de alto pero zoom 200%, es como si tuvieras 300px.
         const effectiveHeight = realHeight / scale;
+        
+        let candidateMode;
+        
+        if (effectiveWidth <= data.MAX_WIDTH.MOBILE) {
+            candidateMode = 'mobile';
+                
+        } else if (effectiveWidth <= data.MAX_WIDTH.TABLET_PORTRAIT) {
+            candidateMode = 'tablet-portrait';
+                
+        } else if (effectiveWidth <= data.MAX_WIDTH.TABLET_LANDSCAPE) {
+            candidateMode = 'tablet-landscape';
 
-        // 4. Umbrales exactos de tu CSS (style-safe-mode.css)
-        let safeThreshold;
+        } else candidateMode = 'desktop';
 
-        switch (mode) {
-            // Mobile: 18.75em = 300px
-            case 'mobile': 
-                safeThreshold = data.MIN_CONTENT_HEIGHT.MOBILE;
-                break;
+        // 3. 🚨 LÓGICA DE CAÍDA EN CASCADA (FALLBACK) POR ALTURA 🚨
+        // Si no cabe verticalmente, degradamos al siguiente diseño más compacto.
 
-            // Tablet: 28.125em = 450px
-            case 'tablet-portrait': 
-            case 'tablet-landscape':
-                safeThreshold = data.MIN_CONTENT_HEIGHT.TABLET;
-                break;
-
-            // Desktop: 37.5em = 600px
-            case 'desktop':
-                safeThreshold = data.MIN_CONTENT_HEIGHT.DESKTOP;
-                break;
+        // Desktop (3 filas) -> Si no cabe, baja a Tablet Landscape (2 filas)
+        if (candidateMode === 'desktop') {
+            if (effectiveHeight < data.MIN_CONTENT_HEIGHT.DESKTOP) {
+                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, `Fallback Altura: Desktop -> Tablet Landscape`);
+                
+                candidateMode = 'tablet-landscape';
+            }
         }
 
-        // 5. Decisión: ¿Cabe el contenido?
-        const isSafeMode = effectiveHeight < safeThreshold;
+        // Tablet Landscape (2 filas ancho) -> Si no cabe, baja a Tablet Portrait (2 filas estrecho)
+        if (candidateMode === 'tablet-landscape') {
+            if (effectiveHeight < data.MIN_CONTENT_HEIGHT.TABLET) {
+                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, `Fallback Altura: Tablet Landscape -> Tablet Portrait`);
+
+                candidateMode = 'tablet-portrait';
+            }
+        } 
+
+        // Tablet Portrait (2 filas estrecho) -> Si no cabe, baja a Mobile (1 fila)
+        if (candidateMode === 'tablet-portrait') {
+            if (effectiveHeight < data.MIN_CONTENT_HEIGHT.TABLET) {
+                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, `Fallback Altura: Tablet Portrait -> Mobile`);
+
+                candidateMode = 'mobile';
+            }
+        } 
+
+        // Safe Mode (Último recurso, SOLO en Mobile)
+        // Si ya estamos en Mobile y aun así no cabemos, liberamos el footer.
+        let enableSafeMode = false;
         
+        if (candidateMode === 'mobile') {
+            if (effectiveHeight < data.MIN_CONTENT_HEIGHT.MOBILE) {
+                enableSafeMode = true;
+            }
+        } 
+
+        // 4. Aplicar el Modo Final
+        const currentMode = document.body.getAttribute('data-layout');
+        if (currentMode !== candidateMode) {
+            document.body.setAttribute('data-layout', candidateMode);
+
+            debug.log('app', debug.DEBUG_LEVELS.BASIC, `Layout Final: ${candidateMode} (W:${effectiveWidth.toFixed(0)} / H:${effectiveHeight.toFixed(0)})`);
+        }
+
         const currentSafe = document.body.getAttribute('data-safe-mode') === 'true';
-        
-        if (isSafeMode !== currentSafe) {
-            document.body.setAttribute('data-safe-mode', isSafeMode ? 'true' : 'false');
+        if (enableSafeMode !== currentSafe) {
+            document.body.setAttribute('data-safe-mode', enableSafeMode ? 'true' : 'false');
             
-            // Log para depurar el "Elefante"
             debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
-                `🛡️ Safe Mode: ${isSafeMode ? 'ON' : 'OFF'} | Eff.Height: ${effectiveHeight.toFixed(0)}px (Umbral ${mode}: ${safeThreshold}px)`);
+                `🛡️ Safe Mode: ${enableSafeMode ? 'ON' : 'OFF'} (Solo Mobile) | Eff.Height: ${effectiveHeight.toFixed(0)}px`);
             
-            if (!isSafeMode) {
+            if (!enableSafeMode) {
                 window.scrollTo(0, 0);
                 if (this.STATE.carouselInstance) requestAnimationFrame(() => this.STATE.carouselInstance.update());
             }
