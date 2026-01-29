@@ -128,7 +128,7 @@ class VortexSpiraApp {
             } else {
                 this.stackInitialize(); 
                 this.renderNavegacion();
-                this.showToast(this.getString('toastErrorId'));
+                this.showToast(this.getString('toast.errorId'));
             }
         } else {
             this.stackInitialize(); 
@@ -149,6 +149,7 @@ class VortexSpiraApp {
 
             if (prevMode !== newMode) {
                 debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, `Layout Change (${prevMode} -> ${newMode}). Renderizando...`);
+
                 this._cacheDOM();
                 
                 if (this.STATE.activeCourseId) {
@@ -200,7 +201,7 @@ class VortexSpiraApp {
 
     _handleVolverClick() { 
         if (this.DOM.vistaDetalle.classList.contains('active')) {
-             this.STATE.lastDetailFocusIndex = 0;
+            this.STATE.lastDetailFocusIndex = 0;
         }
         nav_base._handleVolverClick.call(this); 
         // Ejecutar diagnóstico al volver
@@ -210,20 +211,44 @@ class VortexSpiraApp {
         });
     }
 
-    _updateFocus(shouldSlide) { nav_base._updateFocusImpl.call(this, shouldSlide); }
-    _handleTrackClick(e) { nav_base._handleTrackClick.call(this, e); }
+    _updateFocus(shouldSlide) { 
+        nav_base._updateFocusImpl.call(this, shouldSlide); 
+    }
+    _handleTrackClick(e) { 
+        nav_base._handleTrackClick.call(this, e); 
+    }
     
-    _handleCardClick(id, tipo, parentFocusIndex) { nav_base._handleCardClick.call(this, id, tipo, parentFocusIndex); }
+    _handleCardClick(id, tipo, parentFocusIndex) { 
+        nav_base._handleCardClick.call(this, id, tipo, parentFocusIndex); 
+    }
     
-    _handleActionRowClick(e) { this._handleActionRowClick.call(this, e); }
-    getString(key) { return i18n.getString(key); }
-    applyStrings() { i18n.applyStrings(this); }
+    _handleActionRowClick(e) { 
+        this._handleActionRowClick.call(this, e); 
+    }
+    getString(key) { 
+        return i18n.getString(key); 
+    }
+    applyStrings() { 
+        i18n.applyStrings(this); 
+    }
 
     showToast(message) {
         if (!this.DOM.toast) return;
-        this.DOM.toast.textContent = message;
-        this.DOM.toast.classList.add('active');
-        setTimeout(() => this.DOM.toast.classList.remove('active'), 2000);
+        
+        // 🟢 A11Y TRICK: Vaciar primero para forzar al lector de pantalla a anunciar el nuevo texto
+        this.DOM.toast.textContent = '';
+        this.DOM.toast.classList.remove('active');
+        
+        // Usamos requestAnimationFrame para asegurar que el DOM procesa el vaciado
+        requestAnimationFrame(() => {
+            this.DOM.toast.textContent = message;
+            this.DOM.toast.classList.add('active');
+            
+            if (this._toastTimer) clearTimeout(this._toastTimer);
+            this._toastTimer = setTimeout(() => {
+                this.DOM.toast.classList.remove('active');
+            }, 3000);
+        });
     }
 
     _syncHeaderDimensions() {
@@ -231,6 +256,7 @@ class VortexSpiraApp {
         if (header) {
             const realHeight = header.offsetHeight;
             document.documentElement.style.setProperty('--header-height-real', `${realHeight}px`);
+
             debug.log('app', debug.DEBUG_LEVELS.DEEP, `A11y Sync: Header mide ${realHeight}px`);
         }
         const footer = document.querySelector('footer');
@@ -250,11 +276,13 @@ class VortexSpiraApp {
             if (this.STATE.fullData) {
                 if (this.STATE.activeCourseId) {
                     debug.log('app', debug.DEBUG_LEVELS.BASIC, `SmartResize: Manteniendo vista detalle.`);
+
                     requestAnimationFrame(() => {
                         this._mostrarDetalle(this.STATE.activeCourseId);
                     });
                 } else {
                     debug.log('app', debug.DEBUG_LEVELS.BASIC, `SmartResize: Refrescando menú.`);
+
                     requestAnimationFrame(() => {
                         this.renderNavegacion();
                     });
@@ -348,7 +376,8 @@ class VortexSpiraApp {
             
             if (!enableSafeMode) {
                 window.scrollTo(0, 0);
-                if (this.STATE.carouselInstance) requestAnimationFrame(() => this.STATE.carouselInstance.update());
+                if (this.STATE.carouselInstance) 
+                    requestAnimationFrame(() => this.STATE.carouselInstance.update());
             }
         }
     }

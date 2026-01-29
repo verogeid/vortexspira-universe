@@ -71,6 +71,18 @@ export function _updateFocusImpl(shouldSlide = true) {
     let target = null;
     let targetSlideIndex = -1;
 
+    // 🛡️ SAFETY CHECK: Verificar si existen elementos interactivos antes de hacer nada
+    // Evita bucles infinitos o errores si una carpeta está vacía.
+    const hasFocusables = this.DOM.track.querySelector('.card:not([data-tipo="relleno"])');
+    if (!hasFocusables) {
+        debug.logWarn('nav_base', '⚠️ CRITICAL: Track vacío o solo rellenos. Abortando foco.');
+
+        // Opcional: Mostrar toast de aviso si es necesario
+        this.showToast(this.getString('toast.emptyNav'));
+
+        return;
+    }
+
     // ⭐️ FIX INTELIGENTE DE LOOP: Buscar el elemento más cercano visualmente ⭐️
     // En lugar de buscar ciegamente en el DOM, preguntamos a Swiper dónde estamos
     // y buscamos la tarjeta que esté en el slide activo (o en sus vecinos).

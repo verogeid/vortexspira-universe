@@ -1,6 +1,6 @@
 {
     "meta": {
-        "version": "1.0.02"
+        "version": "1.0.03"
     },
     "page": {
         "title": "VortexSpira® Universe: Selector de Cursos"
@@ -37,6 +37,15 @@
             "landing": "Ir a la Landing Page"
         }
     },
+    "help": {
+        "title": "Ayuda Rápida:",
+        "rotate": "<b>Gira</b>: Arrastra, usa la rueda del ratón o las flechas del teclado.",
+        "back": "<b>Vuelve</b>: Pulsa [Esc] o el botón \"↩\"."
+    },
+    "about": {
+        "landing": "Hazte Fundador y obten tu 60% OFF",
+        "diary": "Lee el Dev Diary en GitHub"
+    },
     "modal": {
         "title": "Accesibilidad",
         "close": "Cerrar configuración",
@@ -52,14 +61,9 @@
             "dyslexic": "Dislexia"
         }
     },
-    "help": {
-        "title": "Ayuda Rápida:",
-        "rotate": "<b>Gira</b>: Arrastra, usa la rueda del ratón o las flechas del teclado.",
-        "back": "<b>Vuelve</b>: Pulsa [Esc] o el botón \"↩\"."
-    },
     "toast": {
         "errorId": "Curso no encontrado. Pruebe a buscarlo manualmente.",
-        "skipColumn": "Saltando columna vacía...",
-        "emptyNav": "No hay elementos navegables en esta sección."
+        "emptyNav": "No hay elementos navegables en esta sección.",
+        "skipColumn": "Saltando columna vacía..."
     }
 }

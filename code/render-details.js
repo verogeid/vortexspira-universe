@@ -101,9 +101,24 @@ export function _mostrarDetalle(cursoId) {
         // 3. Configurar título del nivel (Raíz por defecto en deep-link)
         if (cardNivelActual) {
             cardNivelActual.classList.add('visible');
-            // Intentamos obtener breadcrumb, si no, fallback
-            const bcText = appInstance.getString ? appInstance.getString('breadcrumbRoot') : 'Nivel Raíz';
-            cardNivelActual.innerHTML = `<h3>${bcText}</h3>`;
+
+            // LÓGICA DE BREADCRUMB (Recuperar nombre del nivel padre)
+            const currentStack = appInstance.stackGetCurrent();
+            let parentTitle = 'Nivel Raíz'; // Fallback por defecto
+
+            if (currentStack && currentStack.levelId) {
+                // Buscamos el nodo padre en la estructura completa
+                const parentNode = appInstance._findNodoById(currentStack.levelId, appInstance.STATE.fullData.navegacion);
+                if (parentNode) {
+                    parentTitle = parentNode.nombre || parentNode.titulo || parentTitle;
+                }
+            } else {
+                // Estamos en raíz o deep link sin contexto -> Usar texto "Nivel Raíz" del i18n
+                // ⭐️ FIX I18N: Clave actualizada para el nuevo JSON
+                parentTitle = appInstance.getString ? appInstance.getString('nav.breadcrumbRoot') : 'Nivel Raíz';
+            }
+
+            cardNivelActual.innerHTML = `<h3>${parentTitle}</h3>`;
         }
 
         // 4. Panel Info (Derecha) - Ocultar en Tablet Portrait
@@ -125,7 +140,10 @@ export function _mostrarDetalle(cursoId) {
 
     if (isMobile) {
         const parent = appInstance.stackGetCurrent();
-        let parentName = appInstance.getString('breadcrumbRoot');
+
+        // ⭐️ FIX I18N: Clave actualizada aquí también por si acaso
+        let parentName = appInstance.getString('nav.breadcrumbRoot');
+
         if (parent && parent.levelId) {
             const parentNodo = appInstance._findNodoById(parent.levelId, appInstance.STATE.fullData.navegacion);
             if (parentNodo) {
@@ -133,10 +151,12 @@ export function _mostrarDetalle(cursoId) {
             }
         }
 
+        const ariaLabel = this.getString('nav.aria.backBtn');
+
         let volverHtml = '';
         // En móvil siempre ponemos el volver
         volverHtml = `
-            <article class="card card-volver-vertical" role="button" tabindex="0" onclick="App._handleVolverClick()">
+            <article class="card card-volver-vertical" role="button" aria-label=${ariaLabel} tabindex="0" onclick="App._handleVolverClick()">
                 <h3>${data.LOGO.VOLVER}</h3>
             </article>
         `;
@@ -216,13 +236,16 @@ export function _mostrarDetalle(cursoId) {
     }
 
     if (curso.enlaces) {
-        curso.enlaces.forEach(enlace => {
+        curso.enlaces.forEach((enlace, index) => { // 🟢 Añadido índice para ID único
             const iconClass = (enlace.type === 'c') ? 'icon-buy' : (enlace.type === 'd' ? 'icon-download' : 'icon-link');
+            const textId = `action-text-${index}`; // ID para vincular texto y botón
+            
             slidesHtml += `
                 <div class="swiper-slide detail-action-slide">
                     <div class="detail-action-item" onclick="App._handleActionRowClick(event)" tabindex="0" role="listitem">
-                        <span class="detail-action-text">${enlace.texto}</span>
+                        <span id="${textId}" class="detail-action-text">${enlace.texto}</span>
                         <a ${!enlace.url || enlace.url === '#' ? '' : `href="${enlace.url}" target="_blank"`} 
+                            aria-labelledby="${textId}"
                             class="detail-action-btn ${!enlace.url || enlace.url === '#' ? 'disabled' : ''}">
                             <i class="action-icon ${!enlace.url || enlace.url === '#' ? 'icon-vacio' : iconClass}"></i>
                         </a>

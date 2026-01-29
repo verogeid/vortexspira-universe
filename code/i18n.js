@@ -45,12 +45,26 @@ export function getCurrentLang() {
     return _currentLang;
 }
 
+/* 🟢 MODIFICADO: Soporte para claves anidadas (dot notation) manteniendo tu gestión de errores */
 export function getString(key) {
-    if (!_loadedStrings || !_loadedStrings[key]) {
-        debug.logWarn('i18n', `Clave no encontrada: ${key}`);
+    if (!_loadedStrings) {
+        debug.logWarn('i18n', `Intento de leer clave sin cargar strings: ${key}`);
         return `[${key}]`;
     }
-    return _loadedStrings[key];
+
+    const keys = key.split('.');
+    let value = _loadedStrings;
+    
+    for (const k of keys) {
+        if (value && value[k] !== undefined) {
+            value = value[k];
+        } else {
+            debug.logWarn('i18n', `Clave no encontrada: ${key}`);
+
+            return `[${key}]`;
+        }
+    }
+    return value;
 }
 
 /**
@@ -61,14 +75,14 @@ export function applyStrings(appInstance) {
     if (!_loadedStrings) return;
 
     debug.log('i18n', debug.DEBUG_LEVELS.BASIC, 'Aplicando textos al DOM...');
-    document.title = getString('pageTitle'); 
+    document.title = getString('page.title'); 
 
-    // Mapeo ID -> Clave JSON
+    // Mapeo ID -> Clave JSON (Actualizado a Jerárquico)
     const elementsById = {
-        'main-header-title': 'headerTitle',
-        'info-adicional-titulo-ayuda': 'helpTitle',
-        'info-adicional-ayuda-gira': 'helpRotate',
-        'info-adicional-ayuda-vuelve': 'helpBack'
+        'main-header-title': 'header.title',
+        'info-adicional-titulo-ayuda': 'help.title',
+        'info-adicional-ayuda-gira': 'help.rotate',
+        'info-adicional-ayuda-vuelve': 'help.back'
     };
 
     for (const id in elementsById) {
@@ -78,7 +92,7 @@ export function applyStrings(appInstance) {
             
             // Lógica especial para subtítulo dentro del H1
             if (id === 'main-header-title') {
-                const subtitle = getString('headerSubtitle');
+                const subtitle = getString('header.subtitle');
                 content = `${content}<small id="main-header-subtitle">${subtitle}</small>`;
             }
             el.innerHTML = content;
@@ -86,8 +100,8 @@ export function applyStrings(appInstance) {
     }
 
     const linksById = {
-        'info-adicional-link-landing': { key: 'aboutLinkLanding', url: data.URL.LANDING_PAGE },
-        'info-adicional-link-diary': { key: 'aboutLinkDiary', url: data.URL.DEV_DIARY }
+        'info-adicional-link-landing': { key: 'about.landing', url: data.URL.LANDING_PAGE },
+        'info-adicional-link-diary': { key: 'about.diary', url: data.URL.DEV_DIARY }
     };
 
     for (const id in linksById) {
@@ -99,8 +113,9 @@ export function applyStrings(appInstance) {
     }
 
     const attributes = {
-        'vista-central': { 'aria-label': 'ariaNavRegion' },
-        'card-volver-fija-elemento': { 'aria-label': 'ariaBackLevel' }
+        'vista-central': { 'aria-label': 'nav.aria.region' },
+        'card-volver-fija-elemento': { 'aria-label': 'nav.aria.backBtn' },
+        'btn-config-accesibilidad': { 'aria-label': 'header.aria.a11yBtn' }
     };
 
     for (const id in attributes) {
@@ -110,6 +125,25 @@ export function applyStrings(appInstance) {
                 el.setAttribute(attr, getString(attributes[id][attr]));
             }
         }
+    }
+
+    // Footer (Si se maneja aquí y no dinámicamente)
+    const footerCopy = document.querySelector('.footer-copyright');
+    if (footerCopy) footerCopy.textContent = getString('footer.copyright');
+    
+    const footerAuth = document.querySelector('.footer-author-text');
+    if (footerAuth) footerAuth.innerHTML = getString('footer.author');
+    
+    // Footer Arias
+    const socialMap = {
+        '.link-linkedin': 'footer.aria.linkedin',
+        '.link-github': 'footer.aria.github',
+        '.link-fire': 'footer.aria.landing',
+        '.footer-license-link': 'footer.aria.license'
+    };
+    for (const sel in socialMap) {
+        const el = document.querySelector(sel);
+        if (el) el.setAttribute('aria-label', getString(socialMap[sel]));
     }
 }
 /* --- code/i18n.js --- */
