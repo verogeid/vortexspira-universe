@@ -52,10 +52,14 @@ body[data-layout="mobile"] .vista {
 
 body[data-layout="mobile"] #vista-detalle-mobile {
     position: fixed !important; 
-    top: var(--header-height) !important; 
+    top: var(--header-height-real, var(--header-height)) !important; 
+
     left: 0 !important;
     width: 100% !important; 
-    height: calc(100vh - var(--header-height) - var(--footer-height)) !important;
+
+    /* Ajuste de altura restando el header real */
+    height: calc(100vh - var(--header-height-real, var(--header-height)) - var(--footer-height)) !important;
+
     z-index: 99 !important;
 
     overflow-y: hidden !important;
@@ -73,7 +77,7 @@ body[data-layout="mobile"] #vista-detalle-mobile:not(.active) {
 /* Aplicamos las reglas a AMBOS carruseles (Nav y Detalle) */
 body[data-layout="mobile"] #nav-swiper-mobile, 
 body[data-layout="mobile"] #detalle-swiper-mobile {
-    height: calc(100vh - var(--header-height-real, 50px) - var(--footer-height-real, 6vh) - 10px) !important;
+    height: calc(100vh - var(--header-height-real, 50px) - var(--footer-height-real, 6vh)) !important;
     width: 100%; position: relative;
 
     overflow: hidden; 
@@ -112,6 +116,8 @@ body[data-layout="mobile"] #detalle-swiper-mobile .swiper-slide .card {
 }
 
 body[data-layout="mobile"] .card-relleno-final {
+    min-height: 300px !important; /* Doble altura para evitar solapamiento con footer */
+    
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -137,23 +143,38 @@ body[data-layout="mobile"] .card h3 .icon-obras-card {
     margin-right: 0 !important; /* El gap del padre controla el espacio */
 
     /* En móvil podemos hacerlo un pelín más grande si quieres, o dejarlo heredar */
-    font-size: 1.2em !important; 
-    width: 1.2em !important;
-    height: 1.2em !important;
+    font-size: var(--card-h3-icon) !important; 
+    width: var(--card-h3-icon) !important;
+    height: var(--card-h3-icon) !important;
 }
 
 /* 3. TEXTO: Bloque con Ellipsis real */
-    body[data-layout="mobile"] .card h3 .card-text-content {
-        display: -webkit-box !important;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 3; /* Límite de líneas móvil */
-        line-clamp: 3;
-        
-        overflow: hidden;
-        text-overflow: ellipsis;
-        
-        word-break: normal !important;
-        overflow-wrap: break-word !important;
-    }
+body[data-layout="mobile"] .card h3 .card-text-content {
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical;
 
+    /* Límite de líneas móvil */
+    -webkit-line-clamp: var(--card-h3-line-clamp); line-clamp: var(--card-h3-line-clamp);
+    
+    
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* 🟢 FIX: Comportamiento de palabras naturales */
+    word-break: normal !important;      /* Respeta las palabras completas */
+    overflow-wrap: normal !important;   /* Evita partir palabras a la fuerza */
+    -webkit-hyphens: none !important; hyphens: none !important; /* Evita guiones automáticos feos */
+}
+
+/* 🛡️ GLOBAL MOBILE FIX: Mata el scroll horizontal fantasma */
+body[data-layout="mobile"],
+html {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+}
+
+/* Asegura que ninguna imagen o contenedor rompa el ancho */
+body[data-layout="mobile"] * {
+    max-width: 100%;
+}
 /* --- styles/style-mobile.css --- */

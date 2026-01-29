@@ -25,9 +25,13 @@ body[data-layout="mobile"][data-safe-mode="true"] #app-container {
     overflow: visible !important;
     display: block !important; /* Quitamos flex/grid complejos */
 
-    /* 🟢 VITAL: Espacio físico para que el contenido empiece DEBAJO del header fijo */
-    padding-top: calc(var(--header-height-real, 60px) + 5px) !important;
+    /* 🟢 CORRECCIÓN: Calcular altura mínima para empujar el footer al fondo */
+    /* 100dvh (Pantalla) - HeaderReal - FooterReal */
+    min-height: calc(100dvh - var(--header-height-real, 60px) - var(--footer-height-real, 40px)) !important;
 
+    /* Mantener el padding superior que añadimos antes */
+    padding-top: calc(var(--header-height-real, 60px) + 10px) !important;
+    
     margin-top: 0 !important;
 }
 

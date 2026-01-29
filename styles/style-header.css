@@ -13,8 +13,10 @@ header {
 
 #header-content-wrapper {
     position: relative;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
+    max-width: 100vw; /* Límite físico */
+    overflow: hidden; /* Corta lo que sobre */
+
     display: flex;
     align-items: center;
     justify-content: space-between; 
@@ -185,9 +187,12 @@ body[data-layout="mobile"] header {
     height: auto;
     min-height: var(--header-height);
 
-    /* ⭐️ FIX: Padding vertical para que el texto respire si crece */
-    padding-top: 5px; 
-    padding-bottom: 5px;
+    /* 🟢 FIX: Flexbox para centrar verticalmente el wrapper dentro del header */
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center; /* Centrado vertical del bloque wrapper */
+
+    padding: 5px 0; /* Padding vertical para respirar */
 }
 
 body[data-layout="mobile"] header h1 {
@@ -195,22 +200,85 @@ body[data-layout="mobile"] header h1 {
     left: auto !important;
     transform: none !important;
 
-    margin: 0 auto; /* Centrado horizontal en flex */
-    flex-grow: 1;   /* Ocupa el espacio disponible */
+    width: auto !important;
+    max-width: 100% !important;
+    margin: 0 !important;
 
-    flex-wrap: nowrap;
-    white-space: normal;
-    line-height: 1.1;
-
-    /* Pequeño margen para no pegarse al botón A11y e icono de Obras */
-    padding-left: 10px; 
-    padding-right: 10px; 
+    /* Configuración Flex interna para Logo + Texto */
+    display: flex !important;
+    flex-wrap: wrap; /* 🟢 PERMITE QUE EL TEXTO CAIGA DEBAJO DEL LOGO SI NO CABE */
     justify-content: center;
+    align-items: center;
+    gap: 6px;
+
+    /* Texto */
+    white-space: normal !important; /* Permitir saltos de línea */
+    line-height: 1.1;
+    text-align: center;
+
+    /* Seguridad de desbordamiento */
+    overflow: hidden;
+}
+
+/* Control del Texto dentro del H1 */
+body[data-layout="mobile"] header h1 .header-logo {
+    /* El logo nunca debe desaparecer, pero sí encogerse */
+    flex-shrink: 0; 
 }
 
 body[data-layout="mobile"] header h1 a {
     flex-shrink: 0; display: inline-flex;
     height: auto; /* Permite crecer */
+}
+
+/* Usamos GRID para control total del espacio */
+body[data-layout="mobile"] #header-content-wrapper {
+    display: grid !important;
+    
+    /* 3 Columnas: [Icono Obras?] [ Título Flexible ] [ Botón A11y ] */
+    /* min-content asegura que los iconos ocupen lo justo */
+    grid-template-columns: min-content 1fr min-content;
+    
+    align-items: center; /* Centrado Vertical Perfecto */
+    width: 100%;
+    gap: 8px; /* Espacio controlado entre elementos */
+    padding: 0 10px;
+
+    /* Aseguramos que el wrapper no herede el 100% de altura base */
+    height: auto !important; 
+    min-height: 0 !important;
+}
+
+/* Asegurar que los iconos laterales no se aplasten */
+body[data-layout="mobile"] .icon-obras-header,
+body[data-layout="mobile"] #btn-config-accesibilidad {
+    grid-column: auto; /* Se colocan automáticamente */
+    flex-shrink: 0;
+}
+
+/* Si el icono de obras no existe (Prod), el Grid se adapta solo */
+body[data-layout="mobile"] #header-content-wrapper:not(:has(.icon-obras-header)) {
+    /* Si no hay icono izquierdo, forzamos al título a ocupar col 1 y 2 para centrar mejor? */
+    /* Mejor dejamos que grid lo maneje, el H1 se expandirá */
+}
+
+/* En móviles, dale prioridad al botón para que no se salga */
+@media (max-width: 480px) {
+    #header-content-wrapper {
+        gap: 5px; /* Reduce el hueco entre título y botón */
+    }
+
+    #main-header-title {
+        flex: 1; /* Ocupa el espacio disponible */
+        min-width: 0; /* PERMITE que el flex-item se encoja más allá de su contenido */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; /* Pone "..." si no cabe el texto */
+    }
+
+    #btn-config-accesibilidad {
+        flex-shrink: 0; /* Impide que el botón se aplaste */
+    }
 }
 
 /* --- styles/style-header.css --- */

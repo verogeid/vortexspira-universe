@@ -59,7 +59,7 @@
     --card-title-font-size: clamp(0.9rem, calc(1rem * var(--font-scale)), 1.3rem);
     --card-desc-font-size: clamp(0.8rem, calc(0.9rem * var(--font-scale)), 1.1rem);
     --card-h3-line-clamp: 3;
-    --card-h3-icon: 1.4em;
+    --card-h3-icon: 1.2em;
 
     /* Nivel Actual */
     --card-nivel-actual-h3-line-clamp: 4;
@@ -95,10 +95,10 @@
     --tab-port-header-obras-size: clamp(16px, 4dvh, 1.8rem);
 
     /* 📐 VARIABLES DE MÓVIL */
-    --mobile-header-title-size: clamp(0.85rem, calc(3dvh * var(--font-scale)), 1.2rem);
-    --mobile-header-logo-size: clamp(16px, 6dvh, 1.8rem) !important;
-    --mobile-header-icon-size: clamp(16px, 6dvh, 1.6rem) !important;
-    --mobile-header-obras-size: clamp(12px, 4dvh, 1.2rem) !important;
+    --mobile-header-title-size: clamp(0.75rem, calc(2.5dvh * var(--font-scale)), 1.1rem);
+    --mobile-header-logo-size: clamp(14px, 5dvh, 1.8rem) !important;
+    --mobile-header-icon-size: clamp(14px, 5dvh, 1.6rem) !important;
+    --mobile-header-obras-size: clamp(10px, 3dvh, 1.2rem) !important;
 
     --footer-social-link-size: clamp(12px, 2.5dvh, 1rem) !important;
 

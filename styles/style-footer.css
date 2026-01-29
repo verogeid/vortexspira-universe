@@ -144,4 +144,27 @@ footer a.footer-license-link:focus-visible {
         display: none !important;
     }
 
+@media (max-width: 480px) {
+    footer, #footer-content {
+        width: 100%;
+        max-width: 100vw;
+        box-sizing: border-box;
+        overflow-x: hidden; /* Seguridad extra */
+        overflow-y: hidden;
+    }
+
+    .footer-copyright, 
+    .footer-author-text {
+        white-space: normal !important; /* Fuerza el salto de línea */
+        word-wrap: break-word; /* Rompe palabras largas si es necesario */
+        display: block; /* Asegura que ocupen su propia línea si es flex */
+        line-height: 1.2;
+    }
+    
+    /* Si usas flex en el footer, permite que envuelva */
+    .footer-social-container {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
 /* --- styles/style-footer.css --- */

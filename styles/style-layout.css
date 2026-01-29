@@ -8,7 +8,10 @@ body {
     margin: 0;
     box-sizing: border-box;
     min-height: 100vh;
-    padding-top: var(--header-height);
+
+    /* 🟢 CORRECCIÓN: Usar la altura REAL calculada por JS, con fallback a la variable CSS */
+    padding-top: var(--header-height-real, var(--header-height));
+    
     padding-bottom: var(--footer-height); 
     
     /* ⭐️ A11Y: Aseguramos base 100% para respetar ajustes de navegador */
