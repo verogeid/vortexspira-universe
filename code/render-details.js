@@ -240,14 +240,18 @@ export function _mostrarDetalle(cursoId) {
             const iconClass = (enlace.type === 'c') ? 'icon-buy' : (enlace.type === 'd' ? 'icon-download' : 'icon-link');
             const textId = `action-text-${index}`; // ID para vincular texto y botón
             
+            // 1. Calculamos el estado antes para limpiar el template
+            const isDisabled = !enlace.url || enlace.url === '#';
+
             slidesHtml += `
                 <div class="swiper-slide detail-action-slide">
                     <div class="detail-action-item" onclick="App._handleActionRowClick(event)" tabindex="0" role="listitem">
                         <span id="${textId}" class="detail-action-text">${enlace.texto}</span>
-                        <a ${!enlace.url || enlace.url === '#' ? '' : `href="${enlace.url}" target="_blank"`} 
+
+                        <a ${isDisabled ? 'role="link" aria-disabled="true"' : `href="${enlace.url}" target="_blank"`} 
                             aria-labelledby="${textId}"
-                            class="detail-action-btn ${!enlace.url || enlace.url === '#' ? 'disabled' : ''}">
-                            <i class="action-icon ${!enlace.url || enlace.url === '#' ? 'icon-vacio' : iconClass}"></i>
+                            class="detail-action-btn ${isDisabled ? 'disabled' : ''}">
+                            <i class="action-icon ${isDisabled ? 'icon-vacio' : iconClass}"></i>
                         </a>
                     </div>
                 </div>
