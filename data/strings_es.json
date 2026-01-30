@@ -1,6 +1,6 @@
 {
     "meta": {
-        "version": "1.0.03"
+        "version": "1.0.04"
     },
     "page": {
         "title": "VortexSpira® Universe: Selector de Cursos"
@@ -20,12 +20,17 @@
             "breadcrumb": "Nivel Actual: "
         },
         "breadcrumbRoot": "Nivel Raíz",
+        "level": "Nivel",
         "emptyState": "No hay contenido disponible en este nivel."
+    },
+    "card": {
+        "noTitle": "Sin Título"
     },
     "details": {
         "aria": {
             "region": "Detalle del curso"
-        }
+        },
+        "noDescription": "Sin descripción disponible."
     },
     "footer": {
         "copyright": "©2025 VortexSpira®",
@@ -59,6 +64,15 @@
             "sans": "Sans",
             "serif": "Serif",
             "dyslexic": "Dislexia"
+        },
+        "spacing": {
+            "compact": "Compacto",
+            "normal": "Normal",
+            "wide": "Amplio"
+        },
+        "aria": {
+            "textSize": "Tamaño de texto",
+            "lineSpacing": "Espaciado de línea"
         }
     },
     "toast": {

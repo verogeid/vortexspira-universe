@@ -20,6 +20,13 @@ export function initKeyboardControls() {
 
     // ⭐️ LISTENER PRINCIPAL EN FASE DE CAPTURA ⭐️
     document.addEventListener('keydown', (e) => {
+        // 🛡️ BLOQUEO TOTAL: Si el UI está bloqueado (toast persistente), ignorar teclado.
+        if (this.STATE.isUIBlocked) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+        
         const app = this; 
 
         // ============================================================

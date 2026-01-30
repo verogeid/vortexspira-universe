@@ -1,6 +1,7 @@
 /* --- code/a11y.js --- */
 
 import * as debug from './debug.js';
+import { getString } from './i18n.js';
 
 const STORAGE_KEY = 'vortex_a11y_prefs_v1';
 
@@ -13,9 +14,9 @@ const DEFAULTS = {
 
 // Mapeo para el slider de espaciado: Valor -> [AlturaLinea, Etiqueta]
 const SPACING_MAP = {
-    1: { val: 1.0, label: 'Compacto' },
-    2: { val: 1.5, label: 'Normal' },
-    3: { val: 2.0, label: 'Amplio' }
+    1: { val: 1.0, labelKey: 'modal.spacing.compact' },
+    2: { val: 1.5, labelKey: 'modal.spacing.normal' },
+    3: { val: 2.0, labelKey: 'modal.spacing.wide' }
 };
 
 let _prefs = { ...DEFAULTS };
@@ -44,9 +45,10 @@ function _loadPreferences() {
 function _savePreferences() {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(_prefs));
+
         debug.log('a11y', debug.DEBUG_LEVELS.BASIC, 'Preferencias guardadas.');
     } catch (e) {
-        console.error('Error guardando a11y prefs', e);
+        debug.logError('a11y', 'Error guardando a11y prefs', e);
     }
 }
 
@@ -114,51 +116,53 @@ function _updateSliderLabel(pct) {
 function _updateSpacingLabel(step) {
     if (!_domRefs.rangeSpacingVal) return;
     const info = SPACING_MAP[step] || SPACING_MAP[2];
-    _domRefs.rangeSpacingVal.textContent = info.label;
+
+    _domRefs.rangeSpacingVal.textContent = getString(info.labelKey);
 }
 
 function _injectModalHTML() {
-    if (document.getElementById('a11y-modal-overlay')) return;
+    if (document.getElementById('a11y-modal-overlay')) 
+        return;
 
     const html = `
         <div id="a11y-modal-overlay" class="a11y-modal-overlay" aria-hidden="true">
             <div id="a11y-modal" class="a11y-modal" role="dialog" aria-modal="true" aria-labelledby="a11y-title">
                 <div class="a11y-header">
-                    <h2 id="a11y-title">Accesibilidad</h2>
-                    <button id="a11y-close" class="a11y-close-btn" aria-label="Cerrar">✕</button>
+                    <h2 id="a11y-title">${getString('modal.title')}</h2>
+                    <button id="a11y-close" class="a11y-close-btn" aria-label="${getString('modal.close')}">✕</button>
                 </div>
 
                 <div class="a11y-section">
-                    <h3>Tipografía</h3>
+                    <h3>${getString('modal.sections.font')}</h3>
                     <div class="a11y-controls-group font-group">
-                        <button class="a11y-option-btn font-preview-sans" data-font="sans">Sans</button>
-                        <button class="a11y-option-btn font-preview-serif" data-font="serif">Serif</button>
-                        <button class="a11y-option-btn font-preview-dyslexic" data-font="dyslexic">Dislexia</button>
+                        <button class="a11y-option-btn font-preview-sans" data-font="sans">${getString('modal.options.sans')}</button>
+                        <button class="a11y-option-btn font-preview-serif" data-font="serif">${getString('modal.options.serif')}</button>
+                        <button class="a11y-option-btn font-preview-dyslexic" data-font="dyslexic">${getString('modal.options.dyslexic')}</button>
                     </div>
                 </div>
 
                 <div class="a11y-section">
-                    <h3>Tamaño Texto</h3>
+                    <h3>${getString('modal.sections.size')}</h3>
                     <div class="a11y-range-wrapper">
                         <span style="font-size: 0.8rem" aria-hidden="true">A</span>
-                        <input type="range" id="a11y-range-size" class="a11y-range" min="90" max="200" step="5" aria-label="Tamaño de texto">
+                        <input type="range" id="a11y-range-size" class="a11y-range" min="90" max="200" step="5" aria-label="${getString('modal.aria.textSize')}">
                         <span style="font-size: 1.2rem" aria-hidden="true">A</span>
                         <span id="a11y-range-val" class="a11y-range-value">100%</span>
                     </div>
                 </div>
 
                 <div class="a11y-section">
-                    <h3>Espaciado</h3>
+                    <h3>${getString('modal.sections.spacing')}</h3>
                     <div class="a11y-range-wrapper">
                         <span class="range-icon-small" aria-hidden="true">≡</span>
-                        <input type="range" id="a11y-range-spacing" class="a11y-range" min="1" max="3" step="1" aria-label="Espaciado de línea">
+                        <input type="range" id="a11y-range-spacing" class="a11y-range" min="1" max="3" step="1" aria-label="${getString('modal.aria.lineSpacing')}">
                         <span class="range-icon-large" aria-hidden="true">≡</span>
-                        <span id="a11y-range-spacing-val" class="a11y-range-value">Normal</span>
+                        <span id="a11y-range-spacing-val" class="a11y-range-value">${getString('modal.spacing.normal')}</span>
                     </div>
                 </div>
 
                 <div class="a11y-footer">
-                    <button id="a11y-reset" aria-label="Restaurar configuración por defecto" title="Restaurar valores por defecto"></button>
+                    <button id="a11y-reset" aria-label="${getString('modal.reset')}" title="${getString('modal.reset')}"></button>
                 </div>
             </div>
         </div>

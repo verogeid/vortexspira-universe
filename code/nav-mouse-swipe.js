@@ -74,9 +74,15 @@ export function handleSlideChangeEnd(swiper) {
     if (columnCards.length === 0 && !isMobile) { 
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, `SWIPE: Columna vacía. Saltando (${_swipeDirection})...`);
 
+        // 🟢 A11Y FIX: Notificar al usuario que estamos saltando una zona vacía
+        this.showToast(this.getString('toast.skipColumn'), null);
+
         _swipeDirection === 'next' ? swiper.slideNext(data.SWIPER.SLIDE_SPEED) : swiper.slidePrev(data.SWIPER.SLIDE_SPEED);
         return; 
     }
+
+    // 🟢 Si hemos llegado hasta aquí, es que hay contenido. Ocultamos el aviso de salto.
+    this.hideToast();
 
     // ⭐️ CÁLCULO DE FOCO DESTINO ⭐️
     let targetRow;

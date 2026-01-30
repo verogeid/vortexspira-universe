@@ -357,30 +357,56 @@ export function _setupResizeObserver() {
     this.STATE.resizeObserver.observe(document.body);
 };
 
-// ⭐️ MANTENEMOS EL NOMBRE CORRECTO QUE USA APP.JS
 export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tipoEspecialArg = null) {
     const tipoEspecial = tipoEspecialArg || nodo.tipoEspecial;
-    if (esRelleno) return `<article class="card card--relleno" data-tipo="relleno" tabindex="-1" aria-hidden="true"></article>`;
+    if (esRelleno) 
+        return `<article class="card card--relleno" 
+                        data-tipo="relleno" 
+                        tabindex="-1" 
+                        aria-hidden="true">
+                </article>`;
 
     if (tipoEspecial === 'breadcrumb-vertical') {
-        return `<article class="card card-breadcrumb-vertical" data-id="breadcrumb-nav" data-tipo="relleno" tabindex="-1" aria-hidden="true"><h3>${nodo.texto}</h3></article>`;
-    }
+        // El breadcrumb es informativo, ya lo marcaste con aria-hidden=true en tu lógica original 
+        // (aunque idealmente debería ser legible si el foco pudiera llegar, pero como es tabindex="-1" está bien así para navegación visual).
+        return `
+            <article class="card card-breadcrumb-vertical" 
+                    data-id="breadcrumb-nav" 
+                    data-tipo="relleno" 
+                    tabindex="-1" 
+                    aria-hidden="true">
+                <h3>${nodo.texto}</h3>
+            </article>`;}
 
     if (tipoEspecial === 'volver-vertical') {
-        // 🟢 A11Y FIX: Añadido aria-label explícito para lectores de pantalla
         const ariaLabel = this.getString('nav.aria.backBtn');
 
-        return `<article class="card card-volver-vertical" data-id="volver-nav" data-tipo="volver-vertical" role="button" aria-label="${ariaLabel}" tabindex="0" onclick="App._handleVolverClick()"><h3>${data.LOGO.VOLVER}</h3></article>`;
+        return `
+            <article class="card card-volver-vertical" 
+                    data-id="volver-nav" 
+                    data-tipo="volver-vertical" 
+                    role="button" 
+                    aria-label="${ariaLabel}" 
+                    tabindex="0" 
+                    onclick="App._handleVolverClick()">
+                <h3>${data.LOGO.VOLVER}</h3>
+            </article>`;
     }
 
     const isCourse = !!nodo.titulo;
     const tipo = isCourse ? 'curso' : 'categoria';
-    let displayTitle = nodo.nombre || nodo.titulo || 'Sin Título';
+
+    let displayTitle = nodo.nombre || nodo.titulo || this.getString('card.noTitle');
+
     let iconHTML = ''; 
 
     if (tipo === 'categoria') {
-        if (estaActivo) { iconHTML = `<span class="card-icon-lead">${data.LOGO.CARPETA}</span>`; }
-        else { iconHTML = `<span class="icon-vacio-card"></span>`; }
+        if (estaActivo) { 
+            iconHTML = `<span class="card-icon-lead">${data.LOGO.CARPETA}</span>`; 
+        } else { 
+            iconHTML = `<span class="icon-vacio-card"></span>`; 
+        }
+
     } else {
         if (displayTitle.includes(data.LOGO.OBRAS)) {
             iconHTML = `<span class="icon-obras-card"></span>`;
@@ -390,16 +416,29 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
         }
     }
 
+    // 🟢 A11Y FIX: Vincular la tarjeta (botón) con su texto visible
+    const titleId = `card-title-${nodo.id}`;
+
     return `
-        <article class="card ${estaActivo ? '' : 'disabled'}" data-id="${nodo.id}" data-tipo="${tipo}" role="button" tabindex="0">
-            <h3>${iconHTML}<span class="card-text-content">${displayTitle}</span></h3>
+        <article class="card ${estaActivo ? '' : 'disabled'}" 
+                data-id="${nodo.id}" 
+                data-tipo="${tipo}" 
+                role="button" 
+                tabindex="0"
+                aria-labelledby="${titleId}">
+            <h3>
+                ${iconHTML}
+                <span id="${titleId}" class="card-text-content">${displayTitle}</span>
+            </h3>
         </article>`;
 };
 
 export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual) {
     const vistaVolver = this.DOM.cardVolverFija; 
     const infoAdicional = this.DOM.infoAdicional;
-    if (!vistaVolver || !infoAdicional) return;
+
+    if (!vistaVolver || !infoAdicional) 
+        return;
 
     if (isMobile) { 
         vistaVolver.classList.remove('visible'); 
@@ -411,11 +450,17 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
         vistaVolver.classList.add('visible'); 
         this.DOM.cardNivelActual.classList.add('visible');
 
-        this.DOM.cardNivelActual.innerHTML = `<h3>${isSubLevel ? (nodoActual?.nombre || nodoActual?.titulo || 'Nivel') : this.getString('nav.breadcrumbRoot')}</h3>`;
+        this.DOM.cardNivelActual.innerHTML = `
+            <h3>
+                ${isSubLevel ? 
+                    (nodoActual?.nombre || nodoActual?.titulo || this.getString('nav.level')) : 
+                    this.getString('nav.breadcrumbRoot')}
+            </h3>`;
 
         if (isSubLevel) {
             this.DOM.cardVolverFijaElemento.classList.add('visible'); 
-            this.DOM.cardVolverFijaElemento.innerHTML = `<h3>${data.LOGO.VOLVER}</h3>`; 
+            this.DOM.cardVolverFijaElemento.innerHTML = `<h3 aria-hidden="true">${data.LOGO.VOLVER}</h3>`; // Icono decorativo oculto
+            this.DOM.cardVolverFijaElemento.setAttribute('aria-label', this.getString('nav.aria.backBtn')); // Label explícito
             this.DOM.cardVolverFijaElemento.tabIndex = 0;
         } else {
             this.DOM.cardVolverFijaElemento.classList.remove('visible'); 

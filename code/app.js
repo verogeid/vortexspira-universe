@@ -31,6 +31,7 @@ class VortexSpiraApp {
             activeCourseId: null, 
             lastDetailFocusIndex: 0, 
             isNavigatingBack: false, 
+            isUIBlocked: false
         };
         window.App = this; 
         
@@ -68,8 +69,21 @@ class VortexSpiraApp {
         debug._setupKeyTracker?.(); 
         debug._watchFlag(this.STATE, 'keyboardNavInProgress');
         debug._watchFlag(this.STATE, 'isNavigatingBack');
+        debug._watchFlag(this.STATE, 'isUIBlocked');
 
-        a11y.initA11y();
+        // 🟢 AUTO-ARRANQUE INTELIGENTE DEL SIMULADOR E2E
+        // Se ejecuta aquí, centralizado en App, si la configuración lo pide.
+        if (!debug.IS_PRODUCTION) {
+            // Exponer para debug manual si se desea
+            window.simularLector = debug.enableScreenReaderSimulator;
+
+            // Arrancar automáticamente si el nivel de debug de a11y es alto
+            if (debug.DEBUG_CONFIG.a11y >= debug.DEBUG_LEVELS.EXTREME) {
+                // Como init() se suele llamar en DOMContentLoaded, podemos arrancar directo.
+                // Si no, la función tiene sus propias guardas, pero aquí garantizamos que sea parte del ciclo de inicio.
+                debug.enableScreenReaderSimulator();
+            }
+        }
 
         this._setupSmartResize();
         this._updateLayoutMode();
@@ -109,6 +123,8 @@ class VortexSpiraApp {
         }
 
         if (!loadSuccess) return;
+
+        a11y.initA11y();
 
         this.applyStrings(); 
         if (data.injectHeaderContent) data.injectHeaderContent(this);
@@ -200,9 +216,12 @@ class VortexSpiraApp {
     }
 
     _handleVolverClick() { 
-        if (this.DOM.vistaDetalle.classList.contains('active')) {
+        if (this.STATE.isUIBlocked) 
+            return;
+
+        if (this.DOM.vistaDetalle.classList.contains('active'))
             this.STATE.lastDetailFocusIndex = 0;
-        }
+        
         nav_base._handleVolverClick.call(this); 
         // Ejecutar diagnóstico al volver
         requestAnimationFrame(() => {
@@ -215,14 +234,23 @@ class VortexSpiraApp {
         nav_base._updateFocusImpl.call(this, shouldSlide); 
     }
     _handleTrackClick(e) { 
+        if (this.STATE.isUIBlocked) 
+            return;
+
         nav_base._handleTrackClick.call(this, e); 
     }
     
     _handleCardClick(id, tipo, parentFocusIndex) { 
+        if (this.STATE.isUIBlocked) 
+            return;
+
         nav_base._handleCardClick.call(this, id, tipo, parentFocusIndex); 
     }
     
     _handleActionRowClick(e) { 
+        if (this.STATE.isUIBlocked) 
+            return;
+
         this._handleActionRowClick.call(this, e); 
     }
     getString(key) { 
@@ -232,23 +260,50 @@ class VortexSpiraApp {
         i18n.applyStrings(this); 
     }
 
-    showToast(message) {
-        if (!this.DOM.toast) return;
+    showToast(message, duration = 3000) {
+        if (!this.DOM.toast) 
+            return;
+
+        // 1. Bloquear UI
+        this.STATE.isUIBlocked = true;
+        document.body.classList.add('ui-blocked'); // Útil para CSS (cursor: wait)
         
-        // 🟢 A11Y TRICK: Vaciar primero para forzar al lector de pantalla a anunciar el nuevo texto
+        // 2. Preparar mensaje A11y (Vaciar primero)
         this.DOM.toast.textContent = '';
         this.DOM.toast.classList.remove('active');
         
+        // Limpiar timer anterior si existía
+        if (this._toastTimer) clearTimeout(this._toastTimer);
+
         // Usamos requestAnimationFrame para asegurar que el DOM procesa el vaciado
         requestAnimationFrame(() => {
             this.DOM.toast.textContent = message;
             this.DOM.toast.classList.add('active');
             
-            if (this._toastTimer) clearTimeout(this._toastTimer);
-            this._toastTimer = setTimeout(() => {
-                this.DOM.toast.classList.remove('active');
-            }, 3000);
+            // 3. Gestionar duración
+            if (duration !== null) {
+                this._toastTimer = setTimeout(() => {
+                    this.hideToast();
+                }, duration);
+            } else {
+                debug.log('app', debug.DEBUG_LEVELS.BASIC, 'Toast persistente activado (UI Bloqueada). Esperando hideToast().');
+            }
         });
+    }
+
+    // 🟢 Para ocultar el toast manualmente cuando ya no sea necesario
+    hideToast() {
+        if (!this.DOM.toast) 
+            return;
+
+        this.DOM.toast.classList.remove('active');
+        if (this._toastTimer) clearTimeout(this._toastTimer);
+
+        // Desbloquear UI
+        this.STATE.isUIBlocked = false;
+        document.body.classList.remove('ui-blocked');
+
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, 'Toast oculto. UI Desbloqueada.');
     }
 
     _syncHeaderDimensions() {
@@ -403,6 +458,17 @@ class VortexSpiraApp {
         this.DOM.cardNivelActual = document.getElementById('card-nivel-actual');
         this.DOM.appContainer = document.getElementById('app-container');
         this.DOM.toast = document.getElementById('toast-notification'); 
+
+        // 🟢 FIX A11Y: Forzar atributos ARIA críticos si no están en el HTML
+        if (this.DOM.toast) {
+            if (!this.DOM.toast.getAttribute('role')) {
+                this.DOM.toast.setAttribute('role', 'alert'); 
+            }
+            // role="alert" ya implica aria-live="assertive", pero ser explícito no daña en legacy
+            if (!this.DOM.toast.getAttribute('aria-live')) {
+                this.DOM.toast.setAttribute('aria-live', 'assertive');
+            }
+        }
 
         if (isMobile) {
             this.DOM.vistaNav = document.getElementById('vista-navegacion-mobile');

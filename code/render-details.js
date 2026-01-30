@@ -43,19 +43,17 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
 export function _mostrarDetalle(cursoId) {
     debug.log('render_details', debug.DEBUG_LEVELS.BASIC, `Mostrando detalle para: ${cursoId}`);
     
-    const appInstance = this;
-    
     // ⭐️ FIX: Usar la verdad única del layout (zoom-aware)
     const layoutMode = document.body.getAttribute('data-layout') || 'desktop';
     const isMobile = layoutMode === 'mobile';
     
-    const curso = appInstance._findNodoById(cursoId, appInstance.STATE.fullData.navegacion); 
+    const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion); 
 
     if (!curso) return;
 
     // 🗑️ LIMPIEZA TOTAL DE NAVEGACIÓN
-    if (typeof appInstance._destroyCarousel === 'function') {
-        appInstance._destroyCarousel();
+    if (typeof this._destroyCarousel === 'function') {
+        this._destroyCarousel();
     }
     
     ['vista-navegacion-desktop', 'vista-navegacion-tablet', 'vista-navegacion-mobile'].forEach(id => {
@@ -72,14 +70,14 @@ export function _mostrarDetalle(cursoId) {
     if (desktopView) { desktopView.classList.remove('active'); desktopView.style.display = 'none'; }
     if (mobileView) { mobileView.classList.remove('active'); mobileView.style.display = 'none'; }
 
-    appInstance.DOM.vistaDetalle = isMobile ? mobileView : desktopView;
-    appInstance.DOM.vistaDetalle.style.display = 'flex'; 
-    appInstance.DOM.vistaDetalle.classList.add('active');
+    this.DOM.vistaDetalle = isMobile ? mobileView : desktopView;
+    this.DOM.vistaDetalle.style.display = 'flex'; 
+    this.DOM.vistaDetalle.classList.add('active');
 
-    appInstance.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop'); 
+    this.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop'); 
     const swiperId = isMobile ? '#detalle-swiper-mobile' : '#detalle-swiper-desktop';
 
-    // ⭐️ FIX: Gestión de paneles laterales (Volver e Info) para Desktop/Tablet
+    // Gestión de paneles laterales (Volver e Info) para Desktop/Tablet
     const vistaVolver = document.getElementById('vista-volver');
     const infoAdicional = document.getElementById('info-adicional');
     const cardVolverFija = document.getElementById('card-volver-fija-elemento');
@@ -95,7 +93,7 @@ export function _mostrarDetalle(cursoId) {
             cardVolverFija.innerHTML = `<h3>${data.LOGO.VOLVER}</h3>`; 
             cardVolverFija.tabIndex = 0;
             // Asegurar el clic usando la función del appInstance
-            cardVolverFija.onclick = () => appInstance._handleVolverClick(); 
+            cardVolverFija.onclick = () => this._handleVolverClick(); 
         }
 
         // 3. Configurar título del nivel (Raíz por defecto en deep-link)
@@ -103,19 +101,18 @@ export function _mostrarDetalle(cursoId) {
             cardNivelActual.classList.add('visible');
 
             // LÓGICA DE BREADCRUMB (Recuperar nombre del nivel padre)
-            const currentStack = appInstance.stackGetCurrent();
+            const currentStack = this.stackGetCurrent();
             let parentTitle = 'Nivel Raíz'; // Fallback por defecto
 
             if (currentStack && currentStack.levelId) {
                 // Buscamos el nodo padre en la estructura completa
-                const parentNode = appInstance._findNodoById(currentStack.levelId, appInstance.STATE.fullData.navegacion);
+                const parentNode = this._findNodoById(currentStack.levelId, this.STATE.fullData.navegacion);
                 if (parentNode) {
                     parentTitle = parentNode.nombre || parentNode.titulo || parentTitle;
                 }
             } else {
                 // Estamos en raíz o deep link sin contexto -> Usar texto "Nivel Raíz" del i18n
-                // ⭐️ FIX I18N: Clave actualizada para el nuevo JSON
-                parentTitle = appInstance.getString ? appInstance.getString('nav.breadcrumbRoot') : 'Nivel Raíz';
+                parentTitle = this.getString ? this.getString('nav.breadcrumbRoot') : 'Nivel Raíz';
             }
 
             cardNivelActual.innerHTML = `<h3>${parentTitle}</h3>`;
@@ -139,13 +136,13 @@ export function _mostrarDetalle(cursoId) {
     let slidesHtml = '';
 
     if (isMobile) {
-        const parent = appInstance.stackGetCurrent();
+        const parent = this.stackGetCurrent();
 
         // ⭐️ FIX I18N: Clave actualizada aquí también por si acaso
-        let parentName = appInstance.getString('nav.breadcrumbRoot');
+        let parentName = this.getString('nav.breadcrumbRoot');
 
         if (parent && parent.levelId) {
-            const parentNodo = appInstance._findNodoById(parent.levelId, appInstance.STATE.fullData.navegacion);
+            const parentNodo = this._findNodoById(parent.levelId, this.STATE.fullData.navegacion);
             if (parentNodo) {
                 parentName = parentNodo.nombre || parentNodo.titulo || parentName;
             }
@@ -171,7 +168,7 @@ export function _mostrarDetalle(cursoId) {
         `;
     }
 
-    const descripcion = curso.descripcion || '';
+    const descripcion = curso.descripcion || this.getString('details.noDescription');
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = descripcion.trim();
 
@@ -236,8 +233,13 @@ export function _mostrarDetalle(cursoId) {
     }
 
     if (curso.enlaces) {
-        curso.enlaces.forEach((enlace, index) => { // 🟢 Añadido índice para ID único
-            const iconClass = (enlace.type === 'c') ? 'icon-buy' : (enlace.type === 'd' ? 'icon-download' : 'icon-link');
+        curso.enlaces.forEach((enlace, index) => {
+            const iconClass = (enlace.type === 'c') ? 
+                'icon-buy' : 
+                (enlace.type === 'd' ? 
+                    'icon-download' : 
+                    'icon-link');
+
             const textId = `action-text-${index}`; // ID para vincular texto y botón
             
             // 1. Calculamos el estado antes para limpiar el template
@@ -247,7 +249,7 @@ export function _mostrarDetalle(cursoId) {
                 <div class="swiper-slide detail-action-slide">
                     <div class="detail-action-item" onclick="App._handleActionRowClick(event)" tabindex="0" role="listitem">
                         <span id="${textId}" class="detail-action-text">${enlace.texto}</span>
-
+                        
                         <a ${isDisabled ? 'role="link" aria-disabled="true"' : `href="${enlace.url}" target="_blank"`} 
                             aria-labelledby="${textId}"
                             class="detail-action-btn ${isDisabled ? 'disabled' : ''}">
@@ -263,28 +265,28 @@ export function _mostrarDetalle(cursoId) {
         slidesHtml += `<div class="swiper-slide card-relleno-final" style="height: 100px !important; pointer-events: none;"></div>`;
     }
 
-    if (appInstance.DOM.detalleTrack) {
-        appInstance.DOM.detalleTrack.innerHTML = slidesHtml;
+    if (this.DOM.detalleTrack) {
+        this.DOM.detalleTrack.innerHTML = slidesHtml;
     }
 
-    _initDetailCarousel(appInstance, swiperId, 0);
+    _initDetailCarousel(this, swiperId, 0);
 
     setTimeout(() => {
         let targetElement = null;
 
         if (isMobile) {
-            targetElement = appInstance.DOM.detalleTrack.querySelector('.card-volver-vertical');
+            targetElement = this.DOM.detalleTrack.querySelector('.card-volver-vertical');
             if (!targetElement) {
-                targetElement = appInstance.DOM.detalleTrack.querySelector('.detail-text-fragment[data-index="0"]');
+                targetElement = this.DOM.detalleTrack.querySelector('.detail-text-fragment[data-index="0"]');
             }
         } else {
-            targetElement = appInstance.DOM.detalleTrack.querySelector('.detail-text-fragment[data-index="0"]');
+            targetElement = this.DOM.detalleTrack.querySelector('.detail-text-fragment[data-index="0"]');
         }
 
         if (targetElement) {
             targetElement.focus({ preventScroll: true });
             if (nav_base_details && typeof nav_base_details._updateDetailFocusState === 'function') {
-                nav_base_details._updateDetailFocusState(appInstance);
+                nav_base_details._updateDetailFocusState(this);
             }
         }
     }, 200);
