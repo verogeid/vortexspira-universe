@@ -33,10 +33,13 @@ export async function loadStrings(lang) {
         _currentLang = lang;
         
         document.documentElement.lang = _currentLang;
+
         debug.log('i18n', debug.DEBUG_LEVELS.BASIC, `Textos cargados para idioma: ${lang}`);
+
         return true;
     } catch (e) {
         debug.logWarn('i18n', `Fallo al cargar strings_${lang}.json.`, e);
+
         return false;
     }
 }
@@ -49,6 +52,7 @@ export function getCurrentLang() {
 export function getString(key) {
     if (!_loadedStrings) {
         debug.logWarn('i18n', `Intento de leer clave sin cargar strings: ${key}`);
+        
         return `[${key}]`;
     }
 
@@ -75,6 +79,7 @@ export function applyStrings(appInstance) {
     if (!_loadedStrings) return;
 
     debug.log('i18n', debug.DEBUG_LEVELS.BASIC, 'Aplicando textos al DOM...');
+
     document.title = getString('page.title'); 
 
     // Mapeo ID -> Clave JSON (Actualizado a Jerárquico)

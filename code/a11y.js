@@ -23,7 +23,9 @@ let _prefs = { ...DEFAULTS };
 let _domRefs = {};
 
 export function initA11y() {
-    debug.log('a11y', debug.DEBUG_LEVELS.BASIC, 'Inicializando módulo de accesibilidad...');
+    debug.log('a11y', debug.DEBUG_LEVELS.BASIC, 
+        'Inicializando módulo de accesibilidad...');
+
     _loadPreferences();
     _injectModalHTML();
     _cacheDOM();
@@ -47,6 +49,7 @@ function _savePreferences() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(_prefs));
 
         debug.log('a11y', debug.DEBUG_LEVELS.BASIC, 'Preferencias guardadas.');
+        
     } catch (e) {
         debug.logError('a11y', 'Error guardando a11y prefs', e);
     }

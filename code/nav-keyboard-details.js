@@ -27,8 +27,11 @@ export function _handleDetailNavigation(key) {
 
     let newIndex = currentIndex;
     
-    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, `--- INICIO: _handleDetailNavigation (Key: ${key}) ---`);
-    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, `Current Focus Index (List): ${currentIndex}, Total Elements: ${totalElements}`);
+    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
+                `--- INICIO: _handleDetailNavigation (Key: ${key}) ---`);
+
+    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
+                `Current Focus Index (List): ${currentIndex}, Total Elements: ${totalElements}`);
     
     switch (key) {
         case 'ArrowUp':
@@ -36,16 +39,21 @@ export function _handleDetailNavigation(key) {
             // ⭐️ FIX CLAVE: Wrap-around para ArrowUp ⭐️
             if (newIndex < 0) newIndex = totalElements - 1; 
             break;
+
         case 'ArrowDown':
             newIndex = currentIndex + 1;
             // ⭐️ FIX CLAVE: Wrap-around para ArrowDown ⭐️
             if (newIndex >= totalElements) newIndex = 0; 
             break;
+
         case 'ArrowLeft':
         case 'ArrowRight':
             // Ignoramos el movimiento lateral.
-            debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Movimiento lateral ignorado.');
+            debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
+                        'Movimiento lateral ignorado.');
+
             return; 
+
         case 'Enter':
         case ' ':
             // Lógica para Enter/Space 
@@ -63,7 +71,10 @@ export function _handleDetailNavigation(key) {
                     const btn = targetElement.querySelector('.detail-action-btn');
                     if (btn && !btn.classList.contains('disabled')) {
                         btn.click(); 
-                        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Botón de acción activado.');
+
+                        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
+                                    'Botón de acción activado.');
+
                         return;
                     }
                 } 
@@ -71,16 +82,24 @@ export function _handleDetailNavigation(key) {
                 // Si es un fragmento de texto o título, simula el avance al siguiente elemento.
                 if (targetElement.classList.contains('detail-text-fragment') || targetElement.classList.contains('detail-title-slide')) {
                     newIndex = currentIndex + 1;
-                    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Enter/Space: Avanzando al siguiente fragmento.');
+
+                    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
+                                'Enter/Space: Avanzando al siguiente fragmento.');
+
                     if (newIndex >= totalElements) {
                         // ⭐️ FIX CLAVE: Wrap-around en Enter/Space ⭐️
                         newIndex = 0; 
-                        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Enter/Space: Saltando al primer fragmento.');
+
+                        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
+                                    'Enter/Space: Saltando al primer fragmento.');
                     }
                 }
+
             } else {
-                 debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Enter/Space: No hay contenido enfocable en el índice actual.');
-                 return; 
+                debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
+                            'Enter/Space: No hay contenido enfocable en el índice actual.');
+
+                return; 
             }
             break;
     }
@@ -89,7 +108,8 @@ export function _handleDetailNavigation(key) {
         const newFocusElement = focusableElements[newIndex];
 
         if (newFocusElement) {
-            debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, `FORZANDO FOCO NATIVO. Nuevo Índice: ${newIndex}`);
+            debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
+                        `FORZANDO FOCO NATIVO. Nuevo Índice: ${newIndex}`);
             
             // ⭐️ FIX CLAVE 2: Aplicar foco nativo (sin preventScroll para permitir que el navegador haga scroll) ⭐️
             newFocusElement.focus();
@@ -101,12 +121,15 @@ export function _handleDetailNavigation(key) {
             app.STATE.lastDetailFocusIndex = newIndex; 
             
         } else {
-             debug.logWarn('nav_keyboard_details', `No se encontró elemento enfocable en el índice ${newIndex}.`);
+             debug.logWarn('nav_keyboard_details', 
+                            `No se encontró elemento enfocable en el índice ${newIndex}.`);
         }
     } else {
-        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 'Índice sin cambios. No se llama a focus.');
+        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
+                    'Índice sin cambios. No se llama a focus.');
     }
-    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, '--- FIN: _handleDetailNavigation ---');
+    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
+                '--- FIN: _handleDetailNavigation ---');
 }
 
 // --- code/nav-keyboard-details.js ---

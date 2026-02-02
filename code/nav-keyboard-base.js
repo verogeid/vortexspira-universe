@@ -7,7 +7,8 @@ import * as nav_keyboard_details from './nav-keyboard-details.js';
 import * as nav_keyboard_swipe from './nav-keyboard-swipe.js'; 
 
 export function initKeyboardControls() {
-    debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 'Inicializando controles de teclado (CAPTURE Mode)');
+    debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 
+                'Inicializando controles de teclado (CAPTURE Mode)');
 
     document.addEventListener('focusin', (e) => {
         const app = this;
@@ -103,7 +104,8 @@ export function initKeyboardControls() {
         const isDetailActive = app.DOM.vistaDetalle.classList.contains('active');
         const focused = document.activeElement;
 
-        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Key: ${e.key} | Target: ${e.target.tagName}`);
+        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, 
+                    `Key: ${e.key} | Target: ${e.target.tagName}`);
 
         // 1. ESCAPE
         if (e.key === 'Escape') {
@@ -145,7 +147,9 @@ export function initKeyboardControls() {
             const isInCentralTrack = focused.closest('#track-desktop, #track-tablet, #track-mobile, #detalle-track-desktop, #detalle-track-mobile');
 
             if (isInCentralTrack) {
-                debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Flecha interceptada en track central. Bloqueando propagación.`);
+                debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, 
+                            `Flecha interceptada en track central. Bloqueando propagación.`);
+
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
@@ -238,7 +242,9 @@ function _handleGlobalWheel(e) {
     if (!targetIsCentral) return;
 
     if (e.deltaY !== 0) {
-        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, `Wheel: ${e.deltaY}. Bloqueando propagación.`);
+        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, 
+                    `Wheel: ${e.deltaY}. Bloqueando propagación.`);
+
         e.preventDefault(); 
         e.stopPropagation();
         e.stopImmediatePropagation();

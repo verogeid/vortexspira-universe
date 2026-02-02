@@ -1,24 +1,33 @@
 /* --- code/app.js --- */
 
 import * as debug from './debug.js';
+import * as debug_diagnostics from './debug.diagnostics.js';
+import * as debug_screenReaderSim from './debug.screenReaderSim.js';
+
 import * as data from './data.js';
 import * as i18n from './i18n.js';
 import * as a11y from './a11y.js';
+
 import * as nav_stack from './nav-stack.js';
 import * as nav_base from './nav-base.js';
 import * as nav_base_details from './nav-base-details.js'; 
+
 import * as render_details from './render-details.js'; 
 import * as render_base from './render-base.js';
+
 import * as nav_keyboard_base from './nav-keyboard-base.js'; 
 import * as nav_keyboard_details from './nav-keyboard-details.js'; 
 import * as nav_mouse_swipe from './nav-mouse-swipe.js';
+
 import * as render_swipe from './render-swipe.js';
 import * as render_mobile from './render-mobile.js';
 
 class VortexSpiraApp {
     constructor() {
         debug._setupConsoleInterceptor();
+
         this.DOM = {}; 
+
         this.STATE = {
             fullData: null,          
             historyStack: [],        
@@ -56,6 +65,7 @@ class VortexSpiraApp {
         
         this.setupTouchListeners = nav_mouse_swipe.setupTouchListeners;
         this._handleActionRowClick = nav_base_details._handleActionRowClick; 
+        
         this.clearConsole = debug.logClear;
     }
 
@@ -63,10 +73,11 @@ class VortexSpiraApp {
         debug.logClear();
         debug.logDebugLevels();
         
-        debug._setupGlobalClickListener();
-        debug._setupFocusTracker();
-        debug._setupFocusMethodInterceptor();
-        debug._setupKeyTracker?.(); 
+        debug_diagnostics._setupGlobalClickListener();
+        debug_diagnostics._setupFocusTracker();
+        debug_diagnostics._setupFocusMethodInterceptor();
+        debug_diagnostics._setupKeyTracker?.(); 
+
         debug._watchFlag(this.STATE, 'keyboardNavInProgress');
         debug._watchFlag(this.STATE, 'isNavigatingBack');
         debug._watchFlag(this.STATE, 'isUIBlocked');
@@ -75,13 +86,13 @@ class VortexSpiraApp {
         // Se ejecuta aquí, centralizado en App, si la configuración lo pide.
         if (!debug.IS_PRODUCTION) {
             // Exponer para debug manual si se desea
-            window.simularLector = debug.enableScreenReaderSimulator;
+            window.simularLector = debug_screenReaderSim.enableScreenReaderSimulator;
 
             // Arrancar automáticamente si el nivel de debug de a11y es alto
             if (debug.DEBUG_CONFIG.a11y >= debug.DEBUG_LEVELS.EXTREME) {
                 // Como init() se suele llamar en DOMContentLoaded, podemos arrancar directo.
                 // Si no, la función tiene sus propias guardas, pero aquí garantizamos que sea parte del ciclo de inicio.
-                debug.enableScreenReaderSimulator();
+                debug_screenReaderSim.enableScreenReaderSimulator();
             }
         }
 
@@ -92,7 +103,9 @@ class VortexSpiraApp {
         this.DOM.vistaNav = this.DOM.vistaNav || document.getElementById('vista-navegacion-desktop'); 
 
         let targetLang = i18n.detectBrowserLanguage(); 
-        debug.log('app', debug.DEBUG_LEVELS.BASIC, `Idioma detectado: ${targetLang}`);
+
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                    `Idioma detectado: ${targetLang}`);
 
         let loadSuccess = false;
         try {
@@ -109,6 +122,7 @@ class VortexSpiraApp {
             }
         } catch (e) {
             debug.logWarn('app', `Fallo cargando idioma '${targetLang}'. Reintentando con 'es'.`, e);
+
             if (targetLang !== 'es') {
                 try {
                     await i18n.loadStrings('es');
@@ -164,7 +178,8 @@ class VortexSpiraApp {
             this._syncHeaderDimensions();
 
             if (prevMode !== newMode) {
-                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, `Layout Change (${prevMode} -> ${newMode}). Renderizando...`);
+                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
+                            `Layout Change (${prevMode} -> ${newMode}). Renderizando...`);
 
                 this._cacheDOM();
                 
@@ -176,22 +191,25 @@ class VortexSpiraApp {
             }
             // Diagnóstico tras refresco de layout
             requestAnimationFrame(() => {
-                debug.runFontDiagnostics?.();
-                debug.runLayoutDiagnostics?.();
+                debug_diagnostics.runFontDiagnostics?.();
+                debug_diagnostics.runLayoutDiagnostics?.();
             });
         });
         
         this.STATE.initialRenderComplete = true; 
+
         debug.log('app', debug.DEBUG_LEVELS.BASIC, "Carga inicial completada.");
 
         requestAnimationFrame(() => {
             setTimeout(() => {
                 document.body.classList.add('app-loaded');
                 // Diagnóstico inicial
-                debug.runFontDiagnostics?.();
-                debug.runLayoutDiagnostics?.();
+                debug_diagnostics.runFontDiagnostics?.();
+                debug_diagnostics.runLayoutDiagnostics?.();
             }, 100); 
         });
+
+        this._injectA11yAnnouncer();
     }
 
     // ⭐️ WRAPPERS DE NAVEGACIÓN (Para inyectar diagnóstico)
@@ -200,8 +218,8 @@ class VortexSpiraApp {
         render_base.renderNavegacion.call(this);
         // Ejecutar diagnóstico tras renderizar el menú
         requestAnimationFrame(() => {
-            debug.runFontDiagnostics?.();
-            debug.runLayoutDiagnostics?.();
+            debug_diagnostics.runFontDiagnostics?.();
+            debug_diagnostics.runLayoutDiagnostics?.();
         });
     }
 
@@ -210,8 +228,8 @@ class VortexSpiraApp {
         this.STATE.activeCourseId = cursoId; 
         // Ejecutar diagnóstico tras renderizar el detalle
         requestAnimationFrame(() => {
-            debug.runFontDiagnostics?.();
-            debug.runLayoutDiagnostics?.();
+            debug_diagnostics.runFontDiagnostics?.();
+            debug_diagnostics.runLayoutDiagnostics?.();
         });
     }
 
@@ -225,8 +243,8 @@ class VortexSpiraApp {
         nav_base._handleVolverClick.call(this); 
         // Ejecutar diagnóstico al volver
         requestAnimationFrame(() => {
-            debug.runFontDiagnostics?.();
-            debug.runLayoutDiagnostics?.();
+            debug_diagnostics.runFontDiagnostics?.();
+            debug_diagnostics.runLayoutDiagnostics?.();
         });
     }
 
@@ -286,7 +304,8 @@ class VortexSpiraApp {
                     this.hideToast();
                 }, duration);
             } else {
-                debug.log('app', debug.DEBUG_LEVELS.BASIC, 'Toast persistente activado (UI Bloqueada). Esperando hideToast().');
+                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                            'Toast persistente activado (UI Bloqueada). Esperando hideToast().');
             }
         });
     }
@@ -303,7 +322,49 @@ class VortexSpiraApp {
         this.STATE.isUIBlocked = false;
         document.body.classList.remove('ui-blocked');
 
-        debug.log('app', debug.DEBUG_LEVELS.BASIC, 'Toast oculto. UI Desbloqueada.');
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                    'Toast oculto. UI Desbloqueada.');
+    }
+
+    // 🟢 NUEVO: Inyectar contenedor exclusivo para voz
+    _injectA11yAnnouncer() {
+        if (document.getElementById('a11y-announcer')) return;
+        
+        // Creamos un div que siempre está "vivo" para el lector
+        const announcer = document.createElement('div');
+        announcer.id = 'a11y-announcer';
+        announcer.setAttribute('role', 'status'); 
+        announcer.setAttribute('aria-live', 'polite');
+        announcer.setAttribute('aria-atomic', 'true');
+        
+        // Estilo sr-only (invisible pero legible)
+        Object.assign(announcer.style, {
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: '0',
+            overflow: 'hidden',
+            clip: 'rect(0, 0, 0, 0)',
+            whiteSpace: 'nowrap',
+            border: '0'
+        });
+        
+        document.body.appendChild(announcer);
+        this.DOM.announcer = announcer;
+    }
+
+    // 🟢 FIX A11Y: Usar el canal dedicado
+    announceA11y(message) {
+        if (!this.DOM.announcer) this._injectA11yAnnouncer();
+        
+        const el = this.DOM.announcer;
+        el.textContent = ''; // Limpiar para provocar evento de cambio
+        
+        setTimeout(() => {
+            el.textContent = message;
+            
+            debug.log('app', debug.DEBUG_LEVELS.DEEP, `🗣️ Locutor: "${message}"`);
+        }, 50);
     }
 
     _syncHeaderDimensions() {
@@ -312,7 +373,8 @@ class VortexSpiraApp {
             const realHeight = header.offsetHeight;
             document.documentElement.style.setProperty('--header-height-real', `${realHeight}px`);
 
-            debug.log('app', debug.DEBUG_LEVELS.DEEP, `A11y Sync: Header mide ${realHeight}px`);
+            debug.log('app', debug.DEBUG_LEVELS.DEEP, 
+                        `A11y Sync: Header mide ${realHeight}px`);
         }
         const footer = document.querySelector('footer');
         if (footer) {
@@ -330,13 +392,15 @@ class VortexSpiraApp {
             
             if (this.STATE.fullData) {
                 if (this.STATE.activeCourseId) {
-                    debug.log('app', debug.DEBUG_LEVELS.BASIC, `SmartResize: Manteniendo vista detalle.`);
+                    debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                                `SmartResize: Manteniendo vista detalle.`);
 
                     requestAnimationFrame(() => {
                         this._mostrarDetalle(this.STATE.activeCourseId);
                     });
                 } else {
-                    debug.log('app', debug.DEBUG_LEVELS.BASIC, `SmartResize: Refrescando menú.`);
+                    debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                                `SmartResize: Refrescando menú.`);
 
                     requestAnimationFrame(() => {
                         this.renderNavegacion();
@@ -348,14 +412,30 @@ class VortexSpiraApp {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(handleResize, 100); 
         });
+
+        // 2. 🟢 ZOOM TÁCTIL (Pinch-to-zoom)
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                // Usamos un debounce más corto para que se sienta reactivo al hacer zoom
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(handleResize, 100); 
+            });
+        }
     }
 
     _updateLayoutMode() {
         const rootStyle = getComputedStyle(document.documentElement);
         // 1. Detectar el "Elefante" (Zoom de Accesibilidad)
         const scale = parseFloat(rootStyle.getPropertyValue('--font-scale')) || 1;
-        const realWidth = window.innerWidth;
-        const realHeight = window.innerHeight;
+        
+        
+        // 🟢 FIX ZOOM: Usar visualViewport si existe, sino fallback a innerWidth
+        const realWidth = window.visualViewport ? 
+                        window.visualViewport.width : 
+                        window.innerWidth;
+        const realHeight = window.visualViewport ? 
+                        window.visualViewport.height : 
+                        window.innerHeight;
         
         // 2. Determinar Modo Inicial por ANCHO
         const effectiveWidth = realWidth / scale;
@@ -380,7 +460,8 @@ class VortexSpiraApp {
         // Desktop (3 filas) -> Si no cabe, baja a Tablet Landscape (2 filas)
         if (candidateMode === 'desktop') {
             if (effectiveHeight < data.MIN_CONTENT_HEIGHT.DESKTOP) {
-                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, `Fallback Altura: Desktop -> Tablet Landscape`);
+                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
+                            `Fallback Altura: Desktop -> Tablet Landscape`);
                 
                 candidateMode = 'tablet-landscape';
             }
@@ -389,7 +470,8 @@ class VortexSpiraApp {
         // Tablet Landscape (2 filas ancho) -> Si no cabe, baja a Tablet Portrait (2 filas estrecho)
         if (candidateMode === 'tablet-landscape') {
             if (effectiveHeight < data.MIN_CONTENT_HEIGHT.TABLET) {
-                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, `Fallback Altura: Tablet Landscape -> Tablet Portrait`);
+                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
+                            `Fallback Altura: Tablet Landscape -> Tablet Portrait`);
 
                 candidateMode = 'tablet-portrait';
             }
@@ -398,7 +480,8 @@ class VortexSpiraApp {
         // Tablet Portrait (2 filas estrecho) -> Si no cabe, baja a Mobile (1 fila)
         if (candidateMode === 'tablet-portrait') {
             if (effectiveHeight < data.MIN_CONTENT_HEIGHT.TABLET) {
-                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, `Fallback Altura: Tablet Portrait -> Mobile`);
+                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
+                            `Fallback Altura: Tablet Portrait -> Mobile`);
 
                 candidateMode = 'mobile';
             }
@@ -419,7 +502,8 @@ class VortexSpiraApp {
         if (currentMode !== candidateMode) {
             document.body.setAttribute('data-layout', candidateMode);
 
-            debug.log('app', debug.DEBUG_LEVELS.BASIC, `Layout Final: ${candidateMode} (W:${effectiveWidth.toFixed(0)} / H:${effectiveHeight.toFixed(0)})`);
+            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                        `Layout Final: ${candidateMode} (W:${effectiveWidth.toFixed(0)} / H:${effectiveHeight.toFixed(0)})`);
         }
 
         const currentSafe = document.body.getAttribute('data-safe-mode') === 'true';
@@ -442,7 +526,8 @@ class VortexSpiraApp {
         const isMobile = layout === 'mobile';
         const isDesktopView = layout === 'desktop'; 
         
-        debug.log('app', debug.DEBUG_LEVELS.DEEP, `Refrescando caché DOM. Modo: ${layout}`);
+        debug.log('app', debug.DEBUG_LEVELS.DEEP, 
+                    `Refrescando caché DOM. Modo: ${layout}`);
 
         this.DOM.vistaDetalleDesktop = document.getElementById('vista-detalle-desktop');
         this.DOM.vistaDetalleMobile = document.getElementById('vista-detalle-mobile');
@@ -459,27 +544,39 @@ class VortexSpiraApp {
         this.DOM.appContainer = document.getElementById('app-container');
         this.DOM.toast = document.getElementById('toast-notification'); 
 
-        // 🟢 FIX A11Y: Forzar atributos ARIA críticos si no están en el HTML
+        // 🟢 FIX A11Y: Configurar Toast
         if (this.DOM.toast) {
-            if (!this.DOM.toast.getAttribute('role')) {
+            if (!this.DOM.toast.getAttribute('role')) 
                 this.DOM.toast.setAttribute('role', 'alert'); 
-            }
-            // role="alert" ya implica aria-live="assertive", pero ser explícito no daña en legacy
-            if (!this.DOM.toast.getAttribute('aria-live')) {
+
+            if (!this.DOM.toast.getAttribute('aria-live')) 
                 this.DOM.toast.setAttribute('aria-live', 'assertive');
-            }
         }
+
+        // 🟢 FIX A11Y: SILENCIAR RUIDO (Quitar aria-live de elementos que no deben hablar solos)
+        // El track y el título no deben anunciar cambios automáticos, nosotros controlamos el foco y los avisos.
+        if (this.DOM.cardNivelActual) 
+            this.DOM.cardNivelActual.removeAttribute('aria-live');
 
         if (isMobile) {
             this.DOM.vistaNav = document.getElementById('vista-navegacion-mobile');
             this.DOM.track = document.getElementById('track-mobile');
+
         } else if (isDesktopView) {
             this.DOM.vistaNav = document.getElementById('vista-navegacion-desktop');
             this.DOM.track = document.getElementById('track-desktop');
+
         } else { 
             this.DOM.vistaNav = document.getElementById('vista-navegacion-tablet');
             this.DOM.track = document.getElementById('track-tablet');
         }
+
+        // Limpieza extra de tracks
+        if (this.DOM.track) this.DOM.track.removeAttribute('aria-live');
+        ['track-desktop', 'track-tablet', 'track-mobile'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.removeAttribute('aria-live');
+        });
     }
 }
 

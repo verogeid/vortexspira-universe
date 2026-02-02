@@ -10,12 +10,14 @@ export function stackInitialize() {
     this.STATE.historyStack = [
         { levelId: null, focusId: null } 
     ];
-    debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, 'Pila de navegación inicializada (Mode: ID).');
+    debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, 
+                'Pila de navegación inicializada (Mode: ID).');
 };
 
 export function stackGetCurrent() {
     if (!this.STATE.historyStack || this.STATE.historyStack.length === 0) {
         debug.logError('nav_stack', 'La pila está vacía. Inicializando.');
+
         this.stackInitialize();
     }
     return this.STATE.historyStack[this.STATE.historyStack.length - 1];
@@ -24,10 +26,14 @@ export function stackGetCurrent() {
 export function stackPop() {
     if (this.STATE.historyStack.length <= 1) {
         debug.logWarn('nav_stack', 'Intento de pop en el nivel raíz.');
+
         return null;
     }
     this.STATE.historyStack.pop(); 
-    debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, `Nivel popeado. Profundidad actual: ${this.STATE.historyStack.length}`);
+
+    debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, 
+                `Nivel popeado. Profundidad actual: ${this.STATE.historyStack.length}`);
+
     return this.stackGetCurrent(); 
 };
 
@@ -39,7 +45,9 @@ export function stackPush(newLevelId) {
     const currentLevel = this.stackGetCurrent();
     
     if (currentLevel && currentLevel.levelId === newLevelId) {
-        debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, `PUSH RECHAZADO: Ya estás en el nivel "${newLevelId}".`);
+        debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, 
+                    `PUSH RECHAZADO: Ya estás en el nivel "${newLevelId}".`);
+
         return; 
     }
     
@@ -48,7 +56,9 @@ export function stackPush(newLevelId) {
         levelId: newLevelId,
         focusId: null 
     });
-    debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, `Nivel pusheado: ${newLevelId}.`);
+
+    debug.log('nav_stack', debug.DEBUG_LEVELS.BASIC, 
+                `Nivel pusheado: ${newLevelId}.`);
 };
 
 /**
@@ -99,7 +109,10 @@ export function stackBuildFromId(targetId, fullData) {
             });
         }
         this.STATE.historyStack = newStack;
-        debug.log('nav_stack', debug.DEBUG_LEVELS.IMPORTANT, `Pila reconstruida por ID: ${newStack.length}`);
+
+        debug.log('nav_stack', debug.DEBUG_LEVELS.DEEP, 
+                    `Pila reconstruida por ID: ${newStack.length}`);
+                    
         return true;
     }
     return false;

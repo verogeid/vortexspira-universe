@@ -21,6 +21,7 @@
         },
         "breadcrumbRoot": "Nivel Raíz",
         "level": "Nivel",
+        "contextPrefix": "Navegando en: ",
         "emptyState": "No hay contenido disponible en este nivel."
     },
     "card": {

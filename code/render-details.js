@@ -41,7 +41,8 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
 }
 
 export function _mostrarDetalle(cursoId) {
-    debug.log('render_details', debug.DEBUG_LEVELS.BASIC, `Mostrando detalle para: ${cursoId}`);
+    debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
+                `Mostrando detalle para: ${cursoId}`);
     
     // ⭐️ FIX: Usar la verdad única del layout (zoom-aware)
     const layoutMode = document.body.getAttribute('data-layout') || 'desktop';

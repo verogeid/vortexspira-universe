@@ -94,18 +94,27 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
         
         grabCursor: true, 
         centeredSlides: false, 
-        mousewheel: { enabled: false }, 
-        keyboard: { enabled: false }, 
         speed: data.SWIPER.SLIDE_SPEED,
         freeMode: true, 
         freeModeMomentum: true,
         freeModeSticky: true, 
+
+        mousewheel: { enabled: false }, 
+        keyboard: { enabled: false }, 
+        a11y: { enabled: false }
     };
 
     const container = document.querySelector(swiperId);
     if (container) {
         this.STATE.carouselInstance = new Swiper(container, swiperConfig);
-        debug.log('render_mobile', debug.DEBUG_LEVELS.BASIC, `Swiper vertical (1 dedo) inicializado en ${swiperId}`);
+
+        // 🟢 FIX A11Y: Limpieza post-init
+        if (this.STATE.carouselInstance.wrapperEl) {
+            this.STATE.carouselInstance.wrapperEl.removeAttribute('aria-live');
+        }
+        
+        debug.log('render_mobile', debug.DEBUG_LEVELS.BASIC, 
+                    `Swiper vertical (1 dedo) inicializado en ${swiperId}`);
     }
 
     if (typeof this.setupTouchListeners === 'function') {

@@ -5,11 +5,11 @@ import * as data from './data.js';
 import * as nav_base_details from './nav-base-details.js'; 
 
 export function setupListeners() {
-  if (this.DOM.cardVolverFijaElemento) { 
-      this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
-  }
-  _setupDetailFocusHandler.call(this); 
-  _setupGlobalClickRecovery.call(this); 
+    if (this.DOM.cardVolverFijaElemento) { 
+        this.DOM.cardVolverFijaElemento.addEventListener('click', this._handleVolverClick.bind(this));
+    }
+    _setupDetailFocusHandler.call(this); 
+    _setupGlobalClickRecovery.call(this); 
 };
 
 function _setupDetailFocusHandler() {
@@ -29,6 +29,7 @@ function _setupGlobalClickRecovery() {
             interactive.focus({ preventScroll: true });
             return;
         }
+
         const zone = target.closest('#app-header, footer, #info-adicional, #vista-volver');
         if (zone) {
             const focusable = zone.querySelector('a, button, input, textarea, select, summary, [tabindex]:not([tabindex="-1"])');
@@ -38,8 +39,10 @@ function _setupGlobalClickRecovery() {
             }
         }
         const isNavActive = this.DOM.vistaNav && this.DOM.vistaNav.classList.contains('active');
-        if (isNavActive && (document.activeElement === document.body || !document.activeElement)) {
-             this._updateFocus(false);
+
+        if (isNavActive && 
+            (document.activeElement === document.body || !document.activeElement)) {
+            this._updateFocus(false);
         }
     });
 }
@@ -47,7 +50,9 @@ function _setupGlobalClickRecovery() {
 export function _handleVolverClick() {
     if (this.STATE.isNavigatingBack) return; 
     
-    debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'ESC: Iniciando proceso Volver.');
+    debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 
+                'ESC: Iniciando proceso Volver.');
+
     this.STATE.isNavigatingBack = true; 
 
     if (this.DOM.vistaDetalle?.classList.contains('active')) {
@@ -61,7 +66,9 @@ export function _handleVolverClick() {
         this.renderNavegacion(); 
     } 
     else {
-        debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 'ESC: Raíz alcanzada. Bloqueo liberado.');
+        debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 
+                    'ESC: Raíz alcanzada. Bloqueo liberado.');
+
         this.STATE.isNavigatingBack = false; 
     }
 };
@@ -75,7 +82,8 @@ export function _updateFocusImpl(shouldSlide = true) {
     // Evita bucles infinitos o errores si una carpeta está vacía.
     const hasFocusables = this.DOM.track.querySelector('.card:not([data-tipo="relleno"])');
     if (!hasFocusables) {
-        debug.logWarn('nav_base', '⚠️ CRITICAL: Track vacío o solo rellenos. Abortando foco.');
+        debug.logWarn('nav_base', 
+                        '⚠️ CRITICAL: Track vacío o solo rellenos. Abortando foco.');
 
         // Opcional: Mostrar toast de aviso si es necesario
         this.showToast(this.getString('toast.emptyNav'));
@@ -115,23 +123,37 @@ export function _updateFocusImpl(shouldSlide = true) {
         target = this.DOM.track.querySelector(`.card[data-pos="${targetPos}"]`);
     }
 
-    // Limpieza de estados visuales antiguos
+    // 🟢 1. LIMPIEZA SELECTIVA
+    // Solo quitamos clases a los que NO son el target para evitar parpadeos
     const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
     allCardsInTrack.forEach(c => { 
-        c.classList.remove('focus-visible'); 
-        c.tabIndex = -1; 
+        if (c !== target) {
+            c.classList.remove('focus-visible'); 
+            c.removeAttribute('aria-current'); 
+            c.tabIndex = -1; 
+        }
     });
 
-    debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, `_updateFocusImpl: Idx=${targetPos} | Slide=${shouldSlide} | TargetFound=${!!target}`);
+    debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
+                `_updateFocusImpl: Idx=${targetPos} | Slide=${shouldSlide} | TargetFound=${!!target}`);
 
     if (target) {
         target.classList.add('focus-visible');
+        target.setAttribute('aria-current', 'true');
         target.tabIndex = 0;
-        
+
+        // 🟢 2. CHECK DE IDEMPOTENCIA (EL FIX REAL)
+        // Si el navegador ya tiene el foco en este elemento, NO llamamos a .focus() de nuevo.
+        // Esto elimina el "tartamudeo" del lector de pantalla.
+        if (document.activeElement === target) {
+            debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, `_updateFocusImpl: Foco ya establecido. Ignorando llamada redundante.`);
+            return; 
+        }
+
         // 🛠️ DETECCIÓN DE LAYOUT (Zoom Aware) 🛠️
         const layout = document.body.getAttribute('data-layout') || 'desktop';
         const isMobile = layout === 'mobile';
-
+        
         if (isMobile) {
             target.focus(); 
 
@@ -142,7 +164,11 @@ export function _updateFocusImpl(shouldSlide = true) {
                 // Leemos las dimensiones reales del DOM (por si el CSS aún no refrescó)
                 const headerHeight = document.getElementById('app-header')?.offsetHeight || 0;
                 const footerHeight = document.querySelector('footer')?.offsetHeight || 0;
-                const viewHeight = window.innerHeight;
+
+                const viewHeight = window.visualViewport ? 
+                        window.visualViewport.height : 
+                        window.innerHeight;
+                //const viewHeight = window.innerHeight;
                 const bottomLimit = viewHeight - footerHeight;
 
                 // En lugar de mirar solo la tarjeta, miramos el SLIDE contenedor.

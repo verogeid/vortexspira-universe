@@ -54,7 +54,9 @@ export const SWIPER = {
 export async function loadData(lang) {
     try {
         const filename = `./data/cursos_${lang}.json`;
-        debug.log('data', debug.DEBUG_LEVELS.BASIC, `Cargando datos de cursos: ${filename}`);
+
+        debug.log('data', debug.DEBUG_LEVELS.BASIC, 
+                    `Cargando datos de cursos: ${filename}`);
         
         const response = await fetch(filename); 
         if (!response.ok) {
@@ -125,7 +127,8 @@ export function injectHeaderContent(appInstance) {
         // Como ahora tiene una máscara CSS, no debe tener texto/emoji dentro para no ensuciar.
         const btnA11y = document.getElementById('btn-config-accesibilidad');
         if (btnA11y) {
-            debug.log('data', debug.DEBUG_LEVELS.DEEP, 'Estableciendo texto aria-label del botón a11y.');
+            debug.log('data', debug.DEBUG_LEVELS.DEEP, 
+                        'Estableciendo texto aria-label del botón a11y.');
             
             btnA11y.innerHTML = ''; // Vaciar emoji antiguo
             // Aseguramos que tenga label accesible ya que es visualmente un icono

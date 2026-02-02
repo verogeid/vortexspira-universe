@@ -61,7 +61,8 @@ export function _handleSwipeNavigation(key, appInstance) {
     const currentRowIndex = columnCards.indexOf(currentCard);
     const totalRowsInColumn = columnCards.length;
 
-    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, `NAV: Row ${currentRowIndex}/${totalRowsInColumn} | Key: ${key}`);
+    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, 
+                `NAV: Row ${currentRowIndex}/${totalRowsInColumn} | Key: ${key}`);
 
     switch (key) {
         case 'ArrowUp':
@@ -80,7 +81,9 @@ export function _handleSwipeNavigation(key, appInstance) {
                 if (app.STATE.currentFocusIndex === 0) {
                     // SI: Giramos el carrusel hacia atrás (Loop)
                     app.STATE.forceFocusRow = 'last'; 
-                    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, "NAV: Inicio Absoluto -> Slide Anterior (Loop)");
+
+                    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, 
+                                "NAV: Inicio Absoluto -> Slide Anterior (Loop)");
                     
                     // 🔓 NO BLOQUEAMOS: Necesitamos que handleSlideChangeEnd resuelva el destino y aplique Skipper
                     swiper.isKeyboardLockedFocus = false; 
@@ -92,7 +95,9 @@ export function _handleSwipeNavigation(key, appInstance) {
                     
                     // 🔒 BLOQUEAMOS: Sabemos exactamente dónde vamos, no queremos interferencias
                     swiper.isKeyboardLockedFocus = true;
-                    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, "🔒 FLAG: isKeyboardLockedFocus = true (Columna Anterior)");
+
+                    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, 
+                                "🔒 FLAG: isKeyboardLockedFocus = true (Columna Anterior)");
                     
                     app._updateFocus(true); 
                 }
@@ -115,7 +120,9 @@ export function _handleSwipeNavigation(key, appInstance) {
                 if (app.STATE.currentFocusIndex >= allValidCards.length - 1) {
                     // SI: Giramos el carrusel hacia adelante (Loop)
                     app.STATE.forceFocusRow = 0; 
-                    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, "NAV: Fin Absoluto -> Slide Siguiente (Loop)");
+
+                    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, 
+                                "NAV: Fin Absoluto -> Slide Siguiente (Loop)");
                     
                     // 🔓 NO BLOQUEAMOS
                     swiper.isKeyboardLockedFocus = false;
@@ -127,7 +134,9 @@ export function _handleSwipeNavigation(key, appInstance) {
                     
                     // 🔒 BLOQUEAMOS
                     swiper.isKeyboardLockedFocus = true;
-                    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, "🔒 FLAG: isKeyboardLockedFocus = true (Columna Siguiente)");
+
+                    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, 
+                                "🔒 FLAG: isKeyboardLockedFocus = true (Columna Siguiente)");
                     
                     app._updateFocus(true); 
                 }
@@ -135,7 +144,9 @@ export function _handleSwipeNavigation(key, appInstance) {
             break;
 
         case 'ArrowLeft':
-            debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, "NAV: Izquierda -> Slide Anterior");
+            debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, 
+                        "NAV: Izquierda -> Slide Anterior");
+
             app.STATE.forceFocusRow = null; 
             
             // 🔓 NO BLOQUEAMOS: Es un cambio de página, necesitamos recalcular el foco en la nueva slide
@@ -145,7 +156,9 @@ export function _handleSwipeNavigation(key, appInstance) {
             break;
 
         case 'ArrowRight':
-            debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, "NAV: Derecha -> Slide Siguiente");
+            debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, 
+                        "NAV: Derecha -> Slide Siguiente");
+
             app.STATE.forceFocusRow = null; 
             
             // 🔓 NO BLOQUEAMOS
@@ -158,7 +171,10 @@ export function _handleSwipeNavigation(key, appInstance) {
         case ' ':
             if (!currentCard.classList.contains('disabled')) {
                 const { id, tipo } = currentCard.dataset;
-                debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, `ACCION: Ejecutando ${id}`);
+                
+                debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, 
+                            `ACCION: Ejecutando ${id}`);
+                            
                 if (tipo === 'volver-vertical') app._handleVolverClick();
                 else app._handleCardClick(id, tipo);
             }

@@ -8,7 +8,8 @@ let _resizeTimer;
 
 export function renderNavegacion() {
     // 🔍 Nivel EXTREME para el flujo detallado paso a paso
-    debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 01. START renderNavegacion. FullData:${!!this.STATE.fullData} Hydrating:${this.STATE.isHydrating}`);
+    debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                `[RENDER-FLOW] 01. START renderNavegacion. FullData:${!!this.STATE.fullData} Hydrating:${this.STATE.isHydrating}`);
     
     if (!this.STATE.fullData) return;
     if (this.STATE.isHydrating) return;
@@ -58,7 +59,9 @@ export function renderNavegacion() {
     this.STATE.itemsPorColumna = isMobile ? 1 : (isDesktop ? data.SWIPER.ELEMENTS_PER_COLUMN_DESKTOP : data.SWIPER.ELEMENTS_PER_COLUMN_TABLET);
 
     if (!this.DOM.track) {
-        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 🛑 ABORT. Track element not found.`);
+        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                    `[RENDER-FLOW] 🛑 ABORT. Track element not found.`);
+
         this.STATE.isNavigatingBack = false;
         return;
     }
@@ -98,7 +101,8 @@ export function renderNavegacion() {
     if (this.STATE.resizeSnapshot) {
         const snap = this.STATE.resizeSnapshot;
         // 🔍 TRAZA EXTREMA DE DECISIÓN
-        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 02. Processing Snapshot. Type:${snap.type} Value:${snap.value}`);
+        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                    `[RENDER-FLOW] 02. Processing Snapshot. Type:${snap.type} Value:${snap.value}`);
 
         // 1. Intentar encontrar elemento exacto (ID o Selector)
         let foundEl = null;
@@ -106,7 +110,8 @@ export function renderNavegacion() {
         else if (snap.type === 'SELECTOR') foundEl = document.querySelector(snap.value);
 
         if (foundEl) {
-            debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 03A. Exact Match Found: ${snap.value}. Setting explicitExternalFocus.`);
+            debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                        `[RENDER-FLOW] 03A. Exact Match Found: ${snap.value}. Setting explicitExternalFocus.`);
 
             explicitExternalFocus = foundEl;
             shouldFocusTrack = false;
@@ -126,20 +131,25 @@ export function renderNavegacion() {
                 }
                 this.STATE.currentFocusIndex = logicalIndex;
                 shouldFocusTrack = true; // Dejamos que _updateFocus haga su trabajo
-                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 03B. Card found in track (Index: ${logicalIndex}).`);
+
+                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `[RENDER-FLOW] 03B. Card found in track (Index: ${logicalIndex}).`);
             } else {
                 // No está en el track -> ¿Era volver-nav?
                 if (targetId === 'volver-nav') {
                     const volverFijoRef = this.DOM.cardVolverFijaElemento || document.getElementById('card-volver-fija-elemento');
                     if (volverFijoRef) {
-                        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 03C. 'volver-nav' remapped to fixed button.`);
+                        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                                    `[RENDER-FLOW] 03C. 'volver-nav' remapped to fixed button.`);
 
                         explicitExternalFocus = volverFijoRef;
                         shouldFocusTrack = false;
                         this.STATE.currentFocusIndex = -1;
                     }
                 } else {
-                    debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 03D. ID lost. Resetting to 0.`);
+                    debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                                `[RENDER-FLOW] 03D. ID lost. Resetting to 0.`);
+
                     this.STATE.currentFocusIndex = 0;
                     shouldFocusTrack = true;
                 }
@@ -149,11 +159,15 @@ export function renderNavegacion() {
             // Caso especial: Era botón fijo y ahora quizás es tarjeta volver-nav
             const rawIndex = itemsDelNivel.findIndex(item => item.id === 'volver-nav');
             if (rawIndex !== -1) {
-                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 03E. Fixed button remapped to track 'volver-nav'.`);
+                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `[RENDER-FLOW] 03E. Fixed button remapped to track 'volver-nav'.`);
+
                 let logicalIndex = 0;
                 for (let i = 0; i < rawIndex; i++) {
                     const it = itemsDelNivel[i];
-                    if (it.tipo !== 'relleno' && it.tipoEspecial !== 'breadcrumb-vertical') logicalIndex++;
+
+                    if (it.tipo !== 'relleno' && it.tipoEspecial !== 'breadcrumb-vertical') 
+                        logicalIndex++;
                 }
                 this.STATE.currentFocusIndex = logicalIndex;
                 shouldFocusTrack = true;
@@ -221,14 +235,17 @@ export function renderNavegacion() {
                 if (volverFijoRef) volverFijoRef.classList.remove('focus-visible');
 
                 // 🔍 TRAZA FINAL
-                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 04. Finally Block. Explicit: ${!!explicitExternalFocus}, Track: ${shouldFocusTrack}`);
+                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `[RENDER-FLOW] 04. Finally Block. Explicit: ${!!explicitExternalFocus}, Track: ${shouldFocusTrack}`);
 
                 if (explicitExternalFocus) {
-                    debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESTORE-DEBUG] 05. Scheduling external focus for ${explicitExternalFocus.id}`);
+                    debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                                `[RESTORE-DEBUG] 05. Scheduling external focus for ${explicitExternalFocus.id}`);
                     
                     // ⭐️ FUNCIÓN DE RESTAURACIÓN ROBUSTA ⭐️
                     const performRestoration = () => {
-                        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESTORE-DEBUG] 07. performRestoration EXECUTING.`);
+                        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                                    `[RESTORE-DEBUG] 07. performRestoration EXECUTING.`);
 
                         explicitExternalFocus.focus();
                         explicitExternalFocus.classList.add('focus-visible');
@@ -241,7 +258,8 @@ export function renderNavegacion() {
 
                     // Primer intento
                     setTimeout(() => {
-                        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESTORE-DEBUG] 06. Timeout 50ms triggered.`);
+                        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                                    `[RESTORE-DEBUG] 06. Timeout 50ms triggered.`);
 
                         performRestoration();
 
@@ -250,10 +268,12 @@ export function renderNavegacion() {
                             const isFocused = document.activeElement === explicitExternalFocus;
                             const hasClass = explicitExternalFocus.classList.contains('focus-visible');
                             
-                            debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESTORE-DEBUG] 08. Re-Check: IsFocused=${isFocused}, HasClass=${hasClass}`);
+                            debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                                        `[RESTORE-DEBUG] 08. Re-Check: IsFocused=${isFocused}, HasClass=${hasClass}`);
 
                             if (!isFocused || !hasClass) {
-                                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESTORE-DEBUG] 09. Restoration Failed. Retrying...`);
+                                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                                            `[RESTORE-DEBUG] 09. Restoration Failed. Retrying...`);
 
                                 performRestoration();
                             }
@@ -261,14 +281,16 @@ export function renderNavegacion() {
                     }, 50);
 
                 } else if (shouldFocusTrack) {
-                    debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RESTORE-DEBUG] 05-Track. Scheduling track restoration.`);
+                    debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                                `[RESTORE-DEBUG] 05-Track. Scheduling track restoration.`);
 
                     setTimeout(() => {
                         this._updateFocus(isReturning);
                     }, 50);
                 }
                 
-                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, `[RENDER-FLOW] 10. renderNavegacion END.`);
+                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `[RENDER-FLOW] 10. renderNavegacion END.`);
             }
         });
     } catch (e) {
@@ -416,6 +438,9 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
         }
     }
 
+    // 🟢 FIX A11Y: Añadido aria-disabled="true" si no está activo
+    const ariaDisabled = !estaActivo ? 'aria-disabled="true"' : '';
+
     // 🟢 A11Y FIX: Vincular la tarjeta (botón) con su texto visible
     const titleId = `card-title-${nodo.id}`;
 
@@ -424,7 +449,8 @@ export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tip
                 data-id="${nodo.id}" 
                 data-tipo="${tipo}" 
                 role="button" 
-                tabindex="0"
+                tabindex="0" 
+                ${ariaDisabled} 
                 aria-labelledby="${titleId}">
             <h3>
                 ${iconHTML}
@@ -450,12 +476,13 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
         vistaVolver.classList.add('visible'); 
         this.DOM.cardNivelActual.classList.add('visible');
 
-        this.DOM.cardNivelActual.innerHTML = `
-            <h3>
-                ${isSubLevel ? 
-                    (nodoActual?.nombre || nodoActual?.titulo || this.getString('nav.level')) : 
-                    this.getString('nav.breadcrumbRoot')}
-            </h3>`;
+        const rootText = this.getString('nav.breadcrumbRoot');
+        const levelText = this.getString('nav.level');
+        const tituloNivel = isSubLevel ? 
+                            (nodoActual?.nombre || nodoActual?.titulo || levelText) : 
+                            rootText;
+
+        this.DOM.cardNivelActual.innerHTML = `<h3>${tituloNivel}</h3>`;
 
         if (isSubLevel) {
             this.DOM.cardVolverFijaElemento.classList.add('visible'); 
@@ -465,6 +492,14 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
         } else {
             this.DOM.cardVolverFijaElemento.classList.remove('visible'); 
             this.DOM.cardVolverFijaElemento.tabIndex = -1;
+        }
+
+        // 🟢 NOTIFICACIÓN CONTEXTUAL PARA CIEGOS
+        const contextPrefix = this.getString('nav.contextPrefix') || 'Navegando en: '; // Fallback por si falta en JSON
+        const mensajeContexto = `${contextPrefix}${tituloNivel}`;
+        
+        if (this.STATE.initialRenderComplete) {
+            this.announceA11y(mensajeContexto);
         }
     }
 };

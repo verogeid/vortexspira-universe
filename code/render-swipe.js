@@ -71,15 +71,25 @@ export function _initCarousel_Swipe(initialSwiperSlide, itemsPorColumna, isMobil
         
         // Desactivación total de controles nativos conflictivos
         mousewheel: false,
-        keyboard: { enabled: false }
+        keyboard: { enabled: false },
+
+        // 🟢 FIX A11Y: Desactivar gestión automática de Swiper para evitar conflictos y ruido
+        a11y: { enabled: false }
     };
 
-    debug.log('render_swipe', debug.DEBUG_LEVELS.BASIC, `SWIPE: Init ${swiperId} | Loop=${swiperConfig.loop}`);
+    debug.log('render_swipe', debug.DEBUG_LEVELS.BASIC, 
+                `SWIPE: Init ${swiperId} | Loop=${swiperConfig.loop}`);
     
     try {
         this.STATE.carouselInstance = new Swiper(swiperId, swiperConfig);
 
         if (this.STATE.carouselInstance) {
+            // 🟢 FIX A11Y: Asegurar SILENCIO TOTAL en el contenedor del track
+            if (this.STATE.carouselInstance.wrapperEl) {
+                this.STATE.carouselInstance.wrapperEl.removeAttribute('aria-live');
+                this.STATE.carouselInstance.wrapperEl.removeAttribute('aria-busy');
+            }
+
             const targetIndex = this.STATE.currentFocusIndex;
             const targetCard = this.DOM.track.querySelector(`.card[data-pos="${targetIndex}"]`);
             
@@ -87,7 +97,10 @@ export function _initCarousel_Swipe(initialSwiperSlide, itemsPorColumna, isMobil
                 const targetSlide = targetCard.closest('.swiper-slide');
                 if (targetSlide && targetSlide.dataset.swiperSlideIndex !== undefined) {
                     const realIndex = parseInt(targetSlide.dataset.swiperSlideIndex, 10);
-                    debug.log('render_swipe', debug.DEBUG_LEVELS.BASIC, `SWIPE: Posicionando en data-pos="${targetIndex}" (Slide Lógico ${realIndex})`);
+
+                    debug.log('render_swipe', debug.DEBUG_LEVELS.BASIC, 
+                                `SWIPE: Posicionando en data-pos="${targetIndex}" (Slide Lógico ${realIndex})`);
+
                     this.STATE.carouselInstance.slideToLoop(realIndex, 0, false);
                 }
             }
@@ -95,7 +108,7 @@ export function _initCarousel_Swipe(initialSwiperSlide, itemsPorColumna, isMobil
             if (typeof this.setupTouchListeners === 'function') {
                 this.setupTouchListeners();
             }
-            this._updateFocus(false);
+            //this._updateFocus(false);
         }
     } catch (error) {
         debug.logError('render_swipe', 'Error al inicializar Swiper:', error);
