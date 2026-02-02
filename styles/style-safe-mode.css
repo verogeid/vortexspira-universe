@@ -48,6 +48,9 @@ body[data-layout="mobile"][data-safe-mode="true"] #nav-swiper-mobile,
 body[data-layout="mobile"][data-safe-mode="true"] #detalle-swiper-mobile {
     height: auto !important;
     overflow: visible !important;
+
+    /* 🟢 CORRECCIÓN: Devuelve el control del dedo al navegador */
+    touch-action: auto !important;
 }
 
 body[data-layout="mobile"][data-safe-mode="true"] .swiper-wrapper {
