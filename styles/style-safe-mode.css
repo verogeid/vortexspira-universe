@@ -132,7 +132,7 @@ body[data-layout="mobile"][data-safe-mode="true"] .footer-social-container {
    ============================================================ */
 
 /* 1. SOLTAR EL CONTENEDOR PRINCIPAL DE LA VISTA */
-body[data-safe-mode="true"] #vista-detalle-mobile {
+body[data-layout="mobile"][data-safe-mode="true"] #vista-detalle-mobile {
     position: relative !important; /* Vital: deja de flotar sobre todo */
     top: auto !important;
     left: auto !important;
@@ -144,14 +144,14 @@ body[data-safe-mode="true"] #vista-detalle-mobile {
 }
 
 /* 2. SOLTAR EL CONTENEDOR DEL SWIPER */
-body[data-safe-mode="true"] #detalle-swiper-mobile {
+body[data-layout="mobile"][data-safe-mode="true"] #detalle-swiper-mobile {
     height: auto !important;
     overflow: visible !important;
 }
 
 /* 3. APILAR LOS SLIDES VERTICALMENTE */
 /* Swiper usa flex-row por defecto. Lo forzamos a columna */
-body[data-safe-mode="true"] #detalle-swiper-mobile .swiper-wrapper {
+body[data-layout="mobile"][data-safe-mode="true"] #detalle-swiper-mobile .swiper-wrapper {
     display: flex !important;
     flex-direction: column !important; /* ⬅️ LA CLAVE: Uno debajo de otro */
     height: auto !important;
