@@ -1,0 +1,210 @@
+/* --- styles/style-safe-mode.css --- */
+
+/* ============================================================
+   🚨 MODO DE SEGURIDAD UNIFICADO (Reflow WCAG 1.4.10) 🚨
+   Se activa vía JS (data-safe-mode="true")
+   ============================================================ */
+/*@media (max-height: 500px) */
+
+/* 1. Liberamos el BODY para permitir scroll nativo */
+body[data-layout="mobile"][data-safe-mode="true"] {
+    position: static !important;
+    overflow-y: auto !important; 
+    height: auto !important;
+    padding-top: 0 !important; /* El padding lo darán los elementos ahora estáticos */
+    padding-bottom: 0 !important;
+
+    /* 🟢 VITAL: Define el "techo" lógico para el scroll automático del navegador (focus) */
+    scroll-padding-top: calc(var(--header-height-real, 60px) + 5px) !important;
+}
+
+/* 3. El Contenedor Principal fluye entre header y footer */
+body[data-layout="mobile"][data-safe-mode="true"] #app-container {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    display: block !important; /* Quitamos flex/grid complejos */
+
+    /* 🟢 CORRECCIÓN: Calcular altura mínima para empujar el footer al fondo */
+    /* 100dvh (Pantalla) - HeaderReal - FooterReal */
+    min-height: calc(100dvh - var(--header-height-real, 60px) - var(--footer-height-real, 40px)) !important;
+
+    /* Mantener el padding superior que añadimos antes */
+    padding-top: calc(var(--header-height-real, 60px) + 10px) !important;
+    
+    margin-top: 0 !important;
+}
+
+/* Ajuste fino para que el texto no toque literalmente el borde de la pantalla */
+body[data-layout="mobile"][data-safe-mode="true"] .detail-text-fragment,
+body[data-layout="mobile"][data-safe-mode="true"] .detail-title-slide {
+    padding: 0;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+}
+
+/* 4. Soltamos el Swiper para que se muestre como lista vertical simple */
+body[data-layout="mobile"][data-safe-mode="true"] #nav-swiper-mobile, 
+body[data-layout="mobile"][data-safe-mode="true"] #detalle-swiper-mobile {
+    height: auto !important;
+    overflow: visible !important;
+}
+
+body[data-layout="mobile"][data-safe-mode="true"] .swiper-wrapper {
+    height: auto !important;
+    padding-bottom: 4px !important;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+body[data-layout="mobile"][data-safe-mode="true"] .swiper-slide {
+    height: auto !important;
+    margin-bottom: 20px !important; /* Separación manual entre cards */
+}
+/* 3. Forzar que el primer slide (Breadcrumb) suba del todo */
+body[data-layout="mobile"][data-safe-mode="true"] .swiper-slide:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+/* 4. Ajuste específico para la tarjeta Breadcrumb */
+body[data-layout="mobile"][data-safe-mode="true"] .card.card-breadcrumb-vertical {
+    margin-top: 0 !important;
+    /* Reducimos también su altura mínima si es necesario para ganar espacio */
+    min-height: 40px !important; 
+}
+
+/* ============================================================
+   🚨 REGLAS SAFE MODE PARA HEADER (SOLO MOBILE) 🚨
+   Cuando el espacio es crítico, priorizamos la visibilidad del
+   botón A11y sacrificando el texto del título.
+   ============================================================ */
+
+body[data-layout="mobile"][data-safe-mode="true"] #header-content-wrapper {
+    /* Forzamos que no haga wrap para mantener la línea */
+    flex-wrap: nowrap !important;
+    gap: 5px;
+}
+
+body[data-layout="mobile"][data-safe-mode="true"] header h1 {
+    /* Restauramos posición relativa para que fluya */
+    position: relative !important;
+    left: auto !important;
+    transform: none !important;
+    
+    /* FLEXIBILIDAD: Ocupa espacio pero encoge si es necesario */
+    flex: 1 1 auto !important;
+    min-width: 0 !important; /* Vital para que el truncado funcione en Flex */
+    width: auto !important;
+    max-width: none !important;
+    
+    /* Puntos suspensivos forzados */
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    
+    margin: 0 clamp(2px, 1dvh, 5px) !important;
+    display: block !important; /* Comportamiento de bloque para el overflow */
+    padding: 0 !important;     /* Eliminamos padding extra para ganar espacio */
+}
+
+/* Aseguramos que el logo y el texto estén alineados inline dentro del bloque truncado */
+body[data-layout="mobile"][data-safe-mode="true"] header h1 a {
+    display: inline-flex !important;
+    vertical-align: middle;
+}
+
+/* 🚨 Footer deja de flotar y fluye con el documento */
+body[data-layout="mobile"][data-safe-mode="true"] footer {
+    position: relative !important; /* Se mueven con el scroll */
+    height: auto !important;       /* Crecen según el tamaño de la letra */
+    min-height: auto !important;
+    padding: 10px !important;
+    z-index: 10;
+}
+
+body[data-layout="mobile"][data-safe-mode="true"] .footer-social-container {
+    display: none !important;
+}
+
+/* ============================================================
+   🚨 VISTAS DE DETALLE (SOLO MÓVIL) 🚨
+   IMPORTANTE: Restringido a [data-layout="mobile"]
+   ============================================================ */
+
+/* 1. SOLTAR EL CONTENEDOR PRINCIPAL DE LA VISTA */
+body[data-safe-mode="true"] #vista-detalle-mobile {
+    position: relative !important; /* Vital: deja de flotar sobre todo */
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    overflow: visible !important;
+    padding-bottom: 20px;
+}
+
+/* 2. SOLTAR EL CONTENEDOR DEL SWIPER */
+body[data-safe-mode="true"] #detalle-swiper-mobile {
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* 3. APILAR LOS SLIDES VERTICALMENTE */
+/* Swiper usa flex-row por defecto. Lo forzamos a columna */
+body[data-safe-mode="true"] #detalle-swiper-mobile .swiper-wrapper {
+    display: flex !important;
+    flex-direction: column !important; /* ⬅️ LA CLAVE: Uno debajo de otro */
+    height: auto !important;
+    transform: none !important; /* Eliminar desplazamientos residuales */
+    
+    gap: var(--detail-vertical-spacing) !important;
+
+    box-sizing: border-box;
+}
+
+/* 4. RESTAURAR LOS SLIDES INDIVIDUALES */
+body[data-layout="mobile"][data-safe-mode="true"] .swiper-slide {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 !important; /* El gap del wrapper ya separa */
+    flex-shrink: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+
+    margin-bottom: var(--detail-vertical-spacing) !important;
+}
+
+/* 5. ARREGLAR LOS FRAGMENTOS DE TEXTO */
+/* Deben crecer todo lo que necesite el texto */
+body[data-layout="mobile"][data-safe-mode="true"] .detail-text-fragment {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    white-space: normal !important;
+}
+
+body[data-layout="mobile"][data-safe-mode="true"] .detail-text-fragment .content-wrapper {
+    position: relative !important;
+    top: auto !important;
+    transform: none !important;
+
+    padding: var(--detail-vertical-spacing, 2px) !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+}
+body[data-layout="mobile"][data-safe-mode="true"] .detail-text-fragment p {
+    margin-bottom: 10px !important; /* Margen fijo en px, no en em/rem */
+    font-size: inherit; /* Asegurar que hereda el tamaño "capado" */
+}
+
+/* 6. ASEGURAR VISIBILIDAD DEL TÍTULO */
+body[data-layout="mobile"][data-safe-mode="true"] .detail-title-slide {
+    height: auto !important;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    white-space: normal !important; /* Que el título salte de línea si es largo */
+}
+
+/* --- styles/style-safe-mode.css --- */

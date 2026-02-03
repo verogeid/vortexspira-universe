@@ -3,7 +3,7 @@
 .card {
     border: 2px solid var(--color-card-border);
     background: var(--color-card-bg);
-    padding: 1rem; 
+    padding: var(--card-padding); 
     border-radius: 12px;
     transition: all 0.2s ease;
     cursor: pointer;

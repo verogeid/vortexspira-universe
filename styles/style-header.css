@@ -193,6 +193,8 @@ body[data-layout="mobile"] header {
     justify-content: center; /* Centrado vertical del bloque wrapper */
 
     padding: 5px 0; /* Padding vertical para respirar */
+
+    padding-right: var(--card-padding);
 }
 
 body[data-layout="mobile"] header h1 {

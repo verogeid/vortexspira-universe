@@ -60,6 +60,7 @@
     --card-desc-font-size: clamp(0.8rem, calc(0.9rem * var(--font-scale)), 1.1rem);
     --card-h3-line-clamp: 3;
     --card-h3-icon: 1.2em;
+    --card-padding: 1rem;
 
     /* Nivel Actual */
     --card-nivel-actual-h3-line-clamp: 4;
@@ -100,7 +101,45 @@
     --mobile-header-icon-size: clamp(14px, 5dvh, 1.6rem) !important;
     --mobile-header-obras-size: clamp(10px, 3dvh, 1.2rem) !important;
 
+    --mobile-card-padding: 0.5rem;
+    --mobile-card-min-height: 100px !important; /* Card Relleno Final */
+
     --footer-social-link-size: clamp(12px, 2.5dvh, 1rem) !important;
+
+    /* 📐 VARIABLES DE MÓVIL SAFE MODE */
+    --sm-mobile-header-title-size: clamp(14px, 3dvh, 20px) !important;
+    --sm-mobile-header-logo-size: clamp(16px, 5dvh, 24px) !important;
+    --sm-mobile-header-icon-size: clamp(24px, 5dvh, 32px) !important;
+    --sm-mobile-header-obras-size: clamp(20px, 3dvh, 28px) !important;
+
+    --sm-footer-font-size: clamp(10px, 2dvh, 20px) !important;
+    --sm-footer-social-link-size: clamp(12px, 4dvh, 20px) !important;
+
+    --sm-card-title-font-size: clamp(14px, 4dvh, 20px) !important;
+    --sm-card-desc-font-size: clamp(12px, 3dvh, 16px) !important;
+    --sm-card-breadcrump-vertical-h3-font-size: clamp(14px, 4dvh, 18px) !important;
+    --sm-card-nivel-actual-h3-font-size: clamp(14px, 4dvh, 20px) !important;
+    --sm-card-volver-fija-h3-font-size: clamp(16px, 5dvh, 24px) !important;
+
+    --sm-mobile-card-padding: 10px !important;
+    --sm-mobile-card-gap: 10px !important;
+
+    --sm-detail-vertical-spacing: 10px !important;
+    --sm-details-title-slide-font-size: clamp(16px, 5dvh, 24px) !important;
+    --sm-details-text-fragment-font-size: clamp(14px, 4dvh, 18px) !important;
+    --sm-details-action-btn-font-size: clamp(12px, 3dvh, 16px) !important; 
+    --sm-details-action-btn-size: clamp(30px, 8dvh, 44px) !important; /* Altura máxima física */
+    --sm-details-action-icon-size: clamp(14px, 4dvh, 20px) !important;
+    --sm-details-action-text-font-size: clamp(12px, 3dvh, 16px) !important;
+    --sm-details-volver-btn-font-size: clamp(14px, 4dvh, 18px) !important;
+
+    --sm-a11y-title-font-size: clamp(16px, 5dvh, 22px) !important;
+    --sm-a11y-section-font-size: clamp(14px, 4dvh, 18px) !important;
+    --sm-a11y-close-btn-font-size: clamp(16px, 5dvh, 24px) !important;
+    --sm-a11y-close-btn-size: clamp(30px, 8dvh, 44px) !important; /* Touch Target seguro */
+    --sm-a11y-option-btn-font-size: clamp(12px, 3dvh, 16px) !important;
+    --sm-a11y-slider-icon-size: clamp(14px, 4dvh, 20px) !important;
+    --sm-a11y-range-value-font-size: clamp(12px, 3dvh, 16px) !important;
 
     /* Tipografía Dinámica */
     --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -329,47 +368,6 @@ p {
     .detail-action-btn:focus-visible .action-icon {
         background-color: Highlight !important;
     }
-}
-
-/* ============================================================
-   🚨 REGLAS "HARD CAP" PARA SAFE MODE (Cumplimiento Reflow 508/WCAG) 🚨
-   Sobrescribimos las variables críticas con topes en PIXELES (px).
-   Esto evita que la "Doble Multiplicación" (rem * scale) rompa el diseño
-   en pantallas pequeñas (<320px) cuando el zoom es alto.
-   ============================================================ */
-
-body[data-safe-mode="true"] {
-    /* --- VISTA DE DETALLES: Topes físicos estrictos --- */
-    
-    --detail-vertical-spacing: 2px !important;
-
-    /* Título: Máximo 24px (1.5 líneas en 320px) */
-    --details-title-slide-font-size: clamp(16px, 5dvh, 24px) !important;
-    
-    /* Texto cuerpo: Máximo 18px (Lectura cómoda sin desbordar) */
-    --details-text-fragment-font-size: clamp(14px, 4dvh, 18px) !important;
-    
-    /* Botones de Acción: Crítico para que no ocupen todo el ancho */
-    --details-action-btn-font-size: clamp(12px, 3dvh, 16px) !important; 
-    --details-action-btn-size: clamp(30px, 8dvh, 44px) !important; /* Altura máxima física */
-    --details-action-icon-size: clamp(14px, 4dvh, 20px) !important;
-    --details-action-text-font-size: clamp(12px, 3dvh, 16px) !important;
-    
-    /* Botón Volver interno */
-    --details-volver-btn-font-size: clamp(14px, 4dvh, 18px) !important;
-
-    /* --- MENU MÓVIL: Topes físicos --- */
-    --mobile-header-title-size: clamp(14px, 3dvh, 20px) !important;
-    --card-title-font-size: clamp(14px, 4dvh, 20px) !important;
-    --card-desc-font-size: clamp(12px, 3dvh, 16px) !important;
-    
-    --card-breadcrump-vertical-h3-font-size: clamp(14px, 4dvh, 18px) !important;
-    --card-nivel-actual-h3-font-size: clamp(14px, 4dvh, 20px) !important;
-    --card-volver-fija-h3-font-size: clamp(16px, 5dvh, 24px) !important;
-
-    /* Footer */
-    --footer-font-size: clamp(10px, 2dvh, 14px) !important;
-    --footer-social-link-size: clamp(16px, 4dvh, 24px) !important;
 }
 
 /* --- styles/style-theme.css --- */

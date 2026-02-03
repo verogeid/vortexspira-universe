@@ -8,6 +8,8 @@ body[data-layout="mobile"] {
     --header-icon-size: var(--mobile-header-icon-size);
     --header-obras-size: var(--mobile-header-obras-size);
 
+    --card-padding: var(--mobile-card-padding);
+
     overflow: hidden !important; 
     height: 100dvh; 
     position: fixed; 
@@ -23,10 +25,16 @@ body[data-layout="mobile"] #app-container {
     /*margin-bottom: var(--footer-height-real, --footer-height) !important;*/
 
     padding-top: 15px !important; padding-bottom: 15px !important;
-    padding-left: 0px; padding-right: 0px; 
+    padding-left: 0px;
 
     display: flex; flex-direction: column;
     gap: var(--card-gap); overflow: visible;
+}
+
+body[data-layout="mobile"] #app-container,
+body[data-layout="mobile"] #vista-central,
+body[data-layout="mobile"] #vista-detalle-mobile {
+    padding-right: var(--card-padding);
 }
 
 body[data-layout="mobile"] #vista-volver, 
@@ -116,7 +124,7 @@ body[data-layout="mobile"] #detalle-swiper-mobile .swiper-slide .card {
 }
 
 body[data-layout="mobile"] .card-relleno-final {
-    min-height: 300px !important; /* Doble altura para evitar solapamiento con footer */
+    min-height: var(--mobile-card-min-height);
     
     background: transparent !important;
     border: none !important;
