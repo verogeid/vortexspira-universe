@@ -33,26 +33,31 @@
     --shadow-opacity: 0.8;       /* Opacidad base de la sombra Ghost */
 
     /* 📐 VARIABLES ESTRUCTURALES BASE */
-    --header-height: 9dvh;
-    --footer-height: 5dvh;
     --card-gap: 3dvh; 
     --nav-desktop-height: 100%; 
     --nav-carousel-top-offset: 2dvh;
 
-    /* 📐 VARIABLES DE FUENTE HEADER (Valores por defecto / Desktop) */
-    /* Título: Crece con la letra pero frena si la pantalla es bajita */
-    --header-title-size: clamp(0.8rem, calc((1rem + 2dvh) * var(--font-scale)), 3rem);
+    /* Tipografía Dinámica */
+    --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-scale: 1;
+    --line-height-base: 1.5;
+    --paragraph-spacing: 1.5em;
     
-    /* LOGICA DE ICONOS: clamp(MÍNIMO_SEGURIDAD, AJUSTE_AL_HUECO_VERTICAL, PROPORCIÓN_TEXTO)
-       - Mínimo: Píxeles fijos para que nunca desaparezca.
-       - Ideal: % de la altura de pantalla (dvh) para que nunca desborde.
-       - Máximo: rem (que escala con el zoom) para que crezca junto al texto hasta topar con el techo.
-    */
+    --font-dyslexic: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+    --font-serif: 'Georgia', 'Times New Roman', serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    /* 📐 HEADER (Valores por defecto / Desktop) */
+    --header-height: 9dvh;
+    --header-title-size: clamp(0.8rem, calc((1rem + 2dvh) * var(--font-scale)), 3rem);
     --header-logo-size: clamp(24px, 8dvh, 4rem);
     --header-icon-size: clamp(24px, 8dvh, 3.7rem);
     --header-obras-size: clamp(16px, 6dvh, 3rem);
-
+    
+    /* 📐 FOOTER (Valores por defecto / Desktop) */
+    --footer-height: 5dvh;
     --footer-font-size: clamp(0.6rem, calc(1.5dvh * var(--font-scale)), 0.8rem);
+    --footer-social-link-size: clamp(12px, 2.5dvh, 1rem) !important;
 
     /* 📐 VARIABLES DE TARJETAS (CARDS) */
     --card-p-line-height: 1.4;
@@ -83,6 +88,40 @@
     --info-adicional-details-small-line-height: 1.5;
     --info-adicional-lista-a-font-size: clamp(0.9rem, calc(0.8rem * var(--font-scale)), 1.2rem);
 
+    /* 📐 A11Y Modal */
+    --a11y-title-font-size: clamp(1.1rem, calc((1rem + 1dvh) * var(--font-scale)), 1.8rem);
+    --a11y-section-font-size: clamp(0.9rem, calc((0.8rem + 0.5dvh) * var(--font-scale)), 1.2rem);
+    --a11y-close-btn-font-size: clamp(1.2rem, calc((1rem + 1dvh) * var(--font-scale)), 1.6rem);
+    --a11y-close-btn-size: clamp(30px, calc(5dvh * var(--font-scale)), 50px);
+    --a11y-option-btn-font-size: clamp(0.8rem, calc((0.75rem + 0.5dvh) * var(--font-scale)), 1rem);
+    --a11y-slider-icon-size: clamp(0.8rem, calc(1rem * var(--font-scale)), 1.3rem);
+    --a11y-range-value-font-size: clamp(0.8rem, calc((0.75rem + 0.5dvh) * var(--font-scale)), 1rem);
+    --a11y-range-size: clamp(30px, calc(5dvh * var(--font-scale)), 50px);
+    --a11y-reset-size: clamp(30px, calc(5dvh * var(--font-scale)), 50px);
+
+    --a11y-gap: 20px;
+    --a11y-padding: 25px;                       /* Padding interno del modal */
+    --a11y-header-margin: 20px;                 /* Margen bajo el título */
+    --a11y-section-margin: 25px;                /* Margen entre secciones */
+    --a11y-controls-gap: 10px;                  /* Hueco entre botones */
+    --a11y-btn-padding: 10px;                   /* Relleno botones opciones */
+    --a11y-btn-min-width: 120px;                /* Ancho mínimo botones */
+    --a11y-slider-thumb-size: 20px;             /* Bolita del slider */
+    --a11y-slider-height: 6px;                  /* Grosor línea slider */
+
+    /* 📐 VISTA DE DETALLES */
+    --details-text-fragment-font-size: clamp(0.8rem, calc(0.9rem * var(--font-scale)), 1rem);
+    --details-text-fragment-line-height: 1.6;
+    --details-title-slide-font-size: clamp(1rem, calc(1.1rem * var(--font-scale)), 1.1rem);
+
+    --detail-vertical-spacing: calc(0.5rem * var(--line-height-base, 1.5));
+
+    --details-action-btn-font-size: clamp(0.75rem, calc(0.9rem * var(--font-scale)), 1rem); 
+    --details-action-btn-size: clamp(30px, calc(4dvh * var(--font-scale)), 45px);
+    --details-action-icon-size: clamp(0.9rem, calc(1rem * var(--font-scale)), 1.1rem);
+    --details-action-text-font-size: clamp(0.75rem, calc(0.9rem * var(--font-scale)), 1rem);
+    --details-volver-btn-font-size: clamp(0.8rem, calc(1rem * var(--font-scale)), 1.1rem);
+
     /* 📐 VARIABLES DE TABLET LANDSCAPE */
     --tab-land-header-title-size: clamp(0.8rem, calc(5dvh * var(--font-scale)), 1.8rem);
     --tab-land-header-logo-size: clamp(24px, 7dvh, 3rem); 
@@ -104,74 +143,51 @@
     --mobile-card-padding: 0.5rem;
     --mobile-card-min-height: 100px !important; /* Card Relleno Final */
 
-    --footer-social-link-size: clamp(12px, 2.5dvh, 1rem) !important;
-
     /* 📐 VARIABLES DE MÓVIL SAFE MODE */
-    --sm-mobile-header-title-size: clamp(14px, 3dvh, 20px) !important;
-    --sm-mobile-header-logo-size: clamp(16px, 5dvh, 24px) !important;
-    --sm-mobile-header-icon-size: clamp(24px, 5dvh, 32px) !important;
-    --sm-mobile-header-obras-size: clamp(20px, 3dvh, 28px) !important;
+    --sm-mobile-header-title-size: clamp(14px, 3vmin, 20px) !important;
+    --sm-mobile-header-logo-size: clamp(16px, 5vmin, 24px) !important;
+    --sm-mobile-header-icon-size: clamp(24px, 5vmin, 32px) !important;
+    --sm-mobile-header-obras-size: clamp(20px, 3vmin, 28px) !important;
 
-    --sm-footer-font-size: clamp(10px, 2dvh, 20px) !important;
-    --sm-footer-social-link-size: clamp(12px, 4dvh, 20px) !important;
+    --sm-footer-font-size: clamp(10px, 2vmin, 20px) !important;
+    --sm-footer-social-link-size: clamp(12px, 4vmin, 20px) !important;
 
-    --sm-card-title-font-size: clamp(14px, 4dvh, 20px) !important;
-    --sm-card-desc-font-size: clamp(12px, 3dvh, 16px) !important;
-    --sm-card-breadcrump-vertical-h3-font-size: clamp(14px, 4dvh, 18px) !important;
-    --sm-card-nivel-actual-h3-font-size: clamp(14px, 4dvh, 20px) !important;
-    --sm-card-volver-fija-h3-font-size: clamp(16px, 5dvh, 24px) !important;
+    --sm-card-title-font-size: clamp(14px, 4vmin, 20px) !important;
+    --sm-card-desc-font-size: clamp(12px, 3vmin, 16px) !important;
+    --sm-card-breadcrump-vertical-h3-font-size: clamp(14px, 4vmin, 18px) !important;
+    --sm-card-nivel-actual-h3-font-size: clamp(14px, 4vmin, 20px) !important;
+    --sm-card-volver-fija-h3-font-size: clamp(16px, 5vmin, 24px) !important;
 
-    --sm-mobile-card-padding: 10px !important;
-    --sm-mobile-card-gap: 10px !important;
+    --sm-mobile-card-padding: 5px !important;
+    --sm-mobile-card-gap: 2px !important;
 
-    --sm-detail-vertical-spacing: 10px !important;
-    --sm-details-title-slide-font-size: clamp(16px, 5dvh, 24px) !important;
-    --sm-details-text-fragment-font-size: clamp(14px, 4dvh, 18px) !important;
-    --sm-details-action-btn-font-size: clamp(12px, 3dvh, 16px) !important; 
-    --sm-details-action-btn-size: clamp(30px, 8dvh, 44px) !important; /* Altura máxima física */
-    --sm-details-action-icon-size: clamp(14px, 4dvh, 20px) !important;
-    --sm-details-action-text-font-size: clamp(12px, 3dvh, 16px) !important;
-    --sm-details-volver-btn-font-size: clamp(14px, 4dvh, 18px) !important;
+    --sm-detail-vertical-spacing: 5px !important;
+    --sm-details-title-slide-font-size: clamp(16px, 5vmin, 24px) !important;
+    --sm-details-text-fragment-font-size: clamp(14px, 4vmin, 18px) !important;
+    --sm-details-action-btn-font-size: clamp(12px, 3vmin, 16px) !important; 
+    --sm-details-action-btn-size: clamp(30px, 8vmin, 44px) !important; /* Altura máxima física */
+    --sm-details-action-icon-size: clamp(14px, 4vmin, 20px) !important;
+    --sm-details-action-text-font-size: clamp(12px, 3vmin, 16px) !important;
+    --sm-details-volver-btn-font-size: clamp(14px, 4vmin, 18px) !important;
 
-    --sm-a11y-title-font-size: clamp(16px, 5dvh, 22px) !important;
-    --sm-a11y-section-font-size: clamp(14px, 4dvh, 18px) !important;
-    --sm-a11y-close-btn-font-size: clamp(16px, 5dvh, 24px) !important;
-    --sm-a11y-close-btn-size: clamp(30px, 8dvh, 44px) !important; /* Touch Target seguro */
-    --sm-a11y-option-btn-font-size: clamp(12px, 3dvh, 16px) !important;
-    --sm-a11y-slider-icon-size: clamp(14px, 4dvh, 20px) !important;
-    --sm-a11y-range-value-font-size: clamp(12px, 3dvh, 16px) !important;
+    --sm-a11y-title-font-size: clamp(12px, 5vmin, 16px) !important;
+    --sm-a11y-section-font-size: clamp(11px, 4vmin, 14px) !important;
+    --sm-a11y-close-btn-font-size: clamp(14px, 5vmin, 18px) !important;
+    --sm-a11y-close-btn-size: clamp(24px, 8vmin, 32px) !important; /* Touch Target seguro */
+    --sm-a11y-option-btn-font-size: clamp(10px, 3vmin, 13px) !important;
+    --sm-a11y-slider-icon-size: clamp(10px, 4vmin, 14px) !important;
+    --sm-a11y-range-value-font-size: clamp(10px, 3vmin, 14px) !important;
+    --sm-a11y-reset-size: clamp(24px, 5vmin, 32px);
 
-    /* Tipografía Dinámica */
-    --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-scale: 1;
-    --line-height-base: 1.5;
-    --paragraph-spacing: 1.5em;
-    
-    --font-dyslexic: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
-    --font-serif: 'Georgia', 'Times New Roman', serif;
-    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-
-    /* A11Y Modal */
-    --a11y-title-font-size: clamp(1.1rem, calc((1rem + 1dvh) * var(--font-scale)), 1.8rem);
-    --a11y-section-font-size: clamp(0.9rem, calc((0.8rem + 0.5dvh) * var(--font-scale)), 1.2rem);
-    --a11y-close-btn-font-size: clamp(1.2rem, calc((1rem + 1dvh) * var(--font-scale)), 1.6rem);
-    --a11y-close-btn-size: clamp(30px, calc(5dvh * var(--font-scale)), 50px);
-    --a11y-option-btn-font-size: clamp(0.8rem, calc((0.75rem + 0.5dvh) * var(--font-scale)), 1rem);
-    --a11y-slider-icon-size: clamp(0.8rem, calc(1rem * var(--font-scale)), 1.3rem);
-    --a11y-range-value-font-size: clamp(0.8rem, calc((0.75rem + 0.5dvh) * var(--font-scale)), 1rem);
-
-    /* 📐 VISTA DE DETALLES */
-    --details-text-fragment-font-size: clamp(0.8rem, calc(0.9rem * var(--font-scale)), 1rem);
-    --details-text-fragment-line-height: 1.6;
-    --details-title-slide-font-size: clamp(1rem, calc(1.1rem * var(--font-scale)), 1.1rem);
-
-    --detail-vertical-spacing: calc(0.5rem * var(--line-height-base, 1.5));
-
-    --details-action-btn-font-size: clamp(0.75rem, calc(0.9rem * var(--font-scale)), 1rem); 
-    --details-action-btn-size: clamp(30px, calc(4dvh * var(--font-scale)), 45px);
-    --details-action-icon-size: clamp(0.9rem, calc(1rem * var(--font-scale)), 1.1rem);
-    --details-action-text-font-size: clamp(0.75rem, calc(0.9rem * var(--font-scale)), 1rem);
-    --details-volver-btn-font-size: clamp(0.8rem, calc(1rem * var(--font-scale)), 1.1rem);
+    --sm-a11y-gap: clamp(2px, 5vmin, 20px);
+    --sm-a11y-padding: clamp(5px, 2vmin, 10px) !important;
+    --sm-a11y-header-margin: clamp(5px, 2vmin, 10px) !important;
+    --sm-a11y-section-margin: clamp(10px, 3vmin, 15px) !important;
+    --sm-a11y-controls-gap: clamp(4px, 1.5vmin, 8px) !important;
+    --sm-a11y-btn-padding: clamp(4px, 1.5vmin, 8px) !important;
+    --sm-a11y-btn-min-width: 0px !important;   /* CRÍTICO: Permitimos que los botones se encojan mucho en safe mode */ 
+    --sm-a11y-slider-thumb-size: clamp(14px, 5vmin, 18px) !important;
+    --sm-a11y-slider-height: 4px !important;
 }
 
 /* Aplicación de las variables al documento */

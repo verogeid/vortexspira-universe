@@ -112,8 +112,9 @@ function _updateModalUI() {
 
 function _updateSliderLabel(pct) {
     if (!_domRefs.rangeVal) return;
+
     const computedPx = parseFloat(getComputedStyle(document.documentElement).fontSize).toFixed(1);
-    _domRefs.rangeVal.textContent = `${pct}% (${computedPx}px)`;
+    _domRefs.rangeVal.textContent = `${pct}%`; // (${computedPx}px)`;
 }
 
 function _updateSpacingLabel(step) {
@@ -148,19 +149,19 @@ function _injectModalHTML() {
                     <h3>${getString('modal.sections.size')}</h3>
                     <div class="a11y-range-wrapper">
                         <span style="font-size: 0.8rem" aria-hidden="true">A</span>
-                        <input type="range" id="a11y-range-size" class="a11y-range" min="90" max="200" step="5" aria-label="${getString('modal.aria.textSize')}">
-                        <span style="font-size: 1.2rem" aria-hidden="true">A</span>
                         <span id="a11y-range-val" class="a11y-range-value">100%</span>
+                        <span style="font-size: 1.2rem" aria-hidden="true">A</span>
+                        <input type="range" id="a11y-range-size" class="a11y-range" min="90" max="200" step="5" aria-label="${getString('modal.aria.textSize')}">
                     </div>
                 </div>
 
                 <div class="a11y-section">
                     <h3>${getString('modal.sections.spacing')}</h3>
                     <div class="a11y-range-wrapper">
-                        <span class="range-icon-small" aria-hidden="true">≡</span>
-                        <input type="range" id="a11y-range-spacing" class="a11y-range" min="1" max="3" step="1" aria-label="${getString('modal.aria.lineSpacing')}">
-                        <span class="range-icon-large" aria-hidden="true">≡</span>
+                        <span class="range-icon-small" style="font-size: 0.8rem" aria-hidden="true">≡</span>
                         <span id="a11y-range-spacing-val" class="a11y-range-value">${getString('modal.spacing.normal')}</span>
+                        <span class="range-icon-large" style="font-size: 1.2rem" aria-hidden="true">≡</span>
+                        <input type="range" id="a11y-range-spacing" class="a11y-range" min="1" max="3" step="1" aria-label="${getString('modal.aria.lineSpacing')}">
                     </div>
                 </div>
 

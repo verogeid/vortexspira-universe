@@ -7,7 +7,10 @@
     z-index: 9998;
 
     display: none; overflow-y: auto;
-    padding: 10px;
+    padding: 0 !important;
+
+    align-items: center; 
+    justify-content: center;
 
     opacity: 0; transition: opacity 0.3s ease;
 }
@@ -22,16 +25,23 @@
 
     background: var(--color-card-bg);
     border: 2px solid var(--color-card-border); 
+    border-radius: 12px;
+
+    /* 🟢 FIX 1: Vital para que el padding no sume ancho extra */
+    box-sizing: border-box !important;
+
     color: var(--color-text);
     
-    border-radius: 12px;
-    padding: 25px;
+    /* 🟢 FÓRMULA DE FLUIDEZ TOTAL (Inverse Proportional) */
+    /* 2. El ancho es el 100% MENOS ese hueco a cada lado (x2) */
+    width: calc(100% - (2 * var(--ally-gap)));
+
+    padding: var(--a11y-padding);
     box-shadow: 0 10px 40px var(--color-shadow-modal); 
     position: relative;
 
-    width: 90%;
     /* Aseguramos que no se salga horizontalmente */
-    max-width: min(580px, 90vw);
+    max-width: 90vw;
 
     max-height: none; overflow-y: auto;
     transform: translateY(20px); transition: transform 0.3s ease;
@@ -49,9 +59,9 @@
     display: flex; 
     justify-content: space-between; 
     align-items: center;
-    margin-bottom: 20px; 
+    margin-bottom: var(--a11y-header-margin); 
     border-bottom: 1px solid var(--color-border-placeholder);
-    padding-bottom: 10px;
+    padding-bottom: calc(var(--a11y-header-margin) / 2);
     
     /* ⭐️ FIX: Evitar desbordamiento del header */
     width: 100%; max-width: 100%;
@@ -71,7 +81,7 @@
     /* Flex child properties */
     flex: 1; 
     min-width: 0; /* CRÍTICO: Permite al flex item encogerse por debajo de su contenido */
-    padding-right: 15px; /* Espacio de seguridad con el botón cerrar */
+    padding-right: var(--a11y-padding); /* Espacio de seguridad con el botón cerrar */
 }
 
 .a11y-close-btn {
@@ -101,14 +111,14 @@
 }
 
 .a11y-section { 
-    margin-bottom: 25px; 
+    margin-bottom: var(--a11y-section-margin);
     /* ⭐️ FIX: Asegurar que la sección no desborde */
     width: 100%;
     overflow: hidden;
 }
 .a11y-section h3 { 
     font-size: var(--a11y-section-font-size); 
-    margin-bottom: 10px; 
+    margin-bottom: var(--a11y-controls-gap); 
     opacity: 0.9; 
 
     /* ⭐️ FIX: Truncar Subtítulos ("Tipografía", "Tamaño del texto...") */
@@ -119,7 +129,8 @@
 }
 
 .a11y-controls-group {
-    display: flex; gap: 10px;
+    display: flex; 
+    gap: var(--a11y-controls-gap);
     width: 100%;
 
     flex-wrap: wrap;
@@ -129,7 +140,7 @@
 .a11y-option-btn {
     flex: 1 1 auto; /* Crecen y encogen, base automática */
     
-    padding: 10px;
+    padding: var(--a11y-btn-padding);
     background: transparent;
     border: 2px solid var(--color-card-border);
     border-radius: 8px; color: var(--color-text);
@@ -143,7 +154,7 @@
     text-overflow: ellipsis;
     
     /* Permite que el botón encoja si es necesario */
-    min-width: 120px;
+    min-width: var(--a11y-btn-min-width);
     max-width: 100%;
 }
 
@@ -168,7 +179,7 @@
 
 /* SLIDER */
 .a11y-range-wrapper {
-    display: flex; align-items: center; gap: 15px;
+    display: flex; align-items: center; gap: var(--a11y-controls-gap);
     width: 100%;
     overflow: hidden; /* Contención */
 }
@@ -180,25 +191,26 @@
 
     font-size: var(--a11y-slider-font-size);
     
-    width: 1.5em; /* Ancho fijo para alineación */
+    width: 1.5rem; /* Ancho fijo para alineación */
     text-align: center;
     line-height: 1;
 }
 
 input[type=range].a11y-range {
-    flex-grow: 1; height: 6px;
+    flex-grow: 1; height: var(--a11y-slider-height);
     background: var(--color-border-placeholder);
     border-radius: 5px; outline: none;
     -webkit-appearance: none; appearance: none;
     cursor: pointer;
-    min-width: 50px; /* Mínimo vital para el slider */
+    min-width: var(--a11y-range-size); /* Mínimo vital para el slider */
 }
 input[type=range].a11y-range:focus-visible {
     box-shadow: 0 0 0 2px var(--color-primary);
 }
 input[type=range].a11y-range::-webkit-slider-thumb {
     -webkit-appearance: none; appearance: none;
-    width: 20px; height: 20px; border-radius: 50%;
+    width: var(--a11y-slider-thumb-size); 
+    height: var(--a11y-slider-thumb-size); border-radius: 50%;
     background: var(--color-primary); 
     box-shadow: 0 0 5px var(--color-shadow-primary);
     transition: transform 0.2s;
@@ -208,7 +220,8 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
 }
 
 .a11y-range-value {
-    min-width: 70px; text-align: right; 
+    /*min-width: 70px; */
+    text-align: right; 
     font-weight: bold; font-size: var(--a11y-range-value-font-size);
 
     /* ⭐️ FIX: Truncar valor del porcentaje si crece mucho */
@@ -228,8 +241,8 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
 /* SECCIÓN FINAL (Footer del modal) */
 .a11y-footer {
     text-align: right; 
-    margin-top: 20px; 
-    padding-top: 10px; 
+    margin-top: var(--card-gap); 
+    padding-top: var(--card-padding); 
     border-top: 1px solid var(--color-border-placeholder);
     display: flex;
     justify-content: flex-end;
@@ -241,8 +254,8 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
     border: 2px solid var(--color-card-border); 
     border-radius: 8px;
     cursor: pointer; 
-    width: 60px; 
-    height: 60px;
+    width: var(--a11y-reset-size); 
+    height: var(--a11y-reset-size);
     display: flex;
     align-items: center;
     justify-content: center;

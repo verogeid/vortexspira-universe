@@ -80,7 +80,7 @@ export function _setupKeyTracker() {
 export function runFontDiagnostics() {
     if (debug.DEBUG_CONFIG.global_font < debug.DEBUG_LEVELS.BASIC) return;
 
-    logGroupCollapsed('global_font', debug.DEBUG_LEVELS.BASIC, "%c📊 DIAGNÓSTICO DE TAMAÑOS REALES", "background: #222; color: #bada55; font-size: 16px; padding: 4px; border-radius: 4px;");
+    debug.logGroupCollapsed('global_font', debug.DEBUG_LEVELS.BASIC, "%c📊 DIAGNÓSTICO DE TAMAÑOS REALES", "background: #222; color: #bada55; font-size: 16px; padding: 4px; border-radius: 4px;");
 
     const root = document.documentElement;
     const rootStyle = getComputedStyle(root);

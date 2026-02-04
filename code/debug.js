@@ -15,15 +15,15 @@ export const DEBUG_LEVELS = {
 export const DEBUG_CONFIG = {
     global: DEBUG_LEVELS.DISABLED,
     global_focus: DEBUG_LEVELS.DISABLED,
-    global_font: DEBUG_LEVELS.DISABLED,
-    global_layout: DEBUG_LEVELS.DISABLED,
+    global_font: DEBUG_LEVELS.DEEP,
+    global_layout: DEBUG_LEVELS.DEEP,
     global_key: DEBUG_LEVELS.DISABLED,
     global_mouse: DEBUG_LEVELS.DISABLED,
     
     app: DEBUG_LEVELS.DISABLED,
     data: DEBUG_LEVELS.DISABLED,
     i18n: DEBUG_LEVELS.DISABLED,
-    a11y: DEBUG_LEVELS.EXTREME,
+    a11y: DEBUG_LEVELS.DISABLED,
     nav_stack: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Detalle

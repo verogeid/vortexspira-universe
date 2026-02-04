@@ -15,6 +15,8 @@ body[data-layout="mobile"] {
     position: fixed; 
     width: 100%;
     padding-bottom: var(--footer-height); 
+
+    padding-right: var(--card-padding); /* Espacio extra en mobile, para scroll fantasma */
 }
 
 body[data-layout="mobile"] #app-container {
@@ -22,19 +24,13 @@ body[data-layout="mobile"] #app-container {
     min-height: calc(100dvh - var(--header-height-real, 50px) - var(--footer-height-real, --footer-height));
 
     margin-top: 0 !important;
-    /*margin-bottom: var(--footer-height-real, --footer-height) !important;*/
 
-    padding-top: 15px !important; padding-bottom: 15px !important;
+    padding-top: 0 !important; 
+    padding-bottom: 15px !important;
     padding-left: 0px;
 
     display: flex; flex-direction: column;
     gap: var(--card-gap); overflow: visible;
-}
-
-body[data-layout="mobile"] #app-container,
-body[data-layout="mobile"] #vista-central,
-body[data-layout="mobile"] #vista-detalle-mobile {
-    padding-right: var(--card-padding);
 }
 
 body[data-layout="mobile"] #vista-volver, 

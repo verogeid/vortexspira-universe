@@ -204,19 +204,41 @@ body[data-layout="mobile"] header h1 {
 
     width: auto !important;
     max-width: 100% !important;
-    margin: 0 !important;
+
+    /* 1. ACTIVAR EL MOTOR DE RECORTE */
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
 
     /* Configuración Flex interna para Logo + Texto */
-    display: flex !important;
-    flex-wrap: wrap; /* 🟢 PERMITE QUE EL TEXTO CAIGA DEBAJO DEL LOGO SI NO CABE */
+    
     justify-content: center;
     align-items: center;
+    
+    /* 2. CONFIGURACIÓN DE LÍNEAS */
+    /* Cuántas líneas permites antes de cortar? 2 suele ser ideal para header */
+    -webkit-line-clamp: 2 !important; 
+    line-clamp: 2 !important;
+    
+    /* 3. COMPORTAMIENTO DEL TEXTO */
+    white-space: normal !important; /* Permite saltar de línea */
+    overflow: hidden !important;    /* Oculta lo que sobre */
+    text-overflow: ellipsis !important; /* Pone los puntos ... */
+    
+    /* 4. AJUSTES VISUALES */
+    /* Quitamos el centrado flex anterior porque choca con -webkit-box */
+    text-align: center !important; 
+    
+    /* Aseguramos que el texto rompa si es una palabra kilométrica */
+    word-break: break-word !important; 
+    overflow-wrap: anywhere !important; 
+    
+    /* Reset de alturas para que el clamp funcione */
+    height: auto !important;
+    max-height: none !important;
+    
+    /* Ajuste fino de márgenes */
+    margin: 0 auto !important;
     gap: 6px;
-
-    /* Texto */
-    white-space: normal !important; /* Permitir saltos de línea */
-    line-height: 1.1;
-    text-align: center;
 
     /* Seguridad de desbordamiento */
     overflow: hidden;

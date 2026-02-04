@@ -3,40 +3,16 @@
 /* 1. RESET GLOBAL DEL SCROLL Y ESTRUCTURA
    Liberamos el body para que tenga scroll nativo y altura automática */
 body[data-layout="mobile"][data-safe-mode="true"] {
-    position: static !important;
-    overflow-y: auto !important;
-    height: auto !important;
-    padding-top: 0 !important;
-    
-    /* Preferencia guardada: Sin negritas */
-    font-weight: normal !important;
-    
-    --detail-vertical-spacing: var(--sm-detail-vertical-spacing);
-
-    /* Título: Máximo 24px (1.5 líneas en 320px) */
-    --details-title-slide-font-size: var(--sm-details-title-slide-font-size);
-    
-    /* Texto cuerpo: Máximo 18px (Lectura cómoda sin desbordar) */
-    --details-text-fragment-font-size: var(--sm-details-text-fragment-font-size);
-    
-    /* Botones de Acción: Crítico para que no ocupen todo el ancho */
-    --details-action-btn-font-size: var(--sm-details-action-btn-font-size); 
-    --details-action-btn-size: var(--sm-details-action-btn-size); /* Altura máxima física */
-    --details-action-icon-size: var(--sm-details-action-icon-size);
-    --details-action-text-font-size: var(--sm-details-action-text-font-size);
-    
-    /* Botón Volver interno */
-    --details-volver-btn-font-size: var(--sm-details-volver-btn-font-size);
-
-    /* --- MENU MÓVIL: Topes físicos --- */
     --header-title-size: var(--sm-mobile-header-title-size);
     --header-logo-size: var(--sm-mobile-header-logo-size);
     --header-icon-size: var(--sm-mobile-header-icon-size);
     --header-obras-size: var(--sm-mobile-header-obras-size);
 
+    --footer-font-size: var(--sm-footer-font-size);
+    --footer-social-link-size: var(--sm-footer-social-link-size);
+
     --card-title-font-size: var(--sm-card-title-font-size);
     --card-desc-font-size: var(--sm-card-desc-font-size);
-    
     --card-breadcrump-vertical-h3-font-size: var(--sm-card-breadcrump-vertical-h3-font-size);
     --card-nivel-actual-h3-font-size: var(--sm-card-nivel-actual-h3-font-size);
     --card-volver-fija-h3-font-size: var(--sm-card-volver-fija-h3-font-size);
@@ -44,162 +20,153 @@ body[data-layout="mobile"][data-safe-mode="true"] {
     --card-padding: var(--sm-mobile-card-padding);
     --card-gap: var(--sm-mobile-card-gap);
 
+    --detail-vertical-spacing: var(--sm-detail-vertical-spacing);
+    --details-title-slide-font-size: var(--sm-details-title-slide-font-size);
+    --details-text-fragment-font-size: var(--sm-details-text-fragment-font-size);
+    --details-action-btn-font-size: var(--sm-details-action-btn-font-size); 
+    --details-action-btn-size: var(--sm-details-action-btn-size); /* Altura máxima física */
+    --details-action-icon-size: var(--sm-details-action-icon-size);
+    --details-action-text-font-size: var(--sm-details-action-text-font-size);
+    --details-volver-btn-font-size: var(--sm-details-volver-btn-font-size);
+
     --a11y-title-font-size: var(--sm-a11y-title-font-size);
     --a11y-section-font-size: var(--sm-a11y-section-font-size);
     --a11y-close-btn-font-size: var(--sm-a11y-close-btn-font-size);
-    --a11y-close-btn-size: var(--sm-a11y-close-btn-size); /* Touch Target seguro */
+    --a11y-close-btn-size: var(--sm-a11y-close-btn-size);
     --a11y-option-btn-font-size: var(--sm-a11y-option-btn-font-size);
     --a11y-slider-icon-size: var(--sm-a11y-slider-icon-size);
     --a11y-range-value-font-size: var(--sm-a11y-range-value-font-size);
+    --a11y-range-size: var(--sm-a11y-range-size);
+    --a11y-reset-size: var(--sm-a11y-reset-size);
 
-    /* Footer */
-    --footer-font-size: var(--sm-footer-font-size);
-    --footer-social-link-size: var(--sm-footer-social-link-size);
+    --a11y-gap: var(--sm-a11y-gap);
+    --a11y-padding: var(--sm-a11y-padding);
+    --a11y-header-margin: var(--sm-a11y-header-margin);
+    --a11y-section-margin: var(--sm-a11y-section-margin);
+    --a11y-controls-gap: var(--sm-a11y-controls-gap);
+    --a11y-btn-padding: var(--sm-a11y-btn-padding);
+    --a11y-btn-min-width: var(--sm-a11y-btn-min-width);
+    --a11y-slider-thumb-size: var(--sm-a11y-slider-thumb-size);
+    --a11y-slider-height: var(--sm-a11y-slider-height);
 }
 
-/* 2. DESBLOQUEO DE CONTENEDORES PRINCIPALES
-   Deben dejar de medir 100vh para poder empujar el footer hacia abajo */
-body[data-layout="mobile"][data-safe-mode="true"] #app-container,
-body[data-layout="mobile"][data-safe-mode="true"] #vista-central,
-body[data-layout="mobile"][data-safe-mode="true"] #vista-detalle-mobile {
-    position: static !important; /* Deja de flotar sobre el contenido */
-    display: block !important;   /* Simplificamos grids/flex complejos */
-    height: auto !important;
-    overflow: visible !important; /* Permite que el contenido salga */
-    
-    /* Asegura que el footer no se monte encima */
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-body[data-layout="mobile"][data-safe-mode="true"] .a11y-modal-overlay {
-    padding-right: var(--card-padding);
-}
-
-/* 3. TRANSFORMACIÓN DE SWIPERS A LISTA VERTICAL 
-   Esta es la clave para que veas todo el contenido de un vistazo */
-body[data-layout="mobile"][data-safe-mode="true"] #nav-swiper-mobile, 
-body[data-layout="mobile"][data-safe-mode="true"] #detalle-swiper-mobile {
-    height: auto !important;
-    overflow: visible !important;
-    
-    /* 🚨 CRÍTICO: Devuelve el scroll táctil al usuario (arregla el dedo bloqueado) */
-    touch-action: auto !important;
-}
-
-body[data-layout="mobile"][data-safe-mode="true"] .swiper-wrapper {
-    /* Pone los slides uno debajo de otro */
-    display: flex !important;
-    flex-direction: column !important; 
-    height: auto !important;
-    
-    /* Reseteo de transformaciones de Swiper JS */
-    transform: none !important; 
-    box-sizing: border-box !important;
+body[data-layout="mobile"][data-safe-mode="true"] * {
+    /* Preferencia guardada: Sin negritas */
+    font-weight: normal !important;
 }
 
 body[data-layout="mobile"][data-safe-mode="true"] .swiper-slide {
     height: auto !important;
-    width: 100% !important;
-    flex-shrink: 0 !important;
-    display: block !important;
-    margin: 0 !important;
 }
 
 body[data-layout="mobile"][data-safe-mode="true"] .card {
     min-height: auto !important;
 }
 
-/* 4. FOOTER AL FINAL
-   Al ser 'position: relative', si el contenido de arriba crece,
-   el footer baja automáticamente. */
-body[data-layout="mobile"][data-safe-mode="true"] footer {
-    position: relative !important;
-    height: auto !important;
-    width: 100% !important;
-    display: block !important;
-    margin-top: 20px !important;
-
-    padding-right: var(--sm-mobile-card-padding);
-}
-
 body[data-layout="mobile"][data-safe-mode="true"] .footer-social-link {
     display: none !important;
 }
 
-/* 5. CONTROL DE TIPOGRAFÍA (Accesibilidad y Preferencias) */
-body[data-layout="mobile"][data-safe-mode="true"] * {
-    /* 🚨 Preferencia de usuario: NUNCA negritas en los posts/textos */
-    font-weight: normal !important;
+/* 1. Asegurar que el overlay no meta ruido */
+body[data-layout="mobile"][data-safe-mode="true"] .a11y-modal-overlay {
+    padding: 0 !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
 }
 
-/* Ajuste específico para que los títulos no se vean extraños sin negrita */
-body[data-layout="mobile"][data-safe-mode="true"] h1,
-body[data-layout="mobile"][data-safe-mode="true"] h2,
-body[data-layout="mobile"][data-safe-mode="true"] h3 {
-    font-weight: normal !important;
-    /* Un poco más de interlineado ayuda cuando no hay negrita */
-    line-height: 1.4 !important; 
-
-    /* Puntos suspensivos forzados */
-    white-space: normal !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+body[data-layout="mobile"][data-safe-mode="true"] .a11y-modal {
+    max-width: none !important; 
+    
+    margin: 10px auto 40px auto !important;
+    border-radius: 4px !important;
 }
 
-/* 6. HEADER EN FLUJO NATURAL
-   Al cambiarlo a relative, el header ocupa espacio físico y 
-   empuja el contenido hacia abajo. Ya no tapa nada. */
-body[data-layout="mobile"][data-safe-mode="true"] header {
-    left: auto !important;
-    width: 100% !important;
+/* HEADER DEL MODAL */
+body[data-layout="mobile"][data-safe-mode="true"] .a11y-header h2 {
+    /* 🚨 CRÍTICO: Permitir que el título baje de línea si no cabe */
+    white-space: normal !important; 
+    overflow: visible !important;
+    text-overflow: clip !important; /* Quitamos los "..." */
+    line-height: 1.1 !important;
     
-    /* Aseguramos que se vea bien */
-    height: auto !important;
-    min-height: var(--header-height, 50px);
-    
-    /* Opcional: Si quieres que se quede pegado arriba al hacer scroll 
-       cambia 'relative' por 'sticky' y descomenta la siguiente línea: */
-    top: 0 !important; position: sticky !important; z-index: 1000;
-    padding-right: var(--sm-mobile-card-padding);
+    /* Permitir que el texto ocupe todo el ancho */
+    flex: 1 1 auto !important;
 }
 
-body[data-layout="mobile"][data-safe-mode="true"] header h1 {
-    /* 1. ACTIVAR EL MOTOR DE RECORTE (Igual que en tus cards) */
-    display: -webkit-box !important;
-    -webkit-box-orient: vertical !important;
-    
-    /* 2. CONFIGURACIÓN DE LÍNEAS */
-    /* Cuántas líneas permites antes de cortar? 2 suele ser ideal para header */
-    -webkit-line-clamp: 2 !important; 
-    line-clamp: 2 !important;
-    
-    /* 3. COMPORTAMIENTO DEL TEXTO */
-    white-space: normal !important; /* Permite saltar de línea */
-    overflow: hidden !important;    /* Oculta lo que sobre */
-    text-overflow: ellipsis !important; /* Pone los puntos ... */
-    
-    /* 4. AJUSTES VISUALES */
-    /* Quitamos el centrado flex anterior porque choca con -webkit-box */
-    text-align: center !important; 
-    width: 100% !important;
-    max-width: 100% !important;
-    
-    /* Aseguramos que el texto rompa si es una palabra kilométrica */
-    word-break: break-word !important; 
-    overflow-wrap: anywhere !important; 
-    
-    /* Reset de alturas para que el clamp funcione */
-    height: auto !important;
-    max-height: none !important;
-    
-    /* Ajuste fino de márgenes */
-    margin: 0 auto !important;
+/* SECCIONES Y TÍTULOS */
+body[data-layout="mobile"][data-safe-mode="true"] .a11y-section h3 {
+    white-space: normal !important; /* "Tamaño Texto" en dos líneas si hace falta */
+    overflow: visible !important;
+    line-height: 1.1 !important;
+    margin-bottom: 5px !important;
 }
 
-/* Ajuste para el enlace dentro del H1 para que no rompa el bloque */
-body[data-layout="mobile"][data-safe-mode="true"] header h1 a {
-    display: inline !important; /* Vital para que el texto fluya dentro del box */
+/* CONTROLES (BOTONES SANS/SERIF) */
+body[data-layout="mobile"][data-safe-mode="true"] .a11y-controls-group {
+    flex-wrap: wrap !important; /* Asegurar que envuelvan */
+}
+
+body[data-layout="mobile"][data-safe-mode="true"] .a11y-option-btn {
+    /* Que el texto dentro del botón también pueda saltar de línea */
+    white-space: normal !important; 
+    text-align: center !important;
+    line-height: 1.1 !important;
+    height: auto !important; /* Permitir que el botón crezca verticalmente */
+    min-width: 0 !important;
+}
+
+/* SLIDERS (RANGE WRAPPER) - LA PARTE MÁS DIFÍCIL */
+body[data-layout="mobile"][data-safe-mode="true"] .a11y-range-wrapper {
+    display: flex !important;
+    flex-wrap: wrap !important; /* Permite crear la 2ª fila */
+    justify-content: space-between !important; /* Icono Izq - Valor Centro - Icono Der */
+    align-items: center !important;
+    gap: 0px !important; /* Sin gap horizontal extra, usamos space-between */
+}
+
+body[data-layout="mobile"][data-safe-mode="true"] input[type=range].a11y-range {
+    /* El slider debe ocupar toda la fila si es necesario */
+    flex: 1 1 100% !important; 
+    min-width: 100% !important;
+    margin: 5px 0 !important; /* Separación vertical */
+    order: 2; /* Forzarlo debajo de los iconos pequeños si se rompe la línea */
+}
+
+/* Los iconos "A" pequeños */
+body[data-layout="mobile"][data-safe-mode="true"] .range-icon-small,
+body[data-layout="mobile"][data-safe-mode="true"] .range-icon-large,
+body[data-layout="mobile"][data-safe-mode="true"] .a11y-range-wrapper span[aria-hidden="true"],
+body[data-layout="mobile"][data-safe-mode="true"] .a11y-range-value {
+    order: 1 !important; /* Se mantienen en la primera fila */
+    width: auto !important;
+    flex: 0 1 auto !important; /* Solo ocupan lo que necesiten */
+    
+    /* Reset de márgenes */
+    margin: 0 !important;
+    line-height: 1.2 !important;
+}
+
+/* CENTRADO DEL VALOR (El texto "100%" o "Normal") */
+body[data-layout="mobile"][data-safe-mode="true"] .a11y-range-value {
+    text-align: center !important;
+    flex-grow: 1 !important; /* Empuja los iconos a los extremos */
+}
+
+/* 3. FILA INFERIOR: EL SLIDER (Elemento 4 del HTML) */
+body[data-layout="mobile"][data-safe-mode="true"] input[type=range].a11y-range {
+    /* FORZAMOS LA NUEVA LÍNEA */
+    order: 2 !important; 
+    width: 100% !important; 
+    flex-basis: 100% !important; 
+    
+    /* Espacio vital para dibujarse */
+    margin-top: 8px !important; 
+    margin-bottom: 5px !important;
+    height: 6px !important;
+    
+    /* Aseguramos que no se oculte */
+    display: block !important;
+    opacity: 1 !important;
 }
 
 /* --- styles/style-safe-mode.css --- */
