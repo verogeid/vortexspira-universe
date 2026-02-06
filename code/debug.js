@@ -13,10 +13,10 @@ export const DEBUG_LEVELS = {
 };
 
 export const DEBUG_CONFIG = {
-    global: DEBUG_LEVELS.DISABLED,
+    global: DEBUG_LEVELS.DEEP,
     global_focus: DEBUG_LEVELS.DISABLED,
-    global_font: DEBUG_LEVELS.DEEP,
-    global_layout: DEBUG_LEVELS.DEEP,
+    global_font: DEBUG_LEVELS.DISABLED,
+    global_layout: DEBUG_LEVELS.DISABLED,
     global_key: DEBUG_LEVELS.DISABLED,
     global_mouse: DEBUG_LEVELS.DISABLED,
     
@@ -33,15 +33,15 @@ export const DEBUG_CONFIG = {
     // Módulos de Teclado
     nav_keyboard_base: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para ver el listener keydown global ⭐️
     nav_keyboard_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para la lógica de cursor en detalle ⭐️
-    nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
+    nav_keyboard_swipe: DEBUG_LEVELS.DEEP,
 
     // Módulos de Mouse
     nav_mouse_details: DEBUG_LEVELS.DISABLED, // Excluir rueda de ratón en detalle
-    nav_mouse_swipe: DEBUG_LEVELS.DISABLED,   // Excluir arrastre en menús
+    nav_mouse_swipe: DEBUG_LEVELS.DEEP,   // Excluir arrastre en menús
     
     render_base: DEBUG_LEVELS.DISABLED,
     render_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para inicialización de Swiper de detalle ⭐️
-    render_swipe: DEBUG_LEVELS.DISABLED
+    render_swipe: DEBUG_LEVELS.BASIC
 };
 
 /* ============================================================

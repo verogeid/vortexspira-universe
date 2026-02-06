@@ -70,35 +70,26 @@ export function _handleSwipeNavigation(key, appInstance) {
                 // A. Movimiento Interno: Subir en la misma columna
                 const prevCard = columnCards[currentRowIndex - 1];
                 if (prevCard) {
-                    const newGlobalIndex = allValidCards.indexOf(prevCard);
-                    if (newGlobalIndex !== -1) {
-                        app.STATE.currentFocusIndex = newGlobalIndex;
-                        app._updateFocus(false); // No mover slide, es interno
+                    // 🟢 FIX: Usar data-pos para movimiento vertical interno
+                    const newPos = parseInt(prevCard.dataset.pos, 10);
+                    if (!isNaN(newPos)) {
+                        app.STATE.currentFocusIndex = newPos;
+                        app._updateFocus(false);
                     }
                 }
             } else {
-                // B. Extremo Superior (Techo de la columna)
+                // B. Extremo Superior
                 if (app.STATE.currentFocusIndex === 0) {
-                    // SI: Giramos el carrusel hacia atrás (Loop)
                     app.STATE.forceFocusRow = 'last'; 
-
                     debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, 
                                 "NAV: Inicio Absoluto -> Slide Anterior (Loop)");
-                    
-                    // 🔓 NO BLOQUEAMOS: Necesitamos que handleSlideChangeEnd resuelva el destino y aplique Skipper
                     swiper.isKeyboardLockedFocus = false; 
-                    
                     swiper.slidePrev(data.SWIPER.SLIDE_SPEED);
                 } else {
-                    // NO: Vamos al elemento anterior (base de la columna previa)
                     app.STATE.currentFocusIndex--;
-                    
-                    // 🔒 BLOQUEAMOS: Sabemos exactamente dónde vamos, no queremos interferencias
                     swiper.isKeyboardLockedFocus = true;
-
                     debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, 
                                 "🔒 FLAG: isKeyboardLockedFocus = true (Columna Anterior)");
-                    
                     app._updateFocus(true); 
                 }
             }
@@ -106,38 +97,30 @@ export function _handleSwipeNavigation(key, appInstance) {
 
         case 'ArrowDown':
             if (currentRowIndex < totalRowsInColumn - 1) {
-                // A. Movimiento Interno: Bajar en la misma columna
+                // A. Movimiento Interno
                 const nextCard = columnCards[currentRowIndex + 1];
                 if (nextCard) {
-                    const newGlobalIndex = allValidCards.indexOf(nextCard);
-                    if (newGlobalIndex !== -1) {
-                        app.STATE.currentFocusIndex = newGlobalIndex;
-                        app._updateFocus(false); // No mover slide
+                    // 🟢 FIX: Usar data-pos para movimiento vertical interno
+                    const newPos = parseInt(nextCard.dataset.pos, 10);
+                    if (!isNaN(newPos)) {
+                        app.STATE.currentFocusIndex = newPos;
+                        app._updateFocus(false);
                     }
                 }
             } else {
-                // B. Extremo Inferior (Suelo de la columna)
+                // B. Extremo Inferior
+                // Usamos allValidCards.length como límite lógico aproximado, asumiendo data-pos secuencial
                 if (app.STATE.currentFocusIndex >= allValidCards.length - 1) {
-                    // SI: Giramos el carrusel hacia adelante (Loop)
                     app.STATE.forceFocusRow = 0; 
-
                     debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, 
                                 "NAV: Fin Absoluto -> Slide Siguiente (Loop)");
-                    
-                    // 🔓 NO BLOQUEAMOS
                     swiper.isKeyboardLockedFocus = false;
-                    
                     swiper.slideNext(data.SWIPER.SLIDE_SPEED);
                 } else {
-                    // NO: Vamos al elemento siguiente (tope de la columna próxima)
                     app.STATE.currentFocusIndex++;
-                    
-                    // 🔒 BLOQUEAMOS
                     swiper.isKeyboardLockedFocus = true;
-
                     debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, 
                                 "🔒 FLAG: isKeyboardLockedFocus = true (Columna Siguiente)");
-                    
                     app._updateFocus(true); 
                 }
             }

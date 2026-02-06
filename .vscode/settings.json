@@ -1,0 +1,7 @@
+{
+    "terminal.integrated.accessibleViewFocusOnCommandExecution": true,
+    "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+    "editor.codeActionsOnSave": {
+        
+    }
+}

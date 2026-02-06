@@ -114,28 +114,23 @@ export function handleSlideChangeEnd(swiper) {
     const newFocusCard = this.findBestFocusInColumn(columnCards, targetRow);
     
     if (newFocusCard) {
-        const allValidCards = Array.from(this.DOM.track.querySelectorAll('.card:not([data-tipo="relleno"])'));
-        const newGlobalIndex = allValidCards.indexOf(newFocusCard);
-        
-        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, 
-                    `Candidato Foco: ID=${newFocusCard.dataset.id} | GlobalIdx=${newGlobalIndex} | CurrentIdx=${this.STATE.currentFocusIndex}`);
-        
-        if (newGlobalIndex > -1) {
-            // Aunque el índice lógico sea el mismo (ej. 0), la tarjeta FÍSICA ha cambiado (es un clon o está en otro slide).
-            // SIEMPRE debemos forzar la actualización física (_updateFocus) para traer el "halo" y el foco del navegador a la nueva tarjeta.
-            
-            if (this.STATE.currentFocusIndex !== newGlobalIndex) {
-                debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.IMPORTANT, 
-                            `🚨 CORRIGIENDO FOCO: ${this.STATE.currentFocusIndex} -> ${newGlobalIndex}`);
+        // 🟢 FIX CRÍTICO: Usar 'data-pos' (Lógico) en lugar de indexOf (Físico)
+        // Esto inmuniza la lógica contra los clones de Swiper Loop.
+        const newLogicalIndex = parseInt(newFocusCard.dataset.pos, 10);
 
-                this.STATE.currentFocusIndex = newGlobalIndex;
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, 
+                    `Candidato Foco: ID=${newFocusCard.dataset.id} | LogicalPos=${newLogicalIndex} | CurrentIdx=${this.STATE.currentFocusIndex}`);
+
+        if (!isNaN(newLogicalIndex)) {
+            if (this.STATE.currentFocusIndex !== newLogicalIndex) {
+                debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.IMPORTANT, 
+                            `🚨 CORRIGIENDO FOCO: ${this.STATE.currentFocusIndex} -> ${newLogicalIndex}`);
+
+                this.STATE.currentFocusIndex = newLogicalIndex;
             } else {
                 debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, 
                             `Foco estable (Lógico). Re-sincronizando físico.`);
             }
-
-            // Llamamos a _updateFocus(false) para mover la clase .focus-visible y el foco nativo .focus()
-            // sin provocar otro slide (false).
             this._updateFocus(false); 
         }
     } else {

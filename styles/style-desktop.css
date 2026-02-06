@@ -3,7 +3,7 @@
 /* @media (min-width: 1024px) */
 body[data-layout="desktop"] #app-container {
     height: auto !important;
-    min-height: calc(100dvh - var(--header-height-real, 50px) - var(--footer-height-real, --footer-height));;
+    min-height: var(--app-container-min-height);
 
     width: 100%; max-width: 4000px; margin: 0 auto;
 

@@ -13,6 +13,8 @@ export function _generateCardHTML_Carousel(items, itemsPerSlide) {
 
     const totalItems = items.length;
     let totalSlotsDeseados = Math.ceil(totalItems / itemsPerSlide) * itemsPerSlide; 
+
+    
     if (totalSlotsDeseados < (data.SWIPER.NEEDED_SLIDES_TO_LOOP * itemsPerSlide)) totalSlotsDeseados = (data.SWIPER.NEEDED_SLIDES_TO_LOOP * itemsPerSlide);
 
     const itemsConRelleno = [...items];
