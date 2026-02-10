@@ -40,7 +40,8 @@ class VortexSpiraApp {
             activeCourseId: null, 
             lastDetailFocusIndex: 0, 
             isNavigatingBack: false, 
-            isUIBlocked: false
+            isUIBlocked: false,
+            isBooting: true
         };
         window.App = this; 
         
@@ -73,6 +74,9 @@ class VortexSpiraApp {
         debug.logClear();
         debug.logDebugLevels();
         
+        // Mantenemos isBooting = true por defecto desde el constructor
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, "🚀 Iniciando App (Modo Silencioso activado)...");
+
         debug_diagnostics._setupGlobalClickListener();
         debug_diagnostics._setupFocusTracker();
         debug_diagnostics._setupFocusMethodInterceptor();
@@ -198,16 +202,22 @@ class VortexSpiraApp {
         
         this.STATE.initialRenderComplete = true; 
 
-        debug.log('app', debug.DEBUG_LEVELS.BASIC, "Carga inicial completada.");
+        // 🟢 FIN DE LA SECUENCIA DE ARRANQUE
+        // Damos un pequeño respiro para que el DOM se asiente y el anuncio de "Nivel Raíz" salga primero.
+        setTimeout(() => {
+            document.body.classList.add('app-loaded');
+            
+            // 🔓 Liberamos el flag de arranque
+            this.STATE.isBooting = false;
+            debug.log('app', debug.DEBUG_LEVELS.BASIC, "🔓 App cargada. Activando foco real.");
 
-        requestAnimationFrame(() => {
-            setTimeout(() => {
-                document.body.classList.add('app-loaded');
-                // Diagnóstico inicial
-                debug_diagnostics.runFontDiagnostics?.();
-                debug_diagnostics.runLayoutDiagnostics?.();
-            }, 100); 
-        });
+            // 🔥 Forzamos el primer foco real (ahora sí hablará el SR)
+            // Usamos 'false' para no animar/deslizar, solo focalizar.
+            this._updateFocus(false);
+
+            debug_diagnostics.runFontDiagnostics?.();
+            debug_diagnostics.runLayoutDiagnostics?.();
+        }, 200); // 200ms es imperceptible visualmente pero suficiente para ordenar eventos A11y
 
         this._injectA11yAnnouncer();
     }
@@ -282,6 +292,16 @@ class VortexSpiraApp {
         if (!this.DOM.toast) 
             return;
 
+        // 🟢 ANTI-SPAM DE TOAST
+        // Si el mensaje es idéntico al que ya se muestra y el toast está activo,
+        // no hacemos NADA (ni siquiera reiniciamos el timer, para que no sea eterno si se spamea).
+        // Esto evita que el lector de pantalla lea 8 veces "Columna vacía".
+        if (this.DOM.toast.classList.contains('active') && this.DOM.toast.textContent === message) {
+            debug.log('app', debug.DEBUG_LEVELS.DEEP, `🚫 Toast duplicado ignorado: "${message}"`);
+
+            return;
+        }
+
         // 1. Bloquear UI
         this.STATE.isUIBlocked = true;
         document.body.classList.add('ui-blocked'); // Útil para CSS (cursor: wait)
@@ -328,7 +348,8 @@ class VortexSpiraApp {
 
     // 🟢 NUEVO: Inyectar contenedor exclusivo para voz
     _injectA11yAnnouncer() {
-        if (document.getElementById('a11y-announcer')) return;
+        if (document.getElementById('a11y-announcer')) 
+            return;
         
         // Creamos un div que siempre está "vivo" para el lector
         const announcer = document.createElement('div');
@@ -355,9 +376,21 @@ class VortexSpiraApp {
 
     // 🟢 FIX A11Y: Usar el canal dedicado
     announceA11y(message) {
-        if (!this.DOM.announcer) this._injectA11yAnnouncer();
+        if (!this.DOM.announcer) 
+            this._injectA11yAnnouncer();
         
         const el = this.DOM.announcer;
+
+        // 🟢 ANTI-SPAM DE ANNOUNCER
+        // Si el mensaje es idéntico al que ya se muestra,
+        // no hacemos NADA
+        // Esto evita que el lector de pantalla lea 8 veces "Columna vacía".
+        if (el && el.textContent === message) {
+            debug.log('app', debug.DEBUG_LEVELS.DEEP, `🚫 Announcer duplicado ignorado: "${message}"`);
+            
+            return;
+        }
+
         el.textContent = ''; // Limpiar para provocar evento de cambio
         
         setTimeout(() => {
@@ -365,6 +398,14 @@ class VortexSpiraApp {
             
             debug.log('app', debug.DEBUG_LEVELS.DEEP, `🗣️ Locutor: "${message}"`);
         }, 50);
+    }
+
+    announceA11yStop() {
+        if (this.DOM.announcer) {
+            this.DOM.announcer.textContent = '';
+
+            debug.log('a11y', debug.DEBUG_LEVELS.DEEP, `🗣️ Locutor detenido.`);
+        }
     }
 
     _syncHeaderDimensions() {

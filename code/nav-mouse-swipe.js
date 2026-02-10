@@ -82,14 +82,14 @@ export function handleSlideChangeEnd(swiper) {
                     `SWIPE: Columna vacía. Saltando (${_swipeDirection})...`);
 
         // 🟢 A11Y FIX: Notificar al usuario que estamos saltando una zona vacía
-        this.showToast(this.getString('toast.skipColumn'), null);
+        this.announceA11y(this.getString('toast.skipColumn'), 'assertive');
 
         _swipeDirection === 'next' ? swiper.slideNext(data.SWIPER.SLIDE_SPEED) : swiper.slidePrev(data.SWIPER.SLIDE_SPEED);
         return; 
     }
 
     // 🟢 Si hemos llegado hasta aquí, es que hay contenido. Ocultamos el aviso de salto.
-    this.hideToast();
+    this.announceA11yStop();
 
     // ⭐️ CÁLCULO DE FOCO DESTINO ⭐️
     let targetRow;
@@ -132,6 +132,19 @@ export function handleSlideChangeEnd(swiper) {
                             `Foco estable (Lógico). Re-sincronizando físico.`);
             }
             this._updateFocus(false); 
+
+            // 🚀 SILENT RESET (EL TRUCO DE MAGIA) 🚀
+            // Si estamos en un "Clon" (activeIndex != realIndex ajustado), volvemos al original SIN animación.
+            // Esto evita que los índices crezcan y asegura que siempre estemos en territorio seguro.
+            // Swiper loop mode intenta hacerlo, pero a veces falla en saltos rápidos. Lo forzamos aquí.
+            if (swiper.params.loop) {
+                // Pequeño delay para dejar que el renderizado del foco termine
+                requestAnimationFrame(() => {
+                    swiper.slideToLoop(swiper.realIndex, 0); // 0ms = Instantáneo
+                    debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, 
+                        `🔄 SILENT LOOP FIX: Reubicado en slide lógico ${swiper.realIndex}`);
+                });
+            }
         }
     } else {
         debug.logWarn('nav_mouse_swipe', 

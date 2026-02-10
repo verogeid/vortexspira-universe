@@ -13,7 +13,7 @@ export const DEBUG_LEVELS = {
 };
 
 export const DEBUG_CONFIG = {
-    global: DEBUG_LEVELS.DEEP,
+    global: DEBUG_LEVELS.BASIC,
     global_focus: DEBUG_LEVELS.DISABLED,
     global_font: DEBUG_LEVELS.DISABLED,
     global_layout: DEBUG_LEVELS.DISABLED,
@@ -23,7 +23,7 @@ export const DEBUG_CONFIG = {
     app: DEBUG_LEVELS.DISABLED,
     data: DEBUG_LEVELS.DISABLED,
     i18n: DEBUG_LEVELS.DISABLED,
-    a11y: DEBUG_LEVELS.DISABLED,
+    a11y: DEBUG_LEVELS.EXTREME,
     nav_stack: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Detalle
@@ -33,15 +33,15 @@ export const DEBUG_CONFIG = {
     // Módulos de Teclado
     nav_keyboard_base: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para ver el listener keydown global ⭐️
     nav_keyboard_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para la lógica de cursor en detalle ⭐️
-    nav_keyboard_swipe: DEBUG_LEVELS.DEEP,
+    nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Mouse
     nav_mouse_details: DEBUG_LEVELS.DISABLED, // Excluir rueda de ratón en detalle
-    nav_mouse_swipe: DEBUG_LEVELS.DEEP,   // Excluir arrastre en menús
+    nav_mouse_swipe: DEBUG_LEVELS.DISABLED,   // Excluir arrastre en menús
     
     render_base: DEBUG_LEVELS.DISABLED,
     render_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para inicialización de Swiper de detalle ⭐️
-    render_swipe: DEBUG_LEVELS.BASIC
+    render_swipe: DEBUG_LEVELS.DISABLED
 };
 
 /* ============================================================
@@ -127,6 +127,15 @@ export function logError(moduleName, ...args) {
 export function logGroupCollapsed(moduleName, requiredLevel, ...args) {
     if (DEBUG_CONFIG[moduleName] >= requiredLevel && !IS_PRODUCTION) {
         _printWithPrefix(console.groupCollapsed, moduleName, args);
+    }
+}
+
+/**
+ * Inicia un grupo expandido.
+ */
+export function logGroupExpanded(moduleName, requiredLevel, ...args) {
+    if (DEBUG_CONFIG[moduleName] >= requiredLevel && !IS_PRODUCTION) {
+        _printWithPrefix(console.group, moduleName, args);
     }
 }
 

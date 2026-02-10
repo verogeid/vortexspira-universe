@@ -81,12 +81,31 @@ export function _updateFocusImpl(shouldSlide = true) {
     // 🛡️ SAFETY CHECK: Verificar si existen elementos interactivos antes de hacer nada
     // Evita bucles infinitos o errores si una carpeta está vacía.
     const hasFocusables = this.DOM.track.querySelector('.card:not([data-tipo="relleno"])');
+
     if (!hasFocusables) {
+        // 🟢 FIX 1: Silenciar errores durante el redimensionado visual (Clase CSS)
+        const isResizing = document.body.classList.contains('resize-animation-stopper');
+
+        // 🟢 FIX 2: Silenciar errores (y foco) durante el arranque (isBooting) o hidratación
+        if (this.STATE.isHydrating || isResizing || this.STATE.isBooting) {
+            debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 
+                'Track vacío o inestable ignorado durante transición (Boot/Resize).');
+
+            return;
+        }
+
         debug.logWarn('nav_base', 
                         '⚠️ CRITICAL: Track vacío o solo rellenos. Abortando foco.');
 
-        // Opcional: Mostrar toast de aviso si es necesario
-        this.showToast(this.getString('toast.emptyNav'));
+        return;
+    }
+
+    // 🟢 FIX 3: Bloqueo de foco en arranque
+    // Aunque el track tenga elementos, si estamos 'booteando', NO ponemos el foco aún.
+    // Esto evita que el screen reader lea 3 veces lo mismo. Esperamos a que app.js libere el flag.
+    if (this.STATE.isBooting) {
+        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
+            'Ignorando _updateFocus durante el arranque (Silencio A11y).');
 
         return;
     }
@@ -146,7 +165,9 @@ export function _updateFocusImpl(shouldSlide = true) {
         // Si el navegador ya tiene el foco en este elemento, NO llamamos a .focus() de nuevo.
         // Esto elimina el "tartamudeo" del lector de pantalla.
         if (document.activeElement === target) {
-            debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, `_updateFocusImpl: Foco ya establecido. Ignorando llamada redundante.`);
+            debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
+                        `_updateFocusImpl: Foco ya establecido. Ignorando llamada redundante.`);
+            
             return; 
         }
 

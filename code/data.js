@@ -23,7 +23,7 @@ export const URL = {
     LICENSE: "http://creativecommons.org/licenses/by-nc-nd/4.0/",
     LICENSE_IMG_SRC: "https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png",
     LANDING_PAGE: "https://subscribepage.io/vortexspira",
-    DEV_DIARY: "https://github.com/verogeid/vortexspira",
+    DEV_DIARY: "https://github.com/verogeid/vortexspira-devdiary",
     WEBPAGE: "https://www.vortexspira.com"
 }
 

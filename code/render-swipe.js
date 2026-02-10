@@ -58,6 +58,11 @@ export function _initCarousel_Swipe(initialSwiperSlide, itemsPorColumna, isMobil
         spaceBetween: data.SWIPER.CARD_GAP_PX,
         
         loop: true,
+
+        loopedSlides: data.SWIPER.NEEDED_SLIDES_TO_LOOP * 2,
+        preloadImages: true,
+        watchSlidesProgress: false,
+
         centeredSlides: true,
         initialSlide: initialSwiperSlide, 
         

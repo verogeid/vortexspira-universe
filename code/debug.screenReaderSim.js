@@ -36,7 +36,7 @@ export function enableScreenReaderSimulator() {
         const logStyle = "color: #fff; background: #005cc5; padding: 4px 8px; border-radius: 4px; font-size: 12px;";
         const textStyle = "font-weight: bold; color: #fff; font-size: 13px;";
         
-        debug.logGroupCollapsed('a11y', debug.DEBUG_LEVELS.EXTREME, 
+        debug.logGroupExpanded('a11y', debug.DEBUG_LEVELS.EXTREME, 
                                 `%c👉 FOCO`, logStyle, ` ${name || 'SIN NOMBRE'} `);
 
         debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
@@ -131,7 +131,7 @@ function _announceElement(el) {
     const textStyle = "font-weight: bold; color: #fff; font-size: 13px;";
     
     // Aquí es donde el simulador te dice la verdad: Nombre + Estado
-    debug.logGroupCollapsed('a11y', debug.DEBUG_LEVELS.EXTREME, 
+    debug.logGroupExpanded('a11y', debug.DEBUG_LEVELS.EXTREME, 
                             `%c👉 FOCO`, logStyle, ` ${name || 'SIN NOMBRE'}${titleSuffix} `);
     
     debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, `%cTexto: "${name}"`, textStyle);

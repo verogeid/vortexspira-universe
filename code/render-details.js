@@ -29,11 +29,20 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
         freeMode: true,
         freeModeMomentum: true,
         freeModeSticky: true,
+
+        // 🟢 FIX 1: Desactivar la gestión A11y de Swiper para evitar conflictos
+        a11y: { enabled: false }
     };
 
     appInstance.STATE.detailCarouselInstance = new Swiper(document.querySelector(swiperId), swiperConfig);
 
     if (appInstance.STATE.detailCarouselInstance) {
+        // 🟢 FIX 2: Asegurar silencio absoluto en el wrapper generado
+        if (appInstance.STATE.detailCarouselInstance.wrapperEl) {
+            appInstance.STATE.detailCarouselInstance.wrapperEl.removeAttribute('aria-live');
+            appInstance.STATE.detailCarouselInstance.wrapperEl.removeAttribute('aria-busy');
+        }
+
         appInstance.STATE.detailCarouselInstance.on('slideChangeTransitionEnd', (swiper) => {
             nav_base_details._handleSlideChangeEnd(swiper, appInstance);
         });
@@ -76,6 +85,13 @@ export function _mostrarDetalle(cursoId) {
     this.DOM.vistaDetalle.classList.add('active');
 
     this.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop'); 
+    
+    // 🟢 FIX 3: Silenciar el track ANTES de inyectar contenido para evitar lectura masiva
+    if (this.DOM.detalleTrack) {
+        this.DOM.detalleTrack.removeAttribute('aria-live');
+        this.DOM.detalleTrack.removeAttribute('role'); // Dejarlo como div genérico o list
+    }
+
     const swiperId = isMobile ? '#detalle-swiper-mobile' : '#detalle-swiper-desktop';
 
     // Gestión de paneles laterales (Volver e Info) para Desktop/Tablet
@@ -208,10 +224,12 @@ export function _mostrarDetalle(cursoId) {
     // Renderizar los slides procesados
     if (slidesContent.length > 0) {
         // Slide 1: Título + Primer contenido
+        // El H2 NO es focusable por sí mismo, se lee al llegar al fragmento o por contexto.
+        // Hacemos que el fragmento sea el 'document' focusable.
         slidesHtml += `
             <div class="swiper-slide">
-                <h2 class="detail-title-slide">${curso.titulo}</h2>
-                <div class="detail-text-fragment" data-index="0" role="document" tabindex="0" onclick="this.focus()">
+                <h2 class="detail-title-slide" aria-hidden="true">${curso.titulo}</h2>
+                <div class="detail-text-fragment" data-index="0" role="article" tabindex="0" onclick="this.focus()">
                     <div class="content-wrapper">
                         ${slidesContent[0]}
                     </div>
@@ -223,7 +241,7 @@ export function _mostrarDetalle(cursoId) {
         for (let i = 1; i < slidesContent.length; i++) {
             slidesHtml += `
                 <div class="swiper-slide">
-                    <div class="detail-text-fragment" data-index="${i}" role="document" tabindex="0" onclick="this.focus()">
+                    <div class="detail-text-fragment" data-index="${i}" role="article" tabindex="0" onclick="this.focus()">
                         <div class="content-wrapper">
                             ${slidesContent[i]}
                         </div>
@@ -246,13 +264,28 @@ export function _mostrarDetalle(cursoId) {
             // 1. Calculamos el estado antes para limpiar el template
             const isDisabled = !enlace.url || enlace.url === '#';
 
+            // 🟢 FIX 5: Evitar foco en elemento oculto deshabilitado.
+            // Añadimos 'pointer-events: none' si está deshabilitado para que el click 
+            // pase al padre (que sí es un elemento válido para el foco).
+            const style = isDisabled ? 'style="pointer-events: none;"' : '';
+
             slidesHtml += `
                 <div class="swiper-slide detail-action-slide">
-                    <div class="detail-action-item" onclick="App._handleActionRowClick(event)" tabindex="0" role="listitem">
-                        <span id="${textId}" class="detail-action-text">${enlace.texto}</span>
+                    <div class="detail-action-item" 
+                        onclick="App._handleActionRowClick(event)" 
+                        tabindex="0" 
+                        role="button" 
+                        aria-labelledby="${textId}">
+                        
+                        <span id="${textId}" 
+                            class="detail-action-text">
+                            ${enlace.texto}
+                        </span>
                         
                         <a ${isDisabled ? 'role="link" aria-disabled="true"' : `href="${enlace.url}" target="_blank"`} 
-                            aria-labelledby="${textId}"
+                            tabindex="-1"
+                            aria-hidden="true"
+                            ${style}
                             class="detail-action-btn ${isDisabled ? 'disabled' : ''}">
                             <i class="action-icon ${isDisabled ? 'icon-vacio' : iconClass}"></i>
                         </a>
@@ -263,7 +296,9 @@ export function _mostrarDetalle(cursoId) {
     }
 
     if (isMobile) {
-        slidesHtml += `<div class="swiper-slide card-relleno-final" style="height: 100px !important; pointer-events: none;"></div>`;
+        slidesHtml += `<div class="swiper-slide card-relleno-final" 
+                            style="height: 100px !important; pointer-events: none;" 
+                            aria-hidden="true"></div>`;
     }
 
     if (this.DOM.detalleTrack) {
@@ -272,6 +307,11 @@ export function _mostrarDetalle(cursoId) {
 
     _initDetailCarousel(this, swiperId, 0);
 
+    // 🟢 FIX 4: Anuncio de Contexto
+    // En lugar de dejar que el HTML hable solo, lo anunciamos explícitamente.
+    const mensajeContexto = `${this.getString('nav.contextPrefix') || 'Curso: '} ${curso.titulo}`;
+    this.announceA11y(mensajeContexto);
+    
     setTimeout(() => {
         let targetElement = null;
 
