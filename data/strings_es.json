@@ -39,7 +39,7 @@
         "aria": {
             "license": "Ver licencia Creative Commons CC BY-NC-ND 4.0",
             "linkedin": "Visitar perfil de LinkedIn de Diego González Fernández",
-            "github": "Ver Dev Diary en GitHub",
+            "github": "Ir al Diario de Desarrollo en GitHub",
             "landing": "Ir a la Landing Page"
         }
     },
@@ -54,6 +54,7 @@
     },
     "modal": {
         "title": "Accesibilidad",
+        "opened": "Configuración de accesibilidad abierta",
         "close": "Cerrar configuración",
         "reset": "Restaurar valores por defecto",
         "sections": {
@@ -72,6 +73,7 @@
             "wide": "Amplio"
         },
         "aria": {
+            "font": "Tipografía: ",
             "textSize": "Tamaño de texto",
             "lineSpacing": "Espaciado de línea"
         }

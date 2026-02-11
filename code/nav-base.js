@@ -25,20 +25,41 @@ function _setupGlobalClickRecovery() {
     document.addEventListener('click', (e) => {
         const target = e.target;
         const interactive = target.closest('a, button, input, textarea, select, summary, [tabindex]:not([tabindex="-1"])');
+
+        // 1. Si el usuario clicó en algo interactivo, dejamos que el navegador haga su trabajo.
         if (interactive) {
             interactive.focus({ preventScroll: true });
             return;
         }
 
-        const zone = target.closest('#app-header, footer, #info-adicional, #vista-volver');
+        // 2. RECUPERACIÓN DE FOCO EN ZONAS SEGURAS
+        // Si clicamos en el fondo vacío de una zona segura (Header, Footer, ModalOverlay),
+        // buscamos el primer elemento interactivo y le damos el foco para que no se pierda.
+        const zone = target.closest('#app-header, footer, #info-adicional, #vista-volver, #a11y-modal-overlay');
+
         if (zone) {
+            // Verificar si el modal está abierto para no romper la trampa de foco
+            const isModalOpen = document.getElementById('a11y-modal-overlay')?.classList.contains('active');
+            const isClickInModal = zone.id === 'a11y-modal-overlay';
+
+            // 🛑 CONDICIÓN DEL USUARIO: "Solo si no estamos en el modal" (o si el clic ES en el modal)
+            // Si el modal está abierto, y el clic NO fue en el modal (header de fondo?), ABORTAMOS.
+            if (isModalOpen && !isClickInModal) {
+                return;
+            }
+
             const focusable = zone.querySelector('a, button, input, textarea, select, summary, [tabindex]:not([tabindex="-1"])');
             if (focusable) {
+                // 🟢 RESTAURAR FOCO: "Obviamente quiero que vuelva..."
                 focusable.focus({ preventScroll: true });
                 return; 
             }
         }
+        
+        // 3. RECUPERACIÓN GLOBAL (Fallback al Swiper)
+        // Solo si NO hay modal abierto.
         const isNavActive = this.DOM.vistaNav && this.DOM.vistaNav.classList.contains('active');
+        if (document.getElementById('a11y-modal-overlay')?.classList.contains('active')) return;
 
         if (isNavActive && 
             (document.activeElement === document.body || !document.activeElement)) {
@@ -74,6 +95,15 @@ export function _handleVolverClick() {
 };
 
 export function _updateFocusImpl(shouldSlide = true) {
+    // Si el modal de accesibilidad está abierto, la navegación principal tiene prohibido
+    // robar el foco, aunque se haya redibujado el fondo por un cambio de fuente.
+    if (document.getElementById('a11y-modal-overlay')?.classList.contains('active')) {
+        debug.log('global_focus', debug.DEBUG_LEVELS.DEEP, 
+            '🛡️ _updateFocus bloqueado: Modal A11y está activo.');
+
+        return;
+    }
+
     const targetPos = this.STATE.currentFocusIndex;
     let target = null;
     let targetSlideIndex = -1;
@@ -145,6 +175,7 @@ export function _updateFocusImpl(shouldSlide = true) {
     // 🟢 1. LIMPIEZA SELECTIVA
     // Solo quitamos clases a los que NO son el target para evitar parpadeos
     const allCardsInTrack = Array.from(this.DOM.track.querySelectorAll('.card'));
+
     allCardsInTrack.forEach(c => { 
         if (c !== target) {
             c.classList.remove('focus-visible'); 
@@ -245,7 +276,7 @@ export function _updateFocusImpl(shouldSlide = true) {
                             `MÓVIL FIX: Idx=${targetPos} | SlideTop=${topRef.toFixed(1)} | Header=${headerHeight} | Delta=${delta.toFixed(1)}`);
 
                         // Usamos una transición suave para que se vea el ajuste
-                        swiper.setTransition(300);
+                        swiper.setTransition(data.SWIPER.SLIDE_SPEED);
                         swiper.setTranslate(newTrans);
                         swiper.updateProgress(); 
                     }
@@ -267,12 +298,12 @@ export function _updateFocusImpl(shouldSlide = true) {
                 } 
                 else {
                     // En grid desktop sin loop complejo, slideToLoop suele estar bien
+
+                    // Recalcular índice lógico si no lo tenemos
+                    const fallbackTarget = Math.floor(targetPos / this.STATE.itemsPorColumna);
                     if (typeof swiper.slideToLoop === 'function') {
-                        // Recalcular índice lógico si no lo tenemos
-                        const fallbackTarget = Math.floor(targetPos / this.STATE.itemsPorColumna);
                         swiper.slideToLoop(fallbackTarget, data.SWIPER.SLIDE_SPEED);
                     } else {
-                        const fallbackTarget = Math.floor(targetPos / this.STATE.itemsPorColumna);
                         swiper.slideTo(fallbackTarget, data.SWIPER.SLIDE_SPEED);
                     }
                 }

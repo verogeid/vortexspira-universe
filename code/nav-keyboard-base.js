@@ -12,6 +12,7 @@ export function initKeyboardControls() {
 
     document.addEventListener('focusin', (e) => {
         const app = this;
+
         if (!app.DOM.track) return;
         if (!app.DOM.track.contains(e.target)) {
             const ghosts = app.DOM.track.querySelectorAll('.card.focus-visible');
@@ -41,9 +42,18 @@ export function initKeyboardControls() {
             if (e.key === 'Escape') {
                 e.preventDefault();
                 e.stopPropagation();
-                const closeBtn = document.getElementById('a11y-close');
-                if (closeBtn) closeBtn.click();
+                
+                document.getElementById('a11y-close')?.click(); // Usamos el botón de cierre para mantener la lógica centralizada
+                
                 return;
+            }
+
+            // 🟢 FIX 1: Si estoy en un Slider y pulso flechas, STOP PROPAGATION.
+            // Esto evita que el evento baje hasta el listener del Swiper.
+            // NO hacemos preventDefault() para que el slider nativo se mueva.
+            if (document.activeElement.type === 'range' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+                e.stopPropagation(); 
+                return; // Salimos de la función inmediatamente
             }
 
             // 2. NAVEGACIÓN INTERNA (Tab + Flechas)
@@ -88,9 +98,9 @@ export function initKeyboardControls() {
             }
 
             // Bloqueamos cualquier otra tecla para que no afecte a la app de fondo
-            if (e.key !== 'F5' && e.key !== 'F12') { 
+            if (e.key !== 'F5' && e.key !== 'F12')
                 e.stopPropagation();
-            }
+
             return; 
         }
         // ============================================================
@@ -219,11 +229,22 @@ function _setupInfoAccordion() {
 
     panels.forEach(panel => {
         const summary = panel.querySelector('summary');
-        summary?.addEventListener('click', () => {
-            if (!panel.open) { 
-                panels.forEach(other => { if (other !== panel) other.open = false; });
-            }
-        });
+
+        if (summary) {
+            summary.setAttribute('role', 'button');
+            summary.setAttribute('aria-expanded', panel.open ? 'true' : 'false');
+            
+            // Listener para actualizar el estado ARIA al abrir/cerrar
+            panel.addEventListener('toggle', () => {
+                summary.setAttribute('aria-expanded', panel.open ? 'true' : 'false');
+            });
+
+            summary.addEventListener('click', () => {
+                if (!panel.open) { 
+                    panels.forEach(other => { if (other !== panel) other.open = false; });
+                }
+            });
+        }
     });
 }
 

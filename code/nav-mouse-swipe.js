@@ -83,13 +83,25 @@ export function handleSlideChangeEnd(swiper) {
 
         // 🟢 A11Y FIX: Notificar al usuario que estamos saltando una zona vacía
         this.announceA11y(this.getString('toast.skipColumn'), 'assertive');
+        this.STATE.emptyColumnAnnounced = true; // Marcar que ya anunciamos esta columna vacía
 
         _swipeDirection === 'next' ? swiper.slideNext(data.SWIPER.SLIDE_SPEED) : swiper.slidePrev(data.SWIPER.SLIDE_SPEED);
         return; 
     }
 
-    // 🟢 Si hemos llegado hasta aquí, es que hay contenido. Ocultamos el aviso de salto.
-    this.announceA11yStop();
+    // 🟢 LLEGADA EXITOSA: Activamos semáforo y disparamos al operario de mantenimiento
+    if (this.STATE.emptyColumnAnnounced) {
+        debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, 
+                    "Limpiando anuncio de columna vacía tras llegada a columna con contenido.");
+                    
+        this.STATE.emptyColumnAnnounced = false; // Reset del anuncio
+        this.STATE.pendingLoopFix = true;
+
+        swiper.emit('transitionEnd'); // 🔥 Forzamos la ejecución inmediata del listener de limpieza
+
+        // Ocultamos el aviso de salto.
+        this.announceA11yStop();
+    }
 
     // ⭐️ CÁLCULO DE FOCO DESTINO ⭐️
     let targetRow;
@@ -132,19 +144,6 @@ export function handleSlideChangeEnd(swiper) {
                             `Foco estable (Lógico). Re-sincronizando físico.`);
             }
             this._updateFocus(false); 
-
-            // 🚀 SILENT RESET (EL TRUCO DE MAGIA) 🚀
-            // Si estamos en un "Clon" (activeIndex != realIndex ajustado), volvemos al original SIN animación.
-            // Esto evita que los índices crezcan y asegura que siempre estemos en territorio seguro.
-            // Swiper loop mode intenta hacerlo, pero a veces falla en saltos rápidos. Lo forzamos aquí.
-            if (swiper.params.loop) {
-                // Pequeño delay para dejar que el renderizado del foco termine
-                requestAnimationFrame(() => {
-                    swiper.slideToLoop(swiper.realIndex, 0); // 0ms = Instantáneo
-                    debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, 
-                        `🔄 SILENT LOOP FIX: Reubicado en slide lógico ${swiper.realIndex}`);
-                });
-            }
         }
     } else {
         debug.logWarn('nav_mouse_swipe', 

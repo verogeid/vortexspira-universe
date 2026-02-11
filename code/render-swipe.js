@@ -91,6 +91,21 @@ export function _initCarousel_Swipe(initialSwiperSlide, itemsPorColumna, isMobil
         this.STATE.carouselInstance = new Swiper(swiperId, swiperConfig);
 
         if (this.STATE.carouselInstance) {
+            // 🟢 Listener quirúrgico para arreglar el desfase de clones
+            this.STATE.carouselInstance.on('transitionEnd', () => {
+                if (!this.STATE.isBooting) {
+                    if (this.STATE.pendingLoopFix) {
+                        this.STATE.pendingLoopFix = false; // Reset inmediato
+
+                        this.STATE.carouselInstance.loopFix();
+                        this.STATE.carouselInstance.update();
+
+                        debug.log('render_swipe', debug.DEBUG_LEVELS.DEEP, 
+                            '🔧 LoopFix aplicado tras navegación.');
+                    }
+                }
+            });
+
             // 🟢 FIX A11Y: Asegurar SILENCIO TOTAL en el contenedor del track
             if (this.STATE.carouselInstance.wrapperEl) {
                 this.STATE.carouselInstance.wrapperEl.removeAttribute('aria-live');

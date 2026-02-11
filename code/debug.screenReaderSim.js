@@ -20,51 +20,18 @@ export function enableScreenReaderSimulator() {
                 "%c(Activado automáticamente por flag 'a11y' >= DEEP)", 
                 "color: #777; font-style: italic;");
 
-    // 1. MONITOR DE FOCO
+    // 1. MONITOR DE FOCO (Entrada inicial)
     _srFocusListener = (e) => {
         const el = e.target;
         if (el === document.body) return;
 
-        const role = _computeRole(el);
-        const name = _computeAccessibleName(el);
-        const description = _computeDescription(el);
-        const state = _computeState(el);
-        
-        const isHidden = el.getAttribute('aria-hidden') === 'true' || el.closest('[aria-hidden="true"]');
-        const warning = isHidden ? " ⚠️ ERROR: Elemento enfocado está oculto (aria-hidden=true)" : "";
-
-        const logStyle = "color: #fff; background: #005cc5; padding: 4px 8px; border-radius: 4px; font-size: 12px;";
-        const textStyle = "font-weight: bold; color: #fff; font-size: 13px;";
-        
-        debug.logGroupExpanded('a11y', debug.DEBUG_LEVELS.EXTREME, 
-                                `%c👉 FOCO`, logStyle, ` ${name || 'SIN NOMBRE'} `);
-
-        debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
-                    `%cTexto: "${name}"`, textStyle);
-
-        debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
-                    `Rol:   [${role}]`);
-
-        if (description) 
-            debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
-                        `Desc:  "${description}"`);
-
-        if (state.length) 
-            debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
-                        `Estado: ${state.join(', ')}`);
-
-        if (warning) 
-            debug.logWarn('a11y', warning);
-
-        debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, "Elemento DOM:", el);
-
-        debug.logGroupEnd('a11y', debug.DEBUG_LEVELS.EXTREME);
+        // Reutilizamos la lógica unificada de anuncio
+        _announceElement(el, 'focus');
     };
     document.addEventListener('focusin', _srFocusListener);
 
-    // 2. MONITOR DE REGIONES VIVAS
-    if (!document.body) 
-        return; // Seguridad extra
+    // 2. MONITOR DE REGIONES VIVAS Y CAMBIOS DE ESTADO
+    if (!document.body) return; 
     
     _srObserver = new MutationObserver((mutations) => {
         const updates = new Set(); 
@@ -78,7 +45,6 @@ export function enableScreenReaderSimulator() {
             if (liveRegion && !updates.has(liveRegion)) {
                 updates.add(liveRegion);
                 
-                // Ignoramos vaciados de texto
                 if (!liveRegion.innerText.trim()) return;
 
                 const mode = liveRegion.getAttribute('aria-live');
@@ -94,9 +60,19 @@ export function enableScreenReaderSimulator() {
 
             // B. Cambios de estado en tiempo real (mientras estás encima)
             if (target === document.activeElement || target.contains(document.activeElement)) {
-                if (mut.type === 'attributes' && (mut.attributeName === 'aria-disabled' || mut.attributeName === 'disabled')) {
-                    // Si cambia el atributo dinámicamente, lo volvemos a anunciar
-                    _announceElement(document.activeElement); 
+                
+                // 1. Cambio de Estado (Disabled / Pressed / Expanded)
+                if (mut.type === 'attributes' && ['aria-disabled', 'disabled', 'aria-pressed', 'aria-expanded'].includes(mut.attributeName)) {
+                    _announceElement(document.activeElement, 'update'); 
+                }
+
+                // 2. 🟢 NUEVO: Cambio de Valor (Sliders)
+                // Un lector de pantalla NO lee todo el elemento, solo el nuevo valor.
+                if (mut.type === 'attributes' && ['aria-valuenow', 'aria-valuetext'].includes(mut.attributeName)) {
+                    const val = target.getAttribute('aria-valuetext') || target.getAttribute('aria-valuenow');
+                    debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
+                        `%c🔢 CAMBIO VALOR: "${val}"`, 
+                        "color: #000; background: #00ffaa; padding: 2px 6px; border-radius: 3px; font-weight: bold;");
                 }
             }
         });
@@ -107,32 +83,44 @@ export function enableScreenReaderSimulator() {
         childList: true,
         characterData: true,
         attributes: true,
-        attributeFilter: ['aria-hidden', 'aria-disabled', 'class', 'hidden'] 
+        attributeFilter: [
+            'aria-hidden', 'aria-disabled', 'disabled', 'class', 'hidden',
+            'aria-valuenow', 'aria-valuetext', 'aria-pressed', 'aria-expanded'
+        ] 
     });
 }
 
-function _announceElement(el) {
+/**
+ * Función unificada para pintar el log del elemento.
+ * type: 'focus' (azul/gris) | 'update' (refresco)
+ */
+function _announceElement(el, type = 'focus') {
     const role = _computeRole(el);
     const name = _computeAccessibleName(el);
     const description = _computeDescription(el);
     const state = _computeState(el);
     
-    // 🟢 IMITACIÓN REAL: Si está disabled, va al título principal
+    // 🟢 Detección robusta de deshabilitado
     const isDisabled = el.disabled || el.getAttribute('aria-disabled') === 'true';
     const titleSuffix = isDisabled ? ' (⛔ DESHABILITADO)' : '';
 
     const isHidden = el.getAttribute('aria-hidden') === 'true' || el.closest('[aria-hidden="true"]');
     const warning = isHidden ? " ⚠️ ERROR: Elemento enfocado está oculto" : "";
 
-    const logStyle = isDisabled 
-        ? "color: #aaa; background: #333; padding: 4px 8px; border-radius: 4px; font-size: 12px; border: 1px solid #555;" // Estilo gris para disabled
-        : "color: #fff; background: #005cc5; padding: 4px 8px; border-radius: 4px; font-size: 12px;"; // Azul para activo
+    // 🟢 Estilos Visuales Diferenciados
+    let logStyle = "color: #fff; background: #005cc5; padding: 4px 8px; border-radius: 4px; font-size: 12px;"; // Default Focus (Azul)
+    
+    if (isDisabled) {
+        logStyle = "color: #aaa; background: #333; padding: 4px 8px; border-radius: 4px; font-size: 12px; border: 1px solid #777;"; // Disabled (Gris)
+    } else if (type === 'update') {
+        logStyle = "color: #fff; background: #008800; padding: 4px 8px; border-radius: 4px; font-size: 12px;"; // Update (Verde oscuro)
+    }
 
+    const prefix = type === 'update' ? '🔄 CAMBIO ESTADO' : '👉 FOCO';
     const textStyle = "font-weight: bold; color: #fff; font-size: 13px;";
     
-    // Aquí es donde el simulador te dice la verdad: Nombre + Estado
     debug.logGroupExpanded('a11y', debug.DEBUG_LEVELS.EXTREME, 
-                            `%c👉 FOCO`, logStyle, ` ${name || 'SIN NOMBRE'}${titleSuffix} `);
+                            `%c${prefix}`, logStyle, ` ${name || 'SIN NOMBRE'}${titleSuffix} `);
     
     debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, `%cTexto: "${name}"`, textStyle);
     debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, `Rol:   [${role}]`);
@@ -141,12 +129,12 @@ function _announceElement(el) {
         debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, `Desc:  "${description}"`);
 
     if (state.length) 
-        debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, `Estado Detallado: ${state.join(', ')}`);
+        debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, `Estado: ${state.join(', ')}`);
 
     if (warning) 
         debug.logWarn('a11y', warning);
     
-    debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, el); 
+    debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, "DOM:", el); 
 
     debug.logGroupEnd('a11y', debug.DEBUG_LEVELS.EXTREME);
 }
@@ -167,6 +155,11 @@ function _computeAccessibleName(el) {
 
     if (el.tagName === 'INPUT' && el.type === 'text') 
         return el.value;
+
+    // Fallback para ranges que no tienen label pero tienen value
+    if (el.tagName === 'INPUT' && el.type === 'range') {
+        return el.getAttribute('aria-label') || 'Slider';
+    }
 
     return el.innerText ? el.innerText.split('\n')[0].trim() : ''; 
 }
@@ -193,8 +186,11 @@ function _computeRole(el) {
 function _computeDescription(el) {
     if (el.hasAttribute('aria-describedby')) {
         const ids = el.getAttribute('aria-describedby').split(/\s+/);
-
         return ids.map(id => document.getElementById(id)?.innerText || '').join(' ').trim();
+    }
+    // Para sliders, el valor actual suele ser parte de la descripción si no es el nombre
+    if (el.getAttribute('aria-valuenow')) {
+        return `Valor actual: ${el.getAttribute('aria-valuetext') || el.getAttribute('aria-valuenow')}`;
     }
     return '';
 }
@@ -208,6 +204,8 @@ function _computeState(el) {
 
     if (el.getAttribute('aria-expanded') === 'true') 
         states.push('EXPANDIDO');
+    else if (el.hasAttribute('aria-expanded'))
+        states.push('CONTRAÍDO');
 
     if (el.getAttribute('aria-current')) 
         states.push(`ACTUAL (${el.getAttribute('aria-current')})`);

@@ -41,7 +41,10 @@ class VortexSpiraApp {
             lastDetailFocusIndex: 0, 
             isNavigatingBack: false, 
             isUIBlocked: false,
-            isBooting: true
+            isBooting: true, 
+            emptyColumnAnnounced: false, // Para evitar repetir anuncio de "Columna vacía"
+            pendingLoopFix: false, // 🟢 Semáforo para el arreglo del loop
+            _lastAnnounced: null // Memoria para el anti-spam
         };
         window.App = this; 
         
@@ -348,64 +351,90 @@ class VortexSpiraApp {
 
     // 🟢 NUEVO: Inyectar contenedor exclusivo para voz
     _injectA11yAnnouncer() {
-        if (document.getElementById('a11y-announcer')) 
-            return;
+        // Si ya existen, salimos
+        if (document.getElementById('a11y-announcer-polite')) return;
         
-        // Creamos un div que siempre está "vivo" para el lector
-        const announcer = document.createElement('div');
-        announcer.id = 'a11y-announcer';
-        announcer.setAttribute('role', 'status'); 
-        announcer.setAttribute('aria-live', 'polite');
-        announcer.setAttribute('aria-atomic', 'true');
+        // Helper para crear canales
+        const createAnnouncer = (id, type) => {
+            const el = document.createElement('div');
+            el.id = id;
+            el.setAttribute('role', type === 'assertive' ? 'alert' : 'status');
+            el.setAttribute('aria-live', type);
+            el.setAttribute('aria-atomic', 'true');
+            
+            // Estilo sr-only (invisible pero legible)
+            Object.assign(el.style, {
+                position: 'absolute',
+                width: '1px',
+                height: '1px',
+                padding: '0',
+                overflow: 'hidden',
+                clip: 'rect(0, 0, 0, 0)',
+                whiteSpace: 'nowrap',
+                border: '0'
+            });
+            
+            document.body.appendChild(el);
+            return el;
+        };
+
+        // Creamos los dos canales
+        this.DOM.announcerPolite = createAnnouncer('a11y-announcer-polite', 'polite');
+        this.DOM.announcerAssertive = createAnnouncer('a11y-announcer-assertive', 'assertive');
         
-        // Estilo sr-only (invisible pero legible)
-        Object.assign(announcer.style, {
-            position: 'absolute',
-            width: '1px',
-            height: '1px',
-            padding: '0',
-            overflow: 'hidden',
-            clip: 'rect(0, 0, 0, 0)',
-            whiteSpace: 'nowrap',
-            border: '0'
-        });
-        
-        document.body.appendChild(announcer);
-        this.DOM.announcer = announcer;
+        // Mantenemos referencia legacy por si acaso (opcional)
+        this.DOM.announcer = this.DOM.announcerPolite;
     }
 
     // 🟢 FIX A11Y: Usar el canal dedicado
-    announceA11y(message) {
-        if (!this.DOM.announcer) 
-            this._injectA11yAnnouncer();
-        
-        const el = this.DOM.announcer;
+    announceA11y(message, mode = 'polite') {
+        // 🟢 Si el modal de A11y está abierto, SILENCIO TOTAL en el resto de la app.
+        // Esto evita que al cambiar el tamaño de fuente (y repintarse el fondo) 
+        // el lector se ponga a leer el contenido del swiper
+        const modal = document.getElementById('a11y-modal-overlay');
 
-        // 🟢 ANTI-SPAM DE ANNOUNCER
-        // Si el mensaje es idéntico al que ya se muestra,
-        // no hacemos NADA
-        // Esto evita que el lector de pantalla lea 8 veces "Columna vacía".
-        if (el && el.textContent === message) {
-            debug.log('app', debug.DEBUG_LEVELS.DEEP, `🚫 Announcer duplicado ignorado: "${message}"`);
-            
+        if (modal && modal.classList.contains('active')) {
+            debug.log('app', debug.DEBUG_LEVELS.DEEP, 
+                `🤫 Silenciado por Modal A11y: "${message}"`);
+
             return;
         }
 
-        el.textContent = ''; // Limpiar para provocar evento de cambio
+        // Aseguramos que existan los canales
+        this._injectA11yAnnouncer();
+
+        const el = mode === 'assertive' ? this.DOM.announcerAssertive : this.DOM.announcerPolite;
+
+        // 🟢 TRUE ANTI-SPAM: Si el mensaje ya es el mismo, NO TOCAR EL DOM.
+        if (this.STATE._lastAnnounced === message) {
+            debug.log('app', debug.DEBUG_LEVELS.DEEP, 
+                `🚫 Anti-Spam: Ignorando mensaje repetido "${message}"`);
+
+            return; 
+        }
+
+        // Si es un mensaje nuevo, limpiamos y ponemos el nuevo
+        this.STATE._lastAnnounced = message;
+        el.textContent = ''; 
         
+        // Usamos un tick muy breve para asegurar que el SR note el cambio si veníamos de otro texto
         setTimeout(() => {
             el.textContent = message;
-            
-            debug.log('app', debug.DEBUG_LEVELS.DEEP, `🗣️ Locutor: "${message}"`);
-        }, 50);
+            debug.log('app', debug.DEBUG_LEVELS.DEEP, `🗣️ Locutor (${mode}): "${message}"`);
+        }, 10);
     }
 
     announceA11yStop() {
-        if (this.DOM.announcer) {
-            this.DOM.announcer.textContent = '';
+        if (this.DOM.announcerPolite) 
+            this.DOM.announcerPolite.textContent = '';
 
-            debug.log('a11y', debug.DEBUG_LEVELS.DEEP, `🗣️ Locutor detenido.`);
-        }
+        if (this.DOM.announcerAssertive) 
+            this.DOM.announcerAssertive.textContent = '';
+
+        this.STATE._lastAnnounced = null; // 🟢 Resetear memoria al detener
+
+        debug.log('a11y', debug.DEBUG_LEVELS.DEEP, 
+            `🗣️ Locutor detenido.`);
     }
 
     _syncHeaderDimensions() {

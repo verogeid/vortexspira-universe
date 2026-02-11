@@ -89,23 +89,35 @@ function _updateModalUI() {
 
     // Botones de Fuente
     _domRefs.fontBtns.forEach(btn => {
-        btn.classList.toggle('selected', btn.dataset.font === _prefs.fontType);
+        const isSelected = btn.dataset.font === _prefs.fontType;
+        btn.classList.toggle('selected', isSelected);
+
+        // 🟢 Actualizar aria-pressed para feedback semántico
+        btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
     });
 
     // Slider Texto
     if (_domRefs.rangeSize) {
         _domRefs.rangeSize.value = _prefs.fontSizePct;
+
+        // 🟢 Actualizar aria-valuenow para que el lector lea el valor
+        _domRefs.rangeSize.setAttribute('aria-valuenow', _prefs.fontSizePct);
         _updateSliderLabel(_prefs.fontSizePct);
     }
 
-    // Slider Espaciado (Nuevo)
+    // Slider Espaciado
     if (_domRefs.rangeSpacing) {
-        // Buscar qué paso del slider (1, 2, 3) corresponde al valor actual
-        let step = 2; // Default Normal
+        let step = 2; 
         for (const [key, data] of Object.entries(SPACING_MAP)) {
             if (data.val === _prefs.lineHeight) step = key;
         }
         _domRefs.rangeSpacing.value = step;
+        
+        // 🟢 Actualizar aria-valuetext para leer "Normal", "Amplio", etc.
+        _domRefs.rangeSpacing.setAttribute('aria-valuenow', step);
+        const labelKey = SPACING_MAP[step]?.labelKey || 'modal.spacing.normal';
+        _domRefs.rangeSpacing.setAttribute('aria-valuetext', getString(labelKey));
+        
         _updateSpacingLabel(step);
     }
 }
@@ -128,45 +140,107 @@ function _injectModalHTML() {
     if (document.getElementById('a11y-modal-overlay')) 
         return;
 
+    // 🟢 FIX: Botones de fuente con aria-label descriptivo ("Tipografía: Sans")
     const html = `
-        <div id="a11y-modal-overlay" class="a11y-modal-overlay" aria-hidden="true">
-            <div id="a11y-modal" class="a11y-modal" role="dialog" aria-modal="true" aria-labelledby="a11y-title">
+        <div id="a11y-modal-overlay" 
+            class="a11y-modal-overlay" 
+            aria-hidden="true">
+
+            <div id="a11y-modal" 
+                class="a11y-modal" 
+                role="dialog" 
+                aria-modal="true" 
+                aria-labelledby="a11y-title">
+
                 <div class="a11y-header">
                     <h2 id="a11y-title">${getString('modal.title')}</h2>
-                    <button id="a11y-close" class="a11y-close-btn" aria-label="${getString('modal.close')}">✕</button>
+
+                    <button id="a11y-close" 
+                            class="a11y-close-btn" 
+                            aria-label="${getString('modal.close')}">✕</button>
                 </div>
 
                 <div class="a11y-section">
                     <h3>${getString('modal.sections.font')}</h3>
-                    <div class="a11y-controls-group font-group">
-                        <button class="a11y-option-btn font-preview-sans" data-font="sans">${getString('modal.options.sans')}</button>
-                        <button class="a11y-option-btn font-preview-serif" data-font="serif">${getString('modal.options.serif')}</button>
-                        <button class="a11y-option-btn font-preview-dyslexic" data-font="dyslexic">${getString('modal.options.dyslexic')}</button>
+
+                    <div class="a11y-controls-group font-group" 
+                        role="group" 
+                        aria-label="${getString('modal.sections.font')}">
+
+                        <button class="a11y-option-btn font-preview-sans" 
+                            data-font="sans" 
+                            aria-label="${getString('modal.aria.font')} Sans">
+                            ${getString('modal.options.sans')}
+                        </button>
+
+                        <button class="a11y-option-btn font-preview-serif" 
+                            data-font="serif" 
+                            aria-label="${getString('modal.aria.font')} Serif">
+                            ${getString('modal.options.serif')}
+                        </button>
+
+                        <button class="a11y-option-btn font-preview-dyslexic" 
+                            data-font="dyslexic" 
+                            aria-label="${getString('modal.aria.font')} Dyslexic">
+                            ${getString('modal.options.dyslexic')}
+                        </button>
                     </div>
                 </div>
 
                 <div class="a11y-section">
                     <h3>${getString('modal.sections.size')}</h3>
                     <div class="a11y-range-wrapper">
-                        <span style="font-size: 0.8rem" aria-hidden="true">A</span>
-                        <span id="a11y-range-val" class="a11y-range-value">100%</span>
-                        <span style="font-size: 1.2rem" aria-hidden="true">A</span>
-                        <input type="range" id="a11y-range-size" class="a11y-range" min="90" max="200" step="5" aria-label="${getString('modal.aria.textSize')}">
+                        <span style="font-size: 0.8rem" 
+                            aria-hidden="true">A</span>
+
+                        <span id="a11y-range-val" 
+                            class="a11y-range-value">100%</span>
+
+                        <span style="font-size: 1.2rem" 
+                            aria-hidden="true">A</span>
+
+                        <input type="range" 
+                            id="a11y-range-size" 
+                            class="a11y-range" 
+                            min="90" 
+                            max="200" 
+                            step="5" 
+                            aria-label="${getString('modal.aria.textSize')}"
+                            aria-valuemin="90" 
+                            aria-valuemax="200">
                     </div>
                 </div>
 
                 <div class="a11y-section">
                     <h3>${getString('modal.sections.spacing')}</h3>
                     <div class="a11y-range-wrapper">
-                        <span class="range-icon-small" style="font-size: 0.8rem" aria-hidden="true">≡</span>
-                        <span id="a11y-range-spacing-val" class="a11y-range-value">${getString('modal.spacing.normal')}</span>
-                        <span class="range-icon-large" style="font-size: 1.2rem" aria-hidden="true">≡</span>
-                        <input type="range" id="a11y-range-spacing" class="a11y-range" min="1" max="3" step="1" aria-label="${getString('modal.aria.lineSpacing')}">
+                        <span class="range-icon-small" 
+                            style="font-size: 0.8rem" 
+                            aria-hidden="true">≡</span>
+
+                        <span id="a11y-range-spacing-val" 
+                            class="a11y-range-value">${getString('modal.spacing.normal')}</span>
+
+                        <span class="range-icon-large" 
+                            style="font-size: 1.2rem" 
+                            aria-hidden="true">≡</span>
+
+                        <input type="range" 
+                            id="a11y-range-spacing" 
+                            class="a11y-range" 
+                            min="1" 
+                            max="3" 
+                            step="1" 
+                            aria-label="${getString('modal.aria.lineSpacing')}"
+                            aria-valuemin="1" 
+                            aria-valuemax="3">
                     </div>
                 </div>
 
                 <div class="a11y-footer">
-                    <button id="a11y-reset" aria-label="${getString('modal.reset')}" title="${getString('modal.reset')}"></button>
+                    <button id="a11y-reset" 
+                        aria-label="${getString('modal.reset')}" 
+                        title="${getString('modal.reset')}"></button>
                 </div>
             </div>
         </div>
@@ -225,6 +299,10 @@ function _setupListeners() {
         _domRefs.rangeSize.addEventListener('input', (e) => {
             const val = parseInt(e.target.value);
             _prefs.fontSizePct = val;
+            
+            // 🟢 FIX: Actualizar aria-valuenow en tiempo real
+            e.target.setAttribute('aria-valuenow', val);
+            
             document.documentElement.style.setProperty('--font-scale', val / 100);
             _updateSliderLabel(val);
             window.dispatchEvent(new CustomEvent('vortex-layout-refresh'));
@@ -240,16 +318,20 @@ function _setupListeners() {
             if (info) {
                 _prefs.lineHeight = info.val;
                 _prefs.paragraphSpacing = info.val;
+                
+                // 🟢 FIX: Actualizar atributos ARIA (ValueText)
+                e.target.setAttribute('aria-valuenow', step);
+                e.target.setAttribute('aria-valuetext', getString(info.labelKey));
+
                 _updateSpacingLabel(step);
                 
-                // Aplicar CSS visualmente sin recargar todo
                 const root = document.documentElement;
                 root.style.setProperty('--line-height-base', _prefs.lineHeight);
                 root.style.setProperty('--paragraph-spacing', `${_prefs.paragraphSpacing}em`);
             }
         });
         _domRefs.rangeSpacing.addEventListener('change', () => {
-            _applyPreferences(); // Asegurar consistencia
+            _applyPreferences();
             _savePreferences();
         });
     }
@@ -257,6 +339,14 @@ function _setupListeners() {
 
 export function openModal() {
     if (!_domRefs.overlay) return;
+
+    // 🟢 Anunciar apertura
+    if (window.App && window.App.announceA11y) {
+        // Forzamos el anuncio aunque el modal se esté abriendo (ya que el bloqueo en App.js mira si está 'active')
+        // Al llamarlo antes de añadir la clase 'active', pasará el filtro.
+        window.App.announceA11y(getString('modal.opened') || 'Configuración de accesibilidad abierta', 'assertive');
+    }
+
     _updateModalUI(); // Asegurar que UI está sincronizada al abrir
     _domRefs.overlay.classList.add('active');
     _domRefs.overlay.setAttribute('aria-hidden', 'false');

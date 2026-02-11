@@ -259,34 +259,33 @@ export function _mostrarDetalle(cursoId) {
                     'icon-download' : 
                     'icon-link');
 
-            const textId = `action-text-${index}`; // ID para vincular texto y botón
-            
-            // 1. Calculamos el estado antes para limpiar el template
+            const textId = `action-text-${index}`; 
             const isDisabled = !enlace.url || enlace.url === '#';
+            const style = isDisabled ? 
+                'style="pointer-events: none;"' :
+                '';
 
-            // 🟢 FIX 5: Evitar foco en elemento oculto deshabilitado.
-            // Añadimos 'pointer-events: none' si está deshabilitado para que el click 
-            // pase al padre (que sí es un elemento válido para el foco).
-            const style = isDisabled ? 'style="pointer-events: none;"' : '';
+            // 🟢 Propagar el estado 'aria-disabled' al contenedor padre (el botón real para el SR)
+            const ariaDisabledAttr = isDisabled ? 'aria-disabled="true"' : '';
 
             slidesHtml += `
                 <div class="swiper-slide detail-action-slide">
                     <div class="detail-action-item" 
+                        ${ariaDisabledAttr} 
                         onclick="App._handleActionRowClick(event)" 
                         tabindex="0" 
                         role="button" 
                         aria-labelledby="${textId}">
-                        
+
                         <span id="${textId}" 
-                            class="detail-action-text">
-                            ${enlace.texto}
-                        </span>
+                            class="detail-action-text">${enlace.texto}</span>
                         
                         <a ${isDisabled ? 'role="link" aria-disabled="true"' : `href="${enlace.url}" target="_blank"`} 
                             tabindex="-1"
                             aria-hidden="true"
                             ${style}
                             class="detail-action-btn ${isDisabled ? 'disabled' : ''}">
+
                             <i class="action-icon ${isDisabled ? 'icon-vacio' : iconClass}"></i>
                         </a>
                     </div>
@@ -307,12 +306,22 @@ export function _mostrarDetalle(cursoId) {
 
     _initDetailCarousel(this, swiperId, 0);
 
-    // 🟢 FIX 4: Anuncio de Contexto
-    // En lugar de dejar que el HTML hable solo, lo anunciamos explícitamente.
-    const mensajeContexto = `${this.getString('nav.contextPrefix') || 'Curso: '} ${curso.titulo}`;
-    this.announceA11y(mensajeContexto);
+    // 🟢 FIX 1: Bloquear anuncio de contexto si el modal está abierto
+    if (!document.getElementById('a11y-modal-overlay')?.classList.contains('active')) {
+        const mensajeContexto = `${this.getString('nav.contextPrefix') || 'Curso: '} ${curso.titulo}`;
+        this.announceA11y(mensajeContexto);
+    }
     
+    // 🟢 FIX 2: Bloquear robo de foco si el modal está abierto
     setTimeout(() => {
+        // Si el usuario está en el modal, NO tocamos el foco.
+        if (document.getElementById('a11y-modal-overlay')?.classList.contains('active')) {
+            debug.log('render_details', debug.DEBUG_LEVELS.DEEP, 
+                '🛡️ Foco post-render bloqueado (Modal activo).');
+                
+            return;
+        }
+
         let targetElement = null;
 
         if (isMobile) {
