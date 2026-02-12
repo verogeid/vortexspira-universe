@@ -127,7 +127,8 @@ export function renderNavegacion() {
                 let logicalIndex = 0;
                 for (let i = 0; i < rawIndex; i++) {
                     const it = itemsDelNivel[i];
-                    if (it.tipo !== 'relleno' && it.tipoEspecial !== 'breadcrumb-vertical') logicalIndex++;
+                    if (it.tipo !== 'relleno' && it.tipoEspecial !== 'breadcrumb-vertical') 
+                        logicalIndex++;
                 }
                 this.STATE.currentFocusIndex = logicalIndex;
                 shouldFocusTrack = true; // Dejamos que _updateFocus haga su trabajo

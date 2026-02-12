@@ -14,9 +14,13 @@ export const DEBUG_LEVELS = {
 
 export const DEBUG_CONFIG = {
     global: DEBUG_LEVELS.BASIC,
+
+    global_imageSec: DEBUG_LEVELS.DEEP,
+
     global_focus: DEBUG_LEVELS.DISABLED,
     global_font: DEBUG_LEVELS.DISABLED,
     global_layout: DEBUG_LEVELS.DISABLED,
+    
     global_key: DEBUG_LEVELS.DISABLED,
     global_mouse: DEBUG_LEVELS.DISABLED,
     
@@ -147,6 +151,22 @@ export function logGroupEnd(moduleName, requiredLevel) {
         console.groupEnd();
     }
 }
+
+/**
+ * Muestra el resultado en una tabla
+ */
+export function logTable(moduleName, requiredLevel, data) {
+    if (DEBUG_CONFIG[moduleName] >= requiredLevel)
+        console.table(data);
+};
+
+/**
+ * Muestra un arbol de atributos
+ */
+export function logDir(moduleName, requiredLevel, data) {
+    if (DEBUG_CONFIG[moduleName] >= requiredLevel)
+        console.dir(data);
+};
 
 export function _watchFlag(stateObj, propName) {
     if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) return;

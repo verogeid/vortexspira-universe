@@ -145,7 +145,7 @@ header h1 a:focus-visible .header-logo::after {
     z-index: 101; 
     box-sizing: border-box;
 
-    -webkit-mask-image: var(--icono-a11y); mask-image: var(--icono-a11y);
+    -webkit-mask-image: var(--icon-a11y); mask-image: var(--icon-a11y);
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
     -webkit-mask-size: 70%; mask-size: 70%;

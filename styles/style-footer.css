@@ -99,8 +99,8 @@ footer a.footer-license-link:focus-visible {
 }
 
 .link-fire {
-    -webkit-mask-image: var(--icono-fire);
-    mask-image: var(--icono-fire);
+    -webkit-mask-image: var(--icon-fire);
+    mask-image: var(--icon-fire);
     background-color: #FF931E !important; 
 }
 

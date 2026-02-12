@@ -3,6 +3,7 @@
 import * as debug from './debug.js';
 import * as debug_diagnostics from './debug.diagnostics.js';
 import * as debug_screenReaderSim from './debug.screenReaderSim.js';
+import * as debug_imageSecurity from './debug.imageSecurity.js';
 
 import * as data from './data.js';
 import * as i18n from './i18n.js';
@@ -101,6 +102,15 @@ class VortexSpiraApp {
                 // Si no, la función tiene sus propias guardas, pero aquí garantizamos que sea parte del ciclo de inicio.
                 debug_screenReaderSim.enableScreenReaderSimulator();
             }
+        }
+
+        // 🟢 AUDITORÍA DE SEGURIDAD DE IMÁGENES
+        if (debug.DEBUG_CONFIG.global_imageSec >= debug.DEBUG_LEVELS.BASIC) {
+            // Exponer a consola para uso manual
+            debug_imageSecurity.setupSecurityShorthands();
+
+            // Activar escaneo automático basado en configuración
+            debug_imageSecurity._setupAutoSecurityScan(debug_imageSecurity.runImageSecurityAudit);
         }
 
         this._setupSmartResize();

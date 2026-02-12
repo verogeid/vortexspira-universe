@@ -16,10 +16,6 @@ export function enableScreenReaderSimulator() {
                 "%c👨‍🦯 SIMULADOR DE LECTOR DE PANTALLA ACTIVADO", 
                 "background: #333; color: #bada55; font-size: 16px; padding: 10px; border-radius: 5px; font-weight: bold; margin-top: 10px;");
 
-    debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
-                "%c(Activado automáticamente por flag 'a11y' >= DEEP)", 
-                "color: #777; font-style: italic;");
-
     // 1. MONITOR DE FOCO (Entrada inicial)
     _srFocusListener = (e) => {
         const el = e.target;
@@ -35,6 +31,7 @@ export function enableScreenReaderSimulator() {
     
     _srObserver = new MutationObserver((mutations) => {
         const updates = new Set(); 
+        const valueUpdates = new Set(); // 🟢 Set para deduplicar cambios de valor
 
         mutations.forEach(mut => {
             let target = mut.target;
@@ -66,15 +63,19 @@ export function enableScreenReaderSimulator() {
                     _announceElement(document.activeElement, 'update'); 
                 }
 
-                // 2. 🟢 NUEVO: Cambio de Valor (Sliders)
-                // Un lector de pantalla NO lee todo el elemento, solo el nuevo valor.
+                // 2. Cambio de Valor (Sliders) - ACUMULAR PARA DEDUPLICAR
                 if (mut.type === 'attributes' && ['aria-valuenow', 'aria-valuetext'].includes(mut.attributeName)) {
-                    const val = target.getAttribute('aria-valuetext') || target.getAttribute('aria-valuenow');
-                    debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
-                        `%c🔢 CAMBIO VALOR: "${val}"`, 
-                        "color: #000; background: #00ffaa; padding: 2px 6px; border-radius: 3px; font-weight: bold;");
+                    valueUpdates.add(target);
                 }
             }
+        });
+
+        // 🟢 Procesar actualizaciones de valor una sola vez por elemento
+        valueUpdates.forEach(target => {
+            const val = target.getAttribute('aria-valuetext') || target.getAttribute('aria-valuenow');
+            debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
+                `%c🔢 CAMBIO VALOR: "${val}"`, 
+                "color: #000; background: #00ffaa; padding: 2px 6px; border-radius: 3px; font-weight: bold;");
         });
     });
 
