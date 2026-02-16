@@ -114,7 +114,8 @@
     margin-bottom: var(--a11y-section-margin);
     /* ⭐️ FIX: Asegurar que la sección no desborde */
     width: 100%;
-    overflow: hidden;
+    /*overflow: hidden;*/
+    overflow: visible;
 }
 .a11y-section h3 { 
     font-size: var(--a11y-section-font-size); 
@@ -134,6 +135,9 @@
     width: 100%;
 
     flex-wrap: wrap;
+    
+    box-sizing: border-box;
+    overflow: visible;
 }
 
 /* BOTONES DE OPCIÓN */
@@ -172,7 +176,7 @@
 
 .a11y-option-btn.selected {
     background: var(--color-primary); 
-    color: #fff;
+    color: var(--color-a11y-selected-text);
     border-color: var(--color-primary);
     box-shadow: 0 0 15px var(--color-shadow-primary);
 }
@@ -196,9 +200,20 @@
     line-height: 1;
 }
 
+/* Aplicamos el color de etiquetas (7:1) a los iconos A, ≡ y al valor % */
+.range-icon-small, 
+.range-icon-large, 
+.a11y-range-wrapper span[aria-hidden="true"],
+.a11y-range-value {
+    font-weight: 500;
+    color: var(--color-a11y-slider-labels);
+}
+
 input[type=range].a11y-range {
     flex-grow: 1; height: var(--a11y-slider-height);
-    background: var(--color-border-placeholder);
+
+    background: var(--color-a11y-slider-track);
+
     border-radius: 5px; outline: none;
     -webkit-appearance: none; appearance: none;
     cursor: pointer;
@@ -211,7 +226,9 @@ input[type=range].a11y-range::-webkit-slider-thumb {
     -webkit-appearance: none; appearance: none;
     width: var(--a11y-slider-thumb-size); 
     height: var(--a11y-slider-thumb-size); border-radius: 50%;
+
     background: var(--color-primary); 
+
     box-shadow: 0 0 5px var(--color-shadow-primary);
     transition: transform 0.2s;
 }

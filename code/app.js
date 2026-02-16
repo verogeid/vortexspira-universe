@@ -75,7 +75,7 @@ class VortexSpiraApp {
     }
 
     async init() {
-        debug.logClear();
+        //debug.logClear();
         debug.logDebugLevels();
         
         // Mantenemos isBooting = true por defecto desde el constructor
@@ -119,12 +119,16 @@ class VortexSpiraApp {
         
         this.DOM.vistaNav = this.DOM.vistaNav || document.getElementById('vista-navegacion-desktop'); 
 
-        let targetLang = i18n.detectBrowserLanguage(); 
+        // 🟢 FIX I18N: Priorizar localStorage sobre el navegador
+        // Si el usuario ya eligió idioma, lo respetamos. Si no, detectamos.
+        let targetLang = localStorage.getItem('vortex_lang') || i18n.detectBrowserLanguage(); 
 
         debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                    `Idioma detectado: ${targetLang}`);
+                    `Idioma inicial: ${targetLang} (Origen: ${localStorage.getItem('vortex_lang') ? 'Storage' : 'Browser'})`);
 
         let loadSuccess = false;
+
+        // 2. Intentar cargar el idioma objetivo
         try {
             const [stringsLoaded, coursesData] = await Promise.all([
                 i18n.loadStrings(targetLang),
@@ -140,12 +144,15 @@ class VortexSpiraApp {
         } catch (e) {
             debug.logWarn('app', `Fallo cargando idioma '${targetLang}'. Reintentando con 'es'.`, e);
 
+            // Fallback a Español si falla el objetivo
             if (targetLang !== 'es') {
                 try {
                     await i18n.loadStrings('es');
                     this.STATE.fullData = await data.loadData('es');
-                    targetLang = 'es'; 
+                    targetLang = 'es'; // Forzamos español porque el otro falló
                     loadSuccess = true;
+                    // También actualizamos localStorage para no fallar en la próxima recarga
+                    localStorage.setItem('vortex_lang', 'es');
                 } catch (errFatal) {
                     debug.logError('app', "CRITICAL: Fallo total de carga.", errFatal);
                     return; 
@@ -155,10 +162,24 @@ class VortexSpiraApp {
 
         if (!loadSuccess) return;
 
+        // 3. Determinar si habilitamos el botón de idioma (I18N)
+        // Si estamos en EN, es obvio que existe. Si estamos en ES, verificamos si existe EN.
+        let enableI18n = false;
+        if (targetLang === 'en') {
+            enableI18n = true;
+        } else {
+            // Estamos en ES, chequeamos si EN está disponible
+            enableI18n = await this._checkEnAvailability();
+        }
+
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, `I18N Habilitado: ${enableI18n}`);
+
         a11y.initA11y();
 
         this.applyStrings(); 
-        if (data.injectHeaderContent) data.injectHeaderContent(this);
+
+        // Pasamos el flag enableI18n a injectHeaderContent
+        if (data.injectHeaderContent) data.injectHeaderContent(this, enableI18n);
         if (data.injectFooterContent) data.injectFooterContent(this);
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -235,6 +256,36 @@ class VortexSpiraApp {
         this._injectA11yAnnouncer();
     }
 
+    // 🟢 Chequeo de existencia de recursos EN (Strings + Data)
+    async _checkEnAvailability() {
+        try {
+            // Verificamos el archivo de datos principal como testigo
+            const response = await fetch('./data/cursos_en.json', { method: 'HEAD' });
+            return response.ok;
+        } catch (e) {
+            debug.logWarn('app', 'Chequeo disponibilidad EN fallido', e);
+            return false;
+        }
+    }
+
+    // 🟢 Cambio de Idioma
+    toggleLanguage() {
+        const current = localStorage.getItem('vortex_lang') || 'es';
+        const newLang = current === 'es' ? 'en' : 'es';
+        
+        localStorage.setItem('vortex_lang', newLang);
+
+        // Feedback sonoro inmediato (antes de recargar)
+        const msg = this.getString('header.aria.langSwitch') || "Changing language...";
+        
+        this.announceA11y(msg, 'assertive');
+
+        // Recarga para aplicar cambios limpiamente
+        setTimeout(() => {
+            window.location.reload();
+        }, 500);
+    }
+
     // ⭐️ WRAPPERS DE NAVEGACIÓN (Para inyectar diagnóstico)
     
     renderNavegacion() {
@@ -299,6 +350,10 @@ class VortexSpiraApp {
     }
     applyStrings() { 
         i18n.applyStrings(this); 
+
+        // 🟢 FIX A11Y: Actualizar el idioma del documento HTML
+        const currentLang = localStorage.getItem('vortex_lang') || 'es';
+        document.documentElement.lang = currentLang;
     }
 
     showToast(message, duration = 3000) {

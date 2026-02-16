@@ -232,12 +232,28 @@ function _setupInfoAccordion() {
 
         if (summary) {
             summary.setAttribute('role', 'button');
-            summary.setAttribute('aria-expanded', panel.open ? 'true' : 'false');
+
+            // Buscamos el contenedor de la lista para vincularlo
+            // Usamos el ID específico si existe, o el primer UL/Small hijo
+            const descriptionTarget = panel.querySelector('#info-adicional-lista-ayuda');
+
+            const updateAriaState = () => {
+                const isOpen = panel.open;
+                summary.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                
+                // Si está abierto, vinculamos el contenido para que el SR lo lea automáticamente al recibir foco
+                if (isOpen && descriptionTarget) {
+                    summary.setAttribute('aria-describedby', descriptionTarget.id);
+                } else {
+                    summary.removeAttribute('aria-describedby');
+                }
+            };
             
-            // Listener para actualizar el estado ARIA al abrir/cerrar
-            panel.addEventListener('toggle', () => {
-                summary.setAttribute('aria-expanded', panel.open ? 'true' : 'false');
-            });
+            // Estado inicial
+            updateAriaState();
+
+            // Listener para actualizar al alternar
+            panel.addEventListener('toggle', updateAriaState);
 
             summary.addEventListener('click', () => {
                 if (!panel.open) { 

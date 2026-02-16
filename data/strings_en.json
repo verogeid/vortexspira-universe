@@ -1,0 +1,88 @@
+{
+    "meta": {
+        "version": "1.0.04"
+    },
+    "page": {
+        "title": "VortexSpira® Universe: Course Selector"
+    },
+    "header": {
+        "title": "VortexSpira® Universe",
+        "subtitle": "Immersive Technical Audio-Learning",
+        "aria": {
+            "logoLink": "Go to VortexSpira home",
+            "a11yBtn": "Open Accessibility Settings",
+            "langBtn": "Current language: English. Switch to Spanish.",
+            "langSwitch": "Cambiando idioma a Español..."
+        }
+    },
+    "nav": {
+        "aria": {
+            "region": "Main course navigation",
+            "backBtn": "Go back to previous level",
+            "breadcrumb": "Current Level: "
+        },
+        "breadcrumbRoot": "Root Level",
+        "level": "Level",
+        "contextPrefix": "Navigating in: ",
+        "emptyState": "No content available at this level."
+    },
+    "card": {
+        "noTitle": "Untitled"
+    },
+    "details": {
+        "aria": {
+            "region": "Course details"
+        },
+        "noDescription": "No description available."
+    },
+    "footer": {
+        "copyright": "©2025 VortexSpira®",
+        "author": "Developed by <span style=\"white-space: nowrap\">Diego González Fernández</span>",
+        "aria": {
+            "license": "View Creative Commons CC BY-NC-ND 4.0 license",
+            "linkedin": "Visit Diego González Fernández's LinkedIn profile",
+            "github": "Go to Development Diary on GitHub",
+            "landing": "Go to Landing Page"
+        }
+    },
+    "help": {
+        "title": "Quick Help:",
+        "rotate": "<strong>Rotate</strong>: Drag, use mouse wheel, or keyboard arrows.",
+        "back": "<strong>Back</strong>: Press [Esc] or the \"↩\" button."
+    },
+    "about": {
+        "landing": "Become a Founder and get 60% OFF",
+        "diary": "Read the Dev Diary on GitHub"
+    },
+    "modal": {
+        "title": "Accessibility",
+        "opened": "Accessibility settings opened",
+        "close": "Close settings",
+        "reset": "Restore default values",
+        "sections": {
+            "font": "Typography",
+            "size": "Text Size",
+            "spacing": "Spacing"
+        },
+        "options": {
+            "sans": "Sans",
+            "serif": "Serif",
+            "dyslexic": "Dyslexic"
+        },
+        "spacing": {
+            "compact": "Compact",
+            "normal": "Normal",
+            "wide": "Wide"
+        },
+        "aria": {
+            "font": "Typography: ",
+            "textSize": "Text size",
+            "lineSpacing": "Line spacing"
+        }
+    },
+    "toast": {
+        "errorId": "Course not found. Try searching manually.",
+        "emptyNav": "No navigable elements in this section.",
+        "skipColumn": "Skipping empty column..."
+    }
+}

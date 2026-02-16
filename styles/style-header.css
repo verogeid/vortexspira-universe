@@ -25,6 +25,14 @@ header {
     box-sizing: border-box;
 }
 
+/* 🟢 Contenedor para botones derechos (Idioma + A11y) */
+.header-controls {
+    margin-left: auto;
+    display: flex;
+    gap: calc(var(--card-gap)/2);
+    align-items: center;
+}
+
 header h1 { 
     position: absolute; 
     left: 50%; 
@@ -74,7 +82,7 @@ header h1 a {
     content: '';
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     
-    background-color: #999; /* 🛑 COLOR FIJO (PRIMARY) */
+    background-color: var(--color-logo-static);
     
     -webkit-mask-image: var(--logo-base-static);
     mask-image: var(--logo-base-static);
@@ -88,7 +96,7 @@ header h1 a {
     content: '';
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     
-    background-color: var(--color-icon-obras); /* 🎨 COLOR VARIABLE (SECONDARY) */
+    background-color: var(--color-logo-dynamic);
     
     -webkit-mask-image: var(--logo-base-dynamic);
     mask-image: var(--logo-base-dynamic);
@@ -121,14 +129,13 @@ header h1 a:focus-visible .header-logo::after {
     z-index: 101; 
 }
 
-/* BOTÓN A11Y */
+/* BOTONES HEADER (Base común para A11y e I18n) */
 #btn-config-accesibilidad {
     position: relative; 
     display: flex !important;
     align-items: center;
     justify-content: center;
     
-    /* ⭐️ VARIABLE: Tamaño botón a11y */
     width: var(--header-icon-size);
     height: var(--header-icon-size);
     
@@ -150,18 +157,95 @@ header h1 a:focus-visible .header-logo::after {
     -webkit-mask-position: center; mask-position: center;
     -webkit-mask-size: 70%; mask-size: 70%;
 }
-
-#btn-config-accesibilidad:hover {
+#btn-config-accesibilidad:hover,
+#btn-config-accesibilidad:focus-visible {
     border-color: var(--color-primary);
     box-shadow: 0 0 6px var(--color-shadow-primary);
     background-color: var(--color-primary);
+    transform: scale(1.15);
 }
 
-#btn-config-accesibilidad:focus-visible {
-    background-color: var(--color-primary); 
-    border-color: var(--color-primary);
-    box-shadow: 0 0 10px var(--color-primary);
+/* --- 🌍 BOTÓN IDIOMA (Nuevo Estilo Consistente) --- */
+#btn-lang-toggle {
+    position: relative; 
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    
+    width: var(--header-icon-size);
+    height: var(--header-icon-size);
+    
+    flex-shrink: 0;
+    padding: 0;
+    
+    /* 🟢 SIN BORDE Y FONDO TRANSPARENTE */
+    border: none !important; 
+    background-color: transparent; 
+
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    outline: none;
+    z-index: 101; 
+    box-sizing: border-box;
+}
+
+#btn-lang-toggle:hover,
+#btn-lang-toggle:focus-visible {
     transform: scale(1.15);
+}
+
+/* MÁSCARA DEL MUNDO (ICONO) */
+#btn-lang-toggle .lang-icon-bg {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    
+    /* REPOSO: Blanco Sólido (Consistencia con A11y) */
+    background-color: var(--color-header-text); 
+    opacity: 1; 
+    
+    -webkit-mask-image: var(--icono-i18n); mask-image: var(--icono-i18n);
+    -webkit-mask-size: 75%;
+    mask-size: 75%;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center; mask-position: center;
+    
+    transition: all 0.2s ease;
+}
+
+/* 🟢 INTERACCIÓN: EL SVG SE PONE DE COLOR PRIMARIO */
+#btn-lang-toggle:hover .lang-icon-bg,
+#btn-lang-toggle:focus-visible .lang-icon-bg {
+    background-color: var(--color-primary); 
+    opacity: 1; 
+}
+
+/* TEXTO DEL IDIOMA (ES/EN) */
+#btn-lang-toggle .lang-text {
+    position: relative;
+    font-family: var(--font-main);
+    font-size: 0.8rem;
+    font-weight: 900;
+    
+    z-index: 2;
+    line-height: 1;
+    pointer-events: none;
+    transition: all 0.2s ease;
+
+    /* REPOSO: Texto oscuro sobre icono claro (calado) */
+    color: var(--color-header-bg); 
+    
+    /* Pequeña sombra sólida blanca para legibilidad en los "huecos" del mapa */
+    text-shadow: 
+        0 0 2px var(--color-header-text),
+        0 0 2px var(--color-header-text);
+}
+
+/* 🟢 INTERACCIÓN: Texto BLANCO sobre color primario */
+#btn-lang-toggle:hover .lang-text,
+#btn-lang-toggle:focus-visible .lang-text {
+    color: #ffffff; 
+    /* Sombra del color primario para suavizar bordes */
+    text-shadow: 0 0 3px var(--color-primary);
 }
 
 body[data-layout="desktop"] #main-header-subtitle,
@@ -275,15 +359,9 @@ body[data-layout="mobile"] #header-content-wrapper {
 
 /* Asegurar que los iconos laterales no se aplasten */
 body[data-layout="mobile"] .icon-obras-header,
-body[data-layout="mobile"] #btn-config-accesibilidad {
+body[data-layout="mobile"] .header-controls {
     grid-column: auto; /* Se colocan automáticamente */
     flex-shrink: 0;
-}
-
-/* Si el icono de obras no existe (Prod), el Grid se adapta solo */
-body[data-layout="mobile"] #header-content-wrapper:not(:has(.icon-obras-header)) {
-    /* Si no hay icono izquierdo, forzamos al título a ocupar col 1 y 2 para centrar mejor? */
-    /* Mejor dejamos que grid lo maneje, el H1 se expandirá */
 }
 
 /* En móviles, dale prioridad al botón para que no se salga */
@@ -300,8 +378,9 @@ body[data-layout="mobile"] #header-content-wrapper:not(:has(.icon-obras-header))
         text-overflow: ellipsis; /* Pone "..." si no cabe el texto */
     }
 
-    #btn-config-accesibilidad {
-        flex-shrink: 0; /* Impide que el botón se aplaste */
+    .header-controls {
+        flex-shrink: 0; 
+        gap: 8px; /* Menos espacio entre botones en móvil */
     }
 }
 

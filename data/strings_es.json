@@ -10,7 +10,9 @@
         "subtitle": "Audio-Aprendizaje Técnico Inmersivo",
         "aria": {
             "logoLink": "Ir al inicio de VortexSpira",
-            "a11yBtn": "Abrir Configuración de Accesibilidad"
+            "a11yBtn": "Abrir Configuración de Accesibilidad",
+            "langBtn": "Idioma actual: Español. Cambiar a Inglés.",
+            "langSwitch": "Switching language to English..."
         }
     },
     "nav": {
@@ -45,8 +47,8 @@
     },
     "help": {
         "title": "Ayuda Rápida:",
-        "rotate": "<b>Gira</b>: Arrastra, usa la rueda del ratón o las flechas del teclado.",
-        "back": "<b>Vuelve</b>: Pulsa [Esc] o el botón \"↩\"."
+        "rotate": "<strong>Gira</strong>: Arrastra, usa la rueda del ratón o las flechas del teclado.",
+        "back": "<strong>Vuelve</strong>: Pulsa [Esc] o el botón \"↩\"."
     },
     "about": {
         "landing": "Hazte Fundador y obten tu 60% OFF",

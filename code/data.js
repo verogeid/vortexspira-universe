@@ -86,7 +86,7 @@ export async function loadData(lang) {
     }
 }
 
-export function injectHeaderContent(appInstance) {
+export function injectHeaderContent(appInstance, enableI18n = false) {
     const header = document.getElementById('app-header');
     const wrapper = document.getElementById('header-content-wrapper');
 
@@ -123,20 +123,69 @@ export function injectHeaderContent(appInstance) {
             }
         }
 
-        // 4. BOTÓN A11Y: Limpiamos contenido
-        // Como ahora tiene una máscara CSS, no debe tener texto/emoji dentro para no ensuciar.
+        // 3. CONTENEDOR DE CONTROLES (I18N + A11Y)
+        // Creamos un wrapper para agrupar los botones a la derecha
+        let controls = wrapper.querySelector('.header-controls');
+        if (!controls) {
+            controls = document.createElement('div');
+            controls.className = 'header-controls';
+            
+            // Si el botón A11y ya existe, lo movemos dentro
+            const btnA11y = document.getElementById('btn-config-accesibilidad');
+            if (btnA11y && btnA11y.parentNode === wrapper) {
+                wrapper.insertBefore(controls, btnA11y); // Insertamos contenedor donde estaba el botón
+                controls.appendChild(btnA11y); // Movemos el botón dentro
+            } else {
+                wrapper.appendChild(controls);
+            }
+        }
+
+        // 🟢 BOTÓN IDIOMA (Solo si enableI18n es true)
+        if (enableI18n) {
+            let btnLang = document.getElementById('btn-lang-toggle');
+            if (!btnLang) {
+                btnLang = document.createElement('button');
+                btnLang.id = 'btn-lang-toggle';
+                btnLang.tabIndex = 0;
+                
+                const iconSpan = document.createElement('span');
+                iconSpan.className = 'lang-icon-bg';
+                
+                const textSpan = document.createElement('span');
+                textSpan.className = 'lang-text';
+                textSpan.setAttribute('aria-hidden', 'true');
+                
+                btnLang.appendChild(iconSpan);
+                btnLang.appendChild(textSpan);
+                
+                controls.appendChild(btnLang);
+                
+                btnLang.onclick = () => appInstance.toggleLanguage();
+            }
+
+            const currentLang = localStorage.getItem('vortex_lang') || 'es';
+            const textSpan = btnLang.querySelector('.lang-text');
+            if (textSpan) textSpan.textContent = currentLang.toUpperCase();
+            
+            const langLabel = currentLang === 'es' 
+                ? appInstance.getString('header.aria.langBtn') || "Idioma actual: Español. Cambiar a Inglés." 
+                : appInstance.getString('header.aria.langBtn') || "Current language: English. Switch to Spanish.";
+            btnLang.setAttribute('aria-label', langLabel);
+        }
+
+
+        // 5. BOTÓN A11Y: Limpiamos y configuramos
         const btnA11y = document.getElementById('btn-config-accesibilidad');
         if (btnA11y) {
             debug.log('data', debug.DEBUG_LEVELS.DEEP, 
                         'Estableciendo texto aria-label del botón a11y.');
             
-            btnA11y.innerHTML = ''; // Vaciar emoji antiguo
-            // Aseguramos que tenga label accesible ya que es visualmente un icono
-            if (!btnA11y.getAttribute('aria-label')) {
-                // Si i18n no lo puso (race condition), poner fallback o esperar a applyStrings
-                // Lo dejamos vacío aquí porque applyStrings ya se encarga de esto correctamente
-                // btnA11y.setAttribute('aria-label', 'Configuración de Accesibilidad');
-            }
+            btnA11y.innerHTML = ''; 
+            // El listener de click se añade en injectFooterContent o data.js global?
+            // Mejor añadirlo aquí si no está
+            btnA11y.onclick = () => {
+                import('./a11y.js').then(module => module.openModal());
+            };
         }
     }
 }

@@ -15,7 +15,7 @@ export const DEBUG_LEVELS = {
 export const DEBUG_CONFIG = {
     global: DEBUG_LEVELS.BASIC,
 
-    global_imageSec: DEBUG_LEVELS.DEEP,
+    global_imageSec: DEBUG_LEVELS.DISABLED,
 
     global_focus: DEBUG_LEVELS.DISABLED,
     global_font: DEBUG_LEVELS.DISABLED,

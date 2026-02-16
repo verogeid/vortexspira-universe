@@ -5,19 +5,20 @@
     --color-card-bg: rgba(255, 255, 255, 0.7);
     --color-mask-gradient: rgba(244, 244, 244, 0.4);
     --color-text: #111;
-    --color-card-border: #bbb;
-    --color-card-border-disabled: #ccc;
-    --color-primary: #007bff;
+    --color-card-border: #575757;
+    --color-card-border-disabled: #999;
+    --color-primary: #004a99;
     --color-primary-bg: rgba(0, 123, 255, 0.1);
-    --color-danger: #dc3545;
+    --color-danger: #b2000d;
     --color-danger-bg: rgba(220, 53, 69, 0.1);
-    --color-success: #28a745;
+    --color-success: #196b2c;
     --color-success-bg: rgba(40, 167, 69, 0.1);
-    --color-border-placeholder: #ddd; 
-    --color-text-muted: #999;
-    --color-header-bg: #222;
-    --color-header-text: #fff;
-    --color-footer-text: #fff;
+    --color-border-placeholder: #aaa; 
+    --color-text-muted: #595959;
+    --color-header-bg: #fff;
+    --color-header-text: #222;
+    --color-footer-text: #222;
+
     --color-shadow-primary: rgba(0, 123, 255, 0.4);
     --color-shadow-disabled: rgba(150, 150, 150, 0.2);
     --color-shadow-modal: rgba(0, 0, 0, 0.5);
@@ -26,11 +27,18 @@
     --color-details-action-item-hover: rgba(255, 255, 255, 0.05);
 
     /* Color para el icono de Obras (Orange/Yellow en modo claro) */
-    --color-icon-obras: #F89707; /* Orange/Yellow (Default/Claro) */
+    --color-icon-obras: #804a00; /* Orange/Yellow (Default/Claro) */
+
+    --color-logo-static: #595959;
+    --color-logo-dynamic: var(--color-icon-obras);
 
     /* ⭐️ Control dinámico del filtro SVG */
     --shadow-color-hex: #969696; /* Color puro de la sombra Ghost (gris por defecto) */
     --shadow-opacity: 0.8;       /* Opacidad base de la sombra Ghost */
+
+    --color-a11y-selected-text: #ffffff;
+    --color-a11y-slider-track: #888; 
+    --color-a11y-slider-labels: var(--color-text-muted);
 
     /* 📐 VARIABLES ESTRUCTURALES BASE */
     --card-gap: 3vmin; 
@@ -98,7 +106,7 @@
     --a11y-slider-icon-size: clamp(0.8rem, calc(1rem * var(--font-scale)), 1.3rem);
     --a11y-range-value-font-size: clamp(0.8rem, calc((0.75rem + 0.5vmin) * var(--font-scale)), 1rem);
     --a11y-range-size: clamp(30px, calc(5vmin * var(--font-scale)), 50px);
-    --a11y-reset-size: clamp(30px, calc(5vmin * var(--font-scale)), 50px);
+    --a11y-reset-size: clamp(40px, calc(6vmin * var(--font-scale)), 60px);
 
     --a11y-gap: 20px;
     --a11y-padding: 25px;                       /* Padding interno del modal */
@@ -195,6 +203,7 @@
 html {
     /* Esto escala todo el rem de la aplicación */
     font-size: calc(100% * var(--font-scale)); 
+    font-weight: 450;
 }
 
 body {
@@ -211,14 +220,16 @@ p {
         --color-bg: #111;
         --color-card-bg: rgba(255, 255, 255, 0.02);
         --color-mask-gradient: rgba(17, 17, 17, 0.4);
+        --color-primary: #8bc5ff;
         --color-text: #eee;
-        --color-card-border: #aaa; 
+        --color-card-border: #ababab; 
         --color-card-border-disabled: #666; 
         --color-border-placeholder: #555; 
         --color-header-bg: #222;
         --color-header-text: #fff;
         --color-footer-text: #fff;
-        --color-text-muted: #666;
+
+        --color-text-muted: #ababab;
         --color-shadow-primary: rgba(0, 123, 255, 0.4); 
         --color-shadow-disabled: rgba(170, 170, 170, 0.8);
         --color-shadow-modal: rgba(0, 0, 0, 0.7); 
@@ -228,8 +239,15 @@ p {
         /* ⭐️ CORRECCIÓN: Amarillo brillante para Obras en Modo Oscuro ⭐️ */
         --color-icon-obras: #FFC107; /* Amarillo Brillante */
 
+        --color-logo-static: #ababab;
+        --color-logo-dynamic: var(--color-icon-obras);
+
         /* ⭐️ Variables añadidas para el control dinámico del filtro SVG (Dark Mode) ⭐️ */
         --shadow-color-hex: #888888;
+
+        --color-a11y-selected-text: #000000;
+        --color-a11y-slider-track: #555;
+        --color-a11y-slider-labels: var(--color-text-muted);
     }
 }
 
@@ -249,8 +267,8 @@ p {
         
         /* Bordes y Deshabilitado */
         --color-card-border: #FFFFFF; /* Borde de tarjeta blanco */
-        --color-card-border-disabled: #AAAAAA; /* Gris claro */
-        --color-text-muted: #AAAAAA;
+        --color-card-border-disabled: #BDBDBD; /* Gris claro */
+        --color-text-muted: #BDBDBD;
         
         /* Footer/Header */
         --color-header-bg: #000000;
@@ -258,6 +276,9 @@ p {
         
         /* ⭐️ Amarillo de alto contraste para Obras ⭐️ */
         --color-icon-obras: #FFFF00; /* Amarillo Puro (Alto Contraste) */
+
+        --color-logo-static: #FFFFFF;
+        --color-logo-dynamic: var(--color-icon-obras);
         
         /* Eliminamos las sombras en las variables */
         --color-shadow-disabled: transparent;
