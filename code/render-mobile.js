@@ -21,8 +21,7 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
                 // 1. Renderizamos Breadcrumb
                 // 🛑 NO le inyectamos data-pos. El sistema de navegación lo ignorará.
                 let breadcrumbHtml = this._generarTarjetaHTML(nodo, true, false, nodo.tipoEspecial);
-                breadcrumbHtml = breadcrumbHtml.replace('class="card', 'style="margin-bottom: 10px;" class="card');
-
+                
                 // 2. Renderizamos Volver
                 // ✅ LE inyectamos data-pos con el logicalPos actual (será 0).
                 let volverHtml = this._generarTarjetaHTML(volverNode, true, false, volverNode.tipoEspecial);

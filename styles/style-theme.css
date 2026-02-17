@@ -62,11 +62,13 @@
     --header-logo-size: clamp(24px, calc(8vmin * var(--font-scale)), 4rem);
     --header-icon-size: clamp(24px, calc(8vmin * var(--font-scale)), 3.7rem);
     --header-obras-size: clamp(16px, calc(6vmin * var(--font-scale)), 3rem);
+    --header-lang-font-size: 0.8em;
     
     /* 📐 FOOTER (Valores por defecto / Desktop) */
     --footer-height: 5vmin;
     --footer-font-size: clamp(0.6rem, calc(1.5vmin * var(--font-scale)), 0.8rem);
     --footer-social-link-size: clamp(12px, calc(2.5vmin * var(--font-scale)), 1rem) !important;
+    --footer-padding: clamp(1px, 0.7vmin, 5px);
 
     /* 📐 VARIABLES DE TARJETAS (CARDS) */
     --card-p-line-height: 1.4;
@@ -74,7 +76,7 @@
     --card-desc-font-size: clamp(0.8rem, calc(0.9rem * var(--font-scale)), 1.1rem);
     --card-h3-line-clamp: 3;
     --card-h3-icon: 1.2em;
-    --card-padding: calc(1rem * var(--font-scale));
+    --card-padding: calc(1rem * var(--line-height-base));
 
     /* Nivel Actual */
     --card-nivel-actual-h3-line-clamp: 4;
@@ -87,6 +89,7 @@
     --card-breadcrump-vertical-font-size: 0.9rem;
     --card-breadcrump-vertical-h3-font-size: clamp(1rem, calc(0.9rem * var(--font-scale)), 1.4rem);
     --card-breadcrump-vertical-lice-clamp: 2;
+    --card-breadcrump-vertical-margin-bottom: clamp(1px, 3.5vmin, 10px);
 
     /* Botón Volver Fijo */
     --card-volver-fija-h3-font-size: clamp(1rem, calc(0.8rem * var(--font-scale)), 3rem); 
@@ -148,6 +151,7 @@
     --mobile-header-logo-size: clamp(14px, calc(5vmin * var(--font-scale)), 1.8rem) !important;
     --mobile-header-icon-size: clamp(14px, calc(5vmin * var(--font-scale)), 1.6rem) !important;
     --mobile-header-obras-size: clamp(10px, calc(3vmin * var(--font-scale)), 1.2rem) !important;
+    --mobile-header-padding: clamp(1px, 0.8vmin, 5px);
 
     --mobile-card-padding: 0.5rem;
     --mobile-card-min-height: clamp(200px, calc(30vmin * var(--font-scale)), 50dvh) !important; /* Card Relleno Final */

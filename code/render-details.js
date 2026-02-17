@@ -53,9 +53,10 @@ export function _mostrarDetalle(cursoId) {
     debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
                 `Mostrando detalle para: ${cursoId}`);
     
-    // ⭐️ FIX: Usar la verdad única del layout (zoom-aware)
+    // ⭐️ Usar la verdad única del layout (zoom-aware)
     const layoutMode = document.body.getAttribute('data-layout') || 'desktop';
     const isMobile = layoutMode === 'mobile';
+    const isSafeMode = document.body.getAttribute('data-safe-mode') === 'true';
     
     const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion); 
 
@@ -66,7 +67,11 @@ export function _mostrarDetalle(cursoId) {
         this._destroyCarousel();
     }
     
-    ['vista-navegacion-desktop', 'vista-navegacion-tablet', 'vista-navegacion-mobile'].forEach(id => {
+    [
+        'vista-navegacion-desktop', 
+        'vista-navegacion-tablet', 
+        'vista-navegacion-mobile'
+    ].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             el.classList.remove('active');
@@ -77,16 +82,24 @@ export function _mostrarDetalle(cursoId) {
     const desktopView = document.getElementById('vista-detalle-desktop');
     const mobileView = document.getElementById('vista-detalle-mobile');
     
-    if (desktopView) { desktopView.classList.remove('active'); desktopView.style.display = 'none'; }
-    if (mobileView) { mobileView.classList.remove('active'); mobileView.style.display = 'none'; }
+    if (desktopView) { 
+        desktopView.classList.remove('active'); 
+        desktopView.style.display = 'none'; 
+    }
+    if (mobileView) { 
+        mobileView.classList.remove('active'); 
+        mobileView.style.display = 'none'; 
+    }
 
     this.DOM.vistaDetalle = isMobile ? mobileView : desktopView;
     this.DOM.vistaDetalle.style.display = 'flex'; 
     this.DOM.vistaDetalle.classList.add('active');
 
-    this.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop'); 
+    this.DOM.detalleTrack = isMobile ? 
+        document.getElementById('detalle-track-mobile') : 
+        document.getElementById('detalle-track-desktop'); 
     
-    // 🟢 FIX 3: Silenciar el track ANTES de inyectar contenido para evitar lectura masiva
+    // 🟢 Silenciar el track ANTES de inyectar contenido para evitar lectura masiva
     if (this.DOM.detalleTrack) {
         this.DOM.detalleTrack.removeAttribute('aria-live');
         this.DOM.detalleTrack.removeAttribute('role'); // Dejarlo como div genérico o list
@@ -149,13 +162,12 @@ export function _mostrarDetalle(cursoId) {
         if (infoAdicional) infoAdicional.classList.remove('visible');
     }
 
-    // --- Renderizado de Slides (Tu lógica original intacta) ---
+    // --- Renderizado de Slides ---
     let slidesHtml = '';
 
     if (isMobile) {
         const parent = this.stackGetCurrent();
 
-        // ⭐️ FIX I18N: Clave actualizada aquí también por si acaso
         let parentName = this.getString('nav.breadcrumbRoot');
 
         if (parent && parent.levelId) {
@@ -170,14 +182,19 @@ export function _mostrarDetalle(cursoId) {
         let volverHtml = '';
         // En móvil siempre ponemos el volver
         volverHtml = `
-            <article class="card card-volver-vertical" role="button" aria-label=${ariaLabel} tabindex="0" onclick="App._handleVolverClick()">
+            <article class="card card-volver-vertical" 
+                role="button" 
+                aria-label=${ariaLabel} 
+                tabindex="0" 
+                onclick="App._handleVolverClick()">
                 <h3>${data.LOGO.VOLVER}</h3>
             </article>
         `;
 
         slidesHtml += `
             <div class="swiper-slide">
-                <article class="card card-breadcrumb-vertical" tabindex="-1" style="margin-bottom: 10px;">
+                <article class="card card-breadcrumb-vertical" 
+                    tabindex="-1" ">
                     <h3>${parentName}</h3>
                 </article>
                 ${volverHtml}
@@ -185,66 +202,77 @@ export function _mostrarDetalle(cursoId) {
         `;
     }
 
+    // 🟢 LÓGICA DE AGRUPACIÓN INTELIGENTE DE TEXTO
     const descripcion = curso.descripcion || this.getString('details.noDescription');
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = descripcion.trim();
 
-    // ⭐️ LOGICA DE AGRUPACIÓN (FIX DEFINITIVO)
-    // En lugar de filtrar, acumulamos contenido inline hasta encontrar un bloque
     const slidesContent = [];
-    let inlineBuffer = '';
+    
+    // Configuración de límites
+    const CHAR_LIMIT = isSafeMode ? 0 : 50;
 
-    const flushBuffer = () => {
-        if (inlineBuffer.trim().length > 0) {
-            // Si es texto suelto sin <p>, lo envolvemos para mantener estilo, 
-            // a menos que ya empiece por una etiqueta de bloque (raro en este buffer)
-            slidesContent.push(`<p>${inlineBuffer}</p>`);
+    let currentSlideBuffer = [];
+    let currentBufferLen = 0;
+
+    const flushBufferToSlide = () => {
+        if (currentSlideBuffer.length > 0) {
+            slidesContent.push(currentSlideBuffer.join(''));
+            currentSlideBuffer = [];
+            currentBufferLen = 0;
         }
-        inlineBuffer = '';
     };
 
     Array.from(tempDiv.childNodes).forEach(node => {
-        // ¿Es un elemento de Bloque que merece su propio slide?
-        // Añade aquí cualquier etiqueta que quieras que fuerce un salto de slide
+        // Ignorar nodos de texto vacíos (saltos de línea del editor)
+        if (node.nodeType === 3 && node.textContent.trim().length === 0) return;
+
+        // Detectar separador manual (<hr>)
+        if (node.tagName === 'HR') {
+            flushBufferToSlide(); // Fuerza corte inmediato
+            return;
+        }
+
         const isBlock = (node.nodeType === 1) && ['P', 'UL', 'OL', 'DIV', 'BLOCKQUOTE', 'H3', 'H4', 'TABLE'].includes(node.tagName);
-        const isEmptyText = (node.nodeType === 3) && node.textContent.trim().length === 0;
+        const htmlContent = node.nodeType === 1 ? node.outerHTML : node.textContent;
+        const textLength = node.textContent.length;
 
-        if (isEmptyText) return; // Ignoramos espacios vacíos entre etiquetas
+        // Decisión: ¿Cabe en el slide actual o creamos uno nuevo?
+        // 1. Si ya tenemos contenido Y añadir esto supera el límite -> Cortamos antes.
+        if (currentBufferLen > 0 && (currentBufferLen + textLength > CHAR_LIMIT)) {
+            flushBufferToSlide();
+        }
 
-        if (isBlock) {
-            flushBuffer(); // Si teníamos texto acumulado (ej: título suelto), lo soltamos antes
-            slidesContent.push(node.outerHTML); // Añadimos el bloque completo
-        } else {
-            // Es Inline (Text, STRONG, SPAN, A...) -> Lo guardamos en el buffer
-            inlineBuffer += (node.nodeType === 1 ? node.outerHTML : node.textContent);
+        // Añadimos al buffer actual
+        currentSlideBuffer.push(htmlContent);
+        currentBufferLen += textLength;
+
+        // Lógica de corte agresivo para Mobile/Safe Mode:
+        // Si es un bloque y estamos en modo seguro/móvil, cortamos inmediatamente después de añadirlo.
+        if ((isMobile || isSafeMode) && isBlock) {
+            flushBufferToSlide();
         }
     });
-    flushBuffer(); // Soltar lo que quede al final
+    
+    // Guardar lo que quede pendiente
+    flushBufferToSlide();
 
-    // Renderizar los slides procesados
+    // Generar HTML de los slides de texto
     if (slidesContent.length > 0) {
-        // Slide 1: Título + Primer contenido
-        // El H2 NO es focusable por sí mismo, se lee al llegar al fragmento o por contexto.
-        // Hacemos que el fragmento sea el 'document' focusable.
+        // El primer slide lleva el título (oculto visualmente en slide, pero útil para contexto)
         slidesHtml += `
             <div class="swiper-slide">
                 <h2 class="detail-title-slide" aria-hidden="true">${curso.titulo}</h2>
                 <div class="detail-text-fragment" data-index="0" role="article" tabindex="0" onclick="this.focus()">
-                    <div class="content-wrapper">
-                        ${slidesContent[0]}
-                    </div>
+                    <div class="content-wrapper">${slidesContent[0]}</div>
                 </div>
             </div>
         `;
-
-        // Resto de Slides
         for (let i = 1; i < slidesContent.length; i++) {
             slidesHtml += `
                 <div class="swiper-slide">
                     <div class="detail-text-fragment" data-index="${i}" role="article" tabindex="0" onclick="this.focus()">
-                        <div class="content-wrapper">
-                            ${slidesContent[i]}
-                        </div>
+                        <div class="content-wrapper">${slidesContent[i]}</div>
                     </div>
                 </div>
             `;

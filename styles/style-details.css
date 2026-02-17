@@ -68,8 +68,21 @@
 }
 
 .detail-text-fragment .content-wrapper {
-    /* El wrapper interno es quien da el aire al texto */
-    padding: var(--detail-vertical-spacing); /* Dinámico */
+    /* 1. ACTIVAR GUIONES AUTOMÁTICOS */
+    /* Corta las palabras por la sílaba correcta según el idioma definido en <html lang> */
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    hyphens: auto;
+
+    /* 2. SEGURIDAD DE DESBORDAMIENTO */
+    /* Si una palabra técnica es larguísima y no tiene guiones, la corta a la fuerza */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+
+    /* 3. OPTIMIZACIÓN DE LECTURA */
+    /* Mejora el renderizado del texto para que sea más nítido */
+    text-rendering: optimizeLegibility;
 }
 .detail-text-fragment p {
     width: 100%;

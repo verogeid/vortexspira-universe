@@ -97,7 +97,7 @@ body[data-layout="mobile"] #detalle-swiper-mobile .swiper-wrapper {
     width: 100%; height: auto !important; 
 
     padding-bottom: 15dvh; 
-    padding-top: 15px !important; 
+    padding-top: var(--card-padding) !important; 
 }
 
 /* ALINEACIÓN HORIZONTAL: Ambos slides tienen 6% de padding lateral */

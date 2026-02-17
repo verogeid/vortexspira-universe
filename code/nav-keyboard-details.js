@@ -22,7 +22,7 @@ export function _handleDetailNavigation(key) {
     
     // Validación de índice guardado
     if (currentIndex < 0 || currentIndex >= totalElements) {
-         currentIndex = 0;
+        currentIndex = 0;
     }
 
     let newIndex = currentIndex;
@@ -111,8 +111,28 @@ export function _handleDetailNavigation(key) {
             debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
                         `FORZANDO FOCO NATIVO. Nuevo Índice: ${newIndex}`);
             
-            // ⭐️ FIX CLAVE 2: Aplicar foco nativo (sin preventScroll para permitir que el navegador haga scroll) ⭐️
-            newFocusElement.focus();
+            // 1. Aplicar Foco
+            newFocusElement.focus({ preventScroll: true }); // Bloqueamos el salto nativo
+            app.STATE.lastDetailFocusIndex = newIndex;
+
+            // 2. Gestionar el Swiper
+            if (app.STATE.detailCarouselInstance) {
+                const carousel = app.STATE.detailCarouselInstance;
+                const slide = newFocusElement.closest('.swiper-slide');
+                
+                if (slide) {
+                    const slideIndex = Array.from(carousel.slides).indexOf(slide);
+                    if (slideIndex !== carousel.activeIndex) {
+                        carousel.slideTo(slideIndex, 300);
+                    }
+                }
+
+                // 🟢 3. CORRECCIÓN DE VISIBILIDAD VERTICAL (DIAGNÓSTICO + FIX)
+                // Esperamos un tick a que slideTo inicie o termine
+                requestAnimationFrame(() => {
+                    _checkAndFixVerticalObstruction(app, newFocusElement, carousel);
+                });
+            }
             
             // ⭐️ FIX CLAVE 3: Forzar la actualización visual (blur/sharpness) inmediatamente ⭐️
             nav_base_details._updateDetailFocusState(app);
@@ -121,7 +141,7 @@ export function _handleDetailNavigation(key) {
             app.STATE.lastDetailFocusIndex = newIndex; 
             
         } else {
-             debug.logWarn('nav_keyboard_details', 
+            debug.logWarn('nav_keyboard_details', 
                             `No se encontró elemento enfocable en el índice ${newIndex}.`);
         }
     } else {
@@ -130,6 +150,79 @@ export function _handleDetailNavigation(key) {
     }
     debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
                 '--- FIN: _handleDetailNavigation ---');
+}
+
+function _checkAndFixVerticalObstruction(app, target, swiper) {
+    const header = document.getElementById('app-header');
+    const headerHeight = header?.offsetHeight || 0;
+    const footerHeight = document.querySelector('footer')?.offsetHeight || 0;
+    
+    const parentSlide = target.closest('.swiper-slide');
+    const elementToMeasure = parentSlide || target;
+
+    const rect = elementToMeasure.getBoundingClientRect();
+    const topRef = rect.top;
+    const bottomRef = rect.bottom;
+    
+    const viewHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    
+    // Zonas Seguras (con margen estético)
+    const margin = 0; 
+    const safeTop = headerHeight + margin; 
+    const safeBottom = viewHeight - footerHeight - margin;
+
+    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.EXTREME, 
+        `📏 CHECK VISIBILIDAD: 
+         Safe Zone: ${safeTop.toFixed(0)}px <-> ${safeBottom.toFixed(0)}px
+         Elemento: Top=${topRef.toFixed(1)}px | Bottom=${bottomRef.toFixed(1)}px`);
+
+    let adjustment = 0;
+    let reason = "";
+
+    // CASO 1: Obstrucción SUPERIOR (Prioridad Máxima)
+    // Si el elemento está cortado por arriba (header), hay que bajarlo SÍ o SÍ.
+    if (topRef < safeTop) {
+        const deltaDown = safeTop - topRef;
+        adjustment = deltaDown;
+        reason = "OBSTRUCCIÓN SUPERIOR (Bajando)";
+    } 
+    // CASO 2: Obstrucción INFERIOR (Negociable)
+    // Si está cortado por abajo (footer), intentamos subirlo...
+    else if (bottomRef > safeBottom) {
+        const deltaUp = bottomRef - safeBottom; // Cuánto NECESITAMOS subir
+        
+        // Calculamos cuánto espacio libre ("Headroom") tenemos arriba antes de chocar con el Header
+        const roomAbove = topRef - safeTop;
+        
+        // Si hay espacio, subimos.
+        if (roomAbove > 0) {
+            // Subimos solo lo necesario, o lo máximo permitido si no hay suficiente espacio.
+            // Math.min asegura que nunca subamos tanto como para esconder el top bajo el header.
+            const actualMoveUp = Math.min(deltaUp, roomAbove);
+            
+            adjustment = -actualMoveUp; // Negativo = Subir
+            reason = `OBSTRUCCIÓN INFERIOR (Subiendo ${actualMoveUp.toFixed(1)}px de ${deltaUp.toFixed(1)}px)`;
+        } else {
+            // Si roomAbove <= 0, es que ya estamos pegados al header. No podemos subir más.
+            reason = "OBSTRUCCIÓN INFERIOR (Ignorada: Tope superior alcanzado)";
+        }
+    }
+
+    if (Math.abs(adjustment) < 1) {
+        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.EXTREME, `✅ VISIBLE: Ok.`);
+        return;
+    }
+
+    // Aplicar Corrección
+    const currentTrans = swiper.getTranslate();
+    const newTrans = currentTrans + adjustment;
+
+    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.IMPORTANT, 
+        `🔧 CORRECCIÓN: ${reason}. Translate: ${currentTrans.toFixed(1)} -> ${newTrans.toFixed(1)}`);
+
+    swiper.setTransition(300);
+    swiper.setTranslate(newTrans);
+    swiper.updateProgress();
 }
 
 // --- code/nav-keyboard-details.js ---

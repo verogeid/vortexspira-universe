@@ -222,8 +222,8 @@ header h1 a:focus-visible .header-logo::after {
 /* TEXTO DEL IDIOMA (ES/EN) */
 #btn-lang-toggle .lang-text {
     position: relative;
-    font-family: var(--font-main);
-    font-size: 0.8rem;
+    font-family: var(--font-family-base);
+    font-size: var(--header-lang-font-size);
     font-weight: 900;
     
     z-index: 2;
@@ -276,7 +276,7 @@ body[data-layout="mobile"] header {
     flex-direction: column;
     justify-content: center; /* Centrado vertical del bloque wrapper */
 
-    padding: 5px 0; /* Padding vertical para respirar */
+    padding: var(--mobile-header-padding) 0;
 
     padding-right: var(--card-padding);
 }
@@ -289,70 +289,48 @@ body[data-layout="mobile"] header h1 {
     width: auto !important;
     max-width: 100% !important;
 
-    /* 1. ACTIVAR EL MOTOR DE RECORTE */
-    display: -webkit-box !important;
-    -webkit-box-orient: vertical !important;
+    /* block/inline flow (unilinea robusta) */
+    display: block !important;
 
-    /* Configuración Flex interna para Logo + Texto */
+    /* Configuración de 1 Línea con Puntos Suspensivos */
+    white-space: nowrap !important; 
+    overflow: hidden !important; 
+    text-overflow: ellipsis !important;
     
-    justify-content: center;
-    align-items: center;
-    
-    /* 2. CONFIGURACIÓN DE LÍNEAS */
-    /* Cuántas líneas permites antes de cortar? 2 suele ser ideal para header */
-    -webkit-line-clamp: 2 !important; 
-    line-clamp: 2 !important;
-    
-    /* 3. COMPORTAMIENTO DEL TEXTO */
-    white-space: normal !important; /* Permite saltar de línea */
-    overflow: hidden !important;    /* Oculta lo que sobre */
-    text-overflow: ellipsis !important; /* Pone los puntos ... */
-    
-    /* 4. AJUSTES VISUALES */
-    /* Quitamos el centrado flex anterior porque choca con -webkit-box */
-    text-align: center !important; 
-    
-    /* Aseguramos que el texto rompa si es una palabra kilométrica */
-    word-break: break-word !important; 
-    overflow-wrap: anywhere !important; 
-    
-    /* Reset de alturas para que el clamp funcione */
+    /* Alineación */
+    text-align: center !important;
+
+    /* Reset */
     height: auto !important;
     max-height: none !important;
-    
-    /* Ajuste fino de márgenes */
     margin: 0 auto !important;
     gap: 6px;
-
-    /* Seguridad de desbordamiento */
-    overflow: hidden;
+    
+    -webkit-line-clamp: unset !important;
+    line-clamp: unset !important;
 }
 
-/* Control del Texto dentro del H1 */
 body[data-layout="mobile"] header h1 .header-logo {
-    /* El logo nunca debe desaparecer, pero sí encogerse */
-    flex-shrink: 0; 
+    flex-shrink: 0;
+    vertical-align: middle; /* Alinear verticalmente con el texto en modo block */
+    margin-right: 5px; /* Separación extra ya que 'gap' no funciona en block */
 }
 
 body[data-layout="mobile"] header h1 a {
-    flex-shrink: 0; display: inline-flex;
-    height: auto; /* Permite crecer */
+    flex-shrink: 0; 
+    display: inline-flex;
+    height: auto; 
+    vertical-align: middle; 
 }
 
 /* Usamos GRID para control total del espacio */
 body[data-layout="mobile"] #header-content-wrapper {
     display: grid !important;
-    
-    /* 3 Columnas: [Icono Obras?] [ Título Flexible ] [ Botón A11y ] */
-    /* min-content asegura que los iconos ocupen lo justo */
-    grid-template-columns: min-content 1fr min-content;
-    
-    align-items: center; /* Centrado Vertical Perfecto */
+    grid-template-columns: min-content 1fr auto; 
+    align-items: center; 
     width: 100%;
-    gap: 8px; /* Espacio controlado entre elementos */
+    gap: 8px; 
     padding: 0 10px;
-
-    /* Aseguramos que el wrapper no herede el 100% de altura base */
     height: auto !important; 
     min-height: 0 !important;
 }

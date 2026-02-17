@@ -192,99 +192,137 @@ export function _updateFocusImpl(shouldSlide = true) {
         target.setAttribute('aria-current', 'true');
         target.tabIndex = 0;
 
-        // 🟢 2. CHECK DE IDEMPOTENCIA (EL FIX REAL)
-        // Si el navegador ya tiene el foco en este elemento, NO llamamos a .focus() de nuevo.
-        // Esto elimina el "tartamudeo" del lector de pantalla.
-        if (document.activeElement === target) {
-            debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
-                        `_updateFocusImpl: Foco ya establecido. Ignorando llamada redundante.`);
-            
-            return; 
-        }
-
         // 🛠️ DETECCIÓN DE LAYOUT (Zoom Aware) 🛠️
         const layout = document.body.getAttribute('data-layout') || 'desktop';
         const isMobile = layout === 'mobile';
         
         if (isMobile) {
-            target.focus(); 
+            if (document.activeElement === target) {
+                debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
+                            `_updateFocusImpl: Foco ya establecido. Ignorando llamada redundante.`);
+            } else {
+                debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
+                            `_updateFocusImpl: Estableciendo foco físico en móvil.`);
+
+                // 🟢 Bloquear el scroll nativo del navegador
+                // Esto evita el "primer salto" donde el navegador pone el elemento bajo el header.
+                target.focus({ preventScroll: true });
+            }
+            
 
             if (this.STATE.carouselInstance) {
                 const swiper = this.STATE.carouselInstance;
-                swiper.update(); // Sincronización
+                swiper.update(); 
 
-                // Leemos las dimensiones reales del DOM (por si el CSS aún no refrescó)
-                const headerHeight = document.getElementById('app-header')?.offsetHeight || 0;
+                // 🕵️‍♀️ ZONA DE DEPURACIÓN Y CÁLCULO 🕵️‍♀️
+                const header = document.getElementById('app-header');
+                const headerHeight = header?.offsetHeight || 0;
                 const footerHeight = document.querySelector('footer')?.offsetHeight || 0;
-
-                const viewHeight = window.visualViewport ? 
-                        window.visualViewport.height : 
-                        window.innerHeight;
-                //const viewHeight = window.innerHeight;
+                
+                const viewHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
                 const bottomLimit = viewHeight - footerHeight;
 
-                // En lugar de mirar solo la tarjeta, miramos el SLIDE contenedor.
-                // Esto incluye automáticamente el Breadcrumb si está encima de la tarjeta en el mismo slide.
+                // 🟢 FIX 2: Medir el SLIDE COMPLETO, no solo la tarjeta
+                // Si la tarjeta está dentro de un grupo (ej: Breadcrumb + Volver), medimos el grupo entero.
                 const parentSlide = target.closest('.swiper-slide');
+                const elementToMeasure = parentSlide || target; // Fallback al target si no hay slide
 
-                // Si encontramos el slide, usamos su borde superior. Si no, usamos el de la tarjeta.
-                const topRect = parentSlide ? parentSlide.getBoundingClientRect() : target.getBoundingClientRect();
-                const cardRect = target.getBoundingClientRect(); // Para el fondo seguimos usando la tarjeta
+                const rect = elementToMeasure.getBoundingClientRect(); 
+                const topRef = rect.top;
+                const bottomRef = rect.bottom;
+                
+                debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
+                    `📏 MEDICIONES: 
+                    Header H: ${headerHeight}px
+                    Bottom Limit: ${bottomLimit}px
+                    Elemento a medir: ${elementToMeasure.tagName} ${elementToMeasure.className}
+                    Top: ${topRef.toFixed(1)}px
+                    Bottom: ${bottomRef.toFixed(1)}px`);
 
-                // 1. Techo Real (Breadcrumb en Idx=0)
-                const topRef = topRect.top;
-                const bottomRef = cardRect.bottom;
+                //debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
+                //    `🔍 CHECK VISIBILIDAD: Header=${headerHeight}px | Slide Top=${topRef.toFixed(1)}px`);
 
-                // Detección de Obstrucción
-                // Añadimos margen de seguridad al header
                 const isObstructedTop = topRef < (headerHeight + 5); 
                 const isObstructedBottom = bottomRef > (bottomLimit - 5);
 
                 if (isObstructedTop || isObstructedBottom) {
+                    const margin = 20; 
                     let delta = 0;
-                    const margin = 20; // Un buen margen visual (15px padding + 5px extra)
 
                     if (isObstructedTop) {
-                        // Calcular cuánto hay que bajar para que el TOP del slide se vea bajo el header
-                        delta = (headerHeight + margin) - topRef;
+                        delta = (headerHeight + margin) - topRef; // Cuánto hay que bajarlo
+
+                        debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `⚠️ OBSTRUCCIÓN SUPERIOR. Delta: ${delta.toFixed(1)}px`);
+
                     } else if (isObstructedBottom) {
-                        // Calcular cuánto hay que subir para que el BOTTOM de la tarjeta se vea sobre el footer
-                        delta = (bottomLimit - margin) - bottomRef;
+                        delta = bottomRef - (bottomLimit - margin); // Cuánto hay que subirlo
+
+                        debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `⚠️ OBSTRUCCIÓN INFERIOR. Delta: ${delta.toFixed(1)}px`);
                     }
 
-                    // 🛑 BIFURCACIÓN DE ESTRATEGIA: Safe Mode vs Swiper 🛑
-                    const isSafeMode = document.body.getAttribute('data-safe-mode') === 'true';
+                    // 🟢 FIX 3: Aplicar movimiento único según el tipo de contenedor
+                    if (swiper.params.direction === 'vertical') {
+                        // SWIPER VERTICAL (Detalles): Movemos el contenido usando transformaciones
+                        // Al haber usado preventScroll, el navegador no ha movido nada, así que partimos de la posición actual real.
+                        let currentTrans = swiper.translate;
+                        let newTrans = currentTrans;
 
-                    if (isSafeMode) {
-                        // EN SAFE MODE: El CSS bloquea transformaciones. Usamos Scroll Nativo.
-                        // Delta positivo = Queremos bajar el contenido = Scroll UP (-delta)
-                        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
-                            `MÓVIL FIX (SafeMode): Ajustando Scroll Window por ${-delta.toFixed(1)}px`);
+                        if (isObstructedTop) {
+                            // Para bajar el contenido visualmente, sumamos al translate (hacerlo menos negativo)
+                            newTrans = currentTrans + delta;
+                        } else {
+                            // Para subir el contenido, restamos al translate (hacerlo más negativo)
+                            newTrans = currentTrans - delta;
+                        }
                         
-                        window.scrollBy({
-                            top: -delta,
-                            behavior: 'smooth'
-                        });
-                    } else {
-                        // EN MODO NORMAL: Usamos el motor del Swiper
-                        let newTrans = swiper.translate + delta;
-                        
-                        // Límite físico: No bajar más allá del inicio (0)
-                        newTrans = Math.min(newTrans, 0);
+                        debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `🔧 CORRIGIENDO VERTICAL (Swiper): ${currentTrans} -> ${newTrans}`);
 
-                        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
-                            `MÓVIL FIX: Idx=${targetPos} | SlideTop=${topRef.toFixed(1)} | Header=${headerHeight} | Delta=${delta.toFixed(1)}`);
-
-                        // Usamos una transición suave para que se vea el ajuste
-                        swiper.setTransition(data.SWIPER.SLIDE_SPEED);
+                        swiper.setTransition(300); // Movimiento suave único
                         swiper.setTranslate(newTrans);
-                        swiper.updateProgress(); 
+                        swiper.updateProgress();
+
+                    } else {
+                        // SWIPER HORIZONTAL (Menú Principal): Movemos la ventana entera
+                        // Usamos 'smooth' porque ahora es el único movimiento, no una corrección brusca
+                        if (isObstructedTop) {
+                            window.scrollBy({ top: -delta, behavior: 'smooth' });
+                        } else {
+                            window.scrollBy({ top: delta, behavior: 'smooth' });
+                        }
+                        debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `↔️ CORRECCIÓN HORIZONTAL (Window Scroll)`);
                     }
+
+                    // Verificación Post-Corrección (Solo diagnóstico)
+                    setTimeout(() => {
+                        const newRect = elementToMeasure.getBoundingClientRect();
+                        const newTop = newRect.top;
+                        const visibleAhora = newTop >= headerHeight - 1; // Tolerancia 1px
+                        const icono = visibleAhora ? '✅' : '❌';
+                        debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `${icono} POST-CORRECCIÓN: Nuevo Top=${newTop.toFixed(1)}px. ¿Visible? ${visibleAhora}`);
+                    }, 350); // Esperar a que termine la transición (300ms + margen)
+
+                } else {
+                    debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
+                        `✅ VISIBLE: El elemento está libre (Top ${topRef.toFixed(1)} >= Header ${headerHeight})`);
                 }
             }
         } else {
-            // Foco físico
-            target.focus({ preventScroll: true }); 
+            // Desktop behavior
+            if (document.activeElement === target) {
+                debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `_updateFocusImpl: Foco ya establecido. Ignorando llamada redundante.`);
+            } else {
+                debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `_updateFocusImpl: Estableciendo foco físico en desktop.`);
+
+                // Foco físico
+                target.focus({ preventScroll: true }); 
+            }
 
             // Movimiento del Slide
             if (this.STATE.carouselInstance && shouldSlide) {

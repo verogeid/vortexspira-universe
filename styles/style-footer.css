@@ -6,7 +6,7 @@ footer {
 
     /* Padding dinámico (clamp) en lugar de fijo (5px) */
     /* Si hay poca altura (dvh), el padding baja a 2px para dejar sitio a los iconos */
-    padding: clamp(2px, 1dvh, 5px);
+    padding: var(--footer-padding);
 
     width: 100%;
     color: var(--color-footer-text); text-align: center;
@@ -120,7 +120,7 @@ footer a.footer-license-link:focus-visible {
     body[data-layout="mobile"] footer { 
         position: fixed !important; bottom: 0; 
         margin-top: 0; 
-        /*padding: 0 5px !important; */
+        
         width: 100%; 
     }
     

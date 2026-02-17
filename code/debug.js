@@ -36,7 +36,7 @@ export const DEBUG_CONFIG = {
     
     // Módulos de Teclado
     nav_keyboard_base: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para ver el listener keydown global ⭐️
-    nav_keyboard_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para la lógica de cursor en detalle ⭐️
+    nav_keyboard_details: DEBUG_LEVELS.EXTREME, // ⭐️ DEEP: Para la lógica de cursor en detalle ⭐️
     nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Mouse
