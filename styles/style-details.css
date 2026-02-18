@@ -62,7 +62,7 @@
     
     /* A11Y FIX CRÍTICO: Texto base legible (1rem) + crecimiento */
     font-size: var(--details-text-fragment-font-size);
-    line-height: var(--details-text-fragment-line-height);
+    line-height: var(--line-height-base);
     
     width: 100%;
 }
@@ -86,10 +86,13 @@
 }
 .detail-text-fragment p {
     width: 100%;
-    margin: 0 !important;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: var(--paragraph-spacing) !important;
 }
 .detail-text-fragment p:last-child {
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
 }
 
 .detail-text-fragment:focus-visible,
