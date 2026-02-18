@@ -215,7 +215,28 @@ class VortexSpiraApp {
             const newMode = document.body.getAttribute('data-layout');
             this._syncHeaderDimensions();
 
-            if (prevMode !== newMode) {
+            // 🟢 LÓGICA DE ACTUALIZACIÓN INTELIGENTE
+            // Si hay cambio de layout, forzamos render.
+            // Si solo es un ajuste menor (mismo modo), dejamos que _mostrarDetalle decida con los buckets.
+            const forceRender = (prevMode !== newMode);
+
+            if (forceRender) {
+                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
+                            `Layout Change (${prevMode} -> ${newMode}). Forzando render...`);
+                this._cacheDOM();
+            } else {
+                debug.log('app', debug.DEBUG_LEVELS.DEEP, 
+                            `Layout Refresh (Mismo modo). Delegando a buckets.`);
+            }
+
+            if (this.STATE.activeCourseId) {
+                // Pasamos forceRender para saltarnos el chequeo de buckets si cambió el layout drásticamente
+                this._mostrarDetalle(this.STATE.activeCourseId, forceRender);
+            } else if (forceRender) {
+                this.renderNavegacion();
+            }
+
+            /*if (prevMode !== newMode) {
                 debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
                             `Layout Change (${prevMode} -> ${newMode}). Renderizando...`);
 
@@ -226,7 +247,8 @@ class VortexSpiraApp {
                 } else {
                     this.renderNavegacion();
                 }
-            }
+            }*/
+
             // Diagnóstico tras refresco de layout
             requestAnimationFrame(() => {
                 debug_diagnostics.runFontDiagnostics?.();
@@ -297,8 +319,8 @@ class VortexSpiraApp {
         });
     }
 
-    _mostrarDetalle(cursoId) { 
-        render_details._mostrarDetalle.call(this, cursoId);
+    _mostrarDetalle(cursoId, forceRepaint = false) { 
+        render_details._mostrarDetalle.call(this, cursoId, forceRepaint);
         this.STATE.activeCourseId = cursoId; 
         // Ejecutar diagnóstico tras renderizar el detalle
         requestAnimationFrame(() => {
@@ -531,7 +553,7 @@ class VortexSpiraApp {
                                 `SmartResize: Manteniendo vista detalle.`);
 
                     requestAnimationFrame(() => {
-                        this._mostrarDetalle(this.STATE.activeCourseId);
+                        this._mostrarDetalle(this.STATE.activeCourseId, false);
                     });
                 } else {
                     debug.log('app', debug.DEBUG_LEVELS.BASIC, 

@@ -27,7 +27,7 @@ export const DEBUG_CONFIG = {
     app: DEBUG_LEVELS.DISABLED,
     data: DEBUG_LEVELS.DISABLED,
     i18n: DEBUG_LEVELS.DISABLED,
-    a11y: DEBUG_LEVELS.EXTREME,
+    a11y: DEBUG_LEVELS.DISABLED,
     nav_stack: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Detalle
@@ -36,7 +36,7 @@ export const DEBUG_CONFIG = {
     
     // Módulos de Teclado
     nav_keyboard_base: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para ver el listener keydown global ⭐️
-    nav_keyboard_details: DEBUG_LEVELS.EXTREME, // ⭐️ DEEP: Para la lógica de cursor en detalle ⭐️
+    nav_keyboard_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para la lógica de cursor en detalle ⭐️
     nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Mouse
@@ -44,7 +44,7 @@ export const DEBUG_CONFIG = {
     nav_mouse_swipe: DEBUG_LEVELS.DISABLED,   // Excluir arrastre en menús
     
     render_base: DEBUG_LEVELS.DISABLED,
-    render_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para inicialización de Swiper de detalle ⭐️
+    render_details: DEBUG_LEVELS.EXTREME, // ⭐️ DEEP: Para inicialización de Swiper de detalle ⭐️
     render_swipe: DEBUG_LEVELS.DISABLED
 };
 
