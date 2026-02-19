@@ -7,6 +7,7 @@ import * as debug from './debug.js';
    ============================================================ */
 let _srObserver = null;
 let _srFocusListener = null;
+let _lastGroup = null;
 
 export function enableScreenReaderSimulator() {
 
@@ -21,6 +22,37 @@ export function enableScreenReaderSimulator() {
         const el = e.target;
         if (el === document.body) return;
 
+        // 🟢 FIX: Lógica de anuncio de entrada a Grupos (radiogroup, group, etc.)
+        const currentGroup = el.closest('[role="group"], [role="radiogroup"]');
+        
+        if (currentGroup && currentGroup !== _lastGroup) {
+            _lastGroup = currentGroup;
+
+            const groupName = _computeAccessibleName(currentGroup) || 'Grupo sin nombre';
+
+            const isRadio = currentGroup.getAttribute('role') === 'radiogroup';
+            const groupType = isRadio ? 
+                                'Grupo de botones de opción' : 
+                                'Grupo';
+            
+            // Opcional: contar elementos para ser aún más realistas
+            const childCount = isRadio ? 
+                                currentGroup.querySelectorAll('[role="radio"]').length : 
+                                '';
+
+            const countText = childCount ? 
+                                ` (${childCount} opciones)` : 
+                                '';
+
+            debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
+                `%c📦 ENTRANDO A GRUPO: "${groupName}", ${groupType}${countText}`, 
+                "color: #fff; background: #673ab7; padding: 4px 8px; border-radius: 4px; font-weight: bold; margin-bottom: 4px; display: inline-block;");
+
+        } else if (!currentGroup && _lastGroup) {
+            // Salimos del grupo
+            _lastGroup = null;
+        }
+
         // Reutilizamos la lógica unificada de anuncio
         _announceElement(el, 'focus');
     };
@@ -31,7 +63,7 @@ export function enableScreenReaderSimulator() {
     
     _srObserver = new MutationObserver((mutations) => {
         const updates = new Set(); 
-        const valueUpdates = new Set(); // 🟢 Set para deduplicar cambios de valor
+        const valueUpdates = new Set(); 
 
         mutations.forEach(mut => {
             let target = mut.target;
@@ -39,6 +71,7 @@ export function enableScreenReaderSimulator() {
             
             // A. Cambios en Regiones Vivas (Toast, etc)
             const liveRegion = target.closest('[aria-live]');
+            
             if (liveRegion && !updates.has(liveRegion)) {
                 updates.add(liveRegion);
                 
@@ -58,19 +91,27 @@ export function enableScreenReaderSimulator() {
             // B. Cambios de estado en tiempo real (mientras estás encima)
             if (target === document.activeElement || target.contains(document.activeElement)) {
                 
-                // 1. Cambio de Estado (Disabled / Pressed / Expanded)
-                if (mut.type === 'attributes' && ['aria-disabled', 'disabled', 'aria-pressed', 'aria-expanded'].includes(mut.attributeName)) {
+                // 1. Cambio de Estado (Disabled / Pressed / Expanded / Checked)
+                // 🟢 FIX: Añadido aria-checked a la lista de disparadores
+                if (mut.type === 'attributes' && 
+                    [
+                        'aria-disabled', 
+                        'disabled', 
+                        'aria-pressed', 
+                        'aria-expanded', 
+                        'aria-checked'
+                    ].includes(mut.attributeName)) {
+
                     _announceElement(document.activeElement, 'update'); 
                 }
 
-                // 2. Cambio de Valor (Sliders) - ACUMULAR PARA DEDUPLICAR
+                // 2. Cambio de Valor (Sliders)
                 if (mut.type === 'attributes' && ['aria-valuenow', 'aria-valuetext'].includes(mut.attributeName)) {
                     valueUpdates.add(target);
                 }
             }
         });
 
-        // 🟢 Procesar actualizaciones de valor una sola vez por elemento
         valueUpdates.forEach(target => {
             const val = target.getAttribute('aria-valuetext') || target.getAttribute('aria-valuenow');
             debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
@@ -84,9 +125,10 @@ export function enableScreenReaderSimulator() {
         childList: true,
         characterData: true,
         attributes: true,
+        // 🟢 FIX: Añadido aria-checked a los atributos vigilados
         attributeFilter: [
             'aria-hidden', 'aria-disabled', 'disabled', 'class', 'hidden',
-            'aria-valuenow', 'aria-valuetext', 'aria-pressed', 'aria-expanded'
+            'aria-valuenow', 'aria-valuetext', 'aria-pressed', 'aria-expanded', 'aria-checked'
         ] 
     });
 }
@@ -123,19 +165,24 @@ function _announceElement(el, type = 'focus') {
     debug.logGroupExpanded('a11y', debug.DEBUG_LEVELS.EXTREME, 
                             `%c${prefix}`, logStyle, ` ${name || 'SIN NOMBRE'}${titleSuffix} `);
     
-    debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, `%cTexto: "${name}"`, textStyle);
-    debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, `Rol:   [${role}]`);
+    debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
+                `%cTexto: "${name}"`, textStyle);
+    debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
+                `%cRol:   [${role}]`, textStyle );
 
     if (description) 
-        debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, `Desc:  "${description}"`);
+        debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
+                `Desc:  "${description}"`);
 
     if (state.length) 
-        debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, `Estado: ${state.join(', ')}`);
+        debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
+                `Estado: ${state.join(', ')}`);
 
     if (warning) 
         debug.logWarn('a11y', warning);
     
-    debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, "DOM:", el); 
+    debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
+            "DOM:", el); 
 
     debug.logGroupEnd('a11y', debug.DEBUG_LEVELS.EXTREME);
 }
@@ -213,6 +260,10 @@ function _computeState(el) {
 
     if (el.getAttribute('aria-pressed') === 'true') 
         states.push('PRESIONADO');
+
+    if (el.hasAttribute('aria-checked')) {
+        states.push(el.getAttribute('aria-checked') === 'true' ? 'MARCADO' : 'NO MARCADO');
+    }
 
     return states;
 }

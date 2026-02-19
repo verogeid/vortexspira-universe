@@ -24,6 +24,7 @@
         "breadcrumbRoot": "Nivel Raíz",
         "level": "Nivel",
         "contextPrefix": "Navegando en: ",
+        "coursePrefix": "Curso: ",
         "emptyState": "No hay contenido disponible en este nivel."
     },
     "card": {
@@ -59,6 +60,7 @@
         "opened": "Configuración de accesibilidad abierta",
         "close": "Cerrar configuración",
         "reset": "Restaurar valores por defecto",
+        "resetSuccess": "Valores por defecto restaurados",
         "sections": {
             "font": "Tipografía",
             "size": "Tamaño Texto",

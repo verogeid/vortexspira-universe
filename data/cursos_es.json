@@ -30,7 +30,7 @@
           "cursos": [
             {
               "id": "c-cfwp",
-              "titulo": "Arquitecto Web",
+              "titulo": "Web Architect",
               "descripcion": "Acabo de salir del Kick-off del nuevo e-commerce y tú eres mi refuerzo. Olvida los tutoriales de 'Hola Mundo'; aquí trabajamos con metodología Shift Left. No vamos a tirar líneas de código, vamos a construir un edificio.<HR>🔸Sprint 1 (HTML5): Los cimientos semánticos y accesibles. Sin esto, el proyecto se hunde.<HR>🔸Sprint 2 (CSS3): La fachada, el diseño responsivo y la identidad visual.<HR>🔸Sprint 3 (JavaScript): La maquinaria interna, la lógica y la interactividad.<HR>Al terminar, no solo tendrás una app; tendrás la mentalidad para levantar cualquier proyecto web desde cero sin deuda técnica.",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#", "type": "d" },
@@ -123,8 +123,8 @@
           "subsecciones": [],
           "cursos": [
             {
-              "id": "c-awqa",
-              "titulo": "Arquitecto Web (QA Edition)",
+              "id": "c-waqa",
+              "titulo": "Web Architect QA Ed.",
               "descripcion": "Te han mentido. La interfaz gráfica (UI) es una ilusión; la verdad está en el DOM. Si sigues probando solo 'lo que se ve', tus reportes serán superficiales y tus automatizaciones frágiles. <HR>Este curso transforma tu perfil de Tester a <strong>Ingeniero de Calidad Holístico</strong>, enseñándote a auditar las tripas de la web (Caja Gris): <HR>🔸<strong>La Visión (DOM & Consola):</strong> Deja de adivinar. Aprende a interrogar al navegador y destapar bugs ocultos (y mentiras del Frontend) que la UI no muestra. <HR>🔸<strong>El Selector Indestructible</strong>: ¿Tus tests se rompen si cambian el diseño o el idioma? Normal, estás testeando 'pintura'. Aprenderás a enganchar tus automatizaciones a <strong>Negocio</strong>. Crearás scripts que sobreviven a rediseños completos sin tocar una línea de código. <HR>🔸<strong>Ingeniería del Caos (Network & Render)</strong>: Controla el tráfico. Simula caídas de red, bloquea servicios de terceros y detecta problemas de rendimiento antes de que el usuario sufra.",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#", "type": "d" },
@@ -197,7 +197,7 @@
           "cursos": [
             {
               "id": "c-cfwp",
-              "titulo": "Arquitecto Web",
+              "titulo": "Web Architect",
               "descripcion": "Acabo de salir del Kick-off del nuevo e-commerce y tú eres mi refuerzo. Olvida los tutoriales de 'Hola Mundo'; aquí trabajamos con metodología Shift Left. No vamos a tirar líneas de código, vamos a construir un edificio.<HR>🔸Sprint 1 (HTML5): Los cimientos semánticos y accesibles. Sin esto, el proyecto se hunde.<HR>🔸Sprint 2 (CSS3): La fachada, el diseño responsivo y la identidad visual.<HR>🔸Sprint 3 (JavaScript): La maquinaria interna, la lógica y la interactividad.<HR>Al terminar, no solo tendrás una app; tendrás la mentalidad para levantar cualquier proyecto web desde cero sin deuda técnica.",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#a", "type": "d" },
@@ -290,8 +290,8 @@
           "subsecciones": [],
           "cursos": [
             {
-              "id": "c-awqa",
-              "titulo": "Arquitecto Web (QA Edition)",
+              "id": "c-waqa",
+              "titulo": "Web Architect QA Ed.",
               "descripcion": "Te han mentido. La interfaz gráfica (UI) es una ilusión; la verdad está en el DOM. Si sigues probando solo 'lo que se ve', tus reportes serán superficiales y tus automatizaciones frágiles. <HR>Este curso transforma tu perfil de Tester a <strong>Ingeniero de Calidad Holístico</strong>, enseñándote a auditar las tripas de la web (Caja Gris): <HR>🔸<strong>La Visión (DOM & Consola):</strong> Deja de adivinar. Aprende a interrogar al navegador y destapar bugs ocultos (y mentiras del Frontend) que la UI no muestra. <HR>🔸<strong>El Selector Indestructible:</strong> ¿Tus tests se rompen si cambian el diseño o el idioma? Normal, estás testeando 'pintura'. Aprenderás a enganchar tus automatizaciones a la <strong>Estructura Invisible</strong> del negocio. Crearás scripts que sobreviven a rediseños completos sin tocar una línea de código. <HR>🔸<strong>Ingeniería del Caos (Network & Render):</strong> Controla el tráfico. Simula caídas de red, bloquea servicios de terceros y detecta problemas de rendimiento antes de que el usuario sufra.",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#", "type": "d" },

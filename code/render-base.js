@@ -21,6 +21,7 @@ export function renderNavegacion() {
     }
     ['vista-detalle-desktop', 'vista-detalle-mobile'].forEach(id => {
         const el = document.getElementById(id);
+
         if (el) {
             el.classList.remove('active');
             el.style.display = 'none';
@@ -34,15 +35,31 @@ export function renderNavegacion() {
     const isTabletLandscape = layoutMode === 'tablet-landscape';
     const isDesktop = layoutMode === 'desktop';
 
-    const targetViewId = isMobile ? 'vista-navegacion-mobile' : 
-                         (isDesktop ? 'vista-navegacion-desktop' : 'vista-navegacion-tablet');
-    const targetTrackId = isMobile ? 'track-mobile' : 
-                          (isDesktop ? 'track-desktop' : 'track-tablet');
-    const swiperId = isMobile ? '#nav-swiper-mobile' : 
-                     (isDesktop ? '#nav-swiper' : '#nav-swiper-tablet');
+    const targetViewId = isMobile ? 
+                        'vista-navegacion-mobile' : 
+                        (isDesktop ? 
+                            'vista-navegacion-desktop' : 
+                            'vista-navegacion-tablet');
 
-    ['vista-navegacion-desktop', 'vista-navegacion-tablet', 'vista-navegacion-mobile'].forEach(id => {
+    const targetTrackId = isMobile ? 
+                        'track-mobile' : 
+                        (isDesktop ? 
+                            'track-desktop' : 
+                            'track-tablet');
+
+    const swiperId = isMobile ? 
+                    '#nav-swiper-mobile' : 
+                    (isDesktop ? 
+                        '#nav-swiper' : 
+                        '#nav-swiper-tablet');
+
+    [
+        'vista-navegacion-desktop', 
+        'vista-navegacion-tablet', 
+        'vista-navegacion-mobile'
+    ].forEach(id => {
         const el = document.getElementById(id);
+
         if (el) {
             if (id === targetViewId) {
                 el.style.display = 'flex';
@@ -55,8 +72,14 @@ export function renderNavegacion() {
     });
 
     this._cacheDOM();
+
     this.DOM.track = document.getElementById(targetTrackId);
-    this.STATE.itemsPorColumna = isMobile ? 1 : (isDesktop ? data.SWIPER.ELEMENTS_PER_COLUMN_DESKTOP : data.SWIPER.ELEMENTS_PER_COLUMN_TABLET);
+
+    this.STATE.itemsPorColumna = isMobile ? 
+                                1 : 
+                                (isDesktop ? 
+                                    data.SWIPER.ELEMENTS_PER_COLUMN_DESKTOP : 
+                                    data.SWIPER.ELEMENTS_PER_COLUMN_TABLET);
 
     if (!this.DOM.track) {
         debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
@@ -71,26 +94,48 @@ export function renderNavegacion() {
     // Limpiamos TODOS los tracks para evitar duplicados fantasma
     ['track-desktop', 'track-tablet', 'track-mobile'].forEach(id => {
         const el = document.getElementById(id);
+
         if (el) el.innerHTML = '';
     });
 
     const currentLevelState = this.stackGetCurrent();
     const nodoActual = this._findNodoById(currentLevelState.levelId, this.STATE.fullData.navegacion);
     
-    let itemsDelNivel = !currentLevelState.levelId ? this.STATE.fullData.navegacion : (nodoActual?.subsecciones || []).concat(nodoActual?.cursos || []);
+    let itemsDelNivel = !currentLevelState.levelId ? 
+                        this.STATE.fullData.navegacion : 
+                        (nodoActual?.subsecciones || []).concat(nodoActual?.cursos || []);
+                        
     const isSubLevel = !!currentLevelState.levelId;
 
     if (isMobile && isSubLevel) {
-        itemsDelNivel = [{ id: 'volver-nav', tipoEspecial: 'volver-vertical' }].concat(itemsDelNivel);
+        itemsDelNivel = [
+            { 
+                id: 'volver-nav', 
+                tipoEspecial: 'volver-vertical' 
+            }
+        ].concat(itemsDelNivel);
 
-        let breadcrumbText = nodoActual?.nombre || nodoActual?.titulo || this.getString('nav.breadcrumbRoot');
+        let breadcrumbText = nodoActual?.nombre || 
+                            nodoActual?.titulo || 
+                            this.getString('nav.breadcrumbRoot');
         
-        itemsDelNivel = [{ id: 'breadcrumb-nav', tipoEspecial: 'breadcrumb-vertical', texto: breadcrumbText }].concat(itemsDelNivel);
+        itemsDelNivel = [
+            { 
+                id: 'breadcrumb-nav', 
+                tipoEspecial: 'breadcrumb-vertical', 
+                texto: breadcrumbText 
+            }
+        ].concat(itemsDelNivel);
     }
 
     // Usamos el nombre correcto de la función
-    const renderHtmlFn = isMobile ? this._generateCardHTML_Mobile : this._generateCardHTML_Carousel;
-    this.DOM.track.innerHTML = renderHtmlFn.call(this, itemsDelNivel, this.STATE.itemsPorColumna);
+    const renderHtmlFn = isMobile ? 
+                        this._generateCardHTML_Mobile : 
+                        this._generateCardHTML_Carousel;
+
+    this.DOM.track.innerHTML = renderHtmlFn.call(this, 
+                                                itemsDelNivel, 
+                                                this.STATE.itemsPorColumna);
 
     const isReturning = this.STATE.isNavigatingBack;
     
@@ -106,8 +151,12 @@ export function renderNavegacion() {
 
         // 1. Intentar encontrar elemento exacto (ID o Selector)
         let foundEl = null;
-        if (snap.type === 'ID') foundEl = document.getElementById(snap.value);
-        else if (snap.type === 'SELECTOR') foundEl = document.querySelector(snap.value);
+
+        if (snap.type === 'ID') 
+            foundEl = document.getElementById(snap.value);
+
+        else if (snap.type === 'SELECTOR') 
+            foundEl = document.querySelector(snap.value);
 
         if (foundEl) {
             debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
@@ -222,8 +271,15 @@ export function renderNavegacion() {
     try {
         requestAnimationFrame(() => {
             try {
-                const initCarouselFn = isMobile ? this._initCarousel_Mobile : this._initCarousel_Swipe;
-                initCarouselFn.call(this, initialSlideIndex, this.STATE.itemsPorColumna, isMobile, swiperId);
+                const initCarouselFn = isMobile ? 
+                                        this._initCarousel_Mobile : 
+                                        this._initCarousel_Swipe;
+
+                initCarouselFn.call(this, 
+                                    initialSlideIndex, 
+                                    this.STATE.itemsPorColumna, 
+                                    isMobile, 
+                                    swiperId);
             } catch (err) {
                 debug.logError('render_base', 'CRITICAL: Fallo en initCarousel', err);
 
@@ -301,7 +357,10 @@ export function renderNavegacion() {
         debug.logError('render_base', '[RENDER-FLOW] Exception in rAF', e);
     }
 
-    _updateNavViews.call(this, !!currentLevelState.levelId, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual); 
+    _updateNavViews.call(this, 
+                        !!currentLevelState.levelId, 
+                        isMobile, isTabletPortrait, isTabletLandscape, isDesktop, 
+                        nodoActual); 
 
     /*// 🟢 FIX 1: Bloquear anuncio de contexto si modal activo
     if (!document.getElementById('a11y-modal-overlay')?.classList.contains('active')) {
@@ -396,7 +455,11 @@ export function _setupResizeObserver() {
     this.STATE.resizeObserver.observe(document.body);
 };
 
-export function _generarTarjetaHTMLImpl(nodo, estaActivo, esRelleno = false, tipoEspecialArg = null) {
+export function _generarTarjetaHTMLImpl(nodo, 
+                                        estaActivo, 
+                                        esRelleno = false, 
+                                        tipoEspecialArg = null) {
+
     const tipoEspecial = tipoEspecialArg || nodo.tipoEspecial;
     if (esRelleno) 
         return `<article class="card card--relleno" 
@@ -483,41 +546,38 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
     if (!vistaVolver || !infoAdicional) 
         return;
 
-    if (isMobile) { 
-        vistaVolver.classList.remove('visible'); 
-        infoAdicional.classList.remove('visible'); 
-    } else { 
-        if (isDesktop || isTabletLandscape) infoAdicional.classList.add('visible'); 
-        else infoAdicional.classList.remove('visible');
+    const rootText = this.getString('nav.breadcrumbRoot');
+    const levelText = this.getString('nav.level');
+    const tituloNivel = isSubLevel ? 
+                        (nodoActual?.nombre || nodoActual?.titulo || levelText) : 
+                        rootText;
 
-        vistaVolver.classList.add('visible'); 
-        this.DOM.cardNivelActual.classList.add('visible');
+    // 🟢 FIX: Delegamos al CSS. Rellenamos el DOM SIEMPRE.
+    // style-mobile.css ya tiene un display:none !important que lo ocultará cuando deba.
+    infoAdicional.classList.toggle('visible', isDesktop || isTabletLandscape);
+    vistaVolver.classList.add('visible'); 
+    this.DOM.cardNivelActual.classList.add('visible');
 
-        const rootText = this.getString('nav.breadcrumbRoot');
-        const levelText = this.getString('nav.level');
-        const tituloNivel = isSubLevel ? 
-                            (nodoActual?.nombre || nodoActual?.titulo || levelText) : 
-                            rootText;
+    // Rellenamos el contenido incondicionalmente
+    this.DOM.cardNivelActual.innerHTML = `<h3>${tituloNivel}</h3>`;
 
-        this.DOM.cardNivelActual.innerHTML = `<h3>${tituloNivel}</h3>`;
+    if (isSubLevel) {
+        this.DOM.cardVolverFijaElemento.classList.add('visible'); 
+        this.DOM.cardVolverFijaElemento.innerHTML = `<h3 aria-hidden="true">${data.LOGO.VOLVER}</h3>`; 
+        this.DOM.cardVolverFijaElemento.setAttribute('aria-label', this.getString('nav.aria.backBtn'));
+        this.DOM.cardVolverFijaElemento.tabIndex = 0;
+    } else {
+        this.DOM.cardVolverFijaElemento.classList.remove('visible'); 
+        this.DOM.cardVolverFijaElemento.tabIndex = -1;
+    }
 
-        if (isSubLevel) {
-            this.DOM.cardVolverFijaElemento.classList.add('visible'); 
-            this.DOM.cardVolverFijaElemento.innerHTML = `<h3 aria-hidden="true">${data.LOGO.VOLVER}</h3>`; // Icono decorativo oculto
-            this.DOM.cardVolverFijaElemento.setAttribute('aria-label', this.getString('nav.aria.backBtn')); // Label explícito
-            this.DOM.cardVolverFijaElemento.tabIndex = 0;
-        } else {
-            this.DOM.cardVolverFijaElemento.classList.remove('visible'); 
-            this.DOM.cardVolverFijaElemento.tabIndex = -1;
-        }
-
-        // 🟢 NOTIFICACIÓN CONTEXTUAL PARA CIEGOS
-        const contextPrefix = this.getString('nav.contextPrefix') || 'Navegando en: '; // Fallback por si falta en JSON
-        const mensajeContexto = `${contextPrefix}${tituloNivel}`;
-        
-        if (this.STATE.initialRenderComplete) {
-            this.announceA11y(mensajeContexto);
-        }
+    // 🟢 NOTIFICACIÓN CONTEXTUAL PARA CIEGOS
+    const contextPrefix = this.getString('nav.contextPrefix') || 'Navegando en: ';
+    const mensajeContexto = `${contextPrefix}${tituloNivel}`;
+    
+    if (this.STATE.initialRenderComplete) {
+        this.announceA11y(mensajeContexto);
     }
 };
+
 /* --- code/render-base.js --- */

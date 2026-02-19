@@ -236,19 +236,6 @@ class VortexSpiraApp {
                 this.renderNavegacion();
             }
 
-            /*if (prevMode !== newMode) {
-                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
-                            `Layout Change (${prevMode} -> ${newMode}). Renderizando...`);
-
-                this._cacheDOM();
-                
-                if (this.STATE.activeCourseId) {
-                    this._mostrarDetalle(this.STATE.activeCourseId);
-                } else {
-                    this.renderNavegacion();
-                }
-            }*/
-
             // Diagnóstico tras refresco de layout
             requestAnimationFrame(() => {
                 debug_diagnostics.runFontDiagnostics?.();

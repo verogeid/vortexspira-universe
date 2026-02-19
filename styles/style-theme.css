@@ -76,7 +76,7 @@
     --card-desc-font-size: clamp(0.8rem, calc(0.9rem * var(--font-scale)), 1.1rem);
     --card-h3-line-clamp: 3;
     --card-h3-icon: 1.2em;
-    --card-padding: calc(1rem * var(--line-height-base));
+    --card-padding: 1rem;
 
     /* Nivel Actual */
     --card-nivel-actual-h3-line-clamp: 4;
@@ -97,7 +97,7 @@
     /* Info Adicional */
     --info-adicional-summary-font-size: clamp(0.9rem, calc(0.8rem * var(--font-scale)), 1.2rem); 
     --info-adicional-details-small-font-size: clamp(0.85rem, calc(0.75rem * var(--font-scale)), 1rem);
-    --info-adicional-details-small-line-height: 1.5;
+    --info-adicional-details-small-line-height: var(--line-height-base);
     --info-adicional-lista-a-font-size: clamp(0.9rem, calc(0.8rem * var(--font-scale)), 1.2rem);
 
     /* 📐 A11Y Modal */

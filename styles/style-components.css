@@ -106,12 +106,15 @@
 #info-adicional details[open] > summary::before { transform: rotate(90deg); }
 #info-adicional details > small { 
     display: block; 
-    padding: 0.5rem 0.5rem 0.5rem 0.5rem; 
+    padding: 0; 
     color: var(--color-text); 
     opacity: 0.7; 
     /* ⭐️ A11Y FIX: Subido min size */
     font-size: var(--info-adicional-details-small-font-size); 
     line-height: var(--info-adicional-details-small-line-height);
+}
+#info-adicional details small li:not(:first-child) { 
+    padding-top: var(--card-padding); 
 }
 #info-adicional-lista-acerca { list-style-type: none; padding-left: 0; }
 #info-adicional-lista-ayuda { list-style-type: disc; padding-left: 15px; }

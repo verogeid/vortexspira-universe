@@ -24,6 +24,7 @@
         "breadcrumbRoot": "Root Level",
         "level": "Level",
         "contextPrefix": "Navigating in: ",
+        "coursePrefix": "Course: ",
         "emptyState": "No content available at this level."
     },
     "card": {
@@ -59,6 +60,7 @@
         "opened": "Accessibility settings opened",
         "close": "Close settings",
         "reset": "Restore default values",
+        "resetSuccess": "Default values restored",
         "sections": {
             "font": "Typography",
             "size": "Text Size",

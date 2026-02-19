@@ -51,6 +51,22 @@ export const SWIPER = {
     NEEDED_SLIDES_TO_LOOP: _SLIDES_PER_VIEW * 3 + 2
 }
 
+export const A11Y = {
+    STORAGE_KEY: 'vortex_a11y_prefs_v1',
+    DEFAULTS: {
+        fontType: 'sans',      
+        fontSizePct: 100,      
+        lineHeight: 1.5,       
+        paragraphSpacing: 1.5 
+    },
+    SPACING_MAP: { // Mapeo para el slider de espaciado: Valor -> [AlturaLinea, Etiqueta]
+        1: { val: 1.0, labelKey: 'modal.spacing.compact' },
+        2: { val: 1.5, labelKey: 'modal.spacing.normal' },
+        3: { val: 2, labelKey: 'modal.spacing.wide' },
+        4: { val: 2.5, labelKey: 'modal.spacing.extraWide' }
+    }
+};
+
 export async function loadData(lang) {
     try {
         const filename = `./data/cursos_${lang}.json`;

@@ -56,7 +56,7 @@
 
     margin-top: 0 !important;
     /* Pequeña separación con el texto de abajo */
-    margin-bottom: 5px; 
+    margin-bottom: var(--footer-padding); 
     margin-right: 0;
 
     font-size: var(--card-h3-icon);
