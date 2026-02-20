@@ -34,7 +34,11 @@ export function _generateCardHTML_Carousel(items, itemsPerSlide) {
                 
                 if (!esRelleno) {
                     const logicalIndex = i + j; 
-                    cardHtml = cardHtml.replace('class="card', `data-pos="${logicalIndex}" class="card`);
+                    
+                    const posInSet = logicalIndex + 1;
+
+                    // Inyectamos posición y tamaño total
+                    cardHtml = cardHtml.replace('class="card', `data-pos="${logicalIndex}" aria-posinset="${posInSet}" aria-setsize="${totalItems}" class="card`);
                 }
                 
                 slideContent += cardHtml;

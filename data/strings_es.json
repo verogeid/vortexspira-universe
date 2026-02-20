@@ -69,13 +69,21 @@
             "font": "Tipografía",
             "size": "Tamaño Texto",
             "spacing": "Espaciado",
-            "motion": "Movimiento"
+            "motion": "Movimiento",
+            "theme": "Tema de Color"
         },
         "options": {
             "sans": "Sans",
             "serif": "Serif",
             "dyslexic": "Dislexia",
-            "reduceMotion": "Reducir animaciones"
+            "reduceMotion": "Reducir animaciones",
+
+            "themeDefault": "Sistema (Por defecto)",
+            "themeLight": "Modo Claro",
+            "themeDark": "Modo Oscuro",
+            "themeContrast": "Alto Contraste",
+            "themeForced": "Colores Forzados",
+            "themeYellow": "Amarillo sobre Negro"
         },
         "spacing": {
             "compact": "Compacto",

@@ -105,8 +105,8 @@ export function applyStrings(appInstance) {
     }
 
     const linksById = {
-        'info-adicional-link-landing': { key: 'about.landing', url: data.URL.LANDING_PAGE },
-        'info-adicional-link-diary': { key: 'about.diary', url: data.URL.DEV_DIARY }
+        'info-adicional-link-landing': { key: 'about.landing', url: data.MEDIA.URL.LANDING_PAGE },
+        'info-adicional-link-diary': { key: 'about.diary', url: data.MEDIA.URL.DEV_DIARY }
     };
 
     for (const id in linksById) {

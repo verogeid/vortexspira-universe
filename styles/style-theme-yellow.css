@@ -1,0 +1,64 @@
+/* --- styles/style-theme-yellow.css --- */
+
+/* =========================================================
+   TEMA ESPECÍFICO: AMARILLO SOBRE NEGRO (Baja Visión / AAA)
+   ========================================================= */
+body[data-theme="yellow"] {
+    /* Fondo negro puro para eliminar deslumbramiento */
+    --color-bg: #000000;
+    --color-card-bg: #000000; 
+    --color-mask-gradient: rgba(0, 0, 0, 0.9); 
+    --color-header-bg: #000000;
+    
+    /* Textos y bordes en amarillo puro/brillante */
+    --color-text: #FFFF00;
+    --color-header-text: #FFFF00;
+    --color-footer-text: #FFFF00;
+    --color-card-border: #FFFF00; 
+    
+    /* Foco y enlaces (Podemos usar un amarillo ligeramente anaranjado o mantenerlo puro pero invertido) */
+    --color-primary: #FFD700; /* Gold / Oro para diferenciar botones/foco */
+    --color-primary-bg: rgba(255, 215, 0, 0.15);
+    --color-shadow-primary: transparent; /* Sin sombras para evitar borrosidad */
+    
+    /* Elementos deshabilitados y mutados (Amarillo oscuro/sucio) */
+    --color-card-border-disabled: #808000; /* Olive */
+    --color-text-muted: #BDB76B; /* DarkKhaki */
+    --color-shadow-disabled: transparent;
+    
+    /* Iconos y Logo */
+    --color-icon-obras: #808000;
+    --color-logo-static: #FFFF00;
+    --color-logo-dynamic: #FFD700;
+
+    /* Accesibilidad Modal */
+    --color-a11y-selected-text: #000000; /* Texto negro sobre fondo amarillo al seleccionar */
+    --color-a11y-slider-track: #808000;
+    --color-a11y-slider-labels: var(--color-text-muted);
+
+    /* Forzamos el comportamiento del navegador */
+    color-scheme: dark;
+    background-color: var(--color-bg) !important;
+    color: var(--color-text) !important;
+}
+
+/* 1. Estado de reposo: Amarillo apagado (Oliva) para ambas partes */
+body[data-theme="yellow"] .header-logo::before,
+body[data-theme="yellow"] .header-logo::after {
+    background-color: var(--color-logo-static)!important; /* Amarillo oscuro */
+    transition: background-color var(--animation-speed) ease;
+}
+
+/* 2. Estado Activo (Foco de teclado o Hover de ratón): Se enciende en amarillo puro */
+body[data-theme="yellow"] a:focus-visible .header-logo::after,
+body[data-theme="yellow"] a:hover .header-logo::after {
+    background-color: var(--color-logo-dynamic) !important;
+}
+
+/* Modificación extra para que la selección de texto del navegador se vea bien */
+body[data-theme="yellow"] ::selection {
+    background-color: #FFFF00;
+    color: #000000;
+}
+
+/* --- styles/style-theme-yellow.css --- */

@@ -296,6 +296,11 @@ function _computeState(el) {
         states.push(el.getAttribute('aria-checked') === 'true' ? 'MARCADO' : 'NO MARCADO');
     }
 
+    // 🟢 FIX: Soporte para posición en listas y carruseles
+    if (el.hasAttribute('aria-posinset') && el.hasAttribute('aria-setsize')) {
+        states.push(`Posición ${el.getAttribute('aria-posinset')} de ${el.getAttribute('aria-setsize')}`);
+    }
+
     return states;
 }
 

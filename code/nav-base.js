@@ -238,10 +238,7 @@ export function _updateFocusImpl(shouldSlide = true) {
                     Elemento a medir: ${elementToMeasure.tagName} ${elementToMeasure.className}
                     Top: ${topRef.toFixed(1)}px
                     Bottom: ${bottomRef.toFixed(1)}px`);
-
-                //debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
-                //    `🔍 CHECK VISIBILIDAD: Header=${headerHeight}px | Slide Top=${topRef.toFixed(1)}px`);
-
+                    
                 const isObstructedTop = topRef < (headerHeight + 5); 
                 const isObstructedBottom = bottomRef > (bottomLimit - 5);
 
@@ -277,6 +274,15 @@ export function _updateFocusImpl(shouldSlide = true) {
                             newTrans = currentTrans - delta;
                         }
                         
+                        // 🟢 FIX CRÍTICO: Clamping. Evitar el "vacío" si el usuario hace scroll muy rápido
+                        // minTranslate = Tope superior (normalmente 0)
+                        // maxTranslate = Tope inferior (el final real del contenido, en negativo)
+                        const limitTop = swiper.minTranslate();
+                        const limitBottom = swiper.maxTranslate();
+
+                        if (newTrans > limitTop) newTrans = limitTop;
+                        if (newTrans < limitBottom) newTrans = limitBottom;
+
                         debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
                             `🔧 CORRIGIENDO VERTICAL (Swiper): ${currentTrans} -> ${newTrans}`);
 

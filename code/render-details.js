@@ -287,7 +287,7 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                     <h3>${parentName}</h3>
                 </article>
                 <article class="card card-volver-vertical" role="button" aria-label="${ariaLabel}" tabindex="0" onclick="App._handleVolverClick()">
-                    <h3>${data.LOGO.VOLVER}</h3>
+                    <h3>${data.MEDIA.LOGO.VOLVER}</h3>
                 </article>
             </div>
         `;
@@ -303,19 +303,22 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
         slidesData = _generateSlidesStructural(descripcion);
     }
 
+    // 🟢 FIX A11Y: Guardamos el tamaño total de fragmentos
+    const totalSlides = slidesData.length;
+
     slidesData.forEach((slide, index) => {
         let titleHtml = '';
         if (slide.isFirst) {
             titleHtml = `<h2 class="detail-title-slide" aria-hidden="true">${curso.titulo}</h2>`;
         }
         
-        // 🟢 FIX A11Y: Advertir al usuario que es texto pasivo
         const readOnlyMsg = this.getString('details.aria.readOnly') || 'Elemento de solo lectura. Usa las flechas para navegar.';
+        const posInSet = index + 1; // 🟢 FIX A11Y: Posición actual
 
         slidesHtml += `
             <div class="swiper-slide">
                 ${titleHtml}
-                <div class="detail-text-fragment" data-index="${index}" role="article" tabindex="0" onclick="this.focus()" aria-description="${readOnlyMsg}">
+                <div class="detail-text-fragment" data-index="${index}" role="article" tabindex="0" onclick="this.focus()" aria-description="${readOnlyMsg}" aria-posinset="${posInSet}" aria-setsize="${totalSlides}">
                     <div class="content-wrapper">${slide.content}</div>
                 </div>
             </div>

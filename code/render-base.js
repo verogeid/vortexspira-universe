@@ -362,10 +362,6 @@ export function renderNavegacion() {
                         isMobile, isTabletPortrait, isTabletLandscape, isDesktop, 
                         nodoActual); 
 
-    /*// 🟢 FIX 1: Bloquear anuncio de contexto si modal activo
-    if (!document.getElementById('a11y-modal-overlay')?.classList.contains('active')) {
-        this.announceA11y(this.getString('nav.breadcrumbRoot') || 'Nivel Raíz');
-    }*/
 
     // 🟢 FIX 2: Bloquear robo de foco si modal activo
     setTimeout(() => {
@@ -491,7 +487,7 @@ export function _generarTarjetaHTMLImpl(nodo,
                     aria-label="${ariaLabel}" 
                     tabindex="0" 
                     onclick="App._handleVolverClick()">
-                <h3>${data.LOGO.VOLVER}</h3>
+                <h3>${data.MEDIA.LOGO.VOLVER}</h3>
             </article>`;
     }
 
@@ -504,17 +500,17 @@ export function _generarTarjetaHTMLImpl(nodo,
 
     if (tipo === 'categoria') {
         if (estaActivo) { 
-            iconHTML = `<span class="card-icon-lead">${data.LOGO.CARPETA}</span>`; 
+            iconHTML = `<span class="card-icon-lead">${data.MEDIA.LOGO.CARPETA}</span>`; 
         } else { 
             iconHTML = `<span class="icon-vacio-card"></span>`; 
         }
 
     } else {
-        if (displayTitle.includes(data.LOGO.OBRAS)) {
+        if (displayTitle.includes(data.MEDIA.LOGO.OBRAS)) {
             iconHTML = `<span class="icon-obras-card"></span>`;
-            displayTitle = displayTitle.replace(data.LOGO.OBRAS, "").trim(); 
+            displayTitle = displayTitle.replace(data.MEDIA.LOGO.OBRAS, "").trim(); 
         } else {
-            iconHTML = `<span class="card-icon-lead">${data.LOGO.CURSO}</span>`; 
+            iconHTML = `<span class="card-icon-lead">${data.MEDIA.LOGO.CURSO}</span>`; 
         }
     }
 
@@ -572,7 +568,7 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
 
     if (isSubLevel) {
         this.DOM.cardVolverFijaElemento.classList.add('visible'); 
-        this.DOM.cardVolverFijaElemento.innerHTML = `<h3 aria-hidden="true">${data.LOGO.VOLVER}</h3>`; 
+        this.DOM.cardVolverFijaElemento.innerHTML = `<h3 aria-hidden="true">${data.MEDIA.LOGO.VOLVER}</h3>`; 
         this.DOM.cardVolverFijaElemento.setAttribute('aria-label', this.getString('nav.aria.backBtn'));
         this.DOM.cardVolverFijaElemento.tabIndex = 0;
     } else {

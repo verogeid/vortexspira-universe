@@ -69,13 +69,21 @@
             "font": "Typography",
             "size": "Text Size",
             "spacing": "Spacing",
-            "motion": "Motion"
+            "motion": "Motion",
+            "theme": "Color Theme"
         },
         "options": {
             "sans": "Sans",
             "serif": "Serif",
             "dyslexic": "Dyslexic",
-            "reduceMotion": "Reduce Motion"
+            "reduceMotion": "Reduce Motion",
+
+            "themeDefault": "System (Default)",
+            "themeLight": "Light Mode",
+            "themeDark": "Dark Mode",
+            "themeContrast": "High Contrast",
+            "themeForced": "Forced Colors",
+            "themeYellow": "Yellow on Black"
         },
         "spacing": {
             "compact": "Compact",

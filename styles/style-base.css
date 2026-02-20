@@ -3,11 +3,13 @@
 /* 1. Variables y Tema (Colores, Modo Oscuro) */
 @import url('style-theme.css');
 
-@import url('style-prefers-color-scheme-light.css');
-@import url('style-prefers-color-scheme-dark.css');
+@import url('style-theme-scheme-light.css');
+@import url('style-theme-scheme-dark.css');
 
-@import url('style-forced-colors.css');
-@import url('style-prefers-contrast.css');
+@import url('style-theme-forced-colors.css');
+@import url('style-theme-contrast.css');
+
+@import url('style-theme-yellow.css');
 
 /* Variables de medios (SVG Icons) */
 @import url('style-media.css');

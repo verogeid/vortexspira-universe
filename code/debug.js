@@ -15,8 +15,6 @@ export const DEBUG_LEVELS = {
 export const DEBUG_CONFIG = {
     global: DEBUG_LEVELS.BASIC,
 
-    global_imageSec: DEBUG_LEVELS.DISABLED,
-
     global_focus: DEBUG_LEVELS.DISABLED,
     global_font: DEBUG_LEVELS.DISABLED,
     global_layout: DEBUG_LEVELS.DISABLED,
@@ -41,7 +39,7 @@ export const DEBUG_CONFIG = {
 
     // Módulos de Mouse
     nav_mouse_details: DEBUG_LEVELS.DISABLED, // Excluir rueda de ratón en detalle
-    nav_mouse_swipe: DEBUG_LEVELS.DISABLED,   // Excluir arrastre en menús
+    nav_mouse_swipe: DEBUG_LEVELS.BASIC,   // Excluir arrastre en menús
     
     render_base: DEBUG_LEVELS.DISABLED,
     render_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para inicialización de Swiper de detalle ⭐️
@@ -65,6 +63,9 @@ function _printWithPrefix(method, moduleName, args) {
     }
 }
 
+/**
+ * Función para mostrar los niveles de depuración configurados en consola.
+ */
 export function logDebugLevels() {
     logGroupCollapsed('global', DEBUG_LEVELS.BASIC, 'Configured DEBUG levels:');
     for (const idKey in DEBUG_CONFIG) {
@@ -75,6 +76,9 @@ export function logDebugLevels() {
     logGroupEnd('global', DEBUG_LEVELS.BASIC);
 }
 
+/**
+ * Función vaciar la consola al iniciar la aplicación, si está configurada para hacerlo.
+ */
 export function logClear() {
     if (CLEAR_CONSOLE_ON_START) {
         console.clear();
@@ -167,21 +171,6 @@ export function logDir(moduleName, requiredLevel, data) {
     if (DEBUG_CONFIG[moduleName] >= requiredLevel)
         console.dir(data);
 };
-
-export function _watchFlag(stateObj, propName) {
-    if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) return;
-    let value = stateObj[propName];
-    Object.defineProperty(stateObj, propName, {
-        get: () => value,
-        set: (newValue) => {
-            if (value !== newValue) {
-                logTrace('global', `Flag [${propName}] cambiado: ${value} -> ${newValue}`);
-                value = newValue;
-            }
-        },
-        configurable: true
-    });
-}
 
 export function _setupConsoleInterceptor() {
     if (DEBUG_CONFIG.global < DEBUG_LEVELS.DEEP) 

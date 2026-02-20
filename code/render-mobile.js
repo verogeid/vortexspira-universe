@@ -10,6 +10,9 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
     // Usamos esto en lugar de 'i' para que el Breadcrumb no consuma un índice.
     let logicalPos = 0; 
     
+    // 🟢 FIX A11Y: Calcular total de elementos navegables (Excluimos el relleno y el breadcrumb informativo)
+    const totalLogicalItems = items.filter(n => n.tipo !== 'relleno' && n.tipoEspecial !== 'breadcrumb-vertical').length;
+
     for (let i = 0; i < items.length; i++) {
         const nodo = items[i];
 
@@ -25,8 +28,14 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
                 // 2. Renderizamos Volver
                 // ✅ LE inyectamos data-pos con el logicalPos actual (será 0).
                 let volverHtml = this._generarTarjetaHTML(volverNode, true, false, volverNode.tipoEspecial);
-                volverHtml = volverHtml.replace('class="card', `data-pos="${logicalPos}" class="card`);
+                // 🟢 FIX A11Y: Inyectar ARIA en botón Volver
 
+                volverHtml = volverHtml.replace('class="card', 
+                    `data-pos="${logicalPos}" 
+                    aria-posinset="${logicalPos + 1}" 
+                    aria-setsize="${totalLogicalItems}" 
+                    class="card`);
+                
                 html += `<div class="swiper-slide">
                     ${breadcrumbHtml}
                     ${volverHtml}
@@ -55,14 +64,22 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
 
         // Si es una tarjeta válida, le asignamos su posición lógica y aumentamos el contador
         if (!esRelleno) {
-            cardHtml = cardHtml.replace('class="card', `data-pos="${logicalPos}" class="card`);
+            // 🟢 FIX A11Y: Inyectar ARIA en tarjetas normales
+            cardHtml = cardHtml.replace('class="card', 
+                `data-pos="${logicalPos}" 
+                aria-posinset="${logicalPos + 1}" 
+                aria-setsize="${totalLogicalItems}" 
+                class="card`);
+
             logicalPos++;
         }
 
         html += `<div class="swiper-slide">${cardHtml}</div>`; 
     }
 
-    html += `<div class="swiper-slide card-relleno-final" style="height: 100px !important; pointer-events: none;"></div>`;
+    html += `<div class="swiper-slide card-relleno-final" 
+                style="height: 100px !important; pointer-events: none;">
+            </div>`;
 
     if (this.DOM.track) {
         this.DOM.track.style.gridTemplateRows = '';

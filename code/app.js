@@ -3,7 +3,6 @@
 import * as debug from './debug.js';
 import * as debug_diagnostics from './debug.diagnostics.js';
 import * as debug_screenReaderSim from './debug.screenReaderSim.js';
-import * as debug_imageSecurity from './debug.imageSecurity.js';
 
 import * as data from './data.js';
 import * as i18n from './i18n.js';
@@ -86,9 +85,9 @@ class VortexSpiraApp {
         debug_diagnostics._setupFocusMethodInterceptor();
         debug_diagnostics._setupKeyTracker?.(); 
 
-        debug._watchFlag(this.STATE, 'keyboardNavInProgress');
-        debug._watchFlag(this.STATE, 'isNavigatingBack');
-        debug._watchFlag(this.STATE, 'isUIBlocked');
+        debug_diagnostics._watchFlag(this.STATE, 'keyboardNavInProgress');
+        debug_diagnostics._watchFlag(this.STATE, 'isNavigatingBack');
+        debug_diagnostics._watchFlag(this.STATE, 'isUIBlocked');
 
         // 🟢 AUTO-ARRANQUE INTELIGENTE DEL SIMULADOR E2E
         // Se ejecuta aquí, centralizado en App, si la configuración lo pide.
@@ -102,15 +101,6 @@ class VortexSpiraApp {
                 // Si no, la función tiene sus propias guardas, pero aquí garantizamos que sea parte del ciclo de inicio.
                 debug_screenReaderSim.enableScreenReaderSimulator();
             }
-        }
-
-        // 🟢 AUDITORÍA DE SEGURIDAD DE IMÁGENES
-        if (debug.DEBUG_CONFIG.global_imageSec >= debug.DEBUG_LEVELS.BASIC) {
-            // Exponer a consola para uso manual
-            debug_imageSecurity.setupSecurityShorthands();
-
-            // Activar escaneo automático basado en configuración
-            debug_imageSecurity._setupAutoSecurityScan(debug_imageSecurity.runImageSecurityAudit);
         }
 
         this._setupSmartResize();
@@ -445,7 +435,8 @@ class VortexSpiraApp {
                 overflow: 'hidden',
                 clip: 'rect(0, 0, 0, 0)',
                 whiteSpace: 'nowrap',
-                border: '0'
+                border: '0',
+                pointerEvents: 'none' // Asegura que no interfiera con interacciones táctiles o de mouse
             });
             
             document.body.appendChild(el);
@@ -587,13 +578,13 @@ class VortexSpiraApp {
         
         let candidateMode;
         
-        if (effectiveWidth <= data.MAX_WIDTH.MOBILE) {
+        if (effectiveWidth <= data.VIEWPORT.MAX_WIDTH.MOBILE) {
             candidateMode = 'mobile';
                 
-        } else if (effectiveWidth <= data.MAX_WIDTH.TABLET_PORTRAIT) {
+        } else if (effectiveWidth <= data.VIEWPORT.MAX_WIDTH.TABLET_PORTRAIT) {
             candidateMode = 'tablet-portrait';
                 
-        } else if (effectiveWidth <= data.MAX_WIDTH.TABLET_LANDSCAPE) {
+        } else if (effectiveWidth <= data.VIEWPORT.MAX_WIDTH.TABLET_LANDSCAPE) {
             candidateMode = 'tablet-landscape';
 
         } else candidateMode = 'desktop';
@@ -603,8 +594,8 @@ class VortexSpiraApp {
 
         // Desktop (3 filas) -> Si no cabe, baja a Tablet Landscape (2 filas)
         if (candidateMode === 'desktop') {
-            if (effectiveHeight < data.MIN_CONTENT_HEIGHT.DESKTOP) {
-                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
+            if (effectiveHeight < data.VIEWPORT.MIN_CONTENT_HEIGHT.DESKTOP) {
+                debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
                             `Fallback Altura: Desktop -> Tablet Landscape`);
                 
                 candidateMode = 'tablet-landscape';
@@ -613,8 +604,8 @@ class VortexSpiraApp {
 
         // Tablet Landscape (2 filas ancho) -> Si no cabe, baja a Tablet Portrait (2 filas estrecho)
         if (candidateMode === 'tablet-landscape') {
-            if (effectiveHeight < data.MIN_CONTENT_HEIGHT.TABLET) {
-                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
+            if (effectiveHeight < data.VIEWPORT.MIN_CONTENT_HEIGHT.TABLET) {
+                debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
                             `Fallback Altura: Tablet Landscape -> Tablet Portrait`);
 
                 candidateMode = 'tablet-portrait';
@@ -623,8 +614,8 @@ class VortexSpiraApp {
 
         // Tablet Portrait (2 filas estrecho) -> Si no cabe, baja a Mobile (1 fila)
         if (candidateMode === 'tablet-portrait') {
-            if (effectiveHeight < data.MIN_CONTENT_HEIGHT.TABLET) {
-                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
+            if (effectiveHeight < data.VIEWPORT.MIN_CONTENT_HEIGHT.TABLET) {
+                debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
                             `Fallback Altura: Tablet Portrait -> Mobile`);
 
                 candidateMode = 'mobile';
@@ -636,7 +627,7 @@ class VortexSpiraApp {
         let enableSafeMode = false;
         
         if (candidateMode === 'mobile') {
-            if (effectiveHeight < data.MIN_CONTENT_HEIGHT.MOBILE) {
+            if (effectiveHeight < data.VIEWPORT.MIN_CONTENT_HEIGHT.MOBILE) {
                 enableSafeMode = true;
             }
         } 

@@ -1,43 +1,57 @@
 /* --- code/data.js --- */
 import * as debug from './debug.js';
 
-export const LOGO = {
-    OBRAS: '🚧',
-    CARPETA: '📂',
-    CURSO: '📚',
-    VOLVER: '↩',
-    BUY: '🛒',
-    DISABLED: '🔒',
-    A11Y: '🫆​',
-    I18N: '🌐'
-}
+export const A11Y = {
+    STORAGE_KEY: 'vortex_a11y_prefs_v1',
+    DEFAULTS: {
+        fontType: 'sans',      
+        fontSizePct: 100,      
+        lineHeight: 1.5,       
+        paragraphSpacing: 1.5,
+        reduceMotion: false,
+        theme: 'default'
+    },
+    SPACING_MAP: { // Mapeo para el slider de espaciado: Valor -> [AlturaLinea, Etiqueta]
+        1: { val: 1.0, labelKey: 'modal.spacing.compact' },
+        2: { val: 1.5, labelKey: 'modal.spacing.normal' },
+        3: { val: 2, labelKey: 'modal.spacing.wide' },
+        4: { val: 2.5, labelKey: 'modal.spacing.extraWide' }
+    }
+};
 
-export const COLOR = {
-    PRIMARY: '#999',
-    SECONDARY: '#F89707',
-    FOOTER_ICON: '#888'
-}
+export const MEDIA = {
+    LOGO: {
+        OBRAS: '🚧',
+        CARPETA: '📂',
+        CURSO: '📚',
+        VOLVER: '↩',
+        BUY: '🛒',
+        DISABLED: '🔒',
+        A11Y: '🫆​',
+        I18N: '🌐'
+    },
+    URL: {
+        LINKEDIN: "https://www.linkedin.com/in/diego-gonzalez-fernandez",
+        LICENSE: "http://creativecommons.org/licenses/by-nc-nd/4.0/",
+        LICENSE_IMG_SRC: "https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png",
+        LANDING_PAGE: "https://subscribepage.io/vortexspira",
+        DEV_DIARY: "https://github.com/verogeid/vortexspira-devdiary",
+        WEBPAGE: "https://www.vortexspira.com"
+    }
+};
 
-export const URL = {
-    LINKEDIN: "https://www.linkedin.com/in/diego-gonzalez-fernandez",
-    LICENSE: "http://creativecommons.org/licenses/by-nc-nd/4.0/",
-    LICENSE_IMG_SRC: "https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png",
-    LANDING_PAGE: "https://subscribepage.io/vortexspira",
-    DEV_DIARY: "https://github.com/verogeid/vortexspira-devdiary",
-    WEBPAGE: "https://www.vortexspira.com"
-}
-
-// MÍNIMO VITAL: ¿Necesario para ver algo útil?
-export const MIN_CONTENT_HEIGHT = {
-    MOBILE: 260, // Equivale a 18.75em
-    TABLET: 450, // Equivale a 28.125em
-    DESKTOP: 600 // Equivale a 37.5em
-}
-
-export const MAX_WIDTH = {
-    MOBILE: 600,
-    TABLET_PORTRAIT: 800,
-    TABLET_LANDSCAPE: 1023.99
+export const VIEWPORT = {
+    // MÍNIMO VITAL: ¿Necesario para ver algo útil?
+    MIN_CONTENT_HEIGHT: {
+        MOBILE: 260, // Equivale a 18.75em
+        TABLET: 450, // Equivale a 28.125em
+        DESKTOP: 600 // Equivale a 37.5em
+    },
+    MAX_WIDTH: {
+        MOBILE: 600,
+        TABLET_PORTRAIT: 800,
+        TABLET_LANDSCAPE: 1023.99
+    }
 }
 
 export const SWIPER = {
@@ -64,23 +78,6 @@ export const SWIPER = {
     CARD_GAP_PX: 15,
     ELEMENTS_PER_COLUMN_TABLET: 2,
     ELEMENTS_PER_COLUMN_DESKTOP: 3,
-};
-
-export const A11Y = {
-    STORAGE_KEY: 'vortex_a11y_prefs_v1',
-    DEFAULTS: {
-        fontType: 'sans',      
-        fontSizePct: 100,      
-        lineHeight: 1.5,       
-        paragraphSpacing: 1.5,
-        reduceMotion: false
-    },
-    SPACING_MAP: { // Mapeo para el slider de espaciado: Valor -> [AlturaLinea, Etiqueta]
-        1: { val: 1.0, labelKey: 'modal.spacing.compact' },
-        2: { val: 1.5, labelKey: 'modal.spacing.normal' },
-        3: { val: 2, labelKey: 'modal.spacing.wide' },
-        4: { val: 2.5, labelKey: 'modal.spacing.extraWide' }
-    }
 };
 
 export async function loadData(lang) {
@@ -131,7 +128,7 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
             // 2. HEADER LOGO: Creamos el enlace y el span con la clase CSS
             // El CSS .header-logo se encarga de pintar el SVG con máscaras.
             const logoLink = document.createElement('a');
-            logoLink.href = URL.WEBPAGE;
+            logoLink.href = MEDIA.URL.WEBPAGE;
             logoLink.target = "_self";
 
             logoLink.setAttribute('aria-label', appInstance.getString('header.aria.logoLink'));
@@ -232,9 +229,9 @@ export function injectFooterContent(appInstance) {
                 ${appInstance.getString('footer.copyright')}
             </span>
             
-            <a href="${URL.LICENSE}" target="_top" 
+            <a href="${MEDIA.URL.LICENSE}" target="_top" 
                 aria-label="${appInstance.getString('footer.aria.license')}" class="footer-license-link">
-                <img src="${URL.LICENSE_IMG_SRC}" width=88 height=31 alt="Creative Commons License"/>
+                <img src="${MEDIA.URL.LICENSE_IMG_SRC}" width=88 height=31 alt="Creative Commons License"/>
             </a>
             <span class="footer-separator-author">|</span>
             <span class="footer-author-text">
@@ -243,15 +240,15 @@ export function injectFooterContent(appInstance) {
             <span class="footer-separator">|</span>
             
             <div class="footer-social-container">
-                <a href="${URL.LINKEDIN}" target="_blank" 
+                <a href="${MEDIA.URL.LINKEDIN}" target="_blank" 
                     aria-label="${appInstance.getString('footer.aria.linkedin')}" class="footer-social-link link-linkedin">
                 </a>
 
-                <a href="${URL.DEV_DIARY}" target="_blank" 
+                <a href="${MEDIA.URL.DEV_DIARY}" target="_blank" 
                     aria-label="${appInstance.getString('footer.aria.github')}" class="footer-social-link link-github">
                 </a>
 
-                <a href="${URL.LANDING_PAGE}" target="_blank" 
+                <a href="${MEDIA.URL.LANDING_PAGE}" target="_blank" 
                     aria-label="${appInstance.getString('footer.aria.landing')}" class="footer-social-link link-fire">
                 </a>
             </div>

@@ -27,7 +27,7 @@ export function detachSwiperEvents(swiper) {
 
 export function handleSlideChangeStart(swiper) {
     if (this.STATE.isNavigatingBack) return; 
-    
+
     if (swiper.activeIndex !== swiper.previousIndex) {
         _swipeDirection = swiper.activeIndex > swiper.previousIndex ? 'next' : 'prev';
 
@@ -81,10 +81,13 @@ export function handleSlideChangeEnd(swiper) {
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, 
                     `SWIPE: Columna vacía. Saltando (${_swipeDirection})...`);
 
-        // 🟢 A11Y FIX: Notificar al usuario que estamos saltando una zona vacía
-        this.announceA11y(this.getString('toast.skipColumn'), 'assertive');
-        this.STATE.emptyColumnAnnounced = true; // Marcar que ya anunciamos esta columna vacía
-
+        // 🟢 FIX A11Y: Solo anunciar si hay animación. Si el salto es instantáneo, 
+        // sobra el aviso porque el usuario ya estará en la siguiente tarjeta útil.
+        if (!data.SWIPER.prefersReducedMotion()) {
+            this.announceA11y(this.getString('toast.skipColumn'), 'assertive');
+            this.STATE.emptyColumnAnnounced = true; // Marcar que ya anunciamos esta columna vacía
+        }
+        
         _swipeDirection === 'next' ? swiper.slideNext(data.SWIPER.SLIDE_SPEED) : swiper.slidePrev(data.SWIPER.SLIDE_SPEED);
         return; 
     }

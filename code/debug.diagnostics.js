@@ -412,4 +412,28 @@ export function runLayoutDiagnostics() {
     debug.logGroupEnd('global_layout', debug.DEBUG_LEVELS.BASIC);
 }
 
+/**
+ * Función para "espiar" cambios en una propiedad de estado crítica.
+ * Útil para diagnosticar cambios inesperados en flags  
+ * @param {*} stateObj 
+ * @param {*} propName 
+ */
+export function _watchFlag(stateObj, propName) {
+    if (debug.DEBUG_CONFIG.global < debug.DEBUG_LEVELS.DEEP) return;
+
+    let value = stateObj[propName];
+    Object.defineProperty(stateObj, propName, {
+        get: () => value,
+        set: (newValue) => {
+            if (value !== newValue) {
+                debug.logTrace('global', 
+                    `Flag [${propName}] cambiado: ${value} -> ${newValue}`);
+
+                value = newValue;
+            }
+        },
+        configurable: true
+    });
+}
+
 /* --- code/debug.diagnostics.js --- */

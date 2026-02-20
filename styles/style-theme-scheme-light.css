@@ -1,0 +1,94 @@
+/* --- styles/style-theme-prefers-color-scheme-light.css --- */
+
+/* =========================================================
+   1. MODO SISTEMA OPERATIVO (Automático / Base)
+   ========================================================= */
+:root {
+    --color-bg: #f4f4f4;
+    --color-card-bg: rgba(255, 255, 255, 0.7);
+    --color-mask-gradient: rgba(244, 244, 244, 0.4);
+    --color-text: #111;
+    --color-card-border: #575757;
+    --color-card-border-disabled: #999;
+    --color-primary: #004a99;
+    --color-primary-bg: rgba(0, 123, 255, 0.1);
+    --color-danger: #b2000d;
+    --color-danger-bg: rgba(220, 53, 69, 0.1);
+    --color-success: #196b2c;
+    --color-success-bg: rgba(40, 167, 69, 0.1);
+    --color-border-placeholder: #aaa; 
+    --color-text-muted: #595959;
+    --color-header-bg: #fff;
+    --color-header-text: #222;
+    --color-footer-text: #222;
+
+    --color-shadow-primary: rgba(0, 123, 255, 0.4);
+    --color-shadow-disabled: rgba(150, 150, 150, 0.2);
+    --color-shadow-modal: rgba(0, 0, 0, 0.5);
+    --color-toast-bg: #222;
+    --color-toast-text: #fff;
+    --color-details-action-item-hover: rgba(255, 255, 255, 0.05);
+
+    /* Color para el icono de Obras (Orange/Yellow en modo claro) */
+    --color-icon-obras: #804a00; 
+
+    --color-logo-static: #595959;
+    --color-logo-dynamic: var(--color-icon-obras);
+
+    /* ⭐️ Control dinámico del filtro SVG */
+    --shadow-color-hex: #969696; /* Color puro de la sombra Ghost (gris por defecto) */
+    --shadow-opacity: 0.8;       /* Opacidad base de la sombra Ghost */
+
+    --color-a11y-selected-text: #ffffff;
+    --color-a11y-slider-track: #888; 
+    --color-a11y-slider-labels: var(--color-text-muted);
+}
+
+/* =========================================================
+   2. MODO MANUAL (Seleccionado en Modal A11y)
+   ========================================================= */
+body[data-theme="light"] {
+    --color-bg: #f4f4f4;
+    --color-card-bg: rgba(255, 255, 255, 0.7);
+    --color-mask-gradient: rgba(244, 244, 244, 0.4);
+    --color-text: #111;
+    --color-card-border: #575757;
+    --color-card-border-disabled: #999;
+    --color-primary: #004a99;
+    --color-primary-bg: rgba(0, 123, 255, 0.1);
+    --color-danger: #b2000d;
+    --color-danger-bg: rgba(220, 53, 69, 0.1);
+    --color-success: #196b2c;
+    --color-success-bg: rgba(40, 167, 69, 0.1);
+    --color-border-placeholder: #aaa; 
+    --color-text-muted: #595959;
+    --color-header-bg: #fff;
+    --color-header-text: #222;
+    --color-footer-text: #222;
+
+    --color-shadow-primary: rgba(0, 123, 255, 0.4);
+    --color-shadow-disabled: rgba(150, 150, 150, 0.2);
+    --color-shadow-modal: rgba(0, 0, 0, 0.5);
+    --color-toast-bg: #222;
+    --color-toast-text: #fff;
+    --color-details-action-item-hover: rgba(255, 255, 255, 0.05);
+
+    --color-icon-obras: #804a00; 
+
+    --color-logo-static: #595959;
+    --color-logo-dynamic: var(--color-icon-obras);
+
+    --shadow-color-hex: #969696; 
+    --shadow-opacity: 0.8;       
+
+    --color-a11y-selected-text: #ffffff;
+    --color-a11y-slider-track: #888; 
+    --color-a11y-slider-labels: var(--color-text-muted);
+
+    /* Forzamos el esquema nativo de componentes (scrollbars, etc.) */
+    color-scheme: light;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+
+/* --- styles/style-theme-prefers-color-scheme-light.css --- */

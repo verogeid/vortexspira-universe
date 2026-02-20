@@ -1,0 +1,81 @@
+/* --- styles/style-theme-prefers-color-scheme-dark.css --- */
+
+/* =========================================================
+   1. MODO SISTEMA OPERATIVO (Automático)
+   ========================================================= */
+@media (prefers-color-scheme: dark) {
+    :root {   
+        --color-bg: #111;
+        --color-card-bg: rgba(255, 255, 255, 0.02);
+        --color-mask-gradient: rgba(17, 17, 17, 0.4);
+        --color-primary: #8bc5ff;
+        --color-text: #eee;
+        --color-card-border: #ababab; 
+        --color-card-border-disabled: #666; 
+        --color-border-placeholder: #555; 
+        --color-header-bg: #222;
+        --color-header-text: #fff;
+        --color-footer-text: #fff;
+
+        --color-text-muted: #ababab;
+        --color-shadow-primary: rgba(0, 123, 255, 0.4); 
+        --color-shadow-disabled: rgba(170, 170, 170, 0.8);
+        --color-shadow-modal: rgba(0, 0, 0, 0.7); 
+        --color-toast-bg: #222;
+        --color-toast-text: #fff;
+
+        /* ⭐️ CORRECCIÓN: Amarillo brillante para Obras en Modo Oscuro ⭐️ */
+        --color-icon-obras: #FFC107; /* Amarillo Brillante */
+
+        --color-logo-static: #ababab;
+        --color-logo-dynamic: var(--color-icon-obras);
+
+        /* ⭐️ Variables añadidas para el control dinámico del filtro SVG (Dark Mode) ⭐️ */
+        --shadow-color-hex: #888888;
+
+        --color-a11y-selected-text: #000000;
+        --color-a11y-slider-track: #555;
+        --color-a11y-slider-labels: var(--color-text-muted);
+    }
+}
+
+/* =========================================================
+   2. MODO MANUAL (Seleccionado en Modal A11y)
+   ========================================================= */
+body[data-theme="dark"] {
+    --color-bg: #111;
+    --color-card-bg: rgba(255, 255, 255, 0.02);
+    --color-mask-gradient: rgba(17, 17, 17, 0.4);
+    --color-primary: #8bc5ff;
+    --color-text: #eee;
+    --color-card-border: #ababab; 
+    --color-card-border-disabled: #666; 
+    --color-border-placeholder: #555; 
+    --color-header-bg: #222;
+    --color-header-text: #fff;
+    --color-footer-text: #fff;
+
+    --color-text-muted: #ababab;
+    --color-shadow-primary: rgba(0, 123, 255, 0.4); 
+    --color-shadow-disabled: rgba(170, 170, 170, 0.8);
+    --color-shadow-modal: rgba(0, 0, 0, 0.7); 
+    --color-toast-bg: #222;
+    --color-toast-text: #fff;
+
+    --color-icon-obras: #FFC107; 
+
+    --color-logo-static: #ababab;
+    --color-logo-dynamic: var(--color-icon-obras);
+
+    --shadow-color-hex: #888888;
+
+    --color-a11y-selected-text: #000000;
+    --color-a11y-slider-track: #555;
+    --color-a11y-slider-labels: var(--color-text-muted);
+
+    /* Forzamos el esquema nativo de componentes (scrollbars, etc.) */
+    color-scheme: dark;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+/* --- styles/style-theme-prefers-color-scheme-dark.css --- */

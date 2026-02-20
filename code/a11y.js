@@ -70,6 +70,9 @@ function _applyPreferences() {
     root.style.setProperty('--line-height-base', _prefs.lineHeight);
     root.style.setProperty('--paragraph-spacing', `${_prefs.paragraphSpacing}em`);
 
+    // 🟢 Aplicar Tema al body (El CSS se encargará del resto)
+    document.body.setAttribute('data-theme', _prefs.theme || 'default');
+
     // 🟢 Aplicar Reducción de movimiento al body
     document.body.setAttribute('data-reduced-motion', _prefs.reduceMotion ? 'true' : 'false');
 
@@ -119,6 +122,15 @@ function _updateModalUI() {
         _domRefs.rangeSpacing.setAttribute('aria-valuetext', i18n.getString(labelKey));
         
         _updateSpacingLabel(step);
+    }
+
+    // Radio Buttons de Tema
+    if (_domRefs.themeBtns) {
+        _domRefs.themeBtns.forEach(btn => {
+            const isSelected = btn.dataset.theme === _prefs.theme;
+            btn.classList.toggle('selected', isSelected);
+            btn.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+        });
     }
 
     // Checkbox Reducir Animaciones
@@ -254,6 +266,30 @@ function _injectModalHTML() {
                 </div>
 
                 <div class="a11y-section">
+                    <h3>${i18n.getString('modal.sections.theme') || 'Tema de Color'}</h3>
+                    <div class="a11y-controls-group theme-group" role="radiogroup" aria-label="${i18n.getString('modal.sections.theme') || 'Tema de Color'}">
+                        <button class="a11y-option-btn" role="radio" aria-checked="false" data-theme="default">
+                            ${i18n.getString('modal.options.themeDefault') || 'Sistema'}
+                        </button>
+                        <button class="a11y-option-btn" role="radio" aria-checked="false" data-theme="light">
+                            ${i18n.getString('modal.options.themeLight') || 'Claro'}
+                        </button>
+                        <button class="a11y-option-btn" role="radio" aria-checked="false" data-theme="dark">
+                            ${i18n.getString('modal.options.themeDark') || 'Oscuro'}
+                        </button>
+                        <button class="a11y-option-btn" role="radio" aria-checked="false" data-theme="contrast">
+                            ${i18n.getString('modal.options.themeContrast') || 'Alto Contraste'}
+                        </button>
+                        <button class="a11y-option-btn" role="radio" aria-checked="false" data-theme="forced">
+                            ${i18n.getString('modal.options.themeForced') || 'Forzados'}
+                        </button>
+                        <button class="a11y-option-btn" role="radio" aria-checked="false" data-theme="yellow">
+                            ${i18n.getString('modal.options.themeYellow') || 'Amarillo/Negro'}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="a11y-section">
                     <h3>${i18n.getString('modal.sections.motion') || 'Movimiento'}</h3>
                     <div class="a11y-controls-group">
                         <label class="a11y-checkbox-label" 
@@ -291,6 +327,8 @@ function _cacheDOM() {
 
         rangeSpacing: document.getElementById('a11y-range-spacing'),
         rangeSpacingVal: document.getElementById('a11y-range-spacing-val'),
+
+        themeBtns: document.querySelectorAll('.theme-group .a11y-option-btn'),
 
         reduceMotionCb: document.getElementById('a11y-reduce-motion'),
 
@@ -365,6 +403,22 @@ function _setupListeners() {
         _domRefs.rangeSpacing.addEventListener('change', () => {
             // 🟢 FIX: Eliminamos _applyPreferences() para evitar el rebote del ARIA
             _savePreferences();
+        });
+    }
+
+    // Botones de Tema
+    if (_domRefs.themeBtns) {
+        _domRefs.themeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                _prefs.theme = btn.dataset.theme;
+                _applyPreferences();
+                _savePreferences();
+                
+                // Anuncio al lector de pantalla
+                if (window.App && window.App.announceA11y) {
+                    window.App.announceA11y(`Tema cambiado a: ${btn.innerText}`, 'polite');
+                }
+            });
         });
     }
 
