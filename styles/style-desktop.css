@@ -61,7 +61,7 @@ body[data-layout="desktop"] #nav-swiper .cards-column-group .card {
 }
     
 body[data-layout="desktop"] #vista-volver { 
-  min-width: 0; 
+    min-width: 0;
 }
 body[data-layout="desktop"] #vista-volver #card-nivel-actual,
 body[data-layout="desktop"] #vista-volver #card-volver-fija-elemento {

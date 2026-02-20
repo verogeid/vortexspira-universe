@@ -91,7 +91,21 @@ export function _handleVolverClick() {
                     'ESC: Raíz alcanzada. Bloqueo liberado.');
 
         this.STATE.isNavigatingBack = false; 
+        
+        return; // Salimos temprano para no ensuciar la URL en la raíz
     }
+
+    // 🟢 HISTORIAL: Push al navegador al retroceder mediante nuestro botón
+    const currentLevel = this.stackGetCurrent();
+    const targetId = this.STATE.activeCourseId || currentLevel?.levelId;
+    const url = new URL(window.location);
+    
+    if (targetId) {
+        url.searchParams.set('id', targetId);
+    } else {
+        url.searchParams.delete('id');
+    }
+    history.pushState({ id: targetId }, '', url);
 };
 
 export function _updateFocusImpl(shouldSlide = true) {
@@ -238,7 +252,7 @@ export function _updateFocusImpl(shouldSlide = true) {
                     Elemento a medir: ${elementToMeasure.tagName} ${elementToMeasure.className}
                     Top: ${topRef.toFixed(1)}px
                     Bottom: ${bottomRef.toFixed(1)}px`);
-                    
+
                 const isObstructedTop = topRef < (headerHeight + 5); 
                 const isObstructedBottom = bottomRef > (bottomLimit - 5);
 
@@ -385,6 +399,13 @@ export function _handleTrackClick(e) {
 
 export function _handleCardClick(id, tipo) {
     this.stackUpdateCurrentFocus(id);
+
+    // 🟢 HISTORIAL: Push al navegador para avanzar
+    if (tipo !== 'volver-vertical') {
+        const url = new URL(window.location);
+        url.searchParams.set('id', id);
+        history.pushState({ id: id }, '', url);
+    }
 
     if (tipo === 'categoria') { 
         this.stackPush(id); 

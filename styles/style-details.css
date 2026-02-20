@@ -289,4 +289,10 @@ button.detail-action-btn {
     background: var(--color-card-bg); 
 }
 
+body[data-layout="tablet-portrait"] #vista-volver,
+body[data-layout="tablet-landscape"] #vista-volver,
+body[data-layout="desktop"] #vista-volver { 
+    display: flex;
+}
+
 /* --- styles/style-details.css --- */

@@ -258,12 +258,39 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
     }
     const swiperId = isMobileLayout ? '#detalle-swiper-mobile' : '#detalle-swiper-desktop';
 
+    // 🟢 OBTENER EL NOMBRE DEL PADRE (Lo calculamos una sola vez para Mobile y Desktop)
+    const parent = this.stackGetCurrent();
+    let parentName = this.getString('nav.breadcrumbRoot') || 'VortexSpira';
+    if (parent && parent.levelId) {
+        const parentNodo = this._findNodoById(parent.levelId, this.STATE.fullData.navegacion);
+        if (parentNodo) parentName = parentNodo.nombre || parentNodo.titulo || parentName;
+    }
+
     // UI Standard
     const vistaVolver = document.getElementById('vista-volver');
     const infoAdicional = document.getElementById('info-adicional');
+    
     if (!isMobileLayout) {
         if (vistaVolver) vistaVolver.classList.add('visible');
         if (infoAdicional) infoAdicional.classList.add('visible');
+
+        // 🟢 FIX CRÍTICO BUG DE F5: Rellenar elementos internos si venimos de recarga directa
+        const cardNivelActual = document.getElementById('card-nivel-actual');
+        const cardVolverFijaElemento = document.getElementById('card-volver-fija-elemento');
+
+        if (cardNivelActual) {
+            cardNivelActual.classList.add('visible');
+            cardNivelActual.innerHTML = `<h3>${parentName}</h3>`;
+        }
+
+        if (cardVolverFijaElemento) {
+            // Al estar dentro de un curso, el botón de volver siempre debe estar habilitado
+            cardVolverFijaElemento.classList.add('visible');
+            cardVolverFijaElemento.innerHTML = `<h3 aria-hidden="true">${data.MEDIA.LOGO.VOLVER || '↩'}</h3>`;
+            cardVolverFijaElemento.setAttribute('aria-label', this.getString('nav.aria.backBtn'));
+            cardVolverFijaElemento.tabIndex = 0;
+        }
+
     } else {
         if (vistaVolver) vistaVolver.classList.remove('visible');
         if (infoAdicional) infoAdicional.classList.remove('visible');
@@ -274,12 +301,6 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
 
     // Header Mobile
     if (isMobileLayout) {
-        const parent = this.stackGetCurrent();
-        let parentName = this.getString('nav.breadcrumbRoot');
-        if (parent && parent.levelId) {
-            const parentNodo = this._findNodoById(parent.levelId, this.STATE.fullData.navegacion);
-            if (parentNodo) parentName = parentNodo.nombre || parentNodo.titulo || parentName;
-        }
         const ariaLabel = this.getString('nav.aria.backBtn');
         slidesHtml += `
             <div class="swiper-slide">
@@ -287,7 +308,7 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                     <h3>${parentName}</h3>
                 </article>
                 <article class="card card-volver-vertical" role="button" aria-label="${ariaLabel}" tabindex="0" onclick="App._handleVolverClick()">
-                    <h3>${data.MEDIA.LOGO.VOLVER}</h3>
+                    <h3>${data.MEDIA.LOGO.VOLVER || '↩'}</h3>
                 </article>
             </div>
         `;

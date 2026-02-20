@@ -233,6 +233,45 @@ class VortexSpiraApp {
             });
         });
         
+        // 🟢 NAVEGADOR: Escuchar los botones nativos de Atrás / Adelante
+        window.addEventListener('popstate', (event) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetId = urlParams.get('id');
+
+            debug.log('app', debug.DEBUG_LEVELS.BASIC, `Navegación nativa detectada. Destino ID: ${targetId}`);
+
+            if (targetId) {
+                // Reconstruimos la pila matemáticamente hacia el elemento destino de la URL
+                if (this.stackBuildFromId(targetId, this.STATE.fullData)) { 
+                    const nodo = this._findNodoById(targetId, this.STATE.fullData.navegacion);
+                    
+                    if (nodo && (nodo.titulo || nodo.descripcion)) { 
+                        // Es un curso, abrimos detalle
+                        this._mostrarDetalle(targetId);
+                    } else {
+                        // Es una categoría, mostramos navegación
+                        if (this.DOM.vistaDetalle) {
+                            this.DOM.vistaDetalle.classList.remove('active');
+                        }
+                        this.STATE.activeCourseId = null;
+                        this.renderNavegacion();
+                    }
+                } else {
+                    // Si el ID de la URL es inválido, forzamos la raíz
+                    this.stackInitialize(); 
+                    this.renderNavegacion();
+                }
+            } else {
+                // No hay ID en la URL, volvemos a la raíz principal
+                if (this.DOM.vistaDetalle) {
+                    this.DOM.vistaDetalle.classList.remove('active');
+                }
+                this.STATE.activeCourseId = null;
+                this.stackInitialize(); 
+                this.renderNavegacion();
+            }
+        });
+        
         this.STATE.initialRenderComplete = true; 
 
         // 🟢 FIN DE LA SECUENCIA DE ARRANQUE
