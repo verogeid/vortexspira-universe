@@ -1,0 +1,40 @@
+/* --- styles/style-reduced-motion.css --- */
+
+/* 1. Por preferencia del Sistema Operativo */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --transition-speed: 0.01ms !important;
+        --animation-speed: 0.01ms !important;
+        --scroll-beahavior: auto !important;
+    }
+    *, *::before, *::after {
+        animation-duration: var(--animation-speed);
+        animation-iteration-count: 1 !important;
+        transition-duration: var(--transition-speed);
+        scroll-behavior: var(--scroll-beahavior);
+    }
+    html { scroll-behavior: var(--scroll-beahavior); }
+}
+
+/* 2. Por preferencia manual en el Modal (Checkbox) */
+body[data-reduced-motion="true"] {
+    --transition-speed: 0.01ms !important;
+    --animation-speed: 0.01ms !important;
+    --scroll-beahavior: auto !important;
+}
+
+body[data-reduced-motion="true"] *, 
+body[data-reduced-motion="true"] *::before, 
+body[data-reduced-motion="true"] *::after {
+    animation-duration: var(--animation-speed);
+    animation-iteration-count: 1 !important;
+    transition-duration: var(--transition-speed);
+    scroll-behavior: var(--scroll-beahavior);
+}
+
+/* Aplicar el scroll instantáneo al documento base */
+html:has(body[data-reduced-motion="true"]) {
+    scroll-behavior: var(--scroll-beahavior);
+}
+
+/* --- styles/style-reduce-motion.css --- */

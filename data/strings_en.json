@@ -19,7 +19,9 @@
         "aria": {
             "region": "Main course navigation",
             "backBtn": "Go back to previous level",
-            "breadcrumb": "Current Level: "
+            "breadcrumb": "Current Level: ",
+            "actionCategory": "Go to subsection:",
+            "actionCourse": "Open course details:"
         },
         "breadcrumbRoot": "Root Level",
         "level": "Level",
@@ -32,7 +34,8 @@
     },
     "details": {
         "aria": {
-            "region": "Course details"
+            "region": "Course details",
+            "readOnly": "Read-only element."
         },
         "noDescription": "No description available."
     },
@@ -59,17 +62,20 @@
         "title": "Accessibility",
         "opened": "Accessibility settings opened",
         "close": "Close settings",
+        "closed": "Accessibility settings closed",
         "reset": "Restore default values",
         "resetSuccess": "Default values restored",
         "sections": {
             "font": "Typography",
             "size": "Text Size",
-            "spacing": "Spacing"
+            "spacing": "Spacing",
+            "motion": "Motion"
         },
         "options": {
             "sans": "Sans",
             "serif": "Serif",
-            "dyslexic": "Dyslexic"
+            "dyslexic": "Dyslexic",
+            "reduceMotion": "Reduce Motion"
         },
         "spacing": {
             "compact": "Compact",

@@ -288,9 +288,15 @@ export function _updateFocusImpl(shouldSlide = true) {
                         // SWIPER HORIZONTAL (Menú Principal): Movemos la ventana entera
                         // Usamos 'smooth' porque ahora es el único movimiento, no una corrección brusca
                         if (isObstructedTop) {
-                            window.scrollBy({ top: -delta, behavior: 'smooth' });
+                            window.scrollBy({ 
+                                top: -delta, 
+                                behavior: data.SWIPER.scrollBehavior 
+                            });
                         } else {
-                            window.scrollBy({ top: delta, behavior: 'smooth' });
+                            window.scrollBy({ 
+                                top: delta, 
+                                behavior: data.SWIPER.scrollBehavior 
+                            });
                         }
                         debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
                             `↔️ CORRECCIÓN HORIZONTAL (Window Scroll)`);

@@ -40,16 +40,31 @@ export const MAX_WIDTH = {
     TABLET_LANDSCAPE: 1023.99
 }
 
-const _SLIDES_PER_VIEW = 3;
-
 export const SWIPER = {
-    SLIDE_SPEED: 400, // en ms
+    prefersReducedMotion: function() {
+        // 🟢 Comprueba si está marcado en el modal (data-attribute) O en el sistema operativo
+        const manualOverride = document.body.getAttribute('data-reduced-motion') === 'true';
+
+        const osPreference = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        
+        return manualOverride || osPreference;
+    },
+    get SLIDE_SPEED() { 
+        return this.prefersReducedMotion() ? 0 : 400; 
+    },
+    get SLIDES_PER_VIEW() {
+        return 3;
+    },
+    get NEEDED_SLIDES_TO_LOOP() {
+        return this.SLIDES_PER_VIEW * 3 + 2; 
+    },
+    get scrollBehavior () {
+        return this.prefersReducedMotion() ? 'auto' : 'smooth';
+    },
     CARD_GAP_PX: 15,
     ELEMENTS_PER_COLUMN_TABLET: 2,
     ELEMENTS_PER_COLUMN_DESKTOP: 3,
-    SLIDES_PER_VIEW: _SLIDES_PER_VIEW,
-    NEEDED_SLIDES_TO_LOOP: _SLIDES_PER_VIEW * 3 + 2
-}
+};
 
 export const A11Y = {
     STORAGE_KEY: 'vortex_a11y_prefs_v1',
@@ -57,7 +72,8 @@ export const A11Y = {
         fontType: 'sans',      
         fontSizePct: 100,      
         lineHeight: 1.5,       
-        paragraphSpacing: 1.5 
+        paragraphSpacing: 1.5,
+        reduceMotion: false
     },
     SPACING_MAP: { // Mapeo para el slider de espaciado: Valor -> [AlturaLinea, Etiqueta]
         1: { val: 1.0, labelKey: 'modal.spacing.compact' },

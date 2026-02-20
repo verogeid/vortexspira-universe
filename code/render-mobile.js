@@ -65,7 +65,7 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
     html += `<div class="swiper-slide card-relleno-final" style="height: 100px !important; pointer-events: none;"></div>`;
 
     if (this.DOM.track) {
-         this.DOM.track.style.gridTemplateRows = '';
+        this.DOM.track.style.gridTemplateRows = '';
     }
     return html;
 };

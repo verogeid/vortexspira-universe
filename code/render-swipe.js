@@ -67,6 +67,7 @@ export function _initCarousel_Swipe(initialSwiperSlide, itemsPorColumna, isMobil
         initialSlide: initialSwiperSlide, 
         
         speed: data.SWIPER.SLIDE_SPEED,
+        
         roundLengths: true,
         observer: true,
         observeParents: true,

@@ -309,10 +309,13 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
             titleHtml = `<h2 class="detail-title-slide" aria-hidden="true">${curso.titulo}</h2>`;
         }
         
+        // 🟢 FIX A11Y: Advertir al usuario que es texto pasivo
+        const readOnlyMsg = this.getString('details.aria.readOnly') || 'Elemento de solo lectura. Usa las flechas para navegar.';
+
         slidesHtml += `
             <div class="swiper-slide">
                 ${titleHtml}
-                <div class="detail-text-fragment" data-index="${index}" role="article" tabindex="0" onclick="this.focus()">
+                <div class="detail-text-fragment" data-index="${index}" role="article" tabindex="0" onclick="this.focus()" aria-description="${readOnlyMsg}">
                     <div class="content-wrapper">${slide.content}</div>
                 </div>
             </div>

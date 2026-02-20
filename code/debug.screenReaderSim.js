@@ -58,6 +58,13 @@ export function enableScreenReaderSimulator() {
     };
     document.addEventListener('focusin', _srFocusListener);
 
+    // 🟢 FIX: Escuchar cambios nativos de checkbox/radio que no disparan el MutationObserver
+    document.addEventListener('change', (e) => {
+        if (e.target.tagName === 'INPUT' && (e.target.type === 'checkbox' || e.target.type === 'radio')) {
+            _announceElement(e.target, 'update');
+        }
+    });
+
     // 2. MONITOR DE REGIONES VIVAS Y CAMBIOS DE ESTADO
     if (!document.body) return; 
     
@@ -201,15 +208,36 @@ function _computeAccessibleName(el) {
     if (el.tagName === 'IMG') 
         return el.getAttribute('alt') || '';
 
-    if (el.tagName === 'INPUT' && el.type === 'text') 
-        return el.value;
+    // 🟢 Lógica avanzada para inputs nativos
+    if (el.tagName === 'INPUT') {
 
-    // Fallback para ranges que no tienen label pero tienen value
-    if (el.tagName === 'INPUT' && el.type === 'range') {
-        return el.getAttribute('aria-label') || 'Slider';
+        if (el.type === 'text') 
+            return el.value;
+
+        if (el.type === 'range') 
+            return el.getAttribute('aria-label') || 'Slider';
+        
+        // Checkbox y Radio: Buscar su Label asociado
+        if (el.type === 'checkbox' || el.type === 'radio') {
+            
+            // 1. Label Implícito (El input está dentro de un <label>)
+            const parentLabel = el.closest('label');
+            if (parentLabel) {
+                return parentLabel.innerText.trim();
+            }
+            
+            // 2. Label Explícito (<label for="id-del-input">)
+            if (el.id) {
+                const explicitLabel = document.querySelector(`label[for="${el.id}"]`);
+                if (explicitLabel) {
+                    return explicitLabel.innerText.trim();
+                }
+            }
+        }
     }
 
-    return el.innerText ? el.innerText.split('\n')[0].trim() : ''; 
+    // 🟢 FIX: Reemplazar los saltos de línea por espacios para leer todo el contenido del bloque
+    return el.innerText ? el.innerText.replace(/\n+/g, ' ').trim() : '';
 }
 
 function _computeRole(el) {
@@ -261,7 +289,10 @@ function _computeState(el) {
     if (el.getAttribute('aria-pressed') === 'true') 
         states.push('PRESIONADO');
 
-    if (el.hasAttribute('aria-checked')) {
+    // 🟢 FIX: Soporte para la propiedad nativa de los checkboxes
+    if (el.tagName === 'INPUT' && (el.type === 'checkbox' || el.type === 'radio')) {
+        states.push(el.checked ? 'MARCADO' : 'NO MARCADO');
+    } else if (el.hasAttribute('aria-checked')) {
         states.push(el.getAttribute('aria-checked') === 'true' ? 'MARCADO' : 'NO MARCADO');
     }
 

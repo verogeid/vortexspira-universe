@@ -74,7 +74,7 @@ header h1 a {
     
     position: relative; 
     flex-shrink: 0;
-    transition: all 0.2s ease;
+    transition: all var(--animation-speed) ease;
 }
 
 /* Capa 1: Parte ESTÁTICA (Gris #999 fijo) */
@@ -147,7 +147,7 @@ header h1 a:focus-visible .header-logo::after {
     background-color: var(--color-header-text); 
 
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--animation-speed) ease;
     outline: none;
     z-index: 101; 
     box-sizing: border-box;
@@ -183,7 +183,7 @@ header h1 a:focus-visible .header-logo::after {
     background-color: transparent; 
 
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: transform var(--animation-speed) ease;
     outline: none;
     z-index: 101; 
     box-sizing: border-box;
@@ -209,7 +209,7 @@ header h1 a:focus-visible .header-logo::after {
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
     
-    transition: all 0.2s ease;
+    transition: all var(--animation-speed) ease;
 }
 
 /* 🟢 INTERACCIÓN: EL SVG SE PONE DE COLOR PRIMARIO */
@@ -229,7 +229,7 @@ header h1 a:focus-visible .header-logo::after {
     z-index: 2;
     line-height: 1;
     pointer-events: none;
-    transition: all 0.2s ease;
+    transition: all var(--animation-speed) ease;
 
     /* REPOSO: Texto oscuro sobre icono claro (calado) */
     color: var(--color-header-bg); 

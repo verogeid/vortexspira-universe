@@ -41,7 +41,7 @@ body[data-layout="tablet-landscape"] {
 body[data-layout="tablet-portrait"] #vista-navegacion-tablet,
 body[data-layout="tablet-landscape"] #vista-navegacion-tablet {
     display: flex; z-index: 10; min-width: 0; overflow: hidden;
-    transition: opacity 0.4s ease;
+    transition: opacity var(--transition-speed) ease;
 }
 
     /* @media (min-width: 601px) and (max-width: 800px) */

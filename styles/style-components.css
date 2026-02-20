@@ -45,7 +45,7 @@
     justify-content: center; align-items: center; 
     margin-bottom: 0; overflow: hidden; 
     box-sizing: border-box; 
-    transition: all 0.2s ease; 
+    transition: all var(--animation-speed) ease; 
     color: var(--color-text); background: var(--color-card-bg);
     border: 2px solid var(--color-card-border); border-radius: 12px;
     cursor: pointer;
@@ -88,7 +88,7 @@
     list-style: none; 
     padding: 0.2rem; 
     color: var(--color-text); 
-    opacity: 0.9; transition: color 0.2s ease; 
+    opacity: 0.9; transition: color var(--animation-speed) ease; 
     outline: none;
 }
 #info-adicional summary:hover,
@@ -101,7 +101,7 @@
     content: '▶'; 
     font-size: 1em; /* Hereda */
     margin-right: 8px; 
-    display: inline-block; transition: transform 0.2s ease; 
+    display: inline-block; transition: transform var(--animation-speed) ease; 
 }
 #info-adicional details[open] > summary::before { transform: rotate(90deg); }
 #info-adicional details > small { 
@@ -122,7 +122,7 @@
 #info-adicional-lista-acerca a { 
     display: flex; align-items: center; text-decoration: none; 
     color: var(--color-text); 
-    opacity: 0.9; transition: all 0.2s ease; 
+    opacity: 0.9; transition: all var(--animation-speed) ease; 
     /* ⭐️ A11Y FIX */
     font-size: var(--info-adicional-lista-a-font-size);
 }
@@ -164,17 +164,8 @@
     z-index: 9999; text-align: center; max-width: 80%;
 
     opacity: 0; visibility: hidden; 
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+    transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
 }
 .toast.active { opacity: 1; visibility: visible; }
-
-@media (prefers-reduced-motion: reduce) {
-    #card-volver-fija-elemento { transition: none !important; }
-    #card-volver-fija-elemento:hover, 
-    #card-volver-fija-elemento:focus-visible { 
-        transform: none; 
-        box-shadow: none; }
-    .toast { transition: none; }
-}
 
 /* --- styles/style-components.css --- */

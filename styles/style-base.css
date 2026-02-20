@@ -3,6 +3,12 @@
 /* 1. Variables y Tema (Colores, Modo Oscuro) */
 @import url('style-theme.css');
 
+@import url('style-prefers-color-scheme-light.css');
+@import url('style-prefers-color-scheme-dark.css');
+
+@import url('style-forced-colors.css');
+@import url('style-prefers-contrast.css');
+
 /* Variables de medios (SVG Icons) */
 @import url('style-media.css');
 
@@ -25,4 +31,6 @@
 @import url('style-mobile.css');
 @import url('style-safe-mode.css'); /* a11y safe mode */
 
+/* --- Reduce Motion --- */
+@import url('style-reduce-motion.css');
 /* --- styles/style-base.css --- */

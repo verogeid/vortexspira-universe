@@ -44,11 +44,11 @@
     max-width: 90vw;
 
     max-height: none; overflow-y: auto;
-    transform: translateY(20px); transition: transform 0.3s ease;
+    transform: translateY(20px); transition: transform var(--animation-speed) ease;
 
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) transparent;
-    scroll-behavior: smooth;
+    scroll-behavior: var(--scroll-beahavior);
 }
 
 .a11y-modal-overlay.active .a11y-modal {
@@ -95,7 +95,7 @@
     border-radius: 50%;
 
     display: flex; justify-content: center; align-items: center;
-    transition: all 0.2s ease;
+    transition: all var(--animation-speed) ease;
     
     /* ⭐️ FIX: Prohibido encogerse */
     flex-shrink: 0; 
@@ -148,7 +148,7 @@
     background: transparent;
     border: 2px solid var(--color-card-border);
     border-radius: 8px; color: var(--color-text);
-    cursor: pointer; transition: all 0.2s ease;
+    cursor: pointer; transition: all var(--animation-speed) ease;
 
     font-size: var(--a11y-option-btn-font-size);
 
@@ -230,7 +230,7 @@ input[type=range].a11y-range::-webkit-slider-thumb {
     background: var(--color-primary); 
 
     box-shadow: 0 0 5px var(--color-shadow-primary);
-    transition: transform 0.2s;
+    transition: transform var(--animation-speed);
 }
 input[type=range].a11y-range:hover::-webkit-slider-thumb {
     transform: scale(1.2);
@@ -255,6 +255,16 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
     font-weight: bold; 
 }
 
+/* Checkbox de reducción de movimiento */
+.a11y-checkbox {
+    accent-color: var(--color-primary);
+}
+
+.a11y-checkbox:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
 /* SECCIÓN FINAL (Footer del modal) */
 .a11y-footer {
     text-align: right; 
@@ -276,7 +286,7 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: all var(--animation-speed) ease;
     
     background-color: var(--color-text-muted); 
     -webkit-mask-image: var(--icon-reset); mask-image: var(--icon-reset);
@@ -294,17 +304,6 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
     box-shadow: 0 0 10px var(--color-danger-bg);
     transform: rotate(-180deg); 
     outline: none;
-}
-
-@media (forced-colors: active) {
-    #a11y-reset { 
-        background-color: ButtonText; 
-        border: 2px solid ButtonText; 
-    }
-    #a11y-reset:hover { 
-        background-color: Highlight; 
-        border-color: Highlight; 
-    }
 }
 
 /* Previews de fuente */

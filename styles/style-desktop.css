@@ -79,14 +79,14 @@ body[data-layout="desktop"] #vista-navegacion-desktop .mask-right {
     z-index: 10;
 }
 body[data-layout="desktop"] #vista-navegacion-desktop .mask-left { 
-  left: 0; 
+    left: 0; 
 }
 body[data-layout="desktop"] #vista-navegacion-desktop .mask-right {
     right: 0; background: linear-gradient(to left, var(--color-bg), transparent);
 }
 
 body[data-layout="desktop"] #info-adicional { 
-  display: block !important; 
+    display: block !important; 
 }
 
 /* --- styles/style-desktop.css --- */

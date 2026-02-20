@@ -19,7 +19,9 @@
         "aria": {
             "region": "Navegación principal de cursos",
             "backBtn": "Volver al nivel anterior",
-            "breadcrumb": "Nivel Actual: "
+            "breadcrumb": "Nivel Actual: ",
+            "actionCategory": "Ir a la subsección:",
+            "actionCourse": "Abrir detalles del curso:"
         },
         "breadcrumbRoot": "Nivel Raíz",
         "level": "Nivel",
@@ -32,7 +34,8 @@
     },
     "details": {
         "aria": {
-            "region": "Detalle del curso"
+            "region": "Detalle del curso",
+            "readOnly": "Elemento de solo lectura."
         },
         "noDescription": "Sin descripción disponible."
     },
@@ -59,17 +62,20 @@
         "title": "Accesibilidad",
         "opened": "Configuración de accesibilidad abierta",
         "close": "Cerrar configuración",
+        "closed": "Configuración de accesibilidad cerrada",
         "reset": "Restaurar valores por defecto",
         "resetSuccess": "Valores por defecto restaurados",
         "sections": {
             "font": "Tipografía",
             "size": "Tamaño Texto",
-            "spacing": "Espaciado"
+            "spacing": "Espaciado",
+            "motion": "Movimiento"
         },
         "options": {
             "sans": "Sans",
             "serif": "Serif",
-            "dyslexic": "Dislexia"
+            "dyslexic": "Dislexia",
+            "reduceMotion": "Reducir animaciones"
         },
         "spacing": {
             "compact": "Compacto",

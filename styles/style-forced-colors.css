@@ -1,0 +1,135 @@
+/* --- styles/style-forced-colors.css --- */
+
+/* ⭐️ Modo de Colores Forzados (High Contrast Mode) ⭐️ */
+@media (forced-colors: active) {
+    
+    /* === 1. TARJETAS (Cards) y BOTÓN VOLVER FIJO === */
+    .card,
+    #card-volver-fija-elemento {
+        border: 2px dashed LinkText !important;
+    }
+
+    /* Foco en tarjeta habilitada -> Borde AZUL (Highlight) */
+    .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
+    .card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
+    .card:not(.disabled):not([data-tipo="relleno"]).focus-current,
+    #card-volver-fija-elemento:focus-visible,
+    #card-volver-fija-elemento.focus-visible,
+    #card-volver-fija-elemento.focus-current {
+        border: 4px solid Highlight !important; /* AZUL */
+        outline: none !important;
+    }
+
+    /* Tarjeta Deshabilitada -> Borde GRIS (GrayText) */
+    .card.disabled {
+        border: 2px dashed LinkText !important;
+        opacity: 1 !important; /* Opacidad 1 para ver bien el color */
+        color: GrayText !important;
+    }
+    
+    /* Foco en deshabilitada -> Borde BLANCO/TEXTO (CanvasText) */
+    .card.disabled:focus-visible,
+    .card.disabled.focus-visible {
+        border: 4px solid GrayText !important; /* BLANCO */
+    }
+
+    /* Tarjetas de Relleno/Breadcrumb -> Borde DISCONTINUO */
+    .card[data-tipo="relleno"],
+    .card.card-breadcrumb-vertical {
+        border: 2px dashed CanvasText !important;
+        opacity: 0.6;
+    }
+
+    /* === 2. ICONOS (MÁSCARAS) === */
+    /* Aquí background-color define el color de la TINTA del icono, no del fondo */
+    
+    .icon-vacio-card, 
+    .card-icon-lead, 
+    .icon-obras-card,
+    .icon-obras-header,
+    .action-icon {
+        forced-color-adjust: none;
+        background-color: CanvasText !important; /* Tinta Normal */
+    }
+
+    /* Iconos Deshabilitados -> Tinta GRIS */
+    .card.disabled .icon-vacio-card,
+    .card.disabled .card-icon-lead,
+    .detail-action-btn.disabled .action-icon {
+        background-color: GrayText !important;
+    }
+    
+    /* === 3. BOTÓN A11Y (El botón es la máscara) === */
+    #btn-config-accesibilidad {
+        forced-color-adjust: none;
+        border: 2px solid ButtonText !important;
+        background-color: LinkText !important; /* Tinta Normal */
+    }
+    #btn-config-accesibilidad:focus-visible {
+        border-color: Highlight !important;
+        background-color: Highlight !important; /* Tinta AZUL al foco */
+    }
+
+    /* === 4. ENLACES (Info, Footer) - SIN TOCAR FONDO === */
+    #info-adicional summary, 
+    #info-adicional a,
+    footer a {
+        color: LinkText !important;
+        text-decoration: underline;
+    }
+
+    /* Foco -> Texto AZUL (Highlight) sin fondo */
+    #info-adicional summary:focus, 
+    #info-adicional a:focus,
+    #info-adicional a:focus-visible,
+    footer a:focus,
+    footer a:focus-visible {
+        color: Highlight !important; 
+        outline: 2px dotted Highlight !important;
+        background-color: transparent !important;
+        text-decoration: none;
+    }
+
+    /* Iconos Footer */
+    .footer-social-link::before {
+        forced-color-adjust: none;
+        background-color: LinkText !important; /* Tinta Amarilla/Enlace */
+    }
+    .footer-social-link:focus-visible::before,
+    .footer-social-link:hover::before {
+        background-color: Highlight !important; /* Tinta Azul */
+    }
+
+    /* === 5. VISTA DETALLE === */
+    .detail-text-fragment {
+        border-left: none !important;
+    }
+
+    .detail-text-fragment:focus-visible,
+    .detail-text-fragment.focus-current {
+        border-left: 6px solid Highlight !important; /* Barra lateral Azul */
+        background-color: transparent !important;
+    }
+
+    .detail-action-btn {
+        border: 2px solid LinkText !important;
+    }
+    .detail-action-btn:focus-visible {
+        border: 4px solid Highlight !important;
+    }
+    /* Icono dentro del botón de acción */
+    .detail-action-btn:focus-visible .action-icon {
+        background-color: Highlight !important;
+    }
+
+    #a11y-reset { 
+        background-color: ButtonText; 
+        border: 2px solid ButtonText; 
+    }
+    #a11y-reset:hover { 
+        background-color: Highlight; 
+        border-color: Highlight; 
+    }
+}
+
+/* --- styles/style-forced-colors.css --- */

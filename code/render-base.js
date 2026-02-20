@@ -524,6 +524,15 @@ export function _generarTarjetaHTMLImpl(nodo,
     // 🟢 A11Y FIX: Vincular la tarjeta (botón) con su texto visible
     const titleId = `card-title-${nodo.id}`;
 
+    // 🟢 FIX A11Y: Construir el anuncio de la acción + nombre
+    const actionPrefix = isCourse 
+        ? (this.getString('nav.aria.actionCourse') || 'Abrir detalles del curso:') 
+        : (this.getString('nav.aria.actionCategory') || 'Ir a la subsección:');
+        
+    const ariaLabelText = `${actionPrefix} ${displayTitle}`;
+
+    // Reemplazamos aria-labelledby por aria-label y ocultamos el span interno al lector 
+    // para que no repita el nombre dos veces.
     return `
         <article class="card ${estaActivo ? '' : 'disabled'}" 
                 data-id="${nodo.id}" 
@@ -531,10 +540,10 @@ export function _generarTarjetaHTMLImpl(nodo,
                 role="button" 
                 tabindex="0" 
                 ${ariaDisabled} 
-                aria-labelledby="${titleId}">
+                aria-label="${ariaLabelText}">
             <h3>
                 ${iconHTML}
-                <span id="${titleId}" class="card-text-content">${displayTitle}</span>
+                <span id="${titleId}" class="card-text-content" aria-hidden="true">${displayTitle}</span>
             </h3>
         </article>`;
 };

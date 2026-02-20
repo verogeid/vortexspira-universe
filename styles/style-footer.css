@@ -42,7 +42,7 @@ footer small {
 /* Estilos Genéricos para Enlaces */
 footer a { 
     color: var(--color-footer-text); text-decoration: none; 
-    transition: all 0.2s ease; display: inline-block; 
+    transition: all var(--animation-speed) ease; display: inline-block; 
     padding: 0.2rem 0.5rem;
     border-radius: 8px; border: 2px solid transparent;
 }
@@ -82,7 +82,7 @@ footer a.footer-license-link:focus-visible {
     flex-shrink: 0;
 
     background-color: var(--color-footer-text);
-    transition: all 0.2s ease;
+    transition: all var(--animation-speed) ease;
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
     -webkit-mask-size: contain; mask-size: contain;

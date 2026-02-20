@@ -70,6 +70,9 @@ function _applyPreferences() {
     root.style.setProperty('--line-height-base', _prefs.lineHeight);
     root.style.setProperty('--paragraph-spacing', `${_prefs.paragraphSpacing}em`);
 
+    // 🟢 Aplicar Reducción de movimiento al body
+    document.body.setAttribute('data-reduced-motion', _prefs.reduceMotion ? 'true' : 'false');
+
     _updateModalUI();
 
     // ⭐️ Disparar evento de resize para que app.js recalcule el layout inmediatamente
@@ -116,6 +119,11 @@ function _updateModalUI() {
         _domRefs.rangeSpacing.setAttribute('aria-valuetext', i18n.getString(labelKey));
         
         _updateSpacingLabel(step);
+    }
+
+    // Checkbox Reducir Animaciones
+    if (_domRefs.reduceMotionCb) {
+        _domRefs.reduceMotionCb.checked = _prefs.reduceMotion;
     }
 }
 
@@ -245,6 +253,20 @@ function _injectModalHTML() {
                     </div>
                 </div>
 
+                <div class="a11y-section">
+                    <h3>${i18n.getString('modal.sections.motion') || 'Movimiento'}</h3>
+                    <div class="a11y-controls-group">
+                        <label class="a11y-checkbox-label" 
+                                style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                            <input type="checkbox" 
+                                id="a11y-reduce-motion" 
+                                class="a11y-checkbox" 
+                                style="width:20px; height:20px;">
+                            <span style="font-size: var(--a11y-option-btn-font-size);">${i18n.getString('modal.options.reduceMotion') || 'Reducir animaciones'}</span>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="a11y-footer">
                     <button id="a11y-reset" 
                         aria-label="${i18n.getString('modal.reset')}" 
@@ -270,6 +292,8 @@ function _cacheDOM() {
         rangeSpacing: document.getElementById('a11y-range-spacing'),
         rangeSpacingVal: document.getElementById('a11y-range-spacing-val'),
 
+        reduceMotionCb: document.getElementById('a11y-reduce-motion'),
+
         triggerBtn: document.getElementById('btn-config-accesibilidad')
     };
 }
@@ -282,30 +306,6 @@ function _setupListeners() {
     if (_domRefs.overlay) {
         _domRefs.overlay.addEventListener('click', (e) => {
             if (e.target === _domRefs.overlay) closeModal();
-        });
-    }
-
-    // Botón Reset
-    if (_domRefs.resetBtn) {
-        _domRefs.resetBtn.addEventListener('click', () => {
-            _prefs = { ...data.A11Y.DEFAULTS };
-            _applyPreferences();
-            _savePreferences();
-            
-            // 🟢 FIX: Notificar al usuario sobre el éxito de la acción
-            if (window.App && window.App.announceA11y) {
-                // Intenta obtener la traducción, o usa un texto por defecto
-                const msg = i18n.getString('modal.resetSuccess') || 'Valores por defecto restaurados';
-                
-                // 1. Quitamos la clase temporalmente para saltar el bloqueo
-                _domRefs.overlay.classList.remove('active');
-                
-                // 2. Lanzamos el anuncio
-                window.App.announceA11y(msg, 'assertive');
-                
-                // 3. Devolvemos la clase inmediatamente (visualmente no parpadea nada)
-                _domRefs.overlay.classList.add('active');
-            }
         });
     }
 
@@ -367,29 +367,76 @@ function _setupListeners() {
             _savePreferences();
         });
     }
+
+    // Checkbox Reducir Animaciones
+    if (_domRefs.reduceMotionCb) {
+        // 🟢 Evitar el salto de foco al hacer clic con el ratón (Bypass Focus Trap)
+        const label = _domRefs.reduceMotionCb.closest('label');
+        if (label) {
+            label.addEventListener('mousedown', (e) => {
+                e.preventDefault(); // Evitamos que el foco caiga al 'body' temporalmente
+                _domRefs.reduceMotionCb.focus(); // Forzamos el foco directo al checkbox
+            });
+        }
+
+        _domRefs.reduceMotionCb.addEventListener('change', (e) => {
+            _prefs.reduceMotion = e.target.checked;
+            _applyPreferences();
+            _savePreferences();
+        });
+    }
+
+    // Botón Reset
+    if (_domRefs.resetBtn) {
+        _domRefs.resetBtn.addEventListener('click', () => {
+            _prefs = { ...data.A11Y.DEFAULTS };
+            _applyPreferences();
+            _savePreferences();
+            
+            // 🟢 FIX: Notificar al usuario sobre el éxito de la acción
+            if (window.App && window.App.announceA11y) {
+                // Intenta obtener la traducción, o usa un texto por defecto
+                const msg = i18n.getString('modal.resetSuccess') || 'Valores por defecto restaurados';
+                
+                // 1. Quitamos la clase temporalmente para saltar el bloqueo
+                _domRefs.overlay.classList.remove('active');
+                
+                // 2. Lanzamos el anuncio
+                window.App.announceA11y(msg, 'assertive');
+                
+                // 3. Devolvemos la clase inmediatamente (visualmente no parpadea nada)
+                _domRefs.overlay.classList.add('active');
+            }
+        });
+    }
 }
 
 export function openModal() {
     if (!_domRefs.overlay) return;
 
-    // 🟢 Anunciar apertura
-    if (window.App && window.App.announceA11y) {
-        // Forzamos el anuncio aunque el modal se esté abriendo (ya que el bloqueo en App.js mira si está 'active')
-        // Al llamarlo antes de añadir la clase 'active', pasará el filtro.
-        window.App.announceA11y(
-            i18n.getString('modal.opened') || 
-            'Configuración de accesibilidad abierta', 
-            'assertive');
-    }
-
     _updateModalUI(); // Asegurar que UI está sincronizada al abrir
 
     _domRefs.overlay.classList.add('active');
     _domRefs.overlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
 
-    setTimeout(() => _domRefs.closeBtn.focus(), 50);
-
-    document.body.style.overflow = 'hidden'; 
+    // 🟢 FIX: Retrasar el anuncio para que el lector no lo interrumpa al leer el nuevo foco
+    setTimeout(() => {
+        _domRefs.closeBtn.focus();
+        
+        if (window.App && window.App.announceA11y) {
+            // Quitamos la clase temporalmente para saltar el bloqueo de silencio
+            _domRefs.overlay.classList.remove('active');
+            
+            window.App.announceA11y(
+                i18n.getString('modal.opened') || 'Configuración de accesibilidad abierta', 
+                'assertive'
+            );
+            
+            // La devolvemos instantáneamente (sin parpadeo visual)
+            _domRefs.overlay.classList.add('active');
+        }
+    }, 100); // 100ms da el tiempo exacto para que el lector procese el foco primero
 }
 
 export function closeModal() {
@@ -399,8 +446,18 @@ export function closeModal() {
     _domRefs.overlay.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
 
-    if (_domRefs.triggerBtn) 
+    // 🟢 FIX: Notificar al usuario que el modal se ha cerrado
+    if (window.App && window.App.announceA11y) {
+        window.App.announceA11y(
+            i18n.getString('modal.closed') || 'Configuración de accesibilidad cerrada', 
+            'assertive'
+        );
+    }
+
+    // Devolver el foco al botón que abrió el modal
+    if (_domRefs.triggerBtn) {
         _domRefs.triggerBtn.focus();
+    }
 }
 
 /* --- code/a11y.js --- */
