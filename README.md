@@ -4,17 +4,26 @@ Expositor de cursos de VortexSpira® e-learning mentor
 
 ---
 
-## Enlaces de intéres
+## Enlaces de interés
 
 * VortexSpira® Landing page: [https://subscribepage.io/vortexspira](https://subscribepage.io/vortexspira)
-* VortexSpira® Dev Diary: [https://github.com/verogeid/vortexspira](https://github.com/verogeid/vortexspira)
-* VortexSpira® Universe (🏗️): [https://verogeid.github.io/vortexspira-universe/](https://verogeid.github.io/vortexspira-universe/)
+Hasta un 60% OFF en el pre-lanzamiento de todos los cursos, si te conviertes en fundador. Es totalmente gratis.
+
+* VortexSpira® Dev Diary: [https://github.com/verogeid/vortexspira-devdiary](https://github.com/verogeid/vortexspira-devdiary)
+
+* VortexSpira® Universe (🏗️): [https://www.vortexspira.com](https://www.vortexspira.com)
+
+---
+
+## 🛠️ Documentación Técnica
+
+* **[Guía para el Mantenedor (Arquitectura y UI)](./MAINTENANCE.md)**: Documentación detallada sobre la estructura de archivos, el motor de renderizado SPA (Single Page Application), gestión de estados y directrices de Accesibilidad (A11y Nivel AAA).
 
 ---
 
 ## Licencia
 
-Este curso está registrado en Safe Creative y licenciado bajo:
+Este expositor está registrado en Safe Creative y licenciado bajo:
 
 [**🛡️ Safe Creative: Registro de Derechos**](https://www.safecreative.org)
 [**🪪 Creative Commons BY-NC-ND 4.0 Internacional**](http://creativecommons.org/licenses/by-nc-nd/4.0/)
