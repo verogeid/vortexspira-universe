@@ -85,3 +85,5 @@ Este documento detalla el propósito y la función de todos los archivos del pro
 | **`style-cards.css`** | Diseño base de las tarjetas, hover, focos (`focus-visible` / `focus-current`) y tarjetas deshabilitadas. | |
 | **`style-details.css`** | Diseño de la vista inmersiva de lectura, difuminado contextual (*blur*) de elementos no enfocados y botones de acción. | |
 | **`style-components.css`** | Toast notifications, Breadcrumbs y el botón flotante fijo de `volver`. | |
+| **`style-media.css`** | **Recursos y Multimedia.** Gestiona la carga de tipografías base, iconos SVG mediante `background-image` (como las máscaras de los botones) y ajustes responsivos de imágenes/medios. | Separa el "peso gráfico" de la estructura lógica del CSS. |
+
