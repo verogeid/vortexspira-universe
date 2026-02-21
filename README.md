@@ -17,7 +17,7 @@ Hasta un 60% OFF en el pre-lanzamiento de todos los cursos, si te conviertes en 
 
 ## 🛠️ Documentación Técnica
 
-* **[Guía para el Mantenedor (Arquitectura y UI)](./MAINTENANCE.md)**: Documentación detallada sobre la estructura de archivos, el motor de renderizado SPA (Single Page Application), gestión de estados y directrices de Accesibilidad (A11y Nivel AAA).
+* **[Guía para el Mantenedor (Arquitectura y UI)](./MAINTEINER_DOCS.md)**: Documentación detallada sobre la estructura de archivos, el motor de renderizado SPA (Single Page Application), gestión de estados y directrices de Accesibilidad (A11y Nivel AAA).
 
 ---
 
