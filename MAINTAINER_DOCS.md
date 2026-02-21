@@ -1,6 +1,6 @@
 # 📚 Documentación para el Mantenedor (VortexSpira UI)
 
-Este documento detalla el propósito y la función de todos los archivos del proyecto para facilitar su mantenimiento y desarrollo futuro.
+Este documento detalla el propósito y la función de todos los archivos del proyecto para facilitar su mantenimiento y desarrollo futuro, reflejando la arquitectura orientada a componentes, el enrutamiento tipo SPA y la accesibilidad nivel AAA.
 
 ---
 
@@ -8,8 +8,9 @@ Este documento detalla el propósito y la función de todos los archivos del pro
 
 | Archivo | Propósito Principal | Nota Crítica |
 | :--- | :--- | :--- |
-| **`index.html`** | **Estructura HTML Principal.** Define la estructura del documento, la importación de todos los archivos CSS/JS y la **estructura Grid** de la aplicación (`#app-container`). | Define los contenedores raíz de las vistas (`#vista-central`, `#card-volver-fija`). |
-| **`cursos.json`** | **Fuente de Datos Principal.** Contiene la estructura jerárquica (`navegacion`) de todas las secciones, subsecciones, cursos y sus enlaces. | El contenido de la navegación y el detalle se gestiona aquí. |
+| **`index.html`** | **Estructura HTML Principal.** Define la estructura base, la importación de scripts modulares, el Grid de la app (`#app-container`) y el HTML del Modal de Accesibilidad (`#a11y-modal-overlay`). | Contiene la precarga (`preload`) de las tipografías de alta legibilidad (Atkinson/Lexend). |
+| **`data/cursos_es.json` / `_en.json`** | **Fuente de Datos Principal.** Contiene la jerarquía (`navegacion`) de secciones, subsecciones, cursos y sus enlaces. | Separados por idioma para escalabilidad internacional. |
+| **`data/strings_es.json` / `_en.json`** | **Diccionario de Internacionalización.** Textos de la interfaz, etiquetas `aria-label`, mensajes de estado (toast) y locuciones para el *Screen Reader*. | El motor `i18n.js` los inyecta dinámicamente. |
 
 ---
 
@@ -19,50 +20,68 @@ Este documento detalla el propósito y la función de todos los archivos del pro
 
 | Archivo | Propósito Principal | Nota Crítica |
 | :--- | :--- | :--- |
-| **`app.js`** | **Entry Point / Orquestador.** Inicializa la aplicación, el `STATE` global, el *cache* del DOM y delega la ejecución de todos los métodos de alto nivel. | Es la clase principal (`VortexSpiraApp`). |
-| **`data.js`** | **Constantes / Configuración.** Define *breakpoints*, URLs, iconos Unicode y la función `loadData()`. |  |
-| **`debug.js`** | **Sistema de Logging.** Define niveles de *debug* (`DEBUG_LEVELS`) y las funciones para mostrar mensajes en la consola. | |
-| **`i18n.js`** | **Internacionalización.** Contiene las cadenas de texto (`STRINGS`) y las funciones para aplicarlas al DOM. | |
-| **`nav-stack.js`** | **Gestión del Historial.** Maneja la pila de navegación, las acciones `stackPush`/`stackPop` y la reconstrucción de la pila por *deep linking*. | |
+| **`app.js`** | **Entry Point / Orquestador.** Inicializa la app (`VortexSpiraApp`), el `STATE` global, el `ResizeObserver`, escucha a la *History API* (`popstate`) e inyecta el locutor ARIA. | Gestiona el renderizado preventivo para evitar spam de foco en el arranque (`isBooting`). |
+| **`data.js`** | **Constantes y Configuración.** Define *breakpoints* (`VIEWPORT`), comportamiento de Swiper, los valores por defecto de Accesibilidad (`A11Y`) y URLs. | |
+| **`i18n.js`** | **Motor de Internacionalización.** Carga los JSON de idioma, aplica textos al DOM y gestiona el idioma del `<html>`. | |
+| **`a11y.js`** | **Controlador de Accesibilidad.** Gestiona el Modal A11y, guardado en `localStorage`, y la inyección de atributos dinámicos (`data-theme`, `data-reduced-motion`) al `<body>`. | |
+| **`nav-stack.js`** | **Gestión del Historial Lógico.** Maneja la pila profunda de navegación y la reconstrucción matemática por *deep linking* (IDs de URL). | |
 
-### B. Navegación y Foco
-
-| Archivo | Propósito Principal | Nota Crítica |
-| :--- | :--- | :--- |
-| **`nav-base.js`** | **Manejadores Core de Navegación.** Contiene la lógica para los *clics* en tarjetas, la actualización de foco (`_updateFocusImpl`) y *helpers* de búsqueda. | |
-| **`nav-details.js`** | **Lógica de Vista de Detalle.** Maneja la inyección de contenido, el *blur* por proximidad al foco y el *handler* de las filas de acción. | **CRÍTICO:** Define la inyección del emoji `🚫&#xFE0E;` para el botón deshabilitado. |
-| **`nav-keyboard-base.js`** | **Controles de Teclado (Base).** Implementa el *listener* principal `keydown`, la navegación por barras laterales y las **trampas de foco (`_handleFocusTrap`)**. | |
-| **`nav-keyboard-details.js`** | **Controles de Teclado (Detalle).** Define la navegación secuencial entre fragmentos de texto y botones de acción en la vista de detalle. | |
-| **`nav-tactil.js`** | **Control Táctil.** Maneja la detección de dirección de *swipe* y la lógica de *salto* de diapositivas vacías en el carrusel Swiper. | |
-
-### C. Renderizado y Generación de HTML
+### B. Depuración y Diagnóstico (Herramientas de Mantenedor)
 
 | Archivo | Propósito Principal | Nota Crítica |
 | :--- | :--- | :--- |
-| **`render-base.js`** | **Motor de Renderizado Maestro.** Determina el modo, el *track* activo, y contiene la plantilla base de las tarjetas (`_generarTarjetaHTMLImpl`). | |
-| **`render-mobile.js`** | **Renderizado Móvil.** Genera el HTML para la lista vertical, incluyendo elementos *sticky* de la navegación móvil. | |
-| **`render-swipe.js`** | **Renderizado Carousel.** Genera el HTML con *wrappers* de Swiper, inicializa la instancia de Swiper y maneja las *slides* de relleno. | |
+| **`debug.js`** | **Sistema de Logging Maestro.** Define niveles (`DEBUG_LEVELS`) e intercepta la consola. | |
+| **`debug.screenReaderSim.js`** | **Simulador de Lector de Pantalla.** Analiza el DOM (nombres accesibles, roles, estados ARIA nativos e inyectados) y los imprime en consola. | Soporta lectura de descripciones y posiciones (`aria-posinset`). |
+| **`debug.diagnostics.js`** | **Trazabilidad Visual.** Rastrea el foco activo, eventos globales y cambios de layout para asegurar la estabilidad visual. | |
+
+### C. Navegación, Interacción y Foco
+
+| Archivo | Propósito Principal | Nota Crítica |
+| :--- | :--- | :--- |
+| **`nav-base.js`** | **Manejadores Core.** Controla clics (`_handleCardClick`), botón volver, escritura en URL (`history.pushState`) y el **Cálculo de Foco y Colisiones (`_updateFocusImpl`)**. | **CRÍTICO:** Aquí reside el sistema de `clamping` y el `delta` para mover el contenido si el Header lo tapa. |
+| **`nav-base-details.js`** | **Lógica de Vista de Detalle.** Unifica la interacción de la vista de lectura y los botones de acción/compra. | |
+| **`nav-mouse-swipe.js`** | **Control de Ratón/Táctil.** Sustituto evolucionado de `nav-tactil.js`. Maneja la rueda del ratón y la función *Skipper* (salto automático de columnas vacías). | |
+| **`nav-keyboard-base.js`** | **Controles de Teclado (Menú).** Atrapa eventos de teclado, maneja flechas de dirección y bloquea robos de foco indebidos. | |
+| **`nav-keyboard-details.js` / `-swipe.js`** | **Controles de Teclado Específicos.** Delegan el comportamiento de las flechas dentro de las vistas de detalle o carruseles interactivos. | |
+
+### D. Renderizado y Generación de HTML
+
+| Archivo | Propósito Principal | Nota Crítica |
+| :--- | :--- | :--- |
+| **`render-base.js`** | **Motor de Renderizado Maestro.** Coordina las vistas, restaura el foco tras redimensionar (Snapshots) y genera el HTML base de la tarjeta. | Inyecta las variables `aria-label` compuestas. |
+| **`render-swipe.js`** | **Renderizado Desktop/Tablet.** Configura el Swiper horizontal y calcula índices lógicos de ARIA. | |
+| **`render-mobile.js`** | **Renderizado Móvil.** Configura el Swiper vertical en modo *FreeMode* para scroll fluido. | |
+| **`render-details.js`** | **Renderizado de Detalles.** Inyecta los fragmentos de texto con `aria-description`. Alterna entre modo *Structural* (HTML nativo) y *Continuous Flow* (cálculo de altura dinámica). | |
 
 ---
 
 ## 3. Archivos de Estilo (Directorio `styles/`)
 
-### A. Estructura y Vistas
+### A. Core y Layout
 
 | Archivo | Propósito Principal | Nota Crítica |
 | :--- | :--- | :--- |
-| **`style-base.css`** | **Capa de Importación.** Archivo principal que importa todos los demás archivos CSS en el orden correcto. | |
-| **`style-theme.css`** | **Variables y Theming.** Define todos los colores, variables de *layout* y las reglas para el modo oscuro. | |
-| **`style-layout.css`** | **Estructura de Vistas y Grid.** Define el *layout* principal, la asignación de áreas Grid y la visibilidad de las vistas. | |
-| **`style-desktop.css`** | Estilos de *layout* para pantallas **> 1025px** (3 columnas). | |
-| **`style-tablet.css`** | Estilos de *layout* para pantallas **601px a 1024px** (Maneja 2 y 3 columnas). | |
-| **`style-mobile.css`** | Estilos específicos para pantallas **<= 600px**. | Maneja el *scroll* nativo y la vista de detalle *full-screen*. |
-| **`style-footer.css`** | Estilos del *Footer* de la aplicación, incluyendo *links* y redes sociales. | |
+| **`style-base.css`** | **Capa de Importación.** Orquesta la importación de todo el CSS en el orden específico de cascada. | |
+| **`style-layout.css`** | **Estructura Grid.** Define las áreas principales y el manejo de visibilidad de las vistas centrales. | |
+| **`style-desktop.css` / `style-tablet.css` / `style-mobile.css`** | **Responsividad.** Media queries específicos por dispositivo. `style-mobile.css` maneja el *Safe Mode* (ocultación de footer). | |
+| **`style-header.css` / `-footer.css`** | Estilos específicos para la cabecera (logo, animaciones) y el pie de página. | |
+| **`style-a11y.css`** | **Panel de Accesibilidad.** Estilos del modal flotante, checkboxes interactivos (`accent-color`) y declaración `@font-face` (Atkinson Hyperlegible, Lexend). | |
 
-### B. Componentes
+### B. Theming y Accesibilidad (Nivel AAA)
 
 | Archivo | Propósito Principal | Nota Crítica |
 | :--- | :--- | :--- |
-| **`style-cards.css`** | **Estilos de Tarjeta (Navegación).** Define el aspecto de las tarjetas (`.card`), el *hover* y los estados *disabled* de la navegación principal. | |
-| **`style-components.css`**| Estilos para elementos auxiliares como el *sidebar* fijo (`#card-volver-fija`), la tarjeta de nivel actual y la notificación *Toast*. | |
-| **`style-details.css`** | **Estilos de Vista de Detalle (CRÍTICO).** Define el *blur* por proximidad al foco y el estilo de los botones de acción. | **Implementa:** Forma **Cuadrada con bordes redondeados** para `.detail-action-btn.disabled`. |
+| **`style-theme.css`** | **Theming Base.** Definición primaria de variables CSS (colores, sombras, tamaños). | |
+| **`style-reduce-motion.css`** | **Modo "Sin Animaciones".** Apaga transiciones y *smooth scroll* vía Media Query del S.O. y atributo `[data-reduced-motion="true"]`. | |
+| **`style-theme-scheme-light.css` / `-dark.css`** | **Esquemas Claro y Oscuro.** Responde al sistema operativo y a la sobreescritura manual del usuario (`data-theme="light/dark"`). | |
+| **`style-theme-contrast.css`** | **Alto Contraste.** Maximiza bordes y elimina sombras suaves para usuarios con dificultades visuales. | |
+| **`style-theme-forced-colors.css`** | **Colores Forzados.** Extrae los colores semánticos nativos de Windows (`Canvas`, `ButtonText`, `Highlight`) para máximo rigor. | |
+| **`style-theme-yellow.css`** | **Baja Visión (Amarillo sobre Negro).** Tema extremo de accesibilidad para fotofobia severa y cataratas. | |
+
+### C. Componentes
+
+| Archivo | Propósito Principal | Nota Crítica |
+| :--- | :--- | :--- |
+| **`style-cards.css`** | Diseño base de las tarjetas, hover, focos (`focus-visible` / `focus-current`) y tarjetas deshabilitadas. | |
+| **`style-details.css`** | Diseño de la vista inmersiva de lectura, difuminado contextual (*blur*) de elementos no enfocados y botones de acción. | |
+| **`style-components.css`** | Toast notifications, Breadcrumbs y el botón flotante fijo de `volver`. | |
