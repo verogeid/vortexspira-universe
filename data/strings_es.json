@@ -73,9 +73,9 @@
             "theme": "Tema de Color"
         },
         "options": {
-            "sans": "Sans",
-            "serif": "Serif",
-            "dyslexic": "Dislexia",
+            "atkinson": "Atkinson (Sans)",
+            "serif": "Serif Clásica",
+            "dyslexic": "OpenDyslexic / Lexend",
             "reduceMotion": "Reducir animaciones",
 
             "themeDefault": "Sistema (Por defecto)",

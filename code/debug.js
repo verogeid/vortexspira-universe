@@ -29,7 +29,7 @@ export const DEBUG_CONFIG = {
     nav_stack: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Detalle
-    nav_base: DEBUG_LEVELS.DISABLED,
+    nav_base: DEBUG_LEVELS.DEEP,
     nav_base_details: DEBUG_LEVELS.DISABLED, // ⭐️ DEEP: Para el foco/blur después del slide ⭐️
     
     // Módulos de Teclado

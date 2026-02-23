@@ -77,10 +77,6 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
         html += `<div class="swiper-slide">${cardHtml}</div>`; 
     }
 
-    html += `<div class="swiper-slide card-relleno-final" 
-                style="height: 100px !important; pointer-events: none;">
-            </div>`;
-
     if (this.DOM.track) {
         this.DOM.track.style.gridTemplateRows = '';
     }
@@ -114,6 +110,10 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
         freeMode: true, 
         freeModeMomentum: true,
         freeModeSticky: true, 
+
+        // 🟢 Relleno final en todos los dispositivos para details
+        slidesOffsetAfter: window.visualViewport ? window.visualViewport.height : window.innerHeight,
+
 
         mousewheel: { enabled: false }, 
         keyboard: { enabled: false }, 

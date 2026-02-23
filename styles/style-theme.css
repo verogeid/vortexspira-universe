@@ -11,15 +11,15 @@
     --nav-carousel-top-offset: 2vmin;
     --app-container-min-height: calc(100dvh - var(--header-height-real, 50px) - var(--footer-height-real, --footer-height));
 
+    --font-dyslexic: 'OpenDyslexic', 'Lexend', system-ui, 'Comic Sans MS', sans-serif !important; 
+    --font-serif: 'Georgia', 'Times New Roman', serif;
+    --font-atkinson: 'Atkinson Hyperlegible', system-ui, sans-serif !important;
+
     /* Tipografía Dinámica */
-    --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-family-base: var(--font-serif); /* Valor por defecto, puede ser sobrescrito por data-attribute */
     --font-scale: 1;
     --line-height-base: 1.5;
     --paragraph-spacing: 1.5em;
-    
-    --font-dyslexic: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
-    --font-serif: 'Georgia', 'Times New Roman', serif;
-    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
     /* 📐 HEADER (Valores por defecto / Desktop) */
     --header-height: 9vmin;
@@ -115,7 +115,7 @@
     --mobile-header-title-size: clamp(0.75rem, calc(2.5vmin * var(--font-scale)), 1.1rem);
     --mobile-header-logo-size: clamp(14px, calc(5vmin * var(--font-scale)), 1.8rem) !important;
     --mobile-header-icon-size: clamp(14px, calc(5vmin * var(--font-scale)), 1.6rem) !important;
-    --mobile-header-obras-size: clamp(10px, calc(3vmin * var(--font-scale)), 1.2rem) !important;
+    --mobile-header-obras-size: clamp(14px, calc(4vmin * var(--font-scale)), 1.2rem) !important;
     --mobile-header-padding: clamp(1px, 0.8vmin, 5px);
 
     --mobile-card-padding: 0.5rem;

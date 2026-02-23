@@ -53,12 +53,9 @@ function _generateSlidesContinuous(trackElement, rawDescription, maxContentHeigh
         `Strategy: CONTINUOUS FLOW. MaxHeight: ${maxContentHeight}px`);
 
     const slides = [];
-    
-    // 1. Preparar la Cola de Bloques (Queue)
     const rawFragments = rawDescription.split(/<hr\s*\/?>/i);
     let blockQueue = []; 
 
-    // Convertimos cada fragmento del JSON en un nodo <p> real para la cola
     rawFragments.forEach(text => {
         if (!text.trim()) return;
         const p = document.createElement('p');
@@ -66,32 +63,26 @@ function _generateSlidesContinuous(trackElement, rawDescription, maxContentHeigh
         blockQueue.push(p);
     });
 
-    // 2. Preparar Phantom (Con ancho forzado real)
     const phantomSlide = document.createElement('div');
     phantomSlide.className = 'swiper-slide phantom-slide';
     phantomSlide.style.visibility = 'hidden';
     phantomSlide.style.position = 'absolute';
     phantomSlide.style.zIndex = '-1000';
-    
-    // Forzar ancho real del contenedor padre
+
     const realWidth = trackElement.clientWidth;
     phantomSlide.style.width = `${realWidth}px`;
-    phantomSlide.style.height = 'auto'; // Crecer libremente
+    phantomSlide.style.height = 'auto'; 
     phantomSlide.style.boxSizing = 'border-box';
 
     phantomSlide.innerHTML = `
         <div class="detail-text-fragment" 
             style="height: auto !important; max-height: none !important; padding-bottom: 0 !important;">
-            
-            <div class="content-wrapper" 
-                id="phantom-content">
-            </div>
+            <div class="content-wrapper" id="phantom-content"></div>
         </div>
     `;
     trackElement.appendChild(phantomSlide);
     const phantomContent = phantomSlide.querySelector('#phantom-content');
 
-    // Gestión del Título (Solo resta espacio en Slide 1 mediante cálculo)
     let titleHeight = 0;
     if (titleText) {
         const titleFake = document.createElement('h2');
@@ -99,47 +90,25 @@ function _generateSlidesContinuous(trackElement, rawDescription, maxContentHeigh
         titleFake.textContent = titleText;
         titleFake.style.display = 'block';
         phantomSlide.insertBefore(titleFake, phantomSlide.firstChild);
-        
-        // Medimos y quitamos
+
         titleHeight = titleFake.offsetHeight + parseFloat(getComputedStyle(titleFake).marginBottom || 0);
         titleFake.remove();
-        
-        debug.log('render_details', debug.DEBUG_LEVELS.EXTREME, 
-            `Title Height Offset: ${titleHeight}px`);
     }
 
-    // 3. Bucle de Llenado
     let currentSlideHTML = ""; 
     let isFirstSlide = true;
 
     while (blockQueue.length > 0) {
-        const currentBlock = blockQueue.shift(); // Sacamos el siguiente párrafo <p>
-        
-        // Probamos a meter el párrafo entero junto con lo que ya tengamos
-        const prevHTML = phantomContent.innerHTML; // Guardar estado
-        // OJO: currentBlock.outerHTML incluye <p>...</p>, preservando márgenes
+        const currentBlock = blockQueue.shift(); 
         phantomContent.insertAdjacentHTML('beforeend', currentBlock.outerHTML);
 
-        // Límite dinámico (Slide 1 tiene menos espacio por el título)
         const currentLimit = isFirstSlide ? (maxContentHeight - titleHeight) : maxContentHeight;
         const currentHeight = phantomSlide.scrollHeight;
 
         if (currentHeight <= currentLimit) {
-            // ✅ CABE ENTERO
             currentSlideHTML += currentBlock.outerHTML;
-
-            debug.log('render_details', debug.DEBUG_LEVELS.EXTREME, 
-                `✅ Paragraph fits. Accumulating...`);
         } else {
-            // ❌ NO CABE: HAY QUE PARTIR EL PÁRRAFO
-            debug.log('render_details', debug.DEBUG_LEVELS.EXTREME, 
-                `⚠️ Paragraph overflow. Splitting...`);
-
-            // Restauramos el phantom a lo que había antes de intentar meter este bloque
             phantomContent.innerHTML = currentSlideHTML;
-            
-            // Creamos un <p> temporal dentro del phantom para ir llenando palabra a palabra
-            // Esto asegura que mientras medimos, el margen del <p> se aplique (si hay elementos previos)
             const tempP = document.createElement('p');
             phantomContent.appendChild(tempP);
 
@@ -151,10 +120,8 @@ function _generateSlidesContinuous(trackElement, rawDescription, maxContentHeigh
             for (let i = 0; i < words.length; i++) {
                 const word = words[i];
                 const testText = (acceptedWords.length > 0 ? acceptedWords.join(' ') + " " : "") + word;
-                
                 tempP.textContent = testText;
-                
-                // Medimos la altura total del phantom (acumulado + este párrafo creciendo)
+
                 if (phantomSlide.scrollHeight > currentLimit) {
                     splitOccurred = true;
                     rejectedWords = words.slice(i);
@@ -164,46 +131,30 @@ function _generateSlidesContinuous(trackElement, rawDescription, maxContentHeigh
                 }
             }
 
-            // Si cupo algo, lo guardamos envuelto en <p>
             if (acceptedWords.length > 0) {
                 currentSlideHTML += `<p>${acceptedWords.join(' ')}</p>`;
             }
 
-            // 🚀 CERRAMOS EL SLIDE ACTUAL
             slides.push({ isFirst: isFirstSlide, content: currentSlideHTML });
 
-            debug.log('render_details', debug.DEBUG_LEVELS.EXTREME, 
-                `📦 FLUSH SLIDE. Content Len: ${currentSlideHTML.length}`);
-            
-            // RESET PARA EL SIGUIENTE SLIDE
             isFirstSlide = false;
             currentSlideHTML = "";
             phantomContent.innerHTML = "";
 
-            // GESTIÓN DEL RESIDUO
             if (splitOccurred) {
-                // Creamos un nuevo <p> con el resto y lo devolvemos al principio de la cola
                 const residueBlock = document.createElement('p');
                 residueBlock.textContent = rejectedWords.join(' ');
                 blockQueue.unshift(residueBlock);
-
             } else if (acceptedWords.length === 0) {
-                // Caso extremo: No cupo ni una palabra.
-                // Si el slide actual estaba vacío, forzamos meter una palabra para evitar bucle infinito
                 if (slides.length > 0 && slides[slides.length-1].content === "") {
-                    // Forzar avance (truncar palabra si es necesario, o aceptar overflow mínimo)
-                    // En este código simplificado, asumimos que al menos una palabra cabe en un slide vacío.
-                    // Devolvemos a cola para slide vacío
                     blockQueue.unshift(currentBlock);
                 } else {
-                    // Devolvemos a cola para que se procese en el siguiente slide (que estará vacío)
                     blockQueue.unshift(currentBlock);
                 }
             }
         }
     }
 
-    // Flush final del último resto
     if (currentSlideHTML.trim().length > 0) {
         slides.push({ isFirst: isFirstSlide, content: currentSlideHTML });
     }
@@ -220,8 +171,8 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
     const isMobileLayout = layoutMode === 'mobile'; 
     
     // Lógica de decisión:
-    // Continuous Flow SOLO si es Layout Móvil Y es táctil
-    const useContinuousFlow = isMobileLayout && this.STATE.isTouchDevice;
+    // Continuous Flow SOLO si es táctil
+    const useContinuousFlow = this.STATE.isTouchDevice;
 
     this.STATE.activeCourseId = cursoId; 
     const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion); 
@@ -229,8 +180,16 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
 
     if (typeof this._destroyCarousel === 'function') this._destroyCarousel();
     
-    ['vista-navegacion-desktop', 'vista-navegacion-tablet', 'vista-navegacion-mobile'].forEach(id => {
-        const el = document.getElementById(id); if (el) { el.classList.remove('active'); el.style.display = 'none'; }
+    [
+        'vista-navegacion-desktop', 
+        'vista-navegacion-tablet', 
+        'vista-navegacion-mobile'
+    ].forEach(id => {
+        const el = document.getElementById(id); 
+        if (el) { 
+            el.classList.remove('active'); 
+            el.style.display = 'none'; 
+        }
     });
 
     const desktopView = document.getElementById('vista-detalle-desktop');
@@ -319,13 +278,41 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
     }
 
     const descripcion = curso.descripcion || this.getString('details.noDescription');
+    const readOnlyMsg = this.getString('details.aria.readOnly') || 'Elemento de solo lectura. Usa las flechas para navegar.';
     let slidesData = [];
 
-    if (useContinuousFlow) {
-        const maxH = _calculateMaxHeightAvailable();
-        slidesData = _generateSlidesContinuous(this.DOM.detalleTrack, descripcion, maxH, curso.titulo);
+    // 🟢 Táctil (HTML Puro pero Enfocable) vs No-Táctil
+    if (this.STATE.isTouchDevice) {
+        const rawFragments = descripcion.split(/<hr\s*\/?>/i);
+        const rawHtml = rawFragments.map((text, idx) => {
+            const trimmed = text.trim();
+            // 🟢 Convertimos el <p> nativo en un fragmento enfocable para 
+            // no romper la navegación con teclado Bluetooth en tablets/móviles.
+            return trimmed ? `<p class="detail-text-fragment" tabindex="0" role="article" aria-description="${readOnlyMsg}" onclick="this.focus()">${trimmed}</p>` : '';
+        }).join('');
+        
+        slidesData = [{
+            isFirst: true,
+            content: rawHtml,
+            isRaw: true 
+        }];
     } else {
-        slidesData = _generateSlidesStructural(descripcion);
+        if (isMobileLayout) {
+            debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
+                'Dispositivo NO táctil en Layout Móvil detectado. Forzando estrategia CONTINUOUS FLOW para mejor experiencia.');
+
+            // 🟢 Llenado Hidráulico
+            // Esta maravilla corta los párrafos dependiendo de la altura de la pantalla del usuario.
+            // Si tiene un zoom del 400%, hará más cortes para que nada se salga del monitor.
+            const maxH = _calculateMaxHeightAvailable();
+            slidesData = _generateSlidesContinuous(this.DOM.detalleTrack, descripcion, maxH, curso.titulo);
+        } else {
+            debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
+                'Dispositivo NO táctil en Layout NO Móvil detectado. Usando estrategia ESTRUCTURAL para respetar la intención editorial.');
+                
+            //Escritorio/Teclado: Slides estructurales divididos por <hr>
+            slidesData = _generateSlidesStructural(descripcion);
+        }
     }
 
     // 🟢 FIX A11Y: Guardamos el tamaño total de fragmentos
@@ -334,20 +321,34 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
     slidesData.forEach((slide, index) => {
         let titleHtml = '';
         if (slide.isFirst) {
-            titleHtml = `<h2 class="detail-title-slide" aria-hidden="true">${curso.titulo}</h2>`;
+            // 🟢 TÁCTIL O PC: El título ahora también requiere la clase y el tabindex en móvil
+            const titleClasses = slide.isRaw ? 'detail-title-slide detail-text-fragment' : 'detail-title-slide';
+            const titleTab = slide.isRaw ? 'tabindex="0" onclick="this.focus()"' : 'aria-hidden="true"';
+            
+            titleHtml = `<h2 class="${titleClasses}" ${titleTab}>${curso.titulo}</h2>`;
         }
         
-        const readOnlyMsg = this.getString('details.aria.readOnly') || 'Elemento de solo lectura. Usa las flechas para navegar.';
-        const posInSet = index + 1; // 🟢 FIX A11Y: Posición actual
-
-        slidesHtml += `
-            <div class="swiper-slide">
-                ${titleHtml}
-                <div class="detail-text-fragment" data-index="${index}" role="article" tabindex="0" onclick="this.focus()" aria-description="${readOnlyMsg}" aria-posinset="${posInSet}" aria-setsize="${totalSlides}">
+        if (slide.isRaw) {
+            // 🟢 TÁCTIL: Slide de altura libre que contiene todos los fragmentos enfocables dentro
+            slidesHtml += `
+                <div class="swiper-slide" style="height: auto !important;">
+                    ${titleHtml}
                     <div class="content-wrapper">${slide.content}</div>
                 </div>
-            </div>
-        `;
+            `;
+        } else {
+            // 🟢 ESCRITORIO: Bloques enfocables individualmente
+            const posInSet = index + 1; // 🟢 FIX A11Y: Posición actual
+
+            slidesHtml += `
+                <div class="swiper-slide">
+                    ${titleHtml}
+                    <div class="detail-text-fragment" data-index="${index}" role="article" tabindex="0" onclick="this.focus()" aria-description="${readOnlyMsg}" aria-posinset="${posInSet}" aria-setsize="${totalSlides}">
+                        <div class="content-wrapper">${slide.content}</div>
+                    </div>
+                </div>
+            `;
+        }
     });
 
     if (curso.enlaces) {
@@ -375,10 +376,6 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                 </div>
             `;
         });
-    }
-
-    if (isMobileLayout) {
-        slidesHtml += `<div class="swiper-slide card-relleno-final" style="height: 100px !important; pointer-events: none;" aria-hidden="true"></div>`;
     }
 
     if (this.DOM.detalleTrack) {
@@ -417,6 +414,9 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
         appInstance.STATE.detailCarouselInstance = null;
     }
 
+    // Altura del dispositivo para el relleno
+    const viewHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+
     const swiperConfig = {
         direction: 'vertical',
         slidesPerView: 'auto',
@@ -435,6 +435,9 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
         freeMode: true,
         freeModeMomentum: true,
         freeModeSticky: true,
+
+        // 🟢 Relleno final en todos los dispositivos para details
+        slidesOffsetAfter: window.visualViewport ? window.visualViewport.height : window.innerHeight,
 
         // 🟢 Desactivar la gestión A11y de Swiper para evitar conflictos
         a11y: { enabled: false }

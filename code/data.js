@@ -4,7 +4,7 @@ import * as debug from './debug.js';
 export const A11Y = {
     STORAGE_KEY: 'vortex_a11y_prefs_v1',
     DEFAULTS: {
-        fontType: 'sans',      
+        fontType: 'atkinson',      
         fontSizePct: 100,      
         lineHeight: 1.5,       
         paragraphSpacing: 1.5,

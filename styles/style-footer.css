@@ -101,7 +101,7 @@ footer a.footer-license-link:focus-visible {
 .link-fire {
     -webkit-mask-image: var(--icon-fire);
     mask-image: var(--icon-fire);
-    background-color: #FF931E !important; 
+    background-color: var(--color-fire) !important; 
 }
 
 .footer-social-link:hover, 

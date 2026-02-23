@@ -117,7 +117,7 @@ export function _handleDetailNavigation(key) {
                 if (slide) {
                     const slideIndex = Array.from(carousel.slides).indexOf(slide);
                     if (slideIndex !== carousel.activeIndex) {
-                        carousel.slideTo(slideIndex, 300);
+                        carousel.slideTo(slideIndex, data.SWIPER.SLIDE_SPEED);
                     }
                 }
 
@@ -214,7 +214,7 @@ function _checkAndFixVerticalObstruction(app, target, swiper) {
     debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.IMPORTANT, 
         `🔧 CORRECCIÓN: ${reason}. Translate: ${currentTrans.toFixed(1)} -> ${newTrans.toFixed(1)}`);
 
-    swiper.setTransition(300);
+    swiper.setTransition(data.SWIPER.SLIDE_SPEED);
     swiper.setTranslate(newTrans);
     swiper.updateProgress();
 }

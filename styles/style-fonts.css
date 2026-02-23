@@ -1,0 +1,63 @@
+/* --- styles/style-fonts.css --- */
+
+/* 1. Declaración de las fuentes locales */
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('../fonts/AtkinsonHyperlegible-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap; /* Crucial para rendimiento */
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('../fonts/AtkinsonHyperlegible-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Lexend';
+    src: url('../fonts/Lexend-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Lexend';
+    src: url('../fonts/Lexend-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* 2. Aplicación a la aplicación según el data-attribute */
+body[data-font="atkinson"] {
+    /* Reemplazamos el sans genérico por Atkinson */
+    --font-family-base: 'Atkinson Hyperlegible', system-ui, -apple-system, sans-serif;
+}
+
+body[data-font="serif"] {
+    /* Pila clásica y legible de Serif */
+    --font-family-base: 'Georgia', 'Times New Roman', serif;
+}
+
+body[data-font="dyslexic"] {
+    /* El truco maestro: Primero busca la local. Si falla, usa Lexend */
+    --font-family-base: 'OpenDyslexic', 'Lexend', system-ui, sans-serif;
+}
+
+/* 3. Previsualización exacta en los botones del modal A11y */
+.font-preview-atkinson { 
+    font-family: 'Atkinson Hyperlegible', system-ui, sans-serif !important; 
+}
+.font-preview-serif { 
+    font-family: 'Georgia', 'Times New Roman', serif !important; 
+}
+.font-preview-dyslexic { 
+    font-family: 'OpenDyslexic', 'Lexend', system-ui, sans-serif !important; 
+}
+
+/* --- styles/style-fonts.css --- */

@@ -248,7 +248,7 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
     flex-shrink: 0;
 }
 
-.font-preview-sans { font-family: var(--font-sans); }
+.font-preview-atkinson { font-family: var(--font-atkinson); }
 .font-preview-serif { font-family: var(--font-serif); }
 .font-preview-dyslexic { 
     font-family: var(--font-dyslexic); 
@@ -305,10 +305,5 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
     transform: rotate(-180deg); 
     outline: none;
 }
-
-/* Previews de fuente */
-.font-preview-sans { font-family: var(--font-sans); }
-.font-preview-serif { font-family: var(--font-serif); }
-.font-preview-dyslexic { font-family: var(--font-dyslexic); font-weight: bold; }
 
 /* --- styles/style-a11y.css --- */

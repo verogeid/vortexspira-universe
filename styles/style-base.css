@@ -1,6 +1,8 @@
 /* --- styles/style-base.css --- */
 
 /* 1. Variables y Tema (Colores, Modo Oscuro) */
+@import url('style-fonts.css');
+
 @import url('style-theme.css');
 
 @import url('style-theme-scheme-light.css');

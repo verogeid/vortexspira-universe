@@ -52,15 +52,8 @@ function _applyPreferences() {
     const root = document.documentElement;
     
     // 1. Familia
-    let fontVar = 'var(--font-sans)';
-    
-    if (_prefs.fontType === 'serif') 
-        fontVar = 'var(--font-serif)';
-
-    if (_prefs.fontType === 'dyslexic') 
-        fontVar = 'var(--font-dyslexic)';
-
-    root.style.setProperty('--font-family-base', fontVar);
+    // 🟢 1. Familia: Usar data-attribute para que style-fonts.css haga el trabajo
+    document.body.setAttribute('data-font', _prefs.fontType || 'atkinson');
 
     // 2. Escala
     const scale = _prefs.fontSizePct / 100;
@@ -186,13 +179,13 @@ function _injectModalHTML() {
                         role="radiogroup" 
                         aria-label="${i18n.getString('modal.sections.font')}">
 
-                        <button class="a11y-option-btn font-preview-sans" 
+                        <button class="a11y-option-btn font-preview-atkinson" 
                             role="radio"
                             aria-checked="false"
-                            data-font="sans" 
-                            aria-label="${i18n.getString('modal.aria.font')} Sans">
+                            data-font="atkinson" 
+                            aria-label="${i18n.getString('modal.aria.font')} Atkinson">
 
-                            ${i18n.getString('modal.options.sans')}
+                            ${i18n.getString('modal.options.atkinson')}
                         </button>
 
                         <button class="a11y-option-btn font-preview-serif" 

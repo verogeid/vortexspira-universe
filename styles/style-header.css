@@ -155,7 +155,7 @@ header h1 a:focus-visible .header-logo::after {
     -webkit-mask-image: var(--icon-a11y); mask-image: var(--icon-a11y);
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
-    -webkit-mask-size: 70%; mask-size: 70%;
+    -webkit-mask-size: 100%; mask-size: 100%;
 }
 #btn-config-accesibilidad:hover,
 #btn-config-accesibilidad:focus-visible {

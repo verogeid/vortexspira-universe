@@ -239,11 +239,13 @@ export function _updateFocusImpl(shouldSlide = true) {
                 const viewHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
                 const bottomLimit = viewHeight - footerHeight;
 
-                // 🟢 FIX 2: Medir el SLIDE COMPLETO, no solo la tarjeta
-                // Si la tarjeta está dentro de un grupo (ej: Breadcrumb + Volver), medimos el grupo entero.
+                // 🟢 FIX 2: Medición Inteligente
+                // Si es un bloque de texto, medimos el párrafo exacto. 
+                // Si es interactivo (botón/menú), medimos el slide completo.
+                const isTextFragment = target.classList.contains('detail-text-fragment');
                 const parentSlide = target.closest('.swiper-slide');
-                const elementToMeasure = parentSlide || target; // Fallback al target si no hay slide
-
+                const elementToMeasure = isTextFragment ? target : (parentSlide || target);
+                
                 const rect = elementToMeasure.getBoundingClientRect(); 
                 const topRef = rect.top;
                 const bottomRef = rect.bottom;
@@ -303,7 +305,7 @@ export function _updateFocusImpl(shouldSlide = true) {
                         debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
                             `🔧 CORRIGIENDO VERTICAL (Swiper): ${currentTrans} -> ${newTrans}`);
 
-                        swiper.setTransition(300); // Movimiento suave único
+                        swiper.setTransition(data.SWIPER.SLIDE_SPEED); // Movimiento suave único
                         swiper.setTranslate(newTrans);
                         swiper.updateProgress();
 
@@ -333,7 +335,7 @@ export function _updateFocusImpl(shouldSlide = true) {
                         const icono = visibleAhora ? '✅' : '❌';
                         debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
                             `${icono} POST-CORRECCIÓN: Nuevo Top=${newTop.toFixed(1)}px. ¿Visible? ${visibleAhora}`);
-                    }, 350); // Esperar a que termine la transición (300ms + margen)
+                    }, data.SWIPER.SLIDE_SPEED + 50); // Esperar a que termine la transición (300ms + margen)
 
                 } else {
                     debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
