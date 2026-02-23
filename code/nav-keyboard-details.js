@@ -34,25 +34,19 @@ export function _handleDetailNavigation(key) {
                 `Current Focus Index (List): ${currentIndex}, Total Elements: ${totalElements}`);
     
     switch (key) {
+        case 'ArrowLeft':
         case 'ArrowUp':
             newIndex = currentIndex - 1;
             // ⭐️ FIX CLAVE: Wrap-around para ArrowUp ⭐️
             if (newIndex < 0) newIndex = totalElements - 1; 
             break;
 
+        case 'ArrowRight':
         case 'ArrowDown':
             newIndex = currentIndex + 1;
             // ⭐️ FIX CLAVE: Wrap-around para ArrowDown ⭐️
             if (newIndex >= totalElements) newIndex = 0; 
             break;
-
-        case 'ArrowLeft':
-        case 'ArrowRight':
-            // Ignoramos el movimiento lateral.
-            debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
-                        'Movimiento lateral ignorado.');
-
-            return; 
 
         case 'Enter':
         case ' ':

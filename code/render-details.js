@@ -4,13 +4,6 @@ import * as debug from './debug.js';
 import * as data from './data.js';
 import * as nav_base_details from './nav-base-details.js';
 
-// 🟢 HELPER: Detección de entorno táctil (Físico vs Virtual)
-function _isTouchDevice() {
-    return (('ontouchstart' in window) ||
-            (navigator.maxTouchPoints > 0) ||
-            (navigator.msMaxTouchPoints > 0));
-}
-
 // 🟢 CÁLCULO DE ALTURA DISPONIBLE (Ajustado a Zoom Extremo)
 function _calculateMaxHeightAvailable() {
     const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
@@ -220,16 +213,15 @@ function _generateSlidesContinuous(trackElement, rawDescription, maxContentHeigh
 }
 
 export function _mostrarDetalle(cursoId, forceRepaint = false) {
-    debug.log('render_details', debug.DEBUG_LEVELS.BASIC, `Mostrando detalle para: ${cursoId}`);
+    debug.log('render_details', debug.DEBUG_LEVELS.BASIC, `Mostrando detalle para: ${cursoId} ${this.STATE.isTouchDevice ? ' en Dispositivo Táctil' : ''}`);
     
     // Configuración de Entorno
-    const isTouch = _isTouchDevice();
     const layoutMode = document.body.getAttribute('data-layout') || 'desktop';
     const isMobileLayout = layoutMode === 'mobile'; 
     
     // Lógica de decisión:
-    // Continuous Flow SOLO si es Layout Móvil Y NO es táctil (Zoom/Virtual)
-    const useContinuousFlow = isMobileLayout && !isTouch;
+    // Continuous Flow SOLO si es Layout Móvil Y es táctil
+    const useContinuousFlow = isMobileLayout && this.STATE.isTouchDevice;
 
     this.STATE.activeCourseId = cursoId; 
     const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion); 
@@ -244,8 +236,14 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
     const desktopView = document.getElementById('vista-detalle-desktop');
     const mobileView = document.getElementById('vista-detalle-mobile');
     
-    if (desktopView) { desktopView.classList.remove('active'); desktopView.style.display = 'none'; }
-    if (mobileView) { mobileView.classList.remove('active'); mobileView.style.display = 'none'; }
+    if (desktopView) { 
+        desktopView.classList.remove('active'); 
+        desktopView.style.display = 'none'; 
+    }
+    if (mobileView) { 
+        mobileView.classList.remove('active'); 
+        mobileView.style.display = 'none'; 
+    }
 
     this.DOM.vistaDetalle = isMobileLayout ? mobileView : desktopView;
     this.DOM.vistaDetalle.style.display = 'flex'; 
@@ -271,8 +269,11 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
     const infoAdicional = document.getElementById('info-adicional');
     
     if (!isMobileLayout) {
-        if (vistaVolver) vistaVolver.classList.add('visible');
-        if (infoAdicional) infoAdicional.classList.add('visible');
+        if (vistaVolver) 
+            vistaVolver.classList.add('visible');
+
+        if (infoAdicional) 
+            infoAdicional.classList.add('visible');
 
         // 🟢 FIX CRÍTICO BUG DE F5: Rellenar elementos internos si venimos de recarga directa
         const cardNivelActual = document.getElementById('card-nivel-actual');
@@ -292,8 +293,11 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
         }
 
     } else {
-        if (vistaVolver) vistaVolver.classList.remove('visible');
-        if (infoAdicional) infoAdicional.classList.remove('visible');
+        if (vistaVolver) 
+            vistaVolver.classList.remove('visible');
+
+        if (infoAdicional) 
+            infoAdicional.classList.remove('visible');
     }
 
     // GENERACIÓN DE CONTENIDO
@@ -354,9 +358,17 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
             const ariaDisabledAttr = isDisabled ? 'aria-disabled="true"' : '';
             slidesHtml += `
                 <div class="swiper-slide detail-action-slide">
-                    <div class="detail-action-item" ${ariaDisabledAttr} onclick="App._handleActionRowClick(event)" tabindex="0" role="button">
+                    <div class="detail-action-item" 
+                        ${ariaDisabledAttr} 
+                        onclick="App._handleActionRowClick(event)" 
+                        tabindex="0" 
+                        role="button">
                         <span class="detail-action-text">${enlace.texto}</span>
-                        <a ${isDisabled ? 'role="link" aria-disabled="true"' : `href="${enlace.url}" target="_blank"`} tabindex="-1" aria-hidden="true" ${style} class="detail-action-btn ${isDisabled ? 'disabled' : ''}">
+                        <a ${isDisabled ? 'role="link" aria-disabled="true"' : `href="${enlace.url}" target="_blank"`} 
+                            tabindex="-1" 
+                            aria-hidden="true" 
+                            ${style} 
+                            class="detail-action-btn ${isDisabled ? 'disabled' : ''}">
                             <i class="action-icon ${isDisabled ? 'icon-vacio' : iconClass}"></i>
                         </a>
                     </div>

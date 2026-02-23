@@ -209,8 +209,11 @@ export function _updateFocusImpl(shouldSlide = true) {
         // 🛠️ DETECCIÓN DE LAYOUT (Zoom Aware) 🛠️
         const layout = document.body.getAttribute('data-layout') || 'desktop';
         const isMobile = layout === 'mobile';
+        const isDetailView = this.DOM.vistaDetalle?.classList.contains('active');
         
-        if (isMobile) {
+        // 🟢 FIX CRÍTICO: Aplicar el cálculo de colisión del 'parentSlide' a cualquier lista vertical,
+        // no solo en móvil, sino también en las vistas de detalle de PC/Tablet.
+        if (isMobile || isDetailView) {
             if (document.activeElement === target) {
                 debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
                             `_updateFocusImpl: Foco ya establecido. Ignorando llamada redundante.`);

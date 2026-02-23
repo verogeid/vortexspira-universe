@@ -42,6 +42,7 @@ class VortexSpiraApp {
             isNavigatingBack: false, 
             isUIBlocked: false,
             isBooting: true, 
+            isTouchDevice: this._isTouchDevice(),
             emptyColumnAnnounced: false, // Para evitar repetir anuncio de "Columna vacía"
             pendingLoopFix: false, // 🟢 Semáforo para el arreglo del loop
             _lastAnnounced: null // Memoria para el anti-spam
@@ -333,6 +334,13 @@ class VortexSpiraApp {
             debug_diagnostics.runFontDiagnostics?.();
             debug_diagnostics.runLayoutDiagnostics?.();
         });
+    }
+
+    // 🟢 HELPER: Detección de entorno táctil (Físico vs Virtual)
+    _isTouchDevice() {
+        return (('ontouchstart' in window) ||
+                (navigator.maxTouchPoints > 0) ||
+                (navigator.msMaxTouchPoints > 0));
     }
 
     _mostrarDetalle(cursoId, forceRepaint = false) { 
