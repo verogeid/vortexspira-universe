@@ -163,16 +163,114 @@ function _generateSlidesContinuous(trackElement, rawDescription, maxContentHeigh
     return slides;
 }
 
+// 🟢 Llenado Hidráulico para Táctil (Corta párrafos gigantes en <p> más pequeños)
+function _fragmentTextForSingleSlide(trackElement, rawDescription, maxContentHeight, titleText, readOnlyMsg) {
+    debug.log('render_details', debug.DEBUG_LEVELS.BASIC, `Strategy: FRAGMENTACIÓN TÁCTIL. MaxH: ${maxContentHeight}px`);
+
+    const rawFragments = rawDescription.split(/<hr\s*\/?>/i);
+    let finalHtml = "";
+
+    // 1. Crear el fantasma de medición
+    const phantomSlide = document.createElement('div');
+    phantomSlide.className = 'swiper-slide phantom-slide';
+    phantomSlide.style.visibility = 'hidden';
+    phantomSlide.style.position = 'absolute';
+    phantomSlide.style.zIndex = '-1000';
+    
+    // Ancho real del carrusel para que el texto haga saltos de línea idénticos a la realidad
+    const realWidth = trackElement.clientWidth || window.innerWidth;
+    phantomSlide.style.width = `${realWidth}px`;
+    phantomSlide.style.height = 'auto';
+    phantomSlide.style.boxSizing = 'border-box';
+
+    // Usamos el mismo HTML interno que el real
+    phantomSlide.innerHTML = `
+        <div class="content-wrapper">
+            <p class="detail-text-fragment" id="phantom-p" style="margin:0; padding:0;"></p>
+        </div>
+    `;
+    trackElement.appendChild(phantomSlide);
+    const phantomP = phantomSlide.querySelector('#phantom-p');
+
+    // 2. Medir y restar el título para el primer fragmento
+    let titleHeight = 0;
+    if (titleText) {
+        const titleFake = document.createElement('h2');
+        titleFake.className = 'detail-title-slide detail-text-fragment';
+        titleFake.textContent = titleText;
+        titleFake.style.display = 'block';
+        phantomSlide.insertBefore(titleFake, phantomSlide.firstChild);
+        
+        titleHeight = titleFake.offsetHeight + parseFloat(getComputedStyle(titleFake).marginBottom || 0);
+        titleFake.remove(); // Lo quitamos para no ensuciar el cálculo de los siguientes <p>
+    }
+
+    let isFirstParagraph = true;
+
+    // 3. Proceso de corte palabra a palabra
+    rawFragments.forEach(text => {
+        const trimmed = text.trim();
+        if (!trimmed) return;
+
+        phantomP.textContent = trimmed;
+        
+        // El primer párrafo dispone de menos altura porque tiene el título encima
+        let currentLimit = isFirstParagraph ? (maxContentHeight - titleHeight) : maxContentHeight;
+        if (currentLimit < 50) currentLimit = 50; // Margen de seguridad anti-bucles
+
+        if (phantomP.offsetHeight <= currentLimit) {
+            // ✅ Cabe entero, lo añadimos tal cual
+            finalHtml += `<p class="detail-text-fragment" tabindex="0" role="article" aria-description="${readOnlyMsg}" onclick="this.focus()">${trimmed}</p>`;
+            isFirstParagraph = false;
+        } else {
+            // ❌ Es gigante. A trocear palabra por palabra
+            const words = trimmed.split(' ');
+            let currentWords = [];
+            
+            for (let i = 0; i < words.length; i++) {
+                const word = words[i];
+                currentWords.push(word);
+                phantomP.textContent = currentWords.join(' ');
+                
+                // Si esta palabra hace que se pase del límite
+                if (phantomP.offsetHeight > currentLimit) {
+                    if (currentWords.length > 1) {
+                        currentWords.pop(); // Sacamos la palabra culpable
+                        // Imprimimos el párrafo seguro
+                        finalHtml += `<p class="detail-text-fragment" tabindex="0" role="article" aria-description="${readOnlyMsg}" onclick="this.focus()">${currentWords.join(' ')}</p>`;
+                        
+                        // La palabra culpable inicia el siguiente párrafo
+                        currentWords = [word];
+                        isFirstParagraph = false;
+                        currentLimit = maxContentHeight; // A partir de aquí tenemos toda la pantalla libre
+                    } else {
+                        // Caso extremo (ej. un enlace o palabra larguísima a tamaño 200%)
+                        finalHtml += `<p class="detail-text-fragment" tabindex="0" role="article" aria-description="${readOnlyMsg}" onclick="this.focus()">${currentWords.join(' ')}</p>`;
+                        currentWords = [];
+                        isFirstParagraph = false;
+                        currentLimit = maxContentHeight;
+                    }
+                }
+            }
+            
+            // Empujar lo que sobre al final del bucle de palabras
+            if (currentWords.length > 0) {
+                finalHtml += `<p class="detail-text-fragment" tabindex="0" role="article" aria-description="${readOnlyMsg}" onclick="this.focus()">${currentWords.join(' ')}</p>`;
+                isFirstParagraph = false;
+            }
+        }
+    });
+
+    trackElement.removeChild(phantomSlide);
+    return finalHtml;
+}
+
 export function _mostrarDetalle(cursoId, forceRepaint = false) {
     debug.log('render_details', debug.DEBUG_LEVELS.BASIC, `Mostrando detalle para: ${cursoId} ${this.STATE.isTouchDevice ? ' en Dispositivo Táctil' : ''}`);
     
     // Configuración de Entorno
     const layoutMode = document.body.getAttribute('data-layout') || 'desktop';
     const isMobileLayout = layoutMode === 'mobile'; 
-    
-    // Lógica de decisión:
-    // Continuous Flow SOLO si es táctil
-    const useContinuousFlow = this.STATE.isTouchDevice;
 
     this.STATE.activeCourseId = cursoId; 
     const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion); 
@@ -283,13 +381,10 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
 
     // 🟢 Táctil (HTML Puro pero Enfocable) vs No-Táctil
     if (this.STATE.isTouchDevice) {
-        const rawFragments = descripcion.split(/<hr\s*\/?>/i);
-        const rawHtml = rawFragments.map((text, idx) => {
-            const trimmed = text.trim();
-            // 🟢 Convertimos el <p> nativo en un fragmento enfocable para 
-            // no romper la navegación con teclado Bluetooth en tablets/móviles.
-            return trimmed ? `<p class="detail-text-fragment" tabindex="0" role="article" aria-description="${readOnlyMsg}" onclick="this.focus()">${trimmed}</p>` : '';
-        }).join('');
+        
+        // 🟢 FIX A11Y + ZOOM EXTREMO: Fragmentamos párrafos gigantes para que quepan en la pantalla
+        const maxH = _calculateMaxHeightAvailable();
+        const rawHtml = _fragmentTextForSingleSlide(this.DOM.detalleTrack, descripcion, maxH, curso.titulo, readOnlyMsg);
         
         slidesData = [{
             isFirst: true,
@@ -452,8 +547,50 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
             appInstance.STATE.detailCarouselInstance.wrapperEl.removeAttribute('aria-busy');
         }
 
+        // 1. 🟢 EL BLINDAJE: Detectar si hay un dedo/cursor arrastrando físicamente
+        appInstance.STATE.detailCarouselInstance.on('touchStart', () => {
+            appInstance.STATE._isTouchGesturing = true;
+        });
+
+        // 2. El Radar SOLO escanea si es un arrastre táctil genuino
+        appInstance.STATE.detailCarouselInstance.on('setTranslate', (swiper) => {
+            if (appInstance.STATE._isTouchGesturing && !appInstance.STATE.isAutoScrolling && !appInstance.STATE.keyboardNavInProgress) {
+                nav_base_details._handleTouchScrollRadar(appInstance);
+            }
+        });
+
+        // 3. El "Drop": El usuario levanta el dedo
+        appInstance.STATE.detailCarouselInstance.on('touchEnd', (swiper) => {
+            setTimeout(() => {
+                // Si soltamos el dedo y no hay inercia (animating = false)
+                if (!swiper.animating && appInstance.STATE._isTouchGesturing) {
+                    appInstance.STATE._isTouchGesturing = false; // Liberamos el blindaje
+                    
+                    if (!appInstance.STATE.isAutoScrolling) {
+                        debug.log('render_details', debug.DEBUG_LEVELS.EXTREME, '👆 TouchEnd: Evaluando encuadre táctil.');
+                        nav_base_details._handleSlideChangeEnd(swiper, appInstance);
+                    }
+                }
+            }, 50);
+        });
+
+        // 4. Fin de la inercia (Deslizamiento libre táctil)
+        appInstance.STATE.detailCarouselInstance.on('transitionEnd', (swiper) => {
+            if (appInstance.STATE._isTouchGesturing) {
+                appInstance.STATE._isTouchGesturing = false; // Liberamos el blindaje al parar
+                
+                if (!appInstance.STATE.isAutoScrolling) {
+                    debug.log('render_details', debug.DEBUG_LEVELS.EXTREME, '🛑 TransitionEnd: Inercia terminada. Evaluando encuadre.');
+                    nav_base_details._handleSlideChangeEnd(swiper, appInstance);
+                }
+            }
+        });
+
+        // 5. Teclado puro de Swiper (Fallback)
         appInstance.STATE.detailCarouselInstance.on('slideChangeTransitionEnd', (swiper) => {
-            nav_base_details._handleSlideChangeEnd(swiper, appInstance);
+            if (!appInstance.STATE._isTouchGesturing && !appInstance.STATE.isAutoScrolling) {
+                nav_base_details._handleSlideChangeEnd(swiper, appInstance);
+            }
         });
     }
 }

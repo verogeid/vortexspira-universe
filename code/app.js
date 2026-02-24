@@ -212,7 +212,7 @@ class VortexSpiraApp {
             const forceRender = (prevMode !== newMode);
 
             if (forceRender) {
-                debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
+                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                             `Layout Change (${prevMode} -> ${newMode}). Forzando render...`);
                 this._cacheDOM();
             } else {
@@ -692,7 +692,7 @@ class VortexSpiraApp {
         if (enableSafeMode !== currentSafe) {
             document.body.setAttribute('data-safe-mode', enableSafeMode ? 'true' : 'false');
             
-            debug.log('app', debug.DEBUG_LEVELS.IMPORTANT, 
+            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                 `🛡️ Safe Mode: ${enableSafeMode ? 'ON' : 'OFF'} (Solo Mobile) | Eff.Height: ${effectiveHeight.toFixed(0)}px`);
             
             if (!enableSafeMode) {

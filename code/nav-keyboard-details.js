@@ -211,7 +211,7 @@ function _checkAndFixVerticalObstruction(app, target, swiper) {
     const currentTrans = swiper.getTranslate();
     const newTrans = currentTrans + adjustment;
 
-    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.IMPORTANT, 
+    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
         `🔧 CORRECCIÓN: ${reason}. Translate: ${currentTrans.toFixed(1)} -> ${newTrans.toFixed(1)}`);
 
     swiper.setTransition(data.SWIPER.SLIDE_SPEED);

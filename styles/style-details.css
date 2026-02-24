@@ -185,6 +185,20 @@
     font-weight: 500; 
     color: inherit; 
     text-align: left; margin-right: 15px; flex-grow: 1;
+
+    /* 🟢 NUEVO: Preparamos el espacio del borde transparente (igual que en los párrafos) */
+    border-left: 2px solid transparent;
+    padding-left: 6px;
+
+    /* 🟢 NUEVO: Aplicamos el mismo redondeo que tienen los textos */
+    border-radius: 4px;
+    
+    transition: border-color var(--animation-speed) ease;
+}
+
+/* 🟢 NUEVO: Pintamos el borde del texto SOLO cuando la opción completa tiene el foco */
+.detail-action-item.focus-current .detail-action-text {
+    border-left-color: var(--color-text);
 }
 
 /* 5. BOTÓN DE ACCIÓN */

@@ -27,12 +27,15 @@ export function _clearDetailVisualStates(appInstance) {
     appInstance.DOM.cardVolverFijaElemento?.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2');
 }
 
-export function _updateDetailFocusState(appInstance) {
+export function _updateDetailFocusState(appInstance, targetOverride = null) {
     debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 'Iniciando _updateDetailFocusState...');
 
     const focusableElements = _getFocusableDetailElements(appInstance);
-    const focusedElement = focusableElements.find(el => el === document.activeElement);
-    
+
+    // 🟢 FIX: Si nos pasan un fantasma, lo usamos. Si no, buscamos el foco físico del teclado.
+    const focusedElement = targetOverride || 
+                            focusableElements.find(el => el === document.activeElement);
+
     if (!focusedElement) {
         if (document.activeElement.closest('#vista-volver')) {
             debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 
@@ -51,16 +54,10 @@ export function _updateDetailFocusState(appInstance) {
     const focusedIndex = focusableElements.indexOf(focusedElement);
     appInstance.STATE.lastDetailFocusIndex = focusedIndex; 
 
-    debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 
-        `Índice enfocado: ${focusedIndex}. Aplicando clases visuales de proximidad.`);
+    debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, `Índice enfocado: ${focusedIndex}. Aplicando clases visuales de proximidad.`);
 
-    _clearDetailVisualStates(appInstance);
-    focusableElements.forEach((content, index) => {
-        const diff = Math.abs(index - focusedIndex);
-        if (diff === 0) content.classList.add('focus-current');
-        else if (diff === 1) content.classList.add('focus-adj-1'); 
-        else if (diff === 2) content.classList.add('focus-adj-2'); 
-    });
+    // 🟢 FIX: Usamos la nueva función modular
+    _applyVisualClasses(appInstance, focusedIndex);
 
     // 🟢 Lógica de cámara (Auto-Scroll) específica para la vista de Detalles
     const swiper = appInstance.STATE.detailCarouselInstance;
@@ -142,29 +139,53 @@ export function _updateDetailFocusState(appInstance) {
             debug.log('nav_base_details', debug.DEBUG_LEVELS.BASIC, 
                 `🎥 Movimiento de cámara (Detalles): ${currentTrans.toFixed(1)} -> ${newTrans.toFixed(1)}`);
 
+            // 🟢 BANDERA: Avisamos al sistema que la cámara se mueve por código, no por el dedo
+            appInstance.STATE.isAutoScrolling = true;
+
             swiper.setTransition(data.SWIPER.SLIDE_SPEED); 
             swiper.setTranslate(newTrans);
             swiper.updateProgress();
+
+            // Liberamos la bandera cuando acabe la animación
+            setTimeout(() => {
+                appInstance.STATE.isAutoScrolling = false;
+            }, (data.SWIPER.SLIDE_SPEED || 300) + 50);
         }
     }
 };
 
 export function _handleSlideChangeEnd(swiper, appInstance) {
-    debug.log('nav_base_details', debug.DEBUG_LEVELS.BASIC, 
-        'Slide Change End: Restaurando foco.');
-
+    debug.log('nav_base_details', debug.DEBUG_LEVELS.BASIC, 'Slide Change End: Evaluando restauración de foco.');
+    
     appInstance.STATE.keyboardNavInProgress = false; 
+
+    // 🟢 FIX SILENCIO A11Y: Comparamos el foco físico real con nuestro índice fantasma.
     const focusableElements = _getFocusableDetailElements(appInstance);
-    const target = focusableElements[appInstance.STATE.lastDetailFocusIndex];
+    const physicalFocusIndex = focusableElements.indexOf(document.activeElement);
 
-    if (target) {
-        target.focus({ preventScroll: true });
-
-    } else {
-        debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 
-            'Slide Change End: No se encontró target para restaurar foco.');
+    // 🟢 FIX: Recuperamos el Snap visual sin interrumpir al lector
+    // Si no hay foco físico en el detalle, o el radar lo movió:
+    if (physicalFocusIndex !== -1 && appInstance.STATE.lastDetailFocusIndex !== physicalFocusIndex) {
+        const ghostElement = focusableElements[appInstance.STATE.lastDetailFocusIndex];
+        
+        if (ghostElement) {
+            debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 
+                `🛑 SILENCIO A11Y: Auto-encuadrando elemento fantasma (${appInstance.STATE.lastDetailFocusIndex}) sin robar foco físico.`);
+            
+            // Le pasamos el elemento fantasma para que la cámara lo desencubra
+            _updateDetailFocusState(appInstance, ghostElement);
+        }
+        return;
     }
 
+    const target = focusableElements[appInstance.STATE.lastDetailFocusIndex];
+    
+    if (target) {
+        target.focus({ preventScroll: true });
+    } else {
+        debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 'Slide Change End: No se encontró target para restaurar foco.');
+    }
+    
     _updateDetailFocusState(appInstance);
 }
 
@@ -175,5 +196,98 @@ export function _handleActionRowClick(e) {
     e.currentTarget.focus();
     _updateDetailFocusState(App);
 };
+
+// 🟢 NUEVO: Aplica las clases de opacidad visual sin mover el carrusel ni forzar foco físico
+export function _applyVisualClasses(appInstance, activeIndex) {
+    const focusableElements = _getFocusableDetailElements(appInstance);
+    _clearDetailVisualStates(appInstance);
+    
+    focusableElements.forEach((content, index) => {
+        const diff = Math.abs(index - activeIndex);
+        if (diff === 0) content.classList.add('focus-current');
+        else if (diff === 1) content.classList.add('focus-adj-1'); 
+        else if (diff === 2) content.classList.add('focus-adj-2'); 
+    });
+}
+
+// 🟢 Escanea qué elemento asoma bajo el header durante el scroll táctil
+export function _handleTouchScrollRadar(appInstance) {
+    const swiper = appInstance.STATE.detailCarouselInstance;
+    if (!swiper || swiper.params.direction !== 'vertical') return;
+
+    const headerEl = document.getElementById('app-header');
+    const headerHeight = headerEl ? headerEl.offsetHeight + 10 : 10;
+
+    // 🟢 Necesitamos el footer para medir la zona segura real
+    const footerEl = document.querySelector('footer');
+    const footerHeight = footerEl ? footerEl.offsetHeight : 0;
+    const viewHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const bottomLimit = viewHeight - footerHeight;
+
+    // 🟢 NUEVO: Detección del Vector de Lectura (Dirección del scroll)
+    const currentTrans = swiper.translate;
+    const lastTrans = appInstance.STATE._radarLastTrans !== undefined ? appInstance.STATE._radarLastTrans : currentTrans;
+
+    // translate negativo = bajar por el documento
+    if (currentTrans < lastTrans) {
+        appInstance.STATE._isScrollingDown = true;
+    } else if (currentTrans > lastTrans) {
+        appInstance.STATE._isScrollingDown = false;
+    }
+    appInstance.STATE._radarLastTrans = currentTrans;
+
+    // Por defecto asumimos avance natural (hacia abajo)
+    const isScrollingDown = appInstance.STATE._isScrollingDown !== false;
+
+    const focusableElements = _getFocusableDetailElements(appInstance);
+    let validCandidates = [];
+
+    for (let i = 0; i < focusableElements.length; i++) {
+        const el = focusableElements[i];
+        const isText = el.classList.contains('detail-text-fragment');
+        const parentSlide = el.closest('.swiper-slide');
+        const elementToMeasure = isText ? el : (parentSlide || el);
+
+        const rect = elementToMeasure.getBoundingClientRect();
+        
+        // 🟢 FIX: Medición estricta del área verdaderamente visible
+        const visibleTop = Math.max(rect.top, headerHeight);
+        const visibleBottom = Math.min(rect.bottom, bottomLimit);
+        const visibleHeight = visibleBottom - visibleTop;
+
+        // 🟢 FIX: Cálculo dinámico de "2 líneas" según la tipografía y zoom actuales
+        const style = window.getComputedStyle(elementToMeasure);
+        let lineHeight = parseFloat(style.lineHeight);
+
+        // Fallback matemático seguro por si el navegador devuelve "normal" en lugar de píxeles
+        if (isNaN(lineHeight)) {
+            lineHeight = parseFloat(style.fontSize) * 1.5; 
+        }
+        
+        const minimalLinesHeight = lineHeight * data.VIEWPORT.DETAILS.minLinesHeight;
+
+        // Si se ven al menos 2 líneas del elemento (o el elemento entero si mide menos que eso)
+        if (visibleHeight >= minimalLinesHeight || (visibleHeight > 0 && visibleHeight >= rect.height - 5)) {
+            validCandidates.push(i);
+        }
+    }
+
+    // 2. 🟢 LÓGICA DE ESPEJO: Seleccionamos el ganador según la dirección
+    if (validCandidates.length > 0) {
+        // Si leemos hacia abajo, el radar persigue el texto que entra por el footer (el último válido).
+        // Si leemos hacia arriba, persigue el texto que entra por el header (el primer válido).
+        const targetIndex = isScrollingDown 
+            ? validCandidates[validCandidates.length - 1] 
+            : validCandidates[0];
+
+        if (appInstance.STATE.lastDetailFocusIndex !== targetIndex) {
+            debug.log('nav_base_details', debug.DEBUG_LEVELS.EXTREME, 
+                `📡 Radar: Foco a Índice ${targetIndex} (Vector: ${isScrollingDown ? 'Abajo' : 'Arriba'})`);
+                
+            appInstance.STATE.lastDetailFocusIndex = targetIndex;
+            _applyVisualClasses(appInstance, targetIndex);
+        }
+    }
+}
 
 // --- code/nav-base-details.js ---

@@ -72,6 +72,8 @@ footer a.footer-license-link:focus-visible {
     background: transparent !important;
 }
 
+
+
 .footer-social-link {
     display: inline-block;
     
@@ -126,7 +128,8 @@ footer a.footer-license-link:focus-visible {
     
     body[data-layout="mobile"] .footer-author-text, 
     body[data-layout="mobile"] .footer-separator,
-    body[data-layout="mobile"] .footer-version {
+    body[data-layout="mobile"] .footer-version,
+    body[data-layout="mobile"] .footer-license-link {
         display: none;
     }
 

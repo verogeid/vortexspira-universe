@@ -138,7 +138,7 @@ export function handleSlideChangeEnd(swiper) {
 
         if (!isNaN(newLogicalIndex)) {
             if (this.STATE.currentFocusIndex !== newLogicalIndex) {
-                debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.IMPORTANT, 
+                debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, 
                             `🚨 CORRIGIENDO FOCO: ${this.STATE.currentFocusIndex} -> ${newLogicalIndex}`);
 
                 this.STATE.currentFocusIndex = newLogicalIndex;
