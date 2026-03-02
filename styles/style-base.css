@@ -37,4 +37,8 @@
 
 /* --- Reduce Motion --- */
 @import url('style-reduce-motion.css');
+
+/* Reglas para desactivar opacidades */
+@import url('style-no-opacity.css');
+
 /* --- styles/style-base.css --- */

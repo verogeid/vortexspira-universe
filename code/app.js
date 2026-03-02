@@ -29,6 +29,7 @@ class VortexSpiraApp {
         this.DOM = {}; 
 
         this.STATE = {
+            currentTraceId: null,
             fullData: null,          
             historyStack: [],        
             itemsPorColumna: 3,      

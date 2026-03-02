@@ -143,8 +143,13 @@ export function initKeyboardControls() {
                 e.stopPropagation(); 
                 
                 app.STATE.keyboardNavInProgress = true;
-                if (isNavActive) nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
-                else nav_keyboard_details._handleDetailNavigation.call(app, e.key);
+                
+                if (isNavActive) 
+                    nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
+
+                else 
+                    nav_keyboard_details._handleDetailNavigation.call(app, e.key);
+
                 app.STATE.keyboardNavInProgress = false;
                 return;
             }
@@ -153,7 +158,12 @@ export function initKeyboardControls() {
         }
 
         // 4. CURSORES (FLECHAS) - Navegación Principal
-        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        if ([
+                'ArrowUp', 
+                'ArrowDown', 
+                'ArrowLeft', 
+                'ArrowRight'
+            ].includes(e.key)) {
             const isInCentralTrack = focused.closest('#track-desktop, #track-tablet, #track-mobile, #detalle-track-desktop, #detalle-track-mobile');
 
             if (isInCentralTrack) {
@@ -165,22 +175,31 @@ export function initKeyboardControls() {
                 e.stopImmediatePropagation();
 
                 app.STATE.keyboardNavInProgress = true;
-                if (isNavActive) nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
-                else nav_keyboard_details._handleDetailNavigation.call(app, e.key);
+
+                if (isNavActive) 
+                    nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
+
+                else 
+                    nav_keyboard_details._handleDetailNavigation.call(app, e.key);
                 
-                setTimeout(() => { app.STATE.keyboardNavInProgress = false; }, 50);
             } else {
                 const section = focused.closest('#info-adicional, footer, #app-header, #card-volver-fija, #vista-volver');
+        
                 if (section) {
                     e.preventDefault();
                     _handleLocalSectionNavigation(e.key, section);
-                    if (isDetailActive) nav_base_details._clearDetailVisualStates(app);
+
+                    if (isDetailActive) 
+                        nav_base_details._clearDetailVisualStates(app);
                 } else if (document.activeElement === document.body) {
                     e.preventDefault();
                     app.STATE.keyboardNavInProgress = true;
-                    if (isNavActive) nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
-                    else if (isDetailActive) nav_keyboard_details._handleDetailNavigation.call(app, e.key);
-                    setTimeout(() => { app.STATE.keyboardNavInProgress = false; }, 50);
+
+                    if (isNavActive) 
+                        nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
+
+                    else if (isDetailActive) 
+                        nav_keyboard_details._handleDetailNavigation.call(app, e.key);
                 }
             }
         }

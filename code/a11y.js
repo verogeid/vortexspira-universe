@@ -69,6 +69,9 @@ function _applyPreferences() {
     // 🟢 Aplicar Reducción de movimiento al body
     document.body.setAttribute('data-reduced-motion', _prefs.reduceMotion ? 'true' : 'false');
 
+    document.body.setAttribute('data-no-block-opacity', _prefs.noBlockOpacity ? 'true' : 'false');
+    document.body.setAttribute('data-no-mask-opacity', _prefs.noMaskOpacity ? 'true' : 'false');
+
     _updateModalUI();
 
     // ⭐️ Disparar evento de resize para que app.js recalcule el layout inmediatamente
@@ -127,9 +130,15 @@ function _updateModalUI() {
     }
 
     // Checkbox Reducir Animaciones
-    if (_domRefs.reduceMotionCb) {
+    if (_domRefs.reduceMotionCb)
         _domRefs.reduceMotionCb.checked = _prefs.reduceMotion;
-    }
+    
+
+    if (_domRefs.noBlockOpacityCb) 
+        _domRefs.noBlockOpacityCb.checked = _prefs.noBlockOpacity;
+
+    if (_domRefs.noMaskOpacityCb) 
+        _domRefs.noMaskOpacityCb.checked = _prefs.noMaskOpacity;
 }
 
 function _updateSliderLabel(pct) {
@@ -283,16 +292,24 @@ function _injectModalHTML() {
                 </div>
 
                 <div class="a11y-section">
-                    <h3>${i18n.getString('modal.sections.motion') || 'Movimiento'}</h3>
+                    <h3>${i18n.getString('modal.sections.motion') || 'Protección vestibular y fatiga cognitiva'}</h3>
                     <div class="a11y-controls-group">
-                        <label class="a11y-checkbox-label" 
-                                style="display:flex; align-items:center; gap:10px; cursor:pointer;">
-                            <input type="checkbox" 
-                                id="a11y-reduce-motion" 
-                                class="a11y-checkbox" 
-                                style="width:20px; height:20px;">
+                        
+                        <label class="a11y-checkbox-label" style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                            <input type="checkbox" id="a11y-reduce-motion" class="a11y-checkbox" style="width:20px; height:20px;">
                             <span style="font-size: var(--a11y-option-btn-font-size);">${i18n.getString('modal.options.reduceMotion') || 'Reducir animaciones'}</span>
                         </label>
+
+                        <label class="a11y-checkbox-label" style="display:flex; align-items:center; gap:10px; cursor:pointer; margin-top: 10px;">
+                            <input type="checkbox" id="a11y-no-block-opacity" class="a11y-checkbox" style="width:20px; height:20px;">
+                            <span style="font-size: var(--a11y-option-btn-font-size);">${i18n.getString('modal.options.noBlockOpacity') || 'Desactivar atenuación en descripción de cursos'}</span>
+                        </label>
+
+                        <label class="a11y-checkbox-label" style="display:flex; align-items:center; gap:10px; cursor:pointer; margin-top: 10px;">
+                            <input type="checkbox" id="a11y-no-mask-opacity" class="a11y-checkbox" style="width:20px; height:20px;">
+                            <span style="font-size: var(--a11y-option-btn-font-size);">${i18n.getString('modal.options.noMaskOpacity') || 'Desactivar atenuación en menúes'}</span>
+                        </label>
+
                     </div>
                 </div>
 
@@ -324,6 +341,9 @@ function _cacheDOM() {
         themeBtns: document.querySelectorAll('.theme-group .a11y-option-btn'),
 
         reduceMotionCb: document.getElementById('a11y-reduce-motion'),
+
+        noBlockOpacityCb: document.getElementById('a11y-no-block-opacity'),
+        noMaskOpacityCb: document.getElementById('a11y-no-mask-opacity'),
 
         triggerBtn: document.getElementById('btn-config-accesibilidad')
     };
@@ -428,6 +448,21 @@ function _setupListeners() {
 
         _domRefs.reduceMotionCb.addEventListener('change', (e) => {
             _prefs.reduceMotion = e.target.checked;
+            _applyPreferences();
+            _savePreferences();
+        });
+    }
+
+    if (_domRefs.noBlockOpacityCb) {
+        _domRefs.noBlockOpacityCb.addEventListener('change', (e) => {
+            _prefs.noBlockOpacity = e.target.checked;
+            _applyPreferences();
+            _savePreferences();
+        });
+    }
+    if (_domRefs.noMaskOpacityCb) {
+        _domRefs.noMaskOpacityCb.addEventListener('change', (e) => {
+            _prefs.noMaskOpacity = e.target.checked;
             _applyPreferences();
             _savePreferences();
         });

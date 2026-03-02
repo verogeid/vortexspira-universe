@@ -69,7 +69,7 @@
             "font": "Typography",
             "size": "Text Size",
             "spacing": "Spacing",
-            "motion": "Motion",
+            "motion": "Vestibular protection and cognitive fatigue",
             "theme": "Color Theme"
         },
         "options": {
@@ -77,6 +77,9 @@
             "serif": "Classic Serif",
             "dyslexic": "OpenDyslexic / Lexend",
             "reduceMotion": "Reduce Motion",
+
+            "noBlockOpacity": "Disable dimming in course descriptions",
+            "noMaskOpacity": "Disable dimming in menus",
 
             "themeDefault": "System (Default)",
             "themeLight": "Light Mode",

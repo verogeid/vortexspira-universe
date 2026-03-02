@@ -10,8 +10,12 @@ export function _handleDetailNavigation(key) {
     const swiper = app.STATE.detailCarouselInstance;
     if (!swiper) return;
 
-    // ⭐️ El bloqueo de la bandera fue eliminado aquí ya que la navegación es síncrona. ⭐️
-    // La bandera solo se verifica y se gestiona en nav-keyboard-base.js para la rueda de ratón.
+    // 🟢 INICIO DE LA MÁQUINA DE ESTADOS (TECLADO)
+    app.STATE.currentTraceId = 'KBD-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+    app.STATE.keyboardNavInProgress = true; 
+    
+    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
+        `\n[TRACE ${app.STATE.currentTraceId}] ⌨️ Pulsada tecla ${key}. Flag keyboardNavInProgress = TRUE`);
     
     const focusableElements = nav_base_details._getFocusableDetailElements(app);
     const totalElements = focusableElements.length;
@@ -26,12 +30,9 @@ export function _handleDetailNavigation(key) {
     }
 
     let newIndex = currentIndex;
-    
-    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
-                `--- INICIO: _handleDetailNavigation (Key: ${key}) ---`);
 
     debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
-                `Current Focus Index (List): ${currentIndex}, Total Elements: ${totalElements}`);
+                `[TRACE ${app.STATE.currentTraceId}] Current Focus Index (List): ${currentIndex}, Total Elements: ${totalElements}`);
     
     switch (key) {
         case 'ArrowLeft':
@@ -67,7 +68,7 @@ export function _handleDetailNavigation(key) {
                         btn.click(); 
 
                         debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
-                                    'Botón de acción activado.');
+                                    `[TRACE ${app.STATE.currentTraceId}] Botón de acción activado.`);
 
                         return;
                     }
@@ -78,20 +79,20 @@ export function _handleDetailNavigation(key) {
                     newIndex = currentIndex + 1;
 
                     debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
-                                'Enter/Space: Avanzando al siguiente fragmento.');
+                                `[TRACE ${app.STATE.currentTraceId}] Enter/Space: Avanzando al siguiente fragmento.`);
 
                     if (newIndex >= totalElements) {
                         // ⭐️ FIX CLAVE: Wrap-around en Enter/Space ⭐️
                         newIndex = 0; 
 
                         debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
-                                    'Enter/Space: Saltando al primer fragmento.');
+                                    `[TRACE ${app.STATE.currentTraceId}] Enter/Space: Saltando al primer fragmento.`);
                     }
                 }
 
             } else {
                 debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
-                            'Enter/Space: No hay contenido enfocable en el índice actual.');
+                            `[TRACE ${app.STATE.currentTraceId}] Enter/Space: No hay contenido enfocable en el índice actual.`);
 
                 return; 
             }
@@ -102,13 +103,14 @@ export function _handleDetailNavigation(key) {
         const newFocusElement = focusableElements[newIndex];
 
         if (newFocusElement) {
-            debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
-                        `FORZANDO FOCO NATIVO. Nuevo Índice: ${newIndex}`);
-            
+            debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
+                `[TRACE ${app.STATE.currentTraceId}] Aplicando foco a índice ${newIndex}`);
+
             // 1. Aplicar Foco
             newFocusElement.focus({ preventScroll: true }); // Bloqueamos el salto nativo
             app.STATE.lastDetailFocusIndex = newIndex;
 
+            /*
             // 2. Gestionar el Swiper
             if (app.STATE.detailCarouselInstance) {
                 const carousel = app.STATE.detailCarouselInstance;
@@ -117,19 +119,31 @@ export function _handleDetailNavigation(key) {
                 if (slide) {
                     const slideIndex = Array.from(carousel.slides).indexOf(slide);
                     if (slideIndex !== carousel.activeIndex) {
+                        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
+                            `[TRACE ${app.STATE.currentTraceId}] 2. Ordenando slideTo(${slideIndex})`);
+
                         carousel.slideTo(slideIndex, data.SWIPER.SLIDE_SPEED);
+                    } else {
+                        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
+                            `[TRACE ${app.STATE.currentTraceId}] 2. Ignorando slideTo (ya estamos en slide ${slideIndex})`);
                     }
                 }
 
                 // 🟢 3. CORRECCIÓN DE VISIBILIDAD VERTICAL (DIAGNÓSTICO + FIX)
                 // Esperamos un tick a que slideTo inicie o termine
                 requestAnimationFrame(() => {
-                    _checkAndFixVerticalObstruction(app, newFocusElement, carousel);
+                    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
+                        `[TRACE ${app.STATE.currentTraceId}] 3. Ejecutando _checkAndFix (dentro de rAF)`);
+
+                    _checkAndFixVerticalObstruction(app, newFocusElement, carousel, app.STATE.currentTraceId);
                 });
-            }
+            }*/
             
+            debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
+                `[TRACE ${app.STATE.currentTraceId}] 4. Llamando sincrónicamente a _updateDetailFocusState`);
+
             // ⭐️ FIX CLAVE 3: Forzar la actualización visual (blur/sharpness) inmediatamente ⭐️
-            nav_base_details._updateDetailFocusState(app);
+            nav_base_details._updateDetailFocusState(app, null, app.STATE.currentTraceId); // Pasamos el traceId para mantener la trazabilidad en los logs
 
             // ⭐️ FIX CLAVE 4: Guardar el índice del elemento (no el índice del slide) para el focus trap ⭐️
             app.STATE.lastDetailFocusIndex = newIndex; 
@@ -139,14 +153,18 @@ export function _handleDetailNavigation(key) {
                             `No se encontró elemento enfocable en el índice ${newIndex}.`);
         }
     } else {
-        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
-                    'Índice sin cambios. No se llama a focus.');
+        // Si no hubo movimiento, abortamos la máquina de estados
+        app.STATE.keyboardNavInProgress = false;
+
+        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
+            `[TRACE ${app.STATE.currentTraceId}] Índice sin cambios. Flag keyboardNavInProgress = FALSE`);
     }
-    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
-                '--- FIN: _handleDetailNavigation ---');
 }
 
-function _checkAndFixVerticalObstruction(app, target, swiper) {
+function _checkAndFixVerticalObstruction(app, target, swiper, traceId = 'NA') {
+    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
+        `[TRACE ${traceId}-CHK] Iniciando chequeo vertical secundario`);
+
     const header = document.getElementById('app-header');
     const headerHeight = header?.offsetHeight || 0;
     const footerHeight = document.querySelector('footer')?.offsetHeight || 0;
@@ -167,8 +185,8 @@ function _checkAndFixVerticalObstruction(app, target, swiper) {
 
     debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.EXTREME, 
         `📏 CHECK VISIBILIDAD: 
-         Safe Zone: ${safeTop.toFixed(0)}px <-> ${safeBottom.toFixed(0)}px
-         Elemento: Top=${topRef.toFixed(1)}px | Bottom=${bottomRef.toFixed(1)}px`);
+        Safe Zone: ${safeTop.toFixed(0)}px <-> ${safeBottom.toFixed(0)}px
+        Elemento: Top=${topRef.toFixed(1)}px | Bottom=${bottomRef.toFixed(1)}px`);
 
     let adjustment = 0;
     let reason = "";
@@ -203,7 +221,9 @@ function _checkAndFixVerticalObstruction(app, target, swiper) {
     }
 
     if (Math.abs(adjustment) < 1) {
-        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.EXTREME, `✅ VISIBLE: Ok.`);
+        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
+            `[TRACE ${traceId}-CHK] ✅ VISIBLE: Ok. Abortando ajuste secundario.`);
+
         return;
     }
 
@@ -212,7 +232,7 @@ function _checkAndFixVerticalObstruction(app, target, swiper) {
     const newTrans = currentTrans + adjustment;
 
     debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
-        `🔧 CORRECCIÓN: ${reason}. Translate: ${currentTrans.toFixed(1)} -> ${newTrans.toFixed(1)}`);
+        `[TRACE ${traceId}-CHK] 🔧 EJECUTANDO setTranslate secundario: ${reason}. Físico: ${currentTrans.toFixed(1)} -> Destino: ${newTrans.toFixed(1)}`);
 
     swiper.setTransition(data.SWIPER.SLIDE_SPEED);
     swiper.setTranslate(newTrans);

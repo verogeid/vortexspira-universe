@@ -1,0 +1,33 @@
+/* --- styles/style-no-opacity.css --- */
+
+/* 🟢 1. PROTECCIÓN CONTRA FATIGA COGNITIVA: DESCRIPCIÓN DE CURSOS (Vertical) */
+/* Esta regla ahora SOLO afecta a los elementos de la vista de detalle */
+body[data-no-block-opacity="true"] {
+    --adj-block-opacity: 1 !important;
+}
+
+body[data-no-block-opacity="true"] .detail-text-fragment,
+body[data-no-block-opacity="true"] .detail-action-item {
+    opacity: 1 !important;
+    filter: none !important;
+}
+
+
+/* 🟢 2. PROTECCIÓN CONTRA FATIGA COGNITIVA: MENÚES Y NAVEGACIÓN (Horizontal/Mobile) */
+/* Esta regla ahora centraliza toda la atenuación de la navegación principal */
+
+/* A. Desactiva la máscara degradada lateral (Tablet/Desktop) */
+body[data-no-mask-opacity="true"] .carousel-mask {
+    display: none !important;
+}
+
+/* B. Desactiva la atenuación de las tarjetas (Mobile, Tablet y Desktop) */
+/* Al mover estos selectores aquí, noMaskOpacity ahora sí afecta a Mobile */
+body[data-no-mask-opacity="true"] .card:not(.focus-visible),
+body[data-no-mask-opacity="true"] .card.disabled,
+body[data-no-mask-opacity="true"] .card.card-breadcrumb-vertical {
+    opacity: 1 !important;
+    filter: none !important;
+}
+
+/* --- styles/style-no-opacity.css --- */

@@ -51,14 +51,21 @@
     border: none;
     border-left: 2px solid transparent; 
     padding-left: 6px; 
+
+    /* NUEVO: Obliga al navegador a incluir el borde y padding dentro del 100% */
+    box-sizing: border-box;
+    /* NUEVO: Respiro a la derecha para evitar que el texto roce el límite de la pantalla */
+    padding-right: calc(var(--card-padding)/2);
+
     transition: all var(--animation-speed) ease, opacity var(--transition-speed) ease;
     will-change: opacity;
     cursor: text;
     filter: none !important;
-    opacity: 0.3; 
+    opacity: var(--adj-block-opacity); 
     pointer-events: auto;
 
-    margin-bottom: 0;
+    /* 🟢 FIX: Usar la variable de párrafo para separar los slides entre sí */
+    margin-bottom: var(--paragraph-spacing);
     
     /* A11Y FIX CRÍTICO: Texto base legible (1rem) + crecimiento */
     font-size: var(--details-text-fragment-font-size);
@@ -140,23 +147,24 @@
 .detail-text-fragment.focus-adj-1,
 .detail-action-item.focus-adj-1 {
     filter: none !important;
-    opacity: 0.6;
+    opacity: calc(var(--adj-block-opacity) * 2);
 }
 
 .detail-text-fragment.focus-adj-2,
 .detail-action-item.focus-adj-2 {
     filter: none !important;
-    opacity: 0.3;
+    opacity: var(--adj-block-opacity);
 }
 
 .detail-action-item {
     transition: opacity var(--transition-speed) ease;
     filter: none !important;
-    opacity: 0.3; 
+    opacity: var(--adj-block-opacity); 
     pointer-events: auto;
     outline: none;
     box-sizing: border-box; 
     width: 100%;
+    margin-bottom: var(--paragraph-spacing);
 }
 
 .detail-action-item.focus-current .detail-action-btn {
@@ -172,7 +180,6 @@
 .detail-action-item {
     display: flex; justify-content: space-between; align-items: center;
     padding: 8px 5px; background: transparent;
-    border-bottom: 1px solid var(--color-border-placeholder);
     transition: background-color var(--animation-speed) ease;
 }
 .detail-action-item:hover { 

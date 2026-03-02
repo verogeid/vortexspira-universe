@@ -547,15 +547,58 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
             appInstance.STATE.detailCarouselInstance.wrapperEl.removeAttribute('aria-busy');
         }
 
-        // 1. 🟢 EL BLINDAJE: Detectar si hay un dedo/cursor arrastrando físicamente
+        // 1. TÁCTIL: Solo inicia si el teclado no está moviendo la cámara
         appInstance.STATE.detailCarouselInstance.on('touchStart', () => {
+            if (appInstance.STATE.keyboardNavInProgress) {
+                debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
+                    `[TRACE ${appInstance.STATE.currentTraceId}] 👆 TouchStart ignorado: Teclado en curso.`);
+                return;
+            }
+            
+            appInstance.STATE.currentTraceId = 'TCH-' + Math.random().toString(36).substr(2, 4).toUpperCase();
             appInstance.STATE._isTouchGesturing = true;
+            debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
+                `\n[TRACE ${appInstance.STATE.currentTraceId}] 👆 Arrastre táctil iniciado. Flag _isTouchGesturing = TRUE`);
         });
 
-        // 2. El Radar SOLO escanea si es un arrastre táctil genuino
-        appInstance.STATE.detailCarouselInstance.on('setTranslate', (swiper) => {
-            if (appInstance.STATE._isTouchGesturing && !appInstance.STATE.isAutoScrolling && !appInstance.STATE.keyboardNavInProgress) {
+        // 2. RADAR: Solo actúa si es un arrastre táctil legítimo
+        appInstance.STATE.detailCarouselInstance.on('setTranslate', () => {
+            if (appInstance.STATE._isTouchGesturing && !appInstance.STATE.isAutoScrolling) {
                 nav_base_details._handleTouchScrollRadar(appInstance);
+            }
+        });
+
+        // 3. FIN DE INERCIA: El regulador maestro (El que baja las banderas)
+        appInstance.STATE.detailCarouselInstance.on('transitionEnd', (swiper) => {
+            const traceId = appInstance.STATE.currentTraceId || 'UNKNOWN';
+            debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
+                `[TRACE ${traceId}] 🛑 TransitionEnd físico del carrusel alcanzado.`);
+
+            // A) Si veníamos del TECLADO
+            if (appInstance.STATE.keyboardNavInProgress) {
+                appInstance.STATE.keyboardNavInProgress = false;
+                debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
+                    `[TRACE ${traceId}] ✔️ Bajando flag de Teclado. Movimiento completado.`);
+            } 
+            // B) Si veníamos de ARRASTRE TÁCTIL
+            else if (appInstance.STATE._isTouchGesturing) {
+                appInstance.STATE._isTouchGesturing = false;
+                debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
+                    `[TRACE ${traceId}] ✔️ Bajando flag Táctil. Evaluando auto-encuadre...`);
+                
+                if (!appInstance.STATE.isAutoScrolling) {
+                    nav_base_details._handleSlideChangeEnd(swiper, appInstance);
+                }
+            }
+            // C) Si veníamos de RUEDA DE RATÓN (si tienes el flag _isWheeling)
+            else if (appInstance.STATE._isWheeling) {
+                appInstance.STATE._isWheeling = false;
+                debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
+                    `[TRACE ${traceId}] ✔️ Bajando flag de Rueda. Evaluando auto-encuadre...`);
+                
+                if (!appInstance.STATE.isAutoScrolling) {
+                    nav_base_details._handleSlideChangeEnd(swiper, appInstance);
+                }
             }
         });
 
@@ -572,18 +615,6 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
                     }
                 }
             }, 50);
-        });
-
-        // 4. Fin de la inercia (Deslizamiento libre táctil)
-        appInstance.STATE.detailCarouselInstance.on('transitionEnd', (swiper) => {
-            if (appInstance.STATE._isTouchGesturing) {
-                appInstance.STATE._isTouchGesturing = false; // Liberamos el blindaje al parar
-                
-                if (!appInstance.STATE.isAutoScrolling) {
-                    debug.log('render_details', debug.DEBUG_LEVELS.EXTREME, '🛑 TransitionEnd: Inercia terminada. Evaluando encuadre.');
-                    nav_base_details._handleSlideChangeEnd(swiper, appInstance);
-                }
-            }
         });
 
         // 5. Teclado puro de Swiper (Fallback)

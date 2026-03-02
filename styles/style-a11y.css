@@ -73,13 +73,16 @@
     /* ⭐️ FIX FUENTE: Limitamos el crecimiento máximo para que no sea gigante */
     font-size: var(--a11y-title-font-size);
     
-    /* ⭐️ FIX LAYOUT: Truncar con puntos suspensivos si no cabe */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* FIX LAYOUT: Permitir múltiples líneas y romper palabras */
+    white-space: normal !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.2;
+    height: auto;
+    overflow: visible;
     
     /* Flex child properties */
-    flex: 1; 
+    flex: 1 1 auto;
     min-width: 0; /* CRÍTICO: Permite al flex item encogerse por debajo de su contenido */
     padding-right: var(--a11y-padding); /* Espacio de seguridad con el botón cerrar */
 }
@@ -122,10 +125,13 @@
     margin-bottom: var(--a11y-controls-gap); 
     opacity: 0.9; 
 
-    /* ⭐️ FIX: Truncar Subtítulos ("Tipografía", "Tamaño del texto...") */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* FIX LAYOUT: Permitir múltiples líneas */
+    white-space: normal !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.2;
+    height: auto;
+    overflow: visible;
     max-width: 100%;
 }
 
@@ -152,10 +158,17 @@
 
     font-size: var(--a11y-option-btn-font-size);
 
-    /* ⭐️ FIX: Truncar texto de botones ("Sans", "Compacto") */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* FIX LAYOUT: Textos en múltiples líneas y botones más altos */
+    white-space: normal !important;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    height: auto !important;
+    /*min-height: 44px; /* Asegura el área táctil mínima recomendada */
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     
     /* Permite que el botón encoja si es necesario */
     min-width: var(--a11y-btn-min-width);

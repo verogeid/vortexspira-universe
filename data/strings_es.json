@@ -69,7 +69,7 @@
             "font": "Tipografía",
             "size": "Tamaño Texto",
             "spacing": "Espaciado",
-            "motion": "Movimiento",
+            "motion": "Protección vestibular y fatiga cognitiva",
             "theme": "Tema de Color"
         },
         "options": {
@@ -77,6 +77,8 @@
             "serif": "Serif Clásica",
             "dyslexic": "OpenDyslexic / Lexend",
             "reduceMotion": "Reducir animaciones",
+            "noBlockOpacity": "Desactivar atenuación en descripción de cursos",
+            "noMaskOpacity": "Desactivar atenuación en menúes",
 
             "themeDefault": "Sistema (Por defecto)",
             "themeLight": "Modo Claro",

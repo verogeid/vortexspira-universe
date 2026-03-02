@@ -9,7 +9,9 @@ export const A11Y = {
         lineHeight: 1.5,       
         paragraphSpacing: 1.5,
         reduceMotion: false,
-        theme: 'default'
+        theme: 'default',
+        noBlockOpacity: false, 
+        noMaskOpacity: false
     },
     SPACING_MAP: { // Mapeo para el slider de espaciado: Valor -> [AlturaLinea, Etiqueta]
         1: { val: 1.0, labelKey: 'modal.spacing.compact' },

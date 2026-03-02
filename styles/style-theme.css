@@ -4,6 +4,7 @@
     --scroll-beahavior: smooth !important;
     --transition-speed: 0.5s !important;
     --animation-speed: 0.3s !important;
+    --adj-block-opacity: 0.3;
 
     /* 📐 VARIABLES ESTRUCTURALES BASE */
     --card-gap: 3vmin; 
@@ -178,10 +179,6 @@ html {
 body {
     font-family: var(--font-family-base);
     line-height: var(--line-height-base);
-}
-
-p {
-    margin-bottom: var(--paragraph-spacing);
 }
 
 /* --- styles/style-theme.css --- */
