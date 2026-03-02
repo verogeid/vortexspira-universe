@@ -76,10 +76,11 @@
             "atkinson": "Atkinson (Sans)",
             "serif": "Classic Serif",
             "dyslexic": "OpenDyslexic / Lexend",
-            "reduceMotion": "Reduce Motion",
 
+            "reduceMotion": "Reduce Motion",
             "noBlockOpacity": "Disable dimming in course descriptions",
             "noMaskOpacity": "Disable dimming in menus",
+            "noZoneOpacity": "Disable zone dimming",
 
             "themeDefault": "System (Default)",
             "themeLight": "Light Mode",

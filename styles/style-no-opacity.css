@@ -1,33 +1,71 @@
 /* --- styles/style-no-opacity.css --- */
 
-/* 🟢 1. PROTECCIÓN CONTRA FATIGA COGNITIVA: DESCRIPCIÓN DE CURSOS (Vertical) */
-/* Esta regla ahora SOLO afecta a los elementos de la vista de detalle */
+/* 🟢 1. PROTECCIÓN CONTRA FATIGA COGNITIVA: DESCRIPCIÓN DE CURSOS (noBlockOpacity) */
 body[data-no-block-opacity="true"] {
     --adj-block-opacity: 1 !important;
 }
 
+/* Forzamos nitidez absoluta en detalles y el breadcrumb si este check está activo */
 body[data-no-block-opacity="true"] .detail-text-fragment,
-body[data-no-block-opacity="true"] .detail-action-item {
+body[data-no-block-opacity="true"] .detail-action-item,
+body[data-no-block-opacity="true"] .card.card-breadcrumb-vertical {
     opacity: 1 !important;
     filter: none !important;
 }
 
-
-/* 🟢 2. PROTECCIÓN CONTRA FATIGA COGNITIVA: MENÚES Y NAVEGACIÓN (Horizontal/Mobile) */
-/* Esta regla ahora centraliza toda la atenuación de la navegación principal */
-
-/* A. Desactiva la máscara degradada lateral (Tablet/Desktop) */
+/* 🟢 2. NITIDEZ EN NAVEGACIÓN Y MENÚS (noMaskOpacity) */
 body[data-no-mask-opacity="true"] .carousel-mask {
     display: none !important;
 }
 
-/* B. Desactiva la atenuación de las tarjetas (Mobile, Tablet y Desktop) */
-/* Al mover estos selectores aquí, noMaskOpacity ahora sí afecta a Mobile */
 body[data-no-mask-opacity="true"] .card:not(.focus-visible),
 body[data-no-mask-opacity="true"] .card.disabled,
 body[data-no-mask-opacity="true"] .card.card-breadcrumb-vertical {
     opacity: 1 !important;
     filter: none !important;
+}
+
+/* 🟢 3. NITIDEZ TOTAL EN PANELES (noZoneOpacity) */
+/* Si el usuario desactiva zonas, estos elementos deben ser CRISTALINOS */
+body[data-no-zone-opacity="true"] #info-adicional,
+body[data-no-zone-opacity="true"] .card.card-breadcrumb-vertical,
+body[data-no-zone-opacity="true"] #vista-volver {
+    opacity: 1 !important;
+    filter: none !important;
+}
+
+/* 🟢 4. ATENUACIÓN GLOBAL POR MACRO-ZONAS */
+/* Solo se activa si hay una zona y NO se ha desactivado por check */
+body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #app-header,
+body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #vista-volver,
+body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #vista-central,
+body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #info-adicional,
+body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) footer {
+    /* Si --adj-block-opacity es 0.3 -> Opacidad 0.65 */
+    /* Si --adj-block-opacity es 1.0 -> Opacidad 1.0 (No atenuar) */
+    opacity: calc(0.5 + (var(--adj-block-opacity) / 2));
+    
+    /* Usamos un valor fijo muy sutil que desaparece si la opacidad es 1 */
+    filter: grayscale(calc(0.3 * (1 - var(--adj-block-opacity, 0))));
+    
+    transition: opacity var(--transition-speed) ease, filter var(--transition-speed) ease;
+}
+
+/* 🟢 5. EXCEPCIÓN: ZONA ACTIVA (Luz total) */
+body[data-active-zone="header"] #app-header,
+body[data-active-zone="volver"] #vista-volver,
+body[data-active-zone="central"] #vista-central,
+body[data-active-zone="info"] #info-adicional,
+body[data-active-zone="footer"] footer,
+body[data-active-zone="modal"] #a11y-modal-overlay {
+    opacity: 1 !important;
+    filter: none !important;
+}
+
+/* 🟢 6. REFUERZO DE NITIDEZ EN INFO-ADICIONAL */
+/* Aseguramos que el texto sea blanco puro/negro puro según el tema */
+#info-adicional {
+    color: var(--color-text);
 }
 
 /* --- styles/style-no-opacity.css --- */

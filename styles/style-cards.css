@@ -119,7 +119,7 @@
     border-color: var(--color-border-placeholder);
     background: transparent; 
     min-height: 50px;
-    opacity: 0.8; 
+    opacity: 1; 
     font-size: var(--card-breadcrump-vertical-font-size);
     cursor: default; 
     text-align: left;

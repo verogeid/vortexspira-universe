@@ -69,8 +69,11 @@ function _applyPreferences() {
     // 🟢 Aplicar Reducción de movimiento al body
     document.body.setAttribute('data-reduced-motion', _prefs.reduceMotion ? 'true' : 'false');
 
+    // 🟢 Atributos para la atenuación de textos y zonas
     document.body.setAttribute('data-no-block-opacity', _prefs.noBlockOpacity ? 'true' : 'false');
     document.body.setAttribute('data-no-mask-opacity', _prefs.noMaskOpacity ? 'true' : 'false');
+
+    document.body.setAttribute('data-no-zone-opacity', _prefs.noZoneOpacity ? 'true' : 'false');
 
     _updateModalUI();
 
@@ -310,6 +313,11 @@ function _injectModalHTML() {
                             <span style="font-size: var(--a11y-option-btn-font-size);">${i18n.getString('modal.options.noMaskOpacity') || 'Desactivar atenuación en menúes'}</span>
                         </label>
 
+                        <label class="a11y-checkbox-label" style="display:flex; align-items:center; gap:10px; cursor:pointer; margin-top: 10px;">
+                            <input type="checkbox" id="a11y-no-zone-opacity" class="a11y-checkbox" style="width:20px; height:20px;">
+                            <span style="font-size: var(--a11y-option-btn-font-size);">${i18n.getString('modal.options.noZoneOpacity') || 'Desactivar atenuación por zona'}</span>
+                        </label>
+
                     </div>
                 </div>
 
@@ -345,6 +353,8 @@ function _cacheDOM() {
         noBlockOpacityCb: document.getElementById('a11y-no-block-opacity'),
         noMaskOpacityCb: document.getElementById('a11y-no-mask-opacity'),
 
+        noZoneOpacityCb: document.getElementById('a11y-no-zone-opacity'),
+        
         triggerBtn: document.getElementById('btn-config-accesibilidad')
     };
 }
@@ -463,6 +473,14 @@ function _setupListeners() {
     if (_domRefs.noMaskOpacityCb) {
         _domRefs.noMaskOpacityCb.addEventListener('change', (e) => {
             _prefs.noMaskOpacity = e.target.checked;
+            _applyPreferences();
+            _savePreferences();
+        });
+    }
+
+    if (_domRefs.noZoneOpacityCb) {
+        _domRefs.noZoneOpacityCb.addEventListener('change', (e) => {
+            _prefs.noZoneOpacity = e.target.checked;
             _applyPreferences();
             _savePreferences();
         });

@@ -76,9 +76,11 @@
             "atkinson": "Atkinson (Sans)",
             "serif": "Serif Clásica",
             "dyslexic": "OpenDyslexic / Lexend",
+            
             "reduceMotion": "Reducir animaciones",
             "noBlockOpacity": "Desactivar atenuación en descripción de cursos",
             "noMaskOpacity": "Desactivar atenuación en menúes",
+            "noZoneOpacity": "Desactivar atenuación por zona",
 
             "themeDefault": "Sistema (Por defecto)",
             "themeLight": "Modo Claro",

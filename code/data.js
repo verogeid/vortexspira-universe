@@ -4,14 +4,20 @@ import * as debug from './debug.js';
 export const A11Y = {
     STORAGE_KEY: 'vortex_a11y_prefs_v1',
     DEFAULTS: {
-        fontType: 'atkinson',      
-        fontSizePct: 100,      
+        fontType: 'atkinson', 
+
+        fontSizePct: 100,  
+
         lineHeight: 1.5,       
         paragraphSpacing: 1.5,
-        reduceMotion: false,
+
         theme: 'default',
+
+        reduceMotion: false,
+
         noBlockOpacity: false, 
-        noMaskOpacity: false
+        noMaskOpacity: false,
+        noZoneOpacity: false
     },
     SPACING_MAP: { // Mapeo para el slider de espaciado: Valor -> [AlturaLinea, Etiqueta]
         1: { val: 1.0, labelKey: 'modal.spacing.compact' },
