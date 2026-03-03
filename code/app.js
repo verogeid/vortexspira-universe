@@ -76,11 +76,12 @@ class VortexSpiraApp {
     }
 
     async init() {
-        //debug.logClear();
+        debug.logClear();
         debug.logDebugLevels();
         
         // Mantenemos isBooting = true por defecto desde el constructor
-        debug.log('app', debug.DEBUG_LEVELS.BASIC, "🚀 Iniciando App (Modo Silencioso activado)...");
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+            "🚀 Iniciando App (Modo Silencioso activado)...");
 
         debug_diagnostics._setupGlobalClickListener();
         debug_diagnostics._setupFocusTracker();
@@ -164,7 +165,8 @@ class VortexSpiraApp {
             enableI18n = await this._checkEnAvailability();
         }
 
-        debug.log('app', debug.DEBUG_LEVELS.BASIC, `I18N Habilitado: ${enableI18n}`);
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+            `I18N Habilitado: ${enableI18n}`);
 
         a11y.initA11y();
 
@@ -200,6 +202,29 @@ class VortexSpiraApp {
         
         this._updateLayoutMode();
         this._syncHeaderDimensions();
+
+        // ====================================================================
+        // 🛡️ ESCUDO DE CRISTAL: INTERCEPTOR UNIVERSAL (Teclado, Ratón y Touch)
+        // Atrapa las interacciones en Fase de Captura (antes de procesarlas)
+        // ====================================================================
+        const preventInteraction = (e) => {
+            if (this.STATE.isUIBlocked) {
+                // Permitimos soltar teclas, pero bloqueamos la acción en sí
+                if (e.type !== 'keyup') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    debug.log('app', debug.DEBUG_LEVELS.EXTREME, `🛡️ Escudo activo. Bloqueado: ${e.type} ${e.key || ''}`);
+                }
+            }
+        };
+
+        // Escuchamos en fase de captura (true)
+        document.addEventListener('keydown', preventInteraction, true);
+        document.addEventListener('mousedown', preventInteraction, true);
+        document.addEventListener('click', preventInteraction, true);
+        document.addEventListener('touchstart', preventInteraction, { passive: false, capture: true });
+        document.addEventListener('touchmove', preventInteraction, { passive: false, capture: true });
+        // ====================================================================
 
         window.addEventListener('vortex-layout-refresh', () => {
             const prevMode = document.body.getAttribute('data-layout');
@@ -283,7 +308,8 @@ class VortexSpiraApp {
             
             // 🔓 Liberamos el flag de arranque
             this.STATE.isBooting = false;
-            debug.log('app', debug.DEBUG_LEVELS.BASIC, "🔓 App cargada. Activando foco real.");
+            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                "🔓 App cargada. Activando foco real.");
 
             // 🔥 Forzamos el primer foco real (ahora sí hablará el SR)
             // Usamos 'false' para no animar/deslizar, solo focalizar.
@@ -295,6 +321,22 @@ class VortexSpiraApp {
 
         this._injectA11yAnnouncer();
     }
+
+    // ============================================================================
+    // 🛡️ MÉTODOS DE CONTROL DEL ESCUDO (UI Lock)
+    // ============================================================================
+    blockUI() {
+        this.STATE.isUIBlocked = true;
+        document.body.classList.add('ui-blocked');
+        debug.log('app', debug.DEBUG_LEVELS.EXTREME, '🛡️ ESCUDO ACTIVADO: UI Bloqueada');
+    }
+
+    unblockUI() {
+        this.STATE.isUIBlocked = false;
+        document.body.classList.remove('ui-blocked');
+        debug.log('app', debug.DEBUG_LEVELS.EXTREME, '🛡️ ESCUDO DESACTIVADO: UI Liberada');
+    }
+    // ============================================================================
 
     // 🟢 Chequeo de existencia de recursos EN (Strings + Data)
     async _checkEnAvailability() {

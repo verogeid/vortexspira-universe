@@ -106,10 +106,14 @@
 .detail-text-fragment.focus-current { 
     filter: none !important; 
     opacity: 1 !important;
-    border-left: 2px solid var(--color-text) !important;
-    box-shadow: -5px 0 10px -5px var(--color-shadow-disabled); 
-    color: var(--color-text) !important; 
     background-color: transparent; 
+
+    border-left: 3px dashed var(--color-text) !important;
+
+    outline: none !important;
+    box-shadow: -5px 0 10px -5px var(--color-shadow-disabled); 
+
+    color: var(--color-text) !important; 
 }
 
 .detail-text-fragment.focus-current-hover, 
@@ -194,13 +198,25 @@
     text-align: left; margin-right: 15px; flex-grow: 1;
 
     /* 🟢 NUEVO: Preparamos el espacio del borde transparente (igual que en los párrafos) */
-    border-left: 2px solid transparent;
+    border-left: 3px solid transparent;
     padding-left: 6px;
 
     /* 🟢 NUEVO: Aplicamos el mismo redondeo que tienen los textos */
     border-radius: 4px;
     
-    transition: border-color var(--animation-speed) ease;
+    transition: all var(--animation-speed) ease;
+}
+
+/* 1. Label de un Botón HABILITADO (Se pinta de color interactivo sólido) */
+.detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) .detail-action-text {
+    border-left-color: var(--color-primary);
+    border-left-style: solid;
+}
+
+/* 2. Label de un Botón DESHABILITADO (Se pinta de color silenciado a guiones) */
+.detail-action-item.focus-current:has(.detail-action-btn.disabled) .detail-action-text {
+    border-left-color: var(--color-text-muted);
+    border-left-style: dashed;
 }
 
 /* 🟢 NUEVO: Pintamos el borde del texto SOLO cuando la opción completa tiene el foco */
@@ -236,11 +252,11 @@
 
 .detail-action-btn:not(.disabled):focus-visible,
 .detail-action-item.focus-current .detail-action-btn:not(.disabled) { 
-    border-color: var(--color-primary);   
+    outline: none !important;
+    border-color: 3px solid var(--color-primary);   
     color: var(--color-primary) !important; 
     box-shadow: 0 0 15px var(--color-shadow-primary);
     transform: scale(1.1);
-    outline: none;
 }
 
 .detail-action-btn.disabled {
@@ -279,11 +295,12 @@
 
 .detail-action-btn.disabled:focus-visible,
 .detail-action-item.focus-current .detail-action-btn.disabled { 
-    outline: none;
-    transform: scale(1.03); 
-    border-color: var(--color-text); 
+    outline: none !important;
+    transform: scale(1.03);
+
+    border: 2px dashed var(--color-text-muted); 
+    color: var(--color-text-muted) !important; 
     box-shadow: 0 0 15px var(--color-shadow-disabled); 
-    color: var(--color-text); 
 }
 
 .action-icon {

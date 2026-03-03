@@ -100,4 +100,11 @@ body.app-loaded {
     transition: none !important;
 }
 
+/* 🛡️ ESCUDO DE CRISTAL: Bloqueo de UI durante saltos de columnas vacías */
+body.ui-blocked,
+body.ui-blocked * {
+    pointer-events: none !important;
+    touch-action: none !important; /* Bloquea gestos de scroll nativos en móvil */
+}
+
 /* --- styles/style-layout.css --- */

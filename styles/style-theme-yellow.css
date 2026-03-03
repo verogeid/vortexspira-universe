@@ -17,23 +17,23 @@ body[data-theme="yellow"] {
     --color-card-border: #FFFF00; 
     
     /* Foco y enlaces (Podemos usar un amarillo ligeramente anaranjado o mantenerlo puro pero invertido) */
-    --color-primary: #FFD700; /* Gold / Oro para diferenciar botones/foco */
-    --color-primary-bg: rgba(255, 215, 0, 0.15);
+    --color-primary: #FFFFFF; /* Gold / Oro para diferenciar botones/foco */
+    --color-primary-bg: rgba(255, 255, 255, 0.15);
     --color-shadow-primary: transparent; /* Sin sombras para evitar borrosidad */
     
     /* Elementos deshabilitados y mutados (Amarillo oscuro/sucio) */
-    --color-card-border-disabled: #808000; /* Olive */
-    --color-text-muted: #BDB76B; /* DarkKhaki */
+    --color-card-border-disabled: #CACA00; /* Olive */
+    --color-text-muted: #E6E600; /* DarkKhaki */
     --color-shadow-disabled: transparent;
     
     /* Iconos y Logo */
-    --color-icon-obras: #808000;
+    --color-icon-obras: #FFFF00;
     --color-logo-static: #FFFF00;
-    --color-logo-dynamic: #FFD700;
+    --color-logo-dynamic: #FFFFFF;
 
     /* Accesibilidad Modal */
     --color-a11y-selected-text: #000000; /* Texto negro sobre fondo amarillo al seleccionar */
-    --color-a11y-slider-track: #808000;
+    --color-a11y-slider-track: #CACA00;
     --color-a11y-slider-labels: var(--color-text-muted);
 
     /* Forzamos el comportamiento del navegador */

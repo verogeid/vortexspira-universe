@@ -4,40 +4,24 @@ import * as debug from './debug.js';
 import * as data from './data.js';
 import * as nav_base_details from './nav-base-details.js'; 
 
+/* --- code/nav-base.js --- */
 function _setupMacroFocusTracker() {
-    let focusTimeout;
+    const zones = {
+        'header': '#app-header',
+        'volver': '#vista-volver',
+        'central': '#vista-central',
+        'info': '#info-adicional',
+        'footer': 'footer',
+        'modal': '#a11y-modal-overlay'
+    };
 
     document.addEventListener('focusin', (e) => {
-        clearTimeout(focusTimeout);
-        
-        const target = e.target;
-        const zones = {
-            'header': '#app-header',
-            'volver': '#vista-volver',
-            'central': '#vista-central',
-            'info': '#info-adicional',
-            'footer': 'footer',
-            'modal': '#a11y-modal-overlay'
-        };
-
-        let activeZone = 'none';
+        // Buscamos a qué zona pertenece el elemento que acaba de recibir foco
         for (const [key, selector] of Object.entries(zones)) {
-            if (target.closest(selector)) {
-                activeZone = key;
+            if (e.target.closest(selector)) {
+                document.body.setAttribute('data-active-zone', key);
                 break;
             }
-        }
-        
-        // Etiquetamos el body para que el CSS reaccione
-        document.body.setAttribute('data-active-zone', activeZone);
-        
-        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, `📍 Macro-Zona activa: ${activeZone}`);
-    });
-
-    // Limpiar zona si el foco sale a elementos nulos (body/document)
-    document.addEventListener('focusout', (e) => {
-        if (!e.relatedTarget) {
-            document.body.setAttribute('data-active-zone', 'none');
         }
     });
 }

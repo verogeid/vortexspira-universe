@@ -81,6 +81,9 @@ export function handleSlideChangeEnd(swiper) {
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, 
                     `SWIPE: Columna vacía. Saltando (${_swipeDirection})...`);
 
+        // 🛡️ 1. LEVANTAMOS ESCUDOS: Bloqueamos teclado y ratón
+        this.blockUI();
+
         // 🟢 FIX A11Y: Solo anunciar si hay animación. Si el salto es instantáneo, 
         // sobra el aviso porque el usuario ya estará en la siguiente tarjeta útil.
         if (!data.SWIPER.prefersReducedMotion()) {
@@ -90,6 +93,11 @@ export function handleSlideChangeEnd(swiper) {
         
         _swipeDirection === 'next' ? swiper.slideNext(data.SWIPER.SLIDE_SPEED) : swiper.slidePrev(data.SWIPER.SLIDE_SPEED);
         return; 
+    }
+
+    // 🛡️ 2. BAJAMOS ESCUDOS: Hemos aterrizado en una columna con datos útiles
+    if (this.STATE.isUIBlocked) {
+        this.unblockUI();
     }
 
     // 🟢 LLEGADA EXITOSA: Activamos semáforo y disparamos al operario de mantenimiento
