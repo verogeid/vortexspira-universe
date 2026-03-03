@@ -4,173 +4,194 @@
    1. MODO SISTEMA OPERATIVO (Automático)
    ========================================================= */
 @media (forced-colors: active) {
-    
+    :root {
+        /* 🟢 MAPEO DE VARIABLES AL SISTEMA DE WINDOWS */
+        --color-primary: Highlight !important;
+        --color-primary-text: HighlightText !important;
+
+        --color-text: CanvasText !important;
+        --color-bg: Canvas !important;
+        --color-card-bg: Canvas !important;
+        --color-header-bg: Canvas !important;
+        --color-footer-text: CanvasText !important; 
+        
+        --color-card-border: LinkText !important;
+        
+        /* 🟢 SEMÁNTICA: Rellenos y deshabilitados usan GrayText */
+        --color-card-border-disabled: GrayText !important;
+        --color-border-placeholder: GrayText !important;
+        --color-text-muted: GrayText !important;
+        
+        --color-icon-obras: CanvasText !important;
+        --color-shadow-primary: transparent !important;
+        --color-shadow-disabled: transparent !important;
+
+        /* 🟢 VARIABLES DE BOTONES */
+        --color-btn-text: ButtonText !important;
+        --color-btn-face: ButtonFace !important;
+    }
+
     /* === 1. TARJETAS (Cards) y BOTÓN VOLVER FIJO === */
     .card,
     #card-volver-fija-elemento {
-        border: 2px dashed LinkText !important;
+        border: 2px dashed var(--color-card-border) !important;
     }
 
-    /* Foco en tarjeta habilitada -> Borde AZUL (Highlight) */
     .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
     .card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
     .card:not(.disabled):not([data-tipo="relleno"]).focus-current,
     #card-volver-fija-elemento:focus-visible,
     #card-volver-fija-elemento.focus-visible,
     #card-volver-fija-elemento.focus-current {
-        border: 4px solid Highlight !important; /* AZUL */
+        border: 4px solid var(--color-primary) !important;
         outline: none !important;
     }
 
-    /* Tarjeta Deshabilitada -> Borde GRIS (GrayText) */
     .card.disabled {
-        border: 2px dashed LinkText !important;
-        opacity: 1 !important; /* Opacidad 1 para ver bien el color */
-        color: GrayText !important;
+        border: 2px dashed var(--color-card-border-disabled) !important;
+        opacity: 1 !important; 
+        color: var(--color-card-border-disabled) !important;
     }
     
-    /* Foco en deshabilitada -> Borde BLANCO/TEXTO (CanvasText) */
     .card.disabled:focus-visible,
     .card.disabled.focus-visible {
-        border: 4px solid GrayText !important; /* BLANCO */
+        border: 4px solid var(--color-card-border-disabled) !important; 
     }
 
-    /* Tarjetas de Relleno/Breadcrumb -> Borde DISCONTINUO */
     .card[data-tipo="relleno"],
     .card.card-breadcrumb-vertical {
-        border: 2px dashed CanvasText !important;
+        border: 2px dashed var(--color-border-placeholder) !important;
         opacity: 0.6;
     }
 
     /* === 2. ICONOS (MÁSCARAS) === */
+    /* 🟢 FIX: .card-icon-lead eliminado para evitar el fondo blanco */
     .icon-vacio-card, 
-    .card-icon-lead, 
     .icon-obras-card,
     .icon-obras-header,
     .action-icon {
         forced-color-adjust: none;
-        background-color: CanvasText !important; /* Tinta Normal */
+        background-color: var(--color-text) !important; /* Tinta Base */
     }
 
-    /* Iconos Deshabilitados -> Tinta GRIS */
     .card.disabled .icon-vacio-card,
-    .card.disabled .card-icon-lead,
     .detail-action-btn.disabled .action-icon {
-        background-color: GrayText !important;
+        background-color: var(--color-card-border-disabled) !important;
     }
     
     /* === 3. BOTÓN A11Y === */
     #btn-config-accesibilidad {
         forced-color-adjust: none;
-        border: 2px solid ButtonText !important;
-        background-color: LinkText !important; /* Tinta Normal */
+        border: 2px solid var(--color-btn-text) !important;
+        background-color: var(--color-text) !important; /* Tinta Base */
     }
     #btn-config-accesibilidad:focus-visible {
-        border-color: Highlight !important;
-        background-color: Highlight !important; /* Tinta AZUL al foco */
+        border-color: var(--color-primary) !important;
+        background-color: var(--color-primary) !important; 
     }
 
     /* === 4. ENLACES (Info, Footer) === */
     #info-adicional summary, 
-    #info-adicional a,
-    footer a {
-        color: LinkText !important;
+    #info-adicional a {
+        color: var(--color-card-border) !important; /* LinkText */
         text-decoration: underline;
     }
 
     #info-adicional summary:focus, 
     #info-adicional a:focus,
-    #info-adicional a:focus-visible,
-    footer a:focus,
-    footer a:focus-visible {
-        color: Highlight !important; 
-        outline: 2px dotted Highlight !important;
+    #info-adicional a:focus-visible {
+        color: var(--color-primary) !important; 
         background-color: transparent !important;
         text-decoration: none;
     }
 
-    .footer-social-link::before {
-        forced-color-adjust: none;
-        background-color: LinkText !important; 
+    footer a.footer-license-link {
+        outline: none !important; 
+        border: 2px solid transparent !important; 
     }
-    .footer-social-link:focus-visible::before,
-    .footer-social-link:hover::before {
-        background-color: Highlight !important; 
+
+    footer a.footer-license-link:focus-visible,
+    footer a.footer-license-link:hover {
+        border: 2px solid var(--color-primary) !important; 
+        background-color: transparent !important;
+    }
+
+    .footer-social-link {
+        forced-color-adjust: none;
+        background-color: var(--color-text) !important; 
+        outline: none !important; 
+        border: none !important;  
+    }
+    
+    .footer-social-link:focus-visible,
+    .footer-social-link:hover {
+        background-color: var(--color-primary) !important; 
+        outline: none !important; 
+        border: none !important;
     }
 
     /* === 5. VISTA DETALLE === */
-
-    /* 🟢 Textos informativos (Solo lectura -> Gris Discontinuo) */
     .detail-text-fragment {
-        /* Dejamos el espacio preparado para que el layout no salte */
         border-left: 3px solid transparent !important;
     }
 
     .detail-text-fragment:focus-visible,
     .detail-text-fragment.focus-current {
-        border-left: 3px dashed GrayText !important; 
+        border-left: 3px dashed var(--color-card-border-disabled) !important; 
         background-color: transparent !important;
-        outline: none !important; /* Vital para quitar el recuadro nativo de Windows */
+        outline: none !important; 
     }
 
-    /* 🟢 Labels de Acción (Borde izquierdo) */
     .detail-action-text {
         border-left: 3px solid transparent !important;
     }
 
-    /* Opcion Habilitada -> Highlight (Azul por defecto en Windows) Sólido */
     .detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) .detail-action-text {
-        border-left: 3px solid Highlight !important;
+        border-left: 3px solid var(--color-primary) !important;
     }
 
-    /* Opción Deshabilitada -> GrayText (Gris) Discontinuo */
     .detail-action-item.focus-current:has(.detail-action-btn.disabled) .detail-action-text {
-        border-left: 3px dashed GrayText !important;
+        border-left: 3px dashed var(--color-card-border-disabled) !important;
     }
 
-    /* 🟢 Botones Físicos (Reposo y Foco) */
-    
-    /* 1. Botón Habilitado - Reposo */
     .detail-action-btn:not(.disabled) {
-        border: 2px solid CanvasText !important;
+        border: 2px solid var(--color-card-border) !important;
     }
     
-    /* 2. Botón Habilitado - Foco (Directo o al seleccionar la fila) */
     .detail-action-btn:not(.disabled):focus-visible,
     .detail-action-item.focus-current .detail-action-btn:not(.disabled) {
-        border: 4px solid Highlight !important;
+        border: 4px solid var(--color-primary) !important;
     }
     
-    /* Sincronizar el Icono del botón Habilitado */
     .detail-action-btn:not(.disabled):focus-visible .action-icon,
     .detail-action-item.focus-current .detail-action-btn:not(.disabled) .action-icon {
-        background-color: Highlight !important;
+        background-color: var(--color-primary) !important;
     }
 
-    /* 3. Botón Deshabilitado - Reposo */
     .detail-action-btn.disabled {
-        border: 2px dashed GrayText !important;
+        border: 2px dashed var(--color-card-border-disabled) !important;
     }
 
-    /* 4. Botón Deshabilitado - Foco (Directo o al seleccionar la fila) */
     .detail-action-btn.disabled:focus-visible,
     .detail-action-item.focus-current .detail-action-btn.disabled {
-        border: 4px dashed GrayText !important;
+        border: 4px dashed var(--color-card-border-disabled) !important;
     }
     
-    /* Sincronizar el Icono del botón Deshabilitado */
     .detail-action-btn.disabled:focus-visible .action-icon,
     .detail-action-item.focus-current .detail-action-btn.disabled .action-icon {
-        background-color: GrayText !important;
+        background-color: var(--color-card-border-disabled) !important;
     }
 
     #a11y-reset { 
-        background-color: ButtonText; 
-        border: 2px solid ButtonText; 
+        background-color: var(--color-btn-text) !important; 
+        color: var(--color-btn-face) !important; /* Texto invertido para lectura */
+        border: 2px solid var(--color-btn-text) !important; 
     }
-    #a11y-reset:hover { 
-        background-color: Highlight; 
-        border-color: Highlight; 
+    #a11y-reset:hover,
+    #a11y-reset:focus-visible { 
+        background-color: var(--color-primary) !important; 
+        border-color: var(--color-primary) !important; 
+        color: var(--color-primary-text) !important; /* Color de texto sobre Highlight */
     }
 }
 
@@ -178,18 +199,36 @@
 /* =========================================================
    2. MODO MANUAL (Seleccionado en Modal A11y)
    ========================================================= */
-
-/* Forzar base de colores del sistema si el usuario lo activa a mano */
 body[data-theme="forced"] {
+    --color-primary: Highlight !important;
+    --color-primary-text: HighlightText !important;
+    
+    --color-text: CanvasText !important;
+    --color-bg: Canvas !important;
+    --color-card-bg: Canvas !important;
+    --color-header-bg: Canvas !important;
+    --color-footer-text: CanvasText !important; 
+    
+    --color-card-border: LinkText !important;
+    --color-card-border-disabled: GrayText !important;
+    --color-border-placeholder: GrayText !important;
+    --color-text-muted: GrayText !important;
+    
+    --color-icon-obras: CanvasText !important;
+    --color-shadow-primary: transparent !important;
+    --color-shadow-disabled: transparent !important;
+
+    --color-btn-text: ButtonText !important;
+    --color-btn-face: ButtonFace !important;
+
     background-color: Canvas !important;
     color: CanvasText !important;
     color-scheme: light dark;
 }
 
-/* === 1. TARJETAS (Cards) y BOTÓN VOLVER FIJO === */
 body[data-theme="forced"] .card,
 body[data-theme="forced"] #card-volver-fija-elemento {
-    border: 2px dashed LinkText !important;
+    border: 2px dashed var(--color-card-border) !important;
 }
 
 body[data-theme="forced"] .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
@@ -198,145 +237,149 @@ body[data-theme="forced"] .card:not(.disabled):not([data-tipo="relleno"]).focus-
 body[data-theme="forced"] #card-volver-fija-elemento:focus-visible,
 body[data-theme="forced"] #card-volver-fija-elemento.focus-visible,
 body[data-theme="forced"] #card-volver-fija-elemento.focus-current {
-    border: 4px solid Highlight !important; 
+    border: 4px solid var(--color-primary) !important; 
     outline: none !important;
 }
 
 body[data-theme="forced"] .card.disabled {
-    border: 2px dashed LinkText !important;
+    border: 2px dashed var(--color-card-border-disabled) !important;
     opacity: 1 !important; 
-    color: GrayText !important;
+    color: var(--color-card-border-disabled) !important;
 }
 
 body[data-theme="forced"] .card.disabled:focus-visible,
 body[data-theme="forced"] .card.disabled.focus-visible {
-    border: 4px solid GrayText !important; 
+    border: 4px solid var(--color-card-border-disabled) !important; 
 }
 
 body[data-theme="forced"] .card[data-tipo="relleno"],
 body[data-theme="forced"] .card.card-breadcrumb-vertical {
-    border: 2px dashed CanvasText !important;
+    border: 2px dashed var(--color-border-placeholder) !important;
     opacity: 0.6;
 }
 
-/* === 2. ICONOS (MÁSCARAS) === */
 body[data-theme="forced"] .icon-vacio-card, 
-body[data-theme="forced"] .card-icon-lead, 
 body[data-theme="forced"] .icon-obras-card,
 body[data-theme="forced"] .icon-obras-header,
 body[data-theme="forced"] .action-icon {
     forced-color-adjust: none;
-    background-color: CanvasText !important; 
+    background-color: var(--color-text) !important; 
 }
 
 body[data-theme="forced"] .card.disabled .icon-vacio-card,
-body[data-theme="forced"] .card.disabled .card-icon-lead,
 body[data-theme="forced"] .detail-action-btn.disabled .action-icon {
-    background-color: GrayText !important;
+    background-color: var(--color-card-border-disabled) !important;
 }
 
-/* === 3. BOTÓN A11Y === */
 body[data-theme="forced"] #btn-config-accesibilidad {
     forced-color-adjust: none;
-    border: 2px solid ButtonText !important;
-    background-color: LinkText !important; 
+    border: 2px solid var(--color-btn-text) !important;
+    background-color: var(--color-text) !important; 
 }
 body[data-theme="forced"] #btn-config-accesibilidad:focus-visible {
-    border-color: Highlight !important;
-    background-color: Highlight !important; 
+    border-color: var(--color-primary) !important;
+    background-color: var(--color-primary) !important; 
 }
 
-/* === 4. ENLACES (Info, Footer) === */
 body[data-theme="forced"] #info-adicional summary, 
-body[data-theme="forced"] #info-adicional a,
-body[data-theme="forced"] footer a {
-    color: LinkText !important;
+body[data-theme="forced"] #info-adicional a {
+    color: var(--color-card-border) !important;
     text-decoration: underline;
 }
 
 body[data-theme="forced"] #info-adicional summary:focus, 
 body[data-theme="forced"] #info-adicional a:focus,
-body[data-theme="forced"] #info-adicional a:focus-visible,
-body[data-theme="forced"] footer a:focus,
-body[data-theme="forced"] footer a:focus-visible {
-    color: Highlight !important; 
-    outline: 2px dotted Highlight !important;
+body[data-theme="forced"] #info-adicional a:focus-visible {
+    color: var(--color-primary) !important; 
     background-color: transparent !important;
     text-decoration: none;
 }
 
-body[data-theme="forced"] .footer-social-link::before {
+body[data-theme="forced"] footer a.footer-license-link {
+    outline: none !important; 
+    border: 2px solid transparent !important; 
+}
+
+body[data-theme="forced"] footer a.footer-license-link:focus-visible,
+body[data-theme="forced"] footer a.footer-license-link:hover {
+    border: 2px solid var(--color-primary) !important; 
+    background-color: transparent !important;
+}
+
+body[data-theme="forced"] .footer-social-link {
     forced-color-adjust: none;
-    background-color: LinkText !important; 
-}
-body[data-theme="forced"] .footer-social-link:focus-visible::before,
-body[data-theme="forced"] .footer-social-link:hover::before {
-    background-color: Highlight !important; 
+    background-color: var(--color-text) !important; 
+    outline: none !important;
+    border: none !important;
 }
 
-/* === 5. VISTA DETALLE === */
+body[data-theme="forced"] .footer-social-link:focus-visible,
+body[data-theme="forced"] .footer-social-link:hover {
+    background-color: var(--color-primary) !important; 
+    outline: none !important;
+    border: none !important;
+}
 
-/* 🟢 Textos informativos */
 body[data-theme="forced"] .detail-text-fragment {
     border-left: 3px solid transparent !important;
 }
 
 body[data-theme="forced"] .detail-text-fragment:focus-visible,
 body[data-theme="forced"] .detail-text-fragment.focus-current {
-    border-left: 3px dashed GrayText !important; 
+    border-left: 3px dashed var(--color-card-border-disabled) !important; 
     background-color: transparent !important;
     outline: none !important;
 }
 
-/* 🟢 Labels de Acción */
 body[data-theme="forced"] .detail-action-text {
     border-left: 3px solid transparent !important;
 }
 
 body[data-theme="forced"] .detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) .detail-action-text {
-    border-left: 3px solid Highlight !important;
+    border-left: 3px solid var(--color-primary) !important;
 }
 
 body[data-theme="forced"] .detail-action-item.focus-current:has(.detail-action-btn.disabled) .detail-action-text {
-    border-left: 3px dashed GrayText !important;
+    border-left: 3px dashed var(--color-card-border-disabled) !important;
 }
 
-/* 🟢 Botones Físicos */
 body[data-theme="forced"] .detail-action-btn:not(.disabled) {
-    border: 2px solid CanvasText !important;
+    border: 2px solid var(--color-card-border) !important;
 }
 
 body[data-theme="forced"] .detail-action-btn:not(.disabled):focus-visible,
 body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn:not(.disabled) {
-    border: 2px solid Highlight !important;
+    border: 4px solid var(--color-primary) !important;
 }
 
 body[data-theme="forced"] .detail-action-btn:not(.disabled):focus-visible .action-icon,
 body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn:not(.disabled) .action-icon {
-    background-color: Highlight !important;
+    background-color: var(--color-primary) !important;
 }
 
 body[data-theme="forced"] .detail-action-btn.disabled {
-    border: 2px dashed GrayText !important;
+    border: 2px dashed var(--color-card-border-disabled) !important;
 }
 
 body[data-theme="forced"] .detail-action-btn.disabled:focus-visible,
 body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn.disabled {
-    border: 2px dashed GrayText !important;
+    border: 4px dashed var(--color-card-border-disabled) !important;
 }
 
 body[data-theme="forced"] .detail-action-btn.disabled:focus-visible .action-icon,
 body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn.disabled .action-icon {
-    background-color: GrayText !important;
+    background-color: var(--color-card-border-disabled) !important;
 }
 
 body[data-theme="forced"] #a11y-reset { 
-    background-color: ButtonText; 
-    border: 2px solid ButtonText; 
+    background-color: var(--color-btn-text) !important; 
+    color: var(--color-btn-face) !important;
+    border: 2px solid var(--color-btn-text) !important; 
 }
-body[data-theme="forced"] #a11y-reset:hover { 
-    background-color: Highlight; 
-    border-color: Highlight; 
+body[data-theme="forced"] #a11y-reset:hover,
+body[data-theme="forced"] #a11y-reset:focus-visible { 
+    background-color: var(--color-primary) !important; 
+    border-color: var(--color-primary) !important; 
+    color: var(--color-primary-text) !important;
 }
-
 /* --- styles/style-theme-forced-colors.css --- */

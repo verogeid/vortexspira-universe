@@ -147,15 +147,26 @@ export function _updateDetailFocusState(appInstance, targetOverride = null) {
         if (!isDestinationSame) {
             debug.log('nav_base_details', debug.DEBUG_LEVELS.BASIC, 
                 `[TRACE ${traceId}-UDF] 🎥 setTranslate: ${physicalTrans.toFixed(1)} -> ${newTrans.toFixed(1)}`);
-            appInstance.STATE.isAutoScrolling = true;
+            
+                // 🛡️ 1. LEVANTAR ESCUDO GLOBAL: Bloqueamos teclado, ratón y touch
+            if (typeof appInstance.blockUI === 'function') {
+                appInstance.blockUI();
+            }
             
             swiper.setTransition(data.SWIPER.SLIDE_SPEED || 300); 
             swiper.setTranslate(newTrans);
             swiper.updateProgress();
 
+            // 🛡️ 2. BAJAR ESCUDO: Cuando termina la animación
             clearTimeout(appInstance.STATE._autoScrollTimeout);
+
             appInstance.STATE._autoScrollTimeout = setTimeout(() => {
-                appInstance.STATE.isAutoScrolling = false;
+                if (typeof appInstance.unblockUI === 'function') {
+                    appInstance.unblockUI();
+                }
+
+                // Actualizamos visuales post-animación
+                swiper.update();
                 
                 debug.log('nav_base_details', debug.DEBUG_LEVELS.BASIC, 
                     `[TRACE ${traceId}-UDF] 🛡️ Escudo bajado.`);
