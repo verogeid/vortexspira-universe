@@ -5,10 +5,10 @@
    ========================================================= */
 @media (forced-colors: active) {
     :root {
-        /* 🟢 MAPEO DE VARIABLES AL SISTEMA DE WINDOWS */
+        /* 🟢 MAPEO SEMÁNTICO AL SISTEMA DE WINDOWS */
         --color-primary: Highlight !important;
         --color-primary-text: HighlightText !important;
-
+        
         --color-text: CanvasText !important;
         --color-bg: Canvas !important;
         --color-card-bg: Canvas !important;
@@ -17,24 +17,26 @@
         
         --color-card-border: LinkText !important;
         
-        /* 🟢 SEMÁNTICA: Rellenos y deshabilitados usan GrayText */
+        /* Semántica de atenuados (Gris) */
         --color-card-border-disabled: GrayText !important;
         --color-border-placeholder: GrayText !important;
         --color-text-muted: GrayText !important;
         
         --color-icon-obras: CanvasText !important;
+        
+        /* Semántica de Botones Nativos */
+        --color-btn-face: ButtonFace !important;
+        --color-btn-text: ButtonText !important;
+
         --color-shadow-primary: transparent !important;
         --color-shadow-disabled: transparent !important;
 
-        /* 🟢 VARIABLES DE BOTONES */
-        --color-btn-text: ButtonText !important;
-        --color-btn-face: ButtonFace !important;
+        --color-a11y-selected-text: #000000;
     }
 
-    /* === 1. TARJETAS (Cards) y BOTÓN VOLVER FIJO === */
-    .card,
-    #card-volver-fija-elemento {
-        border: 2px dashed var(--color-card-border) !important;
+    /* === 1. TARJETAS === */
+    .card, #card-volver-fija-elemento {
+        border: 2px solid var(--color-card-border) !important;
     }
 
     .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
@@ -43,63 +45,66 @@
     #card-volver-fija-elemento:focus-visible,
     #card-volver-fija-elemento.focus-visible,
     #card-volver-fija-elemento.focus-current {
-        border: 4px solid var(--color-primary) !important;
+        border: var(--border-width-focus) solid var(--color-primary) !important;
         outline: none !important;
     }
 
     .card.disabled {
-        border: 2px dashed var(--color-card-border-disabled) !important;
+        border: var(--border-width-no-focus) solid var(--color-card-border-disabled) !important;
         opacity: 1 !important; 
         color: var(--color-card-border-disabled) !important;
     }
     
-    .card.disabled:focus-visible,
-    .card.disabled.focus-visible {
-        border: 4px solid var(--color-card-border-disabled) !important; 
+    .card.disabled:focus-visible, .card.disabled.focus-visible {
+        border: var(--border-width-focus) solid var(--color-card-border-disabled) !important; 
     }
 
-    .card[data-tipo="relleno"],
-    .card.card-breadcrumb-vertical {
-        border: 2px dashed var(--color-border-placeholder) !important;
+    .card[data-tipo="relleno"], .card.card-breadcrumb-vertical {
+        border: var(--border-width-no-focus) dashed var(--color-border-placeholder) !important;
         opacity: 0.6;
     }
 
-    /* === 2. ICONOS (MÁSCARAS) === */
-    /* 🟢 FIX: .card-icon-lead eliminado para evitar el fondo blanco */
+    /* === 2. ICONOS === */
+    /* 🟢 SOLO MÁSCARAS SVG (Inyección de tinta) */
     .icon-vacio-card, 
     .icon-obras-card,
     .icon-obras-header,
     .action-icon {
         forced-color-adjust: none;
-        background-color: var(--color-text) !important; /* Tinta Base */
+        background-color: var(--color-text) !important; 
     }
 
     .card.disabled .icon-vacio-card,
     .detail-action-btn.disabled .action-icon {
         background-color: var(--color-card-border-disabled) !important;
     }
+
+    /* 🟢 ICONOS DE TEXTO/EMOJI (Transparencia obligatoria) */
+    .card-icon-lead {
+        background-color: transparent !important;
+        color: var(--color-text) !important;
+    }
     
     /* === 3. BOTÓN A11Y === */
     #btn-config-accesibilidad {
         forced-color-adjust: none;
-        border: 2px solid var(--color-btn-text) !important;
-        background-color: var(--color-text) !important; /* Tinta Base */
+        border: var(--border-width-no-focus) solid var(--color-btn-text) !important;
+        background-color: var(--color-bg) !important; 
+        color: var(--color-btn-text) !important;
     }
     #btn-config-accesibilidad:focus-visible {
         border-color: var(--color-primary) !important;
         background-color: var(--color-primary) !important; 
+        color: var(--color-primary-text) !important;
     }
 
-    /* === 4. ENLACES (Info, Footer) === */
-    #info-adicional summary, 
-    #info-adicional a {
-        color: var(--color-card-border) !important; /* LinkText */
+    /* === 4. ENLACES === */
+    #info-adicional summary, #info-adicional a {
+        color: var(--color-card-border) !important;
         text-decoration: underline;
     }
 
-    #info-adicional summary:focus, 
-    #info-adicional a:focus,
-    #info-adicional a:focus-visible {
+    #info-adicional summary:focus, #info-adicional a:focus, #info-adicional a:focus-visible {
         color: var(--color-primary) !important; 
         background-color: transparent !important;
         text-decoration: none;
@@ -107,94 +112,83 @@
 
     footer a.footer-license-link {
         outline: none !important; 
-        border: 2px solid transparent !important; 
+        border: var(--border-width-no-focus) solid transparent !important; 
     }
 
-    footer a.footer-license-link:focus-visible,
-    footer a.footer-license-link:hover {
-        border: 2px solid var(--color-primary) !important; 
+    footer a.footer-license-link:focus-visible, footer a.footer-license-link:hover {
+        border: var(--border-width-no-focus) solid var(--color-primary) !important; 
         background-color: transparent !important;
     }
 
     .footer-social-link {
         forced-color-adjust: none;
         background-color: var(--color-text) !important; 
-        outline: none !important; 
-        border: none !important;  
+        outline: none !important; border: none !important;  
     }
     
-    .footer-social-link:focus-visible,
+    .footer-social-link:focus-visible, 
     .footer-social-link:hover {
         background-color: var(--color-primary) !important; 
-        outline: none !important; 
-        border: none !important;
+        outline: none !important; border: none !important;
     }
 
     /* === 5. VISTA DETALLE === */
-    .detail-text-fragment {
-        border-left: 3px solid transparent !important;
+    .detail-text-fragment { 
+        border-left: var(--border-width-focus) solid transparent !important; 
     }
-
-    .detail-text-fragment:focus-visible,
+    .detail-text-fragment:focus-visible, 
     .detail-text-fragment.focus-current {
-        border-left: 3px dashed var(--color-card-border-disabled) !important; 
-        background-color: transparent !important;
+        border-left: var(--border-width-focus) solid var(--color-card-border-disabled) !important; 
+        background-color: transparent !important; 
         outline: none !important; 
     }
 
-    .detail-action-text {
-        border-left: 3px solid transparent !important;
+    .detail-action-text { 
+        border-left: var(--border-width-focus) solid transparent !important; 
     }
-
     .detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) .detail-action-text {
-        border-left: 3px solid var(--color-primary) !important;
+        border-left: var(--border-width-focus) solid var(--color-primary) !important;
     }
-
     .detail-action-item.focus-current:has(.detail-action-btn.disabled) .detail-action-text {
-        border-left: 3px dashed var(--color-card-border-disabled) !important;
+        border-left: var(--border-width-focus) solid var(--color-card-border-disabled) !important;
     }
 
-    .detail-action-btn:not(.disabled) {
-        border: 2px solid var(--color-card-border) !important;
+    .detail-action-btn:not(.disabled) { 
+        border: var(--border-width-no-focus) solid var(--color-card-border) !important; 
     }
-    
-    .detail-action-btn:not(.disabled):focus-visible,
+    .detail-action-btn:not(.disabled):focus-visible, 
     .detail-action-item.focus-current .detail-action-btn:not(.disabled) {
-        border: 4px solid var(--color-primary) !important;
+        border: var(--border-width-no-focus) solid var(--color-primary) !important;
     }
-    
-    .detail-action-btn:not(.disabled):focus-visible .action-icon,
+    .detail-action-btn:not(.disabled):focus-visible .action-icon, 
     .detail-action-item.focus-current .detail-action-btn:not(.disabled) .action-icon {
         background-color: var(--color-primary) !important;
     }
 
-    .detail-action-btn.disabled {
-        border: 2px dashed var(--color-card-border-disabled) !important;
+    .detail-action-btn.disabled { 
+        border: var(--border-width-no-focus) solid var(--color-card-border-disabled) !important; 
     }
-
-    .detail-action-btn.disabled:focus-visible,
+    .detail-action-btn.disabled:focus-visible, 
     .detail-action-item.focus-current .detail-action-btn.disabled {
-        border: 4px dashed var(--color-card-border-disabled) !important;
+        border: var(--border-width-no-focus) solid var(--color-card-border-disabled) !important;
     }
-    
-    .detail-action-btn.disabled:focus-visible .action-icon,
+    .detail-action-btn.disabled:focus-visible .action-icon, 
     .detail-action-item.focus-current .detail-action-btn.disabled .action-icon {
         background-color: var(--color-card-border-disabled) !important;
     }
 
+    /* 🟢 BOTÓN RESET (Tratado como máscara SVG normal) */
     #a11y-reset { 
-        background-color: var(--color-btn-text) !important; 
-        color: var(--color-btn-face) !important; /* Texto invertido para lectura */
-        border: 2px solid var(--color-btn-text) !important; 
+        forced-color-adjust: none;
+        background-color: var(--color-text) !important; /* Tinta del icono */
+        border-color: var(--color-text) !important; 
     }
-    #a11y-reset:hover,
+    #a11y-reset:hover, 
     #a11y-reset:focus-visible { 
-        background-color: var(--color-primary) !important; 
+        background-color: var(--color-primary) !important; /* Tinta al foco */
         border-color: var(--color-primary) !important; 
-        color: var(--color-primary-text) !important; /* Color de texto sobre Highlight */
     }
 }
-
 
 /* =========================================================
    2. MODO MANUAL (Seleccionado en Modal A11y)
@@ -215,171 +209,165 @@ body[data-theme="forced"] {
     --color-text-muted: GrayText !important;
     
     --color-icon-obras: CanvasText !important;
+    
+    --color-btn-face: ButtonFace !important;
+    --color-btn-text: ButtonText !important;
+
     --color-shadow-primary: transparent !important;
     --color-shadow-disabled: transparent !important;
 
-    --color-btn-text: ButtonText !important;
-    --color-btn-face: ButtonFace !important;
+    --color-a11y-selected-text: #000000;
 
     background-color: Canvas !important;
     color: CanvasText !important;
     color-scheme: light dark;
 }
 
-body[data-theme="forced"] .card,
-body[data-theme="forced"] #card-volver-fija-elemento {
-    border: 2px dashed var(--color-card-border) !important;
+/* Duplicado exacto de las reglas para el atributo data-theme */
+body[data-theme="forced"] .card, 
+body[data-theme="forced"] #card-volver-fija-elemento { 
+    border: var(--border-width-no-focus) solid var(--color-card-border) !important; 
 }
-
-body[data-theme="forced"] .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
-body[data-theme="forced"] .card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
-body[data-theme="forced"] .card:not(.disabled):not([data-tipo="relleno"]).focus-current,
-body[data-theme="forced"] #card-volver-fija-elemento:focus-visible,
-body[data-theme="forced"] #card-volver-fija-elemento.focus-visible,
-body[data-theme="forced"] #card-volver-fija-elemento.focus-current {
-    border: 4px solid var(--color-primary) !important; 
-    outline: none !important;
+body[data-theme="forced"] .card:not(.disabled):not([data-tipo="relleno"]).focus-visible, 
+body[data-theme="forced"] .card:not(.disabled):not([data-tipo="relleno"]):focus-visible, 
+body[data-theme="forced"] .card:not(.disabled):not([data-tipo="relleno"]).focus-current, 
+body[data-theme="forced"] #card-volver-fija-elemento:focus-visible, 
+body[data-theme="forced"] #card-volver-fija-elemento.focus-visible, 
+body[data-theme="forced"] #card-volver-fija-elemento.focus-current { 
+    border: var(--border-width-focus) solid var(--color-primary) !important; 
+    outline: none !important; 
 }
-
-body[data-theme="forced"] .card.disabled {
-    border: 2px dashed var(--color-card-border-disabled) !important;
+body[data-theme="forced"] .card.disabled { 
+    border: var(--border-width-no-focus) solid var(--color-card-border-disabled) !important; 
     opacity: 1 !important; 
-    color: var(--color-card-border-disabled) !important;
+    color: var(--color-card-border-disabled) !important; 
 }
-
-body[data-theme="forced"] .card.disabled:focus-visible,
-body[data-theme="forced"] .card.disabled.focus-visible {
-    border: 4px solid var(--color-card-border-disabled) !important; 
+body[data-theme="forced"] .card.disabled:focus-visible, 
+body[data-theme="forced"] .card.disabled.focus-visible { 
+    border: var(--border-width-focus) solid var(--color-card-border-disabled) !important; 
 }
-
-body[data-theme="forced"] .card[data-tipo="relleno"],
-body[data-theme="forced"] .card.card-breadcrumb-vertical {
-    border: 2px dashed var(--color-border-placeholder) !important;
-    opacity: 0.6;
+body[data-theme="forced"] .card[data-tipo="relleno"], 
+body[data-theme="forced"] .card.card-breadcrumb-vertical { 
+    border: var(--border-width-no-focus) dashed var(--color-border-placeholder) !important; 
+    opacity: 0.6; 
 }
 
 body[data-theme="forced"] .icon-vacio-card, 
-body[data-theme="forced"] .icon-obras-card,
-body[data-theme="forced"] .icon-obras-header,
-body[data-theme="forced"] .action-icon {
-    forced-color-adjust: none;
+body[data-theme="forced"] .icon-obras-card, 
+body[data-theme="forced"] .icon-obras-header, 
+body[data-theme="forced"] .action-icon { 
+    forced-color-adjust: none; 
     background-color: var(--color-text) !important; 
 }
-
-body[data-theme="forced"] .card.disabled .icon-vacio-card,
-body[data-theme="forced"] .detail-action-btn.disabled .action-icon {
-    background-color: var(--color-card-border-disabled) !important;
+body[data-theme="forced"] .card.disabled .icon-vacio-card, 
+body[data-theme="forced"] .detail-action-btn.disabled .action-icon { 
+    background-color: var(--color-card-border-disabled) !important; 
+}
+body[data-theme="forced"] .card-icon-lead { 
+    background-color: transparent !important; 
+    color: var(--color-text) !important; 
 }
 
-body[data-theme="forced"] #btn-config-accesibilidad {
-    forced-color-adjust: none;
-    border: 2px solid var(--color-btn-text) !important;
-    background-color: var(--color-text) !important; 
+body[data-theme="forced"] #btn-config-accesibilidad { 
+    forced-color-adjust: none; 
+    border: var(--border-width-no-focus) solid var(--color-btn-text) !important; 
+    background-color: var(--color-btn-text) !important; 
+    color: var(--color-bg) !important; 
 }
-body[data-theme="forced"] #btn-config-accesibilidad:focus-visible {
-    border-color: var(--color-primary) !important;
+body[data-theme="forced"] #btn-config-accesibilidad:focus-visible { 
+    border-color: var(--color-primary) !important; 
     background-color: var(--color-primary) !important; 
+    color: var(--color-primary-text) !important; 
 }
 
 body[data-theme="forced"] #info-adicional summary, 
-body[data-theme="forced"] #info-adicional a {
-    color: var(--color-card-border) !important;
-    text-decoration: underline;
+body[data-theme="forced"] #info-adicional a { 
+    color: var(--color-card-border) !important; 
+    text-decoration: underline; 
 }
-
 body[data-theme="forced"] #info-adicional summary:focus, 
-body[data-theme="forced"] #info-adicional a:focus,
-body[data-theme="forced"] #info-adicional a:focus-visible {
+body[data-theme="forced"] #info-adicional a:focus, 
+body[data-theme="forced"] #info-adicional a:focus-visible { 
     color: var(--color-primary) !important; 
-    background-color: transparent !important;
-    text-decoration: none;
+    background-color: transparent !important; 
+    text-decoration: none; 
 }
-
-body[data-theme="forced"] footer a.footer-license-link {
+body[data-theme="forced"] footer a.footer-license-link { 
     outline: none !important; 
-    border: 2px solid transparent !important; 
+    border: var(--border-width-no-focus) solid transparent !important; 
+}
+body[data-theme="forced"] footer a.footer-license-link:focus-visible, 
+body[data-theme="forced"] footer a.footer-license-link:hover { 
+    border: var(--border-width-no-focus) solid var(--color-primary) !important; 
+    background-color: transparent !important; 
 }
 
-body[data-theme="forced"] footer a.footer-license-link:focus-visible,
-body[data-theme="forced"] footer a.footer-license-link:hover {
-    border: 2px solid var(--color-primary) !important; 
-    background-color: transparent !important;
-}
-
-body[data-theme="forced"] .footer-social-link {
-    forced-color-adjust: none;
+body[data-theme="forced"] .footer-social-link { 
+    forced-color-adjust: none; 
     background-color: var(--color-text) !important; 
-    outline: none !important;
-    border: none !important;
+    outline: none !important; 
+    border: none !important; 
 }
-
-body[data-theme="forced"] .footer-social-link:focus-visible,
-body[data-theme="forced"] .footer-social-link:hover {
+body[data-theme="forced"] .footer-social-link:focus-visible, 
+body[data-theme="forced"] .footer-social-link:hover { 
     background-color: var(--color-primary) !important; 
-    outline: none !important;
-    border: none !important;
+    outline: none !important; 
+    border: none !important; 
 }
 
-body[data-theme="forced"] .detail-text-fragment {
-    border-left: 3px solid transparent !important;
+body[data-theme="forced"] .detail-text-fragment { 
+    border-left: var(--border-width-focus) solid transparent !important; 
+}
+body[data-theme="forced"] .detail-text-fragment:focus-visible, 
+body[data-theme="forced"] .detail-text-fragment.focus-current { 
+    border-left: var(--border-width-focus) solid var(--color-card-border-disabled) !important; 
+    background-color: transparent !important; 
+    outline: none !important; 
 }
 
-body[data-theme="forced"] .detail-text-fragment:focus-visible,
-body[data-theme="forced"] .detail-text-fragment.focus-current {
-    border-left: 3px dashed var(--color-card-border-disabled) !important; 
-    background-color: transparent !important;
-    outline: none !important;
+body[data-theme="forced"] .detail-action-text { 
+    border-left: var(--border-width-focus) solid transparent !important; 
+}
+body[data-theme="forced"] .detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) .detail-action-text { 
+    border-left: var(--border-width-focus) solid var(--color-primary) !important; 
+}
+body[data-theme="forced"] .detail-action-item.focus-current:has(.detail-action-btn.disabled) .detail-action-text { 
+    border-left: var(--border-width-focus) solid var(--color-card-border-disabled) !important; 
 }
 
-body[data-theme="forced"] .detail-action-text {
-    border-left: 3px solid transparent !important;
+body[data-theme="forced"] .detail-action-btn:not(.disabled) { 
+    border: var(--border-width-no-focus) solid var(--color-card-border) !important; 
+}
+body[data-theme="forced"] .detail-action-btn:not(.disabled):focus-visible, 
+body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn:not(.disabled) { 
+    border: var(--border-width-focus) solid var(--color-primary) !important; 
+}
+body[data-theme="forced"] .detail-action-btn:not(.disabled):focus-visible .action-icon, 
+body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn:not(.disabled) .action-icon { 
+    background-color: var(--color-primary) !important; 
 }
 
-body[data-theme="forced"] .detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) .detail-action-text {
-    border-left: 3px solid var(--color-primary) !important;
+body[data-theme="forced"] .detail-action-btn.disabled { 
+    border: var(--border-width-no-focus) solid var(--color-card-border-disabled) !important; 
 }
-
-body[data-theme="forced"] .detail-action-item.focus-current:has(.detail-action-btn.disabled) .detail-action-text {
-    border-left: 3px dashed var(--color-card-border-disabled) !important;
+body[data-theme="forced"] .detail-action-btn.disabled:focus-visible, 
+body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn.disabled { 
+    border: var(--border-width-focus) solid var(--color-card-border-disabled) !important; 
 }
-
-body[data-theme="forced"] .detail-action-btn:not(.disabled) {
-    border: 2px solid var(--color-card-border) !important;
-}
-
-body[data-theme="forced"] .detail-action-btn:not(.disabled):focus-visible,
-body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn:not(.disabled) {
-    border: 4px solid var(--color-primary) !important;
-}
-
-body[data-theme="forced"] .detail-action-btn:not(.disabled):focus-visible .action-icon,
-body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn:not(.disabled) .action-icon {
-    background-color: var(--color-primary) !important;
-}
-
-body[data-theme="forced"] .detail-action-btn.disabled {
-    border: 2px dashed var(--color-card-border-disabled) !important;
-}
-
-body[data-theme="forced"] .detail-action-btn.disabled:focus-visible,
-body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn.disabled {
-    border: 4px dashed var(--color-card-border-disabled) !important;
-}
-
-body[data-theme="forced"] .detail-action-btn.disabled:focus-visible .action-icon,
-body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn.disabled .action-icon {
-    background-color: var(--color-card-border-disabled) !important;
+body[data-theme="forced"] .detail-action-btn.disabled:focus-visible .action-icon, 
+body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn.disabled .action-icon { 
+    background-color: var(--color-card-border-disabled) !important; 
 }
 
 body[data-theme="forced"] #a11y-reset { 
-    background-color: var(--color-btn-text) !important; 
-    color: var(--color-btn-face) !important;
-    border: 2px solid var(--color-btn-text) !important; 
+    forced-color-adjust: none;
+    background-color: var(--color-text) !important; /* Tinta del icono */
+    border-color: var(--color-text) !important; 
 }
-body[data-theme="forced"] #a11y-reset:hover,
+body[data-theme="forced"] #a11y-reset:hover, 
 body[data-theme="forced"] #a11y-reset:focus-visible { 
-    background-color: var(--color-primary) !important; 
+    background-color: var(--color-primary) !important; /* Tinta al foco */
     border-color: var(--color-primary) !important; 
-    color: var(--color-primary-text) !important;
 }
+
 /* --- styles/style-theme-forced-colors.css --- */

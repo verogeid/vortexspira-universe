@@ -4,7 +4,12 @@
     --scroll-beahavior: smooth !important;
     --transition-speed: 0.5s !important;
     --animation-speed: 0.3s !important;
-    --adj-block-opacity: 0.3;
+    --opacity: 0.3;
+
+    --border-width-focus: 4px !important;
+    --border-width-no-focus: 2px !important;
+    --zoom-width-focus-major: 0.2;
+    --zoom-width-focus-minnor: 0.02;
 
     /* 📐 VARIABLES ESTRUCTURALES BASE */
     --card-gap: 3vmin; 

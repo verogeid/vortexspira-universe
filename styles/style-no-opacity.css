@@ -2,7 +2,7 @@
 
 /* 🟢 1. PROTECCIÓN CONTRA FATIGA COGNITIVA: DESCRIPCIÓN DE CURSOS (noBlockOpacity) */
 body[data-no-block-opacity="true"] {
-    --adj-block-opacity: 1 !important;
+    --opacity: 1 !important;
 }
 
 /* Forzamos nitidez absoluta en detalles y el breadcrumb si este check está activo */
@@ -41,12 +41,12 @@ body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity=
 body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #vista-central,
 body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #info-adicional,
 body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) footer {
-    /* Si --adj-block-opacity es 0.3 -> Opacidad 0.65 */
-    /* Si --adj-block-opacity es 1.0 -> Opacidad 1.0 (No atenuar) */
-    opacity: calc(0.5 + (var(--adj-block-opacity) / 2));
+    /* Si --opacity es 0.3 -> Opacidad 0.65 */
+    /* Si --opacity es 1.0 -> Opacidad 1.0 (No atenuar) */
+    opacity: calc(0.5 + (var(--opacity) / 2));
     
     /* Usamos un valor fijo muy sutil que desaparece si la opacidad es 1 */
-    filter: grayscale(calc(0.3 * (1 - var(--adj-block-opacity, 0))));
+    filter: grayscale(calc(0.3 * (1 - var(--opacity, 0))));
     
     transition: opacity var(--transition-speed) ease, filter var(--transition-speed) ease;
 }

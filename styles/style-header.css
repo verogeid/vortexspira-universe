@@ -111,6 +111,12 @@ header h1 a:focus-visible .header-logo::after {
     background-color: var(--color-primary); 
     filter: drop-shadow(0 0 6px var(--color-shadow-primary));
 }
+header h1 a:hover .header-logo::after,
+header h1 a:focus-visible .header-logo::after,
+header h1 a:hover .header-logo::before,
+header h1 a:focus-visible .header-logo::before {
+    transform: scale(calc(1 + var(--zoom-width-focus-major)));
+}
 
 /* ICONO OBRAS */
 .icon-obras-header {
@@ -142,7 +148,7 @@ header h1 a:focus-visible .header-logo::after {
     flex-shrink: 0;
 
     padding: 0;
-    border: 1.5px solid var(--color-card-border) !important;
+    border: var(--border-width-no-focus) solid var(--color-card-border) !important;
     border-radius: 0.55em;
     background-color: var(--color-header-text); 
 
@@ -162,7 +168,7 @@ header h1 a:focus-visible .header-logo::after {
     border-color: var(--color-primary);
     box-shadow: 0 0 6px var(--color-shadow-primary);
     background-color: var(--color-primary);
-    transform: scale(1.15);
+    transform: scale(calc(1 + var(--zoom-width-focus-major)));
 }
 
 /* --- 🌍 BOTÓN IDIOMA (Nuevo Estilo Consistente) --- */
@@ -191,7 +197,7 @@ header h1 a:focus-visible .header-logo::after {
 
 #btn-lang-toggle:hover,
 #btn-lang-toggle:focus-visible {
-    transform: scale(1.15);
+    transform: scale(calc(1 + var(--zoom-width-focus-major)));
 }
 
 /* MÁSCARA DEL MUNDO (ICONO) */

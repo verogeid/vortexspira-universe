@@ -1,7 +1,7 @@
 /* --- styles/style-cards.css --- */
 
 .card {
-    border: 2px solid var(--color-card-border);
+    border: var(--border-width-no-focus) solid var(--color-card-border);
     background: var(--color-card-bg);
     padding: var(--card-padding); 
     border-radius: 12px;
@@ -71,8 +71,7 @@
     display: -webkit-box;
     display: block;
 
-    -webkit-line-clamp: var(--card-breadcrump-h3-line-clamp); 
-    line-clamp: var(--card-breadcrump-h3-line-clamp);
+    -webkit-line-clamp: var(--card-breadcrump-h3-line-clamp);  line-clamp: var(--card-breadcrump-h3-line-clamp);
     -webkit-box-orient: vertical;
     
     font-size: var(--card-breadcrump-vertical-h3-font-size);
@@ -147,67 +146,80 @@
 .card:not(.focus-visible) {
     filter: saturate(0.8);
 }
-
-/* Estados de Foco */
-.card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
-.card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
-.card:not(.disabled):not([data-tipo="relleno"]).focus-current { 
-    outline: none; 
-    border: 4px solid var(--color-primary);
-    background: var(--color-card-bg); 
-    transform: scale(1.03);
-    box-shadow: 0 0 25px var(--color-shadow-primary); 
-    color: var(--color-primary) !important; 
-}
-
-.card:not(.disabled):not([data-tipo="relleno"]):hover {
-    outline: none; 
-    border-color: var(--color-primary);
-    background: var(--color-card-bg); 
-    box-shadow: 0 0 25px var(--color-shadow-primary); 
-}
-
 .card.focus-visible {
     opacity: 1 !important;
     filter: saturate(1) !important;
 }
 
-.card.disabled {
-    border: 2px solid var(--color-card-border-disabled); 
-    background: var(--color-card-bg);
-    color: var(--color-text); 
+/* 🟢 REGLA 1: Card de RELLENO (Borde fino punteado) */
+.card[data-tipo="relleno"] {
+    border: var(--border-width-no-focus) dashed var(--color-border-placeholder) !important; 
+    background: transparent; 
+    pointer-events: none; 
+    cursor: default;
+}
+
+/* 🟢 REGLA 2: Card NO relleno (Borde fino continuo) - Estado Reposo */
+.card:not([data-tipo="relleno"]) {
+    border-style: solid;
+    border-width: var(--border-width-no-focus);
+    border-color: var(--color-card-border);
+}
+
+/* Reposo de Tarjeta Deshabilitada */
+.card.disabled:not([data-tipo="relleno"]) {
+    border-color: var(--color-card-border-disabled);
     opacity: 0.5;
 }
 
+
+/* 🟢 REGLA 3: HOVER (Transform, color, pero borde fino) */
+
+/* Hover Habilitada */
+.card:not(.disabled):not([data-tipo="relleno"]):hover {
+    outline: none; 
+    border-width: var(--border-width-no-focus); /* Borde fino */
+    border-color: var(--color-primary);
+    transform: scale(calc(1 + (var(--zoom-width-focus-minnor) * 2)));
+    box-shadow: 0 0 25px var(--color-shadow-primary); 
+}
+
+/* Hover Deshabilitada */
+.card.disabled:not([data-tipo="relleno"]):hover {
+    outline: none; 
+    border-width: var(--border-width-no-focus); /* Borde fino */
+    border-color: var(--color-card-border-disabled);
+    transform: scale(calc(1 + (var(--zoom-width-focus-minnor) * 2)));
+    box-shadow: 0 0 15px var(--color-shadow-disabled); 
+    opacity: 0.9; 
+}
+
+
+/* 🟢 REGLA 4: FOCO (Transform, color, y borde GRUESO) */
+
+/* Foco Habilitada */
+.card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
+.card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
+.card:not(.disabled):not([data-tipo="relleno"]).focus-current { 
+    outline: none; 
+    border-width: var(--border-width-focus) !important; /* Borde GRUESO */
+    border-color: var(--color-primary) !important;
+    transform: scale(calc(1 + (var(--zoom-width-focus-minnor) * 2)));
+    box-shadow: 0 0 25px var(--color-shadow-primary); 
+    color: var(--color-primary) !important; 
+}
+
+/* Foco Deshabilitada */
 .card.disabled.focus-visible, 
 .card.disabled:focus-visible,
 .card.disabled.focus-current {
     outline: none !important;
-    
-    /* Borde silenciado a guiones, indicando "Foco" pero "No Interactivo" */
-    border: 4px solid var(--color-card-border-disabled) !important;
-    
-    background: var(--color-card-bg); 
-    transform: scale(1.02);
+    border-width: var(--border-width-focus) !important; /* Borde GRUESO */
+    border-color: var(--color-card-border-disabled) !important;
+    transform: scale(calc(1 + (var(--zoom-width-focus-minnor) * 2)));
     box-shadow: 0 0 15px var(--color-shadow-disabled); 
     opacity: 0.9; 
     color: var(--color-text-muted) !important;
-}
-
-.card.disabled:hover {
-    outline: none; 
-    border-color: var(--color-card-border); 
-    background: var(--color-card-bg); 
-    box-shadow: 0 0 15px var(--color-shadow-disabled); 
-    opacity: 0.9; 
-    color: var(--color-text) !important;
-}
-
-.card[data-tipo="relleno"] {
-    border: 2px dashed var(--color-border-placeholder); 
-    background: transparent; 
-    pointer-events: none; 
-    cursor: default;
 }
 
 /* --- styles/style-cards.css --- */

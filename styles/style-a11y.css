@@ -24,7 +24,7 @@
     margin: auto;
 
     background: var(--color-card-bg);
-    border: 2px solid var(--color-card-border); 
+    border: var(--border-width-no-focus) solid var(--color-card-border); 
     border-radius: 12px;
 
     /* 🟢 FIX 1: Vital para que el padding no sume ancho extra */
@@ -152,7 +152,7 @@
     
     padding: var(--a11y-btn-padding);
     background: transparent;
-    border: 2px solid var(--color-card-border);
+    border: var(--border-width-no-focus) solid var(--color-card-border);
     border-radius: 8px; color: var(--color-text);
     cursor: pointer; transition: all var(--animation-speed) ease;
 
@@ -180,11 +180,17 @@
     box-shadow: 0 0 10px var(--color-shadow-primary);
 }
 
+/* Foco en botón normal (no seleccionado) */
 .a11y-option-btn:focus-visible {
     border-color: var(--color-primary);
+    /* Usamos el borde focus grueso de nuestro sistema */
+    border-width: var(--border-width-focus);
+    /* Como el borde engorda, compensamos el padding interior para que el texto no salte */
+    padding: calc(var(--a11y-btn-padding) - (var(--border-width-focus) - var(--border-width-no-focus)));
+    
     box-shadow: 0 0 15px var(--color-shadow-primary);
     outline: none;
-    transform: scale(1.05);
+    transform: scale(calc(1 + var(--zoom-width-focus-minnor)));
 }
 
 .a11y-option-btn.selected {
@@ -192,6 +198,17 @@
     color: var(--color-a11y-selected-text);
     border-color: var(--color-primary);
     box-shadow: 0 0 15px var(--color-shadow-primary);
+}
+
+/* 🟢 FIX CRÍTICO: Foco en botón YA seleccionado */
+.a11y-option-btn.selected:focus-visible {
+    /* Mantenemos el fondo y el color de texto invertido */
+    background: var(--color-primary);
+    color: var(--color-a11y-selected-text);
+    
+    /* El truco: Creamos un aro exterior con el color del texto para que contraste siempre */
+    outline: var(--border-width-no-focus) solid var(--color-text);
+    outline-offset: var(--border-width-no-focus); /* Separa el aro del botón */
 }
 
 /* SLIDER */
@@ -246,7 +263,7 @@ input[type=range].a11y-range::-webkit-slider-thumb {
     transition: transform var(--animation-speed);
 }
 input[type=range].a11y-range:hover::-webkit-slider-thumb {
-    transform: scale(1.2);
+    transform: scale(calc(1 + var(--zoom-width-focus-major)));
 }
 
 .a11y-range-value {
@@ -270,12 +287,65 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
 
 /* Checkbox de reducción de movimiento */
 .a11y-checkbox {
-    accent-color: var(--color-primary);
+    -webkit-appearance: none;
+    appearance: none;
+    
+    /* Dimensiones y forma base */
+    width: 1.25rem;
+    height: 1.25rem;
+    border: var(--border-width-no-focus) solid var(--color-card-border);
+    border-radius: 4px; /* ⬅️ La curvatura que querías */
+    
+    background-color: transparent;
+    cursor: pointer;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+    flex-shrink: 0;
+    
+    transition: all var(--animation-speed) ease;
 }
 
+/* 2. Dibujamos la marca de "Check" (✔) con CSS */
+.a11y-checkbox::after {
+    content: '';
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    width: 25%;
+    height: 50%;
+    /* Usamos el color de fondo para el "tick" (para que contraste) */
+    border: solid var(--color-card-bg); 
+    border-width: 0 2px 2px 0;
+    transform: translate(-50%, -60%) rotate(45deg);
+    opacity: 0; /* Oculto si no está marcado */
+    transition: opacity var(--animation-speed) ease;
+}
+
+/* 3. Estado: Marcado (Checked) */
+.a11y-checkbox:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.a11y-checkbox:checked::after {
+    opacity: 1; /* Mostramos el tick */
+}
+
+/* 4. Estado: Hover (Feedback visual al ratón) */
+.a11y-checkbox:hover {
+    border-color: var(--color-primary);
+}
+
+/* 5. 🟢 AHORA SÍ: El Foco Curvo Perfecto usando Box-Shadow */
 .a11y-checkbox:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
+    outline: none; /* Adiós cuadrado rígido */
+    
+    /* Sombra doble: 1 capa del color de fondo (hueco) + 1 capa azul (anillo) */
+    box-shadow: 
+        0 0 0 2px var(--color-card-bg), 
+        0 0 0 calc(2px + var(--border-width-focus)) var(--color-primary);
 }
 
 /* SECCIÓN FINAL (Footer del modal) */
@@ -291,7 +361,7 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
 /* BOTÓN RESET (Icono) */
 #a11y-reset {
     background: transparent; 
-    border: 2px solid var(--color-card-border); 
+    border: var(--border-width-no-focus) solid var(--color-card-border); 
     border-radius: 8px;
     cursor: pointer; 
     width: var(--a11y-reset-size); 

@@ -75,7 +75,8 @@ body.app-loaded {
     body[data-layout="desktop"] #info-adicional {
         grid-column: 3 / 4; 
         width: 100%; 
-        border-radius: 12px; border: 2px dashed var(--color-border-placeholder); 
+        border-radius: 12px; 
+        border: var(--border-width-no-focus) dashed var(--color-border-placeholder); 
         background: var(--color-card-bg); display: none; 
         box-sizing: border-box; 
         padding: var(--nav-carousel-top-offset) 15px 15px 15px; 

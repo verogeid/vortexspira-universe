@@ -5,7 +5,7 @@
     
     padding: 1rem;
 
-    border: 2px dashed var(--color-border-placeholder);
+    border: var(--border-width-no-focus) dashed var(--color-border-placeholder);
     background: transparent; border-radius: 12px;
 
     display: none; 
@@ -47,7 +47,7 @@
     box-sizing: border-box; 
     transition: all var(--animation-speed) ease; 
     color: var(--color-text); background: var(--color-card-bg);
-    border: 2px solid var(--color-card-border); border-radius: 12px;
+    border: var(--border-width-no-focus) solid var(--color-card-border); border-radius: 12px;
     cursor: pointer;
     height: var(--card-height-calc, calc( (100% - (2 * var(--card-gap))) / 3 )); min-height: 0;
 }
@@ -64,7 +64,7 @@
 #card-volver-fija-elemento:hover,
 #card-volver-fija-elemento:focus-visible {
     outline: none; border-color: var(--color-primary); 
-    transform: scale(1.03); 
+    transform: scale(calc(1 + var(--zoom-width-focus-minnor))); 
     box-shadow: 0 0 25px var(--color-shadow-primary); 
     color: var(--color-primary);
 }
@@ -94,7 +94,8 @@
 #info-adicional summary:hover,
 #info-adicional summary:focus { 
     opacity: 1; 
-    color: var(--color-primary); 
+    color: var(--color-primary);
+    transform: scale(calc(1 + var(--zoom-width-focus-minnor)));
 }
 #info-adicional summary::-webkit-details-marker { display: none; }
 #info-adicional summary::before { 
@@ -159,7 +160,7 @@
 
     padding: 1rem 2rem; 
     
-    border-radius: 12px; border: 2px solid var(--color-card-border);
+    border-radius: 12px; border: var(--border-width-no-focus) solid var(--color-card-border);
     box-shadow: 0 5px 25px var(--color-shadow-modal);
     z-index: 9999; text-align: center; max-width: 80%;
 

@@ -44,7 +44,7 @@ footer a {
     color: var(--color-footer-text); text-decoration: none; 
     transition: all var(--animation-speed) ease; display: inline-block; 
     padding: 0.2rem 0.5rem;
-    border-radius: 8px; border: 2px solid transparent;
+    border-radius: 8px; border: var(--border-width-no-focus) solid transparent;
 }
 footer a:focus { outline: none; }
 
@@ -52,7 +52,7 @@ footer a:focus { outline: none; }
 footer a:hover, footer a:focus-visible {
     border-color: var(--color-primary); 
     background: var(--color-card-bg); /* Fondo por defecto (se quitará en la licencia) */
-    transform: scale(1.03); 
+    transform: scale(calc(1 + var(--zoom-width-focus-minnor))); 
     box-shadow: 0 0 25px var(--color-shadow-primary);
     color: var(--color-primary); 
 }
@@ -70,9 +70,8 @@ footer a.footer-license-link {
 footer a.footer-license-link:hover, 
 footer a.footer-license-link:focus-visible {
     background: transparent !important;
+    transform: scale(calc(1 + var(--zoom-width-focus-major)));
 }
-
-
 
 .footer-social-link {
     display: inline-block;
@@ -109,7 +108,7 @@ footer a.footer-license-link:focus-visible {
 .footer-social-link:hover, 
 .footer-social-link:focus-visible {
     background-color: var(--color-primary) !important;
-    transform: scale(1.15);
+    transform: scale(calc(1 + var(--zoom-width-focus-major)));
     outline: none;
 }
 

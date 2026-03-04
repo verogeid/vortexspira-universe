@@ -49,7 +49,7 @@
     outline: none;
     border-radius: 4px;
     border: none;
-    border-left: 2px solid transparent; 
+    border-left: var(--border-width-no-focus) solid transparent; 
     padding-left: 6px; 
 
     /* NUEVO: Obliga al navegador a incluir el borde y padding dentro del 100% */
@@ -61,7 +61,7 @@
     will-change: opacity;
     cursor: text;
     filter: none !important;
-    opacity: var(--adj-block-opacity); 
+    opacity: var(--opacity); 
     pointer-events: auto;
 
     /* 🟢 FIX: Usar la variable de párrafo para separar los slides entre sí */
@@ -108,7 +108,7 @@
     opacity: 1 !important;
     background-color: transparent; 
 
-    border-left: 3px dashed var(--color-text) !important;
+    border-left: var(--border-width-focus) solid var(--color-text) !important;
 
     outline: none !important;
     box-shadow: -5px 0 10px -5px var(--color-shadow-disabled); 
@@ -151,19 +151,19 @@
 .detail-text-fragment.focus-adj-1,
 .detail-action-item.focus-adj-1 {
     filter: none !important;
-    opacity: calc(var(--adj-block-opacity) * 2);
+    opacity: calc(var(--opacity) * 2);
 }
 
 .detail-text-fragment.focus-adj-2,
 .detail-action-item.focus-adj-2 {
     filter: none !important;
-    opacity: var(--adj-block-opacity);
+    opacity: var(--opacity);
 }
 
 .detail-action-item {
     transition: opacity var(--transition-speed) ease;
     filter: none !important;
-    opacity: var(--adj-block-opacity); 
+    opacity: var(--opacity); 
     pointer-events: auto;
     outline: none;
     box-sizing: border-box; 
@@ -198,7 +198,7 @@
     text-align: left; margin-right: 15px; flex-grow: 1;
 
     /* 🟢 NUEVO: Preparamos el espacio del borde transparente (igual que en los párrafos) */
-    border-left: 3px solid transparent;
+    border-left: var(--border-width-focus) solid transparent;
     padding-left: 6px;
 
     /* 🟢 NUEVO: Aplicamos el mismo redondeo que tienen los textos */
@@ -216,7 +216,7 @@
 /* 2. Label de un Botón DESHABILITADO (Se pinta de color silenciado a guiones) */
 .detail-action-item.focus-current:has(.detail-action-btn.disabled) .detail-action-text {
     border-left-color: var(--color-text-muted);
-    border-left-style: dashed;
+    border-left-style: solid;
 }
 
 /* 🟢 NUEVO: Pintamos el borde del texto SOLO cuando la opción completa tiene el foco */
@@ -230,7 +230,7 @@
     width: var(--details-action-btn-size);
     height: var(--details-action-btn-size);
     background: transparent; 
-    border: 2px solid var(--color-card-border); 
+    border: var(--border-width-no-focus) solid var(--color-card-border); 
     border-radius: 8px;  
     color: var(--color-text); 
     font-size: var(--details-action-btn-font-size);
@@ -245,7 +245,7 @@
 .detail-action-item:hover .detail-action-btn:not(.disabled) { 
     border-color: var(--color-primary);
     box-shadow: 0 0 15px var(--color-shadow-primary);
-    transform: scale(1.1);
+    transform: scale(calc(1 + var(--zoom-width-focus-major)));
     color: var(--color-text); 
     outline: none;
 }
@@ -253,15 +253,15 @@
 .detail-action-btn:not(.disabled):focus-visible,
 .detail-action-item.focus-current .detail-action-btn:not(.disabled) { 
     outline: none !important;
-    border-color: 3px solid var(--color-primary);   
+    border-color: var(--border-width-focus) solid var(--color-primary);   
     color: var(--color-primary) !important; 
     box-shadow: 0 0 15px var(--color-shadow-primary);
-    transform: scale(1.1);
+    transform: scale(calc(1 + var(--zoom-width-focus-major)));
 }
 
 .detail-action-btn.disabled {
     color: var(--color-text-muted); 
-    border: 2px solid var(--color-card-border-disabled); 
+    border: var(--border-width-no-focus) solid var(--color-card-border-disabled); 
     background: transparent;
     cursor: default; 
     width: var(--details-action-btn-size);
@@ -287,7 +287,7 @@
 .detail-action-btn.disabled:hover,
 .detail-action-item:hover .detail-action-btn.disabled { 
     outline: none;
-    transform: scale(1.03); 
+    transform: scale(calc(1 + var(--zoom-width-focus-minnor))); 
     border-color: var(--color-card-border); 
     box-shadow: 0 0 10px var(--color-shadow-disabled);
     color: var(--color-text); 
@@ -296,9 +296,9 @@
 .detail-action-btn.disabled:focus-visible,
 .detail-action-item.focus-current .detail-action-btn.disabled { 
     outline: none !important;
-    transform: scale(1.03);
+    transform: scale(calc(1 + (var(--zoom-width-focus-minnor)*2)));
 
-    border: 2px dashed var(--color-text-muted); 
+    border: var(--border-width-no-focus) dashed var(--color-text-muted); 
     color: var(--color-text-muted) !important; 
     box-shadow: 0 0 15px var(--color-shadow-disabled); 
 }
