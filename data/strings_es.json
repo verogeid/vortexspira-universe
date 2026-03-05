@@ -3,13 +3,13 @@
         "version": "1.0.04"
     },
     "page": {
-        "title": "VortexSpira® Universe: Selector de Cursos"
+        "title": "VortexSpira® EdTech: Selector de Cursos"
     },
     "header": {
-        "title": "VortexSpira® Universe",
+        "title": "VortexSpira® EdTech",
         "subtitle": "Audio-Aprendizaje Técnico Inmersivo",
         "aria": {
-            "logoLink": "Ir al inicio de VortexSpira",
+            "logoLink": "Ir al inicio de VortexSpira EdTech",
             "a11yBtn": "Abrir Configuración de Accesibilidad",
             "langBtn": "Idioma actual: Español. Cambiar a Inglés.",
             "langSwitch": "Switching language to English..."
