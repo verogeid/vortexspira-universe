@@ -266,7 +266,8 @@ function _fragmentTextForSingleSlide(trackElement, rawDescription, maxContentHei
 }
 
 export function _mostrarDetalle(cursoId, forceRepaint = false) {
-    debug.log('render_details', debug.DEBUG_LEVELS.BASIC, `Mostrando detalle para: ${cursoId} ${this.STATE.isTouchDevice ? ' en Dispositivo Táctil' : ''}`);
+    debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
+        `Mostrando detalle para: ${cursoId} ${this.STATE.isTouchDevice ? ' en Dispositivo Táctil' : ''}`);
     
     // Configuración de Entorno
     const layoutMode = document.body.getAttribute('data-layout') || 'desktop';

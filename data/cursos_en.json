@@ -1,0 +1,269 @@
+{
+  "prod": [
+    {
+      "id": "s-ds",
+      "nombre": "Software Development",
+      "subsecciones": [
+        {
+          "id": "s-ds-be",
+          "nombre": "Back-End",
+          "subsecciones": [
+            {
+              "id": "s-ds-be-api",
+              "nombre": "API",
+              "subsecciones": [],
+              "cursos": []
+            },
+            {
+              "id": "s-ds-be-db",
+              "nombre": "Databases",
+              "subsecciones": [],
+              "cursos": []
+            }
+          ],
+          "cursos": []
+        },
+        {
+          "id": "s-ds-fe",
+          "nombre": "Front-End",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-ds-lg",
+          "nombre": "Fundamentals & Languages",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-ds-ia",
+          "nombre": "Artificial Intelligence",
+          "subsecciones": [],
+          "cursos": []
+        }
+      ],
+      "cursos": []
+    },
+    {
+      "id": "s-dev",
+      "nombre": "DevOps & CI/CD",
+      "subsecciones": [
+        {
+          "id": "s-dev-dk",
+          "nombre": "Containers & Orchestration",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-dev-cv",
+          "nombre": "Version Control",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-dev-cicd",
+          "nombre": "Continuous Integration (CI/CD)",
+          "subsecciones": [],
+          "cursos": []
+        }
+      ],
+      "cursos": []
+    },
+    {
+      "id": "s-doc",
+      "nombre": "Documentation & Modeling",
+      "subsecciones": [
+        {
+          "id": "s-ds-doc-dgr",
+          "nombre": "Diagrams & Modeling",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-doc-tool",
+          "nombre": "Tools & Languages",
+          "subsecciones": [],
+          "cursos": []
+        }
+      ],
+      "cursos": []
+    },
+    {
+      "id": "s-qa",
+      "nombre": "Software Testing (QA)",
+      "subsecciones": [
+        {
+          "id": "s-qa-a11y",
+          "nombre": "Accessibility (A11y)",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-qa-atm",
+          "nombre": "Automation",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-qa-fun",
+          "nombre": "Fundamentals & Management",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-qa-pfm",
+          "nombre": "Performance",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-qa-seg",
+          "nombre": "Security",
+          "subsecciones": [],
+          "cursos": []
+        }
+      ],
+      "cursos": []
+    },
+    {
+      "id": "s-rec",
+      "nombre": "Additional Resources",
+      "subsecciones": [],
+      "cursos": []
+    }
+  ],
+
+  "dev": [
+    {
+      "id": "s-ds",
+      "nombre": "Software Development",
+      "subsecciones": [
+        {
+          "id": "s-ds-be",
+          "nombre": "Back-End",
+          "subsecciones": [
+            {
+              "id": "s-ds-be-api",
+              "nombre": "API",
+              "subsecciones": [],
+              "cursos": []
+            },
+            {
+              "id": "s-ds-be-db",
+              "nombre": "Databases",
+              "subsecciones": [],
+              "cursos": []
+            }
+          ],
+          "cursos": []
+        },
+        {
+          "id": "s-ds-fe",
+          "nombre": "Front-End",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-ds-lg",
+          "nombre": "Fundamentals & Languages",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-ds-ia",
+          "nombre": "Artificial Intelligence",
+          "subsecciones": [],
+          "cursos": []
+        }
+      ],
+      "cursos": []
+    },
+    {
+      "id": "s-dev",
+      "nombre": "DevOps & CI/CD",
+      "subsecciones": [
+        {
+          "id": "s-dev-dk",
+          "nombre": "Containers & Orchestration",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-dev-cv",
+          "nombre": "Version Control",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-dev-cicd",
+          "nombre": "Continuous Integration (CI/CD)",
+          "subsecciones": [],
+          "cursos": []
+        }
+      ],
+      "cursos": []
+    },
+    {
+      "id": "s-doc",
+      "nombre": "Documentation & Modeling",
+      "subsecciones": [
+        {
+          "id": "s-ds-doc-dgr",
+          "nombre": "Diagrams & Modeling",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-doc-tool",
+          "nombre": "Tools & Languages",
+          "subsecciones": [],
+          "cursos": []
+        }
+      ],
+      "cursos": []
+    },
+    {
+      "id": "s-qa",
+      "nombre": "Software Testing (QA)",
+      "subsecciones": [
+        {
+          "id": "s-qa-a11y",
+          "nombre": "Accessibility (A11y)",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-qa-atm",
+          "nombre": "Automation",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-qa-fun",
+          "nombre": "Fundamentals & Management",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-qa-pfm",
+          "nombre": "Performance",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-qa-seg",
+          "nombre": "Security",
+          "subsecciones": [],
+          "cursos": []
+        }
+      ],
+      "cursos": []
+    },
+    {
+      "id": "s-rec",
+      "nombre": "Additional Resources",
+      "subsecciones": [],
+      "cursos": []
+    }
+  ]
+}

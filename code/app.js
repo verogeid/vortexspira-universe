@@ -79,6 +79,12 @@ class VortexSpiraApp {
         debug.logClear();
         debug.logDebugLevels();
         
+        // 🟢 DETECCIÓN DE TERMINAL (Touch vs Mouse)
+        document.body.setAttribute('data-terminal', this.STATE.isTouchDevice ? 'touch' : 'mouse');
+
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+            `Terminal detectado: ${this.STATE.isTouchDevice ? 'Touch' : 'Mouse'}`);
+
         // Mantenemos isBooting = true por defecto desde el constructor
         debug.log('app', debug.DEBUG_LEVELS.BASIC, 
             "🚀 Iniciando App (Modo Silencioso activado)...");
@@ -383,7 +389,8 @@ class VortexSpiraApp {
     _isTouchDevice() {
         return (('ontouchstart' in window) ||
                 (navigator.maxTouchPoints > 0) ||
-                (navigator.msMaxTouchPoints > 0));
+                (navigator.msMaxTouchPoints > 0) ||
+                window.matchMedia("(pointer: coarse)").matches);
     }
 
     _mostrarDetalle(cursoId, forceRepaint = false) { 

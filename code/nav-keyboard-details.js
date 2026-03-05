@@ -109,35 +109,6 @@ export function _handleDetailNavigation(key) {
             // 1. Aplicar Foco
             newFocusElement.focus({ preventScroll: true }); // Bloqueamos el salto nativo
             app.STATE.lastDetailFocusIndex = newIndex;
-
-            /*
-            // 2. Gestionar el Swiper
-            if (app.STATE.detailCarouselInstance) {
-                const carousel = app.STATE.detailCarouselInstance;
-                const slide = newFocusElement.closest('.swiper-slide');
-                
-                if (slide) {
-                    const slideIndex = Array.from(carousel.slides).indexOf(slide);
-                    if (slideIndex !== carousel.activeIndex) {
-                        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
-                            `[TRACE ${app.STATE.currentTraceId}] 2. Ordenando slideTo(${slideIndex})`);
-
-                        carousel.slideTo(slideIndex, data.SWIPER.SLIDE_SPEED);
-                    } else {
-                        debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
-                            `[TRACE ${app.STATE.currentTraceId}] 2. Ignorando slideTo (ya estamos en slide ${slideIndex})`);
-                    }
-                }
-
-                // 🟢 3. CORRECCIÓN DE VISIBILIDAD VERTICAL (DIAGNÓSTICO + FIX)
-                // Esperamos un tick a que slideTo inicie o termine
-                requestAnimationFrame(() => {
-                    debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
-                        `[TRACE ${app.STATE.currentTraceId}] 3. Ejecutando _checkAndFix (dentro de rAF)`);
-
-                    _checkAndFixVerticalObstruction(app, newFocusElement, carousel, app.STATE.currentTraceId);
-                });
-            }*/
             
             debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
                 `[TRACE ${app.STATE.currentTraceId}] 4. Llamando sincrónicamente a _updateDetailFocusState`);
@@ -147,10 +118,17 @@ export function _handleDetailNavigation(key) {
 
             // ⭐️ FIX CLAVE 4: Guardar el índice del elemento (no el índice del slide) para el focus trap ⭐️
             app.STATE.lastDetailFocusIndex = newIndex; 
+
+            // 🟢 FIX CRÍTICO: Apagar la bandera del teclado tras el éxito, porque
+            // en la vista detalle hemos desactivado el control de Swiper por defecto.
+            app.STATE.keyboardNavInProgress = false
             
         } else {
             debug.logWarn('nav_keyboard_details', 
                             `No se encontró elemento enfocable en el índice ${newIndex}.`);
+
+            // Aseguramos que se apague también en caso de error
+            app.STATE.keyboardNavInProgress = false;
         }
     } else {
         // Si no hubo movimiento, abortamos la máquina de estados

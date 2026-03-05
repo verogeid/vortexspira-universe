@@ -46,8 +46,10 @@
     margin-bottom: 0; overflow: hidden; 
     box-sizing: border-box; 
     transition: all var(--animation-speed) ease; 
+
     color: var(--color-text); background: var(--color-card-bg);
     border: var(--border-width-no-focus) solid var(--color-card-border); border-radius: 12px;
+    
     cursor: pointer;
     height: var(--card-height-calc, calc( (100% - (2 * var(--card-gap))) / 3 )); min-height: 0;
 }
@@ -64,7 +66,9 @@
 #card-volver-fija-elemento:hover,
 #card-volver-fija-elemento:focus-visible {
     outline: none; border-color: var(--color-primary); 
-    transform: scale(calc(1 + var(--zoom-width-focus-minnor))); 
+
+    transform: scale(calc(1 + var(--zoom-focus-minnor))); 
+
     box-shadow: 0 0 25px var(--color-shadow-primary); 
     color: var(--color-primary);
 }
@@ -88,14 +92,15 @@
     list-style: none; 
     padding: 0.2rem; 
     color: var(--color-text); 
-    opacity: 0.9; transition: color var(--animation-speed) ease; 
+    opacity: calc(var(--opacity) * 3); 
+    transition: color var(--animation-speed) ease; 
     outline: none;
 }
 #info-adicional summary:hover,
 #info-adicional summary:focus { 
     opacity: 1; 
     color: var(--color-primary);
-    transform: scale(calc(1 + var(--zoom-width-focus-minnor)));
+    transform: scale(calc(1 + var(--zoom-focus-minnor)));
 }
 #info-adicional summary::-webkit-details-marker { display: none; }
 #info-adicional summary::before { 
@@ -123,7 +128,8 @@
 #info-adicional-lista-acerca a { 
     display: flex; align-items: center; text-decoration: none; 
     color: var(--color-text); 
-    opacity: 0.9; transition: all var(--animation-speed) ease; 
+    opacity: calc(var(--opacity) * 3); 
+    transition: all var(--animation-speed) ease; 
     /* ⭐️ A11Y FIX */
     font-size: var(--info-adicional-lista-a-font-size);
 }
@@ -132,13 +138,13 @@
     opacity: 1; 
     color: var(--color-text); 
     outline: none; 
-    transform: translateX(3px); 
+    transform: translateX(var(--border-width-focus)); 
 }
 #info-adicional-lista-acerca a:focus-visible { 
     opacity: 1; 
     color: var(--color-primary); 
     outline: none; 
-    transform: translateX(3px); 
+    transform: translateX(var(--border-width-focus)); 
 }
 
 #info-adicional-lista-acerca a::before { 
@@ -167,6 +173,9 @@
     opacity: 0; visibility: hidden; 
     transition: opacity var(--transition-speed) ease, visibility var(--transition-speed) ease;
 }
-.toast.active { opacity: 1; visibility: visible; }
+.toast.active { 
+    opacity: 1; 
+    visibility: visible; 
+}
 
 /* --- styles/style-components.css --- */

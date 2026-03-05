@@ -169,7 +169,7 @@
 /* Reposo de Tarjeta Deshabilitada */
 .card.disabled:not([data-tipo="relleno"]) {
     border-color: var(--color-card-border-disabled);
-    opacity: 0.5;
+    opacity: calc(var(--opacity) * 1.5);
 }
 
 
@@ -180,8 +180,8 @@
     outline: none; 
     border-width: var(--border-width-no-focus); /* Borde fino */
     border-color: var(--color-primary);
-    transform: scale(calc(1 + (var(--zoom-width-focus-minnor) * 2)));
-    box-shadow: 0 0 25px var(--color-shadow-primary); 
+    transform: scale(calc(1 + (var(--zoom-focus-minnor) * 2)));
+    box-shadow: 0 0 var(--shadow-spread-lg) var(--color-shadow-primary); 
 }
 
 /* Hover Deshabilitada */
@@ -189,9 +189,9 @@
     outline: none; 
     border-width: var(--border-width-no-focus); /* Borde fino */
     border-color: var(--color-card-border-disabled);
-    transform: scale(calc(1 + (var(--zoom-width-focus-minnor) * 2)));
-    box-shadow: 0 0 15px var(--color-shadow-disabled); 
-    opacity: 0.9; 
+    transform: scale(calc(1 + (var(--zoom-focus-minnor) * 2)));
+    box-shadow: 0 0 var(--shadow-spread-md) var(--color-shadow-disabled); 
+    opacity: calc(var(--opacity) * 3); 
 }
 
 
@@ -204,8 +204,8 @@
     outline: none; 
     border-width: var(--border-width-focus) !important; /* Borde GRUESO */
     border-color: var(--color-primary) !important;
-    transform: scale(calc(1 + (var(--zoom-width-focus-minnor) * 2)));
-    box-shadow: 0 0 25px var(--color-shadow-primary); 
+    transform: scale(calc(1 + (var(--zoom-focus-minnor) * 2)));
+    box-shadow: 0 0 var(--shadow-spread-lg) var(--color-shadow-primary); 
     color: var(--color-primary) !important; 
 }
 
@@ -216,9 +216,9 @@
     outline: none !important;
     border-width: var(--border-width-focus) !important; /* Borde GRUESO */
     border-color: var(--color-card-border-disabled) !important;
-    transform: scale(calc(1 + (var(--zoom-width-focus-minnor) * 2)));
-    box-shadow: 0 0 15px var(--color-shadow-disabled); 
-    opacity: 0.9; 
+    transform: scale(calc(1 + (var(--zoom-focus-minnor) * 2)));
+    box-shadow: 0 0 var(--shadow-spread-md) var(--color-shadow-disabled); 
+    opacity: calc(var(--opacity) * 3); 
     color: var(--color-text-muted) !important;
 }
 

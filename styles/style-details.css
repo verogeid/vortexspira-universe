@@ -133,7 +133,7 @@
 
 .detail-action-item.focus-current {
     outline: none !important;
-    border: none !important;
+    
     box-shadow: none !important;
     filter: none !important; 
     opacity: 1 !important; 
@@ -141,7 +141,7 @@
 }
 .detail-action-item:hover { 
     outline: none !important;
-    border: none !important;
+    
     box-shadow: none !important;
     filter: none !important; 
     opacity: 1 !important; 
@@ -183,8 +183,13 @@
 
 .detail-action-item {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 5px; background: transparent;
+    padding: 8px 6px; 
+    background: transparent;
     transition: background-color var(--animation-speed) ease;
+
+    /* 🟢 El BORDE envuelve a toda la fila */
+    border-left: var(--border-width-focus) solid transparent;
+    border-radius: 4px;
 }
 .detail-action-item:hover { 
     background-color: var(--color-details-action-item-hover); 
@@ -196,25 +201,18 @@
     font-weight: 500; 
     color: inherit; 
     text-align: left; margin-right: 15px; flex-grow: 1;
-
-    /* 🟢 NUEVO: Preparamos el espacio del borde transparente (igual que en los párrafos) */
-    border-left: var(--border-width-focus) solid transparent;
-    padding-left: 6px;
-
-    /* 🟢 NUEVO: Aplicamos el mismo redondeo que tienen los textos */
-    border-radius: 4px;
     
     transition: all var(--animation-speed) ease;
 }
 
 /* 1. Label de un Botón HABILITADO (Se pinta de color interactivo sólido) */
-.detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) .detail-action-text {
+.detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) {
     border-left-color: var(--color-primary);
     border-left-style: solid;
 }
 
 /* 2. Label de un Botón DESHABILITADO (Se pinta de color silenciado a guiones) */
-.detail-action-item.focus-current:has(.detail-action-btn.disabled) .detail-action-text {
+.detail-action-item.focus-current:has(.detail-action-btn.disabled) {
     border-left-color: var(--color-text-muted);
     border-left-style: solid;
 }
@@ -245,7 +243,7 @@
 .detail-action-item:hover .detail-action-btn:not(.disabled) { 
     border-color: var(--color-primary);
     box-shadow: 0 0 15px var(--color-shadow-primary);
-    transform: scale(calc(1 + var(--zoom-width-focus-major)));
+    transform: scale(calc(1 + var(--zoom-focus-major)));
     color: var(--color-text); 
     outline: none;
 }
@@ -256,7 +254,7 @@
     border-color: var(--border-width-focus) solid var(--color-primary);   
     color: var(--color-primary) !important; 
     box-shadow: 0 0 15px var(--color-shadow-primary);
-    transform: scale(calc(1 + var(--zoom-width-focus-major)));
+    transform: scale(calc(1 + var(--zoom-focus-major)));
 }
 
 .detail-action-btn.disabled {
@@ -287,7 +285,7 @@
 .detail-action-btn.disabled:hover,
 .detail-action-item:hover .detail-action-btn.disabled { 
     outline: none;
-    transform: scale(calc(1 + var(--zoom-width-focus-minnor))); 
+    transform: scale(calc(1 + var(--zoom-focus-minnor))); 
     border-color: var(--color-card-border); 
     box-shadow: 0 0 10px var(--color-shadow-disabled);
     color: var(--color-text); 
@@ -296,7 +294,7 @@
 .detail-action-btn.disabled:focus-visible,
 .detail-action-item.focus-current .detail-action-btn.disabled { 
     outline: none !important;
-    transform: scale(calc(1 + (var(--zoom-width-focus-minnor)*2)));
+    transform: scale(calc(1 + (var(--zoom-focus-minnor)*2)));
 
     border: var(--border-width-no-focus) dashed var(--color-text-muted); 
     color: var(--color-text-muted) !important; 

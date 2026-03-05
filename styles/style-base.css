@@ -9,6 +9,8 @@
 @import url('style-theme-scheme-dark.css');
 
 @import url('style-theme-forced-colors.css');
+@import url('style-theme-forced-colors-mobile.css');
+
 @import url('style-theme-contrast.css');
 
 @import url('style-theme-yellow.css');

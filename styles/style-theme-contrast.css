@@ -33,6 +33,10 @@
         
         /* Eliminamos las sombras en las variables */
         --color-shadow-disabled: transparent;
+
+        color-scheme: dark;
+        background-color: var(--color-bg);
+        color: var(--color-text);
     }
 }
 

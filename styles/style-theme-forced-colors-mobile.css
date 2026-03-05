@@ -1,0 +1,32 @@
+/* --- styles/style-theme-forced-colors-mobile.css --- */
+
+/* =========================================================
+   PARCHE PARA MÓVILES (Terminal Touch)
+   Soluciona el bug de opacidad de "Highlight" en Android/iOS
+   ========================================================= */
+body[data-theme="forced"][data-terminal="touch"] {
+    --color-primary: #00FFFF !important;       /* Cian puro y sólido */
+    --color-primary-text: #000000 !important;  
+    
+    --color-text: #FFFFFF !important;          
+    --color-bg: #000000 !important;            
+    --color-card-bg: #000000 !important;
+    --color-header-bg: #000000 !important;
+    --color-footer-text: #FFFFFF !important; 
+    
+    --color-card-border: #FFFFFF !important;
+    
+    /* Atenuados en gris sólido */
+    --color-card-border-disabled: #888888 !important;
+    --color-border-placeholder: #888888 !important;
+    --color-text-muted: #888888 !important;
+    
+    --color-icon-obras: #FFFFFF !important;
+    
+    --color-btn-face: #000000 !important;
+    --color-btn-text: #FFFFFF !important;
+
+    --color-a11y-selected-text: #000000 !important;
+}
+
+/* --- styles/style-theme-forced-colors-mobile.css --- */

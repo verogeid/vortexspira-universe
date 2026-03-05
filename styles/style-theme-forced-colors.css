@@ -31,7 +31,11 @@
         --color-shadow-primary: transparent !important;
         --color-shadow-disabled: transparent !important;
 
-        --color-a11y-selected-text: #000000;
+        --color-a11y-selected-text: HighlightText !important;
+
+        background-color: Canvas !important;
+        color: CanvasText !important;
+        color-scheme: light dark;
     }
 
     /* === 1. TARJETAS === */
@@ -88,14 +92,11 @@
     /* === 3. BOTÓN A11Y === */
     #btn-config-accesibilidad {
         forced-color-adjust: none;
-        border: var(--border-width-no-focus) solid var(--color-btn-text) !important;
-        background-color: var(--color-bg) !important; 
-        color: var(--color-btn-text) !important;
+        border: none !important;
+        background-color: var(--color-text) !important;
     }
     #btn-config-accesibilidad:focus-visible {
-        border-color: var(--color-primary) !important;
-        background-color: var(--color-primary) !important; 
-        color: var(--color-primary-text) !important;
+        background-color: var(--color-primary) !important;
     }
 
     /* === 4. ENLACES === */
@@ -143,13 +144,13 @@
         outline: none !important; 
     }
 
-    .detail-action-text { 
+    .detail-action-item { 
         border-left: var(--border-width-focus) solid transparent !important; 
     }
-    .detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) .detail-action-text {
+    .detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) {
         border-left: var(--border-width-focus) solid var(--color-primary) !important;
     }
-    .detail-action-item.focus-current:has(.detail-action-btn.disabled) .detail-action-text {
+    .detail-action-item.focus-current:has(.detail-action-btn.disabled) {
         border-left: var(--border-width-focus) solid var(--color-card-border-disabled) !important;
     }
 
@@ -216,7 +217,7 @@ body[data-theme="forced"] {
     --color-shadow-primary: transparent !important;
     --color-shadow-disabled: transparent !important;
 
-    --color-a11y-selected-text: #000000;
+    --color-a11y-selected-text: HighlightText !important;
 
     background-color: Canvas !important;
     color: CanvasText !important;
@@ -270,14 +271,11 @@ body[data-theme="forced"] .card-icon-lead {
 
 body[data-theme="forced"] #btn-config-accesibilidad { 
     forced-color-adjust: none; 
-    border: var(--border-width-no-focus) solid var(--color-btn-text) !important; 
-    background-color: var(--color-btn-text) !important; 
-    color: var(--color-bg) !important; 
+    border: none !important; 
+    background-color: var(--color-text) !important; 
 }
 body[data-theme="forced"] #btn-config-accesibilidad:focus-visible { 
-    border-color: var(--color-primary) !important; 
-    background-color: var(--color-primary) !important; 
-    color: var(--color-primary-text) !important; 
+    background-color: var(--color-primary) !important;
 }
 
 body[data-theme="forced"] #info-adicional summary, 
@@ -325,14 +323,14 @@ body[data-theme="forced"] .detail-text-fragment.focus-current {
     outline: none !important; 
 }
 
-body[data-theme="forced"] .detail-action-text { 
+body[data-theme="forced"] .detail-action-item { 
     border-left: var(--border-width-focus) solid transparent !important; 
 }
-body[data-theme="forced"] .detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) .detail-action-text { 
+body[data-theme="forced"] .detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) { 
     border-left: var(--border-width-focus) solid var(--color-primary) !important; 
 }
-body[data-theme="forced"] .detail-action-item.focus-current:has(.detail-action-btn.disabled) .detail-action-text { 
-    border-left: var(--border-width-focus) solid var(--color-card-border-disabled) !important; 
+body[data-theme="forced"] .detail-action-item.focus-current:has(.detail-action-btn.disabled) { 
+    border-left: var(--border-width-focus) dashed var(--color-card-border-disabled) !important; 
 }
 
 body[data-theme="forced"] .detail-action-btn:not(.disabled) { 
@@ -348,11 +346,11 @@ body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn:n
 }
 
 body[data-theme="forced"] .detail-action-btn.disabled { 
-    border: var(--border-width-no-focus) solid var(--color-card-border-disabled) !important; 
+    border: var(--border-width-no-focus) dashed var(--color-card-border-disabled) !important; 
 }
 body[data-theme="forced"] .detail-action-btn.disabled:focus-visible, 
 body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn.disabled { 
-    border: var(--border-width-focus) solid var(--color-card-border-disabled) !important; 
+    border: var(--border-width-focus) dashed var(--color-card-border-disabled) !important; 
 }
 body[data-theme="forced"] .detail-action-btn.disabled:focus-visible .action-icon, 
 body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn.disabled .action-icon { 

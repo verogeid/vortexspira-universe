@@ -12,11 +12,31 @@ export function initKeyboardControls() {
 
     document.addEventListener('focusin', (e) => {
         const app = this;
+        const target = e.target;
 
-        if (!app.DOM.track) return;
-        if (!app.DOM.track.contains(e.target)) {
+        // 1. Limpieza de tarjetas fantasma en el carrusel
+        if (app.DOM.track && !app.DOM.track.contains(target)) {
             const ghosts = app.DOM.track.querySelectorAll('.card.focus-visible');
             ghosts.forEach(c => c.classList.remove('focus-visible'));
+        }
+
+        // 🟢 2. NOTARIO DE MEMORIA: Guardar el índice del foco actual en su contenedor
+        // Buscamos si el elemento que acaba de recibir foco está en una de nuestras zonas
+        const container = target.closest('#info-adicional, footer, #app-header');
+        if (container) {
+            // Conseguimos todos los elementos enfocables de ESA zona concreta
+            const isVisible = (el) => el && el.offsetParent !== null;
+            const selector = container.tagName === 'FOOTER' ? 'a' : 
+                             container.id === 'info-adicional' ? 'summary, a' : 'a, button';
+            
+            const focusables = Array.from(container.querySelectorAll(selector)).filter(isVisible);
+            
+            // ¿En qué posición está el elemento que acabamos de tocar?
+            const index = focusables.indexOf(target);
+            if (index !== -1) {
+                // Lo grabamos a fuego en el contenedor
+                container.dataset.lastFocusId = index;
+            }
         }
     });
 
@@ -239,7 +259,13 @@ function _handleLocalSectionNavigation(key, container) {
     if (key === 'ArrowDown' || key === 'ArrowRight') next = (index + 1) % focusables.length;
     else if (key === 'ArrowUp' || key === 'ArrowLeft') next = (index - 1 + focusables.length) % focusables.length;
     
-    if (next !== undefined && focusables[next]) focusables[next].focus();
+    if (next !== undefined && focusables[next]) {
+        const target = focusables[next];
+        target.focus();
+        
+        // 🟢 FIX MEMORIA: Guardar la referencia del último elemento visitado en el propio contenedor
+        container.dataset.lastFocusId = next;
+    }
 }
 
 function _setupInfoAccordion() {
@@ -308,9 +334,15 @@ function _handleGlobalWheel(e) {
         const key = e.deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
         
         app.STATE.keyboardNavInProgress = true; 
+
         if (isNavActive) nav_keyboard_swipe._handleSwipeNavigation(key, app);
         else nav_keyboard_details._handleDetailNavigation.call(app, key);
-        app.STATE.keyboardNavInProgress = false; 
+
+        // 🟢 FIX CRÍTICO: Bajamos la bandera incondicionalmente tras el frame actual.
+        // Si Swiper anima, lo gestionará él, pero si choca contra un borde, esto nos salva de quedarnos trabados.
+        requestAnimationFrame(() => {
+            app.STATE.keyboardNavInProgress = false; 
+        });
     }
 }
 
@@ -325,36 +357,112 @@ export function _handleFocusTrap(e, viewType) {
 
     const isVisible = (el) => el && el.offsetParent !== null;
 
+    // 🟢 HELPER DE MEMORIA: Filtra los visibles y busca si el contenedor tiene memoria.
+    const getGroupWithMemory = (containerSelector, selectorString) => {
+        const container = document.querySelector(containerSelector);
+        if (!container) return [];
+        
+        const focusables = Array.from(container.querySelectorAll(selectorString)).filter(isVisible);
+        if (focusables.length === 0) return [];
+
+        // Si el contenedor guardó memoria de su último índice
+        const lastIndex = parseInt(container.dataset.lastFocusId, 10);
+        if (!isNaN(lastIndex) && focusables[lastIndex]) {
+            return [focusables[lastIndex]];
+        }
+        
+        return focusables; // Fallback normal
+    };
+
     const sections = {
         central: () => {
+            // 🟢 CASO A: Estamos en el Menú Principal
             if (viewType === 'nav') {
                 const cards = Array.from(app.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+                
                 const current = cards[app.STATE.currentFocusIndex];
+
                 if (isVisible(current)) return [current];
+
                 const fallback = cards.find(isVisible);
                 return fallback ? [fallback] : [];
             }
-            return nav_base_details._getFocusableDetailElements(app).filter(el => !el.classList.contains('card-volver-vertical') && isVisible(el));
+
+            // 🟢 CASO B: Estamos en la Vista de Detalles
+            const detailElements = nav_base_details._getFocusableDetailElements(app).filter(el => !el.classList.contains('card-volver-vertical') && isVisible(el));
+            
+            // Si el estado interno recuerda dónde estábamos, devolvemos SOLO ese elemento.
+            // Al ser un array de 1 solo elemento, el TAB y el SHIFT+TAB aterrizarán siempre ahí.
+            if (app.STATE.lastDetailFocusIndex !== undefined && detailElements[app.STATE.lastDetailFocusIndex]) {
+                return [detailElements[app.STATE.lastDetailFocusIndex]];
+            }
+            // Fallback: Si no hay historial, devolvemos todo el array (comportamiento original)
+            return detailElements;
         },
-        info: () => Array.from(app.DOM.infoAdicional?.querySelectorAll('summary, a') || []).filter(isVisible),
-        footer: () => Array.from(document.querySelectorAll('footer a')).filter(isVisible),
-        header: () => Array.from(app.DOM.header.querySelectorAll('a, button')).filter(isVisible),
+        // 🟢 FIX: Usamos el helper de memoria para las secciones periféricas
+        info: () => getGroupWithMemory('#info-adicional', 'summary, a'),
+        footer: () => getGroupWithMemory('footer', 'a'),
+        header: () => getGroupWithMemory('#app-header', 'a, button'),
         volver: () => {
-            if (isMobile && viewType === 'detail') return [app.DOM.detalleTrack.querySelector('.card-volver-vertical')].filter(isVisible);
+            if (isMobile && viewType === 'detail') 
+                return [app.DOM.detalleTrack.querySelector('.card-volver-vertical')].filter(isVisible);
+
             return [app.DOM.cardVolverFijaElemento].filter(isVisible);
         }
     };
 
+    // 🟢 FIX CRÍTICO: Ejecutamos las búsquedas 1 sola vez y guardamos la referencia exacta en memoria
+    const arrCentral = sections.central();
+    const arrInfo = sections.info();
+    const arrFooter = sections.footer();
+    const arrHeader = sections.header();
+    const arrVolver = sections.volver();
+
+    // Armamos la secuencia usando las referencias exactas
     let sequence = (isDesktop || isTabletLS) ? 
-        [sections.central(), sections.info(), sections.footer(), sections.header(), sections.volver()] : 
-        (!isMobile ? [sections.central(), sections.footer(), sections.header(), sections.volver()] : [sections.central(), sections.footer(), sections.header()]);
+        [arrCentral, arrInfo, arrFooter, arrHeader, arrVolver] : 
+        (!isMobile ? [arrCentral, arrFooter, arrHeader, arrVolver] : [arrCentral, arrFooter, arrHeader]);
 
     const groups = sequence.filter(g => g.length > 0);
-    let gIdx = groups.findIndex(g => g.includes(document.activeElement));
-    if (gIdx === -1) gIdx = 0;
+    
+    // 🟢 FIX: Averiguar a qué grupo físico pertenece el foco actual.
+    // Si estamos perdidos en el body (ej: clic fuera), intentamos recuperar el último contenedor conocido
+    let currentContainer = document.activeElement.closest('#vista-central, #info-adicional, footer, #app-header, #vista-volver');
+    
+    if (!currentContainer && app.STATE.lastActiveZoneId) {
+        // Rescatamos la última zona conocida
+        currentContainer = document.getElementById(app.STATE.lastActiveZoneId) || document.querySelector(app.STATE.lastActiveZoneId);
+    }
+    
+    let groupIdx = -1;
+    if (currentContainer) {
+        // Buscamos en 'groups' usando la misma referencia de Array
+        if (currentContainer.id === 'vista-central') groupIdx = groups.indexOf(arrCentral);
+        else if (currentContainer.id === 'info-adicional') groupIdx = groups.indexOf(arrInfo);
+        else if (currentContainer.tagName === 'FOOTER') groupIdx = groups.indexOf(arrFooter);
+        else if (currentContainer.id === 'app-header') groupIdx = groups.indexOf(arrHeader);
+        else if (currentContainer.id === 'vista-volver') groupIdx = groups.indexOf(arrVolver);
+        
+        // Guardamos la zona para el futuro (si hacemos clic fuera)
+        const zoneId = currentContainer.id || currentContainer.tagName.toLowerCase();
+        app.STATE.lastActiveZoneId = zoneId;
+    }
+    
+    if (groupIdx === -1) groupIdx = 0;
 
-    let nextG = e.shiftKey ? (gIdx <= 0 ? groups.length - 1 : gIdx - 1) : (gIdx >= groups.length - 1 ? 0 : gIdx + 1);
-    const target = e.shiftKey ? groups[nextG][groups[nextG].length - 1] : groups[nextG][0];
+    // Calcular el siguiente grupo y apuntar
+    // Si el currentContainer NO existía (estabamos en el body) y pulsamos TAB normal (sin shift),
+    // queremos quedarnos en la zona que acabamos de rescatar, no saltar a la siguiente.
+    let nextGroup;
+    if (document.activeElement === document.body && !e.shiftKey) {
+        nextGroup = groupIdx; // Caemos en la zona rescatada
+    } else {
+        nextGroup = e.shiftKey ? 
+            (groupIdx <= 0 ? groups.length - 1 : groupIdx - 1) : 
+            (groupIdx >= groups.length - 1 ? 0 : groupIdx + 1);
+    }
+    
+    const target = e.shiftKey ? groups[nextGroup][groups[nextGroup].length - 1] : groups[nextGroup][0];
     if (target) target.focus();
 }
 

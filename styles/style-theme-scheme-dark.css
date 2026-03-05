@@ -8,7 +8,7 @@
         --color-bg: #111;
         --color-card-bg: rgba(255, 255, 255, 0.02);
         --color-mask-gradient: rgba(17, 17, 17, 0.4);
-        --color-primary: #8bc5ff;
+        --color-primary: #00E5FF;
         --color-text: #eee;
         --color-card-border: #ababab; 
         --color-card-border-disabled: #666; 
@@ -36,6 +36,10 @@
         --color-a11y-selected-text: #000000;
         --color-a11y-slider-track: #555;
         --color-a11y-slider-labels: var(--color-text-muted);
+
+        color-scheme: dark;
+        background-color: var(--color-bg);
+        color: var(--color-text);
     }
 }
 

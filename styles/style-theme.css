@@ -8,8 +8,13 @@
 
     --border-width-focus: 4px !important;
     --border-width-no-focus: 2px !important;
-    --zoom-width-focus-major: 0.2;
-    --zoom-width-focus-minnor: 0.02;
+    --zoom-focus-major: 0.2;
+    --zoom-focus-minnor: 0.02;
+
+    /* 🟢 Variables para Sombras Dinámicas (derivadas o fijas) */
+    --shadow-spread-sm: 10px;
+    --shadow-spread-md: 15px;
+    --shadow-spread-lg: 25px;
 
     /* 📐 VARIABLES ESTRUCTURALES BASE */
     --card-gap: 3vmin; 
@@ -32,14 +37,18 @@
     --header-title-size: clamp(0.8rem, calc((1rem + 2vmin) * var(--font-scale)), 3rem);
     --header-logo-size: clamp(24px, calc(8vmin * var(--font-scale)), 4rem);
     --header-icon-size: clamp(24px, calc(8vmin * var(--font-scale)), 3.7rem);
-    --header-obras-size: clamp(16px, calc(6vmin * var(--font-scale)), 3rem);
-    --header-lang-font-size: 0.8em;
+    --header-obras-size: clamp(24px, calc(8vmin * var(--font-scale)), 3.7rem);
+    --header-lang-font-size: clamp(0.8rem, calc((2vmin) * var(--font-scale)), 3rem);
     
     /* 📐 FOOTER (Valores por defecto / Desktop) */
     --footer-height: 5vmin;
     --footer-font-size: clamp(0.6rem, calc(1.5vmin * var(--font-scale)), 0.8rem);
     --footer-social-link-size: clamp(12px, calc(2.5vmin * var(--font-scale)), 1rem) !important;
     --footer-padding: clamp(1px, 0.7vmin, 5px);
+
+    --footer-small-gap: clamp(5px, 2vw, 15px);
+    --footer-social-gap: clamp(4px, 1.5vw, 10px) !important;
+    --footer-license-height: clamp(16px, 2.5vw, 32px);
 
     /* 📐 VARIABLES DE TARJETAS (CARDS) */
     --card-p-line-height: 1.4;

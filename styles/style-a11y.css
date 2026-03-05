@@ -44,7 +44,8 @@
     max-width: 90vw;
 
     max-height: none; overflow-y: auto;
-    transform: translateY(20px); transition: transform var(--animation-speed) ease;
+    transform: translateY(var(--a11y-gap)); 
+    transition: transform var(--animation-speed) ease;
 
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) transparent;
@@ -110,7 +111,7 @@
     background: var(--color-primary-bg);
     color: var(--color-primary);
     outline: none;
-    box-shadow: 0 0 10px var(--color-shadow-primary);
+    box-shadow: 0 0 var(--shadow-spread-sm) var(--color-shadow-primary);
 }
 
 .a11y-section { 
@@ -123,7 +124,7 @@
 .a11y-section h3 { 
     font-size: var(--a11y-section-font-size); 
     margin-bottom: var(--a11y-controls-gap); 
-    opacity: 0.9; 
+    opacity: calc(var(--opacity) * 3); 
 
     /* FIX LAYOUT: Permitir múltiples líneas */
     white-space: normal !important;
@@ -177,7 +178,7 @@
 
 .a11y-option-btn:hover { 
     border-color: var(--color-primary); 
-    box-shadow: 0 0 10px var(--color-shadow-primary);
+    box-shadow: 0 0 var(--shadow-spread-sm) var(--color-shadow-primary);
 }
 
 /* Foco en botón normal (no seleccionado) */
@@ -188,16 +189,16 @@
     /* Como el borde engorda, compensamos el padding interior para que el texto no salte */
     padding: calc(var(--a11y-btn-padding) - (var(--border-width-focus) - var(--border-width-no-focus)));
     
-    box-shadow: 0 0 15px var(--color-shadow-primary);
+    box-shadow: 0 0 var(--shadow-spread-md) var(--color-shadow-primary);
     outline: none;
-    transform: scale(calc(1 + var(--zoom-width-focus-minnor)));
+    transform: scale(calc(1 + var(--zoom-focus-minnor)));
 }
 
 .a11y-option-btn.selected {
     background: var(--color-primary); 
     color: var(--color-a11y-selected-text);
     border-color: var(--color-primary);
-    box-shadow: 0 0 15px var(--color-shadow-primary);
+    box-shadow: 0 0 var(--shadow-spread-md) var(--color-shadow-primary);
 }
 
 /* 🟢 FIX CRÍTICO: Foco en botón YA seleccionado */
@@ -250,7 +251,7 @@ input[type=range].a11y-range {
     min-width: var(--a11y-range-size); /* Mínimo vital para el slider */
 }
 input[type=range].a11y-range:focus-visible {
-    box-shadow: 0 0 0 2px var(--color-primary);
+    box-shadow: 0 0 0 var(--border-width-no-focus) var(--color-primary);
 }
 input[type=range].a11y-range::-webkit-slider-thumb {
     -webkit-appearance: none; appearance: none;
@@ -263,7 +264,7 @@ input[type=range].a11y-range::-webkit-slider-thumb {
     transition: transform var(--animation-speed);
 }
 input[type=range].a11y-range:hover::-webkit-slider-thumb {
-    transform: scale(calc(1 + var(--zoom-width-focus-major)));
+    transform: scale(calc(1 + var(--zoom-focus-major)));
 }
 
 .a11y-range-value {
@@ -317,7 +318,7 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
     height: 50%;
     /* Usamos el color de fondo para el "tick" (para que contraste) */
     border: solid var(--color-card-bg); 
-    border-width: 0 2px 2px 0;
+    border-width: 0 var(--border-width-no-focus) var(--border-width-no-focus) 0;
     transform: translate(-50%, -60%) rotate(45deg);
     opacity: 0; /* Oculto si no está marcado */
     transition: opacity var(--animation-speed) ease;
@@ -344,8 +345,8 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
     
     /* Sombra doble: 1 capa del color de fondo (hueco) + 1 capa azul (anillo) */
     box-shadow: 
-        0 0 0 2px var(--color-card-bg), 
-        0 0 0 calc(2px + var(--border-width-focus)) var(--color-primary);
+        0 0 0 var(--border-width-no-focus) var(--color-card-bg), 
+        0 0 0 calc(var(--border-width-no-focus) + var(--border-width-focus)) var(--color-primary);
 }
 
 /* SECCIÓN FINAL (Footer del modal) */
@@ -384,7 +385,7 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
 #a11y-reset:focus-visible {
     background-color: var(--color-danger); 
     border-color: var(--color-danger);     
-    box-shadow: 0 0 10px var(--color-danger-bg);
+    box-shadow: 0 0 var(--shadow-spread-sm) var(--color-danger-bg);
     transform: rotate(-180deg); 
     outline: none;
 }
