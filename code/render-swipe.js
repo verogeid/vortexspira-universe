@@ -93,6 +93,12 @@ export function _initCarousel_Swipe(initialSwiperSlide, itemsPorColumna, isMobil
                 `SWIPE: Init ${swiperId} | Loop=${swiperConfig.loop}`);
     
     try {
+        if (typeof Swiper === 'undefined') {
+            debug.logError('render_swipe', 'Swiper no está cargado. Comprueba la conexión a internet.');
+            
+            return;
+        }
+
         this.STATE.carouselInstance = new Swiper(swiperId, swiperConfig);
 
         if (this.STATE.carouselInstance) {

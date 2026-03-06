@@ -8,41 +8,117 @@ import * as nav_keyboard_swipe from './nav-keyboard-swipe.js';
 
 export function initKeyboardControls() {
     debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 
-                'Inicializando controles de teclado (CAPTURE Mode)');
+                'Inicializando controles de teclado y mouse (CAPTURE Mode).');
 
+    // 🟢 CEREBRO ANTI-TRAMPAS DEL NAVEGADOR
+    let lastMousedownTarget = null;
+    let isScriptFocusing = false; // Chivato para saber si somos nosotros inyectando el foco
+
+    // 1. ESCUDO Y RASTREO (Mousedown)
+    document.addEventListener('mousedown', (e) => {
+        lastMousedownTarget = e.target; // Apuntamos exactamente qué píxel tocó el usuario
+        
+        const container = e.target.closest('#info-adicional, footer, #app-header, #vista-volver');
+        if (container) {
+            this.STATE.lastActiveZoneId = container.id || container.tagName.toLowerCase();
+            
+            const isInteractive = e.target.closest('a, button, summary, [tabindex="0"]');
+            
+            if (!isInteractive && container.id !== 'vista-central') {
+                // 🛑 CLIC EN ZONA MUERTA
+                e.preventDefault(); 
+                
+                const rawMemory = container.dataset.lastFocusId;
+                const lastIndex = parseInt(rawMemory, 10);
+                
+                if (!isNaN(lastIndex)) {
+                    const isVisible = (el) => el && el.offsetParent !== null;
+                    const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"]')).filter(isVisible);
+                    
+                    if (focusables[lastIndex]) {
+                        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `🛡️ Escudo: Clic en zona muerta. Forzando foco en el índice [${lastIndex}]`);
+                        
+                        // 🟢 Avisamos de que esta inyección de foco es nuestra (legítima)
+                        isScriptFocusing = true;
+                        focusables[lastIndex].focus({ preventScroll: true });
+                        isScriptFocusing = false;
+                    }
+                }
+            }
+        }
+    });
+
+    // 2. NOTARIO (El Juez Final del Focusin)
     document.addEventListener('focusin', (e) => {
         const app = this;
         const target = e.target;
 
-        // 1. Limpieza de tarjetas fantasma en el carrusel
         if (app.DOM.track && !app.DOM.track.contains(target)) {
             const ghosts = app.DOM.track.querySelectorAll('.card.focus-visible');
             ghosts.forEach(c => c.classList.remove('focus-visible'));
         }
 
-        // 🟢 2. NOTARIO DE MEMORIA: Guardar el índice del foco actual en su contenedor
-        // Buscamos si el elemento que acaba de recibir foco está en una de nuestras zonas
-        const container = target.closest('#info-adicional, footer, #app-header');
+        const container = target.closest('#info-adicional, footer, #app-header, #vista-volver');
         if (container) {
-            // Conseguimos todos los elementos enfocables de ESA zona concreta
-            const isVisible = (el) => el && el.offsetParent !== null;
-            const selector = container.tagName === 'FOOTER' ? 'a' : 
-                             container.id === 'info-adicional' ? 'summary, a' : 'a, button';
+            app.STATE.lastActiveZoneId = container.id || container.tagName.toLowerCase();
             
-            const focusables = Array.from(container.querySelectorAll(selector)).filter(isVisible);
+            const isInteractive = target.closest('a, button, summary, [tabindex="0"]');
             
-            // ¿En qué posición está el elemento que acabamos de tocar?
-            const index = focusables.indexOf(target);
-            if (index !== -1) {
-                // Lo grabamos a fuego en el contenedor
-                container.dataset.lastFocusId = index;
+            if (isInteractive && container.id !== 'vista-central') {
+                
+                // 🟢 FILTRO DE LA VERDAD
+                // Si este foco NO lo hemos forzado nosotros con el script, y hubo un clic de ratón reciente...
+                if (!isScriptFocusing && lastMousedownTarget) {
+                    
+                    // ¿El usuario clicó FÍSICAMENTE dentro del elemento que acaba de recibir el foco?
+                    const userClickedHere = isInteractive.contains(lastMousedownTarget);
+                    
+                    if (!userClickedHere) {
+                        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `🛑 ¡TRAMPA! Foco falso del navegador detectado. Rechazando...`);
+                        
+                        const rawMemory = container.dataset.lastFocusId;
+                        const lastIndex = parseInt(rawMemory, 10);
+                        
+                        if (!isNaN(lastIndex)) {
+                            const isVisible = (el) => el && el.offsetParent !== null;
+                            const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"]')).filter(isVisible);
+                            
+                            // Si el navegador intentó colarnos un foco falso, lo aplastamos con el legítimo
+                            if (focusables[lastIndex] && focusables[lastIndex] !== isInteractive) {
+                                isScriptFocusing = true;
+                                focusables[lastIndex].focus({ preventScroll: true });
+                                isScriptFocusing = false;
+                            }
+                        }
+                        return; // ❌ ABORTAMOS Y NO GUARDAMOS EL ÍNDICE FALSO
+                    }
+                }
+
+                // FLUJO NORMAL DE GUARDADO
+                const isVisible = (el) => el && el.offsetParent !== null;
+                const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"]')).filter(isVisible);
+                
+                const index = focusables.indexOf(isInteractive);
+                if (index !== -1) {
+                    container.dataset.lastFocusId = index;
+                    debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+                        `📝 Notario: Guardado índice [${index}] en la zona '${app.STATE.lastActiveZoneId}'`);
+                }
             }
         }
     });
 
     // ⭐️ LISTENER PRINCIPAL EN FASE DE CAPTURA ⭐️
     document.addEventListener('keydown', (e) => {
-        // 🛡️ BLOQUEO TOTAL: Si el UI está bloqueado (toast persistente), ignorar teclado.
+        // 🟢 Borramos la huella del ratón en cuanto el usuario toca el teclado
+        lastMousedownTarget = null; 
+        
+        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+            `📝 Listener KeyDown: ${this.STATE.lastActiveZoneId}`);
+
+        // 🛡️ BLOQUEO TOTAL...
         if (this.STATE.isUIBlocked) {
             e.preventDefault();
             e.stopPropagation();
@@ -261,6 +337,7 @@ function _handleLocalSectionNavigation(key, container) {
     
     if (next !== undefined && focusables[next]) {
         const target = focusables[next];
+
         target.focus();
         
         // 🟢 FIX MEMORIA: Guardar la referencia del último elemento visitado en el propio contenedor
@@ -349,7 +426,6 @@ function _handleGlobalWheel(e) {
 export function _handleFocusTrap(e, viewType) {
     const app = this;
 
-    // Usar data-layout en lugar de innerWidth
     const layout = document.body.getAttribute('data-layout') || 'desktop';
     const isMobile = layout === 'mobile';
     const isDesktop = layout === 'desktop';
@@ -357,113 +433,118 @@ export function _handleFocusTrap(e, viewType) {
 
     const isVisible = (el) => el && el.offsetParent !== null;
 
-    // 🟢 HELPER DE MEMORIA: Filtra los visibles y busca si el contenedor tiene memoria.
-    const getGroupWithMemory = (containerSelector, selectorString) => {
+    const getGroupWithMemory = (containerSelector) => {
         const container = document.querySelector(containerSelector);
         if (!container) return [];
         
-        const focusables = Array.from(container.querySelectorAll(selectorString)).filter(isVisible);
+        const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"]')).filter(isVisible);
         if (focusables.length === 0) return [];
 
-        // Si el contenedor guardó memoria de su último índice
         const lastIndex = parseInt(container.dataset.lastFocusId, 10);
         if (!isNaN(lastIndex) && focusables[lastIndex]) {
+            debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, `🧠 Memoria recuperada para ${containerSelector}: index [${lastIndex}]`);
             return [focusables[lastIndex]];
         }
         
-        return focusables; // Fallback normal
+        return focusables; 
     };
 
     const sections = {
         central: () => {
-            // 🟢 CASO A: Estamos en el Menú Principal
             if (viewType === 'nav') {
                 const cards = Array.from(app.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
-                
                 const current = cards[app.STATE.currentFocusIndex];
-
                 if (isVisible(current)) return [current];
-
                 const fallback = cards.find(isVisible);
                 return fallback ? [fallback] : [];
             }
-
-            // 🟢 CASO B: Estamos en la Vista de Detalles
+            
             const detailElements = nav_base_details._getFocusableDetailElements(app).filter(el => !el.classList.contains('card-volver-vertical') && isVisible(el));
             
-            // Si el estado interno recuerda dónde estábamos, devolvemos SOLO ese elemento.
-            // Al ser un array de 1 solo elemento, el TAB y el SHIFT+TAB aterrizarán siempre ahí.
             if (app.STATE.lastDetailFocusIndex !== undefined && detailElements[app.STATE.lastDetailFocusIndex]) {
                 return [detailElements[app.STATE.lastDetailFocusIndex]];
             }
-            // Fallback: Si no hay historial, devolvemos todo el array (comportamiento original)
-            return detailElements;
+            return detailElements; 
         },
-        // 🟢 FIX: Usamos el helper de memoria para las secciones periféricas
-        info: () => getGroupWithMemory('#info-adicional', 'summary, a'),
-        footer: () => getGroupWithMemory('footer', 'a'),
-        header: () => getGroupWithMemory('#app-header', 'a, button'),
+        info: () => getGroupWithMemory('#info-adicional'),
+        footer: () => getGroupWithMemory('footer'),
+        header: () => getGroupWithMemory('#app-header'),
         volver: () => {
-            if (isMobile && viewType === 'detail') 
-                return [app.DOM.detalleTrack.querySelector('.card-volver-vertical')].filter(isVisible);
-
+            if (isMobile && viewType === 'detail') return [app.DOM.detalleTrack.querySelector('.card-volver-vertical')].filter(isVisible);
             return [app.DOM.cardVolverFijaElemento].filter(isVisible);
         }
     };
 
-    // 🟢 FIX CRÍTICO: Ejecutamos las búsquedas 1 sola vez y guardamos la referencia exacta en memoria
     const arrCentral = sections.central();
     const arrInfo = sections.info();
     const arrFooter = sections.footer();
     const arrHeader = sections.header();
     const arrVolver = sections.volver();
 
-    // Armamos la secuencia usando las referencias exactas
     let sequence = (isDesktop || isTabletLS) ? 
         [arrCentral, arrInfo, arrFooter, arrHeader, arrVolver] : 
         (!isMobile ? [arrCentral, arrFooter, arrHeader, arrVolver] : [arrCentral, arrFooter, arrHeader]);
 
     const groups = sequence.filter(g => g.length > 0);
     
-    // 🟢 FIX: Averiguar a qué grupo físico pertenece el foco actual.
-    // Si estamos perdidos en el body (ej: clic fuera), intentamos recuperar el último contenedor conocido
     let currentContainer = document.activeElement.closest('#vista-central, #info-adicional, footer, #app-header, #vista-volver');
-    
+    let wasRecovered = false;
+
     if (!currentContainer && app.STATE.lastActiveZoneId) {
-        // Rescatamos la última zona conocida
         currentContainer = document.getElementById(app.STATE.lastActiveZoneId) || document.querySelector(app.STATE.lastActiveZoneId);
+        wasRecovered = true;
     }
     
     let groupIdx = -1;
     if (currentContainer) {
-        // Buscamos en 'groups' usando la misma referencia de Array
         if (currentContainer.id === 'vista-central') groupIdx = groups.indexOf(arrCentral);
         else if (currentContainer.id === 'info-adicional') groupIdx = groups.indexOf(arrInfo);
         else if (currentContainer.tagName === 'FOOTER') groupIdx = groups.indexOf(arrFooter);
         else if (currentContainer.id === 'app-header') groupIdx = groups.indexOf(arrHeader);
         else if (currentContainer.id === 'vista-volver') groupIdx = groups.indexOf(arrVolver);
         
-        // Guardamos la zona para el futuro (si hacemos clic fuera)
-        const zoneId = currentContainer.id || currentContainer.tagName.toLowerCase();
-        app.STATE.lastActiveZoneId = zoneId;
+        app.STATE.lastActiveZoneId = currentContainer.id || currentContainer.tagName.toLowerCase();
     }
     
     if (groupIdx === -1) groupIdx = 0;
 
-    // Calcular el siguiente grupo y apuntar
-    // Si el currentContainer NO existía (estabamos en el body) y pulsamos TAB normal (sin shift),
-    // queremos quedarnos en la zona que acabamos de rescatar, no saltar a la siguiente.
-    let nextGroup;
-    if (document.activeElement === document.body && !e.shiftKey) {
-        nextGroup = groupIdx; // Caemos en la zona rescatada
-    } else {
-        nextGroup = e.shiftKey ? 
-            (groupIdx <= 0 ? groups.length - 1 : groupIdx - 1) : 
-            (groupIdx >= groups.length - 1 ? 0 : groupIdx + 1);
+    const isLostFocus = !document.activeElement || document.activeElement === document.body || document.activeElement === document.documentElement;
+    
+    // 🟢 RESCATE ABSOLUTO DE MEMORIA 
+    if (isLostFocus && !e.shiftKey) {
+        // Si estábamos perdidos y pulsamos TAB normal, QUEREMOS QUEDARNOS EN LA ZONA.
+        // Y como `groups[groupIdx]` ya viene filtrado por la memoria (gracias a getGroupWithMemory),
+        // solo tenemos que enfocar su primer (y único) elemento.
+        const target = groups[groupIdx][0];
+        if (target) {
+            e.preventDefault();
+            target.focus();
+        }
+
+        // 🟢 CHIVATO MAESTRO
+        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+            `🔍 TRAP REPORT:
+            - Active Element: <${document.activeElement.tagName}> ${document.activeElement.id || document.activeElement.className}
+            - Foco perdido (Body): ${isLostFocus}
+            - Zona rescatada de memoria: ${wasRecovered ? 'SÍ (' + app.STATE.lastActiveZoneId + ')' : 'NO'}
+            - Grupo Actual Index: ${groupIdx}
+            - Próximo Grupo Index (Salto): ${nextGroup}
+            - Shift Pulsado: ${e.shiftKey}
+            - Elemento a enfocar: <${groups[nextGroup]?.[0]?.tagName}>`);
+
+        return; // Detenemos la ejecución aquí, el rescate fue exitoso
     }
+
+    // 🟢 NAVEGACIÓN NORMAL ENTRE ZONAS
+    let nextGroup = e.shiftKey ? 
+        (groupIdx <= 0 ? groups.length - 1 : groupIdx - 1) : 
+        (groupIdx >= groups.length - 1 ? 0 : groupIdx + 1);
     
     const target = e.shiftKey ? groups[nextGroup][groups[nextGroup].length - 1] : groups[nextGroup][0];
-    if (target) target.focus();
+    if (target) {
+        e.preventDefault()
+        target.focus();
+    }
 }
 
 /* --- code/nav-keyboard-base.js --- */

@@ -539,6 +539,12 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
         a11y: { enabled: false }
     };
 
+    if (typeof Swiper === 'undefined') {
+        debug.logError('render_details', 'Swiper no está cargado. Comprueba la conexión a internet.');
+        
+        return;
+    }
+
     appInstance.STATE.detailCarouselInstance = new Swiper(document.querySelector(swiperId), swiperConfig);
 
     if (appInstance.STATE.detailCarouselInstance) {
