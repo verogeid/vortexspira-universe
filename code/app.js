@@ -305,10 +305,9 @@ class VortexSpiraApp {
             }
         });
         
-        this.STATE.initialRenderComplete = true; 
+                this.STATE.initialRenderComplete = true; 
 
         // 🟢 FIN DE LA SECUENCIA DE ARRANQUE
-        // Damos un pequeño respiro para que el DOM se asiente y el anuncio de "Nivel Raíz" salga primero.
         setTimeout(() => {
             document.body.classList.add('app-loaded');
             
@@ -317,16 +316,37 @@ class VortexSpiraApp {
             debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                 "🔓 App cargada. Activando foco real.");
 
-            // 🔥 Forzamos el primer foco real (ahora sí hablará el SR)
-            // Usamos 'false' para no animar/deslizar, solo focalizar.
-            this._updateFocus(false);
+            // 🟢 1. AVISO DE LLEGADA A LA APLICACIÓN (A11y)
+            // Extraemos el título del H1 de forma limpia (quitando el <small> para no leer el subtítulo entero de golpe)
+            const titleNode = document.getElementById('main-header-title');
+            let appName = "VortexSpira EdTech";
+            
+            if (titleNode) {
+                const clone = titleNode.cloneNode(true);
+                const subtitle = clone.querySelector('small');
+                if (subtitle) clone.removeChild(subtitle);
+                appName = clone.textContent.trim() || appName;
+            }
+            
+            // Usamos 'assertive' para forzar al lector a hablar inmediatamente.
+            this.announceA11y(`${appName}, aplicación lista.`, 'assertive');
 
-            debug_diagnostics.runFontDiagnostics?.();
-            debug_diagnostics.runLayoutDiagnostics?.();
-        }, 200); // 200ms es imperceptible visualmente pero suficiente para ordenar eventos A11y
+            // 🟢 2. RETRASO ESTRATÉGICO DEL FOCO
+            // 🔥 El foco nativo INTERRUMPE cualquier locución en curso. 
+            // Le damos 1200ms al lector de pantalla para que diga el título completo con calma
+            // antes de que el foco salte a la primera tarjeta y lo corte.
+            setTimeout(() => {
+                this._updateFocus(false);
+
+                debug_diagnostics.runFontDiagnostics?.();
+                debug_diagnostics.runLayoutDiagnostics?.();
+            }, 1200); 
+
+        }, 200); 
 
         this._injectA11yAnnouncer();
     }
+
 
     // ============================================================================
     // 🛡️ MÉTODOS DE CONTROL DEL ESCUDO (UI Lock)
