@@ -1,4 +1,4 @@
-# <img src="./images/logo.svg" alt="VortexSpira Logo" height="40" target="_top"/> **VortexSpira® Universe**
+# <img src="./images/logo.svg" alt="VortexSpira Logo" height="40" target="_top"/> **VortexSpira® EdTech**
 
 Expositor de cursos de VortexSpira® e-learning mentor
 
@@ -11,7 +11,7 @@ Hasta un 60% OFF en el pre-lanzamiento de todos los cursos, si te conviertes en 
 
 * VortexSpira® Dev Diary: [https://github.com/verogeid/vortexspira-devdiary](https://github.com/verogeid/vortexspira-devdiary)
 
-* VortexSpira® Universe (🏗️): [https://www.vortexspira.com](https://www.vortexspira.com)
+* VortexSpira® EdTech (🏗️): [https://www.vortexspira.com](https://www.vortexspira.com)
 
 ---
 
