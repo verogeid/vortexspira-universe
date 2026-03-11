@@ -13,19 +13,19 @@ export const DEBUG_LEVELS = {
 };
 
 export const DEBUG_CONFIG = {
-    global: DEBUG_LEVELS.DISABLED,
+    global: DEBUG_LEVELS.DEEP,
 
-    global_focus: DEBUG_LEVELS.DISABLED,
+    global_focus: DEBUG_LEVELS.DEEP,
     global_font: DEBUG_LEVELS.DISABLED,
     global_layout: DEBUG_LEVELS.DISABLED,
     
     global_key: DEBUG_LEVELS.DISABLED,
     global_mouse: DEBUG_LEVELS.DISABLED,
     
-    app: DEBUG_LEVELS.BASIC,
+    app: DEBUG_LEVELS.EXTREME,
     data: DEBUG_LEVELS.DISABLED,
     i18n: DEBUG_LEVELS.DISABLED,
-    a11y: DEBUG_LEVELS.DISABLED,
+    a11y: DEBUG_LEVELS.EXTREME,
     nav_stack: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Detalle

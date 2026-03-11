@@ -105,8 +105,8 @@ export async function loadData(lang) {
         
         // Lógica de filtrado de modos (Producción vs Marketing)
         const fullJson = await response.json();
-        const urlParams = new URLSearchParams(window.location.search);
-        const mode = urlParams.get('mode');
+        const url = new URL(window.location);
+        const mode = url.searchParams.get('mode');
 
         let dataSelected;
         if (mode === 'dev') {
@@ -134,37 +134,40 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
         const h1 = header.querySelector('h1');
 
         if (h1) {
-            debug.log('data', debug.DEBUG_LEVELS.DEEP, 'Insertando enlace en Header');
-
-            // 2. HEADER LOGO: Creamos el enlace y el span con la clase CSS
-            // El CSS .header-logo se encarga de pintar el SVG con máscaras.
-            const logoLink = document.createElement('a');
-            logoLink.href = MEDIA.URL.WEBPAGE;
-            logoLink.target = "_self";
-
+            // 2. HEADER LOGO: Comprobamos si ya existe para no duplicarlo al cambiar de idioma
+            let logoLink = h1.querySelector('a');
+            
+            if (!logoLink) {
+                debug.log('data', debug.DEBUG_LEVELS.DEEP, 'Insertando enlace en Header');
+                logoLink = document.createElement('a');
+                logoLink.href = MEDIA.URL.WEBPAGE;
+                logoLink.target = "_self";
+                
+                const logoDiv = document.createElement('span');
+                logoDiv.className = 'header-logo'; 
+                logoLink.appendChild(logoDiv);
+                
+                h1.insertBefore(logoLink, h1.firstChild);
+            }
+            
+            // Siempre actualizamos el aria-label en caliente para los cambios de idioma
             logoLink.setAttribute('aria-label', appInstance.getString('header.aria.logoLink'));
-            
-            // Elemento vacío que recibirá el estilo CSS del logo
-            const logoDiv = document.createElement('span');
-            logoDiv.className = 'header-logo'; 
-            
-            logoLink.appendChild(logoDiv);
 
-            // Insertamos al principio del H1 (antes del texto del título)
-            h1.insertBefore(logoLink, h1.firstChild);
-
-            // 3. DEBUG ICON (OBRAS): Solo insertamos el span con la clase
+            // 3. DEBUG ICON (OBRAS): Solo insertamos si no existe previamente
             if (!debug.IS_PRODUCTION) {
-                debug.log('data', debug.DEBUG_LEVELS.DEEP, 'Insertando Icono de Obras');
-
-                const obrasSpan = document.createElement('span');
-                obrasSpan.className = 'icon-obras-header'; // CSS pinta el icono
-                wrapper.insertBefore(obrasSpan, h1);
+                let obrasSpan = wrapper.querySelector('.icon-obras-header');
+                
+                if (!obrasSpan) {
+                    debug.log('data', debug.DEBUG_LEVELS.DEEP, 'Insertando Icono de Obras');
+                    obrasSpan = document.createElement('span');
+                    obrasSpan.className = 'icon-obras-header'; // CSS pinta el icono
+                    wrapper.insertBefore(obrasSpan, h1);
+                }
             }
         }
 
-        // 3. CONTENEDOR DE CONTROLES (I18N + A11Y)
-        // Creamos un wrapper para agrupar los botones a la derecha
+        // 4. CONTENEDOR DE CONTROLES (I18N + A11Y)
+        // Creamos un wrapper para agrupar los botones a la derecha si no existe
         let controls = wrapper.querySelector('.header-controls');
         if (!controls) {
             controls = document.createElement('div');
@@ -173,8 +176,8 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
             // Si el botón A11y ya existe, lo movemos dentro
             const btnA11y = document.getElementById('btn-config-accesibilidad');
             if (btnA11y && btnA11y.parentNode === wrapper) {
-                wrapper.insertBefore(controls, btnA11y); // Insertamos contenedor donde estaba el botón
-                controls.appendChild(btnA11y); // Movemos el botón dentro
+                wrapper.insertBefore(controls, btnA11y); 
+                controls.appendChild(btnA11y); 
             } else {
                 wrapper.appendChild(controls);
             }
@@ -203,6 +206,7 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
                 btnLang.onclick = () => appInstance.toggleLanguage();
             }
 
+            // Actualizamos el texto e idioma en caliente
             const currentLang = localStorage.getItem('vortex_lang') || 'es';
             const textSpan = btnLang.querySelector('.lang-text');
             if (textSpan) textSpan.textContent = currentLang.toUpperCase();
@@ -210,9 +214,9 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
             const langLabel = currentLang === 'es' 
                 ? appInstance.getString('header.aria.langBtn') || "Idioma actual: Español. Cambiar a Inglés." 
                 : appInstance.getString('header.aria.langBtn') || "Current language: English. Switch to Spanish.";
+            
             btnLang.setAttribute('aria-label', langLabel);
         }
-
 
         // 5. BOTÓN A11Y: Limpiamos y configuramos
         const btnA11y = document.getElementById('btn-config-accesibilidad');
@@ -220,9 +224,9 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
             debug.log('data', debug.DEBUG_LEVELS.DEEP, 
                         'Estableciendo texto aria-label del botón a11y.');
             
-            btnA11y.innerHTML = ''; 
-            // El listener de click se añade en injectFooterContent o data.js global?
-            // Mejor añadirlo aquí si no está
+            // 🟢 FIX A11Y: Traducir el aria-label en caliente sin destruir el botón
+            btnA11y.setAttribute('aria-label', appInstance.getString('header.aria.a11yBtn'));
+            
             btnA11y.onclick = () => {
                 import('./a11y.js').then(module => module.openModal());
             };

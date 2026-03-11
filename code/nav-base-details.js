@@ -55,7 +55,7 @@ export function _updateDetailFocusState(appInstance, targetOverride = null) {
     }
 
     const focusedIndex = focusableElements.indexOf(focusedElement);
-    appInstance.STATE.lastDetailFocusIndex = focusedIndex; 
+    appInstance.STATE._lastDetailFocusIndex = focusedIndex; 
 
     debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 
         `[TRACE ${traceId}] Índice enfocado: ${focusedIndex}. Aplicando clases visuales de proximidad.`);
@@ -189,12 +189,12 @@ export function _handleSlideChangeEnd(swiper, appInstance) {
 
     // 🟢 FIX: Recuperamos el Snap visual sin interrumpir al lector
     // Si no hay foco físico en el detalle, o el radar lo movió:
-    if (physicalFocusIndex !== -1 && appInstance.STATE.lastDetailFocusIndex !== physicalFocusIndex) {
-        const ghostElement = focusableElements[appInstance.STATE.lastDetailFocusIndex];
+    if (physicalFocusIndex !== -1 && appInstance.STATE._lastDetailFocusIndex !== physicalFocusIndex) {
+        const ghostElement = focusableElements[appInstance.STATE._lastDetailFocusIndex];
         
         if (ghostElement) {
             debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 
-                `🛑 SILENCIO A11Y: Auto-encuadrando elemento fantasma (${appInstance.STATE.lastDetailFocusIndex}) sin robar foco físico.`);
+                `🛑 SILENCIO A11Y: Auto-encuadrando elemento fantasma (${appInstance.STATE._lastDetailFocusIndex}) sin robar foco físico.`);
             
             // Le pasamos el elemento fantasma para que la cámara lo desencubra
             _updateDetailFocusState(appInstance, ghostElement);
@@ -202,7 +202,7 @@ export function _handleSlideChangeEnd(swiper, appInstance) {
         return;
     }
 
-    const target = focusableElements[appInstance.STATE.lastDetailFocusIndex];
+    const target = focusableElements[appInstance.STATE._lastDetailFocusIndex];
     
     if (target) {
         target.focus({ preventScroll: true });
@@ -309,11 +309,11 @@ export function _handleTouchScrollRadar(appInstance) {
             ? validCandidates[validCandidates.length - 1] 
             : validCandidates[0];
 
-        if (appInstance.STATE.lastDetailFocusIndex !== targetIndex) {
+        if (appInstance.STATE._lastDetailFocusIndex !== targetIndex) {
             debug.log('nav_base_details', debug.DEBUG_LEVELS.EXTREME, 
                 `📡 Radar: Foco a Índice ${targetIndex} (Vector: ${isScrollingDown ? 'Abajo' : 'Arriba'})`);
                 
-            appInstance.STATE.lastDetailFocusIndex = targetIndex;
+            appInstance.STATE._lastDetailFocusIndex = targetIndex;
             _applyVisualClasses(appInstance, targetIndex);
         }
     }

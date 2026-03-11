@@ -22,7 +22,7 @@ export function _handleDetailNavigation(key) {
     if (totalElements === 0) return;
     
     // ⭐️ Nuevo: Determinar el índice actual basado en el índice guardado (que es el índice en la lista enfocable) ⭐️
-    let currentIndex = app.STATE.lastDetailFocusIndex || 0;
+    let currentIndex = app.STATE._lastDetailFocusIndex || 0;
     
     // Validación de índice guardado
     if (currentIndex < 0 || currentIndex >= totalElements) {
@@ -108,7 +108,7 @@ export function _handleDetailNavigation(key) {
 
             // 1. Aplicar Foco
             newFocusElement.focus({ preventScroll: true }); // Bloqueamos el salto nativo
-            app.STATE.lastDetailFocusIndex = newIndex;
+            app.STATE._lastDetailFocusIndex = newIndex;
             
             debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 
                 `[TRACE ${app.STATE.currentTraceId}] 4. Llamando sincrónicamente a _updateDetailFocusState`);
@@ -117,7 +117,7 @@ export function _handleDetailNavigation(key) {
             nav_base_details._updateDetailFocusState(app, null, app.STATE.currentTraceId); // Pasamos el traceId para mantener la trazabilidad en los logs
 
             // ⭐️ FIX CLAVE 4: Guardar el índice del elemento (no el índice del slide) para el focus trap ⭐️
-            app.STATE.lastDetailFocusIndex = newIndex; 
+            app.STATE._lastDetailFocusIndex = newIndex; 
 
             // 🟢 FIX CRÍTICO: Apagar la bandera del teclado tras el éxito, porque
             // en la vista detalle hemos desactivado el control de Swiper por defecto.

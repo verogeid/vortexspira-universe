@@ -107,7 +107,8 @@
 
 /* Efecto hover/foco en botón cerrar */
 .a11y-close-btn:hover,
-.a11y-close-btn:focus-visible {
+.a11y-close-btn:focus-visible,
+.a11y-close-btn:focus {
     background: var(--color-primary-bg);
     color: var(--color-primary);
     outline: none;
@@ -155,7 +156,7 @@
     background: transparent;
     border: var(--border-width-no-focus) solid var(--color-card-border);
     border-radius: 8px; color: var(--color-text);
-    cursor: pointer; transition: all var(--animation-speed) ease;
+    cursor: pointer;
 
     font-size: var(--a11y-option-btn-font-size);
 
@@ -174,6 +175,16 @@
     /* Permite que el botón encoja si es necesario */
     min-width: var(--a11y-btn-min-width);
     max-width: 100%;
+
+    /* FIX 1: Transiciones específicas, nunca 'all' */
+    transition: transform var(--animation-speed) ease,
+                background-color var(--animation-speed) ease,
+                border-color var(--animation-speed) ease,
+                box-shadow var(--animation-speed) ease,
+                color var(--animation-speed) ease;
+
+    /* FIX 2: Aceleración por hardware preventiva */
+    will-change: transform;
 }
 
 .a11y-option-btn:hover { 
@@ -182,7 +193,8 @@
 }
 
 /* Foco en botón normal (no seleccionado) */
-.a11y-option-btn:focus-visible {
+.a11y-option-btn:focus-visible, 
+.a11y-option-btn:focus {
     border-color: var(--color-primary);
     /* Usamos el borde focus grueso de nuestro sistema */
     border-width: var(--border-width-focus);
@@ -202,7 +214,8 @@
 }
 
 /* 🟢 FIX CRÍTICO: Foco en botón YA seleccionado */
-.a11y-option-btn.selected:focus-visible {
+.a11y-option-btn.selected:focus-visible, 
+.a11y-option-btn.selected:focus {
     /* Mantenemos el fondo y el color de texto invertido */
     background: var(--color-primary);
     color: var(--color-a11y-selected-text);
@@ -250,7 +263,8 @@ input[type=range].a11y-range {
     cursor: pointer;
     min-width: var(--a11y-range-size); /* Mínimo vital para el slider */
 }
-input[type=range].a11y-range:focus-visible {
+input[type=range].a11y-range:focus-visible, 
+input[type=range].a11y-range:focus {
     box-shadow: 0 0 0 var(--border-width-no-focus) var(--color-primary);
 }
 input[type=range].a11y-range::-webkit-slider-thumb {
@@ -340,7 +354,8 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
 }
 
 /* 5. 🟢 AHORA SÍ: El Foco Curvo Perfecto usando Box-Shadow */
-.a11y-checkbox:focus-visible {
+.a11y-checkbox:focus-visible, 
+.a11y-checkbox:focus {
     outline: none; /* Adiós cuadrado rígido */
     
     /* Sombra doble: 1 capa del color de fondo (hueco) + 1 capa azul (anillo) */
@@ -382,7 +397,8 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
 }
 
 #a11y-reset:hover,
-#a11y-reset:focus-visible {
+#a11y-reset:focus-visible,
+#a11y-reset:focus {
     background-color: var(--color-danger); 
     border-color: var(--color-danger);     
     box-shadow: 0 0 var(--shadow-spread-sm) var(--color-danger-bg);

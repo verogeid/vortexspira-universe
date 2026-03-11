@@ -2,6 +2,7 @@
 
 import * as debug from './debug.js'; 
 import * as data from './data.js';
+import { App } from './app.js';
 
 let _lastMode = 'desktop'; 
 let _resizeTimer; 
@@ -104,7 +105,17 @@ export function renderNavegacion() {
     let itemsDelNivel = !currentLevelState.levelId ? 
                         this.STATE.fullData.navegacion : 
                         (nodoActual?.subsecciones || []).concat(nodoActual?.cursos || []);
-                        
+
+    // 🟢 FIX A11Y/UX: Si la carpeta está vacía, inyectamos una tarjeta de aviso
+    if (itemsDelNivel.length === 0) {
+        itemsDelNivel.push({
+            id: 'empty-node',
+            tipoEspecial: 'empty',
+            // Puedes añadir esta clave a tus diccionarios i18n
+            nombre: this.getString('nav.emptySection') || 'Sin contenido aún'
+        });
+    }
+
     const isSubLevel = !!currentLevelState.levelId;
 
     if (isMobile && isSubLevel) {
@@ -363,7 +374,7 @@ export function renderNavegacion() {
                         nodoActual); 
 
 
-    // 🟢 FIX 2: Bloquear robo de foco si modal activo
+    /*// 🟢 FIX 2: Bloquear robo de foco si modal activo
     setTimeout(() => {
         if (document.getElementById('a11y-modal-overlay')?.classList.contains('active')) {
             debug.log('render_base', debug.DEBUG_LEVELS.DEEP, 
@@ -372,7 +383,7 @@ export function renderNavegacion() {
         }
 
         this._updateFocus(false);
-    }, 100);
+    }, 100);*/
 }
 
 function _getUniqueSelector(el) {
@@ -402,7 +413,7 @@ function _getUniqueSelector(el) {
 export function _setupResizeObserver() {
     document.addEventListener('focusin', (e) => {
         if (e.target && e.target !== document.body) {
-            this.STATE.lastFocusedElement = e.target;
+            this.STATE._lastFocusedElement = e.target;
         }
     }, { passive: true });
 
@@ -425,6 +436,9 @@ export function _setupResizeObserver() {
         }, 400);
 
         if (modeChanged && this.STATE.initialRenderComplete) {
+            // 🟢 ESCUDO: Si estamos operando en caliente, quieto parado
+            if (this.STATE.isUIBlocked) return;
+
             _lastMode = newMode;
             
             const isInDetails = !!this.STATE.activeCourseId;
@@ -434,8 +448,8 @@ export function _setupResizeObserver() {
             } else {
                 let activeElement = document.activeElement;
                 if (!activeElement || activeElement === document.body || activeElement === document.documentElement) {
-                    if (this.STATE.lastFocusedElement) {
-                        activeElement = this.STATE.lastFocusedElement;
+                    if (this.STATE._lastFocusedElement) {
+                        activeElement = this.STATE._lastFocusedElement;
                     } else {
                         if (this.DOM.track) {
                             activeElement = this.DOM.track.querySelector(`.card[data-pos="${this.STATE.currentFocusIndex}"]`);
@@ -488,6 +502,23 @@ export function _generarTarjetaHTMLImpl(nodo,
                     tabindex="0" 
                     onclick="App._handleVolverClick()">
                 <h3>${data.MEDIA.LOGO.VOLVER}</h3>
+            </article>`;
+    }
+
+    // 🟢 RENDERIZADO DE CARPETA VACÍA
+    if (tipoEspecial === 'empty') {
+        return `
+            <article class="card disabled" 
+                    data-id="${nodo.id}" 
+                    data-tipo="vacio" 
+                    role="button" 
+                    aria-disabled="true"
+                    tabindex="0" 
+                    aria-label="${nodo.nombre}">
+                <h3>
+                    <span class="icon-vacio-card"></span>
+                    <span id="card-title-${nodo.id}" class="card-text-content" aria-hidden="true">${nodo.nombre}</span>
+                </h3>
             </article>`;
     }
 

@@ -195,31 +195,40 @@
 }
 
 
-/* 🟢 REGLA 4: FOCO (Transform, color, y borde GRUESO) */
+/* 🟢 REGLA 4: FOCO ABSOLUTO (Garantiza visibilidad ignorando la heurística del ratón) */
 
-/* Foco Habilitada */
+/* Tarjetas Normales */
 .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
-.card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
+.card:not(.disabled):not([data-tipo="relleno"]):focus,
 .card:not(.disabled):not([data-tipo="relleno"]).focus-current { 
-    outline: none; 
-    border-width: var(--border-width-focus) !important; /* Borde GRUESO */
+    outline: none !important; 
+    border-width: var(--border-width-focus) !important; 
     border-color: var(--color-primary) !important;
-    transform: scale(calc(1 + (var(--zoom-focus-minnor) * 2)));
-    box-shadow: 0 0 var(--shadow-spread-lg) var(--color-shadow-primary); 
+    transform: scale(calc(1 + (var(--zoom-focus-minnor) * 2))) !important;
+    box-shadow: 0 0 var(--shadow-spread-lg) var(--color-shadow-primary) !important; 
     color: var(--color-primary) !important; 
+    opacity: 1 !important;
+    filter: saturate(1) !important;
 }
 
-/* Foco Deshabilitada */
-.card.disabled.focus-visible, 
-.card.disabled:focus-visible,
-.card.disabled.focus-current {
+/* Tarjetas Deshabilitadas (El foco debe verse en inglés) */
+.card.disabled:not([data-tipo="relleno"]).focus-visible, 
+.card.disabled:not([data-tipo="relleno"]):focus,
+.card.disabled:not([data-tipo="relleno"]).focus-current {
     outline: none !important;
-    border-width: var(--border-width-focus) !important; /* Borde GRUESO */
+    border-width: var(--border-width-focus) !important; 
     border-color: var(--color-card-border-disabled) !important;
-    transform: scale(calc(1 + (var(--zoom-focus-minnor) * 2)));
-    box-shadow: 0 0 var(--shadow-spread-md) var(--color-shadow-disabled); 
-    opacity: calc(var(--opacity) * 3); 
+    transform: scale(calc(1 + (var(--zoom-focus-minnor) * 2))) !important;
+    box-shadow: 0 0 var(--shadow-spread-md) var(--color-shadow-disabled) !important; 
+    opacity: calc(var(--opacity) * 3) !important; 
     color: var(--color-text-muted) !important;
+    filter: saturate(1) !important;
+}
+
+/* Fix extra: Forzar el re-renderizado en WebKit para evitar el "congelado visual" */
+.card {
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
 }
 
 /* --- styles/style-cards.css --- */

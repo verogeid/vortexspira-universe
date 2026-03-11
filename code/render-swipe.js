@@ -94,7 +94,8 @@ export function _initCarousel_Swipe(initialSwiperSlide, itemsPorColumna, isMobil
     
     try {
         if (typeof Swiper === 'undefined') {
-            debug.logError('render_swipe', 'Swiper no está cargado. Comprueba la conexión a internet.');
+            debug.logError('render_swipe', 
+                'Swiper no está cargado. Comprueba la conexión a internet.');
             
             return;
         }

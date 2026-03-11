@@ -47,15 +47,17 @@ footer a {
     padding: 0.2rem 0.5rem;
     border-radius: 8px; border: var(--border-width-no-focus) solid transparent;
 }
-footer a:focus { outline: none; }
 
 /* Efecto Hover Genérico (Aplica borde y sombra a todos) */
-footer a:hover, footer a:focus-visible {
+footer a:hover, 
+footer a:focus-visible,
+footer a:focus {
     border-color: var(--color-primary); 
     background: var(--color-card-bg); /* Fondo por defecto (se quitará en la licencia) */
     transform: scale(calc(1 + var(--zoom-focus-minnor))); 
     box-shadow: 0 0 25px var(--color-shadow-primary);
     color: var(--color-primary); 
+    outline: none;
 }
 
 .footer-license-link img { 
@@ -69,7 +71,8 @@ footer a.footer-license-link {
 }
 
 footer a.footer-license-link:hover, 
-footer a.footer-license-link:focus-visible {
+footer a.footer-license-link:focus-visible,
+footer a.footer-license-link:focus {
     background: transparent !important;
     transform: scale(calc(1 + var(--zoom-focus-minnor) * 2));
 }
@@ -107,7 +110,8 @@ footer a.footer-license-link:focus-visible {
 }
 
 .footer-social-link:hover, 
-.footer-social-link:focus-visible {
+.footer-social-link:focus-visible,
+.footer-social-link:focus {
     background-color: var(--color-primary) !important;
     transform: scale(calc(1 + var(--zoom-focus-major)));
     outline: none;

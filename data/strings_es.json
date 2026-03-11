@@ -27,7 +27,8 @@
         "level": "Nivel",
         "contextPrefix": "Navegando en: ",
         "coursePrefix": "Curso: ",
-        "emptyState": "No hay contenido disponible en este nivel."
+        "emptyState": "No hay contenido disponible en este nivel.",
+        "emptySection": "Sin contenido aún"
     },
     "card": {
         "noTitle": "Sin Título"

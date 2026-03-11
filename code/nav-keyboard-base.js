@@ -11,46 +11,84 @@ export function initKeyboardControls() {
                 'Inicializando controles de teclado y mouse (CAPTURE Mode).');
 
     // 🟢 CEREBRO ANTI-TRAMPAS DEL NAVEGADOR
-    let lastMousedownTarget = null;
-    let isScriptFocusing = false; // Chivato para saber si somos nosotros inyectando el foco
+    this.STATE._lastMousedownTarget = null;
 
-    // 1. ESCUDO Y RASTREO (Mousedown)
     document.addEventListener('mousedown', (e) => {
-        lastMousedownTarget = e.target; // Apuntamos exactamente qué píxel tocó el usuario
+        // 🟢 TELEMETRIA: Registar el clic
+        this.STATE.currentTraceId = `CLICK_${Date.now()}`;
+
+        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+            `[TRACE: ${this.STATE.currentTraceId}] 🖱️ Mousedown capturado en:`, e.target.tagName, e.target.id);
+
+        this.STATE._lastMousedownTarget = e.target; // Apuntamos exactamente qué píxel tocó el usuario
         
-        const container = e.target.closest('#info-adicional, footer, #app-header, #vista-volver');
+        const container = e.target.closest('#vista-central, #info-adicional, footer, #app-header, #vista-volver');
         if (container) {
-            this.STATE.lastActiveZoneId = container.id || container.tagName.toLowerCase();
+            this.STATE._lastActiveZoneId = container.id || container.tagName.toLowerCase();
             
-            const isInteractive = e.target.closest('a, button, summary, [tabindex="0"]');
+            let isInteractive = e.target.closest('a, button, summary, [tabindex="0"], [role="button"]');
             
-            if (!isInteractive && container.id !== 'vista-central') {
-                // 🛑 CLIC EN ZONA MUERTA
-                e.preventDefault(); 
-                
-                const rawMemory = container.dataset.lastFocusId;
-                const lastIndex = parseInt(rawMemory, 10);
-                
-                if (!isNaN(lastIndex)) {
-                    const isVisible = (el) => el && el.offsetParent !== null;
-                    const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"]')).filter(isVisible);
+            // 🟢 FIX SWIPER: Si el "interactivo" detectado es en realidad el contenedor físico del carrusel 
+            // (que Swiper ensucia con tabindex="0"), lo anulamos. Así garantizamos que se trate como Zona Muerta.
+            if (isInteractive && (
+                isInteractive.classList.contains('swiper') || 
+                isInteractive.classList.contains('swiper-wrapper') || 
+                isInteractive.id.startsWith('track-')
+            )) {
+                isInteractive = null;
+            }
+            
+            // 🛑 CLIC EN ZONA MUERTA (No interactiva)
+            if (!isInteractive) {
+
+                if (container.id !== 'vista-central') {
+                    // 🛑 CLIC EN ZONA MUERTA (Normal)
+                    e.preventDefault(); 
                     
+                    const rawMemory = container.dataset.lastFocusId;
+                    // 🟢 LA CLAVE: Si la memoria se ha purgado (NaN), empezamos por el índice 0
+                    const lastIndex = isNaN(parseInt(rawMemory, 10)) ? 0 : parseInt(rawMemory, 10);
+                    
+                    const isVisible = (el) => el && el.offsetParent !== null;
+                    const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"], [role="button"]')).filter(isVisible);
+
                     if (focusables[lastIndex]) {
                         debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
                             `🛡️ Escudo: Clic en zona muerta. Forzando foco en el índice [${lastIndex}]`);
                         
-                        // 🟢 Avisamos de que esta inyección de foco es nuestra (legítima)
-                        isScriptFocusing = true;
+                        // "Marcamos" físicamente el elemento como foco legítimo
+                        focusables[lastIndex].dataset.vortexFocus = "true";
                         focusables[lastIndex].focus({ preventScroll: true });
-                        isScriptFocusing = false;
+                    }
+                } else {
+                    // 🟢 CLIC EN LA ZONA MUERTA DEL SWIPER
+                    if (document.activeElement && document.activeElement !== document.body) {
+                        document.activeElement.blur();
+                        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `🖱️ Clic en Swiper: Forzando blur del elemento anterior para liberar el foco.`);
+                    }
+                    
+                    // 🟢 GARANTÍA ABSOLUTA: Ya que Swiper se traga el evento 'click', 
+                    // forzamos la recuperación visual desde aquí mismo.
+                    if (typeof this._updateFocus === 'function') {
+                        this._updateFocus(false);
                     }
                 }
+            } else if (container.id === 'vista-central') {
+                // 🟢 CLIC EN TARJETA: Sin inventos. Si es interactivo (esté deshabilitado o no), 
+                // le inyectamos el foco a la fuerza y le plantamos el sello del Notario.
+                isInteractive.dataset.vortexFocus = "true";
+                isInteractive.focus({ preventScroll: true });
             }
         }
-    });
+    }, { capture: true });
 
     // 2. NOTARIO (El Juez Final del Focusin)
     document.addEventListener('focusin', (e) => {
+        const traceInfo = this.STATE.currentTraceId || 'SIN_RASTRO';
+        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+            `[TRACE: ${traceInfo}] 🎯 Focusin disparado para:`, e.target.tagName, e.target.id);
+
         const app = this;
         const target = e.target;
 
@@ -59,52 +97,60 @@ export function initKeyboardControls() {
             ghosts.forEach(c => c.classList.remove('focus-visible'));
         }
 
-        const container = target.closest('#info-adicional, footer, #app-header, #vista-volver');
+        const container = target.closest('#vista-central, #info-adicional, footer, #app-header, #vista-volver');
         if (container) {
-            app.STATE.lastActiveZoneId = container.id || container.tagName.toLowerCase();
+            app.STATE._lastActiveZoneId = container.id || container.tagName.toLowerCase();
             
-            const isInteractive = target.closest('a, button, summary, [tabindex="0"]');
+            const isInteractive = target.closest('a, button, summary, [tabindex="0"], [role="button"]');
             
+            // 🟢 CLIC EN ELEMENTO INTERACTIVO
             if (isInteractive && container.id !== 'vista-central') {
                 
+                // 🟢 FIX DE CARRERA: Leemos la marca física del elemento
+                const isScriptFocusing = isInteractive.dataset.vortexFocus === "true";
+                isInteractive.removeAttribute('data-vortex-focus'); // Consumimos la marca
+
                 // 🟢 FILTRO DE LA VERDAD
                 // Si este foco NO lo hemos forzado nosotros con el script, y hubo un clic de ratón reciente...
-                if (!isScriptFocusing && lastMousedownTarget) {
+                if (!isScriptFocusing && this.STATE._lastMousedownTarget) {
                     
-                    // ¿El usuario clicó FÍSICAMENTE dentro del elemento que acaba de recibir el foco?
-                    const userClickedHere = isInteractive.contains(lastMousedownTarget);
+                    const isDetached = !document.body.contains(this.STATE._lastMousedownTarget);
                     
-                    if (!userClickedHere) {
-                        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
-                            `🛑 ¡TRAMPA! Foco falso del navegador detectado. Rechazando...`);
+                    if (isDetached) {
+                        this.STATE._lastMousedownTarget = null;
+                    } else {
+                        const clickedInteractive = this.STATE._lastMousedownTarget.closest?.('a, button, summary, [tabindex="0"], [role="button"]');
+                        const userClickedHere = (clickedInteractive === isInteractive) || isInteractive.contains(this.STATE._lastMousedownTarget);
                         
-                        const rawMemory = container.dataset.lastFocusId;
-                        const lastIndex = parseInt(rawMemory, 10);
-                        
-                        if (!isNaN(lastIndex)) {
-                            const isVisible = (el) => el && el.offsetParent !== null;
-                            const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"]')).filter(isVisible);
+                        if (!userClickedHere) {
+                            debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+                                `🛑 ¡TRAMPA! Foco falso del navegador detectado. Rechazando...`);
                             
-                            // Si el navegador intentó colarnos un foco falso, lo aplastamos con el legítimo
+                            const rawMemory = container.dataset.lastFocusId;
+                            // 🟢 FIX PURGA (Notario): Fallback a 0 si la memoria está vacía.
+                            const lastIndex = isNaN(parseInt(rawMemory, 10)) ? 0 : parseInt(rawMemory, 10);
+                            
+                            const isVisible = (el) => el && el.offsetParent !== null;
+                            const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"], [role="button"]')).filter(isVisible);
+                            
                             if (focusables[lastIndex] && focusables[lastIndex] !== isInteractive) {
-                                isScriptFocusing = true;
+                                focusables[lastIndex].dataset.vortexFocus = "true";
                                 focusables[lastIndex].focus({ preventScroll: true });
-                                isScriptFocusing = false;
                             }
+                            return; 
                         }
-                        return; // ❌ ABORTAMOS Y NO GUARDAMOS EL ÍNDICE FALSO
                     }
                 }
 
                 // FLUJO NORMAL DE GUARDADO
                 const isVisible = (el) => el && el.offsetParent !== null;
-                const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"]')).filter(isVisible);
-                
+                const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"], [role="button"]')).filter(isVisible);
+
                 const index = focusables.indexOf(isInteractive);
                 if (index !== -1) {
                     container.dataset.lastFocusId = index;
                     debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
-                        `📝 Notario: Guardado índice [${index}] en la zona '${app.STATE.lastActiveZoneId}'`);
+                        `📝 Notario: Guardado índice [${index}] en la zona '${app.STATE._lastActiveZoneId}'`);
                 }
             }
         }
@@ -113,10 +159,10 @@ export function initKeyboardControls() {
     // ⭐️ LISTENER PRINCIPAL EN FASE DE CAPTURA ⭐️
     document.addEventListener('keydown', (e) => {
         // 🟢 Borramos la huella del ratón en cuanto el usuario toca el teclado
-        lastMousedownTarget = null; 
+        this.STATE._lastMousedownTarget = null; 
         
         debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
-            `📝 Listener KeyDown: ${this.STATE.lastActiveZoneId}`);
+            `📝 Listener KeyDown: ${this.STATE._lastActiveZoneId}`);
 
         // 🛡️ BLOQUEO TOTAL...
         if (this.STATE.isUIBlocked) {
@@ -461,8 +507,8 @@ export function _handleFocusTrap(e, viewType) {
             
             const detailElements = nav_base_details._getFocusableDetailElements(app).filter(el => !el.classList.contains('card-volver-vertical') && isVisible(el));
             
-            if (app.STATE.lastDetailFocusIndex !== undefined && detailElements[app.STATE.lastDetailFocusIndex]) {
-                return [detailElements[app.STATE.lastDetailFocusIndex]];
+            if (app.STATE._lastDetailFocusIndex !== undefined && detailElements[app.STATE._lastDetailFocusIndex]) {
+                return [detailElements[app.STATE._lastDetailFocusIndex]];
             }
             return detailElements; 
         },
@@ -490,8 +536,8 @@ export function _handleFocusTrap(e, viewType) {
     let currentContainer = document.activeElement.closest('#vista-central, #info-adicional, footer, #app-header, #vista-volver');
     let wasRecovered = false;
 
-    if (!currentContainer && app.STATE.lastActiveZoneId) {
-        currentContainer = document.getElementById(app.STATE.lastActiveZoneId) || document.querySelector(app.STATE.lastActiveZoneId);
+    if (!currentContainer && app.STATE._lastActiveZoneId) {
+        currentContainer = document.getElementById(app.STATE._lastActiveZoneId) || document.querySelector(app.STATE._lastActiveZoneId);
         wasRecovered = true;
     }
     
@@ -503,7 +549,7 @@ export function _handleFocusTrap(e, viewType) {
         else if (currentContainer.id === 'app-header') groupIdx = groups.indexOf(arrHeader);
         else if (currentContainer.id === 'vista-volver') groupIdx = groups.indexOf(arrVolver);
         
-        app.STATE.lastActiveZoneId = currentContainer.id || currentContainer.tagName.toLowerCase();
+        app.STATE._lastActiveZoneId = currentContainer.id || currentContainer.tagName.toLowerCase();
     }
     
     if (groupIdx === -1) groupIdx = 0;
@@ -521,17 +567,6 @@ export function _handleFocusTrap(e, viewType) {
             target.focus();
         }
 
-        // 🟢 CHIVATO MAESTRO
-        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
-            `🔍 TRAP REPORT:
-            - Active Element: <${document.activeElement.tagName}> ${document.activeElement.id || document.activeElement.className}
-            - Foco perdido (Body): ${isLostFocus}
-            - Zona rescatada de memoria: ${wasRecovered ? 'SÍ (' + app.STATE.lastActiveZoneId + ')' : 'NO'}
-            - Grupo Actual Index: ${groupIdx}
-            - Próximo Grupo Index (Salto): ${nextGroup}
-            - Shift Pulsado: ${e.shiftKey}
-            - Elemento a enfocar: <${groups[nextGroup]?.[0]?.tagName}>`);
-
         return; // Detenemos la ejecución aquí, el rescate fue exitoso
     }
 
@@ -540,6 +575,17 @@ export function _handleFocusTrap(e, viewType) {
         (groupIdx <= 0 ? groups.length - 1 : groupIdx - 1) : 
         (groupIdx >= groups.length - 1 ? 0 : groupIdx + 1);
     
+    // 🟢 CHIVATO MAESTRO
+    debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+        `🔍 TRAP REPORT:
+        - Active Element: <${document.activeElement.tagName}> ${document.activeElement.id || document.activeElement.className}
+        - Foco perdido (Body): ${isLostFocus}
+        - Zona rescatada de memoria: ${wasRecovered ? 'SÍ (' + app.STATE._lastActiveZoneId + ')' : 'NO'}
+        - Grupo Actual Index: ${groupIdx}
+        - Próximo Grupo Index (Salto): ${nextGroup}
+        - Shift Pulsado: ${e.shiftKey}
+        - Elemento a enfocar: <${groups[nextGroup]?.[0]?.tagName}>`);
+
     const target = e.shiftKey ? groups[nextGroup][groups[nextGroup].length - 1] : groups[nextGroup][0];
     if (target) {
         e.preventDefault()

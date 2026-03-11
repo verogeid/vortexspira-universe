@@ -95,7 +95,12 @@ body.app-loaded {
     body[data-layout="desktop"] #info-adicional.visible { 
         display: block !important; 
     }
-    
+
+#card-volver-fija-elemento:focus,
+#card-volver-fija-elemento.focus-visible {
+    border: var(--border-width-focus) solid var(--color-primary) !important;
+}
+
 .resize-animation-stopper * {
     animation: none !important;
     transition: none !important;

@@ -107,14 +107,17 @@ header h1 a {
 
 /* Efectos Hover/Focus: Cambia SOLO la parte dinámica a Azul */
 header h1 a:hover .header-logo::after,
-header h1 a:focus-visible .header-logo::after {
+header h1 a:focus-visible .header-logo::after,
+header h1 a:focus .header-logo::after {
     background-color: var(--color-primary); 
     filter: drop-shadow(0 0 6px var(--color-shadow-primary));
 }
 header h1 a:hover .header-logo::after,
 header h1 a:focus-visible .header-logo::after,
+header h1 a:focus .header-logo::after,
 header h1 a:hover .header-logo::before,
-header h1 a:focus-visible .header-logo::before {
+header h1 a:focus-visible .header-logo::before,
+header h1 a:focus .header-logo::before {
     transform: scale(calc(1 + var(--zoom-focus-major)));
 }
 
@@ -165,7 +168,8 @@ header h1 a:focus-visible .header-logo::before {
     -webkit-mask-size: 100%; mask-size: 100%;
 }
 #btn-config-accesibilidad:hover,
-#btn-config-accesibilidad:focus-visible {
+#btn-config-accesibilidad:focus-visible,
+#btn-config-accesibilidad:focus {
     background-color: var(--color-primary);
     transform: scale(calc(1 + var(--zoom-focus-major)));
     filter: drop-shadow(0 0 4px var(--color-shadow-primary));
@@ -196,7 +200,8 @@ header h1 a:focus-visible .header-logo::before {
 }
 
 #btn-lang-toggle:hover,
-#btn-lang-toggle:focus-visible {
+#btn-lang-toggle:focus-visible,
+#btn-lang-toggle:focus {
     transform: scale(calc(1 + var(--zoom-focus-major)));
 }
 
@@ -220,7 +225,8 @@ header h1 a:focus-visible .header-logo::before {
 
 /* 🟢 INTERACCIÓN: EL SVG SE PONE DE COLOR PRIMARIO */
 #btn-lang-toggle:hover .lang-icon-bg,
-#btn-lang-toggle:focus-visible .lang-icon-bg {
+#btn-lang-toggle:focus-visible .lang-icon-bg,
+#btn-lang-toggle:focus .lang-icon-bg {
     background-color: var(--color-primary); 
     opacity: 1; 
     filter: drop-shadow(0 0 4px var(--color-shadow-primary));
@@ -256,7 +262,8 @@ header h1 a:focus-visible .header-logo::before {
 
 /* 🟢 INTERACCIÓN TEXTO: Contraste Matemático 7:1 garantizado */
 #btn-lang-toggle:hover .lang-text,
-#btn-lang-toggle:focus-visible .lang-text {
+#btn-lang-toggle:focus-visible .lang-text,
+#btn-lang-toggle:focus .lang-text {
     /* El cuerpo del texto asume la variable de alto contraste (Blanco en tema claro, Negro en tema oscuro) */
     color: var(--color-a11y-selected-text); 
     

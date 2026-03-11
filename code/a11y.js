@@ -226,12 +226,6 @@ function _injectModalHTML() {
                         <span style="font-size: 0.8rem" 
                             aria-hidden="true">A</span>
 
-                        <span id="a11y-range-val" 
-                            class="a11y-range-value">100%</span>
-
-                        <span style="font-size: 1.2rem" 
-                            aria-hidden="true">A</span>
-
                         <input type="range" 
                             id="a11y-range-size" 
                             class="a11y-range" 
@@ -241,6 +235,12 @@ function _injectModalHTML() {
                             aria-label="${i18n.getString('modal.aria.textSize')}"
                             aria-valuemin="90" 
                             aria-valuemax="200">
+
+                        <span style="font-size: 1.2rem" 
+                            aria-hidden="true">A</span>
+
+                        <span id="a11y-range-val" 
+                            class="a11y-range-value">100%</span>
                     </div>
                 </div>
 
@@ -249,13 +249,6 @@ function _injectModalHTML() {
                     <div class="a11y-range-wrapper">
                         <span class="range-icon-small" 
                             style="font-size: 0.8rem" 
-                            aria-hidden="true">≡</span>
-
-                        <span id="a11y-range-spacing-val" 
-                            class="a11y-range-value">${i18n.getString('modal.spacing.normal')}</span>
-
-                        <span class="range-icon-large" 
-                            style="font-size: 1.2rem" 
                             aria-hidden="true">≡</span>
 
                         <input type="range" 
@@ -267,6 +260,13 @@ function _injectModalHTML() {
                             aria-label="${i18n.getString('modal.aria.lineSpacing')}"
                             aria-valuemin="1" 
                             aria-valuemax="3">
+
+                        <span class="range-icon-large" 
+                            style="font-size: 1.2rem" 
+                            aria-hidden="true">≡</span>
+
+                        <span id="a11y-range-spacing-val" 
+                            class="a11y-range-value">${i18n.getString('modal.spacing.normal')}</span>
                     </div>
                 </div>
 

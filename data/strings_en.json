@@ -27,7 +27,8 @@
         "level": "Level",
         "contextPrefix": "Navigating in: ",
         "coursePrefix": "Course: ",
-        "emptyState": "No content available at this level."
+        "emptyState": "No content available at this level.",
+        "emptySection": "No content yet"
     },
     "card": {
         "noTitle": "Untitled"
