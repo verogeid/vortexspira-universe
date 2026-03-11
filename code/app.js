@@ -480,13 +480,13 @@ class VortexSpiraApp {
             }
 
             // Purgar la memoria visual del notario
-            ['app-header', 'vista-volver', 'info-adicional', 'vista-central'].forEach(id => {
+            /*['app-header', 'vista-volver', 'info-adicional', 'vista-central'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.removeAttribute('data-last-focus-id');
             });
 
             this.STATE._lastActiveZoneId = null;
-            this.STATE._lastMousedownTarget = null;
+            this.STATE._lastMousedownTarget = null;*/
 
             // 🟢 3. LA GRAN SOLUCIÓN: Reutilizamos el ciclo de arranque completo.
             // Como ya no inyectamos un 'resizeSnapshot' forzado, initAppStatus invocará 
