@@ -36,6 +36,7 @@ class VortexSpiraApp {
             carouselInstance: null,  
             resizeObserver: null,    
             currentFocusIndex: 0,   
+            _lastActiveZoneId: null,
             _lastMousedownTarget: null,
             initialRenderComplete: false, 
             keyboardNavInProgress: false,
@@ -760,9 +761,19 @@ class VortexSpiraApp {
 
     _setupSmartResize() {
         let resizeTimer;
-        const handleResize = () => {
+
+        const handleResizeStart = () => {
+            // 🟢 1. El inicio del Huracán. Le ponemos la venda al Notario INMEDIATAMENTE.
+            document.body.classList.add('resize-animation-stopper');
+            clearTimeout(resizeTimer);
+        };
+
+        const handleResizeEnd = () => {
             // 🟢 ESCUDO: Ignorar resizes causados por aplicar 'inert'
-            if (this.STATE.isUIBlocked) return;
+            if (this.STATE.isUIBlocked) {
+                document.body.classList.remove('resize-animation-stopper');
+                return;
+            }
 
             this._updateLayoutMode();
             this._syncHeaderDimensions();
@@ -775,28 +786,51 @@ class VortexSpiraApp {
 
                     requestAnimationFrame(() => {
                         this._mostrarDetalle(this.STATE.activeCourseId, false);
+                        // Retiramos la venda tras repintar
+                        setTimeout(() => document.body.classList.remove('resize-animation-stopper'), 150);
                     });
                 } else {
                     debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                                 `SmartResize: Refrescando menú.`);
 
+                    // 🟢 TRASPASO DE LA FUENTE DE LA VERDAD (NOTARIO -> RENDER)
+                    // Como app.js manda, es él quien coge la foto del Notario y la inyecta
+                    let snap = this.STATE._safeFocusSnapshot || null;
+
+                    if (!snap && this.STATE._lastActiveZoneId) {
+                        if (this.STATE._lastActiveZoneId === 'vista-central') {
+                            snap = { type: 'INDEX', value: Math.max(0, this.STATE.currentFocusIndex) };
+                        } else {
+                            snap = { type: 'ZONE_FALLBACK', value: this.STATE._lastActiveZoneId };
+                        }
+                    }
+                    this.STATE.resizeSnapshot = snap;
+
                     requestAnimationFrame(() => {
                         this.renderNavegacion();
+                        
+                        // 🟢 FIN DE LA CONDICIÓN DE CARRERA
+                        // Dejamos 150ms para que Swiper termine de crearse y hacer focus,
+                        // y solo entonces quitamos la venda para que el Notario vuelva a la vida.
+                        setTimeout(() => document.body.classList.remove('resize-animation-stopper'), 150);
                     });
                 }
+            } else {
+                document.body.classList.remove('resize-animation-stopper');
             }
         };
+
         window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(handleResize, 100); 
+            handleResizeStart();
+            resizeTimer = setTimeout(handleResizeEnd, 100); 
         });
 
         // 2. 🟢 ZOOM TÁCTIL (Pinch-to-zoom)
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', () => {
                 // Usamos un debounce más corto para que se sienta reactivo al hacer zoom
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(handleResize, 100); 
+                handleResizeStart();
+                resizeTimer = setTimeout(handleResizeEnd, 100);
             });
         }
     }

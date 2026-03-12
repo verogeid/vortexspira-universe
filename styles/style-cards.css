@@ -114,7 +114,6 @@
 
 /* Tipos Especiales */
 .card.card-breadcrumb-vertical {
-    border-style: dashed; 
     border-color: var(--color-border-placeholder);
     background: transparent; 
     min-height: 50px;
@@ -171,7 +170,9 @@
     border-color: var(--color-card-border-disabled);
     opacity: calc(var(--opacity) * 1.5);
 }
-
+.card.card-breadcrumb-vertical {
+    border-style: dashed;
+}
 
 /* 🟢 REGLA 3: HOVER (Transform, color, pero borde fino) */
 

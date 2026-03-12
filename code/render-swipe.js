@@ -151,6 +151,13 @@ export function _initCarousel_Swipe(initialSwiperSlide, itemsPorColumna, isMobil
 
 export function _destroyCarouselImpl() {
     if (this.STATE.carouselInstance) {
+        // 🟢 AMORDAZAR A SWIPER
+        // Evitamos que su agonía dispare 'transitionEnd' o 'slideChange'
+        // y nos robe el foco llamando a nav-mouse-swipe.
+        this.STATE.carouselInstance.off('slideChange');
+        this.STATE.carouselInstance.off('slideChangeTransitionEnd');
+        this.STATE.carouselInstance.off('transitionEnd');
+        
         this.STATE.carouselInstance.destroy(true, true);
         this.STATE.carouselInstance = null;
     }
