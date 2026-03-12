@@ -1,131 +1,18 @@
 {
   "prod": [
     {
-      "id": "s-ds",
-      "nombre": "Desarrollo de Software",
-      "subsecciones": [
-        {
-          "id": "s-ds-be",
-          "nombre": "Back-End",
-          "subsecciones": [
-            {
-              "id": "s-ds-be-api",
-              "nombre": "API",
-              "subsecciones": [],
-              "cursos": []
-            },
-            {
-              "id": "s-ds-be-db",
-              "nombre": "Bases de Datos",
-              "subsecciones": [],
-              "cursos": []
-            }
-          ],
-          "cursos": []
-        },
-        {
-          "id": "s-ds-fe",
-          "nombre": "Front-End",
-          "subsecciones": [],
-          "cursos": [
-            {
-              "id": "c-cfwp",
-              "titulo": "Web Architect",
-              "descripcion": "Acabo de salir del Kick-off del nuevo e-commerce y tú eres mi refuerzo. Olvida los tutoriales de 'Hola Mundo'; aquí trabajamos con metodología Shift Left. No vamos a tirar líneas de código, vamos a construir un edificio.<HR>🔸Sprint 1 (HTML5): Los cimientos semánticos y accesibles. Sin esto, el proyecto se hunde.<HR>🔸Sprint 2 (CSS3): La fachada, el diseño responsivo y la identidad visual.<HR>🔸Sprint 3 (JavaScript): La maquinaria interna, la lógica y la interactividad.<HR>Al terminar, no solo tendrás una app; tendrás la mentalidad para levantar cualquier proyecto web desde cero sin deuda técnica.",
-              "enlaces": [
-                { "texto": "Prueba el freemium", "url": "#a", "type": "d" },
-                { "texto": "Adquirir Módulo HTML5", "url": "#a", "type": "c" },
-                { "texto": "Adquirir Módulo CSS3", "url": "#", "type": "c" },
-                { "texto": "Adquirir Módulo JavaScript", "url": "#", "type": "c" },
-                { "texto": "Adquirir Paquete Completo", "url": "#", "type": "c" }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "s-ds-lg",
-          "nombre": "Fundamentos y Lenguajes",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-ds-ia",
-          "nombre": "Inteligencia Artificial",
-          "subsecciones": [],
-          "cursos": []
-        }
-      ],
-      "cursos": []
-    },
-    {
-      "id": "s-dev",
-      "nombre": "DevOps y CI/CD",
-      "subsecciones": [
-        {
-          "id": "s-dev-dk",
-          "nombre": "Contenedores y Orquestación",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-dev-cv",
-          "nombre": "Control de Versiones",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-dev-cicd",
-          "nombre": "Integración Continua (CI/CD)",
-          "subsecciones": [],
-          "cursos": []
-        }
-      ],
-      "cursos": []
-    },
-    {
-      "id": "s-doc",
-      "nombre": "Documentación y Modelado",
-      "subsecciones": [
-        {
-          "id": "s-ds-doc-dgr",
-          "nombre": "Diagramas y Modelado",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-doc-tool",
-          "nombre": "Herramientas y Lenguajes",
-          "subsecciones": [],
-          "cursos": []
-        }
-      ],
-      "cursos": []
-    },
-    {
       "id": "s-qa",
       "nombre": "Pruebas de Software (QA)",
       "subsecciones": [
         {
-          "id": "s-qa-a11y",
-          "nombre": "Accesibilidad (A11y)",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-qa-atm",
-          "nombre": "Automatización",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-qa-fun",
-          "nombre": "Fundamentos y Gestión",
+          "id": "s-qa-adv",
+          "nombre": "QA Avanzado",
           "subsecciones": [],
           "cursos": [
             {
               "id": "c-waqa",
               "titulo": "Web Architect QA Ed.",
-              "descripcion": "Te han mentido. La interfaz gráfica (UI) es una ilusión; la verdad está en el DOM. Si sigues probando solo 'lo que se ve', tus reportes serán superficiales y tus automatizaciones frágiles. <HR>Este curso transforma tu perfil de Tester a <strong>Ingeniero de Calidad Holístico</strong>, enseñándote a auditar las tripas de la web (Caja Gris): <HR>🔸<strong>La Visión (DOM & Consola):</strong> Deja de adivinar. Aprende a interrogar al navegador y destapar bugs ocultos (y mentiras del Frontend) que la UI no muestra. <HR>🔸<strong>El Selector Indestructible</strong>: ¿Tus tests se rompen si cambian el diseño o el idioma? Normal, estás testeando 'pintura'. Aprenderás a enganchar tus automatizaciones a <strong>Negocio</strong>. Crearás scripts que sobreviven a rediseños completos sin tocar una línea de código. <HR>🔸<strong>Ingeniería del Caos (Network & Render)</strong>: Controla el tráfico. Simula caídas de red, bloquea servicios de terceros y detecta problemas de rendimiento antes de que el usuario sufra.",
+              "descripcion": "Te han mentido. La interfaz gráfica (UI) es una ilusión; la verdad está en el DOM. Si sigues probando solo 'lo que se ve', tus reportes serán superficiales y tus automatizaciones frágiles. <HR>Este curso transforma tu perfil de Tester a Ingeniero de Calidad Holístico, enseñándote a auditar las tripas de la web (Caja Gris): <HR>🔸La Visión (DOM & Consola): Deja de adivinar. Aprende a interrogar al navegador y destapar bugs ocultos (y mentiras del Frontend) que la UI no muestra. <HR>🔸El Selector Indestructible: ¿Tus tests se rompen si cambian el diseño o el idioma? Normal, estás testeando 'pintura'. Aprenderás a enganchar tus automatizaciones a Negocio. Crearás scripts que sobreviven a rediseños completos sin tocar una línea de código. <HR>🔸Ingeniería del Caos (Network & Render): Controla el tráfico. Simula caídas de red, bloquea servicios de terceros y detecta problemas de rendimiento antes de que el usuario sufra.",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#", "type": "d" },
                 { "texto": "Adquirir Pack Completo", "url": "#", "type": "c" }
@@ -134,23 +21,39 @@
           ]
         },
         {
-          "id": "s-qa-pfm",
-          "nombre": "Performance",
+          "id": "s-qa-perfa11y",
+          "nombre": "Performance y Accesibilidad (A11y)",
           "subsecciones": [],
           "cursos": []
         },
         {
           "id": "s-qa-seg",
-          "nombre": "Seguridad",
+          "nombre": "Ciberseguridad",
           "subsecciones": [],
           "cursos": [
             {
               "id": "c-cseg",
               "titulo": "Cyberseguridad Beyond-OWASP",
-              "descripcion": "Hoy es tu primer día como becario en la empresa. El experto en ciberseguridad es tu mentor y te va a enseñar todo lo que sabe. <HR>Una simulación con la que entenderás no solo el qué y el cómo, sino el <scrong>porqué</strong>. Aprenderás a auditar una web, y hasta tu propia red doméstica o empresarial. Porque la superficie de ataque está en todas partes. <HR>Una simulación que va más allá del típico libro de texto. Anticípate al hacker o al desastre natural o digital.",
+              "descripcion": "Hoy es tu primer día como becario en la empresa. El experto en ciberseguridad es tu mentor y te va a enseñar todo lo que sabe. <HR>Una simulación con la que entenderás no solo el qué y el cómo, sino el porqué. Aprenderás a auditar una web, y hasta tu propia red doméstica o empresarial. Porque la superficie de ataque está en todas partes. <HR>Una simulación que va más allá del típico libro de texto. Anticípate al hacker o al desastre natural o digital.",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#", "type": "d" },
                 { "texto": "Adquirir pack completo", "url": "#", "type": "c" }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "s-qa-ia",
+          "nombre": "Auditoría de IA",
+          "subsecciones": [],
+          "cursos": [
+            {
+              "id": "c-qaia",
+              "titulo": "AI Quality Architect",
+              "descripcion": "La industria está abrazando la Inteligencia Artificial sin entender su arquitectura. Aprender a escribir prompts no es ingeniería; es ofimática avanzada. Este curso te transforma en un Auditor de IA a nivel corporativo.<HR>🔸Arquitectura y Límites: Entiende la ventana de contexto, el determinismo frente a la probabilidad y los límites físicos de los tokens.<HR>🔸Red Teaming: Secuestra el contexto, provoca bucles de sobrealineación y evalúa las vulnerabilidades de seguridad de la caja negra.<HR>🔸Deuda Técnica y Costes: Audita el impacto real en la infraestructura, desde el almacenamiento de trazas JSON hasta las normativas de privacidad.<HR>Licencia Única Universal: Adquirir este pase te habilita para cursar la formación tanto en Castellano como en Inglés desde tu panel inmersivo.",
+              "enlaces": [
+                { "texto": "Prueba el freemium", "url": "#", "type": "d" },
+                { "texto": "Adquirir Certificación Dual", "url": "#", "type": "c" }
               ]
             }
           ]
@@ -159,18 +62,28 @@
       "cursos": []
     },
     {
-      "id": "s-rec",
-      "nombre": "Recursos Adicionales",
-      "subsecciones": [],
-      "cursos": []
-    }
-  ],
-
-  "dev": [
-    {
       "id": "s-ds",
       "nombre": "Desarrollo de Software",
       "subsecciones": [
+        {
+          "id": "s-ds-fe",
+          "nombre": "Front-End",
+          "subsecciones": [],
+          "cursos": [
+            {
+              "id": "c-cfwp",
+              "titulo": "Web Architect Front-End",
+              "descripcion": "Acabo de salir del Kick-off del nuevo e-commerce y tú eres mi refuerzo. Olvida los tutoriales de 'Hola Mundo'; aquí trabajamos con metodología Shift Left. No vamos a tirar líneas de código, vamos a construir un edificio.<HR>🔸Sprint 1 (HTML5): Los cimientos semánticos y accesibles. Sin esto, el proyecto se hunde.<HR>🔸Sprint 2 (CSS3): La fachada, el diseño responsivo y la identidad visual.<HR>🔸Sprint 3 (JavaScript): La maquinaria interna, la lógica y la interactividad.<HR>Al terminar, no solo tendrás una app; tendrás la mentalidad para levantar cualquier proyecto web desde cero sin deuda técnica.",
+              "enlaces": [
+                { "texto": "Prueba el freemium", "url": "#", "type": "d" },
+                { "texto": "Adquirir Módulo HTML5", "url": "#", "type": "c" },
+                { "texto": "Adquirir Módulo CSS3", "url": "#", "type": "c" },
+                { "texto": "Adquirir Módulo JavaScript", "url": "#", "type": "c" },
+                { "texto": "Adquirir Paquete Completo", "url": "#", "type": "c" }
+              ]
+            }
+          ]
+        },
         {
           "id": "s-ds-be",
           "nombre": "Back-End",
@@ -191,33 +104,8 @@
           "cursos": []
         },
         {
-          "id": "s-ds-fe",
-          "nombre": "Front-End",
-          "subsecciones": [],
-          "cursos": [
-            {
-              "id": "c-cfwp",
-              "titulo": "Web Architect",
-              "descripcion": "Acabo de salir del Kick-off del nuevo e-commerce y tú eres mi refuerzo. Olvida los tutoriales de 'Hola Mundo'; aquí trabajamos con metodología Shift Left. No vamos a tirar líneas de código, vamos a construir un edificio.<HR>🔸Sprint 1 (HTML5): Los cimientos semánticos y accesibles. Sin esto, el proyecto se hunde.<HR>🔸Sprint 2 (CSS3): La fachada, el diseño responsivo y la identidad visual.<HR>🔸Sprint 3 (JavaScript): La maquinaria interna, la lógica y la interactividad.<HR>Al terminar, no solo tendrás una app; tendrás la mentalidad para levantar cualquier proyecto web desde cero sin deuda técnica.",
-              "enlaces": [
-                { "texto": "Prueba el freemium", "url": "#a", "type": "d" },
-                { "texto": "Adquirir Módulo HTML5", "url": "#a", "type": "c" },
-                { "texto": "Adquirir Módulo CSS3", "url": "#", "type": "c" },
-                { "texto": "Adquirir Módulo JavaScript", "url": "#", "type": "c" },
-                { "texto": "Adquirir Paquete Completo", "url": "#", "type": "c" }
-              ]
-            }
-          ]
-        },
-        {
           "id": "s-ds-lg",
           "nombre": "Fundamentos y Lenguajes",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-ds-ia",
-          "nombre": "Inteligencia Artificial",
           "subsecciones": [],
           "cursos": []
         }
@@ -226,7 +114,7 @@
     },
     {
       "id": "s-dev",
-      "nombre": "DevOps y CI/CD",
+      "nombre": "DevOps e Infraestructura",
       "subsecciones": [
         {
           "id": "s-dev-dk",
@@ -235,33 +123,14 @@
           "cursos": []
         },
         {
-          "id": "s-dev-cv",
-          "nombre": "Control de Versiones",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
           "id": "s-dev-cicd",
           "nombre": "Integración Continua (CI/CD)",
           "subsecciones": [],
           "cursos": []
-        }
-      ],
-      "cursos": []
-    },
-    {
-      "id": "s-doc",
-      "nombre": "Documentación y Modelado",
-      "subsecciones": [
-        {
-          "id": "s-ds-doc-dgr",
-          "nombre": "Diagramas y Modelado",
-          "subsecciones": [],
-          "cursos": []
         },
         {
-          "id": "s-doc-tool",
-          "nombre": "Herramientas y Lenguajes",
+          "id": "s-dev-cv",
+          "nombre": "Control de Versiones",
           "subsecciones": [],
           "cursos": []
         }
@@ -269,58 +138,20 @@
       "cursos": []
     },
     {
-      "id": "s-qa",
-      "nombre": "Pruebas de Software (QA)",
+      "id": "s-mod",
+      "nombre": "Modelado y Negocio",
       "subsecciones": [
         {
-          "id": "s-qa-a11y",
-          "nombre": "Accesibilidad (A11y)",
+          "id": "s-mod-uml",
+          "nombre": "Arquitectura y UML",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "s-qa-atm",
-          "nombre": "Automatización",
+          "id": "s-mod-ba",
+          "nombre": "Business Analysis (Jira, BDD)",
           "subsecciones": [],
           "cursos": []
-        },
-        {
-          "id": "s-qa-fun",
-          "nombre": "Fundamentos y Gestión",
-          "subsecciones": [],
-          "cursos": [
-            {
-              "id": "c-waqa",
-              "titulo": "Web Architect QA Ed.",
-              "descripcion": "Te han mentido. La interfaz gráfica (UI) es una ilusión; la verdad está en el DOM. Si sigues probando solo 'lo que se ve', tus reportes serán superficiales y tus automatizaciones frágiles. <HR>Este curso transforma tu perfil de Tester a <strong>Ingeniero de Calidad Holístico</strong>, enseñándote a auditar las tripas de la web (Caja Gris): <HR>🔸<strong>La Visión (DOM & Consola):</strong> Deja de adivinar. Aprende a interrogar al navegador y destapar bugs ocultos (y mentiras del Frontend) que la UI no muestra. <HR>🔸<strong>El Selector Indestructible:</strong> ¿Tus tests se rompen si cambian el diseño o el idioma? Normal, estás testeando 'pintura'. Aprenderás a enganchar tus automatizaciones a la <strong>Estructura Invisible</strong> del negocio. Crearás scripts que sobreviven a rediseños completos sin tocar una línea de código. <HR>🔸<strong>Ingeniería del Caos (Network & Render):</strong> Controla el tráfico. Simula caídas de red, bloquea servicios de terceros y detecta problemas de rendimiento antes de que el usuario sufra.",
-              "enlaces": [
-                { "texto": "Prueba el freemium", "url": "#", "type": "d" },
-                { "texto": "Adquirir Pack Completo", "url": "#", "type": "c" }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "s-qa-pfm",
-          "nombre": "Performance",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-qa-seg",
-          "nombre": "Seguridad",
-          "subsecciones": [],
-          "cursos": [
-            {
-              "id": "c-cseg",
-              "titulo": "Cyberseguridad Beyond-OWASP para QA",
-              "descripcion": "Hoy es tu primer día como becario en la empresa. El experto en ciberseguridad es tu mentor y te va a enseñar todo lo que sabe.<br>Una simulación con la que entenderás no solo el qué y el cómo, sino el porqué. Aprenderás a auditar una web, y hasta tu propia red doméstica o empresarial. Porque la superficie de ataque está en todas partes. Una simulación que va más allá del típico libro de texto.<br>Anticípate al hacker o al desastre natural o digital.",
-              "enlaces": [
-                { "texto": "Prueba el freemium", "url": "#", "type": "d" },
-                { "texto": "Adquirir pack completo", "url": "#", "type": "c" }
-              ]
-            }
-          ]
         }
       ],
       "cursos": []
@@ -344,5 +175,6 @@
         }
       ]
     }
-  ]
+  ],
+  "dev": []
 }
