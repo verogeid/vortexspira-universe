@@ -1,9 +1,56 @@
 {
   "prod": [
     {
+      "id": "s-qa",
+      "nombre": "Software Testing (QA)",
+      "subsecciones": [
+        {
+          "id": "s-qa-adv",
+          "nombre": "Advanced QA",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-qa-perfa11y",
+          "nombre": "Performance and Accessibility (A11y)",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-qa-seg",
+          "nombre": "Cybersecurity",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-qa-ia",
+          "nombre": "AI Auditing",
+          "subsecciones": [],
+          "cursos": [
+            {
+              "id": "c-qaia",
+              "titulo": "AI Quality Architect",
+              "descripcion": "The industry is embracing Artificial Intelligence without understanding its architecture. Learning to write prompts is not engineering; it is advanced office automation. This course transforms you into a corporate-level AI Auditor.<HR>🔸Architecture and Limits: Understand the context window, determinism versus probability, and the physical limits of tokens.<HR>🔸Red Teaming: Hijack the context, trigger over-alignment loops, and evaluate the security vulnerabilities of the black box.<HR>🔸Technical Debt and Costs: Audit the real impact on infrastructure, from JSON trace storage to privacy regulations.<HR>Universal Single License: Purchasing this pass enables you to take the training in both Spanish and English from your immersive dashboard.",
+              "enlaces": [
+                { "texto": "Try the freemium", "url": "#", "type": "d" },
+                { "texto": "Purchase Dual Certification", "url": "#", "type": "c" }
+              ]
+            }
+          ]
+        }
+      ],
+      "cursos": []
+    },
+    {
       "id": "s-ds",
       "nombre": "Software Development",
       "subsecciones": [
+        {
+          "id": "s-ds-fe",
+          "nombre": "Front-End",
+          "subsecciones": [],
+          "cursos": []
+        },
         {
           "id": "s-ds-be",
           "nombre": "Back-End",
@@ -24,20 +71,8 @@
           "cursos": []
         },
         {
-          "id": "s-ds-fe",
-          "nombre": "Front-End",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
           "id": "s-ds-lg",
-          "nombre": "Fundamentals & Languages",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-ds-ia",
-          "nombre": "Artificial Intelligence",
+          "nombre": "Fundamentals and Languages",
           "subsecciones": [],
           "cursos": []
         }
@@ -46,17 +81,11 @@
     },
     {
       "id": "s-dev",
-      "nombre": "DevOps & CI/CD",
+      "nombre": "DevOps and Infrastructure",
       "subsecciones": [
         {
           "id": "s-dev-dk",
-          "nombre": "Containers & Orchestration",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-dev-cv",
-          "nombre": "Version Control",
+          "nombre": "Containers and Orchestration",
           "subsecciones": [],
           "cursos": []
         },
@@ -65,23 +94,10 @@
           "nombre": "Continuous Integration (CI/CD)",
           "subsecciones": [],
           "cursos": []
-        }
-      ],
-      "cursos": []
-    },
-    {
-      "id": "s-doc",
-      "nombre": "Documentation & Modeling",
-      "subsecciones": [
-        {
-          "id": "s-ds-doc-dgr",
-          "nombre": "Diagrams & Modeling",
-          "subsecciones": [],
-          "cursos": []
         },
         {
-          "id": "s-doc-tool",
-          "nombre": "Tools & Languages",
+          "id": "s-dev-cv",
+          "nombre": "Version Control",
           "subsecciones": [],
           "cursos": []
         }
@@ -89,36 +105,18 @@
       "cursos": []
     },
     {
-      "id": "s-qa",
-      "nombre": "Software Testing (QA)",
+      "id": "s-mod",
+      "nombre": "Modeling and Business",
       "subsecciones": [
         {
-          "id": "s-qa-a11y",
-          "nombre": "Accessibility (A11y)",
+          "id": "s-mod-uml",
+          "nombre": "Architecture and UML",
           "subsecciones": [],
           "cursos": []
         },
         {
-          "id": "s-qa-atm",
-          "nombre": "Automation",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-qa-fun",
-          "nombre": "Fundamentals & Management",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-qa-pfm",
-          "nombre": "Performance",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-qa-seg",
-          "nombre": "Security",
+          "id": "s-mod-ba",
+          "nombre": "Business Analysis (Jira, BDD)",
           "subsecciones": [],
           "cursos": []
         }
@@ -132,138 +130,5 @@
       "cursos": []
     }
   ],
-
-  "dev": [
-    {
-      "id": "s-ds",
-      "nombre": "Software Development",
-      "subsecciones": [
-        {
-          "id": "s-ds-be",
-          "nombre": "Back-End",
-          "subsecciones": [
-            {
-              "id": "s-ds-be-api",
-              "nombre": "API",
-              "subsecciones": [],
-              "cursos": []
-            },
-            {
-              "id": "s-ds-be-db",
-              "nombre": "Databases",
-              "subsecciones": [],
-              "cursos": []
-            }
-          ],
-          "cursos": []
-        },
-        {
-          "id": "s-ds-fe",
-          "nombre": "Front-End",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-ds-lg",
-          "nombre": "Fundamentals & Languages",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-ds-ia",
-          "nombre": "Artificial Intelligence",
-          "subsecciones": [],
-          "cursos": []
-        }
-      ],
-      "cursos": []
-    },
-    {
-      "id": "s-dev",
-      "nombre": "DevOps & CI/CD",
-      "subsecciones": [
-        {
-          "id": "s-dev-dk",
-          "nombre": "Containers & Orchestration",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-dev-cv",
-          "nombre": "Version Control",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-dev-cicd",
-          "nombre": "Continuous Integration (CI/CD)",
-          "subsecciones": [],
-          "cursos": []
-        }
-      ],
-      "cursos": []
-    },
-    {
-      "id": "s-doc",
-      "nombre": "Documentation & Modeling",
-      "subsecciones": [
-        {
-          "id": "s-ds-doc-dgr",
-          "nombre": "Diagrams & Modeling",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-doc-tool",
-          "nombre": "Tools & Languages",
-          "subsecciones": [],
-          "cursos": []
-        }
-      ],
-      "cursos": []
-    },
-    {
-      "id": "s-qa",
-      "nombre": "Software Testing (QA)",
-      "subsecciones": [
-        {
-          "id": "s-qa-a11y",
-          "nombre": "Accessibility (A11y)",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-qa-atm",
-          "nombre": "Automation",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-qa-fun",
-          "nombre": "Fundamentals & Management",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-qa-pfm",
-          "nombre": "Performance",
-          "subsecciones": [],
-          "cursos": []
-        },
-        {
-          "id": "s-qa-seg",
-          "nombre": "Security",
-          "subsecciones": [],
-          "cursos": []
-        }
-      ],
-      "cursos": []
-    },
-    {
-      "id": "s-rec",
-      "nombre": "Additional Resources",
-      "subsecciones": [],
-      "cursos": []
-    }
-  ]
+  "dev": []
 }
