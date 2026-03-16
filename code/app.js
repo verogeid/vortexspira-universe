@@ -36,7 +36,6 @@ class VortexSpiraApp {
             carouselInstance: null,  
             resizeObserver: null,    
             currentFocusIndex: 0,   
-            _lastActiveZoneId: null,
             _lastMousedownTarget: null,
             initialRenderComplete: false, 
             keyboardNavInProgress: false,
@@ -78,53 +77,46 @@ class VortexSpiraApp {
     }
 
     async init() {
-        await this.initAppDebug();
+        debug.logClear();
+        debug.logDebugLevels();
+        
+        // 🟢 DETECCIÓN DE TERMINAL (Touch vs Mouse)
+        document.body.setAttribute('data-terminal', this.STATE.isTouchDevice ? 'touch' : 'mouse');
 
-        // 🟢 FIX ARQUITECTURA: Estas dos inicializaciones solo deben ocurrir UNA VEZ 
-        // en la vida de la app. Las sacamos de initAppStatus() para que el cambio 
-        // de idioma en caliente no las duplique en memoria.
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+            `Terminal detectado: ${this.STATE.isTouchDevice ? 'Touch' : 'Mouse'}`);
+
+        // Mantenemos isBooting = true por defecto desde el constructor
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+            "🚀 Iniciando App (Modo Silencioso activado)...");
+
+        debug_diagnostics._setupGlobalClickListener();
+        debug_diagnostics._setupFocusTracker();
+        debug_diagnostics._setupFocusMethodInterceptor();
+        debug_diagnostics._setupKeyTracker?.(); 
+
+        debug_diagnostics._watchFlag(this.STATE, 'keyboardNavInProgress');
+        debug_diagnostics._watchFlag(this.STATE, 'isNavigatingBack');
+        debug_diagnostics._watchFlag(this.STATE, 'isUIBlocked');
+
+        debug_diagnostics._watchFlag(this.STATE, '_lastMousedownTarget');
+        debug_diagnostics._watchFlag(this.STATE, '_lastActiveZoneId');
+
+        // 🟢 AUTO-ARRANQUE INTELIGENTE DEL SIMULADOR E2E
+        // Se ejecuta aquí, centralizado en App, si la configuración lo pide.
+        if (!debug.IS_PRODUCTION) {
+            // Exponer para debug manual si se desea
+            window.simularLector = debug_screenReaderSim.enableScreenReaderSimulator;
+
+            // Arrancar automáticamente si el nivel de debug de a11y es alto
+            if (debug.DEBUG_CONFIG.a11y >= debug.DEBUG_LEVELS.EXTREME) {
+                // Como init() se suele llamar en DOMContentLoaded, podemos arrancar directo.
+                // Si no, la función tiene sus propias guardas, pero aquí garantizamos que sea parte del ciclo de inicio.
+                debug_screenReaderSim.enableScreenReaderSimulator();
+            }
+        }
+
         this._setupSmartResize();
-
-        await this.initAppStatus();
-
-        a11y.initA11y();
-
-        nav_base.setupListeners.call(this);
-        nav_keyboard_base.initKeyboardControls.call(this); 
-        
-        this._updateLayoutMode();
-        this._syncHeaderDimensions();
-
-        await this.initAppListeneres();
-        
-        this.STATE.initialRenderComplete = true; 
-
-        // 🟢 FIN DE LA SECUENCIA DE ARRANQUE
-        setTimeout(() => {
-            document.body.classList.add('app-loaded');
-            
-            // 🔓 Liberamos el flag de arranque
-            this.STATE.isBooting = false;
-            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                "🔓 App cargada. Activando foco real.");
-
-            // 🟢 3. RETRASO ESTRATÉGICO DEL FOCO
-            // El foco nativo INTERRUMPE cualquier locución en curso. 
-            // Le damos 1 segundo al lector para que termine de decir "VortexSpira EdTech" 
-            // y "Navigating in: Root Level" antes de que el foco salte y diga la tarjeta actual.
-            setTimeout(() => {
-                this._updateFocus(false);
-
-                debug_diagnostics.runFontDiagnostics?.();
-                debug_diagnostics.runLayoutDiagnostics?.();
-            }, 1000); 
-
-        }, 200); 
-
-        this._injectA11yAnnouncer();
-    }
-
-    async initAppStatus() {
         this._updateLayoutMode();
         this._cacheDOM();
         
@@ -207,7 +199,10 @@ class VortexSpiraApp {
             enableI18n = await this._checkEnAvailability();
         }
 
-        debug.log('app', debug.DEBUG_LEVELS.BASIC, `I18N Habilitado: ${enableI18n}`);
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+            `I18N Habilitado: ${enableI18n}`);
+
+        a11y.initA11y();
 
         this.applyStrings(); 
 
@@ -249,50 +244,13 @@ class VortexSpiraApp {
             this.stackInitialize(); 
             this.renderNavegacion();
         }
-    }
 
-    async initAppDebug () {
-        debug.logClear();
-        debug.logDebugLevels();
+        nav_base.setupListeners.call(this);
+        nav_keyboard_base.initKeyboardControls.call(this); 
         
-        // 🟢 DETECCIÓN DE TERMINAL (Touch vs Mouse)
-        document.body.setAttribute('data-terminal', this.STATE.isTouchDevice ? 'touch' : 'mouse');
+        this._updateLayoutMode();
+        this._syncHeaderDimensions();
 
-        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-            `Terminal detectado: ${this.STATE.isTouchDevice ? 'Touch' : 'Mouse'}`);
-
-        // Mantenemos isBooting = true por defecto desde el constructor
-        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-            "🚀 Iniciando App (Modo Silencioso activado)...");
-
-        debug_diagnostics._setupGlobalClickListener();
-        debug_diagnostics._setupFocusTracker();
-        debug_diagnostics._setupFocusMethodInterceptor();
-        debug_diagnostics._setupKeyTracker?.(); 
-
-        debug_diagnostics._watchFlag(this.STATE, 'keyboardNavInProgress');
-        debug_diagnostics._watchFlag(this.STATE, 'isNavigatingBack');
-        debug_diagnostics._watchFlag(this.STATE, 'isUIBlocked');
-
-        debug_diagnostics._watchFlag(this.STATE, '_lastMousedownTarget');
-        debug_diagnostics._watchFlag(this.STATE, '_lastActiveZoneId');
-
-        // 🟢 AUTO-ARRANQUE INTELIGENTE DEL SIMULADOR E2E
-        // Se ejecuta aquí, centralizado en App, si la configuración lo pide.
-        if (!debug.IS_PRODUCTION) {
-            // Exponer para debug manual si se desea
-            window.simularLector = debug_screenReaderSim.enableScreenReaderSimulator;
-
-            // Arrancar automáticamente si el nivel de debug de a11y es alto
-            if (debug.DEBUG_CONFIG.a11y >= debug.DEBUG_LEVELS.EXTREME) {
-                // Como init() se suele llamar en DOMContentLoaded, podemos arrancar directo.
-                // Si no, la función tiene sus propias guardas, pero aquí garantizamos que sea parte del ciclo de inicio.
-                debug_screenReaderSim.enableScreenReaderSimulator();
-            }
-        }
-    }
-
-    async initAppListeneres() {
         // ====================================================================
         // 🛡️ ESCUDO DE CRISTAL: INTERCEPTOR UNIVERSAL (Teclado, Ratón y Touch)
         // Atrapa las interacciones en Fase de Captura (antes de procesarlas)
@@ -392,7 +350,34 @@ class VortexSpiraApp {
                 this.renderNavegacion();
             }
         });
+        
+                this.STATE.initialRenderComplete = true; 
+
+        // 🟢 FIN DE LA SECUENCIA DE ARRANQUE
+        setTimeout(() => {
+            document.body.classList.add('app-loaded');
+            
+            // 🔓 Liberamos el flag de arranque
+            this.STATE.isBooting = false;
+            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                "🔓 App cargada. Activando foco real.");
+
+            // 🟢 3. RETRASO ESTRATÉGICO DEL FOCO
+            // El foco nativo INTERRUMPE cualquier locución en curso. 
+            // Le damos 1 segundo al lector para que termine de decir "VortexSpira EdTech" 
+            // y "Navigating in: Root Level" antes de que el foco salte y diga la tarjeta actual.
+            setTimeout(() => {
+                this._updateFocus(false);
+
+                debug_diagnostics.runFontDiagnostics?.();
+                debug_diagnostics.runLayoutDiagnostics?.();
+            }, 1000); 
+
+        }, 200); 
+
+        this._injectA11yAnnouncer();
     }
+
 
     // ============================================================================
     // 🛡️ MÉTODOS DE CONTROL DEL ESCUDO (UI Lock)
@@ -456,9 +441,12 @@ class VortexSpiraApp {
         debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
             `[TRACE: ${this.STATE.currentTraceId} | ${traceTimeStr}] ⏳ INICIO DE CAMBIO DE IDIOMA`);
 
+        // 1. Memoria de foco: ¿El usuario pulsó el botón de idiomas para iniciar esto?
         const wasLangBtnFocused = document.activeElement && document.activeElement.id === 'btn-lang-toggle';
 
+        // 2. Bloqueamos la UI (El 'inert' expulsará el foco de forma segura)
         this.blockUI();
+        
         const msg = this.getString('header.aria.langSwitch') || "Changing language...";
         this.announceA11y(msg, 'assertive');
 
@@ -466,54 +454,123 @@ class VortexSpiraApp {
         const newLang = current === 'es' ? 'en' : 'es';
         
         try {
-            // 1. Inyectamos la orden en la URL y el storage
-            localStorage.setItem('vortex_lang', newLang);
+            // 2. Descargamos los nuevos datos
+            const [stringsLoaded, coursesData] = await Promise.all([
+                i18n.loadStrings(newLang),
+                data.loadData(newLang)
+            ]);
+
+            if (!stringsLoaded || !coursesData) 
+                throw new Error("Fallo al cargar nuevos diccionarios");
+
+            // 3. Preparamos la URL base
             const url = new URL(window.location);
             url.searchParams.set('lang', newLang);
-            window.history.replaceState({}, '', url);
+            const targetId = url.searchParams.get('id');
 
-            // 2. Destrucción inmediata de la UI antigua para evitar colisiones
+            // 3. Aplicamos el nuevo estado base
+            this.STATE.fullData = coursesData;
+            localStorage.setItem('vortex_lang', newLang);
+            document.documentElement.lang = newLang;
+
+            // 🟢 FIX CRÍTICO: DESTRUCCIÓN TOTAL DE LA PILA INMEDIATA
+            // Lo hacemos antes de repintar nada para evitar condiciones de carrera con el ResizeObserver
             this.stackInitialize();
             this.STATE.activeCourseId = null;
 
-            if (this.DOM.vistaDetalle) {
+            if (this.DOM.vistaDetalle) 
                 this.DOM.vistaDetalle.classList.remove('active');
-            }
 
-            // Purgar la memoria visual del notario
-            /*['app-header', 'vista-volver', 'info-adicional', 'vista-central'].forEach(id => {
+            // 🟢 PURGA DE MEMORIA DEL NOTARIO
+            // Borramos los atributos data-last-focus-id de todas las zonas
+            // para que el teclado parta de cero en la nueva interfaz.
+            ['app-header', 'vista-volver', 'info-adicional', 'vista-central'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.removeAttribute('data-last-focus-id');
             });
 
+            debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
+                `[TRACE: ${this.STATE.currentTraceId}] 🧹 Limpiando _lastMousedownTarget y _lastActiveZoneId...`);
+
+            // Reseteamos la zona activa
             this.STATE._lastActiveZoneId = null;
-            this.STATE._lastMousedownTarget = null;*/
+            this.STATE._lastMousedownTarget = null;
 
-            // 🟢 3. LA GRAN SOLUCIÓN: Reutilizamos el ciclo de arranque completo.
-            // Como ya no inyectamos un 'resizeSnapshot' forzado, initAppStatus invocará 
-            // internamente a renderNavegacion y, este a su vez, a this._updateFocus(false).
-            // Esto garantiza que el Swiper se hidrate de forma idéntica al arranque nativo.
-            await this.initAppStatus();
+            // 5. Repintamos la capa estática (Textos, Header, Footer)
+            this.applyStrings();
 
+            if (data.injectHeaderContent) {
+                // Si el nuevo es EN, forzamos true. Si es ES, verificamos si EN existe.
+                const enableI18n = newLang === 'en' ? true : await this._checkEnAvailability();
+                data.injectHeaderContent(this, enableI18n);
+            }
+
+            if (data.injectFooterContent) 
+                data.injectFooterContent(this);
+
+            // 🟢 FIX A11Y UX: Usamos tu sistema de Snapshot para devolver el foco al botón de idiomas
+            if (wasLangBtnFocused) {
+                this.STATE.resizeSnapshot = { type: 'ID', value: 'btn-lang-toggle' };
+            } 
+
+            // 6. ⭐️ RECONSTRUCCIÓN BASADA EN LA URL ⭐️
+            if (targetId) {
+                // Intentamos reconstruir la pila con los nuevos datos
+                if (this.stackBuildFromId(targetId, this.STATE.fullData)) {
+                    debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                        `Pila reconstruida para ID ${targetId} en ${newLang}. Verificando nodo...`);
+
+                    window.history.pushState({}, '', url);
+                    const nodo = this._findNodoById(targetId, this.STATE.fullData.navegacion);
+                    
+                    if (nodo && (nodo.titulo || nodo.descripcion)) {
+                        this._mostrarDetalle(targetId, true);
+                    } else {
+                        // EJECUCIÓN SÍNCRONA (Adiós a los setTimeout de 100ms traicioneros)
+                        this.renderNavegacion();
+                    }
+                } else {
+                    debug.logWarn('app', 
+                        `El nodo ${targetId} no existe en ${newLang}. Degradando a raíz.`);
+
+                    this.stackInitialize(); 
+                    url.searchParams.delete('id');
+                    window.history.pushState({}, '', url);
+                    
+                    this.renderNavegacion(); 
+                    this.showToast(this.getString('toast.errorId'));
+                }
+            } else {
+                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                    "No hay ID en la URL. Mostrando raíz.");
+
+                // Estábamos ya en la raíz
+                window.history.pushState({}, '', url);
+
+                this.renderNavegacion();
+            }
+
+            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                `Idioma cambiado a ${newLang}. Interfaz actualizada.`);
+
+            // 7. Liberamos la UI (El DOM vuelve a ser visible)
             this.unblockUI();
+
             debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
                 `[TRACE: ${this.STATE.currentTraceId}] ✅ FIN DE CAMBIO DE IDIOMA. Escudos bajados.`);
 
-            // 🟢 4. RESTAURACIÓN MANUAL DEL FOCO
-            // Devolvemos el foco al botón suavemente, DESPUÉS de que toda la lógica
-            // del Swiper haya terminado de construir el DOM a través de initAppStatus.
-            /*if (wasLangBtnFocused) {
-                setTimeout(() => {
-                    const btn = document.getElementById('btn-lang-toggle');
-                    if (btn) {
-                        btn.dataset.vortexFocus = "true";
-                        btn.focus({ preventScroll: true });
-                    }
-                }, 150); 
-            }*/
+            // 🟢 LIMPIEZA ASÍNCRONA DEL SNAPSHOT
+            // Le damos tiempo de sobra a renderNavegacion para que consuma la orden de foco
+            // antes de borrarla de la memoria para futuros redimensionados.
+            setTimeout(() => {
+                this.STATE.resizeSnapshot = null;
+            }, 500);
 
         } catch (error) {
-            debug.logError('app', 'Fallo crítico durante el Hot Swap de idioma', error);
+            debug.logError('app', 
+                'Fallo crítico durante el Hot Swap de idioma', error);
+
+            // Si todo falla, forzamos recarga tradicional como salvavidas
             window.location.reload();
         }
     }
@@ -761,19 +818,9 @@ class VortexSpiraApp {
 
     _setupSmartResize() {
         let resizeTimer;
-
-        const handleResizeStart = () => {
-            // 🟢 1. El inicio del Huracán. Le ponemos la venda al Notario INMEDIATAMENTE.
-            document.body.classList.add('resize-animation-stopper');
-            clearTimeout(resizeTimer);
-        };
-
-        const handleResizeEnd = () => {
+        const handleResize = () => {
             // 🟢 ESCUDO: Ignorar resizes causados por aplicar 'inert'
-            if (this.STATE.isUIBlocked) {
-                document.body.classList.remove('resize-animation-stopper');
-                return;
-            }
+            if (this.STATE.isUIBlocked) return;
 
             this._updateLayoutMode();
             this._syncHeaderDimensions();
@@ -786,51 +833,28 @@ class VortexSpiraApp {
 
                     requestAnimationFrame(() => {
                         this._mostrarDetalle(this.STATE.activeCourseId, false);
-                        // Retiramos la venda tras repintar
-                        setTimeout(() => document.body.classList.remove('resize-animation-stopper'), 150);
                     });
                 } else {
                     debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                                 `SmartResize: Refrescando menú.`);
 
-                    // 🟢 TRASPASO DE LA FUENTE DE LA VERDAD (NOTARIO -> RENDER)
-                    // Como app.js manda, es él quien coge la foto del Notario y la inyecta
-                    let snap = this.STATE._safeFocusSnapshot || null;
-
-                    if (!snap && this.STATE._lastActiveZoneId) {
-                        if (this.STATE._lastActiveZoneId === 'vista-central') {
-                            snap = { type: 'INDEX', value: Math.max(0, this.STATE.currentFocusIndex) };
-                        } else {
-                            snap = { type: 'ZONE_FALLBACK', value: this.STATE._lastActiveZoneId };
-                        }
-                    }
-                    this.STATE.resizeSnapshot = snap;
-
                     requestAnimationFrame(() => {
                         this.renderNavegacion();
-                        
-                        // 🟢 FIN DE LA CONDICIÓN DE CARRERA
-                        // Dejamos 150ms para que Swiper termine de crearse y hacer focus,
-                        // y solo entonces quitamos la venda para que el Notario vuelva a la vida.
-                        setTimeout(() => document.body.classList.remove('resize-animation-stopper'), 150);
                     });
                 }
-            } else {
-                document.body.classList.remove('resize-animation-stopper');
             }
         };
-
         window.addEventListener('resize', () => {
-            handleResizeStart();
-            resizeTimer = setTimeout(handleResizeEnd, 100); 
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(handleResize, 100); 
         });
 
         // 2. 🟢 ZOOM TÁCTIL (Pinch-to-zoom)
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', () => {
                 // Usamos un debounce más corto para que se sienta reactivo al hacer zoom
-                handleResizeStart();
-                resizeTimer = setTimeout(handleResizeEnd, 100);
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(handleResize, 100); 
             });
         }
     }

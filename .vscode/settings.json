@@ -3,5 +3,7 @@
     "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
     "editor.codeActionsOnSave": {
         
-    }
+    },
+    "editor.wordWrap": "on",
+    "editor.wrapOnEscapedLineFeeds": true
 }

@@ -100,6 +100,7 @@
     --a11y-btn-min-width: 120px;                /* Ancho mínimo botones */
     --a11y-slider-thumb-size: 20px;             /* Bolita del slider */
     --a11y-slider-height: 6px;                  /* Grosor línea slider */
+    --a11y-slider-width: 1.5rem;                /* Ancho del slider */
 
     /* 📐 VISTA DE DETALLES */
     --details-text-fragment-font-size: clamp(0.8rem, calc(0.9rem * var(--font-scale)), 1rem);
@@ -141,6 +142,7 @@
     --sm-mobile-header-logo-size: clamp(16px, calc(5vmin * var(--font-scale)), 24px) !important;
     --sm-mobile-header-icon-size: clamp(24px, calc(5vmin * var(--font-scale)), 32px) !important;
     --sm-mobile-header-obras-size: clamp(20px, calc(3vmin * var(--font-scale)), 28px) !important;
+    --sm-mobile-header-lang-font-size: clamp(14px, calc((3vmin) * var(--font-scale)), 20px) !important;
 
     --sm-footer-font-size: clamp(10px, calc(2vmin * var(--font-scale)), 20px) !important;
     --sm-footer-social-link-size: clamp(12px, calc(4vmin * var(--font-scale)), 20px) !important;
@@ -177,7 +179,7 @@
     --sm-a11y-header-margin: clamp(5px, calc(2vmin * var(--font-scale)), 10px) !important;
     --sm-a11y-section-margin: clamp(10px, calc(3vmin * var(--font-scale)), 15px) !important;
     --sm-a11y-controls-gap: clamp(4px, calc(1.5vmin * var(--font-scale)), 8px) !important;
-    --sm-a11y-btn-padding: clamp(4px, cslc(1.5vmin * var(--font-scale)), 8px) !important;
+    --sm-a11y-btn-padding: clamp(4px, calc(1.5vmin * var(--font-scale)), 8px) !important;
     --sm-a11y-btn-min-width: 0px !important;   /* CRÍTICO: Permitimos que los botones se encojan mucho en safe mode */ 
     --sm-a11y-slider-thumb-size: clamp(14px, calc(5vmin * var(--font-scale)), 18px) !important;
     --sm-a11y-slider-height: 4px !important;

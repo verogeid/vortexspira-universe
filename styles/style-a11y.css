@@ -227,21 +227,79 @@
 
 /* SLIDER */
 .a11y-range-wrapper {
-    display: flex; align-items: center; gap: var(--a11y-controls-gap);
+    display: flex;
+    flex-wrap: wrap-reverse;
+    align-items: center; 
+    row-gap: calc(var(--a11y-controls-gap) / 2);
+    column-gap: var(--a11y-controls-gap);
     width: 100%;
-    overflow: hidden; /* Contención */
 }
 
-/* Estilos para los iconos laterales de los sliders (A, ≡) */
+/* Iconos laterales (A, ≡) */
 .range-icon-small, .range-icon-large, 
 .a11y-range-wrapper span[aria-hidden="true"] {
-    flex-shrink: 0;
-
+    flex: 0 0 auto; /* No crecen ni encogen, ocupan lo justo */
     font-size: var(--a11y-slider-font-size);
-    
-    width: 1.5rem; /* Ancho fijo para alineación */
     text-align: center;
     line-height: 1;
+    margin: 0;
+    font-weight: 500;
+    color: var(--color-a11y-slider-labels);
+}
+
+/* El Slider (Barra) */
+input[type=range].a11y-range {
+    /* 🟢 El slider es un "muelle gigante". Empuja el valor a la derecha. 
+       Pero si se estrangula a menos del triple de su bolita, obliga al valor a saltar */
+    flex: 999 1 calc(var(--a11y-slider-thumb-size) * 3);
+    min-width: calc(var(--a11y-slider-thumb-size) * 3);
+    height: var(--a11y-slider-height);
+    background: var(--color-a11y-slider-track);
+    border-radius: 5px; 
+    outline: none;
+    -webkit-appearance: none; 
+    appearance: none;
+    cursor: pointer;
+    margin: 0;
+}
+
+/* Efectos Slider (Thumb y Focus) */
+input[type=range].a11y-range:focus-visible, 
+input[type=range].a11y-range:focus {
+    box-shadow: 0 0 0 var(--border-width-no-focus) var(--color-primary);
+}
+input[type=range].a11y-range::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: var(--a11y-slider-thumb-size); 
+    height: var(--a11y-slider-thumb-size); border-radius: 50%;
+    background: var(--color-primary); 
+    box-shadow: 0 0 5px var(--color-shadow-primary);
+    transition: transform var(--animation-speed);
+}
+input[type=range].a11y-range::-moz-range-thumb {
+    width: var(--a11y-slider-thumb-size); 
+    height: var(--a11y-slider-thumb-size); border-radius: 50%;
+    background: var(--color-primary); 
+    box-shadow: 0 0 5px var(--color-shadow-primary);
+    border: none;
+    transition: transform var(--animation-speed);
+}
+input[type=range].a11y-range:hover::-webkit-slider-thumb {
+    transform: scale(calc(1 + var(--zoom-focus-major)));
+}
+
+/* El Valor (100% o Normal) */
+.a11y-range-value {
+    /* 🟢 Ocupa el espacio de 5 letras mínimo. Si salta de línea, crece al 100% */
+    flex: 1 1 5ch; 
+    font-weight: bold; 
+    font-size: var(--a11y-range-value-font-size);
+    text-align: center; /* Se centra en su caja, dándonos el efecto deseado arriba y a la derecha */
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--color-a11y-slider-labels);
 }
 
 /* Aplicamos el color de etiquetas (7:1) a los iconos A, ≡ y al valor % */
@@ -251,46 +309,6 @@
 .a11y-range-value {
     font-weight: 500;
     color: var(--color-a11y-slider-labels);
-}
-
-input[type=range].a11y-range {
-    flex-grow: 1; height: var(--a11y-slider-height);
-
-    background: var(--color-a11y-slider-track);
-
-    border-radius: 5px; outline: none;
-    -webkit-appearance: none; appearance: none;
-    cursor: pointer;
-    min-width: var(--a11y-range-size); /* Mínimo vital para el slider */
-}
-input[type=range].a11y-range:focus-visible, 
-input[type=range].a11y-range:focus {
-    box-shadow: 0 0 0 var(--border-width-no-focus) var(--color-primary);
-}
-input[type=range].a11y-range::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none;
-    width: var(--a11y-slider-thumb-size); 
-    height: var(--a11y-slider-thumb-size); border-radius: 50%;
-
-    background: var(--color-primary); 
-
-    box-shadow: 0 0 5px var(--color-shadow-primary);
-    transition: transform var(--animation-speed);
-}
-input[type=range].a11y-range:hover::-webkit-slider-thumb {
-    transform: scale(calc(1 + var(--zoom-focus-major)));
-}
-
-.a11y-range-value {
-    /*min-width: 70px; */
-    text-align: right; 
-    font-weight: bold; font-size: var(--a11y-range-value-font-size);
-
-    /* ⭐️ FIX: Truncar valor del porcentaje si crece mucho */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex-shrink: 0;
 }
 
 .font-preview-atkinson { font-family: var(--font-atkinson); }
@@ -400,7 +418,7 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
 #a11y-reset:focus-visible,
 #a11y-reset:focus {
     background-color: var(--color-danger); 
-    border-color: var(--color-danger);     
+    border-color: var(--color-danger);      
     box-shadow: 0 0 var(--shadow-spread-sm) var(--color-danger-bg);
     transform: rotate(-180deg); 
     outline: none;

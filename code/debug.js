@@ -15,7 +15,7 @@ export const DEBUG_LEVELS = {
 export const DEBUG_CONFIG = {
     global: DEBUG_LEVELS.DEEP,
 
-    global_focus: DEBUG_LEVELS.EXTREME,
+    global_focus: DEBUG_LEVELS.DEEP,
     global_font: DEBUG_LEVELS.DISABLED,
     global_layout: DEBUG_LEVELS.DISABLED,
     
@@ -41,7 +41,7 @@ export const DEBUG_CONFIG = {
     nav_mouse_details: DEBUG_LEVELS.DISABLED,
     nav_mouse_swipe: DEBUG_LEVELS.DISABLED, 
     
-    render_base: DEBUG_LEVELS.EXTREME,
+    render_base: DEBUG_LEVELS.DISABLED,
     render_details: DEBUG_LEVELS.DISABLED, 
     render_swipe: DEBUG_LEVELS.DISABLED
 };

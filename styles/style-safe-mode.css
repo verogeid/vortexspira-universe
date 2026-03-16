@@ -7,6 +7,7 @@ body[data-layout="mobile"][data-safe-mode="true"] {
     --header-logo-size: var(--sm-mobile-header-logo-size);
     --header-icon-size: var(--sm-mobile-header-icon-size);
     --header-obras-size: var(--sm-mobile-header-obras-size);
+    --header-lang-font-size: var(--sm-mobile-header-lang-font-size);
 
     --footer-font-size: var(--sm-footer-font-size);
     --footer-social-link-size: var(--sm-footer-social-link-size);
@@ -113,60 +114,6 @@ body[data-layout="mobile"][data-safe-mode="true"] .a11y-option-btn {
     line-height: 1.1 !important;
     height: auto !important; /* Permitir que el botón crezca verticalmente */
     min-width: 0 !important;
-}
-
-/* SLIDERS (RANGE WRAPPER) - LA PARTE MÁS DIFÍCIL */
-body[data-layout="mobile"][data-safe-mode="true"] .a11y-range-wrapper {
-    display: flex !important;
-    flex-wrap: wrap !important; /* Permite crear la 2ª fila */
-    justify-content: space-between !important; /* Icono Izq - Valor Centro - Icono Der */
-    align-items: center !important;
-    gap: 0px !important; /* Sin gap horizontal extra, usamos space-between */
-}
-
-body[data-layout="mobile"][data-safe-mode="true"] input[type=range].a11y-range {
-    /* El slider debe ocupar toda la fila si es necesario */
-    flex: 1 1 100% !important; 
-    min-width: 100% !important;
-    margin: 5px 0 !important; /* Separación vertical */
-    order: 2; /* Forzarlo debajo de los iconos pequeños si se rompe la línea */
-}
-
-/* Los iconos "A" pequeños */
-body[data-layout="mobile"][data-safe-mode="true"] .range-icon-small,
-body[data-layout="mobile"][data-safe-mode="true"] .range-icon-large,
-body[data-layout="mobile"][data-safe-mode="true"] .a11y-range-wrapper span[aria-hidden="true"],
-body[data-layout="mobile"][data-safe-mode="true"] .a11y-range-value {
-    order: 1 !important; /* Se mantienen en la primera fila */
-    width: auto !important;
-    flex: 0 1 auto !important; /* Solo ocupan lo que necesiten */
-    
-    /* Reset de márgenes */
-    margin: 0 !important;
-    line-height: 1.2 !important;
-}
-
-/* CENTRADO DEL VALOR (El texto "100%" o "Normal") */
-body[data-layout="mobile"][data-safe-mode="true"] .a11y-range-value {
-    text-align: center !important;
-    flex-grow: 1 !important; /* Empuja los iconos a los extremos */
-}
-
-/* 3. FILA INFERIOR: EL SLIDER (Elemento 4 del HTML) */
-body[data-layout="mobile"][data-safe-mode="true"] input[type=range].a11y-range {
-    /* FORZAMOS LA NUEVA LÍNEA */
-    order: 2 !important; 
-    width: 100% !important; 
-    flex-basis: 100% !important; 
-    
-    /* Espacio vital para dibujarse */
-    margin-top: 8px !important; 
-    margin-bottom: 5px !important;
-    height: 6px !important;
-    
-    /* Aseguramos que no se oculte */
-    display: block !important;
-    opacity: 1 !important;
 }
 
 /* --- styles/style-safe-mode.css --- */

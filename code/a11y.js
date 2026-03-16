@@ -223,7 +223,7 @@ function _injectModalHTML() {
                 <div class="a11y-section">
                     <h3>${i18n.getString('modal.sections.size')}</h3>
                     <div class="a11y-range-wrapper">
-                        <span style="font-size: 0.8rem" 
+                        <span class="range-icon-small" style="font-size: 0.8rem" 
                             aria-hidden="true">A</span>
 
                         <input type="range" 
@@ -236,7 +236,7 @@ function _injectModalHTML() {
                             aria-valuemin="90" 
                             aria-valuemax="200">
 
-                        <span style="font-size: 1.2rem" 
+                        <span class="range-icon-large" style="font-size: 1.2rem" 
                             aria-hidden="true">A</span>
 
                         <span id="a11y-range-val" 

@@ -417,11 +417,13 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
     slidesData.forEach((slide, index) => {
         let titleHtml = '';
         if (slide.isFirst) {
-            // 🟢 TÁCTIL O PC: El título ahora también requiere la clase y el tabindex en móvil
-            const titleClasses = slide.isRaw ? 'detail-title-slide detail-text-fragment' : 'detail-title-slide';
-            const titleTab = slide.isRaw ? 'tabindex="0" onclick="this.focus()"' : 'aria-hidden="true"';
+            // 🟢 FIX ARQUITECTURA: El título NUNCA debe recibir el foco espacial 
+            // Es solo un elemento estructural/visual. 
+            // El foco debe caer en el primer párrafo <p> real.
+            // Le ponemos aria-hidden="true" si no es raw para que el SR no lo lea dos veces si la tarjeta entera ya tiene aria-label
+            const titleTab = slide.isRaw ? '' : 'aria-hidden="true"';
             
-            titleHtml = `<h2 class="${titleClasses}" ${titleTab}>${curso.titulo}</h2>`;
+            titleHtml = `<h2 class="detail-title-slide" ${titleTab}>${curso.titulo}</h2>`;
         }
         
         if (slide.isRaw) {

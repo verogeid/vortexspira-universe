@@ -156,134 +156,89 @@ export function renderNavegacion() {
 
     if (this.STATE.resizeSnapshot) {
         const snap = this.STATE.resizeSnapshot;
+        // 🔍 TRAZA EXTREMA DE DECISIÓN
         debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
                     `[RENDER-FLOW] 02. Processing Snapshot. Type:${snap.type} Value:${snap.value}`);
 
+        // 1. Intentar encontrar elemento exacto (ID o Selector)
         let foundEl = null;
 
-        // 🟢 TU LÓGICA: PRIMERO MIRAMOS LA ZONA
-        // Si hay un _lastActiveZoneId y NO es la zona central (Swiper),
-        // no importa si el snap es INDEX, ID o DATA_ID. Queremos restaurar a esa zona periférica.
-        if (this.STATE._lastActiveZoneId && this.STATE._lastActiveZoneId !== 'vista-central') {
-            
-            let zSelector = this.STATE._lastActiveZoneId;
-            if (!zSelector.startsWith('#') && !['footer', 'header'].includes(zSelector)) {
-                zSelector = '#' + zSelector; 
-            }
-            
-            const zContainer = document.querySelector(zSelector);
-            if (zContainer) {
-                const isVisible = (el) => el && el.offsetParent !== null;
-                const focusables = Array.from(zContainer.querySelectorAll('a[href], button, summary, [tabindex="0"]')).filter(isVisible);
+        if (snap.type === 'ID') 
+            foundEl = document.getElementById(snap.value);
 
-                // Si el Notario nos dio un INDEX, usamos ese índice
-                if (snap.type === 'INDEX') {
-                    if (focusables[snap.value]) {
-                        foundEl = focusables[snap.value];
-                    }
-                } 
-                // Si nos dio un ID (ej: btn-lang-toggle), buscamos ese ID dentro de la zona
-                else if (snap.type === 'ID') {
-                    foundEl = zContainer.querySelector(`#${snap.value}`);
-                } 
-                // Si no encontramos nada o es ZONE_FALLBACK, usamos el primer elemento interactivo
-                else if (snap.type === 'ZONE_FALLBACK' || !foundEl) {
-                    if (focusables[0]) {
-                        foundEl = focusables[0];
-                    }
+        else if (snap.type === 'SELECTOR') 
+            foundEl = document.querySelector(snap.value);
+
+        if (foundEl) {
+            debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                        `[RENDER-FLOW] 03A. Exact Match Found: ${snap.value}. Setting explicitExternalFocus.`);
+
+            explicitExternalFocus = foundEl;
+            shouldFocusTrack = false;
+            this.STATE.currentFocusIndex = -1;
+        } 
+        else if (snap.type === 'DATA_ID') {
+            // 2. Si era una tarjeta (data-id), buscarla en el track
+            const targetId = snap.value;
+            const rawIndex = itemsDelNivel.findIndex(item => item.id === targetId);
+
+            if (rawIndex !== -1) {
+                // Está en el track -> Calcular nuevo índice
+                let logicalIndex = 0;
+                for (let i = 0; i < rawIndex; i++) {
+                    const it = itemsDelNivel[i];
+                    if (it.tipo !== 'relleno' && it.tipoEspecial !== 'breadcrumb-vertical') 
+                        logicalIndex++;
                 }
-            }
+                this.STATE.currentFocusIndex = logicalIndex;
+                shouldFocusTrack = true; // Dejamos que _updateFocus haga su trabajo
 
-            if (foundEl) {
-                explicitExternalFocus = foundEl;
-                shouldFocusTrack = false;
-                this.STATE.currentFocusIndex = -1;
                 debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
-                    `[RENDER-FLOW] 03. Restaurado a zona periférica: ${zSelector}`);
+                            `[RENDER-FLOW] 03B. Card found in track (Index: ${logicalIndex}).`);
             } else {
-                // 🟢 ZONA DESAPARECIDA: Forzamos el salto a la zona central
-                debug.log('render_base', debug.DEBUG_LEVELS.BASIC, 
-                    `Zona ${this.STATE._lastActiveZoneId} desaparecida. Saltando al Swiper.`);
-                    
-                this.STATE._lastActiveZoneId = 'vista-central'; // <-- CLAVE: Limpiar la zona muerta
-                this.STATE.currentFocusIndex = 0;
-                shouldFocusTrack = true;
-            }
+                // No está en el track -> ¿Era volver-nav?
+                if (targetId === 'volver-nav') {
+                    const volverFijoRef = this.DOM.cardVolverFijaElemento || document.getElementById('card-volver-fija-elemento');
+                    if (volverFijoRef) {
+                        debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                                    `[RENDER-FLOW] 03C. 'volver-nav' remapped to fixed button.`);
 
-        } else {
-            // ==========================================
-            // 🟢 ZONA CENTRAL (SWIPER) Y COMPATIBILIDAD
-            // ==========================================
-            
-            if (snap.type === 'ID') {
-                foundEl = document.getElementById(snap.value);
-                if (foundEl) {
-                    explicitExternalFocus = foundEl;
-                    shouldFocusTrack = false;
-                    this.STATE.currentFocusIndex = -1;
-                }
-            }
-            else if (snap.type === 'INDEX') {
-                this.STATE.currentFocusIndex = snap.value;
-                shouldFocusTrack = true;
-            }
-            else if (snap.type === 'SELECTOR') {
-                foundEl = document.querySelector(snap.value);
-                if (foundEl) {
-                    explicitExternalFocus = foundEl;
-                    shouldFocusTrack = false;
-                    this.STATE.currentFocusIndex = -1;
-                }
-            } 
-            else if (snap.type === 'DATA_ID') {
-                const targetId = snap.value;
-                const rawIndex = itemsDelNivel.findIndex(item => item.id === targetId);
-
-                if (rawIndex !== -1) {
-                    let logicalIndex = 0;
-                    for (let i = 0; i < rawIndex; i++) {
-                        const it = itemsDelNivel[i];
-                        if (it.tipo !== 'relleno' && it.tipoEspecial !== 'breadcrumb-vertical') 
-                            logicalIndex++;
+                        explicitExternalFocus = volverFijoRef;
+                        shouldFocusTrack = false;
+                        this.STATE.currentFocusIndex = -1;
                     }
-                    this.STATE.currentFocusIndex = logicalIndex;
-                    shouldFocusTrack = true; 
                 } else {
-                    if (targetId === 'volver-nav') {
-                        const volverFijoRef = this.DOM.cardVolverFijaElemento || document.getElementById('card-volver-fija-elemento');
-                        if (volverFijoRef) {
-                            explicitExternalFocus = volverFijoRef;
-                            shouldFocusTrack = false;
-                            this.STATE.currentFocusIndex = -1;
-                        }
-                    } else {
-                        this.STATE.currentFocusIndex = 0;
-                        shouldFocusTrack = true;
-                    }
-                }
-            } 
-            else if (snap.type === 'ID' && snap.value === 'card-volver-fija-elemento') {
-                const rawIndex = itemsDelNivel.findIndex(item => item.id === 'volver-nav');
-                if (rawIndex !== -1) {
-                    let logicalIndex = 0;
-                    for (let i = 0; i < rawIndex; i++) {
-                        const it = itemsDelNivel[i];
-                        if (it.tipo !== 'relleno' && it.tipoEspecial !== 'breadcrumb-vertical') 
-                            logicalIndex++;
-                    }
-                    this.STATE.currentFocusIndex = logicalIndex;
+                    debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                                `[RENDER-FLOW] 03D. ID lost. Resetting to 0.`);
+
+                    this.STATE.currentFocusIndex = 0;
                     shouldFocusTrack = true;
                 }
             }
+        } 
+        else if (snap.type === 'ID' && snap.value === 'card-volver-fija-elemento') {
+            // Caso especial: Era botón fijo y ahora quizás es tarjeta volver-nav
+            const rawIndex = itemsDelNivel.findIndex(item => item.id === 'volver-nav');
+            if (rawIndex !== -1) {
+                debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
+                            `[RENDER-FLOW] 03E. Fixed button remapped to track 'volver-nav'.`);
+
+                let logicalIndex = 0;
+                for (let i = 0; i < rawIndex; i++) {
+                    const it = itemsDelNivel[i];
+
+                    if (it.tipo !== 'relleno' && it.tipoEspecial !== 'breadcrumb-vertical') 
+                        logicalIndex++;
+                }
+                this.STATE.currentFocusIndex = logicalIndex;
+                shouldFocusTrack = true;
+            }
         }
-        
+
+        this.STATE.resizeSnapshot = null;
+
     } else if (!isReturning) {
-        // 🟢 FIX RESIZE: No resetear ciegamente a 0 si ya estábamos navegando.
-        // Si no hay snapshot, pero tenemos un índice válido en memoria, lo respetamos.
-        // Esto evita que el segundo "latido" del ResizeObserver mate el foco.
-        if (this.STATE.currentFocusIndex === undefined || this.STATE.currentFocusIndex < 0) {
-            this.STATE.currentFocusIndex = 0; 
-        }
+        this.STATE.currentFocusIndex = 0; 
     } else {
         const savedId = currentLevelState.focusId;
         if (savedId) {
@@ -456,60 +411,57 @@ function _getUniqueSelector(el) {
 }
 
 export function _setupResizeObserver() {
+    document.addEventListener('focusin', (e) => {
+        if (e.target && e.target !== document.body) {
+            this.STATE._lastFocusedElement = e.target;
+        }
+    }, { passive: true });
+
     this.STATE.resizeObserver = new ResizeObserver(() => {
+        // En lugar de calcular modos aquí, llamamos a la lógica centralizada de App
+        // para asegurar consistencia
         if (typeof this._updateLayoutMode === 'function') {
             this._updateLayoutMode();
         }
         
+        // Pero para detectar cambios usamos el atributo que acabamos de actualizar (o no)
         const newMode = document.body.getAttribute('data-layout') || 'desktop';
+        
         const modeChanged = newMode !== _lastMode;
         
-        // 🟢 1. El inicio del Huracán. Le ponemos la venda al Notario.
         document.body.classList.add('resize-animation-stopper');
         clearTimeout(_resizeTimer);
-        
         _resizeTimer = setTimeout(() => {
-            // 🟢 2. Terminó el tiempo de Debouncing.
-            // ¡ATENCIÓN! Aún no quitamos la clase stopper. 
-            // Esperamos a que la app termine de acomodar los muebles.
+            document.body.classList.remove('resize-animation-stopper');
+        }, 400);
 
-            if (modeChanged && this.STATE.initialRenderComplete) {
-                if (this.STATE.isUIBlocked) return;
+        if (modeChanged && this.STATE.initialRenderComplete) {
+            // 🟢 ESCUDO: Si estamos operando en caliente, quieto parado
+            if (this.STATE.isUIBlocked) return;
 
-                _lastMode = newMode;
-                
-                const isInDetails = !!this.STATE.activeCourseId;
+            _lastMode = newMode;
+            
+            const isInDetails = !!this.STATE.activeCourseId;
 
-                if (isInDetails) {
-                    this._mostrarDetalle(this.STATE.activeCourseId);
-                } else {
-                    // 3. Leemos la foto que tomó el Notario antes de ponerse la venda.
-                    let snap = this.STATE._safeFocusSnapshot || null;
-
-                    if (!snap && this.STATE._lastActiveZoneId) {
-                        if (this.STATE._lastActiveZoneId === 'vista-central') {
-                            snap = { type: 'INDEX', value: Math.max(0, this.STATE.currentFocusIndex) };
-                        } else {
-                            snap = { type: 'ZONE_FALLBACK', value: this.STATE._lastActiveZoneId };
+            if (isInDetails) {
+                this._mostrarDetalle(this.STATE.activeCourseId);
+            } else {
+                let activeElement = document.activeElement;
+                if (!activeElement || activeElement === document.body || activeElement === document.documentElement) {
+                    if (this.STATE._lastFocusedElement) {
+                        activeElement = this.STATE._lastFocusedElement;
+                    } else {
+                        if (this.DOM.track) {
+                            activeElement = this.DOM.track.querySelector(`.card[data-pos="${this.STATE.currentFocusIndex}"]`);
                         }
                     }
-
-                    // 4. Inyectamos la foto y mandamos redibujar
-                    this.STATE.resizeSnapshot = snap;
-                    this.renderNavegacion();
                 }
-            }
 
-            // 🟢 5. EL FIN DE LA CONDICIÓN DE CARRERA.
-            // renderNavegacion es asíncrono (usa rAF y setTimeouts internos de 50ms).
-            // Le damos tiempo de sobra para que termine de asignar los focos, y solo
-            // entonces le quitamos la venda al Notario para que vuelva a vigilar al usuario.
-            setTimeout(() => {
-                document.body.classList.remove('resize-animation-stopper');
-            }, 150);
-        }, 400); 
+                this.STATE.resizeSnapshot = _getUniqueSelector(activeElement);
+                this.renderNavegacion(); 
+            }
+        }
     });
-    
     this.STATE.resizeObserver.observe(document.body);
 };
 

@@ -85,8 +85,6 @@ export function initKeyboardControls() {
 
     // 2. NOTARIO (El Juez Final del Focusin)
     document.addEventListener('focusin', (e) => {
-        if (document.body.classList.contains('resize-animation-stopper')) return;
-
         const traceInfo = this.STATE.currentTraceId || 'SIN_RASTRO';
         debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
             `[TRACE: ${traceInfo}] 🎯 Focusin disparado para:`, e.target.tagName, e.target.id);
@@ -105,26 +103,54 @@ export function initKeyboardControls() {
             
             const isInteractive = target.closest('a, button, summary, [tabindex="0"], [role="button"]');
             
-            if (isInteractive) {
-                // 1. Guardar índice local (para navegación por zonas/Tab)
+            // 🟢 CLIC EN ELEMENTO INTERACTIVO
+            if (isInteractive && container.id !== 'vista-central') {
+                
+                // 🟢 FIX DE CARRERA: Leemos la marca física del elemento
+                const isScriptFocusing = isInteractive.dataset.vortexFocus === "true";
+                isInteractive.removeAttribute('data-vortex-focus'); // Consumimos la marca
+
+                // 🟢 FILTRO DE LA VERDAD
+                // Si este foco NO lo hemos forzado nosotros con el script, y hubo un clic de ratón reciente...
+                if (!isScriptFocusing && this.STATE._lastMousedownTarget) {
+                    
+                    const isDetached = !document.body.contains(this.STATE._lastMousedownTarget);
+                    
+                    if (isDetached) {
+                        this.STATE._lastMousedownTarget = null;
+                    } else {
+                        const clickedInteractive = this.STATE._lastMousedownTarget.closest?.('a, button, summary, [tabindex="0"], [role="button"]');
+                        const userClickedHere = (clickedInteractive === isInteractive) || isInteractive.contains(this.STATE._lastMousedownTarget);
+                        
+                        if (!userClickedHere) {
+                            debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+                                `🛑 ¡TRAMPA! Foco falso del navegador detectado. Rechazando...`);
+                            
+                            const rawMemory = container.dataset.lastFocusId;
+                            // 🟢 FIX PURGA (Notario): Fallback a 0 si la memoria está vacía.
+                            const lastIndex = isNaN(parseInt(rawMemory, 10)) ? 0 : parseInt(rawMemory, 10);
+                            
+                            const isVisible = (el) => el && el.offsetParent !== null;
+                            const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"], [role="button"]')).filter(isVisible);
+                            
+                            if (focusables[lastIndex] && focusables[lastIndex] !== isInteractive) {
+                                focusables[lastIndex].dataset.vortexFocus = "true";
+                                focusables[lastIndex].focus({ preventScroll: true });
+                            }
+                            return; 
+                        }
+                    }
+                }
+
+                // FLUJO NORMAL DE GUARDADO
                 const isVisible = (el) => el && el.offsetParent !== null;
                 const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"], [role="button"]')).filter(isVisible);
+
                 const index = focusables.indexOf(isInteractive);
-                
                 if (index !== -1) {
                     container.dataset.lastFocusId = index;
-                    
-                    // 2. 🟢 EL FIX: Guardar el Snapshot SIEMPRE, incluso en vista-central
-                    if (isInteractive.dataset.id) {
-                        app.STATE._safeFocusSnapshot = { type: 'DATA_ID', value: isInteractive.dataset.id };
-                    } else if (isInteractive.id) {
-                        app.STATE._safeFocusSnapshot = { type: 'ID', value: isInteractive.id };
-                    } else {
-                        app.STATE._safeFocusSnapshot = { type: 'INDEX', value: index };
-                    }
-                    
                     debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
-                        `📝 Notario: Guardado en '${app.STATE._lastActiveZoneId}'. Snapshot:`, app.STATE._safeFocusSnapshot);
+                        `📝 Notario: Guardado índice [${index}] en la zona '${app.STATE._lastActiveZoneId}'`);
                 }
             }
         }

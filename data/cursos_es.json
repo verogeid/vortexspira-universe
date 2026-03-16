@@ -50,10 +50,10 @@
             {
               "id": "c-qaia",
               "titulo": "AI Quality Architect",
-              "descripcion": "La industria está abrazando la Inteligencia Artificial sin entender su arquitectura. Aprender a escribir prompts no es ingeniería; es ofimática avanzada. Este curso te transforma en un Auditor de IA a nivel corporativo.<HR>🔸Arquitectura y Límites: Entiende la ventana de contexto, el determinismo frente a la probabilidad y los límites físicos de los tokens.<HR>🔸Red Teaming: Secuestra el contexto, provoca bucles de sobrealineación y evalúa las vulnerabilidades de seguridad de la caja negra.<HR>🔸Deuda Técnica y Costes: Audita el impacto real en la infraestructura, desde el almacenamiento de trazas JSON hasta las normativas de privacidad.<HR>Licencia Única Universal: Adquirir este pase te habilita para cursar la formación tanto en Castellano como en Inglés desde tu panel inmersivo.",
+              "descripcion": "La industria está abrazando la Inteligencia Artificial sin entender su arquitectura. Aprender a escribir prompts no es ingeniería; es ofimática avanzada. Este curso te transforma en un Auditor de IA a nivel corporativo.<HR>🔸Arquitectura y Límites: Entiende la ventana de contexto, el determinismo frente a la probabilidad y los límites físicos de los tokens.<HR>🔸Red Teaming: Secuestra el contexto, provoca bucles de sobrealineación y evalúa las vulnerabilidades de seguridad de la caja negra.<HR>🔸Deuda Técnica y Costes: Audita el impacto real en la infraestructura, desde el almacenamiento de trazas JSON hasta las normativas de privacidad.",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#", "type": "d" },
-                { "texto": "Adquirir Certificación Dual", "url": "#", "type": "c" }
+                { "texto": "Adquirir pack completo", "url": "#", "type": "c" }
               ]
             }
           ]

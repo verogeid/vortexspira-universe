@@ -30,10 +30,10 @@
             {
               "id": "c-qaia",
               "titulo": "AI Quality Architect",
-              "descripcion": "The industry is embracing Artificial Intelligence without understanding its architecture. Learning to write prompts is not engineering; it is advanced office automation. This course transforms you into a corporate-level AI Auditor.<HR>🔸Architecture and Limits: Understand the context window, determinism versus probability, and the physical limits of tokens.<HR>🔸Red Teaming: Hijack the context, trigger over-alignment loops, and evaluate the security vulnerabilities of the black box.<HR>🔸Technical Debt and Costs: Audit the real impact on infrastructure, from JSON trace storage to privacy regulations.<HR>Universal Single License: Purchasing this pass enables you to take the training in both Spanish and English from your immersive dashboard.",
+              "descripcion": "The industry is embracing Artificial Intelligence without understanding its architecture. Learning to write prompts is not engineering; it is advanced office automation. This course transforms you into a corporate-level AI Auditor.<HR>🔸Architecture and Limits: Understand the context window, determinism versus probability, and the physical limits of tokens.<HR>🔸Red Teaming: Hijack the context, trigger over-alignment loops, and evaluate the security vulnerabilities of the black box.<HR>🔸Technical Debt and Costs: Audit the real impact on infrastructure, from JSON trace storage to privacy regulations.",
               "enlaces": [
                 { "texto": "Try the freemium", "url": "#", "type": "d" },
-                { "texto": "Purchase Dual Certification", "url": "#", "type": "c" }
+                { "texto": "Purchase Complete Pack", "url": "#", "type": "c" }
               ]
             }
           ]
