@@ -22,7 +22,7 @@ export const DEBUG_CONFIG = {
     global_key: DEBUG_LEVELS.DISABLED,
     global_mouse: DEBUG_LEVELS.DISABLED,
 
-    seo_sim: DEBUG_LEVELS.BASIC,
+    seo_sim: DEBUG_LEVELS.DISABLED,
     
     app: DEBUG_LEVELS.DISABLED,
     data: DEBUG_LEVELS.DISABLED,
