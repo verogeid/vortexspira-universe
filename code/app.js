@@ -1,6 +1,7 @@
 /* --- code/app.js --- */
 
 import * as debug from './debug.js';
+import * as debug_ldJsonSim from './debug.ldJsonSim.js';
 import * as debug_diagnostics from './debug.diagnostics.js';
 import * as debug_screenReaderSim from './debug.screenReaderSim.js';
 
@@ -89,6 +90,8 @@ class VortexSpiraApp {
         // Mantenemos isBooting = true por defecto desde el constructor
         debug.log('app', debug.DEBUG_LEVELS.BASIC, 
             "🚀 Iniciando App (Modo Silencioso activado)...");
+
+        debug_ldJsonSim.ldJsonSim.init(); // 🟢 Activamos el espía de SEO/IA
 
         debug_diagnostics._setupGlobalClickListener();
         debug_diagnostics._setupFocusTracker();
@@ -314,7 +317,7 @@ class VortexSpiraApp {
         // 🟢 NAVEGADOR: Escuchar los botones nativos de Atrás / Adelante
         window.addEventListener('popstate', (event) => {
             const urlParams = new URL(window.location);
-            const targetId = urlParams.get('id');
+            const targetId = urlParams.searchParams.get('id');
 
             debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                 `Navegación nativa detectada. Destino ID: ${targetId}`);
@@ -579,6 +582,10 @@ class VortexSpiraApp {
     
     renderNavegacion() {
         render_base.renderNavegacion.call(this);
+
+        // 🟢 Restaurar el SEO genérico del catálogo
+        this.updateSEO(null);
+
         // Ejecutar diagnóstico tras renderizar el menú
         requestAnimationFrame(() => {
             debug_diagnostics.runFontDiagnostics?.();
@@ -651,6 +658,78 @@ class VortexSpiraApp {
         // 🟢 FIX A11Y: Actualizar el idioma del documento HTML
         const currentLang = localStorage.getItem('vortex_lang') || 'es';
         document.documentElement.lang = currentLang;
+
+        const activeCourse = this.STATE.activeCourseId ? this._findNodoById(this.STATE.activeCourseId, this.STATE.fullData.navegacion) : null;
+        this.updateSEO(activeCourse);
+    }
+    // 🟢 MOTOR SEO DINÁMICO E INYECCIÓN DE JSON-LD PARA BOTS/IAs
+    updateSEO(curso = null) {
+        const currentLang = localStorage.getItem('vortex_lang') || 'es';
+        document.documentElement.lang = currentLang;
+
+        let title = this.getString('page.title') || 'VortexSpira EdTech';
+        let desc = this.getString('seo.description') || '';
+
+        // Si estamos viendo un curso, adaptamos el título y la descripción
+        if (curso) {
+            title = `${curso.titulo} | VortexSpira EdTech`;
+            // Limpiamos las etiquetas HTML (<HR>, <p>, etc) de la descripción del curso
+            desc = curso.descripcion.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim().substring(0, 155) + '...';
+        }
+
+        // 1. Actualizar Título y Meta Descripción
+        document.title = title;
+        let metaDesc = document.querySelector('meta[name="description"]');
+        if (!metaDesc) {
+            metaDesc = document.createElement('meta');
+            metaDesc.name = "description";
+            document.head.appendChild(metaDesc);
+        }
+        metaDesc.content = desc;
+
+        // 2. Inyectar JSON-LD (Datos Estructurados para IAs y Google)
+        let schemaScript = document.getElementById('vortex-json-ld');
+        if (!schemaScript) {
+            schemaScript = document.createElement('script');
+            schemaScript.id = 'vortex-json-ld';
+            schemaScript.type = 'application/ld+json';
+            document.head.appendChild(schemaScript);
+        }
+
+        if (curso) {
+            // 🟢 ESQUEMA DE CURSO (Course Schema)
+            const courseSchema = {
+                "@context": "https://schema.org",
+                "@type": "Course",
+                "name": curso.titulo,
+                "description": curso.descripcion.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim(),
+                "provider": {
+                    "@type": "Organization",
+                    "name": "VortexSpira EdTech",
+                    "sameAs": "https://www.vortexspira.com"
+                },
+                "inLanguage": currentLang === 'en' ? "en-US" : "es-ES"
+            };
+            schemaScript.textContent = JSON.stringify(courseSchema);
+        } else {
+            // 🟢 ESQUEMA DE ORGANIZACIÓN (WebSite / Organization Schema)
+            // Aquí volcamos la filosofía cognitiva e inmersiva para que los bots la entiendan
+            const aboutText = this.getString('seo.about') || desc;
+            const orgSchema = {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "VortexSpira EdTech",
+                "url": "https://www.vortexspira.com/",
+                "description": desc,
+                "about": {
+                    "@type": "Organization",
+                    "name": "VortexSpira EdTech",
+                    "description": aboutText
+                },
+                "inLanguage": currentLang === 'en' ? "en-US" : "es-ES"
+            };
+            schemaScript.textContent = JSON.stringify(orgSchema);
+        }
     }
 
     showToast(message, duration = 3000) {

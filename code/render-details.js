@@ -277,6 +277,9 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
     const curso = this._findNodoById(cursoId, this.STATE.fullData.navegacion); 
     if (!curso) return;
 
+    // 🟢 Inyectar el SEO específico de este curso
+    this.updateSEO(curso);
+    
     if (typeof this._destroyCarousel === 'function') this._destroyCarousel();
     
     [

@@ -5,6 +5,10 @@
     "page": {
         "title": "VortexSpira® EdTech: Selector de Cursos"
     },
+    "seo": {
+        "description": "Aprende desarrollo de software, QA y DevOps desde cero a arquitecto. Plataforma AAA con diseño universal, verbalización desacoplada y cero fatiga cognitiva.",
+        "about": "VortexSpira EdTech: Formación IT con Diseño Universal AAA. Aprende programación, pruebas de software (QA) y DevOps sin barreras tecnológicas ni cognitivas. Ciencia Cognitiva y Experiencia Inmersiva: Verbalización desacoplada con lectura multipersonaje, sincronización TTS, multiplicador de pausas y diseño universal compatible con todos los perfiles cognitivos (dislexia, TDAH, espectro autista). Entorno esencial para superar la fatiga cognitiva mediante navegación total por teclado y protección vestibular."
+    },
     "header": {
         "title": "VortexSpira® EdTech",
         "subtitle": "Audio-Aprendizaje Técnico Inmersivo",

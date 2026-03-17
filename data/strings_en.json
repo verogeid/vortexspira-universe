@@ -5,6 +5,10 @@
     "page": {
         "title": "VortexSpira® EdTech: Course Selector"
     },
+    "seo": {
+        "description": "Learn software development, QA, and DevOps from scratch to architect. AAA platform with universal design, decoupled verbalization, and zero cognitive fatigue.",
+        "about": "VortexSpira EdTech: IT Training with AAA Universal Design. Learn programming, software testing (QA), and DevOps without technological or cognitive barriers. Cognitive Science and Immersive Experience: Decoupled verbalization with multi-character reading, TTS synchronization, adjustable pause multiplier, and universal design compatible with all cognitive profiles (dyslexia, ADHD, autism spectrum). An essential environment to overcome cognitive fatigue through full keyboard navigation and vestibular protection."
+    },
     "header": {
         "title": "VortexSpira® EdTech",
         "subtitle": "Immersive Technical Audio-Learning",

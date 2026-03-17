@@ -13,19 +13,21 @@ export const DEBUG_LEVELS = {
 };
 
 export const DEBUG_CONFIG = {
-    global: DEBUG_LEVELS.DEEP,
+    global: DEBUG_LEVELS.DISABLED,
 
-    global_focus: DEBUG_LEVELS.DEEP,
+    global_focus: DEBUG_LEVELS.DISABLED,
     global_font: DEBUG_LEVELS.DISABLED,
     global_layout: DEBUG_LEVELS.DISABLED,
     
     global_key: DEBUG_LEVELS.DISABLED,
     global_mouse: DEBUG_LEVELS.DISABLED,
+
+    seo_sim: DEBUG_LEVELS.BASIC,
     
-    app: DEBUG_LEVELS.EXTREME,
+    app: DEBUG_LEVELS.DISABLED,
     data: DEBUG_LEVELS.DISABLED,
     i18n: DEBUG_LEVELS.DISABLED,
-    a11y: DEBUG_LEVELS.EXTREME,
+    a11y: DEBUG_LEVELS.DISABLED,
     nav_stack: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Detalle
@@ -33,7 +35,7 @@ export const DEBUG_CONFIG = {
     nav_base_details: DEBUG_LEVELS.DISABLED,
     
     // Módulos de Teclado
-    nav_keyboard_base: DEBUG_LEVELS.EXTREME,
+    nav_keyboard_base: DEBUG_LEVELS.DISABLED,
     nav_keyboard_details: DEBUG_LEVELS.DISABLED,
     nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
 
@@ -150,7 +152,7 @@ export function logGroupExpanded(moduleName, requiredLevel, ...args) {
 /**
  * Cierra el grupo actual.
  */
-export function logGroupEnd(moduleName, requiredLevel) {
+export function logGroupEnd(moduleName, requiredLevel = DEBUG_LEVELS.BASIC) {
     if (DEBUG_CONFIG[moduleName] >= requiredLevel && !IS_PRODUCTION) {
         console.groupEnd();
     }
