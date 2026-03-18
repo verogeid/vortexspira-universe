@@ -41,6 +41,7 @@ class VortexSpiraApp {
             initialRenderComplete: false, 
             keyboardNavInProgress: false,
             activeCourseId: null, 
+            isSpecialViewActive: false,
             _lastDetailFocusIndex: 0, 
             isNavigatingBack: false, 
             isUIBlocked: false,
@@ -60,7 +61,22 @@ class VortexSpiraApp {
         this.stackUpdateCurrentFocus = nav_stack.stackUpdateCurrentFocus;
         this.stackBuildFromId = nav_stack.stackBuildFromId;
 
-        this._findNodoById = nav_base._findNodoById;
+        // 🟢 INTERCEPTOR: Fabricamos "c-about" al vuelo para NO tocar this.STATE.fullData.navegacion
+        this._originalFindNodoById = nav_base._findNodoById;
+        this._findNodoById = (id, items) => {
+            if (id === 'c-about') {
+                return {
+                    id: 'c-about',
+                    titulo: this.getString('footer.aboutText') || 'About Us',
+                    descripcion: (this.getString('seo.about') || '').replace(/\. /g, '. <HR>'),
+                    enlaces: [
+                        { "texto": "LinkedIn", "url": "https://www.linkedin.com/company/vortexspira", "type": "l" },
+                        { "texto": "Landing Page", "url": "https://subscribepage.io/vortexspira", "type": "f" }
+                    ]
+                };
+            }
+            return this._originalFindNodoById(id, items);
+        };
         this._tieneContenidoActivo = nav_base._tieneContenidoActivoImpl;
         this.findBestFocusInColumn = nav_base.findBestFocusInColumn;
 
@@ -231,7 +247,22 @@ class VortexSpiraApp {
         if (data.injectFooterContent) data.injectFooterContent(this);
 
         if (targetId) {
-            if (this.stackBuildFromId(targetId, this.STATE.fullData)) { 
+            // 🟢 FIX: Si se hace F5 o se comparte un enlace directo
+            if (targetId === 'c-about') {
+                const titulo = i18n.getString('footer.aboutText') || 'About Us';
+                const desc = i18n.getString('seo.about') || '';
+                this.STATE.fullData.navegacion.push({
+                    id: 'c-about', 
+                    titulo: titulo, 
+                    descripcion: desc.replace(/\. /g, '. <HR>'), 
+                    subsecciones: [], // 🟢 SALVAVIDAS
+                    cursos: [],       // 🟢 SALVAVIDAS
+                    enlaces: []
+                });
+
+                this._mostrarAbout();
+
+            } else if (this.stackBuildFromId(targetId, this.STATE.fullData)) { 
                 const nodo = this._findNodoById(targetId, this.STATE.fullData.navegacion);
                 if (nodo && nodo.titulo) { 
                     this._mostrarDetalle(targetId);
@@ -318,35 +349,58 @@ class VortexSpiraApp {
         window.addEventListener('popstate', (event) => {
             const urlParams = new URL(window.location);
             const targetId = urlParams.searchParams.get('id');
+            const targetLang = urlParams.searchParams.get('lang');
+            
+            // 🟢 DETECTAR CAMBIO DE IDIOMA DESDE EL NAVEGADOR
+            const currentLang = localStorage.getItem('vortex_lang') || 'es';
+            if (targetLang && targetLang !== currentLang) {
+                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                    `Cambio de idioma detectado vía Back/Next: ${targetLang}`);
+
+                // Forzamos reload para que el motor cargue los JSON correctos del historial
+                window.location.reload(); 
+                return;
+            }
 
             debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                `Navegación nativa detectada. Destino ID: ${targetId}`);
+                `Navegación nativa detectada. Destino ID: ${targetId} | Lang: ${targetLang}`);
 
             if (targetId) {
-                // Reconstruimos la pila matemáticamente hacia el elemento destino de la URL
+                if (targetId === 'c-about') {
+                    this._mostrarAbout(); // false = no empujar historial
+                    return; 
+                }
+
+                // 🟢 FIX DEFINITIVO: Si el navegador sale de c-about hacia atrás, apagamos el flag
+                if (this.STATE.isSpecialViewActive) {
+                    this.STATE.isSpecialViewActive = false;
+                }
+                
                 if (this.stackBuildFromId(targetId, this.STATE.fullData)) { 
                     const nodo = this._findNodoById(targetId, this.STATE.fullData.navegacion);
                     
                     if (nodo && (nodo.titulo || nodo.descripcion)) { 
-                        // Es un curso, abrimos detalle
                         this._mostrarDetalle(targetId);
                     } else {
-                        // Es una categoría, mostramos navegación
                         if (this.DOM.vistaDetalle) {
                             this.DOM.vistaDetalle.classList.remove('active');
+                            this.DOM.vistaDetalle.style.display = 'none';
                         }
                         this.STATE.activeCourseId = null;
                         this.renderNavegacion();
                     }
                 } else {
-                    // Si el ID de la URL es inválido, forzamos la raíz
+                    if (this.DOM.vistaDetalle) {
+                        this.DOM.vistaDetalle.classList.remove('active');
+                        this.DOM.vistaDetalle.style.display = 'none';
+                    }
                     this.stackInitialize(); 
                     this.renderNavegacion();
                 }
             } else {
-                // No hay ID en la URL, volvemos a la raíz principal
                 if (this.DOM.vistaDetalle) {
                     this.DOM.vistaDetalle.classList.remove('active');
+                    this.DOM.vistaDetalle.style.display = 'none';
                 }
                 this.STATE.activeCourseId = null;
                 this.stackInitialize(); 
@@ -354,7 +408,7 @@ class VortexSpiraApp {
             }
         });
         
-                this.STATE.initialRenderComplete = true; 
+        this.STATE.initialRenderComplete = true; 
 
         // 🟢 FIN DE LA SECUENCIA DE ARRANQUE
         setTimeout(() => {
@@ -471,6 +525,19 @@ class VortexSpiraApp {
             url.searchParams.set('lang', newLang);
             const targetId = url.searchParams.get('id');
 
+            if (targetId === 'c-about') {
+                const titulo = i18n.getString('footer.aboutText') || 'About Us';
+                const desc = i18n.getString('seo.about') || '';
+                this.STATE.fullData.navegacion.push({
+                    id: 'c-about', 
+                    titulo: titulo, 
+                    descripcion: desc.replace(/\. /g, '. <HR>'), 
+                    subsecciones: [],
+                    cursos: [],
+                    enlaces: []
+                });
+            }
+
             // 3. Aplicamos el nuevo estado base
             this.STATE.fullData = coursesData;
             localStorage.setItem('vortex_lang', newLang);
@@ -518,18 +585,22 @@ class VortexSpiraApp {
 
             // 6. ⭐️ RECONSTRUCCIÓN BASADA EN LA URL ⭐️
             if (targetId) {
-                // Intentamos reconstruir la pila con los nuevos datos
-                if (this.stackBuildFromId(targetId, this.STATE.fullData)) {
-                    debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                        `Pila reconstruida para ID ${targetId} en ${newLang}. Verificando nodo...`);
-
+                if (targetId === 'c-about') {
+                    // Para c-about usamos pushState para poder volver al idioma anterior con Back
                     window.history.pushState({}, '', url);
-                    const nodo = this._findNodoById(targetId, this.STATE.fullData.navegacion);
+                    this._mostrarAbout(false); 
+                } 
+                else if (this.stackBuildFromId(targetId, this.STATE.fullData)) {
+                    debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                        `Pila reconstruida para ID ${targetId} en ${newLang}`);
+
+                    // 🟢 IMPORTANTE: pushState aquí anota el cambio de idioma en el historial del navegador
+                    window.history.pushState({}, '', url);
                     
+                    const nodo = this._findNodoById(targetId, this.STATE.fullData.navegacion);
                     if (nodo && (nodo.titulo || nodo.descripcion)) {
                         this._mostrarDetalle(targetId, true);
                     } else {
-                        // EJECUCIÓN SÍNCRONA (Adiós a los setTimeout de 100ms traicioneros)
                         this.renderNavegacion();
                     }
                 } else {
@@ -538,8 +609,7 @@ class VortexSpiraApp {
 
                     this.stackInitialize(); 
                     url.searchParams.delete('id');
-                    window.history.pushState({}, '', url);
-                    
+                    window.history.replaceState({}, '', url);
                     this.renderNavegacion(); 
                     this.showToast(this.getString('toast.errorId'));
                 }
@@ -547,9 +617,7 @@ class VortexSpiraApp {
                 debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                     "No hay ID en la URL. Mostrando raíz.");
 
-                // Estábamos ya en la raíz
-                window.history.pushState({}, '', url);
-
+                window.history.replaceState({}, '', url);
                 this.renderNavegacion();
             }
 
@@ -615,11 +683,40 @@ class VortexSpiraApp {
         if (this.STATE.isUIBlocked) 
             return;
 
-        if (this.DOM.vistaDetalle.classList.contains('active'))
+        // 🟢 FIX DEFINITIVO: Si estábamos en "Quiénes Somos"
+        if (this.STATE.isSpecialViewActive) {
+            debug.log('app', debug.DEBUG_LEVELS.BASIC, 'Cerrando vista especial. Restaurando estado original.');
+            this.STATE.isSpecialViewActive = false;
+
+            // Restauramos la identidad del curso que había debajo (si lo había)
+            // Para que cuando nav_base cierre el Detalle, sepa a dónde volver
+            this.STATE.activeCourseId = this.STATE._previousCourseId || null;
+            this.STATE._previousCourseId = null;
+
+            // Si veníamos de un curso, forzamos que nav_base NO mate nuestro activeCourseId
+            // Para eso, ocultamos nosotros la capa y repintamos el curso anterior.
+            if (this.STATE.activeCourseId) {
+                if (this.DOM.vistaDetalle) {
+                    this.DOM.vistaDetalle.classList.remove('active');
+                    this.DOM.vistaDetalle.style.display = 'none';
+                }
+                
+                // Actualizamos URL manualmente porque no pasamos por nav_base
+                const url = new URL(window.location);
+                url.searchParams.set('id', this.STATE.activeCourseId);
+                window.history.pushState({}, '', url);
+
+                this._mostrarDetalle(this.STATE.activeCourseId);
+                return;
+            }
+        }
+
+        // Flujo normal para el resto de la app
+        if (this.DOM.vistaDetalle && this.DOM.vistaDetalle.classList.contains('active'))
             this.STATE._lastDetailFocusIndex = 0;
         
         nav_base._handleVolverClick.call(this); 
-        // Ejecutar diagnóstico al volver
+        
         requestAnimationFrame(() => {
             debug_diagnostics.runFontDiagnostics?.();
             debug_diagnostics.runLayoutDiagnostics?.();
@@ -1093,6 +1190,51 @@ class VortexSpiraApp {
             if (el) el.removeAttribute('aria-live');
         });
     }
+
+    // ==========================================
+    // 🟢 PAGINA DE "QUIÉNES SOMOS" (FANTASMA)
+    // ==========================================
+    _mostrarAbout(pushHistory = true) {
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, 'Abriendo página especial: Quiénes Somos');
+        
+        const titulo = this.getString('footer.aboutText') || 'About Us';
+        let descripcionRica = this.getString('seo.about') || '';
+        descripcionRica = descripcionRica.replace(/\. /g, '. <HR>'); 
+        
+        const cursoFantasma = {
+            id: 'c-about',
+            titulo: titulo,
+            descripcion: descripcionRica,
+            subsecciones: [], // 🟢 Evita crasheos si el Popstate escanea
+            cursos: [],       // 🟢 Evita crasheos si el Popstate escanea
+            enlaces: [
+                { "texto": "LinkedIn", "url": "https://www.linkedin.com/company/vortexspira", "type": "l" },
+                { "texto": "Landing Page", "url": "https://subscribepage.io/vortexspira", "type": "l" }
+            ]
+        };
+
+        const tempRoot = this.STATE.fullData.navegacion.find(n => n.id === 'c-about');
+        if (!tempRoot) {
+            this.STATE.fullData.navegacion.push(cursoFantasma);
+        } else {
+            Object.assign(tempRoot, cursoFantasma);
+        }
+
+        // 🟢 FIX: Guardamos el curso anterior (si había uno) para recuperarlo al salir
+        this.STATE._previousCourseId = this.STATE.activeCourseId;
+        this.STATE.activeCourseId = 'c-about';
+        this.STATE.isSpecialViewActive = true; 
+
+        if (pushHistory) {
+            const url = new URL(window.location);
+            if (url.searchParams.get('id') !== 'c-about') {
+                url.searchParams.set('id', 'c-about');
+                window.history.pushState({}, '', url);
+            }
+        }
+
+        this._mostrarDetalle('c-about');
+    }
 }
 
 const appInstance = new VortexSpiraApp();
@@ -1100,6 +1242,7 @@ export const init = () => appInstance.init();
 export const applyStrings = () => appInstance.applyStrings();
 export const injectHeaderContent = () => data.injectHeaderContent(appInstance);
 export const injectFooterContent = () => data.injectFooterContent(appInstance);
+export const _mostrarAbout = () => appInstance._mostrarAbout();
 export const App = appInstance;
 
 /* --- code/app.js --- */

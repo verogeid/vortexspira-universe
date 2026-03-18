@@ -13,7 +13,7 @@ export const DEBUG_LEVELS = {
 };
 
 export const DEBUG_CONFIG = {
-    global: DEBUG_LEVELS.DISABLED,
+    global: DEBUG_LEVELS.DEEP,
 
     global_focus: DEBUG_LEVELS.DISABLED,
     global_font: DEBUG_LEVELS.DISABLED,
@@ -24,18 +24,18 @@ export const DEBUG_CONFIG = {
 
     seo_sim: DEBUG_LEVELS.DISABLED,
     
-    app: DEBUG_LEVELS.DISABLED,
+    app: DEBUG_LEVELS.EXTREME,
     data: DEBUG_LEVELS.DISABLED,
     i18n: DEBUG_LEVELS.DISABLED,
     a11y: DEBUG_LEVELS.DISABLED,
-    nav_stack: DEBUG_LEVELS.DISABLED,
+    nav_stack: DEBUG_LEVELS.EXTREME,
 
     // Módulos de Detalle
-    nav_base: DEBUG_LEVELS.DISABLED,
-    nav_base_details: DEBUG_LEVELS.DISABLED,
+    nav_base: DEBUG_LEVELS.EXTREME,
+    nav_base_details: DEBUG_LEVELS.EXTREME,
     
     // Módulos de Teclado
-    nav_keyboard_base: DEBUG_LEVELS.DISABLED,
+    nav_keyboard_base: DEBUG_LEVELS.BASIC,
     nav_keyboard_details: DEBUG_LEVELS.DISABLED,
     nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
 
@@ -182,11 +182,18 @@ export function _setupConsoleInterceptor() {
     const originalConsoleLog = console.log;
 
     const SWIPER_WARNING_PATTERN = /Swiper Loop Warning/;
+    const CHROME_VIOLATION = /Violation/;
     const CLEAR_CONSOLE_AVOIDED_PATTERN = /console\.clear\(\) se ha evitado/;
 
     console.warn = function(...args) {
         const message = args.join(' ');
         if (SWIPER_WARNING_PATTERN.test(message)) return;
+        originalConsoleWarn.apply(console, args);
+    };
+
+    console.warn = function(...args) {
+        const message = args.join(' ');
+        if (CHROME_VIOLATION.test(message)) return;
         originalConsoleWarn.apply(console, args);
     };
 

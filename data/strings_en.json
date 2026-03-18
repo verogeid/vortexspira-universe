@@ -47,11 +47,13 @@
     "footer": {
         "copyright": "©2025 VortexSpira®",
         "author": "Developed by <span style=\"white-space: nowrap\">Diego González Fernández</span>",
+        "aboutText": "About Us",
         "aria": {
             "license": "View Creative Commons CC BY-NC-ND 4.0 license",
-            "linkedin": "Visit Diego González Fernández's LinkedIn profile",
+            "linkedin": "Visit VortexSpira®'s LinkedIn profile",
             "github": "Go to Development Diary on GitHub",
-            "landing": "Go to the Landing Page. Get 60% OFF as a Founder. It's free to join!"
+            "landing": "Go to the Landing Page. Get 60% OFF as a Founder. It's free to join!",
+            "about": "Learn more about us and our mission"
         }
     },
     "help": {

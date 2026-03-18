@@ -454,7 +454,12 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
 
     if (curso.enlaces) {
         curso.enlaces.forEach((enlace, index) => {
-            const iconClass = (enlace.type === 'c') ? 'icon-buy' : (enlace.type === 'd' ? 'icon-download' : 'icon-link');
+            const iconClass = (enlace.type === 'c') ? 'icon-buy' : 
+                                (enlace.type === 'd' ? 'icon-download' : 
+                                (enlace.type === 'l' ? 'link-linkedin' : 
+                                (enlace.type === 'f' ? 'link-fire' : 
+                                'icon-link')));
+
             const isDisabled = !enlace.url || enlace.url === '#';
             const style = isDisabled ? 'style="pointer-events: none;"' : '';
             const ariaDisabledAttr = isDisabled ? 'aria-disabled="true"' : '';

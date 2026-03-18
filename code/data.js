@@ -39,7 +39,7 @@ export const MEDIA = {
         I18N: '🌐'
     },
     URL: {
-        LINKEDIN: "https://www.linkedin.com/in/diego-gonzalez-fernandez",
+        LINKEDIN: "https://www.linkedin.com/company/vortexspira",
         LICENSE: "http://creativecommons.org/licenses/by-nc-nd/4.0/",
         LICENSE_IMG_SRC: "https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png",
         LANDING_PAGE: "https://subscribepage.io/vortexspira",
@@ -265,6 +265,13 @@ export function injectFooterContent(appInstance) {
 
                 <a href="${MEDIA.URL.LANDING_PAGE}" target="_blank" 
                     aria-label="${appInstance.getString('footer.aria.landing')}" class="footer-social-link link-fire">
+                </a>
+
+                <a role="button" tabindex="0"
+                    onclick="event.preventDefault(); App._mostrarAbout();"
+                    onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); App._mostrarAbout(); }"
+                    aria-label="${appInstance.getString('footer.aria.about')}" 
+                    class="footer-social-link icon-info">
                 </a>
             </div>
 

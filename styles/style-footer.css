@@ -109,6 +109,15 @@ footer a.footer-license-link:focus {
     background-color: var(--color-fire) !important; 
 }
 
+.icon-info {
+    background-color: currentColor; 
+    -webkit-mask-image: var(--icono-info); mask-image: var(--icono-info); 
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; 
+    -webkit-mask-position: center; mask-position: center; 
+    -webkit-mask-size: contain; mask-size: contain; 
+    cursor: pointer;
+}
+
 .footer-social-link:hover, 
 .footer-social-link:focus-visible,
 .footer-social-link:focus {
