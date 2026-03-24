@@ -585,11 +585,20 @@ class VortexSpiraApp {
 
             // 6. ⭐️ RECONSTRUCCIÓN BASADA EN LA URL ⭐️
             if (targetId) {
+                // 🟢 FIX: Si estamos en c-about, reconstruimos la pila para el origen, no para el fantasma
                 if (targetId === 'c-about') {
-                    // Para c-about usamos pushState para poder volver al idioma anterior con Back
-                    window.history.pushState({}, '', url);
-                    this._mostrarAbout(false); 
-                } 
+                    const originId = this.STATE._previousCourseId; // El curso que estaba debajo
+                    
+                    if (originId && this.stackBuildFromId(originId, this.STATE.fullData)) {
+                        debug.log('app', debug.DEBUG_LEVELS.BASIC, `Pila base reconstruida para ${originId} tras cambio de idioma.`);
+                    } else {
+                        // Si no hay curso previo, intentamos reconstruir al menos hasta la última categoría
+                        this.stackInitialize(); 
+                    }
+
+                    window.history.replaceState({}, '', url);
+                    this._mostrarAbout(false); // Repintamos c-about en el nuevo idioma
+                }
                 else if (this.stackBuildFromId(targetId, this.STATE.fullData)) {
                     debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                         `Pila reconstruida para ID ${targetId} en ${newLang}`);
@@ -1220,8 +1229,13 @@ class VortexSpiraApp {
             Object.assign(tempRoot, cursoFantasma);
         }
 
-        // 🟢 FIX: Guardamos el curso anterior (si había uno) para recuperarlo al salir
-        this.STATE._previousCourseId = this.STATE.activeCourseId;
+        // 🟢 FIX: Solo guardamos el origen si no estamos ya en una vista especial
+        // Esto evita que al cambiar de idioma (que llama a _mostrarAbout), 
+        // el originId pase a ser 'c-about' y perdamos el curso real.
+        if (!this.STATE.isSpecialViewActive) {
+            this.STATE._previousCourseId = this.STATE.activeCourseId || (this.stackGetCurrent()?.levelId !== 'root' ? this.stackGetCurrent()?.levelId : null);
+        }
+        
         this.STATE.activeCourseId = 'c-about';
         this.STATE.isSpecialViewActive = true; 
 
