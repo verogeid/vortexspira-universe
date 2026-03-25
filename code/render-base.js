@@ -509,7 +509,7 @@ export function _generarTarjetaHTMLImpl(nodo,
             </article>`;
     }
 
-    // 🟢 RENDERIZADO DE CARPETA VACÍA
+    // 🟢 RENDERIZADO DE CARPETA VACÍA ("Sin contenido aún")
     if (tipoEspecial === 'empty') {
         return `
             <article class="card disabled" 
@@ -520,7 +520,7 @@ export function _generarTarjetaHTMLImpl(nodo,
                     tabindex="0" 
                     aria-label="${nodo.nombre}">
                 <h3>
-                    <span class="card-icon-lead icon-empty-card" aria-hidden="true"></span>
+                    <span class="card-icon-lead icon-empty-folder-card" aria-hidden="true"></span>
                     <span id="card-title-${nodo.id}" class="card-text-content" aria-hidden="true">${nodo.nombre}</span>
                 </h3>
             </article>`;
@@ -535,11 +535,11 @@ export function _generarTarjetaHTMLImpl(nodo,
 
     if (tipo === 'categoria') {
         if (estaActivo) { 
-            // 🟢 Inyectamos un span vacío que recibirá el icono de la carpeta vía CSS Mask
+            // 🟢 Carpeta con contenido (Activa)
             iconHTML = `<span class="card-icon-lead card-folder-icon" aria-hidden="true"></span>`; 
         } else { 
-            // 🟢 FIX: Añadimos 'card-icon-lead' para que enganche con tu CSS
-            iconHTML = `<span class="card-icon-lead icon-empty-card" aria-hidden="true"></span>`; 
+            // 🟢 Carpeta sin contenido (Inactiva) -> Usa el nuevo icono de folder vacío
+            iconHTML = `<span class="card-icon-lead icon-empty-folder-card" aria-hidden="true"></span>`; 
         }
     } else {
         if (nodo.enObras) {

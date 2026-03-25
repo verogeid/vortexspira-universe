@@ -286,6 +286,11 @@
     mask-image: var(--icon-empty);
 }
 
+.icon-empty-folder-card {
+    -webkit-mask-image: var(--icon-empty-folder);
+    mask-image: var(--icon-empty-folder);
+}
+
 .card-volver-icon {
     -webkit-mask-image: var(--icon-back);
     mask-image: var(--icon-back);
