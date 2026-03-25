@@ -239,12 +239,23 @@
 .range-icon-small, .range-icon-large, 
 .a11y-range-wrapper span[aria-hidden="true"] {
     flex: 0 0 auto; /* No crecen ni encogen, ocupan lo justo */
-    font-size: var(--a11y-slider-font-size);
     text-align: center;
     line-height: 1;
     margin: 0;
     font-weight: 500;
     color: var(--color-a11y-slider-labels);
+}
+
+.a11y-range-wrapper span[aria-hidden="true"] {
+    font-size: var(--a11y-slider-font-size);
+}
+
+.range-icon-small {
+    font-size: 0.8rem;
+}
+
+.range-icon-large {
+    font-size: 1.2rem;
 }
 
 /* El Slider (Barra) */
@@ -291,7 +302,7 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
 /* El Valor (100% o Normal) */
 .a11y-range-value {
     /* 🟢 Ocupa el espacio de 5 letras mínimo. Si salta de línea, crece al 100% */
-    flex: 1 1 5ch; 
+    flex: 1 1 10ch; 
     font-weight: bold; 
     font-size: var(--a11y-range-value-font-size);
     text-align: center; /* Se centra en su caja, dándonos el efecto deseado arriba y a la derecha */
@@ -380,6 +391,18 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
     box-shadow: 
         0 0 0 var(--border-width-no-focus) var(--color-card-bg), 
         0 0 0 calc(var(--border-width-no-focus) + var(--border-width-focus)) var(--color-primary);
+}
+
+.a11y-checkbox-label {
+    display:flex; 
+    align-items:center; 
+    gap:10px; 
+    cursor:pointer; 
+    margin-top: 10px;
+}
+
+.a11y-checkbox-label span {
+    font-size: var(--a11y-option-btn-font-size);
 }
 
 /* SECCIÓN FINAL (Footer del modal) */

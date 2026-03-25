@@ -177,11 +177,64 @@ function _injectModalHTML() {
                 aria-labelledby="a11y-title">
 
                 <div class="a11y-header">
-                    <h2 id="a11y-title">${i18n.getString('modal.title')}</h2>
+                    <h2 id="a11y-title">
+                        ${i18n.getString('modal.title')}
+                    </h2>
 
                     <button id="a11y-close" 
                             class="a11y-close-btn" 
-                            aria-label="${i18n.getString('modal.close')}">✕</button>
+                            aria-label="${i18n.getString('modal.close')}">
+                        ✕
+                    </button>
+                </div>
+
+                <div class="a11y-section">
+                    <h3>
+                        ${i18n.getString('modal.sections.motion') || 
+                        'Protección vestibular y fatiga cognitiva'}
+                    </h3>
+                    <div class="a11y-controls-group">
+                        
+                        <label class="a11y-checkbox-label">
+                            <input type="checkbox" 
+                                id="a11y-reduce-motion" 
+                                class="a11y-checkbox">
+                            <span>
+                                ${i18n.getString('modal.options.reduceMotion') || 
+                                'Reducir animaciones'}
+                            </span>
+                        </label>
+
+                        <label class="a11y-checkbox-label">
+                            <input type="checkbox" 
+                                id="a11y-no-block-opacity" 
+                                class="a11y-checkbox">
+                            <span>
+                                ${i18n.getString('modal.options.noBlockOpacity') || 
+                                'Desactivar atenuación en descripción de cursos'}
+                            </span>
+                        </label>
+
+                        <label class="a11y-checkbox-label">
+                            <input type="checkbox" 
+                                id="a11y-no-mask-opacity" 
+                                class="a11y-checkbox">
+                            <span>
+                                ${i18n.getString('modal.options.noMaskOpacity') || 
+                                'Desactivar atenuación en menúes'}
+                            </span>
+                        </label>
+
+                        <label class="a11y-checkbox-label">
+                            <input type="checkbox" 
+                                id="a11y-no-zone-opacity" 
+                                class="a11y-checkbox">
+                            <span>
+                                ${i18n.getString('modal.options.noZoneOpacity') || 
+                                'Desactivar atenuación por zona'}
+                            </span>
+                        </label>
+                    </div>
                 </div>
 
                 <div class="a11y-section">
@@ -223,8 +276,7 @@ function _injectModalHTML() {
                 <div class="a11y-section">
                     <h3>${i18n.getString('modal.sections.size')}</h3>
                     <div class="a11y-range-wrapper">
-                        <span class="range-icon-small" style="font-size: 0.8rem" 
-                            aria-hidden="true">A</span>
+                        <span class="range-icon-small" aria-hidden="true">A</span>
 
                         <input type="range" 
                             id="a11y-range-size" 
@@ -236,20 +288,16 @@ function _injectModalHTML() {
                             aria-valuemin="90" 
                             aria-valuemax="200">
 
-                        <span class="range-icon-large" style="font-size: 1.2rem" 
-                            aria-hidden="true">A</span>
+                        <span class="range-icon-large" aria-hidden="true">A</span>
 
-                        <span id="a11y-range-val" 
-                            class="a11y-range-value">100%</span>
+                        <span id="a11y-range-val" class="a11y-range-value">100%</span>
                     </div>
                 </div>
 
                 <div class="a11y-section">
                     <h3>${i18n.getString('modal.sections.spacing')}</h3>
                     <div class="a11y-range-wrapper">
-                        <span class="range-icon-small" 
-                            style="font-size: 0.8rem" 
-                            aria-hidden="true">≡</span>
+                        <span class="range-icon-small" aria-hidden="true">≡</span>
 
                         <input type="range" 
                             id="a11y-range-spacing" 
@@ -261,70 +309,64 @@ function _injectModalHTML() {
                             aria-valuemin="1" 
                             aria-valuemax="3">
 
-                        <span class="range-icon-large" 
-                            style="font-size: 1.2rem" 
-                            aria-hidden="true">≡</span>
+                        <span class="range-icon-large" aria-hidden="true">≡</span>
 
                         <span id="a11y-range-spacing-val" 
-                            class="a11y-range-value">${i18n.getString('modal.spacing.normal')}</span>
+                            class="a11y-range-value">
+                            ${i18n.getString('modal.spacing.normal')}
+                        </span>
                     </div>
                 </div>
 
                 <div class="a11y-section">
-                    <h3>${i18n.getString('modal.sections.theme') || 'Tema de Color'}</h3>
-                    <div class="a11y-controls-group theme-group" role="radiogroup" aria-label="${i18n.getString('modal.sections.theme') || 'Tema de Color'}">
-                        <button class="a11y-option-btn" role="radio" aria-checked="false" data-theme="default">
+                    <h3>${i18n.getString('modal.sections.theme') || 
+                        'Tema de Color'}</h3>
+                    <div class="a11y-controls-group theme-group" 
+                        role="radiogroup" 
+                        aria-label="${i18n.getString('modal.sections.theme') || 'Tema de Color'}">
+                        <button class="a11y-option-btn" 
+                                role="radio" 
+                                aria-checked="false" 
+                                data-theme="default">
                             ${i18n.getString('modal.options.themeDefault') || 'Sistema'}
                         </button>
-                        <button class="a11y-option-btn" role="radio" aria-checked="false" data-theme="light">
+                        <button class="a11y-option-btn" 
+                                role="radio" 
+                                aria-checked="false" 
+                                data-theme="light">
                             ${i18n.getString('modal.options.themeLight') || 'Claro'}
                         </button>
-                        <button class="a11y-option-btn" role="radio" aria-checked="false" data-theme="dark">
+                        <button class="a11y-option-btn" 
+                                role="radio" 
+                                aria-checked="false" 
+                                data-theme="dark">
                             ${i18n.getString('modal.options.themeDark') || 'Oscuro'}
                         </button>
-                        <button class="a11y-option-btn" role="radio" aria-checked="false" data-theme="contrast">
+                        <button class="a11y-option-btn" 
+                                role="radio" 
+                                aria-checked="false" 
+                                data-theme="contrast">
                             ${i18n.getString('modal.options.themeContrast') || 'Alto Contraste'}
                         </button>
-                        <button class="a11y-option-btn" role="radio" aria-checked="false" data-theme="forced">
+                        <button class="a11y-option-btn" 
+                                role="radio" 
+                                aria-checked="false" 
+                                data-theme="forced">
                             ${i18n.getString('modal.options.themeForced') || 'Forzados'}
                         </button>
-                        <button class="a11y-option-btn" role="radio" aria-checked="false" data-theme="yellow">
+                        <button class="a11y-option-btn" 
+                                role="radio" 
+                                aria-checked="false" 
+                                data-theme="yellow">
                             ${i18n.getString('modal.options.themeYellow') || 'Amarillo/Negro'}
                         </button>
                     </div>
                 </div>
 
-                <div class="a11y-section">
-                    <h3>${i18n.getString('modal.sections.motion') || 'Protección vestibular y fatiga cognitiva'}</h3>
-                    <div class="a11y-controls-group">
-                        
-                        <label class="a11y-checkbox-label" style="display:flex; align-items:center; gap:10px; cursor:pointer;">
-                            <input type="checkbox" id="a11y-reduce-motion" class="a11y-checkbox" style="width:20px; height:20px;">
-                            <span style="font-size: var(--a11y-option-btn-font-size);">${i18n.getString('modal.options.reduceMotion') || 'Reducir animaciones'}</span>
-                        </label>
-
-                        <label class="a11y-checkbox-label" style="display:flex; align-items:center; gap:10px; cursor:pointer; margin-top: 10px;">
-                            <input type="checkbox" id="a11y-no-block-opacity" class="a11y-checkbox" style="width:20px; height:20px;">
-                            <span style="font-size: var(--a11y-option-btn-font-size);">${i18n.getString('modal.options.noBlockOpacity') || 'Desactivar atenuación en descripción de cursos'}</span>
-                        </label>
-
-                        <label class="a11y-checkbox-label" style="display:flex; align-items:center; gap:10px; cursor:pointer; margin-top: 10px;">
-                            <input type="checkbox" id="a11y-no-mask-opacity" class="a11y-checkbox" style="width:20px; height:20px;">
-                            <span style="font-size: var(--a11y-option-btn-font-size);">${i18n.getString('modal.options.noMaskOpacity') || 'Desactivar atenuación en menúes'}</span>
-                        </label>
-
-                        <label class="a11y-checkbox-label" style="display:flex; align-items:center; gap:10px; cursor:pointer; margin-top: 10px;">
-                            <input type="checkbox" id="a11y-no-zone-opacity" class="a11y-checkbox" style="width:20px; height:20px;">
-                            <span style="font-size: var(--a11y-option-btn-font-size);">${i18n.getString('modal.options.noZoneOpacity') || 'Desactivar atenuación por zona'}</span>
-                        </label>
-
-                    </div>
-                </div>
-
                 <div class="a11y-footer">
                     <button id="a11y-reset" 
-                        aria-label="${i18n.getString('modal.reset')}" 
-                        title="${i18n.getString('modal.reset')}"></button>
+                            aria-label="${i18n.getString('modal.reset')}" 
+                            title="${i18n.getString('modal.reset')}"></button>
                 </div>
             </div>
         </div>
@@ -520,23 +562,14 @@ export function openModal() {
     _domRefs.overlay.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
 
-    // 🟢 FIX: Retrasar el anuncio para que el lector no lo interrumpa al leer el nuevo foco
-    setTimeout(() => {
+    // Usamos el "Smart Focus" para fusionar el aviso de apertura con el botón de cerrar.
+    // Así el usuario sordociego lee todo en su línea braille al recibir el foco.
+    if (window.App && typeof window.App.applySmartFocus === 'function') {
+        window.App.STATE.pendingA11yContext = i18n.getString('modal.opened') || 'Configuración de accesibilidad abierta';
+        window.App.applySmartFocus(_domRefs.closeBtn);
+    } else {
         _domRefs.closeBtn.focus();
-        
-        if (window.App && window.App.announceA11y) {
-            // Quitamos la clase temporalmente para saltar el bloqueo de silencio
-            _domRefs.overlay.classList.remove('active');
-            
-            window.App.announceA11y(
-                i18n.getString('modal.opened') || 'Configuración de accesibilidad abierta', 
-                'assertive'
-            );
-            
-            // La devolvemos instantáneamente (sin parpadeo visual)
-            _domRefs.overlay.classList.add('active');
-        }
-    }, 100); // 100ms da el tiempo exacto para que el lector procese el foco primero
+    }
 }
 
 export function closeModal() {
@@ -546,17 +579,15 @@ export function closeModal() {
     _domRefs.overlay.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
 
-    // 🟢 FIX: Notificar al usuario que el modal se ha cerrado
-    if (window.App && window.App.announceA11y) {
-        window.App.announceA11y(
-            i18n.getString('modal.closed') || 'Configuración de accesibilidad cerrada', 
-            'assertive'
-        );
-    }
-
     // Devolver el foco al botón que abrió el modal
     if (_domRefs.triggerBtn) {
-        _domRefs.triggerBtn.focus();
+        // 🟢 Aplicamos la misma lógica para el cierre: el aviso se pega al botón del engranaje
+        if (window.App && typeof window.App.applySmartFocus === 'function') {
+            window.App.STATE.pendingA11yContext = i18n.getString('modal.closed') || 'Configuración de accesibilidad cerrada';
+            window.App.applySmartFocus(_domRefs.triggerBtn);
+        } else {
+            _domRefs.triggerBtn.focus();
+        }
     }
 }
 

@@ -47,6 +47,7 @@ class VortexSpiraApp {
             isUIBlocked: false,
             isBooting: true, 
             isTouchDevice: this._isTouchDevice(),
+            pendingA11yContext: null,
             emptyColumnAnnounced: false, // Para evitar repetir anuncio de "Columna vacía"
             pendingLoopFix: false, // 🟢 Semáforo para el arreglo del loop
             _lastAnnounced: null // Memoria para el anti-spam
@@ -139,7 +140,8 @@ class VortexSpiraApp {
         this._updateLayoutMode();
         this._cacheDOM();
         
-        this.DOM.vistaNav = this.DOM.vistaNav || document.getElementById('vista-navegacion-desktop'); 
+        this.DOM.vistaNav = this.DOM.vistaNav || 
+                            document.getElementById('vista-navegacion-desktop'); 
 
         // 🟢 EXTRAER PARÁMETROS DE URL
         const url = new URL(window.location);
@@ -185,7 +187,8 @@ class VortexSpiraApp {
                 throw new Error("Carga parcial fallida");
             }
         } catch (e) {
-            debug.logWarn('app', `Fallo cargando idioma '${targetLang}'. Reintentando con 'es'.`, e);
+            debug.logWarn('app', 
+                `Fallo cargando idioma '${targetLang}'. Reintentando con 'es'.`, e);
 
             // Fallback a Español si falla el objetivo
             if (targetLang !== 'es') {
@@ -199,8 +202,10 @@ class VortexSpiraApp {
 
                     url.searchParams.set('lang', targetLang); 
                     window.history.replaceState({}, '', url);
+
                 } catch (errFatal) {
                     debug.logError('app', "CRITICAL: Fallo total de carga.", errFatal);
+
                     return; 
                 }
             }
@@ -229,22 +234,20 @@ class VortexSpiraApp {
         this._injectA11yAnnouncer();
 
         // 🟢 2. AVISO DE BIENVENIDA (Universal, sin hardcodear español)
-        const titleNode = document.getElementById('main-header-title');
-        let appName = "VortexSpira EdTech";
+        let appName = this.getString('header.title') || "VortexSpira EdTech";
         
-        if (titleNode) {
-            const clone = titleNode.cloneNode(true);
-            const subtitle = clone.querySelector('small');
-            if (subtitle) clone.removeChild(subtitle);
-            appName = clone.textContent.trim() || appName;
-        }
-        
-        // Usamos assertive para que sea lo primero que diga el SR al abrir la web
-        this.announceA11y(appName, 'assertive');
+        // 🟢 FIX: En lugar de gritarlo, lo guardamos para el primer elemento enfocado
+        this.STATE.pendingA11yContext = appName;
+
+        debug.log('a11y', debug.DEBUG_LEVELS.EXTREME,
+            `[app.init] Pending A11y Context actualizado: ${this.STATE.pendingA11yContext}`);
 
         // Pasamos el flag enableI18n a injectHeaderContent
-        if (data.injectHeaderContent) data.injectHeaderContent(this, enableI18n);
-        if (data.injectFooterContent) data.injectFooterContent(this);
+        if (data.injectHeaderContent) 
+            data.injectHeaderContent(this, enableI18n);
+
+        if (data.injectFooterContent) 
+            data.injectFooterContent(this);
 
         if (targetId) {
             // 🟢 FIX: Si se hace F5 o se comparte un enlace directo
@@ -253,15 +256,27 @@ class VortexSpiraApp {
 
             } else if (this.stackBuildFromId(targetId, this.STATE.fullData)) { 
                 const nodo = this._findNodoById(targetId, this.STATE.fullData.navegacion);
+
                 if (nodo && nodo.titulo) { 
                     this._mostrarDetalle(targetId);
+
                 } else {
                     this.renderNavegacion();
                 }
             } else {
+                // 🟢 ID ROTO DETECTADO DURANTE EL ARRANQUE
                 this.stackInitialize(); 
+                
+                // Inyectamos el error en el Smart Focus ANTES de renderizar
+                const errorMsg = this.getString('toast.errorId');
+                if (this.STATE.pendingA11yContext) {
+                    this.STATE.pendingA11yContext += ". " + errorMsg;
+                } else {
+                    this.STATE.pendingA11yContext = errorMsg;
+                }
+
                 this.renderNavegacion();
-                this.showToast(this.getString('toast.errorId'));
+                this.showToast(errorMsg); // Mantiene el aviso visual
             }
         } else {
             this.stackInitialize(); 
@@ -284,7 +299,9 @@ class VortexSpiraApp {
                 if (e.type !== 'keyup') {
                     e.preventDefault();
                     e.stopPropagation();
-                    debug.log('app', debug.DEBUG_LEVELS.EXTREME, `🛡️ Escudo activo. Bloqueado: ${e.type} ${e.key || ''}`);
+
+                    debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
+                        `🛡️ Escudo activo. Bloqueado: ${e.type} ${e.key || ''}`);
                 }
             }
         };
@@ -488,6 +505,41 @@ class VortexSpiraApp {
     }
     // ============================================================================
 
+    // ============================================================================
+    // 🧠 SMART FOCUS: Fusión de Contexto y Foco en un solo evento
+    // ============================================================================
+    applySmartFocus(target) {
+        if (!target) return;
+
+        if (this.STATE.pendingA11yContext) {
+            const originalLabel = target.getAttribute('aria-label');
+            const textToPrepend = this.STATE.pendingA11yContext;
+            
+            // Si no tiene aria-label (ej: fragmento de texto), usamos su texto visible
+            const baseText = originalLabel || target.textContent.trim();
+            
+            // Inyectamos todo en un solo bloque semántico
+            target.setAttribute('aria-label', `${textToPrepend}. ${baseText}`);
+            
+            // Restauramos el elemento a su estado original en cuanto el usuario se mueva
+            target.addEventListener('blur', function restoreAria() {
+                if (originalLabel !== null) {
+                    target.setAttribute('aria-label', originalLabel);
+                } else {
+                    target.removeAttribute('aria-label');
+                }
+                target.removeEventListener('blur', restoreAria);
+            }, { once: true });
+
+            // 🟢 Consumimos el mensaje. Las siguientes tarjetas solo leerán su propio contenido.
+            this.STATE.pendingA11yContext = null; 
+        }
+
+        // Aplicamos el foco físico real (el Lector de Pantalla leerá el aria-label que acabamos de inflar)
+        target.focus({ preventScroll: true });
+
+    }
+
     // 🟢 Chequeo de existencia de recursos EN (Strings + Data)
     async _checkEnAvailability() {
         try {
@@ -587,7 +639,9 @@ class VortexSpiraApp {
                     const originId = this.STATE._previousCourseId; // El curso que estaba debajo
                     
                     if (originId && this.stackBuildFromId(originId, this.STATE.fullData)) {
-                        debug.log('app', debug.DEBUG_LEVELS.BASIC, `Pila base reconstruida para ${originId} tras cambio de idioma.`);
+                        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                            `Pila base reconstruida para ${originId} tras cambio de idioma.`);
+
                     } else {
                         // Si no hay curso previo, intentamos reconstruir al menos hasta la última categoría
                         this.stackInitialize(); 
@@ -616,8 +670,18 @@ class VortexSpiraApp {
                     this.stackInitialize(); 
                     url.searchParams.delete('id');
                     window.history.replaceState({}, '', url);
+
+                    // 🟢 ID ROTO DETECTADO DURANTE EL CAMBIO DE IDIOMA
+                    const errorMsg = this.getString('toast.errorId');
+                    if (this.STATE.pendingA11yContext) {
+                        this.STATE.pendingA11yContext += ". " + errorMsg;
+                    } else {
+                        this.STATE.pendingA11yContext = errorMsg;
+                    }
+
                     this.renderNavegacion(); 
                     this.showToast(this.getString('toast.errorId'));
+                
                 }
             } else {
                 debug.log('app', debug.DEBUG_LEVELS.BASIC, 
@@ -853,7 +917,8 @@ class VortexSpiraApp {
         // no hacemos NADA (ni siquiera reiniciamos el timer, para que no sea eterno si se spamea).
         // Esto evita que el lector de pantalla lea 8 veces "Columna vacía".
         if (this.DOM.toast.classList.contains('active') && this.DOM.toast.textContent === message) {
-            debug.log('app', debug.DEBUG_LEVELS.DEEP, `🚫 Toast duplicado ignorado: "${message}"`);
+            debug.log('app', debug.DEBUG_LEVELS.DEEP, 
+                `🚫 Toast duplicado ignorado: "${message}"`);
 
             return;
         }
@@ -1174,10 +1239,10 @@ class VortexSpiraApp {
         // 🟢 FIX A11Y: Configurar Toast
         if (this.DOM.toast) {
             if (!this.DOM.toast.getAttribute('role')) 
-                this.DOM.toast.setAttribute('role', 'alert'); 
+                this.DOM.toast.setAttribute('role', 'status'); 
 
-            if (!this.DOM.toast.getAttribute('aria-live')) 
-                this.DOM.toast.setAttribute('aria-live', 'assertive');
+            if (!this.DOM.toast.getAttribute('aria-hidden')) 
+                this.DOM.toast.setAttribute('aria-hidden', true);
         }
 
         // 🟢 FIX A11Y: SILENCIAR RUIDO (Quitar aria-live de elementos que no deben hablar solos)

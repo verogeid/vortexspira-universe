@@ -504,22 +504,39 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
     _initDetailCarousel(this, swiperId, 0);
 
     if (!document.getElementById('a11y-modal-overlay')?.classList.contains('active')) {
-        const mensajeContexto = `${this.getString('nav.coursePrefix') || 'Curso: '} ${curso.titulo}`;
-        this.announceA11y(mensajeContexto);
+        // 🟢 FIX: Acumular en lugar de anunciar
+        const mensajeContexto = `${this.getString('nav.coursePrefix') || 
+                                    'Curso: '} ${curso.titulo}`;
+
+        if (this.STATE.pendingA11yContext) {
+            if (!this.STATE.pendingA11yContext.includes(mensajeContexto)) {
+                this.STATE.pendingA11yContext += ". " + mensajeContexto;
+            }
+
+        } else {
+            this.STATE.pendingA11yContext = mensajeContexto;
+
+        }
     }
     
     setTimeout(() => {
         if (document.getElementById('a11y-modal-overlay')?.classList.contains('active')) return;
         let targetElement = null;
+
         if (isMobileLayout) {
             targetElement = this.DOM.detalleTrack.querySelector('.card-volver-vertical');
+
             if (!targetElement) targetElement = this.DOM.detalleTrack.querySelector('.detail-text-fragment[data-index="0"]');
+
         } else {
             targetElement = this.DOM.detalleTrack.querySelector('.detail-text-fragment[data-index="0"]');
         }
+
         if (targetElement) {
-            targetElement.focus({ preventScroll: true });
-            if (nav_base_details && typeof nav_base_details._updateDetailFocusState === 'function') {
+            this.applySmartFocus(targetElement);
+
+            if (nav_base_details && 
+                typeof nav_base_details._updateDetailFocusState === 'function') {
                 nav_base_details._updateDetailFocusState(this);
             }
         }

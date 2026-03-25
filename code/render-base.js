@@ -317,7 +317,7 @@ export function renderNavegacion() {
 
                         explicitExternalFocus.focus();
                         explicitExternalFocus.classList.add('focus-visible');
-                        
+
                         explicitExternalFocus.addEventListener('blur', function cleanup() {
                             explicitExternalFocus.classList.remove('focus-visible');
                             explicitExternalFocus.removeEventListener('blur', cleanup);
@@ -622,8 +622,16 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
     const contextPrefix = this.getString('nav.contextPrefix') || 'Navegando en: ';
     const mensajeContexto = `${contextPrefix}${tituloNivel}`;
     
-    if (this.STATE.initialRenderComplete) {
-        this.announceA11y(mensajeContexto);
+    // 🟢 FIX: Acumular el mensaje de la carpeta en lugar de interrumpir
+    if (this.STATE.pendingA11yContext) {
+        // Solo acumula si el mensaje no está ya en el texto
+        if (!this.STATE.pendingA11yContext.includes(mensajeContexto)) {
+            this.STATE.pendingA11yContext += ". " + mensajeContexto;
+        }
+
+    } else {
+        this.STATE.pendingA11yContext = mensajeContexto;
+
     }
 };
 

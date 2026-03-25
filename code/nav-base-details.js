@@ -206,8 +206,10 @@ export function _handleSlideChangeEnd(swiper, appInstance) {
     
     if (target) {
         target.focus({ preventScroll: true });
+
     } else {
-        debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 'Slide Change End: No se encontró target para restaurar foco.');
+        debug.log('nav_base_details', debug.DEBUG_LEVELS.DEEP, 
+            'Slide Change End: No se encontró target para restaurar foco.');
     }
     
     _updateDetailFocusState(appInstance);
@@ -218,6 +220,7 @@ export function _handleActionRowClick(e) {
         'Fila de acción interactuada. Evaluando foco...');
 
     e.currentTarget.focus();
+
     _updateDetailFocusState(App);
 };
 

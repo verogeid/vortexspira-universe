@@ -108,6 +108,7 @@ export function _handleDetailNavigation(key) {
 
             // 1. Aplicar Foco
             newFocusElement.focus({ preventScroll: true }); // Bloqueamos el salto nativo
+
             app.STATE._lastDetailFocusIndex = newIndex;
             
             debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.BASIC, 

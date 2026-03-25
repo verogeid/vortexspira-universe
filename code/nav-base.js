@@ -53,6 +53,7 @@ function _setupGlobalClickRecovery() {
         // 1. Si el usuario clicó en algo interactivo, dejamos que el navegador haga su trabajo.
         if (interactive) {
             interactive.focus({ preventScroll: true });
+
             return;
         }
 
@@ -76,6 +77,7 @@ function _setupGlobalClickRecovery() {
             if (focusable) {
                 // 🟢 RESTAURAR FOCO: "Obviamente quiero que vuelva..."
                 focusable.focus({ preventScroll: true });
+
                 return; 
             }
         }
@@ -247,7 +249,7 @@ export function _updateFocusImpl(shouldSlide = true) {
 
                 // 🟢 Bloquear el scroll nativo del navegador
                 // Esto evita el "primer salto" donde el navegador pone el elemento bajo el header.
-                target.focus({ preventScroll: true });
+                this.applySmartFocus(target);
             }
             
 
@@ -376,7 +378,7 @@ export function _updateFocusImpl(shouldSlide = true) {
                             `_updateFocusImpl: Estableciendo foco físico en desktop.`);
 
                 // Foco físico
-                target.focus({ preventScroll: true }); 
+                this.applySmartFocus(target);
             }
 
             // Movimiento del Slide

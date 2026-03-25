@@ -59,6 +59,7 @@ export function initKeyboardControls() {
                         // "Marcamos" físicamente el elemento como foco legítimo
                         focusables[lastIndex].dataset.vortexFocus = "true";
                         focusables[lastIndex].focus({ preventScroll: true });
+
                     }
                 } else {
                     // 🟢 CLIC EN LA ZONA MUERTA DEL SWIPER
@@ -136,6 +137,7 @@ export function initKeyboardControls() {
                             if (focusables[lastIndex] && focusables[lastIndex] !== isInteractive) {
                                 focusables[lastIndex].dataset.vortexFocus = "true";
                                 focusables[lastIndex].focus({ preventScroll: true });
+
                             }
                             return; 
                         }
@@ -565,6 +567,7 @@ export function _handleFocusTrap(e, viewType) {
         if (target) {
             e.preventDefault();
             target.focus();
+
         }
 
         return; // Detenemos la ejecución aquí, el rescate fue exitoso
@@ -590,6 +593,7 @@ export function _handleFocusTrap(e, viewType) {
     if (target) {
         e.preventDefault()
         target.focus();
+
     }
 }
 
