@@ -30,9 +30,9 @@ export const A11Y = {
 export const MEDIA = {
     LOGO: {
         OBRAS: '🚧',
-        CARPETA: '📂',
-        CURSO: '📚',
-        VOLVER: '↩',
+        CARPETA: '',
+        CURSO: '',
+        VOLVER: '​',
         BUY: '🛒',
         DISABLED: '🔒',
         A11Y: '🫆​',

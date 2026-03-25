@@ -214,7 +214,7 @@ header h1 a:focus .header-logo::before {
     background-color: var(--color-header-text); 
     opacity: 1; 
     
-    -webkit-mask-image: var(--icono-i18n); mask-image: var(--icono-i18n);
+    -webkit-mask-image: var(--icon-i18n); mask-image: var(--icon-i18n);
     -webkit-mask-size: 75%;
     mask-size: 75%;
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;

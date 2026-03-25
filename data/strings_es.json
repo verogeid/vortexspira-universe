@@ -27,6 +27,7 @@
             "actionCategory": "Ir a la subsección:",
             "actionCourse": "Abrir detalles del curso:"
         },
+        "backBtnText": "Volver",
         "breadcrumbRoot": "Nivel Raíz",
         "level": "Nivel",
         "contextPrefix": "Navegando en: ",
@@ -59,7 +60,7 @@
     "help": {
         "title": "Ayuda Rápida:",
         "rotate": "<strong>Gira</strong>: Arrastra, usa la rueda del ratón o las flechas del teclado.",
-        "back": "<strong>Vuelve</strong>: Pulsa [Esc] o el botón \"↩\"."
+        "back": "<strong>Vuelve</strong>: Pulsa [Esc] o el botón \"&lt; Volver\"."
     },
     "about": {
         "landing": "Hazte Fundador y obten tu 60% OFF",

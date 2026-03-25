@@ -48,9 +48,7 @@
     overflow-wrap: anywhere;  /* Obliga a partir la palabra si no cabe, para no romper el layout */
 }
 
-.card h3 .card-icon-lead,
-.card h3 .icon-vacio-card,
-.card h3 .icon-obras-card {
+.card h3 .card-icon-lead {
     float: none !important;
     display: block;
 
@@ -58,12 +56,6 @@
     /* Pequeña separación con el texto de abajo */
     margin-bottom: var(--footer-padding); 
     margin-right: 0;
-
-    font-size: var(--card-h3-icon);
-    width: 1.1em;
-    height: 1.1em;
-
-    line-height: 1;
 }
 
 .card h3 .card-text-content,
@@ -71,7 +63,8 @@
     display: -webkit-box;
     display: block;
 
-    -webkit-line-clamp: var(--card-breadcrump-h3-line-clamp);  line-clamp: var(--card-breadcrump-h3-line-clamp);
+    -webkit-line-clamp: var(--card-breadcrump-h3-line-clamp); 
+    line-clamp: var(--card-breadcrump-h3-line-clamp);
     -webkit-box-orient: vertical;
     
     font-size: var(--card-breadcrump-vertical-h3-font-size);
@@ -92,24 +85,6 @@
     
     /* Usamos la variable controlada */
     font-size: var(--card-desc-font-size, 1rem);
-}
-
-.icon-vacio-card {
-    background-color: currentColor;
-
-    -webkit-mask-image: var(--icon-vacio); mask-image: var(--icon-vacio);
-    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-    -webkit-mask-position: left center; mask-position: left center;
-    -webkit-mask-size: contain; mask-size: contain;
-}
-
-.icon-obras-card {
-    background-color: var(--color-icon-obras);
-
-    -webkit-mask-image: var(--icon-obras); mask-image: var(--icon-obras);
-    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-    -webkit-mask-position: left center; mask-position: left center;
-    -webkit-mask-size: contain; mask-size: contain;
 }
 
 /* Tipos Especiales */
@@ -174,8 +149,7 @@
     border-style: dashed;
 }
 
-/* 🟢 REGLA 3: HOVER (Transform, color, pero borde fino) */
-
+/* 🟢 REGLA 3: HOVER */
 /* Hover Habilitada */
 .card:not(.disabled):not([data-tipo="relleno"]):hover {
     outline: none; 
@@ -195,9 +169,7 @@
     opacity: calc(var(--opacity) * 3); 
 }
 
-
-/* 🟢 REGLA 4: FOCO ABSOLUTO (Garantiza visibilidad ignorando la heurística del ratón) */
-
+/* 🟢 REGLA 4: FOCO ABSOLUTO */
 /* Tarjetas Normales */
 .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
 .card:not(.disabled):not([data-tipo="relleno"]):focus,
@@ -226,10 +198,97 @@
     filter: saturate(1) !important;
 }
 
-/* Fix extra: Forzar el re-renderizado en WebKit para evitar el "congelado visual" */
+/* Fix extra WebKit */
 .card {
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
+}
+
+/* ==========================================================================
+   TARJETA VOLVER (Ocupación total del espacio)
+   ========================================================================== */
+
+/* Contenedor interno que expande icono y texto */
+.card-volver-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    
+    height: 100% !important; 
+    width: 100% !important;
+    margin: 0 !important;
+    gap: 12px; 
+}
+
+/* El texto traducido */
+.card-volver-content .card-volver-text {
+    font-size: var(--card-breadcrump-vertical-h3-font-size);
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--color-text-main);
+    opacity: 0.9;
+}
+
+#card-volver-fija-elemento {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    height: 100%;
+}
+
+#card-volver-fija-elemento .card-volver-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* ==========================================================================
+   ICONOGRAFÍA GLOBAL (MÁSCARAS SVG)
+   ========================================================================== */
+.card-icon-lead,
+.card-volver-icon {
+    display: inline-block;
+    width: var(--card-icon-size);
+    height: var(--card-icon-size);
+    background-color: currentColor; 
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    vertical-align: middle; 
+}
+
+/* Asignación específica de cada variable SVG */
+.card-folder-icon {
+    -webkit-mask-image: var(--icon-folder);
+    mask-image: var(--icon-folder);
+}
+
+.card-course-icon {
+    -webkit-mask-image: var(--icon-course);
+    mask-image: var(--icon-course);
+}
+
+.card-obras-icon {
+    -webkit-mask-image: var(--icon-obras);
+    mask-image: var(--icon-obras);
+}
+
+.icon-empty-card {
+    -webkit-mask-image: var(--icon-empty);
+    mask-image: var(--icon-empty);
+}
+
+.card-volver-icon {
+    -webkit-mask-image: var(--icon-back);
+    mask-image: var(--icon-back);
 }
 
 /* --- styles/style-cards.css --- */

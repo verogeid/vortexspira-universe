@@ -275,10 +275,10 @@
 
 .detail-action-btn.disabled .triangulo-svg,
 .detail-action-btn.disabled .icon-wrapper,
-.detail-action-btn.disabled > i:not(.icon-vacio) { 
+.detail-action-btn.disabled > i:not(.icon-empty) { 
     display: none !important; 
 }
-.detail-action-btn.disabled > i.icon-vacio { 
+.detail-action-btn.disabled > i.icon-empty { 
     display: block !important;
 }
 
@@ -312,7 +312,7 @@
 .icon-download { -webkit-mask-image: var(--icon-download); mask-image: var(--icon-download); }
 .icon-link { -webkit-mask-image: var(--icon-link); mask-image: var(--icon-link); }
 .icon-buy { -webkit-mask-image: var(--icon-buy); mask-image: var(--icon-buy); }
-.icon-vacio { -webkit-mask-image: var(--icon-vacio); mask-image: var(--icon-vacio); }
+.icon-empty { -webkit-mask-image: var(--icon-empty); mask-image: var(--icon-empty); }
 
 /* 7. Estilo Específico Botón Volver Móvil */
 button.detail-action-btn {

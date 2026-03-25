@@ -27,6 +27,7 @@
             "actionCategory": "Go to subsection:",
             "actionCourse": "Open course details:"
         },
+        "backBtnText": "Back",
         "breadcrumbRoot": "Root Level",
         "level": "Level",
         "contextPrefix": "Navigating in: ",
@@ -59,7 +60,7 @@
     "help": {
         "title": "Quick Help:",
         "rotate": "<strong>Rotate</strong>: Drag, use mouse wheel, or keyboard arrows.",
-        "back": "<strong>Back</strong>: Press [Esc] or the \"↩\" button."
+        "back": "<strong>Back</strong>: Press [Esc] or the \"&lt; Back\" button."
     },
     "about": {
         "landing": "Become a Founder and get 60% OFF",

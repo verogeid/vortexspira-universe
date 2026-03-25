@@ -249,17 +249,6 @@ class VortexSpiraApp {
         if (targetId) {
             // 🟢 FIX: Si se hace F5 o se comparte un enlace directo
             if (targetId === 'c-about') {
-                const titulo = i18n.getString('footer.aboutText') || 'About Us';
-                const desc = i18n.getString('seo.about') || '';
-                this.STATE.fullData.navegacion.push({
-                    id: 'c-about', 
-                    titulo: titulo, 
-                    descripcion: desc.replace(/\. /g, '. <HR>'), 
-                    subsecciones: [], // 🟢 SALVAVIDAS
-                    cursos: [],       // 🟢 SALVAVIDAS
-                    enlaces: []
-                });
-
                 this._mostrarAbout();
 
             } else if (this.stackBuildFromId(targetId, this.STATE.fullData)) { 
@@ -371,9 +360,30 @@ class VortexSpiraApp {
                     return; 
                 }
 
-                // 🟢 FIX DEFINITIVO: Si el navegador sale de c-about hacia atrás, apagamos el flag
-                if (this.STATE.isSpecialViewActive) {
-                    this.STATE.isSpecialViewActive = false;
+                // 🟢 MEJORA DE CONSISTENCIA: ¿El destino ya está en nuestra pila?
+                const stackIndex = this.STATE.historyStack.findIndex(s => s.levelId === targetId);
+                
+                if (stackIndex !== -1 && stackIndex < this.STATE.historyStack.length - 1) {
+                    // Es una navegación hacia atrás conocida. Rebobinamos la pila.
+                    debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                        `Retroceso detectado hacia nivel conocido: ${targetId}. Rebobinando pila.`);
+                    
+                    while (this.STATE.historyStack.length - 1 > stackIndex) {
+                        this.stackPop();
+                    }
+                    
+                    // Al haber hecho pop, el nivel actual de la pila YA tiene el focusId guardado.
+                    // Solo tenemos que ocultar detalles y renderizar.
+                    if (this.DOM.vistaDetalle) {
+                        this.DOM.vistaDetalle.classList.remove('active');
+                        this.DOM.vistaDetalle.style.display = 'none';
+                    }
+                    this.STATE.activeCourseId = null;
+                    
+                    // Marcamos como navegación atrás para que renderNavegacion use el focusId guardado
+                    this.STATE.isNavigatingBack = true; 
+                    this.renderNavegacion();
+                    return;
                 }
                 
                 if (this.stackBuildFromId(targetId, this.STATE.fullData)) { 
@@ -524,19 +534,6 @@ class VortexSpiraApp {
             const url = new URL(window.location);
             url.searchParams.set('lang', newLang);
             const targetId = url.searchParams.get('id');
-
-            if (targetId === 'c-about') {
-                const titulo = i18n.getString('footer.aboutText') || 'About Us';
-                const desc = i18n.getString('seo.about') || '';
-                this.STATE.fullData.navegacion.push({
-                    id: 'c-about', 
-                    titulo: titulo, 
-                    descripcion: desc.replace(/\. /g, '. <HR>'), 
-                    subsecciones: [],
-                    cursos: [],
-                    enlaces: []
-                });
-            }
 
             // 3. Aplicamos el nuevo estado base
             this.STATE.fullData = coursesData;
@@ -694,7 +691,8 @@ class VortexSpiraApp {
 
         // 🟢 FIX DEFINITIVO: Si estábamos en "Quiénes Somos"
         if (this.STATE.isSpecialViewActive) {
-            debug.log('app', debug.DEBUG_LEVELS.BASIC, 'Cerrando vista especial. Restaurando estado original.');
+            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                'Cerrando vista especial. Restaurando estado original.');
             this.STATE.isSpecialViewActive = false;
 
             // Restauramos la identidad del curso que había debajo (si lo había)
@@ -710,13 +708,21 @@ class VortexSpiraApp {
                     this.DOM.vistaDetalle.style.display = 'none';
                 }
                 
-                // Actualizamos URL manualmente porque no pasamos por nav_base
-                const url = new URL(window.location);
-                url.searchParams.set('id', this.STATE.activeCourseId);
-                window.history.pushState({}, '', url);
-
-                this._mostrarDetalle(this.STATE.activeCourseId);
-                return;
+                if (this.STATE.activeCourseId) {
+                    // Veníamos de un curso: Lo repintamos y ajustamos URL nosotros
+                    const url = new URL(window.location);
+                    url.searchParams.set('id', this.STATE.activeCourseId);
+                    window.history.pushState({}, '', url);
+                    
+                    this._mostrarDetalle(this.STATE.activeCourseId);
+                    return; // Cortamos ejecución aquí, ya estamos donde queríamos
+                } else {
+                    // Veníamos de un menú (ej: s-qa-adv).
+                    // Al poner activeCourseId = null arriba, le estamos diciendo a nav_base
+                    // "estoy listo para salir del modo detalle y repintar el menú".
+                    // IMPORTANTE: NO usamos 'return' aquí. Dejamos que el flujo baje para que ejecute nav_base._handleVolverClick
+                    // y haga su magia nativa.
+                }
             }
         }
 
@@ -1204,38 +1210,16 @@ class VortexSpiraApp {
     // 🟢 PAGINA DE "QUIÉNES SOMOS" (FANTASMA)
     // ==========================================
     _mostrarAbout(pushHistory = true) {
-        debug.log('app', debug.DEBUG_LEVELS.BASIC, 'Abriendo página especial: Quiénes Somos');
-        
-        const titulo = this.getString('footer.aboutText') || 'About Us';
-        let descripcionRica = this.getString('seo.about') || '';
-        descripcionRica = descripcionRica.replace(/\. /g, '. <HR>'); 
-        
-        const cursoFantasma = {
-            id: 'c-about',
-            titulo: titulo,
-            descripcion: descripcionRica,
-            subsecciones: [], // 🟢 Evita crasheos si el Popstate escanea
-            cursos: [],       // 🟢 Evita crasheos si el Popstate escanea
-            enlaces: [
-                { "texto": "LinkedIn", "url": "https://www.linkedin.com/company/vortexspira", "type": "l" },
-                { "texto": "Landing Page", "url": "https://subscribepage.io/vortexspira", "type": "l" }
-            ]
-        };
-
-        const tempRoot = this.STATE.fullData.navegacion.find(n => n.id === 'c-about');
-        if (!tempRoot) {
-            this.STATE.fullData.navegacion.push(cursoFantasma);
-        } else {
-            Object.assign(tempRoot, cursoFantasma);
-        }
+        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+            'Abriendo página especial: Quiénes Somos');
 
         // 🟢 FIX: Solo guardamos el origen si no estamos ya en una vista especial
         // Esto evita que al cambiar de idioma (que llama a _mostrarAbout), 
         // el originId pase a ser 'c-about' y perdamos el curso real.
         if (!this.STATE.isSpecialViewActive) {
-            this.STATE._previousCourseId = this.STATE.activeCourseId || (this.stackGetCurrent()?.levelId !== 'root' ? this.stackGetCurrent()?.levelId : null);
+            this.STATE._previousCourseId = this.STATE.activeCourseId;
         }
-        
+
         this.STATE.activeCourseId = 'c-about';
         this.STATE.isSpecialViewActive = true; 
 

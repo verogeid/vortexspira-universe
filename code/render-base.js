@@ -492,6 +492,7 @@ export function _generarTarjetaHTMLImpl(nodo,
 
     if (tipoEspecial === 'volver-vertical') {
         const ariaLabel = this.getString('nav.aria.backBtn');
+        const visibleText = this.getString('nav.backBtnText') || 'Volver';
 
         return `
             <article class="card card-volver-vertical" 
@@ -501,7 +502,10 @@ export function _generarTarjetaHTMLImpl(nodo,
                     aria-label="${ariaLabel}" 
                     tabindex="0" 
                     onclick="App._handleVolverClick()">
-                <h3>${data.MEDIA.LOGO.VOLVER}</h3>
+                <h3 aria-hidden="true" class="card-volver-content">
+                    <span class="card-volver-icon"></span>
+                    <span class="card-volver-text">${visibleText}</span>
+                </h3>
             </article>`;
     }
 
@@ -516,7 +520,7 @@ export function _generarTarjetaHTMLImpl(nodo,
                     tabindex="0" 
                     aria-label="${nodo.nombre}">
                 <h3>
-                    <span class="icon-vacio-card"></span>
+                    <span class="card-icon-lead icon-empty-card" aria-hidden="true"></span>
                     <span id="card-title-${nodo.id}" class="card-text-content" aria-hidden="true">${nodo.nombre}</span>
                 </h3>
             </article>`;
@@ -531,17 +535,17 @@ export function _generarTarjetaHTMLImpl(nodo,
 
     if (tipo === 'categoria') {
         if (estaActivo) { 
-            iconHTML = `<span class="card-icon-lead">${data.MEDIA.LOGO.CARPETA}</span>`; 
+            // 🟢 Inyectamos un span vacío que recibirá el icono de la carpeta vía CSS Mask
+            iconHTML = `<span class="card-icon-lead card-folder-icon" aria-hidden="true"></span>`; 
         } else { 
-            iconHTML = `<span class="icon-vacio-card"></span>`; 
+            // 🟢 FIX: Añadimos 'card-icon-lead' para que enganche con tu CSS
+            iconHTML = `<span class="card-icon-lead icon-empty-card" aria-hidden="true"></span>`; 
         }
-
     } else {
-        if (displayTitle.includes(data.MEDIA.LOGO.OBRAS)) {
-            iconHTML = `<span class="icon-obras-card"></span>`;
-            displayTitle = displayTitle.replace(data.MEDIA.LOGO.OBRAS, "").trim(); 
+        if (nodo.enObras) {
+            iconHTML = `<span class="card-icon-lead card-obras-icon" aria-hidden="true"></span>`;
         } else {
-            iconHTML = `<span class="card-icon-lead">${data.MEDIA.LOGO.CURSO}</span>`; 
+            iconHTML = `<span class="card-icon-lead card-course-icon" aria-hidden="true"></span>`;
         }
     }
 
@@ -598,10 +602,17 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
     this.DOM.cardNivelActual.innerHTML = `<h3>${tituloNivel}</h3>`;
 
     if (isSubLevel) {
+        const visibleText = this.getString('nav.backBtnText') || 'Volver'; // 🟢 i18n dinámico
+
         this.DOM.cardVolverFijaElemento.classList.add('visible'); 
-        this.DOM.cardVolverFijaElemento.innerHTML = `<h3 aria-hidden="true">${data.MEDIA.LOGO.VOLVER}</h3>`; 
+        this.DOM.cardVolverFijaElemento.innerHTML = `
+            <h3 aria-hidden="true" class="card-volver-content">
+                <span class="card-volver-icon"></span>
+                <span class="card-volver-text">${visibleText}</span>
+            </h3>`; 
         this.DOM.cardVolverFijaElemento.setAttribute('aria-label', this.getString('nav.aria.backBtn'));
         this.DOM.cardVolverFijaElemento.tabIndex = 0;
+
     } else {
         this.DOM.cardVolverFijaElemento.classList.remove('visible'); 
         this.DOM.cardVolverFijaElemento.tabIndex = -1;

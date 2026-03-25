@@ -140,7 +140,7 @@ body[data-layout="mobile"] .card h3 {
 
 /* 2. RESET DEL ICONO: Deja de flotar y se comporta como columna 1 */
 body[data-layout="mobile"] .card h3 .card-icon-lead,
-body[data-layout="mobile"] .card h3 .icon-vacio-card,
+body[data-layout="mobile"] .card h3 .icon-empty-card,
 body[data-layout="mobile"] .card h3 .icon-obras-card {
     float: none !important;
     margin-top: 0 !important;   /* Sin ajuste óptico, centrado matemático */
