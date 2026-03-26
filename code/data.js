@@ -28,16 +28,6 @@ export const A11Y = {
 };
 
 export const MEDIA = {
-    LOGO: {
-        OBRAS: '🚧',
-        CARPETA: '',
-        CURSO: '',
-        VOLVER: '​',
-        BUY: '🛒',
-        DISABLED: '🔒',
-        A11Y: '🫆​',
-        I18N: '🌐'
-    },
     URL: {
         LINKEDIN: "https://www.linkedin.com/company/vortexspira",
         LICENSE: "http://creativecommons.org/licenses/by-nc-nd/4.0/",
