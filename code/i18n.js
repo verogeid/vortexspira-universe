@@ -148,7 +148,11 @@ export function applyStrings(appInstance) {
     };
     for (const sel in socialMap) {
         const el = document.querySelector(sel);
-        if (el) el.setAttribute('aria-label', getString(socialMap[sel]));
+        if (el) {
+            const txtSocial = getString(socialMap[sel]);
+            el.setAttribute('aria-label', txtSocial);
+            el.setAttribute('title', txtSocial);
+        }
     }
 }
 /* --- code/i18n.js --- */

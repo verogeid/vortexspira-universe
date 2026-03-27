@@ -520,11 +520,13 @@ class VortexSpiraApp {
             
             // Inyectamos todo en un solo bloque semántico
             target.setAttribute('aria-label', `${textToPrepend}. ${baseText}`);
+            target.setAttribute('title', `${textToPrepend}. ${baseText}`);
             
             // Restauramos el elemento a su estado original en cuanto el usuario se mueva
             target.addEventListener('blur', function restoreAria() {
                 if (originalLabel !== null) {
                     target.setAttribute('aria-label', originalLabel);
+                    target.setAttribute('title', originalLabel);
                 } else {
                     target.removeAttribute('aria-label');
                 }

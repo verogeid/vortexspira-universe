@@ -358,6 +358,7 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                     <span class="card-volver-text">${visibleText}</span>
                 </h3>`;
             cardVolverFijaElemento.setAttribute('aria-label', this.getString('nav.aria.backBtn'));
+            cardVolverFijaElemento.setAttribute('title', this.getString('nav.aria.backBtn'));
             cardVolverFijaElemento.tabIndex = 0;
         }
 
@@ -382,7 +383,12 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                 <article class="card card-breadcrumb-vertical" tabindex="0" role="heading" aria-level="3" style="margin-bottom: 10px;">
                     <h3>${parentName}</h3>
                 </article>
-                <article class="card card-volver-vertical" role="button" aria-label="${ariaLabel}" tabindex="0" onclick="App._handleVolverClick()">
+                <article class="card card-volver-vertical" 
+                    role="button" 
+                    aria-label="${ariaLabel}" 
+                    title="${ariaLabel}" 
+                    tabindex="0" 
+                    onclick="App._handleVolverClick()">
                     <h3 aria-hidden="true" class="card-volver-content">
                         <span class="card-volver-icon"></span>
                         <span class="card-volver-text">${visibleText}</span>

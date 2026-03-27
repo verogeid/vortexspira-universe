@@ -19,8 +19,8 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
         btnMainMenu.id = 'btn-main-menu';
         btnMainMenu.setAttribute('aria-expanded', 'false');
         btnMainMenu.setAttribute('aria-controls', 'main-menu-dropdown');
-        btnMainMenu.setAttribute('aria-label', appInstance.getString('header.aria.menuBtn') || 
-            'Abrir menú principal');
+        btnMainMenu.setAttribute('aria-label', appInstance.getString('header.aria.menuBtn'));
+        btnMainMenu.setAttribute('title', appInstance.getString('header.aria.menuBtn'));
         btnMainMenu.tabIndex = 0;
         
         const iconHamburger = document.createElement('span');
@@ -50,21 +50,26 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                     <button role="menuitem" 
                         id="menu-btn-a11y" 
                         class="menu-link" 
-                        aria-label="${appInstance.getString('header.aria.a11yBtn') 
-                            || 'Accesibilidad'}">
+                        aria-label="${appInstance.getString('header.aria.a11yBtn')}"
+                        title="${appInstance.getString('header.aria.a11yBtn')}">
                         <span class="menu-icon icon-a11y"></span> 
                     </button>
                     ${enableI18n ? `
                     <button role="menuitem" 
                         id="menu-btn-lang" 
-                        class="menu-link" 
-                        aria-label="${langLabel}">
-                        <span class="menu-icon icon-lang"></span> 
+                        class="menu-link lang-btn-container" 
+                        aria-label="${langLabel}"
+                        title="${langLabel}">
+                        <span class="lang-icon-bg" aria-hidden="true"></span>
+                        <span class="lang-text" aria-hidden="true">
+                            ${currentLang.toUpperCase()}
+                        </span>
                     </button>` : ''}
                     <button role="menuitem" 
                         id="menu-btn-about" 
                         class="menu-link" 
-                        aria-label="${appInstance.getString('footer.aria.about')}">
+                        aria-label="${appInstance.getString('footer.aria.about')}"
+                        title="${appInstance.getString('footer.aria.about')}">
                         <span class="menu-icon icon-info"></span> 
                     </button>
                 </div>
@@ -78,21 +83,24 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         href="${data.MEDIA.URL.LINKEDIN}" 
                         target="_blank" 
                         class="menu-link" 
-                        aria-label="${appInstance.getString('footer.aria.linkedin')}">
+                        aria-label="${appInstance.getString('footer.aria.linkedin')}"
+                        title="${appInstance.getString('footer.aria.linkedin')}">
                         <span class="menu-icon link-linkedin"></span> 
                     </a>
                     <a role="menuitem" 
                         href="${data.MEDIA.URL.DEV_DIARY}" 
                         target="_blank" 
                         class="menu-link" 
-                        aria-label="${appInstance.getString('footer.aria.github')}">
+                        aria-label="${appInstance.getString('footer.aria.github')}"
+                        title="${appInstance.getString('footer.aria.github')}">
                         <span class="menu-icon link-github"></span> 
                     </a>
                     <a role="menuitem" 
                         href="${data.MEDIA.URL.LANDING_PAGE}" 
                         target="_blank" 
                         class="menu-link" 
-                        aria-label="${appInstance.getString('footer.aria.landing')}">
+                        aria-label="${appInstance.getString('footer.aria.landing')}"
+                        title="${appInstance.getString('footer.aria.landing')}">
                         <span class="menu-icon link-fire"></span> 
                     </a>
                 </div>
@@ -102,18 +110,17 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                     <hr aria-hidden="true">
                 </div>
 
-                <div class="menu-grid-row" 
-                    role="presentation">
+                <div class="menu-grid-row" role="presentation">
                     <a role="menuitem" 
                         href="${data.MEDIA.URL.LICENSE}" 
                         target="_top" 
                         class="menu-link cc-license-btn" 
-                        aria-label="${appInstance.getString('footer.aria.license')}">
-                        <span class="cc-icon-layers" aria-hidden="true">
-                            <span class="cc-layer-bg"></span>
-                            <span class="cc-layer-paper"></span>
-                            <span class="cc-layer-ink"></span>
-                        </span>
+                        aria-label="${appInstance.getString('footer.aria.license')}"
+                        title="${appInstance.getString('footer.aria.license')}">
+                        <img src="${data.MEDIA.URL.LICENSE_IMG_SRC}" 
+                            alt="" 
+                            aria-hidden="true" 
+                            class="cc-license-img">
                     </a>
                 </div>
 
@@ -166,24 +173,59 @@ function _setupListeners(appInstance, enableI18n) {
         }
     });
 
-    // 3. MOTOR WAI-ARIA DE TECLADO (Aislado para el menú)
-    // 3. MOTOR WAI-ARIA DE TECLADO (Aislado para el menú)
+    // 3. MOTOR WAI-ARIA DE TECLADO (Navegación 2D para Cuadrícula)
     navDropdown.addEventListener('keydown', (e) => {
-        const items = Array.from(navDropdown.querySelectorAll('.menu-link'));
-        const index = items.indexOf(document.activeElement);
+        const allItems = Array.from(navDropdown.querySelectorAll('.menu-link'));
+        const currentItem = document.activeElement;
+        const currentIndex = allItems.indexOf(currentItem);
 
-        // 🟢 FIX: Al ser una cuadrícula, permitimos fluir con Arriba/Abajo/Izquierda/Derecha
-        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        if (currentIndex === -1) return;
+
+        // 🟢 NAVEGACIÓN HORIZONTAL (Secuencial clásica)
+        if (e.key === 'ArrowRight') {
             e.preventDefault(); e.stopPropagation();
-            const nextIndex = (index + 1) % items.length;
-            items[nextIndex].focus();
+            const nextIndex = (currentIndex + 1) % allItems.length;
+            allItems[nextIndex].focus();
         } 
-        else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        else if (e.key === 'ArrowLeft') {
             e.preventDefault(); e.stopPropagation();
-            const prevIndex = (index - 1 + items.length) % items.length;
-            items[prevIndex].focus();
+            const prevIndex = (currentIndex - 1 + allItems.length) % allItems.length;
+            allItems[prevIndex].focus();
+        } 
+        // 🟢 NAVEGACIÓN VERTICAL (Espacial entre filas)
+        else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault(); e.stopPropagation();
+
+            // 1. Identificamos todas las filas y en cuál estamos
+            const rows = Array.from(navDropdown.querySelectorAll('.menu-grid-row'));
+            const currentRow = currentItem.closest('.menu-grid-row');
+            const rowIndex = rows.indexOf(currentRow);
+            
+            if (rowIndex === -1) return;
+
+            // 2. ¿En qué posición (columna) estamos dentro de nuestra fila actual?
+            const itemsInCurrentRow = Array.from(currentRow.querySelectorAll('.menu-link'));
+            const colIndex = itemsInCurrentRow.indexOf(currentItem);
+
+            // 3. Calculamos la fila destino (con bucle arriba/abajo)
+            let targetRowIndex;
+            if (e.key === 'ArrowDown') {
+                targetRowIndex = (rowIndex + 1) % rows.length;
+            } else { // ArrowUp
+                targetRowIndex = (rowIndex - 1 + rows.length) % rows.length;
+            }
+            
+            const targetRow = rows[targetRowIndex];
+            const itemsInTargetRow = Array.from(targetRow.querySelectorAll('.menu-link'));
+
+            // 4. Saltamos a la misma columna, o al último elemento si la fila destino es más corta
+            const targetColIndex = Math.min(colIndex, itemsInTargetRow.length - 1);
+            if (itemsInTargetRow[targetColIndex]) {
+                itemsInTargetRow[targetColIndex].focus();
+            }
         } 
         else if (e.key === 'Tab') {
+            // Trampa de foco suave: Cerramos y el navegador sigue su camino
             toggleMenu(true);    
         }
     });
@@ -196,10 +238,28 @@ function _setupListeners(appInstance, enableI18n) {
     };
 
     if (enableI18n) {
-        navDropdown.querySelector('#menu-btn-lang').onclick = (e) => {
+        const btnLang = navDropdown.querySelector('#menu-btn-lang');
+        btnLang.onclick = (e) => {
             e.preventDefault();
             toggleMenu(true);
-            appInstance.toggleLanguage();
+            appInstance.toggleLanguage(); // Tu función principal
+            
+            // 🟢 FIX: Actualizamos el texto y el ARIA en caliente sin recargar el menú
+            setTimeout(() => {
+                const currentLang = localStorage.getItem('vortex_lang') || 'es';
+                
+                // Actualizar Texto visual
+                const textSpan = btnLang.querySelector('.lang-text');
+                if (textSpan) textSpan.textContent = currentLang.toUpperCase();
+                
+                // Actualizar Etiqueta ARIA
+                const langLabel = currentLang === 'es' 
+                    ? appInstance.getString('header.aria.langBtn') || "Idioma: Español. Cambiar a Inglés." 
+                    : appInstance.getString('header.aria.langBtn') || "Language: English. Switch to Spanish.";
+                
+                btnLang.setAttribute('aria-label', langLabel);
+                btnLang.setAttribute('title', langLabel);
+            }, 50); // Pequeño retraso de seguridad por si toggleLanguage tarda unos ms en setear el localStorage
         };
     }
 

@@ -21,6 +21,7 @@
     /* 🟢 FIX: Límite de altura dinámico y scroll */
     max-height: calc(100vh - var(--header-height) - 20px);
     overflow-y: auto;
+    overflow-x: hidden;
 
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) var(--color-card-bg);
@@ -129,50 +130,133 @@
 .menu-icon.link-fire { -webkit-mask-image: var(--icon-fire); mask-image: var(--icon-fire); } 
 .menu-icon.icon-info { -webkit-mask-image: var(--icon-info); mask-image: var(--icon-info); }
 
-/* --- 🔴 Licencia CC (Construcción de 3 Capas) --- */
-.cc-license-btn {
-    width: calc(var(--ui-icon-size) * 2 + var(--menu-gap)) !important; 
-    height: var(--ui-icon-size);
+/* ==========================================================
+   🌟 EXCEPCIONES Y DETALLES VISUALES DE LA CUADRÍCULA 🌟
+========================================================== */
+
+/* --- 🔥 Icono de la Landing (Color Propio) --- */
+.menu-icon.link-fire {
+    -webkit-mask-image: var(--icon-fire); mask-image: var(--icon-fire);
+    background-color: var(--color-fire); 
+}
+/* Al coger foco, brilla con el color fuego en lugar del primario */
+.menu-link:hover .menu-icon.link-fire,
+.menu-link:focus-visible .menu-icon.link-fire,
+.menu-link:focus .menu-icon.link-fire {
+    background-color: var(--color-primary) !important;
+    filter: drop-shadow(0 0 4px var(--color-fire));
 }
 
-.cc-icon-layers {
+
+/* --- 🌍 Botón de Idioma (Sobreimpresión AAA) --- */
+.lang-btn-container {
     position: relative;
-    width: 100%;
-    height: 100%;
-    display: block;
+    overflow: hidden; /* Evita que sombras rebeldes se salgan de la caja */
 }
 
-.cc-layer-bg, .cc-layer-paper, .cc-layer-ink {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+/* El fondo (Mundo) */
+.lang-icon-bg {
+    position: absolute;
+    /* Centrado absoluto dentro de la caja de 44x44 */
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 28px; 
+    height: 28px;
+    
+    background-color: currentColor; /* Hereda de .menu-link, cambia a Primario en hover */
+    -webkit-mask-image: var(--icon-i18n); mask-image: var(--icon-i18n);
     -webkit-mask-size: contain; mask-size: contain;
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
+    
+    transition: all var(--animation-speed) ease;
 }
 
-/* La capa de fondo hereda el color del texto, y se tiñe de primario en el hover */
-.cc-layer-bg {
-    background-color: currentColor; 
-    -webkit-mask-image: var(--icon-license-bg); mask-image: var(--icon-license-bg);
-    transition: background-color var(--animation-speed) ease;
-}
-
-/* El "papel" se recorta con el color del fondo del menú */
-.cc-layer-paper {
-    background-color: var(--color-header-bg); 
-    -webkit-mask-image: var(--icon-license-paper); mask-image: var(--icon-license-paper);
-}
-
-/* La tinta de las letras y contornos */
-.cc-layer-ink {
-    background-color: currentColor; 
-    -webkit-mask-image: var(--icon-license-ink); mask-image: var(--icon-license-ink);
-}
-
-/* Brillo para la licencia */
-.menu-link:hover .cc-layer-bg,
-.menu-link:focus-visible .cc-layer-bg,
-.menu-link:focus .cc-layer-bg {
+/* El brillo del fondo al interactuar */
+.lang-btn-container:hover .lang-icon-bg,
+.lang-btn-container:focus-visible .lang-icon-bg,
+.lang-btn-container:focus .lang-icon-bg {
     filter: drop-shadow(0 0 4px var(--color-shadow-primary));
+}
+
+/* El texto sobreimpreso (ES / EN) */
+.lang-text {
+    position: relative;
+    font-family: var(--font-family-base);
+    font-size: 0.85rem; /* Ajustado para que quepa bien dentro del cuadrado */
+    font-weight: bold;
+    
+    z-index: 2;
+    line-height: 1;
+    pointer-events: none;
+    transition: all var(--animation-speed) ease;
+
+    /* REPOSO: Texto oscuro calado */
+    color: var(--color-header-bg); 
+    
+    /* NITIDEZ: Stroke matemático del color del texto normal */
+    text-shadow: 
+        -1px -1px 0 var(--color-header-text),
+         1px -1px 0 var(--color-header-text),
+        -1px  1px 0 var(--color-header-text),
+         1px  1px 0 var(--color-header-text),
+         0px -1px 0 var(--color-header-text),
+         0px  1px 0 var(--color-header-text),
+        -1px  0px 0 var(--color-header-text),
+         1px  0px 0 var(--color-header-text);
+}
+
+/* INTERACCIÓN DEL TEXTO: Contraste AAA garantizado */
+.lang-btn-container:hover .lang-text,
+.lang-btn-container:focus-visible .lang-text,
+.lang-btn-container:focus .lang-text {
+    color: var(--color-a11y-selected-text); 
+    
+    /* El stroke se mimetiza con el fondo Primario que asume el icono */
+    text-shadow: 
+        -1px -1px 0 var(--color-primary),
+         1px -1px 0 var(--color-primary),
+        -1px  1px 0 var(--color-primary),
+         1px  1px 0 var(--color-primary),
+         0px -1px 0 var(--color-primary),
+         0px  1px 0 var(--color-primary),
+        -1px  0px 0 var(--color-primary),
+         1px  0px 0 var(--color-primary);
+}
+
+/* --- 🔴 Licencia CC (Imagen Directa) --- */
+
+.cc-license-btn {
+    /* Ocupa el equivalente a 2 botones y el hueco */
+    width: calc(var(--ui-icon-size) * 2 + var(--menu-gap)) !important; 
+    height: var(--ui-icon-size);
+    padding: 4px; /* Ajuste para que la imagen respire dentro del botón */
+    
+    /* Preparamos el borde invisible que se revelará al coger foco */
+    border: 2px solid transparent !important; 
+    border-radius: 8px; 
+}
+
+.cc-license-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Encaja la imagen 88x31 perfectamente sin deformarse */
+    display: block;
+}
+
+/* 🟢 Foco y Hover exclusivo para el botón de la imagen */
+.menu-link.cc-license-btn:hover,
+.menu-link.cc-license-btn:focus-visible,
+.menu-link.cc-license-btn:focus {
+    /* Quitamos el fondo grisáceo por defecto del resto de botones */
+    background-color: transparent; 
+    
+    /* Iluminamos con tu color primario */
+    border-color: var(--color-primary) !important; 
+    box-shadow: 0 0 8px var(--color-shadow-primary);
+    
+    /* Apagamos el drop-shadow heredado de .menu-link para que no emborrone la imagen */
+    filter: none; 
 }
 
 /* --- styles/style-menu.css --- */

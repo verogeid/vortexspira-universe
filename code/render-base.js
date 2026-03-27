@@ -500,6 +500,7 @@ export function _generarTarjetaHTMLImpl(nodo,
                     data-tipo="volver-vertical" 
                     role="button" 
                     aria-label="${ariaLabel}" 
+                    title="${ariaLabel}"
                     tabindex="0" 
                     onclick="App._handleVolverClick()">
                 <h3 aria-hidden="true" class="card-volver-content">
@@ -518,7 +519,8 @@ export function _generarTarjetaHTMLImpl(nodo,
                     role="button" 
                     aria-disabled="true"
                     tabindex="0" 
-                    aria-label="${nodo.nombre}">
+                    aria-label="${nodo.nombre}"
+                    title="${nodo.nombre}">
                 <h3>
                     <span class="card-icon-lead icon-empty-folder-card" aria-hidden="true"></span>
                     <span id="card-title-${nodo.id}" class="card-text-content" aria-hidden="true">${nodo.nombre}</span>
@@ -571,7 +573,8 @@ export function _generarTarjetaHTMLImpl(nodo,
                 role="button" 
                 tabindex="0" 
                 ${ariaDisabled} 
-                aria-label="${ariaLabelText}">
+                aria-label="${ariaLabelText}"
+                title="${ariaLabelText}">
             <h3>
                 ${iconHTML}
                 <span id="${titleId}" class="card-text-content" aria-hidden="true">${displayTitle}</span>
@@ -611,6 +614,7 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
                 <span class="card-volver-text">${visibleText}</span>
             </h3>`; 
         this.DOM.cardVolverFijaElemento.setAttribute('aria-label', this.getString('nav.aria.backBtn'));
+        this.DOM.cardVolverFijaElemento.setAttribute('title', this.getString('nav.aria.backBtn'));
         this.DOM.cardVolverFijaElemento.tabIndex = 0;
 
     } else {

@@ -208,7 +208,8 @@ function _injectModalHTML() {
 
                     <button id="a11y-close" 
                             class="a11y-close-btn" 
-                            aria-label="${i18n.getString('modal.close')}">
+                            aria-label="${i18n.getString('modal.close')}"
+                            title="${i18n.getString('modal.close')}">
                         ✕
                     </button>
                 </div>
@@ -267,13 +268,15 @@ function _injectModalHTML() {
 
                     <div class="a11y-controls-group font-group" 
                         role="radiogroup" 
-                        aria-label="${i18n.getString('modal.sections.font')}">
+                        aria-label="${i18n.getString('modal.sections.font')}"
+                        title="${i18n.getString('modal.sections.font')}">
 
                         <button class="a11y-option-btn font-preview-atkinson" 
                             role="radio"
                             aria-checked="false"
                             data-font="atkinson" 
-                            aria-label="${i18n.getString('modal.aria.font')} Atkinson">
+                            aria-label="${i18n.getString('modal.aria.font')} Atkinson"
+                            title="${i18n.getString('modal.aria.font')} Atkinson">
 
                             ${i18n.getString('modal.options.atkinson')}
                         </button>
@@ -282,7 +285,8 @@ function _injectModalHTML() {
                             role="radio"
                             aria-checked="false"
                             data-font="serif" 
-                            aria-label="${i18n.getString('modal.aria.font')} Serif">
+                            aria-label="${i18n.getString('modal.aria.font')} Serif"
+                            title="${i18n.getString('modal.aria.font')} Serif">
 
                             ${i18n.getString('modal.options.serif')}
                         </button>
@@ -291,7 +295,8 @@ function _injectModalHTML() {
                             role="radio"
                             aria-checked="false"
                             data-font="dyslexic" 
-                            aria-label="${i18n.getString('modal.aria.font')} Dyslexic">
+                            aria-label="${i18n.getString('modal.aria.font')} Dyslexic"
+                            title="${i18n.getString('modal.aria.font')} Dyslexic">
 
                             ${i18n.getString('modal.options.dyslexic')}
                         </button>
@@ -310,6 +315,7 @@ function _injectModalHTML() {
                             max="200" 
                             step="5" 
                             aria-label="${i18n.getString('modal.aria.textSize')}"
+                            title="${i18n.getString('modal.aria.textSize')}"
                             aria-valuemin="90" 
                             aria-valuemax="200">
 
@@ -331,6 +337,7 @@ function _injectModalHTML() {
                             max="3" 
                             step="1" 
                             aria-label="${i18n.getString('modal.aria.lineSpacing')}"
+                            title="${i18n.getString('modal.aria.lineSpacing')}"
                             aria-valuemin="1" 
                             aria-valuemax="3">
 
@@ -357,8 +364,8 @@ function _injectModalHTML() {
                             min="1" 
                             max="3" 
                             step="1" 
-                            aria-label="${i18n.getString('modal.aria.letterSpacing') || 
-                                'Ajustar espaciado de caracteres'}"
+                            aria-label="${i18n.getString('modal.aria.letterSpacing')}"
+                            title="${i18n.getString('modal.aria.letterSpacing')}"
                             aria-valuemin="1" 
                             aria-valuemax="3">
 
@@ -380,7 +387,8 @@ function _injectModalHTML() {
                         'Tema de Color'}</h3>
                     <div class="a11y-controls-group theme-group" 
                         role="radiogroup" 
-                        aria-label="${i18n.getString('modal.sections.theme') || 'Tema de Color'}">
+                        aria-label="${i18n.getString('modal.sections.theme')}"
+                        title="${i18n.getString('modal.sections.theme')}">
                         <button class="a11y-option-btn" 
                                 role="radio" 
                                 aria-checked="false" 

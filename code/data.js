@@ -150,7 +150,9 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
             }
             
             // Siempre actualizamos el aria-label en caliente para los cambios de idioma
-            logoLink.setAttribute('aria-label', appInstance.getString('header.aria.logoLink'));
+            const txtLogoLink = appInstance.getString('header.aria.logoLink')
+            logoLink.setAttribute('aria-label', txtLogoLink);
+            logoLink.setAttribute('title', txtLogoLink);
 
             // 3. DEBUG ICON (OBRAS): Solo insertamos si no existe previamente
             if (!debug.IS_PRODUCTION) {
