@@ -1,0 +1,58 @@
+name: Auto Version Bump
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Descargar código con historial completo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Calcular Build Number y Actualizar JSONs
+        run: |
+          # Contamos el histórico total de la rama (número de commits)
+          BUILD_NUM=$(git rev-list --count HEAD)
+
+          FILE_ES="data/strings_es.json"
+          FILE_EN="data/strings_en.json"
+
+          # Función inyectora quirúrgica
+          update_json() {
+            local file=$1
+            if [ -f "$file" ]; then
+              echo "Inyectando build $BUILD_NUM en $file"
+              
+              # --arg inyecta el valor como string (respetando tus comillas: "0")
+              # Apuntamos a la ruta anidada .meta.build
+              jq --arg b "$BUILD_NUM" '.meta.build = $b' "$file" > tmp.json && mv tmp.json "$file"
+            else
+              echo "⚠️ Archivo no encontrado: $file"
+            fi
+          }
+
+          update_json "$FILE_ES"
+          update_json "$FILE_EN"
+
+      - name: Hacer Commit y Push silencioso
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          if [[ -n $(git status -s) ]]; then
+            git add data/strings_es.json data/strings_en.json
+            
+            # El tag [skip ci] evita un bucle infinito de ejecuciones
+            git commit -m "chore: actualiza build a $BUILD_NUM [skip ci]"
+            git push
+          else
+            echo "No hay cambios pendientes."
+          fi
