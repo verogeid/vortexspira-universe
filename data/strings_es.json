@@ -1,6 +1,7 @@
 {
     "meta": {
-        "version": "1.0.04"
+        "version": "0.1.0",
+        "build": "0"
     },
     "page": {
         "title": "VortexSpira® EdTech: Selector de Cursos"
