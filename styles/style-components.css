@@ -103,12 +103,22 @@
     transform: scale(calc(1 + var(--zoom-focus-minnor)));
 }
 #info-adicional summary::-webkit-details-marker { display: none; }
+
 #info-adicional summary::before { 
-    content: '▶'; 
-    font-size: 1em; /* Hereda */
+    content: ''; /* Quitamos el texto */
+    width: 1em; /* Ancho relativo a la fuente */
+    height: 1em; /* Alto relativo a la fuente */
     margin-right: 8px; 
-    display: inline-block; transition: transform var(--animation-speed) ease; 
+    display: inline-block; 
+    vertical-align: middle; /* Alineación perfecta con el texto adyacente */
+    transition: transform var(--animation-speed) ease; 
+    
+    /* 🟢 Inyección del SVG como máscara dinámica */
+    background-color: currentColor; 
+    -webkit-mask: var(--icon-arrow) no-repeat center / contain;
+    mask: var(--icon-arrow) no-repeat center / contain;
 }
+
 #info-adicional details[open] > summary::before { transform: rotate(90deg); }
 #info-adicional details > small { 
     display: block; 

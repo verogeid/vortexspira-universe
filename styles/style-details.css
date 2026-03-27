@@ -12,10 +12,10 @@
     
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) transparent;
-    scroll-behavior: var(--scroll-beahavior);
+    scroll-behavior: var(--scroll-behavior);
 }
 
-    /* @media (max-width: 600px) */ 
+    /* (max-width: 600px) */ 
     body[data-layout="mobile"] #detalle-contenido-mobile {
         padding: 0; 
     }
@@ -273,7 +273,6 @@
     pointer-events: auto; 
 }
 
-.detail-action-btn.disabled .triangulo-svg,
 .detail-action-btn.disabled .icon-wrapper,
 .detail-action-btn.disabled > i:not(.icon-empty) { 
     display: none !important; 

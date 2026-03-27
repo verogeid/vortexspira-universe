@@ -18,6 +18,9 @@ body {
     font-size: 100%; 
     line-height: var(--line-height-base);
 
+    letter-spacing: var(--letter-spacing-base);
+    word-spacing: var(--word-spacing-base);
+
     /* ⭐️ FIX CLS/FLASH: El cuerpo inicia invisible para evitar parpadeos de Swiper */
     opacity: 0;
     transition: opacity var(--transition-speed) ease-in-out;

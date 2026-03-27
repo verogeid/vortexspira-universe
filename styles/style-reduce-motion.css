@@ -5,22 +5,22 @@
     :root {
         --transition-speed: 0.01ms !important;
         --animation-speed: 0.01ms !important;
-        --scroll-beahavior: auto !important;
+        --scroll-behavior: auto !important;
     }
     *, *::before, *::after {
         animation-duration: var(--animation-speed);
         animation-iteration-count: 1 !important;
         transition-duration: var(--transition-speed);
-        scroll-behavior: var(--scroll-beahavior);
+        scroll-behavior: var(--scroll-behavior);
     }
-    html { scroll-behavior: var(--scroll-beahavior); }
+    html { scroll-behavior: var(--scroll-behavior); }
 }
 
 /* 2. Por preferencia manual en el Modal (Checkbox) */
 body[data-reduced-motion="true"] {
     --transition-speed: 0.01ms !important;
     --animation-speed: 0.01ms !important;
-    --scroll-beahavior: auto !important;
+    --scroll-behavior: auto !important;
 }
 
 body[data-reduced-motion="true"] *, 
@@ -29,12 +29,12 @@ body[data-reduced-motion="true"] *::after {
     animation-duration: var(--animation-speed);
     animation-iteration-count: 1 !important;
     transition-duration: var(--transition-speed);
-    scroll-behavior: var(--scroll-beahavior);
+    scroll-behavior: var(--scroll-behavior);
 }
 
 /* Aplicar el scroll instantáneo al documento base */
 html:has(body[data-reduced-motion="true"]) {
-    scroll-behavior: var(--scroll-beahavior);
+    scroll-behavior: var(--scroll-behavior);
 }
 
 /* --- styles/style-reduce-motion.css --- */

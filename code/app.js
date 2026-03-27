@@ -1120,14 +1120,19 @@ class VortexSpiraApp {
         // 1. Detectar el "Elefante" (Zoom de Accesibilidad)
         const scale = parseFloat(rootStyle.getPropertyValue('--font-scale')) || 1;
         
-        
+        // 🟢 FIX CRÍTICO: El bucle de 15px del Scrollbar
+        const realWidth = window.innerWidth;
+
         // 🟢 FIX ZOOM: Usar visualViewport si existe, sino fallback a innerWidth
-        const realWidth = window.visualViewport ? 
-                        window.visualViewport.width : 
-                        window.innerWidth;
         const realHeight = window.visualViewport ? 
                         window.visualViewport.height : 
                         window.innerHeight;
+        
+        // Para el ancho, SOLO pisamos el innerWidth si el usuario está
+        // activamente haciendo "pinch-to-zoom" táctil (escala > 1).
+        if (window.visualViewport && window.visualViewport.scale > 1) {
+            realWidth = window.visualViewport.width;
+        }
         
         // 2. Determinar Modo Inicial por ANCHO
         const effectiveWidth = realWidth / scale;
@@ -1228,7 +1233,7 @@ class VortexSpiraApp {
         this.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop');
         
         this.DOM.header = document.getElementById('app-header');
-        this.DOM.btnA11y = document.getElementById('btn-config-accesibilidad');
+        //this.DOM.btnA11y = document.getElementById('btn-config-accesibilidad');
         this.DOM.cardVolverFija = document.getElementById('vista-volver');
         this.DOM.cardVolverFijaElemento = document.getElementById('card-volver-fija-elemento');
         this.DOM.infoAdicional = document.getElementById('info-adicional');

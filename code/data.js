@@ -1,5 +1,6 @@
 /* --- code/data.js --- */
 import * as debug from './debug.js';
+import * as main_menu from './main-menu.js';
 
 export const A11Y = {
     STORAGE_KEY: 'vortex_a11y_prefs_v1',
@@ -10,6 +11,9 @@ export const A11Y = {
 
         lineHeight: 1.5,       
         paragraphSpacing: 1.5,
+
+        letterSpacing: '0em',
+        wordSpacing: '0em',
 
         theme: 'default',
 
@@ -24,6 +28,11 @@ export const A11Y = {
         2: { val: 1.5, labelKey: 'modal.spacing.normal' },
         3: { val: 2, labelKey: 'modal.spacing.wide' },
         4: { val: 2.5, labelKey: 'modal.spacing.extraWide' }
+    },
+    LETTER_SPACING_MAP: {
+        1: { letter: '0em', word: '0em', labelKey: 'modal.spacing.normal' },
+        2: { letter: '0.12em', word: '0.16em', labelKey: 'modal.spacing.wide' },
+        3: { letter: '0.20em', word: '0.25em', labelKey: 'modal.spacing.extraWide' }
     }
 };
 
@@ -156,71 +165,9 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
             }
         }
 
-        // 4. CONTENEDOR DE CONTROLES (I18N + A11Y)
-        // Creamos un wrapper para agrupar los botones a la derecha si no existe
-        let controls = wrapper.querySelector('.header-controls');
-        if (!controls) {
-            controls = document.createElement('div');
-            controls.className = 'header-controls';
-            
-            // Si el botón A11y ya existe, lo movemos dentro
-            const btnA11y = document.getElementById('btn-config-accesibilidad');
-            if (btnA11y && btnA11y.parentNode === wrapper) {
-                wrapper.insertBefore(controls, btnA11y); 
-                controls.appendChild(btnA11y); 
-            } else {
-                wrapper.appendChild(controls);
-            }
-        }
-
-        // 🟢 BOTÓN IDIOMA (Solo si enableI18n es true)
-        if (enableI18n) {
-            let btnLang = document.getElementById('btn-lang-toggle');
-            if (!btnLang) {
-                btnLang = document.createElement('button');
-                btnLang.id = 'btn-lang-toggle';
-                btnLang.tabIndex = 0;
-                
-                const iconSpan = document.createElement('span');
-                iconSpan.className = 'lang-icon-bg';
-                
-                const textSpan = document.createElement('span');
-                textSpan.className = 'lang-text';
-                textSpan.setAttribute('aria-hidden', 'true');
-                
-                btnLang.appendChild(iconSpan);
-                btnLang.appendChild(textSpan);
-                
-                controls.appendChild(btnLang);
-                
-                btnLang.onclick = () => appInstance.toggleLanguage();
-            }
-
-            // Actualizamos el texto e idioma en caliente
-            const currentLang = localStorage.getItem('vortex_lang') || 'es';
-            const textSpan = btnLang.querySelector('.lang-text');
-            if (textSpan) textSpan.textContent = currentLang.toUpperCase();
-            
-            const langLabel = currentLang === 'es' 
-                ? appInstance.getString('header.aria.langBtn') || "Idioma actual: Español. Cambiar a Inglés." 
-                : appInstance.getString('header.aria.langBtn') || "Current language: English. Switch to Spanish.";
-            
-            btnLang.setAttribute('aria-label', langLabel);
-        }
-
-        // 5. BOTÓN A11Y: Limpiamos y configuramos
-        const btnA11y = document.getElementById('btn-config-accesibilidad');
-        if (btnA11y) {
-            debug.log('data', debug.DEBUG_LEVELS.DEEP, 
-                        'Estableciendo texto aria-label del botón a11y.');
-            
-            // 🟢 FIX A11Y: Traducir el aria-label en caliente sin destruir el botón
-            btnA11y.setAttribute('aria-label', appInstance.getString('header.aria.a11yBtn'));
-            
-            btnA11y.onclick = () => {
-                import('./a11y.js').then(module => module.openModal());
-            };
-        }
+        // 🟢 DELEGACIÓN ARQUITECTÓNICA: 
+        // Pasamos la responsabilidad del menú, el teclado y la UI a su propio componente
+        main_menu.initMainMenu(appInstance, wrapper, enableI18n);
     }
 }
 
@@ -233,39 +180,11 @@ export function injectFooterContent(appInstance) {
             <span class="footer-copyright">
                 ${appInstance.getString('footer.copyright')}
             </span>
-            
-            <a href="${MEDIA.URL.LICENSE}" target="_top" 
-                aria-label="${appInstance.getString('footer.aria.license')}" class="footer-license-link">
-                <img src="${MEDIA.URL.LICENSE_IMG_SRC}" width=88 height=31 alt="Creative Commons License"/>
-            </a>
             <span class="footer-separator-author">|</span>
             <span class="footer-author-text">
                 ${appInstance.getString('footer.author')}
             </span> 
             <span class="footer-separator">|</span>
-            
-            <div class="footer-social-container">
-                <a href="${MEDIA.URL.LINKEDIN}" target="_blank" 
-                    aria-label="${appInstance.getString('footer.aria.linkedin')}" class="footer-social-link link-linkedin">
-                </a>
-
-                <a href="${MEDIA.URL.DEV_DIARY}" target="_blank" 
-                    aria-label="${appInstance.getString('footer.aria.github')}" class="footer-social-link link-github">
-                </a>
-
-                <a href="${MEDIA.URL.LANDING_PAGE}" target="_blank" 
-                    aria-label="${appInstance.getString('footer.aria.landing')}" class="footer-social-link link-fire">
-                </a>
-
-                <a role="button" tabindex="0"
-                    onclick="event.preventDefault(); App._mostrarAbout();"
-                    onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); App._mostrarAbout(); }"
-                    aria-label="${appInstance.getString('footer.aria.about')}" 
-                    class="footer-social-link icon-info">
-                </a>
-            </div>
-
-            <span class="footer-separator">|</span> 
             <span class="footer-version">v${appInstance.getString('meta.version')}</span>
         `;
     }

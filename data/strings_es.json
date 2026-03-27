@@ -46,7 +46,7 @@
         "noDescription": "Sin descripción disponible."
     },
     "footer": {
-        "copyright": "©2025 VortexSpira®",
+        "copyright": "©2025",
         "author": "Desarrollado por <span style=\"white-space: nowrap\">Diego González Fernández</span>",
         "aboutText": "¿Quiénes somos?",
         "aria": {
@@ -77,13 +77,14 @@
             "font": "Tipografía",
             "size": "Tamaño Texto",
             "spacing": "Espaciado",
+            "letterSpacing": "Espaciado de caracteres",
             "motion": "Protección vestibular y fatiga cognitiva",
             "theme": "Tema de Color"
         },
         "options": {
-            "atkinson": "Atkinson (Sans)",
-            "serif": "Serif Clásica",
-            "dyslexic": "OpenDyslexic / Lexend",
+            "atkinson": "Atkinson (Sans) 108%",
+            "serif": "Serif Clásica 108%",
+            "dyslexic": "OpenDyslexic / Lexend 108%",
             
             "reduceMotion": "Reducir animaciones",
             "noBlockOpacity": "Desactivar atenuación en descripción de cursos",
@@ -100,12 +101,14 @@
         "spacing": {
             "compact": "Compacto",
             "normal": "Normal",
-            "wide": "Amplio"
+            "wide": "Amplio",
+            "extraWide": "Muy Amplio"
         },
         "aria": {
             "font": "Tipografía: ",
             "textSize": "Tamaño de texto",
-            "lineSpacing": "Espaciado de línea"
+            "lineSpacing": "Espaciado de línea",
+            "letterSpacing": "Ajustar espaciado entre letras y palabras"
         }
     },
     "toast": {

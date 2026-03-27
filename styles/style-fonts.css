@@ -50,14 +50,18 @@ body[data-font="dyslexic"] {
 }
 
 /* 3. Previsualización exacta en los botones del modal A11y */
-.font-preview-atkinson { 
+#a11y-modal button.font-preview-atkinson { 
     font-family: 'Atkinson Hyperlegible', system-ui, sans-serif !important; 
+    font-weight: 700 !important;
 }
-.font-preview-serif { 
+
+#a11y-modal button.font-preview-serif { 
     font-family: 'Georgia', 'Times New Roman', serif !important; 
 }
-.font-preview-dyslexic { 
+
+#a11y-modal button.font-preview-dyslexic { 
     font-family: 'OpenDyslexic', 'Lexend', system-ui, sans-serif !important; 
+    font-weight: 700 !important;
 }
 
 /* --- styles/style-fonts.css --- */

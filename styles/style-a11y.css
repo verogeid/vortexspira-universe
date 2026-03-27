@@ -49,7 +49,7 @@
 
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) transparent;
-    scroll-behavior: var(--scroll-beahavior);
+    scroll-behavior: var(--scroll-behavior);
 }
 
 .a11y-modal-overlay.active .a11y-modal {
@@ -151,7 +151,7 @@
 /* BOTONES DE OPCIÓN */
 .a11y-option-btn {
     flex: 1 1 auto; /* Crecen y encogen, base automática */
-    
+    font-family: inherit;
     padding: var(--a11y-btn-padding);
     background: transparent;
     border: var(--border-width-no-focus) solid var(--color-card-border);
@@ -250,14 +250,6 @@
     font-size: var(--a11y-slider-font-size);
 }
 
-.range-icon-small {
-    font-size: 0.8rem;
-}
-
-.range-icon-large {
-    font-size: 1.2rem;
-}
-
 /* El Slider (Barra) */
 input[type=range].a11y-range {
     /* 🟢 El slider es un "muelle gigante". Empuja el valor a la derecha. 
@@ -302,7 +294,7 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
 /* El Valor (100% o Normal) */
 .a11y-range-value {
     /* 🟢 Ocupa el espacio de 5 letras mínimo. Si salta de línea, crece al 100% */
-    flex: 1 1 10ch; 
+    flex: 1 1 15ch; 
     font-weight: bold; 
     font-size: var(--a11y-range-value-font-size);
     text-align: center; /* Se centra en su caja, dándonos el efecto deseado arriba y a la derecha */
@@ -322,11 +314,24 @@ input[type=range].a11y-range:hover::-webkit-slider-thumb {
     color: var(--color-a11y-slider-labels);
 }
 
-.font-preview-atkinson { font-family: var(--font-atkinson); }
-.font-preview-serif { font-family: var(--font-serif); }
-.font-preview-dyslexic { 
-    font-family: var(--font-dyslexic); 
-    font-weight: bold; 
+/* --- Iconos de los extremos de los sliders en el modal A11y --- */
+#a11y-modal .a11y-range-wrapper .range-icon-small {
+    font-size: 0.8em; /* Más pequeño que el texto normal */
+    opacity: 0.9;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+#a11y-modal .a11y-range-wrapper .range-icon-large {
+    font-size: 1.3em; /* Notablemente más grande */
+    letter-spacing: 0.2em;
+    opacity: 0.9;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 /* Checkbox de reducción de movimiento */

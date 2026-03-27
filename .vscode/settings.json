@@ -5,5 +5,7 @@
         
     },
     "editor.wordWrap": "on",
-    "editor.wrapOnEscapedLineFeeds": true
+    "editor.wrapOnEscapedLineFeeds": true,
+    "gutterpreview.imagePreviewMaxHeight": 0,
+    "gutterpreview.imagePreviewMaxWidth": 0
 }

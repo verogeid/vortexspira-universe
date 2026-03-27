@@ -4,21 +4,21 @@
 body[data-layout="tablet-portrait"] {
     /* ⭐️ MAPEO DE VARIABLES PORTRAIT */
     --header-title-size: var(--tab-port-header-title-size);
-    --header-logo-size: var(--tab-port-header-logo-size);
+    /*--header-logo-size: var(--tab-port-header-logo-size);
     --header-icon-size: var(--tab-port-header-icon-size);
-    --header-obras-size: var(--tab-port-header-obras-size);
+    --header-obras-size: var(--tab-port-header-obras-size);*/
 }
 
 /* Tablet Landscape */
 body[data-layout="tablet-landscape"] {
     /* ⭐️ MAPEO DE VARIABLES LANDSCAPE */
     --header-title-size: var(--tab-land-header-title-size);
-    --header-logo-size: var(--tab-land-header-logo-size);
+    /*--header-logo-size: var(--tab-land-header-logo-size);
     --header-icon-size: var(--tab-land-header-icon-size);
-    --header-obras-size: var(--tab-land-header-obras-size);
+    --header-obras-size: var(--tab-land-header-obras-size);*/
 }
 
-/* @media ((min-width: 601px) and (max-width: 1023.99px)) */
+/* ((min-width: 601px) and (max-width: 1023.99px)) */
 body[data-layout="tablet-portrait"] #app-container,
 body[data-layout="tablet-landscape"] #app-container {
     height: auto !important; 
@@ -27,7 +27,6 @@ body[data-layout="tablet-landscape"] #app-container {
     width: 100%; max-width: 2500px; margin: 0 auto;
     
     margin-top: 0 !important;
-    /*margin-bottom: var(--footer-height-real, --footer-height);*/
 
     display: grid; gap: 15px; padding: 15px; box-sizing: border-box;
     align-items: start; background: var(--color-bg);
@@ -44,7 +43,7 @@ body[data-layout="tablet-landscape"] #vista-navegacion-tablet {
     transition: opacity var(--transition-speed) ease;
 }
 
-    /* @media (min-width: 601px) and (max-width: 800px) */
+    /* (min-width: 601px) and (max-width: 800px) */
     body[data-layout="tablet-portrait"] #app-container { 
         display: grid;
         grid-template-columns: 1fr 3fr; 
@@ -58,7 +57,7 @@ body[data-layout="tablet-landscape"] #vista-navegacion-tablet {
         display: none !important; 
     }
 
-    /* @media (min-width: 801px) */
+    /* (min-width: 801px) */
     body[data-layout="tablet-landscape"] #app-container { 
         display: grid;
         grid-template-columns: 1fr 3fr 1fr;

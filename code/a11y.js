@@ -63,6 +63,9 @@ function _applyPreferences() {
     root.style.setProperty('--line-height-base', _prefs.lineHeight);
     root.style.setProperty('--paragraph-spacing', `${_prefs.paragraphSpacing}em`);
 
+    root.style.setProperty('--letter-spacing-base', _prefs.letterSpacing);
+    root.style.setProperty('--word-spacing-base', _prefs.wordSpacing);
+
     // 🟢 Aplicar Tema al body (El CSS se encargará del resto)
     document.body.setAttribute('data-theme', _prefs.theme || 'default');
 
@@ -123,6 +126,20 @@ function _updateModalUI() {
         _updateSpacingLabel(step);
     }
 
+    // Slider Caracteres
+    if (_domRefs.rangeLetterSpacing) {
+        let step = 1; 
+        for (const [key, info] of Object.entries(data.A11Y.LETTER_SPACING_MAP)) {
+            if (info.letter === _prefs.letterSpacing) step = key;
+        }
+        _domRefs.rangeLetterSpacing.value = step;
+        _domRefs.rangeLetterSpacing.setAttribute('aria-valuenow', step);
+        const labelKey = data.A11Y.LETTER_SPACING_MAP[step]?.labelKey || 'modal.spacing.normal';
+        _domRefs.rangeLetterSpacing.setAttribute('aria-valuetext', i18n.getString(labelKey));
+        
+        _updateLetterSpacingLabel(step);
+    }
+
     // Radio Buttons de Tema
     if (_domRefs.themeBtns) {
         _domRefs.themeBtns.forEach(btn => {
@@ -158,6 +175,14 @@ function _updateSpacingLabel(step) {
     const info = data.A11Y.SPACING_MAP[step] || data.A11Y.SPACING_MAP[2];
 
     _domRefs.rangeSpacingVal.textContent = i18n.getString(info.labelKey);
+}
+
+function _updateLetterSpacingLabel(step) {
+    if (!_domRefs.rangeLetterSpacingVal) return;
+
+    const info = data.A11Y.LETTER_SPACING_MAP[step] || data.A11Y.LETTER_SPACING_MAP[1];
+
+    _domRefs.rangeLetterSpacingVal.textContent = i18n.getString(info.labelKey);
 }
 
 function _injectModalHTML() {
@@ -319,6 +344,38 @@ function _injectModalHTML() {
                 </div>
 
                 <div class="a11y-section">
+                    <h3>${i18n.getString('modal.sections.letterSpacing') || 'Espaciado de caracteres'}</h3>
+                    <div class="a11y-range-wrapper">
+                        <span class="range-icon-small" 
+                            aria-hidden="true">
+                            T
+                        </span>
+
+                        <input type="range" 
+                            id="a11y-range-letter-spacing" 
+                            class="a11y-range" 
+                            min="1" 
+                            max="3" 
+                            step="1" 
+                            aria-label="${i18n.getString('modal.aria.letterSpacing') || 
+                                'Ajustar espaciado de caracteres'}"
+                            aria-valuemin="1" 
+                            aria-valuemax="3">
+
+                        <span class="range-icon-large" 
+                            aria-hidden="true" 
+                            style="letter-spacing: 0.2em;">
+                            T T
+                        </span>
+
+                        <span id="a11y-range-letter-spacing-val" 
+                            class="a11y-range-value">
+                            ${i18n.getString('modal.spacing.normal')}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="a11y-section">
                     <h3>${i18n.getString('modal.sections.theme') || 
                         'Tema de Color'}</h3>
                     <div class="a11y-controls-group theme-group" 
@@ -388,6 +445,9 @@ function _cacheDOM() {
         rangeSpacing: document.getElementById('a11y-range-spacing'),
         rangeSpacingVal: document.getElementById('a11y-range-spacing-val'),
 
+        rangeLetterSpacing: document.getElementById('a11y-range-letter-spacing'),
+        rangeLetterSpacingVal: document.getElementById('a11y-range-letter-spacing-val'),
+
         themeBtns: document.querySelectorAll('.theme-group .a11y-option-btn'),
 
         reduceMotionCb: document.getElementById('a11y-reduce-motion'),
@@ -397,7 +457,6 @@ function _cacheDOM() {
 
         noZoneOpacityCb: document.getElementById('a11y-no-zone-opacity'),
         
-        triggerBtn: document.getElementById('btn-config-accesibilidad')
     };
 }
 
@@ -469,6 +528,31 @@ function _setupListeners() {
             // 🟢 FIX: Eliminamos _applyPreferences() para evitar el rebote del ARIA
             _savePreferences();
         });
+    }
+
+    // Slider Espaciado de Caracteres
+    if (_domRefs.rangeLetterSpacing) {
+        _domRefs.rangeLetterSpacing.addEventListener('input', (e) => {
+            const step = parseInt(e.target.value);
+            const info = data.A11Y.LETTER_SPACING_MAP[step];
+            
+            if (info) {
+                _prefs.letterSpacing = info.letter;
+                _prefs.wordSpacing = info.word;
+                
+                e.target.setAttribute('aria-valuenow', step);
+                e.target.setAttribute('aria-valuetext', i18n.getString(info.labelKey));
+
+                _updateLetterSpacingLabel(step);
+                
+                const root = document.documentElement;
+                root.style.setProperty('--letter-spacing-base', _prefs.letterSpacing);
+                root.style.setProperty('--word-spacing-base', _prefs.wordSpacing);
+
+                window.dispatchEvent(new CustomEvent('vortex-layout-refresh'));
+            }
+        });
+        _domRefs.rangeLetterSpacing.addEventListener('change', () => _savePreferences());
     }
 
     // Botones de Tema
@@ -579,14 +663,17 @@ export function closeModal() {
     _domRefs.overlay.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
 
-    // Devolver el foco al botón que abrió el modal
-    if (_domRefs.triggerBtn) {
-        // 🟢 Aplicamos la misma lógica para el cierre: el aviso se pega al botón del engranaje
+    // 🟢 FIX: El menú desplegable está cerrado, así que devolvemos el foco 
+    // al botón hamburguesa principal de la cabecera.
+    const btnMainMenu = document.getElementById('btn-main-menu');
+
+    if (btnMainMenu) {
         if (window.App && typeof window.App.applySmartFocus === 'function') {
-            window.App.STATE.pendingA11yContext = i18n.getString('modal.closed') || 'Configuración de accesibilidad cerrada';
-            window.App.applySmartFocus(_domRefs.triggerBtn);
+            window.App.STATE.pendingA11yContext = i18n.getString('modal.closed') || 
+                'Configuración de accesibilidad cerrada';
+            window.App.applySmartFocus(btnMainMenu);
         } else {
-            _domRefs.triggerBtn.focus();
+            btnMainMenu.focus();
         }
     }
 }

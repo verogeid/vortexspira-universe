@@ -1,6 +1,6 @@
 /* --- styles/style-desktop.css --- */
 
-/* @media (min-width: 1024px) */
+/* (min-width: 1024px) */
 body[data-layout="desktop"] #app-container {
     height: auto !important;
     min-height: var(--app-container-min-height);

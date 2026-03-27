@@ -4,13 +4,13 @@
    Liberamos el body para que tenga scroll nativo y altura automática */
 body[data-layout="mobile"][data-safe-mode="true"] {
     --header-title-size: var(--sm-mobile-header-title-size);
-    --header-logo-size: var(--sm-mobile-header-logo-size);
+    /*--header-logo-size: var(--sm-mobile-header-logo-size);
     --header-icon-size: var(--sm-mobile-header-icon-size);
-    --header-obras-size: var(--sm-mobile-header-obras-size);
+    --header-obras-size: var(--sm-mobile-header-obras-size);*/
     --header-lang-font-size: var(--sm-mobile-header-lang-font-size);
 
     --footer-font-size: var(--sm-footer-font-size);
-    --footer-social-link-size: var(--sm-footer-social-link-size);
+    /*--footer-social-link-size: var(--sm-footer-social-link-size);*/
 
     --card-title-font-size: var(--sm-card-title-font-size);
     --card-desc-font-size: var(--sm-card-desc-font-size);
@@ -62,10 +62,6 @@ body[data-layout="mobile"][data-safe-mode="true"] .swiper-slide {
 
 body[data-layout="mobile"][data-safe-mode="true"] .card {
     min-height: auto !important;
-}
-
-body[data-layout="mobile"][data-safe-mode="true"] .footer-social-link {
-    display: none !important;
 }
 
 /* 1. Asegurar que el overlay no meta ruido */

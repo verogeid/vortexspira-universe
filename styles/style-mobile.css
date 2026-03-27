@@ -1,12 +1,15 @@
 /* --- styles/style-mobile.css --- */
 
-/* @media (max-width: 600px) */
+/* (max-width: 600px) */
 body[data-layout="mobile"] {
     /* ⭐️ MAPEO DE VARIABLES: Usamos los valores mobile definidos en theme */
     --header-title-size: var(--mobile-header-title-size);
-    --header-logo-size: var(--mobile-header-logo-size);
+    /*--header-logo-size: var(--mobile-header-logo-size);
     --header-icon-size: var(--mobile-header-icon-size);
-    --header-obras-size: var(--mobile-header-obras-size);
+    --header-obras-size: var(--mobile-header-obras-size);*/
+
+    --footer-padding: var(--mobile-footer-padding);
+    --footer-social-gap: var(--mobile-footer-social-gap);
 
     --card-padding: var(--mobile-card-padding);
 

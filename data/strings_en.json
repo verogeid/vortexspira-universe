@@ -77,6 +77,7 @@
             "font": "Typography",
             "size": "Text Size",
             "spacing": "Spacing",
+            "letterSpacing": "Letter spacing",
             "motion": "Vestibular protection and cognitive fatigue",
             "theme": "Color Theme"
         },
@@ -100,12 +101,14 @@
         "spacing": {
             "compact": "Compact",
             "normal": "Normal",
-            "wide": "Wide"
+            "wide": "Wide",
+            "extraWide": "Extra Wide"
         },
         "aria": {
             "font": "Typography: ",
             "textSize": "Text size",
-            "lineSpacing": "Line spacing"
+            "lineSpacing": "Line spacing",
+            "letterSpacing": "Letter and word spacing"
         }
     },
     "toast": {

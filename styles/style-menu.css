@@ -1,0 +1,178 @@
+/* --- styles/style-menu.css --- */
+
+/* --- El Panel Desplegable --- */
+.menu-dropdown {
+    /* 🟢 FIX: Fixed lo ancla al viewport de la pantalla, inmune a scrolls y overflows */
+    position: fixed;
+    top: calc(var(--header-height) + 2px);
+    right: 12px; /* Margen de seguridad desde el borde derecho de la pantalla */
+
+    background-color: var(--color-header-bg); /* Fondo integrado con tu tema oscuro/claro */
+    border: 2px solid var(--color-separator);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5); 
+    
+    /* 🟢 FIX: Nunca será más ancho que la pantalla menos los márgenes de seguridad */
+    width: max-content;
+    min-width: min(240px, calc(var(--ui-icon-size) + var(--menu-gap) * 2)); 
+    max-width: min(calc(100dvw - 24px), 
+                    calc((var(--ui-icon-size) * 3) + (var(--menu-gap) * 2) + 24px));
+
+    /* 🟢 FIX: Límite de altura dinámico y scroll */
+    max-height: calc(100vh - var(--header-height) - 20px);
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) var(--color-card-bg);
+
+    z-index: 9999;
+    
+    /* Animación fluida de aparición */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-15px);
+    transition: all var(--animation-speed) cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-dropdown.active {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* --- ESTRUCTURA DE LA CUADRÍCULA --- */
+.menu-grid {
+    padding: var(--menu-gap);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.menu-grid-row {
+    display: flex;
+    flex-wrap: wrap; /* 🟢 Si es muy estrecho, los iconos saltan de línea automáticamente */
+    justify-content: flex-start;
+    align-items: center;
+    gap: var(--menu-gap);
+}
+
+.menu-separator {
+    width: 100%;
+}
+
+.menu-separator hr {
+    border: none;
+    border-top: 1px solid var(--color-separator);
+    margin: 12px 0;
+}
+
+/* --- Elementos Interactivos (Iconos Táctiles 44x44 AAA) --- */
+.menu-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* 🟢 DIMENSIONES ESTRICTAS */
+    width: var(--ui-icon-size);
+    height: var(--ui-icon-size);
+    margin: 0;
+    padding: 8px; /* Espacio interno para que el SVG de 28x28 respire */
+
+    background: transparent;
+    border: none;
+    border-radius: 8px; /* Coherente con tu UI */
+    outline: none !important; 
+
+    color: var(--color-header-text); /* Base para el currentColor */
+    cursor: pointer;
+    box-sizing: border-box;
+    flex-shrink: 0;
+
+    transition: all var(--animation-speed) ease;
+}
+
+/* 🟢 Foco y Hover: Fondo redondeado y color de icono (Adaptado a cuadricula) */
+.menu-link:hover,
+.menu-link:focus-visible,
+.menu-link:focus {
+    background-color: var(--color-card-bg); 
+    color: var(--color-primary); 
+}
+
+/* --- Iconos SVG Regulares --- */
+.menu-icon {
+    width: 100%; /* Ocupa el espacio interno que deja el padding de .menu-link */
+    height: 100%;
+    margin: 0; /* Limpiamos el margin-right antiguo */
+    background-color: currentColor; /* Se tiñe mágicamente al heredar var(--color-primary) */
+    display: inline-block;
+    -webkit-mask-size: contain; mask-size: contain;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center; mask-position: center;
+}
+
+/* 🟢 Brillo de iconos al hacer focus/hover */
+.menu-link:hover .menu-icon,
+.menu-link:focus-visible .menu-icon,
+.menu-link:focus .menu-icon {
+    filter: drop-shadow(0 0 4px var(--color-shadow-primary));
+}
+
+/* Asignación ESTRICTA a tus variables reales de style-media.css */
+.menu-icon.icon-a11y { -webkit-mask-image: var(--icon-a11y); mask-image: var(--icon-a11y); }
+.menu-icon.icon-lang { -webkit-mask-image: var(--icon-i18n); mask-image: var(--icon-i18n); } 
+.menu-icon.link-linkedin { -webkit-mask-image: var(--icon-social-linkedin); mask-image: var(--icon-social-linkedin); }
+.menu-icon.link-github { -webkit-mask-image: var(--icon-link-diary); mask-image: var(--icon-link-diary); }
+.menu-icon.link-fire { -webkit-mask-image: var(--icon-fire); mask-image: var(--icon-fire); } 
+.menu-icon.icon-info { -webkit-mask-image: var(--icon-info); mask-image: var(--icon-info); }
+
+/* --- 🔴 Licencia CC (Construcción de 3 Capas) --- */
+.cc-license-btn {
+    width: calc(var(--ui-icon-size) * 2 + var(--menu-gap)) !important; 
+    height: var(--ui-icon-size);
+}
+
+.cc-icon-layers {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.cc-layer-bg, .cc-layer-paper, .cc-layer-ink {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    -webkit-mask-size: contain; mask-size: contain;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center; mask-position: center;
+}
+
+/* La capa de fondo hereda el color del texto, y se tiñe de primario en el hover */
+.cc-layer-bg {
+    background-color: currentColor; 
+    -webkit-mask-image: var(--icon-license-bg); mask-image: var(--icon-license-bg);
+    transition: background-color var(--animation-speed) ease;
+}
+
+/* El "papel" se recorta con el color del fondo del menú */
+.cc-layer-paper {
+    background-color: var(--color-header-bg); 
+    -webkit-mask-image: var(--icon-license-paper); mask-image: var(--icon-license-paper);
+}
+
+/* La tinta de las letras y contornos */
+.cc-layer-ink {
+    background-color: currentColor; 
+    -webkit-mask-image: var(--icon-license-ink); mask-image: var(--icon-license-ink);
+}
+
+/* Brillo para la licencia */
+.menu-link:hover .cc-layer-bg,
+.menu-link:focus-visible .cc-layer-bg,
+.menu-link:focus .cc-layer-bg {
+    filter: drop-shadow(0 0 4px var(--color-shadow-primary));
+}
+
+/* --- styles/style-menu.css --- */

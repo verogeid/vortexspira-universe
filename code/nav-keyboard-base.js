@@ -166,6 +166,30 @@ export function initKeyboardControls() {
         debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
             `📝 Listener KeyDown: ${this.STATE._lastActiveZoneId}`);
 
+        // 🟢 1. CONTROL COOPERATIVO DEL MENÚ DESPLEGABLE
+        const btnMainMenu = document.getElementById('btn-main-menu');
+        const isMenuOpen = btnMainMenu && btnMainMenu.getAttribute('aria-expanded') === 'true';
+
+        if (isMenuOpen) {
+            // Si pulsan Escape con el menú abierto, SOLO cerramos el menú
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                btnMainMenu.click(); // Invoca el toggleMenu internamente de forma limpia
+                btnMainMenu.focus(); // Devolvemos el foco visual
+                return; // 🛑 Cortamos aquí. El _handleVolverClick() principal no se enterará.
+            }
+            
+            // Opcional: Evitar que las flechas de tu motor global muevan el fondo o las tarjetas
+            // si por algún motivo el foco se resbala del menú.
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                const navDropdown = document.getElementById('main-menu-dropdown');
+                if (navDropdown && !navDropdown.contains(document.activeElement)) {
+                    e.preventDefault();
+                    return; 
+                }
+            }
+        }
+        
         // 🛡️ BLOQUEO TOTAL...
         if (this.STATE.isUIBlocked) {
             e.preventDefault();
