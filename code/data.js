@@ -187,7 +187,7 @@ export function injectFooterContent(appInstance) {
                 ${appInstance.getString('footer.author')}
             </span> 
             <span class="footer-separator">|</span>
-            <span class="footer-version">v${appInstance.getString('meta.version')}-Build:${appInstance.getString('meta.build')}</span>
+            <span class="footer-version">v${appInstance.getString('meta.version')}-build:${appInstance.getString('meta.build')}</span>
         `;
     }
 }
