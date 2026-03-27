@@ -1,120 +1,118 @@
 {
-    "meta": {
-        "version": "0.1.0",
-        "build": "0"
-    },
-    "page": {
-        "title": "VortexSpira® EdTech: Course Selector"
-    },
-    "seo": {
-        "description": "Learn software development, QA, and DevOps from scratch to architect. AAA platform with universal design, decoupled verbalization, and zero cognitive fatigue.",
-        "about": "VortexSpira EdTech: IT Training with AAA Universal Design. Learn programming, software testing (QA), and DevOps without technological or cognitive barriers. Cognitive Science and Immersive Experience: Decoupled verbalization with multi-character reading, TTS synchronization, adjustable pause multiplier, and universal design compatible with all cognitive profiles (dyslexia, ADHD, autism spectrum). An essential environment to overcome cognitive fatigue through full keyboard navigation and vestibular protection."
-    },
-    "header": {
-        "title": "VortexSpira® EdTech",
-        "subtitle": "Immersive Technical Audio-Learning",
-        "aria": {
-            "logoLink": "Go to VortexSpira EdTech home",
-            "a11yBtn": "Open Accessibility Settings",
-            "langBtn": "Current language: English. Switch to Spanish.",
-            "langSwitch": "Cambiando idioma a Español..."
-        }
-    },
-    "nav": {
-        "aria": {
-            "region": "Main course navigation",
-            "backBtn": "Go back to previous level",
-            "breadcrumb": "Current Level: ",
-            "actionCategory": "Go to subsection:",
-            "actionCourse": "Open course details:"
-        },
-        "backBtnText": "Back",
-        "breadcrumbRoot": "Root Level",
-        "level": "Level",
-        "contextPrefix": "Navigating in: ",
-        "coursePrefix": "Course: ",
-        "emptyState": "No content available at this level.",
-        "emptySection": "No content yet"
-    },
-    "card": {
-        "noTitle": "Untitled"
-    },
-    "details": {
-        "aria": {
-            "region": "Course details",
-            "readOnly": "Read-only element."
-        },
-        "noDescription": "No description available."
-    },
-    "footer": {
-        "copyright": "©2025 VortexSpira®",
-        "author": "Developed by <span style=\"white-space: nowrap\">Diego González Fernández</span>",
-        "aboutText": "About Us",
-        "aria": {
-            "license": "View Creative Commons CC BY-NC-ND 4.0 license",
-            "linkedin": "Visit VortexSpira®'s LinkedIn profile",
-            "github": "Go to Development Diary on GitHub",
-            "landing": "Go to the Landing Page. Get 60% OFF as a Founder. It's free to join!",
-            "about": "Learn more about us and our mission"
-        }
-    },
-    "help": {
-        "title": "Quick Help:",
-        "rotate": "<strong>Rotate</strong>: Drag, use mouse wheel, or keyboard arrows.",
-        "back": "<strong>Back</strong>: Press [Esc] or the \"&lt; Back\" button."
-    },
-    "about": {
-        "landing": "Become a Founder and get 60% OFF",
-        "diary": "Read the Dev Diary on GitHub"
-    },
-    "modal": {
-        "title": "Accessibility",
-        "opened": "Accessibility settings opened",
-        "close": "Close settings",
-        "closed": "Accessibility settings closed",
-        "reset": "Restore default values",
-        "resetSuccess": "Default values restored",
-        "sections": {
-            "font": "Typography",
-            "size": "Text Size",
-            "spacing": "Spacing",
-            "letterSpacing": "Letter spacing",
-            "motion": "Vestibular protection and cognitive fatigue",
-            "theme": "Color Theme"
-        },
-        "options": {
-            "atkinson": "Atkinson (Sans)",
-            "serif": "Classic Serif",
-            "dyslexic": "OpenDyslexic / Lexend",
-
-            "reduceMotion": "Reduce Motion",
-            "noBlockOpacity": "Disable dimming in course descriptions",
-            "noMaskOpacity": "Disable dimming in menus",
-            "noZoneOpacity": "Disable zone dimming",
-
-            "themeDefault": "System (Default)",
-            "themeLight": "Light Mode",
-            "themeDark": "Dark Mode",
-            "themeContrast": "High Contrast",
-            "themeForced": "Forced Colors",
-            "themeYellow": "Yellow on Black"
-        },
-        "spacing": {
-            "compact": "Compact",
-            "normal": "Normal",
-            "wide": "Wide",
-            "extraWide": "Extra Wide"
-        },
-        "aria": {
-            "font": "Typography: ",
-            "textSize": "Text size",
-            "lineSpacing": "Line spacing",
-            "letterSpacing": "Letter and word spacing"
-        }
-    },
-    "toast": {
-        "errorId": "Course not found. Try searching manually.",
-        "emptyNav": "No navigable elements in this section.",
-        "skipColumn": "Skipping empty column..."
+  "meta": {
+    "version": "0.1.0",
+    "build": "831"
+  },
+  "page": {
+    "title": "VortexSpira® EdTech: Course Selector"
+  },
+  "seo": {
+    "description": "Learn software development, QA, and DevOps from scratch to architect. AAA platform with universal design, decoupled verbalization, and zero cognitive fatigue.",
+    "about": "VortexSpira EdTech: IT Training with AAA Universal Design. Learn programming, software testing (QA), and DevOps without technological or cognitive barriers. Cognitive Science and Immersive Experience: Decoupled verbalization with multi-character reading, TTS synchronization, adjustable pause multiplier, and universal design compatible with all cognitive profiles (dyslexia, ADHD, autism spectrum). An essential environment to overcome cognitive fatigue through full keyboard navigation and vestibular protection."
+  },
+  "header": {
+    "title": "VortexSpira® EdTech",
+    "subtitle": "Immersive Technical Audio-Learning",
+    "aria": {
+      "logoLink": "Go to VortexSpira EdTech home",
+      "a11yBtn": "Open Accessibility Settings",
+      "langBtn": "Current language: English. Switch to Spanish.",
+      "langSwitch": "Cambiando idioma a Español..."
     }
+  },
+  "nav": {
+    "aria": {
+      "region": "Main course navigation",
+      "backBtn": "Go back to previous level",
+      "breadcrumb": "Current Level: ",
+      "actionCategory": "Go to subsection:",
+      "actionCourse": "Open course details:"
+    },
+    "backBtnText": "Back",
+    "breadcrumbRoot": "Root Level",
+    "level": "Level",
+    "contextPrefix": "Navigating in: ",
+    "coursePrefix": "Course: ",
+    "emptyState": "No content available at this level.",
+    "emptySection": "No content yet"
+  },
+  "card": {
+    "noTitle": "Untitled"
+  },
+  "details": {
+    "aria": {
+      "region": "Course details",
+      "readOnly": "Read-only element."
+    },
+    "noDescription": "No description available."
+  },
+  "footer": {
+    "copyright": "©2025 VortexSpira®",
+    "author": "Developed by <span style=\"white-space: nowrap\">Diego González Fernández</span>",
+    "aboutText": "About Us",
+    "aria": {
+      "license": "View Creative Commons CC BY-NC-ND 4.0 license",
+      "linkedin": "Visit VortexSpira®'s LinkedIn profile",
+      "github": "Go to Development Diary on GitHub",
+      "landing": "Go to the Landing Page. Get 60% OFF as a Founder. It's free to join!",
+      "about": "Learn more about us and our mission"
+    }
+  },
+  "help": {
+    "title": "Quick Help:",
+    "rotate": "<strong>Rotate</strong>: Drag, use mouse wheel, or keyboard arrows.",
+    "back": "<strong>Back</strong>: Press [Esc] or the \"&lt; Back\" button."
+  },
+  "about": {
+    "landing": "Become a Founder and get 60% OFF",
+    "diary": "Read the Dev Diary on GitHub"
+  },
+  "modal": {
+    "title": "Accessibility",
+    "opened": "Accessibility settings opened",
+    "close": "Close settings",
+    "closed": "Accessibility settings closed",
+    "reset": "Restore default values",
+    "resetSuccess": "Default values restored",
+    "sections": {
+      "font": "Typography",
+      "size": "Text Size",
+      "spacing": "Spacing",
+      "letterSpacing": "Letter spacing",
+      "motion": "Vestibular protection and cognitive fatigue",
+      "theme": "Color Theme"
+    },
+    "options": {
+      "atkinson": "Atkinson (Sans)",
+      "serif": "Classic Serif",
+      "dyslexic": "OpenDyslexic / Lexend",
+      "reduceMotion": "Reduce Motion",
+      "noBlockOpacity": "Disable dimming in course descriptions",
+      "noMaskOpacity": "Disable dimming in menus",
+      "noZoneOpacity": "Disable zone dimming",
+      "themeDefault": "System (Default)",
+      "themeLight": "Light Mode",
+      "themeDark": "Dark Mode",
+      "themeContrast": "High Contrast",
+      "themeForced": "Forced Colors",
+      "themeYellow": "Yellow on Black"
+    },
+    "spacing": {
+      "compact": "Compact",
+      "normal": "Normal",
+      "wide": "Wide",
+      "extraWide": "Extra Wide"
+    },
+    "aria": {
+      "font": "Typography: ",
+      "textSize": "Text size",
+      "lineSpacing": "Line spacing",
+      "letterSpacing": "Letter and word spacing"
+    }
+  },
+  "toast": {
+    "errorId": "Course not found. Try searching manually.",
+    "emptyNav": "No navigable elements in this section.",
+    "skipColumn": "Skipping empty column..."
+  }
 }

@@ -1,120 +1,118 @@
 {
-    "meta": {
-        "version": "0.1.0",
-        "build": "0"
-    },
-    "page": {
-        "title": "VortexSpira® EdTech: Selector de Cursos"
-    },
-    "seo": {
-        "description": "Aprende desarrollo de software, QA y DevOps desde cero a arquitecto. Plataforma AAA con diseño universal, verbalización desacoplada y cero fatiga cognitiva.",
-        "about": "VortexSpira EdTech: Formación IT con Diseño Universal AAA. Aprende programación, pruebas de software (QA) y DevOps sin barreras tecnológicas ni cognitivas. Ciencia Cognitiva y Experiencia Inmersiva: Verbalización desacoplada con lectura multipersonaje, sincronización TTS, multiplicador de pausas y diseño universal compatible con todos los perfiles cognitivos (dislexia, TDAH, espectro autista). Entorno esencial para superar la fatiga cognitiva mediante navegación total por teclado y protección vestibular."
-    },
-    "header": {
-        "title": "VortexSpira® EdTech",
-        "subtitle": "Audio-Aprendizaje Técnico Inmersivo",
-        "aria": {
-            "logoLink": "Ir al inicio de VortexSpira EdTech",
-            "a11yBtn": "Abrir Configuración de Accesibilidad",
-            "langBtn": "Idioma actual: Español. Cambiar a Inglés.",
-            "langSwitch": "Switching language to English..."
-        }
-    },
-    "nav": {
-        "aria": {
-            "region": "Navegación principal de cursos",
-            "backBtn": "Volver al nivel anterior",
-            "breadcrumb": "Nivel Actual: ",
-            "actionCategory": "Ir a la subsección:",
-            "actionCourse": "Abrir detalles del curso:"
-        },
-        "backBtnText": "Volver",
-        "breadcrumbRoot": "Nivel Raíz",
-        "level": "Nivel",
-        "contextPrefix": "Navegando en: ",
-        "coursePrefix": "Curso: ",
-        "emptyState": "No hay contenido disponible en este nivel.",
-        "emptySection": "Sin contenido aún"
-    },
-    "card": {
-        "noTitle": "Sin Título"
-    },
-    "details": {
-        "aria": {
-            "region": "Detalle del curso",
-            "readOnly": "Elemento de solo lectura."
-        },
-        "noDescription": "Sin descripción disponible."
-    },
-    "footer": {
-        "copyright": "©2025",
-        "author": "Desarrollado por <span style=\"white-space: nowrap\">Diego González Fernández</span>",
-        "aboutText": "¿Quiénes somos?",
-        "aria": {
-            "license": "Ver licencia Creative Commons CC BY-NC-ND 4.0",
-            "linkedin": "Visitar perfil de LinkedIn de VortexSpira®",
-            "github": "Ir al Diario de Desarrollo en GitHub",
-            "landing": "Ir a la Landing Page. Obtén un 60% OFF como Fundador. ¡Unirse es gratis!",
-            "about": "Saber más sobre nosotros y nuestra misión"
-        }
-    },
-    "help": {
-        "title": "Ayuda Rápida:",
-        "rotate": "<strong>Gira</strong>: Arrastra, usa la rueda del ratón o las flechas del teclado.",
-        "back": "<strong>Vuelve</strong>: Pulsa [Esc] o el botón \"&lt; Volver\"."
-    },
-    "about": {
-        "landing": "Hazte Fundador y obten tu 60% OFF",
-        "diary": "Lee el Dev Diary en GitHub"
-    },
-    "modal": {
-        "title": "Accesibilidad",
-        "opened": "Configuración de accesibilidad abierta",
-        "close": "Cerrar configuración",
-        "closed": "Configuración de accesibilidad cerrada",
-        "reset": "Restaurar valores por defecto",
-        "resetSuccess": "Valores por defecto restaurados",
-        "sections": {
-            "font": "Tipografía",
-            "size": "Tamaño Texto",
-            "spacing": "Espaciado",
-            "letterSpacing": "Espaciado de caracteres",
-            "motion": "Protección vestibular y fatiga cognitiva",
-            "theme": "Tema de Color"
-        },
-        "options": {
-            "atkinson": "Atkinson (Sans) 108%",
-            "serif": "Serif Clásica 108%",
-            "dyslexic": "OpenDyslexic / Lexend 108%",
-            
-            "reduceMotion": "Reducir animaciones",
-            "noBlockOpacity": "Desactivar atenuación en descripción de cursos",
-            "noMaskOpacity": "Desactivar atenuación en menúes",
-            "noZoneOpacity": "Desactivar atenuación por zona",
-
-            "themeDefault": "Sistema (Por defecto)",
-            "themeLight": "Modo Claro",
-            "themeDark": "Modo Oscuro",
-            "themeContrast": "Alto Contraste",
-            "themeForced": "Colores Forzados",
-            "themeYellow": "Amarillo sobre Negro"
-        },
-        "spacing": {
-            "compact": "Compacto",
-            "normal": "Normal",
-            "wide": "Amplio",
-            "extraWide": "Muy Amplio"
-        },
-        "aria": {
-            "font": "Tipografía: ",
-            "textSize": "Tamaño de texto",
-            "lineSpacing": "Espaciado de línea",
-            "letterSpacing": "Ajustar espaciado entre letras y palabras"
-        }
-    },
-    "toast": {
-        "errorId": "Curso no encontrado. Pruebe a buscarlo manualmente.",
-        "emptyNav": "No hay elementos navegables en esta sección.",
-        "skipColumn": "Saltando columna vacía..."
+  "meta": {
+    "version": "0.1.0",
+    "build": "831"
+  },
+  "page": {
+    "title": "VortexSpira® EdTech: Selector de Cursos"
+  },
+  "seo": {
+    "description": "Aprende desarrollo de software, QA y DevOps desde cero a arquitecto. Plataforma AAA con diseño universal, verbalización desacoplada y cero fatiga cognitiva.",
+    "about": "VortexSpira EdTech: Formación IT con Diseño Universal AAA. Aprende programación, pruebas de software (QA) y DevOps sin barreras tecnológicas ni cognitivas. Ciencia Cognitiva y Experiencia Inmersiva: Verbalización desacoplada con lectura multipersonaje, sincronización TTS, multiplicador de pausas y diseño universal compatible con todos los perfiles cognitivos (dislexia, TDAH, espectro autista). Entorno esencial para superar la fatiga cognitiva mediante navegación total por teclado y protección vestibular."
+  },
+  "header": {
+    "title": "VortexSpira® EdTech",
+    "subtitle": "Audio-Aprendizaje Técnico Inmersivo",
+    "aria": {
+      "logoLink": "Ir al inicio de VortexSpira EdTech",
+      "a11yBtn": "Abrir Configuración de Accesibilidad",
+      "langBtn": "Idioma actual: Español. Cambiar a Inglés.",
+      "langSwitch": "Switching language to English..."
     }
+  },
+  "nav": {
+    "aria": {
+      "region": "Navegación principal de cursos",
+      "backBtn": "Volver al nivel anterior",
+      "breadcrumb": "Nivel Actual: ",
+      "actionCategory": "Ir a la subsección:",
+      "actionCourse": "Abrir detalles del curso:"
+    },
+    "backBtnText": "Volver",
+    "breadcrumbRoot": "Nivel Raíz",
+    "level": "Nivel",
+    "contextPrefix": "Navegando en: ",
+    "coursePrefix": "Curso: ",
+    "emptyState": "No hay contenido disponible en este nivel.",
+    "emptySection": "Sin contenido aún"
+  },
+  "card": {
+    "noTitle": "Sin Título"
+  },
+  "details": {
+    "aria": {
+      "region": "Detalle del curso",
+      "readOnly": "Elemento de solo lectura."
+    },
+    "noDescription": "Sin descripción disponible."
+  },
+  "footer": {
+    "copyright": "©2025",
+    "author": "Desarrollado por <span style=\"white-space: nowrap\">Diego González Fernández</span>",
+    "aboutText": "¿Quiénes somos?",
+    "aria": {
+      "license": "Ver licencia Creative Commons CC BY-NC-ND 4.0",
+      "linkedin": "Visitar perfil de LinkedIn de VortexSpira®",
+      "github": "Ir al Diario de Desarrollo en GitHub",
+      "landing": "Ir a la Landing Page. Obtén un 60% OFF como Fundador. ¡Unirse es gratis!",
+      "about": "Saber más sobre nosotros y nuestra misión"
+    }
+  },
+  "help": {
+    "title": "Ayuda Rápida:",
+    "rotate": "<strong>Gira</strong>: Arrastra, usa la rueda del ratón o las flechas del teclado.",
+    "back": "<strong>Vuelve</strong>: Pulsa [Esc] o el botón \"&lt; Volver\"."
+  },
+  "about": {
+    "landing": "Hazte Fundador y obten tu 60% OFF",
+    "diary": "Lee el Dev Diary en GitHub"
+  },
+  "modal": {
+    "title": "Accesibilidad",
+    "opened": "Configuración de accesibilidad abierta",
+    "close": "Cerrar configuración",
+    "closed": "Configuración de accesibilidad cerrada",
+    "reset": "Restaurar valores por defecto",
+    "resetSuccess": "Valores por defecto restaurados",
+    "sections": {
+      "font": "Tipografía",
+      "size": "Tamaño Texto",
+      "spacing": "Espaciado",
+      "letterSpacing": "Espaciado de caracteres",
+      "motion": "Protección vestibular y fatiga cognitiva",
+      "theme": "Tema de Color"
+    },
+    "options": {
+      "atkinson": "Atkinson (Sans) 108%",
+      "serif": "Serif Clásica 108%",
+      "dyslexic": "OpenDyslexic / Lexend 108%",
+      "reduceMotion": "Reducir animaciones",
+      "noBlockOpacity": "Desactivar atenuación en descripción de cursos",
+      "noMaskOpacity": "Desactivar atenuación en menúes",
+      "noZoneOpacity": "Desactivar atenuación por zona",
+      "themeDefault": "Sistema (Por defecto)",
+      "themeLight": "Modo Claro",
+      "themeDark": "Modo Oscuro",
+      "themeContrast": "Alto Contraste",
+      "themeForced": "Colores Forzados",
+      "themeYellow": "Amarillo sobre Negro"
+    },
+    "spacing": {
+      "compact": "Compacto",
+      "normal": "Normal",
+      "wide": "Amplio",
+      "extraWide": "Muy Amplio"
+    },
+    "aria": {
+      "font": "Tipografía: ",
+      "textSize": "Tamaño de texto",
+      "lineSpacing": "Espaciado de línea",
+      "letterSpacing": "Ajustar espaciado entre letras y palabras"
+    }
+  },
+  "toast": {
+    "errorId": "Curso no encontrado. Pruebe a buscarlo manualmente.",
+    "emptyNav": "No hay elementos navegables en esta sección.",
+    "skipColumn": "Saltando columna vacía..."
+  }
 }
