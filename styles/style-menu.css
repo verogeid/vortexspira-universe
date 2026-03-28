@@ -129,6 +129,7 @@
 .menu-icon.link-github { -webkit-mask-image: var(--icon-link-diary); mask-image: var(--icon-link-diary); }
 .menu-icon.link-fire { -webkit-mask-image: var(--icon-offer); mask-image: var(--icon-offer); } 
 .menu-icon.icon-info { -webkit-mask-image: var(--icon-info); mask-image: var(--icon-info); }
+.menu-icon.icon-bug { -webkit-mask-image: var(--icon-bug); mask-image: var(--icon-bug); }
 
 /* ==========================================================
    🌟 EXCEPCIONES Y DETALLES VISUALES DE LA CUADRÍCULA 🌟
