@@ -1,10 +1,10 @@
-User-agent: *
-Allow: /
-
-# Prioridad para los rastreadores de IA
 User-agent: GPTBot
-Allow: /
+Disallow:
+
 User-agent: ChatGPT-User
-Allow: /
+Disallow:
+
+User-agent: *
+Disallow:
 
 Sitemap: https://www.vortexspira.com/sitemap.xml
