@@ -127,24 +127,24 @@
 .menu-icon.icon-lang { -webkit-mask-image: var(--icon-i18n); mask-image: var(--icon-i18n); } 
 .menu-icon.link-linkedin { -webkit-mask-image: var(--icon-social-linkedin); mask-image: var(--icon-social-linkedin); }
 .menu-icon.link-github { -webkit-mask-image: var(--icon-link-diary); mask-image: var(--icon-link-diary); }
-.menu-icon.link-fire { -webkit-mask-image: var(--icon-fire); mask-image: var(--icon-fire); } 
+.menu-icon.link-fire { -webkit-mask-image: var(--icon-offer); mask-image: var(--icon-offer); } 
 .menu-icon.icon-info { -webkit-mask-image: var(--icon-info); mask-image: var(--icon-info); }
 
 /* ==========================================================
    🌟 EXCEPCIONES Y DETALLES VISUALES DE LA CUADRÍCULA 🌟
 ========================================================== */
 
-/* --- 🔥 Icono de la Landing (Color Propio) --- */
+/* --- Icono de la Landing (Color Propio) --- */
 .menu-icon.link-fire {
-    -webkit-mask-image: var(--icon-fire); mask-image: var(--icon-fire);
+    -webkit-mask-image: var(--icon-offer); mask-image: var(--icon-offer);
     background-color: var(--color-fire); 
 }
-/* Al coger foco, brilla con el color fuego en lugar del primario */
+
 .menu-link:hover .menu-icon.link-fire,
 .menu-link:focus-visible .menu-icon.link-fire,
 .menu-link:focus .menu-icon.link-fire {
     background-color: var(--color-primary) !important;
-    filter: drop-shadow(0 0 4px var(--color-fire));
+    filter: drop-shadow(0 0 4px var(--color-primary));
 }
 
 
