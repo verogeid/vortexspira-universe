@@ -95,21 +95,18 @@
     transition: all var(--animation-speed) ease;
 }
 
-/* 🟢 Foco y Hover: Fondo redondeado y color de icono (Adaptado a cuadricula) */
-.menu-link:hover,
-.menu-link:focus-visible,
-.menu-link:focus {
-    background-color: var(--color-card-bg); 
-    color: var(--color-primary); 
-}
-
 /* --- Iconos SVG Regulares --- */
 .menu-icon {
     width: 100%; /* Ocupa el espacio interno que deja el padding de .menu-link */
     height: 100%;
     margin: 0; /* Limpiamos el margin-right antiguo */
+
     background-color: currentColor; /* Se tiñe mágicamente al heredar var(--color-primary) */
     display: inline-block;
+
+    border: 2px solid transparent !important; 
+    border-radius: 8px;
+
     -webkit-mask-size: contain; mask-size: contain;
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
@@ -120,6 +117,12 @@
 .menu-link:focus-visible .menu-icon,
 .menu-link:focus .menu-icon {
     filter: drop-shadow(0 0 4px var(--color-shadow-primary));
+    transform: scale(calc(1 + var(--zoom-focus-major)));
+
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+
+    outline: none;
 }
 
 /* Asignación ESTRICTA a tus variables reales de style-media.css */
@@ -127,27 +130,13 @@
 .menu-icon.icon-lang { -webkit-mask-image: var(--icon-i18n); mask-image: var(--icon-i18n); } 
 .menu-icon.link-linkedin { -webkit-mask-image: var(--icon-social-linkedin); mask-image: var(--icon-social-linkedin); }
 .menu-icon.link-github { -webkit-mask-image: var(--icon-link-diary); mask-image: var(--icon-link-diary); }
-.menu-icon.link-fire { -webkit-mask-image: var(--icon-offer); mask-image: var(--icon-offer); } 
+.menu-icon.link-landing { 
+    -webkit-mask-image: var(--icon-offer); mask-image: var(--icon-offer); 
+    background-color: var(--color-fire);
+    transform: translateZ(0);
+}
 .menu-icon.icon-info { -webkit-mask-image: var(--icon-info); mask-image: var(--icon-info); }
 .menu-icon.icon-bug { -webkit-mask-image: var(--icon-bug); mask-image: var(--icon-bug); }
-
-/* ==========================================================
-   🌟 EXCEPCIONES Y DETALLES VISUALES DE LA CUADRÍCULA 🌟
-========================================================== */
-
-/* --- Icono de la Landing (Color Propio) --- */
-.menu-icon.link-fire {
-    -webkit-mask-image: var(--icon-offer); mask-image: var(--icon-offer);
-    background-color: var(--color-fire); 
-}
-
-.menu-link:hover .menu-icon.link-fire,
-.menu-link:focus-visible .menu-icon.link-fire,
-.menu-link:focus .menu-icon.link-fire {
-    background-color: var(--color-primary) !important;
-    filter: drop-shadow(0 0 4px var(--color-primary));
-}
-
 
 /* --- 🌍 Botón de Idioma (Sobreimpresión AAA) --- */
 .lang-btn-container {
@@ -165,6 +154,7 @@
     height: 28px;
     
     background-color: currentColor; /* Hereda de .menu-link, cambia a Primario en hover */
+
     -webkit-mask-image: var(--icon-i18n); mask-image: var(--icon-i18n);
     -webkit-mask-size: contain; mask-size: contain;
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
@@ -178,6 +168,10 @@
 .lang-btn-container:focus-visible .lang-icon-bg,
 .lang-btn-container:focus .lang-icon-bg {
     filter: drop-shadow(0 0 4px var(--color-shadow-primary));
+
+    transform: scale(calc(1 + var(--zoom-focus-major)));
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
 }
 
 /* El texto sobreimpreso (ES / EN) */

@@ -143,7 +143,7 @@ export function applyStrings(appInstance) {
     const socialMap = {
         '.link-linkedin': 'footer.aria.linkedin',
         '.link-github': 'footer.aria.github',
-        '.link-fire': 'footer.aria.landing',
+        '.link-landing': 'footer.aria.landing',
         '.footer-license-link': 'footer.aria.license'
     };
     for (const sel in socialMap) {

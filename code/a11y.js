@@ -69,14 +69,47 @@ function _applyPreferences() {
     // 🟢 Aplicar Tema al body (El CSS se encargará del resto)
     document.body.setAttribute('data-theme', _prefs.theme || 'default');
 
-    // 🟢 Aplicar Reducción de movimiento al body
-    document.body.setAttribute('data-reduced-motion', _prefs.reduceMotion ? 'true' : 'false');
+    // 🟢 LAZY LOAD: Inyección de Temas Manuales
+    // Si elige algo distinto a "Sistema", inyectamos el CSS sin media queries para forzarlo
+    const themeCSSMap = {
+        'light': 'styles/style-theme-scheme-light.css',
+        'dark': 'styles/style-theme-scheme-dark.css',
+        'contrast': 'styles/style-theme-contrast.css',
+        'forced': 'styles/style-theme-forced-colors.css',
+        'yellow': 'styles/style-theme-yellow.css'
+    };
 
-    // 🟢 Atributos para la atenuación de textos y zonas
+    if (_prefs.theme !== 'default' && themeCSSMap[_prefs.theme]) {
+        if (window.App) window.App._injectCSS(themeCSSMap[_prefs.theme], 'vortex-css-manual-theme');
+    } else {
+        // Si vuelve a "Sistema", borramos la inyección manual para que actúen las media queries del index.html
+        const manualThemeLink = document.getElementById('vortex-css-manual-theme');
+        if (manualThemeLink) manualThemeLink.remove();
+    }
+
+    // 🟢 Aplicar Reducción de movimiento
+    document.body.setAttribute('data-reduced-motion', _prefs.reduceMotion ? 'true' : 'false');
+    
+    // LAZY LOAD: Forzar reducción de movimiento aunque el OS no lo pida
+    if (_prefs.reduceMotion) {
+        if (window.App) window.App._injectCSS('styles/style-reduce-motion.css', 'vortex-css-reduce-motion');
+    } else {
+        const rmLink = document.getElementById('vortex-css-reduce-motion');
+        if (rmLink) rmLink.remove();
+    }
+
+    // 🟢 Atributos para la atenuación
     document.body.setAttribute('data-no-block-opacity', _prefs.noBlockOpacity ? 'true' : 'false');
     document.body.setAttribute('data-no-mask-opacity', _prefs.noMaskOpacity ? 'true' : 'false');
-
     document.body.setAttribute('data-no-zone-opacity', _prefs.noZoneOpacity ? 'true' : 'false');
+
+    // LAZY LOAD: Desactivar opacidades (Solo se baja el archivo si marca algún check)
+    if (_prefs.noBlockOpacity || _prefs.noMaskOpacity || _prefs.noZoneOpacity) {
+        if (window.App) window.App._injectCSS('styles/style-no-opacity.css', 'vortex-css-opacity');
+    } else {
+        const opacityLink = document.getElementById('vortex-css-opacity');
+        if (opacityLink) opacityLink.remove();
+    }
 
     _updateModalUI();
 
@@ -648,19 +681,26 @@ function _setupListeners() {
 export function openModal() {
     if (!_domRefs.overlay) return;
 
-    _updateModalUI(); // Asegurar que UI está sincronizada al abrir
+    // Metemos la lógica de apertura visual en una sub-función
+    const showModal = () => {
+        _updateModalUI();
+        _domRefs.overlay.classList.add('active');
+        _domRefs.overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
 
-    _domRefs.overlay.classList.add('active');
-    _domRefs.overlay.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+        if (window.App && typeof window.App.applySmartFocus === 'function') {
+            window.App.STATE.pendingA11yContext = i18n.getString('modal.opened') || 'Configuración de accesibilidad abierta';
+            window.App.applySmartFocus(_domRefs.closeBtn);
+        } else {
+            _domRefs.closeBtn.focus();
+        }
+    };
 
-    // Usamos el "Smart Focus" para fusionar el aviso de apertura con el botón de cerrar.
-    // Así el usuario sordociego lee todo en su línea braille al recibir el foco.
-    if (window.App && typeof window.App.applySmartFocus === 'function') {
-        window.App.STATE.pendingA11yContext = i18n.getString('modal.opened') || 'Configuración de accesibilidad abierta';
-        window.App.applySmartFocus(_domRefs.closeBtn);
+    // 🟢 LAZY LOAD: Esperamos la promesa antes de lanzar showModal()
+    if (window.App && typeof window.App._injectCSS === 'function') {
+        window.App._injectCSS('styles/style-a11y.css', 'vortex-css-a11y').then(showModal);
     } else {
-        _domRefs.closeBtn.focus();
+        showModal();
     }
 }
 

@@ -188,4 +188,19 @@
     visibility: visible; 
 }
 
+/* ========================================================= */
+/* CLOAKING MEJORADO: Ocultación sin romper el render de SVG */
+/* ========================================================= */
+#a11y-modal-overlay:not(.active),
+#main-menu-dropdown:not(.active) {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    
+    /* Obligatorio: Como ya no usamos display:none, le decimos que flote 
+       para que no ocupe espacio físico al final del body y rompa el layout */
+    position: fixed !important; 
+    top: 0; left: 0;
+}
+
 /* --- styles/style-components.css --- */

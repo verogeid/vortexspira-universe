@@ -94,6 +94,35 @@ class VortexSpiraApp {
         this.clearConsole = debug.logClear;
     }
 
+    // 🟢 HELPER MEJORADO: Inyector de CSS Asíncrono
+    _injectCSS(href, id) {
+        return new Promise((resolve) => {
+            let link = document.getElementById(id);
+            const absoluteHref = new URL(href, document.baseURI).href;
+            
+            if (!link) {
+                link = document.createElement('link');
+                link.id = id;
+                link.rel = 'stylesheet';
+                
+                // ⭐️ El secreto: Esperamos a que el CSS cargue para avisar
+                link.onload = () => resolve();
+                link.onerror = () => resolve(); // Si falla, resolvemos igual para no bloquear la app
+                
+                link.href = href;
+                document.head.appendChild(link);
+            } else {
+                if (link.href !== absoluteHref) {
+                    link.onload = () => resolve();
+                    link.onerror = () => resolve();
+                    link.href = href;
+                } else {
+                    resolve(); // Ya estaba cargado de antes
+                }
+            }
+        });
+    }
+
     async init() {
         debug.logClear();
         debug.logDebugLevels();
@@ -1201,6 +1230,16 @@ class VortexSpiraApp {
         if (currentMode !== candidateMode) {
             document.body.setAttribute('data-layout', candidateMode);
 
+            // 🟢 NUEVO: Inyección dinámica del CSS de Layout
+            let cssFile = candidateMode;
+            // Si es tablet-portrait o tablet-landscape, ambos usan style-tablet.css
+            if (candidateMode.includes('tablet')) {
+                cssFile = 'tablet'; 
+            }
+            
+            // Inyectamos el archivo exacto que el usuario necesita
+            this._injectCSS(`styles/style-${cssFile}.css`, 'vortex-css-layout');
+
             debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                         `Layout Final: ${candidateMode} (W:${effectiveWidth.toFixed(0)} / H:${effectiveHeight.toFixed(0)})`);
         }
@@ -1209,6 +1248,15 @@ class VortexSpiraApp {
         if (enableSafeMode !== currentSafe) {
             document.body.setAttribute('data-safe-mode', enableSafeMode ? 'true' : 'false');
             
+            // 🟢 INYECCIÓN DINÁMICA DE SAFE MODE
+            if (enableSafeMode) {
+                this._injectCSS('styles/style-safe-mode.css', 'vortex-css-safe');
+            } else {
+                // Si la pantalla vuelve a crecer, eliminamos el CSS para limpiar la memoria
+                const safeLink = document.getElementById('vortex-css-safe');
+                if (safeLink) safeLink.remove();
+            }
+
             debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                 `🛡️ Safe Mode: ${enableSafeMode ? 'ON' : 'OFF'} (Solo Mobile) | Eff.Height: ${effectiveHeight.toFixed(0)}px`);
             

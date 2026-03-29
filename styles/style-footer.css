@@ -34,116 +34,13 @@ footer small {
     height: 100%; 
 }
 
-.footer-social-container {
-    display: flex;
-    align-items: center;
-    gap: var(--footer-social-gap) !important;
-    vertical-align: middle;
-    margin: 0 calc(var(--footer-social-gap)/2);
-}
-
-/* Estilos Genéricos para Enlaces */
-footer a { 
-    color: var(--color-footer-text); text-decoration: none; 
-    transition: all var(--animation-speed) ease; display: inline-block; 
-    padding: var(--footer-padding) calc(var(--footer-padding)*2);
-    border-radius: 8px; border: var(--border-width-no-focus) solid transparent;
-}
-
-/* Efecto Hover Genérico (Aplica borde y sombra a todos) */
-footer a:hover, 
-footer a:focus-visible,
-footer a:focus {
-    border-color: var(--color-primary); 
-    background: var(--color-card-bg); /* Fondo por defecto (se quitará en la licencia) */
-    transform: scale(calc(1 + var(--zoom-focus-minnor))); 
-    box-shadow: 0 0 25px var(--color-shadow-primary);
-    color: var(--color-primary); 
-    outline: none;
-}
-
-.footer-license-link img { 
-    height: var(--footer-license-height); width: auto; 
-    vertical-align: middle; 
-}
-
-/* AJUSTE LICENCIA: Sin padding y sin fondo, pero MANTENIENDO borde y sombra */
-footer a.footer-license-link {
-    padding: 0; /* Quitamos el padding para que el borde abrace la imagen */
-}
-
-footer a.footer-license-link:hover, 
-footer a.footer-license-link:focus-visible,
-footer a.footer-license-link:focus {
-    background: transparent !important;
-    transform: scale(calc(1 + var(--zoom-focus-minnor) * 2));
-}
-
-.footer-social-link {
-    display: inline-block;
-    
-    /* FIX: Usamos clamp con dvh para que se reduzca si la pantalla es bajita */
-    width: var(--footer-social-link-size) !important;
-    height: var(--footer-social-link-size) !important;
-
-    padding: 4px;
-    
-    /* 🟢 Flex y box-sizing para que el SVG no se desborde */
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-
-    background-color: var(--color-footer-text);
-    transition: all var(--animation-speed) ease;
-    
-    /* 🟢 La máscara ahora se dibujará dentro del área de padding */
-    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-    -webkit-mask-position: center; mask-position: center;
-    -webkit-mask-size: contain; mask-size: contain;
-}
-
-.link-linkedin {
-    -webkit-mask-image: var(--icon-social-linkedin);
-    mask-image: var(--icon-social-linkedin);
-}
-
-.link-github {
-    -webkit-mask-image: var(--icon-link-diary);
-    mask-image: var(--icon-link-diary);
-}
-
-.link-fire {
-    -webkit-mask-image: var(--icon-fire);
-    mask-image: var(--icon-fire);
-    background-color: var(--color-fire) !important; 
-}
-
-.icon-info {
-    background-color: currentColor; 
-    -webkit-mask-image: var(--icon-info); mask-image: var(--icon-info); 
-    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; 
-    -webkit-mask-position: center; mask-position: center; 
-    -webkit-mask-size: contain; mask-size: contain; 
-    cursor: pointer;
-}
-
-.footer-social-link:hover, 
-.footer-social-link:focus-visible,
-.footer-social-link:focus {
-    background-color: var(--color-primary) !important;
-    transform: scale(calc(1 + var(--zoom-focus-major)));
-    outline: none;
-}
-
 .footer-separator,
 .footer-separator-author {
     opacity: 0.4;
     margin: 0 4px;
 }
 
-    body[data-layout="mobile"] footer { 
+    body[data-layout="mobile"][data-safe-mode="true"] footer { 
         display: none;
     }
 

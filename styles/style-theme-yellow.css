@@ -36,6 +36,28 @@ body[data-theme="yellow"] {
     --color-a11y-slider-track: #CACA00;
     --color-a11y-slider-labels: var(--color-text-muted);
 
+    /* 🟢 Variables faltantes: Adaptadas estrictamente al esquema AAA Amarillo/Negro */
+    
+    /* Estados Semánticos (Todo al amarillo para mantener el contraste y reducir fatiga) */
+    --color-fire: #FFFF00; 
+    --color-danger: #FFFF00;
+    --color-danger-bg: rgba(255, 255, 0, 0.1);
+    --color-success: #FFFF00;
+    --color-success-bg: rgba(255, 255, 0, 0.1);
+    
+    /* Elementos secundarios y marcadores */
+    --color-border-placeholder: #CACA00; /* Igual que tu borde deshabilitado (Oliva) */
+    --color-details-action-item-hover: rgba(255, 255, 0, 0.15);
+    
+    /* Notificaciones Toast (Invertidas para máxima alerta: Fondo amarillo, texto negro) */
+    --color-toast-bg: #FFFF00;
+    --color-toast-text: #000000;
+    
+    /* Sombras y Filtros SVG */
+    --color-shadow-modal: rgba(0, 0, 0, 0.9); /* Casi opaco para que el modal destaque */
+    --shadow-color-hex: #FFFF00; /* La sombra interna de los SVG brillará en amarillo */
+    --shadow-opacity: 0.8;
+    
     /* Forzamos el comportamiento del navegador */
     color-scheme: dark;
     background-color: var(--color-bg) !important;

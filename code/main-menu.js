@@ -101,7 +101,7 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         class="menu-link" 
                         aria-label="${appInstance.getString('footer.aria.landing')}"
                         title="${appInstance.getString('footer.aria.landing')}">
-                        <span class="menu-icon link-fire"></span> 
+                        <span class="menu-icon link-landing"></span> 
                     </a>
                 </div>
 
@@ -149,14 +149,20 @@ function toggleMenu(forceClose = false) {
     btnMainMenu.setAttribute('aria-expanded', String(newState));
     
     if (newState) {
-        navDropdown.classList.add('active');
-        setTimeout(() => {
-            const firstItem = navDropdown.querySelector('.menu-link');
-            if (firstItem) firstItem.focus();
-        }, 50);
+        // 🟢 LAZY LOAD: Inyectar CSS y ESPERAR a que termine antes de mostrar
+        if (window.App && typeof window.App._injectCSS === 'function') {
+            window.App._injectCSS('styles/style-menu.css', 'vortex-css-menu').then(() => {
+                navDropdown.classList.add('active');
+                setTimeout(() => {
+                    const firstItem = navDropdown.querySelector('.menu-link');
+                    if (firstItem) firstItem.focus();
+                }, 50);
+            });
+        } else {
+            navDropdown.classList.add('active');
+        }
     } else {
         navDropdown.classList.remove('active');
-        
     }
 }
 

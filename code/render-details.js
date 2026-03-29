@@ -476,7 +476,7 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
             const iconClass = (enlace.type === 'c') ? 'icon-buy' : 
                                 (enlace.type === 'd' ? 'icon-download' : 
                                 (enlace.type === 'l' ? 'link-linkedin' : 
-                                (enlace.type === 'f' ? 'link-fire' : 
+                                (enlace.type === 'f' ? 'link-landing' : 
                                 'icon-link')));
 
             const isDisabled = !enlace.url || enlace.url === '#';
