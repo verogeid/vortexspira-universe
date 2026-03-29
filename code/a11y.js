@@ -80,11 +80,30 @@ function _applyPreferences() {
     };
 
     if (_prefs.theme !== 'default' && themeCSSMap[_prefs.theme]) {
+        // 1. Inyectamos el tema base elegido
         if (window.App) window.App._injectCSS(themeCSSMap[_prefs.theme], 'vortex-css-manual-theme');
+        
+        // 2. DETECCIÓN DE MÓVIL PARA EL PARCHE DE ALTO CONTRASTE
+        // Usamos la API moderna primero, y caemos al RegEx clásico si es un navegador antiguo/Safari
+        const isMobileOS = navigator.userAgentData?.mobile || 
+                           /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (_prefs.theme === 'forced' && isMobileOS) {
+            // Es un móvil en alto contraste: bajamos el parche de colores HEX
+            if (window.App) window.App._injectCSS('styles/style-theme-forced-colors-mobile.css', 'vortex-css-forced-mobile');
+        } else {
+            // Si no es móvil o cambió de tema, purgamos el parche
+            const mobileForcedLink = document.getElementById('vortex-css-forced-mobile');
+            if (mobileForcedLink) mobileForcedLink.remove();
+        }
+
     } else {
         // Si vuelve a "Sistema", borramos la inyección manual para que actúen las media queries del index.html
         const manualThemeLink = document.getElementById('vortex-css-manual-theme');
         if (manualThemeLink) manualThemeLink.remove();
+        
+        const mobileForcedLink = document.getElementById('vortex-css-forced-mobile');
+        if (mobileForcedLink) mobileForcedLink.remove();
     }
 
     // 🟢 Aplicar Reducción de movimiento
@@ -118,19 +137,36 @@ function _applyPreferences() {
 }
 
 /**
- * Actualiza los controles del modal para que coincidan con la realidad
+ * Actualiza los controles del modal con semántica dinámica
  */
 function _updateModalUI() {
     if (!_domRefs.modal) return;
 
-    // Botones de Fuente
+    // Botones de Fuente: Texto dinámico según estado
     _domRefs.fontBtns.forEach(btn => {
         const isSelected = btn.dataset.font === _prefs.fontType;
         btn.classList.toggle('selected', isSelected);
-
-        // 🟢 Actualizar aria-checked para el comportamiento de radio button
         btn.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+
+        const prefix = isSelected ? i18n.getString('modal.aria.fontCurrent') : i18n.getString('modal.aria.fontChange');
+        const accessibleText = `${prefix}${btn.innerText.trim()}`;
+        btn.setAttribute('aria-label', accessibleText);
+        btn.setAttribute('title', accessibleText);
     });
+
+    // Radio Buttons de Tema: Texto dinámico según estado
+    if (_domRefs.themeBtns) {
+        _domRefs.themeBtns.forEach(btn => {
+            const isSelected = btn.dataset.theme === _prefs.theme;
+            btn.classList.toggle('selected', isSelected);
+            btn.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+
+            const prefix = isSelected ? i18n.getString('modal.aria.themeCurrent') : i18n.getString('modal.aria.themeChange');
+            const accessibleText = `${prefix}${btn.innerText.trim()}`;
+            btn.setAttribute('aria-label', accessibleText);
+            btn.setAttribute('title', accessibleText);
+        });
+    }
 
     // Slider Texto
     if (_domRefs.rangeSize) {
@@ -171,15 +207,6 @@ function _updateModalUI() {
         _domRefs.rangeLetterSpacing.setAttribute('aria-valuetext', i18n.getString(labelKey));
         
         _updateLetterSpacingLabel(step);
-    }
-
-    // Radio Buttons de Tema
-    if (_domRefs.themeBtns) {
-        _domRefs.themeBtns.forEach(btn => {
-            const isSelected = btn.dataset.theme === _prefs.theme;
-            btn.classList.toggle('selected', isSelected);
-            btn.setAttribute('aria-checked', isSelected ? 'true' : 'false');
-        });
     }
 
     // Checkbox Reducir Animaciones

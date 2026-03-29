@@ -170,6 +170,7 @@ export function _updateDetailFocusState(appInstance, targetOverride = null) {
                 
                 debug.log('nav_base_details', debug.DEBUG_LEVELS.BASIC, 
                     `[TRACE ${traceId}-UDF] 🛡️ Escudo bajado.`);
+                    
             }, (data.SWIPER.SLIDE_SPEED || 300) + 50);
         } else {
             debug.log('nav_base_details', debug.DEBUG_LEVELS.BASIC, 
@@ -299,7 +300,9 @@ export function _handleTouchScrollRadar(appInstance) {
         const minimalLinesHeight = lineHeight * data.VIEWPORT.DETAILS.minLinesHeight;
 
         // Si se ven al menos 2 líneas del elemento (o el elemento entero si mide menos que eso)
-        if (visibleHeight >= minimalLinesHeight || (visibleHeight > 0 && visibleHeight >= rect.height - 5)) {
+        if (visibleHeight >= minimalLinesHeight || 
+            (visibleHeight > 0 && 
+                visibleHeight >= rect.height - 5)) {
             validCandidates.push(i);
         }
     }

@@ -27,6 +27,35 @@ body[data-theme="forced"][data-terminal="touch"] {
     --color-btn-text: #FFFFFF !important;
 
     --color-a11y-selected-text: #000000 !important;
+
+    /* 🟢 Variables faltantes: Mapeo Duro para terminales móviles */
+    --color-mask-gradient: #000000 !important;
+    --color-header-text: #FFFFFF !important;
+    
+    --color-fire: #FFFFFF !important;
+    --color-danger: #FFFFFF !important;
+    --color-success: #FFFFFF !important;
+    
+    --color-primary-bg: transparent !important;
+    --color-danger-bg: transparent !important;
+    --color-success-bg: transparent !important;
+    
+    --color-shadow-primary: transparent !important;
+    --color-shadow-disabled: transparent !important;
+    --color-shadow-modal: #000000 !important;
+    
+    --color-toast-bg: #000000 !important;
+    --color-toast-text: #FFFFFF !important;
+    --color-details-action-item-hover: transparent !important;
+    
+    --color-logo-static: #FFFFFF !important;
+    --color-logo-dynamic: #00FFFF !important; /* El cian puro que usas en hover táctil */
+    
+    --shadow-color-hex: transparent !important;
+    --shadow-opacity: 0 !important;
+    
+    --color-a11y-slider-track: #FFFFFF !important;
+    --color-a11y-slider-labels: #888888 !important;
 }
 
 /* --- styles/style-theme-forced-colors-mobile.css --- */

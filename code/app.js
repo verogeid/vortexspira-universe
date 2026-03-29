@@ -71,8 +71,14 @@ class VortexSpiraApp {
                     titulo: this.getString('footer.aboutText') || 'About Us',
                     descripcion: (this.getString('seo.about') || '').replace(/\. /g, '. <HR>'),
                     enlaces: [
-                        { "texto": "LinkedIn", "url": "https://www.linkedin.com/company/vortexspira", "type": "l" },
-                        { "texto": "Landing Page", "url": "https://subscribepage.io/vortexspira", "type": "f" }
+                        { "texto": "LinkedIn", 
+                          "url": "https://www.linkedin.com/company/vortexspira", 
+                          "type": "l" 
+                        },
+                        { "texto": "Landing Page", 
+                          "url": "https://subscribepage.io/vortexspira", 
+                          "type": "f" 
+                        }
                     ]
                 };
             }
@@ -263,7 +269,7 @@ class VortexSpiraApp {
         this._injectA11yAnnouncer();
 
         // 🟢 2. AVISO DE BIENVENIDA (Universal, sin hardcodear español)
-        let appName = this.getString('header.title') || "VortexSpira EdTech";
+        let appName = this.getString('header.title');
         
         // 🟢 FIX: En lugar de gritarlo, lo guardamos para el primer elemento enfocado
         this.STATE.pendingA11yContext = appName;
@@ -389,6 +395,7 @@ class VortexSpiraApp {
             // 🟢 DETECTAR CAMBIO DE IDIOMA DESDE EL NAVEGADOR
             const currentLang = localStorage.getItem('vortex_lang') || 'es';
             if (targetLang && targetLang !== currentLang) {
+
                 debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                     `Cambio de idioma detectado vía Back/Next: ${targetLang}`);
 
@@ -597,7 +604,7 @@ class VortexSpiraApp {
         // 2. Bloqueamos la UI (El 'inert' expulsará el foco de forma segura)
         this.blockUI();
         
-        const msg = this.getString('header.aria.langSwitch') || "Changing language...";
+        const msg = this.getString('header.aria.langSwitch');
         this.announceA11y(msg, 'assertive');
 
         const current = localStorage.getItem('vortex_lang') || 'es';
@@ -788,6 +795,7 @@ class VortexSpiraApp {
         if (this.STATE.isSpecialViewActive) {
             debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                 'Cerrando vista especial. Restaurando estado original.');
+
             this.STATE.isSpecialViewActive = false;
 
             // Restauramos la identidad del curso que había debajo (si lo había)
@@ -866,7 +874,10 @@ class VortexSpiraApp {
         const currentLang = localStorage.getItem('vortex_lang') || 'es';
         document.documentElement.lang = currentLang;
 
-        const activeCourse = this.STATE.activeCourseId ? this._findNodoById(this.STATE.activeCourseId, this.STATE.fullData.navegacion) : null;
+        const activeCourse = this.STATE.activeCourseId ? 
+                             this._findNodoById(this.STATE.activeCourseId, 
+                                                this.STATE.fullData.navegacion) : null;
+
         this.updateSEO(activeCourse);
     }
     // 🟢 MOTOR SEO DINÁMICO E INYECCIÓN DE JSON-LD PARA BOTS/IAs
@@ -874,7 +885,7 @@ class VortexSpiraApp {
         const currentLang = localStorage.getItem('vortex_lang') || 'es';
         document.documentElement.lang = currentLang;
 
-        let title = this.getString('page.title') || 'VortexSpira EdTech';
+        let title = this.getString('page.title');
         let desc = this.getString('seo.description') || '';
 
         // Si estamos viendo un curso, adaptamos el título y la descripción

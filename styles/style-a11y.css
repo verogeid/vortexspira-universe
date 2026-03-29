@@ -5,451 +5,179 @@
     background-color: var(--color-shadow-modal);
     -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
     z-index: 9998;
-
     display: none; overflow-y: auto;
     padding: 0 !important;
-
     align-items: center; 
     justify-content: center;
-
     opacity: 0; transition: opacity 0.3s ease;
 }
 
-.a11y-modal-overlay.active {
-    display: flex; opacity: 1;
-}
+.a11y-modal-overlay.active { display: flex; opacity: 1; }
 
-/* ESTILO GHOST PARA EL MODAL */
 .a11y-modal {
     margin: auto;
-
     background: var(--color-card-bg);
     border: var(--border-width-no-focus) solid var(--color-card-border); 
     border-radius: 12px;
-
-    /* 🟢 FIX 1: Vital para que el padding no sume ancho extra */
     box-sizing: border-box !important;
-
     color: var(--color-text);
-    
-    /* 🟢 FÓRMULA DE FLUIDEZ TOTAL (Inverse Proportional) */
-    /* 2. El ancho es el 100% MENOS ese hueco a cada lado (x2) */
     width: calc(100% - (2 * var(--ally-gap)));
-
     padding: var(--a11y-padding);
     box-shadow: 0 10px 40px var(--color-shadow-modal); 
     position: relative;
-
-    /* Aseguramos que no se salga horizontalmente */
     max-width: 90vw;
-
     max-height: none; overflow-y: auto;
     transform: translateY(var(--a11y-gap)); 
     transition: transform var(--animation-speed) ease;
-
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) transparent;
-    scroll-behavior: var(--scroll-behavior);
 }
 
-.a11y-modal-overlay.active .a11y-modal {
-    transform: translateY(0);
-}
+.a11y-modal-overlay.active .a11y-modal { transform: translateY(0); }
 
 .a11y-header {
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center;
+    display: flex; justify-content: space-between; align-items: center;
     margin-bottom: var(--a11y-header-margin); 
     border-bottom: 1px solid var(--color-border-placeholder);
     padding-bottom: calc(var(--a11y-header-margin) / 2);
-    
-    /* ⭐️ FIX: Evitar desbordamiento del header */
-    width: 100%; max-width: 100%;
-    overflow: hidden; 
 }
 
 .a11y-header h2 { 
-    margin: 0; 
-    /* ⭐️ FIX FUENTE: Limitamos el crecimiento máximo para que no sea gigante */
-    font-size: var(--a11y-title-font-size);
-    
-    /* FIX LAYOUT: Permitir múltiples líneas y romper palabras */
-    white-space: normal !important;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.2;
-    height: auto;
-    overflow: visible;
-    
-    /* Flex child properties */
-    flex: 1 1 auto;
-    min-width: 0; /* CRÍTICO: Permite al flex item encogerse por debajo de su contenido */
-    padding-right: var(--a11y-padding); /* Espacio de seguridad con el botón cerrar */
+    margin: 0; font-size: var(--a11y-title-font-size);
+    white-space: normal !important; word-wrap: break-word; line-height: 1.2;
 }
 
+/* 🟢 BOTÓN SALIR: Scale y Sombra, pero NO borde */
 .a11y-close-btn {
-    background: transparent; border: none; 
+    background: transparent; border: none !important; 
     font-size: var(--a11y-close-btn-font-size);
     cursor: pointer; color: var(--color-text);
-
-    /* Tamaño físico del botón también elástico pero controlado */
-    width: var(--a11y-close-btn-size);
-    height: var(--a11y-close-btn-size);
-    border-radius: 50%;
-
-    display: flex; justify-content: center; align-items: center;
+    width: var(--a11y-close-btn-size); height: var(--a11y-close-btn-size);
+    border-radius: 50%; display: flex; justify-content: center; align-items: center;
     transition: all var(--animation-speed) ease;
-    
-    /* ⭐️ FIX: Prohibido encogerse */
-    flex-shrink: 0; 
+    outline: none !important;
 }
 
-/* Efecto hover/foco en botón cerrar */
 .a11y-close-btn:hover,
 .a11y-close-btn:focus-visible,
 .a11y-close-btn:focus {
-    background: var(--color-primary-bg);
     color: var(--color-primary);
-    outline: none;
-    box-shadow: 0 0 var(--shadow-spread-sm) var(--color-shadow-primary);
+    transform: scale(calc(1 + var(--zoom-focus-minnor)));
+    box-shadow: 0 0 var(--shadow-spread-md) var(--color-shadow-primary);
 }
 
-.a11y-section { 
-    margin-bottom: var(--a11y-section-margin);
-    /* ⭐️ FIX: Asegurar que la sección no desborde */
-    width: 100%;
-    /*overflow: hidden;*/
-    overflow: visible;
-}
+.a11y-section { margin-bottom: var(--a11y-section-margin); width: 100%; }
+
 .a11y-section h3 { 
-    font-size: var(--a11y-section-font-size); 
-    margin-bottom: var(--a11y-controls-gap); 
-    opacity: calc(var(--opacity) * 3); 
-
-    /* FIX LAYOUT: Permitir múltiples líneas */
-    white-space: normal !important;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    line-height: 1.2;
-    height: auto;
-    overflow: visible;
-    max-width: 100%;
+    font-size: var(--a11y-section-font-size); margin-bottom: var(--a11y-controls-gap); 
+    opacity: calc(var(--opacity) * 3); line-height: 1.2;
 }
 
-.a11y-controls-group {
-    display: flex; 
-    gap: var(--a11y-controls-gap);
-    width: 100%;
+.a11y-controls-group { display: flex; gap: var(--a11y-controls-gap); flex-wrap: wrap; }
 
-    flex-wrap: wrap;
-    
-    box-sizing: border-box;
-    overflow: visible;
-}
-
-/* BOTONES DE OPCIÓN */
+/* BOTONES DE OPCIÓN (Referencia de diseño) */
 .a11y-option-btn {
-    flex: 1 1 auto; /* Crecen y encogen, base automática */
-    font-family: inherit;
-    padding: var(--a11y-btn-padding);
-    background: transparent;
-    border: var(--border-width-no-focus) solid var(--color-card-border);
-    border-radius: 8px; color: var(--color-text);
-    cursor: pointer;
-
+    flex: 1 1 auto; padding: var(--a11y-btn-padding);
+    background: transparent; border: var(--border-width-no-focus) solid var(--color-card-border);
+    border-radius: 8px; color: var(--color-text); cursor: pointer;
     font-size: var(--a11y-option-btn-font-size);
-
-    /* FIX LAYOUT: Textos en múltiples líneas y botones más altos */
-    white-space: normal !important;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    height: auto !important;
-    /*min-height: 44px; /* Asegura el área táctil mínima recomendada */
-    line-height: 1.2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    
-    /* Permite que el botón encoja si es necesario */
-    min-width: var(--a11y-btn-min-width);
-    max-width: 100%;
-
-    /* FIX 1: Transiciones específicas, nunca 'all' */
-    transition: transform var(--animation-speed) ease,
-                background-color var(--animation-speed) ease,
-                border-color var(--animation-speed) ease,
-                box-shadow var(--animation-speed) ease,
-                color var(--animation-speed) ease;
-
-    /* FIX 2: Aceleración por hardware preventiva */
-    will-change: transform;
+    transition: all var(--animation-speed) ease;
 }
 
 .a11y-option-btn:hover { 
     border-color: var(--color-primary); 
-    box-shadow: 0 0 var(--shadow-spread-sm) var(--color-shadow-primary);
-}
-
-/* Foco en botón normal (no seleccionado) */
-.a11y-option-btn:focus-visible, 
-.a11y-option-btn:focus {
-    border-color: var(--color-primary);
-    /* Usamos el borde focus grueso de nuestro sistema */
-    border-width: var(--border-width-focus);
-    /* Como el borde engorda, compensamos el padding interior para que el texto no salte */
-    padding: calc(var(--a11y-btn-padding) - (var(--border-width-focus) - var(--border-width-no-focus)));
-    
-    box-shadow: 0 0 var(--shadow-spread-md) var(--color-shadow-primary);
-    outline: none;
     transform: scale(calc(1 + var(--zoom-focus-minnor)));
 }
 
-.a11y-option-btn.selected {
-    background: var(--color-primary); 
-    color: var(--color-a11y-selected-text);
-    border-color: var(--color-primary);
-    box-shadow: 0 0 var(--shadow-spread-md) var(--color-shadow-primary);
-}
-
-/* 🟢 FIX CRÍTICO: Foco en botón YA seleccionado */
-.a11y-option-btn.selected:focus-visible, 
-.a11y-option-btn.selected:focus {
-    /* Mantenemos el fondo y el color de texto invertido */
-    background: var(--color-primary);
-    color: var(--color-a11y-selected-text);
-    
-    /* El truco: Creamos un aro exterior con el color del texto para que contraste siempre */
-    outline: var(--border-width-no-focus) solid var(--color-text);
-    outline-offset: var(--border-width-no-focus); /* Separa el aro del botón */
-}
-
-/* SLIDER */
-.a11y-range-wrapper {
-    display: flex;
-    flex-wrap: wrap-reverse;
-    align-items: center; 
-    row-gap: calc(var(--a11y-controls-gap) / 2);
-    column-gap: var(--a11y-controls-gap);
-    width: 100%;
-}
-
-/* Iconos laterales (A, ≡) */
-.range-icon-small, .range-icon-large, 
-.a11y-range-wrapper span[aria-hidden="true"] {
-    flex: 0 0 auto; /* No crecen ni encogen, ocupan lo justo */
-    text-align: center;
-    line-height: 1;
-    margin: 0;
-    font-weight: 500;
-    color: var(--color-a11y-slider-labels);
-}
-
-.a11y-range-wrapper span[aria-hidden="true"] {
-    font-size: var(--a11y-slider-font-size);
-}
-
-/* El Slider (Barra) */
-input[type=range].a11y-range {
-    /* 🟢 El slider es un "muelle gigante". Empuja el valor a la derecha. 
-       Pero si se estrangula a menos del triple de su bolita, obliga al valor a saltar */
-    flex: 999 1 calc(var(--a11y-slider-thumb-size) * 3);
-    min-width: calc(var(--a11y-slider-thumb-size) * 3);
-    height: var(--a11y-slider-height);
-    background: var(--color-a11y-slider-track);
-    border-radius: 5px; 
+.a11y-option-btn:focus-visible, 
+.a11y-option-btn:focus {
     outline: none;
-    -webkit-appearance: none; 
-    appearance: none;
-    cursor: pointer;
-    margin: 0;
+    border: var(--border-width-focus) solid var(--color-primary);
+    padding: calc(var(--a11y-btn-padding) - (var(--border-width-focus) - var(--border-width-no-focus)));
+    transform: scale(calc(1 + var(--zoom-focus-minnor)));
 }
 
-/* Efectos Slider (Thumb y Focus) */
+.a11y-option-btn.selected { background: var(--color-primary); color: var(--color-a11y-selected-text); border-color: var(--color-primary); }
+
+/* SLIDERS UNIFICADOS */
+.a11y-range-wrapper { display: flex; flex-wrap: wrap-reverse; align-items: center; gap: var(--a11y-controls-gap); width: 100%; }
+
+input[type=range].a11y-range {
+    flex: 999 1 150px; height: var(--a11y-slider-height);
+    background: var(--color-a11y-slider-track); border-radius: 5px; 
+    outline: none; -webkit-appearance: none; appearance: none; cursor: pointer;
+    border: var(--border-width-no-focus) solid transparent; /* Espacio para el borde de foco */
+    transition: all var(--animation-speed) ease;
+}
+
+input[type=range].a11y-range:hover {
+    transform: scale(1.02);
+}
+
 input[type=range].a11y-range:focus-visible, 
 input[type=range].a11y-range:focus {
-    box-shadow: 0 0 0 var(--border-width-no-focus) var(--color-primary);
+    transform: scale(1.02);
+    border: var(--border-width-focus) solid var(--color-primary); /* 🟢 Borde exterior redondeado */
+    border-radius: 8px;
 }
+
 input[type=range].a11y-range::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none;
-    width: var(--a11y-slider-thumb-size); 
-    height: var(--a11y-slider-thumb-size); border-radius: 50%;
-    background: var(--color-primary); 
-    box-shadow: 0 0 5px var(--color-shadow-primary);
-    transition: transform var(--animation-speed);
-}
-input[type=range].a11y-range::-moz-range-thumb {
-    width: var(--a11y-slider-thumb-size); 
-    height: var(--a11y-slider-thumb-size); border-radius: 50%;
-    background: var(--color-primary); 
-    box-shadow: 0 0 5px var(--color-shadow-primary);
-    border: none;
-    transition: transform var(--animation-speed);
-}
-input[type=range].a11y-range:hover::-webkit-slider-thumb {
-    transform: scale(calc(1 + var(--zoom-focus-major)));
+    -webkit-appearance: none; width: var(--a11y-slider-thumb-size); height: var(--a11y-slider-thumb-size);
+    border-radius: 50%; background: var(--color-primary);
 }
 
-/* El Valor (100% o Normal) */
-.a11y-range-value {
-    /* 🟢 Ocupa el espacio de 5 letras mínimo. Si salta de línea, crece al 100% */
-    flex: 1 1 15ch; 
-    font-weight: bold; 
-    font-size: var(--a11y-range-value-font-size);
-    text-align: center; /* Se centra en su caja, dándonos el efecto deseado arriba y a la derecha */
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--color-a11y-slider-labels);
-}
-
-/* Aplicamos el color de etiquetas (7:1) a los iconos A, ≡ y al valor % */
-.range-icon-small, 
-.range-icon-large, 
-.a11y-range-wrapper span[aria-hidden="true"],
-.a11y-range-value {
-    font-weight: 500;
-    color: var(--color-a11y-slider-labels);
-}
-
-/* --- Iconos de los extremos de los sliders en el modal A11y --- */
-#a11y-modal .a11y-range-wrapper .range-icon-small {
-    font-size: 0.8em; /* Más pequeño que el texto normal */
-    opacity: 0.9;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-#a11y-modal .a11y-range-wrapper .range-icon-large {
-    font-size: 1.3em; /* Notablemente más grande */
-    letter-spacing: 0.2em;
-    opacity: 0.9;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-/* Checkbox de reducción de movimiento */
+/* CHECKBOXES UNIFICADOS */
 .a11y-checkbox {
-    -webkit-appearance: none;
-    appearance: none;
-    
-    /* Dimensiones y forma base */
-    width: 1.25rem;
-    height: 1.25rem;
+    -webkit-appearance: none; appearance: none;
+    width: 1.25rem; height: 1.25rem;
     border: var(--border-width-no-focus) solid var(--color-card-border);
-    border-radius: 4px; /* ⬅️ La curvatura que querías */
-    
-    background-color: transparent;
-    cursor: pointer;
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0;
-    flex-shrink: 0;
-    
-    transition: all var(--animation-speed) ease;
+    border-radius: 4px; background-color: transparent; cursor: pointer;
+    position: relative; transition: all var(--animation-speed) ease;
 }
 
-/* 2. Dibujamos la marca de "Check" (✔) con CSS */
 .a11y-checkbox::after {
-    content: '';
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    width: 25%;
-    height: 50%;
-    /* Usamos el color de fondo para el "tick" (para que contraste) */
-    border: solid var(--color-card-bg); 
-    border-width: 0 var(--border-width-no-focus) var(--border-width-no-focus) 0;
-    transform: translate(-50%, -60%) rotate(45deg);
-    opacity: 0; /* Oculto si no está marcado */
-    transition: opacity var(--animation-speed) ease;
+    content: ''; position: absolute; top: 45%; left: 50%; width: 25%; height: 50%;
+    border: solid var(--color-card-bg); border-width: 0 2px 2px 0;
+    transform: translate(-50%, -60%) rotate(45deg); opacity: 0;
 }
 
-/* 3. Estado: Marcado (Checked) */
-.a11y-checkbox:checked {
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
+.a11y-checkbox:checked { background-color: var(--color-primary); border-color: var(--color-primary); }
+.a11y-checkbox:checked::after { opacity: 1; }
+
+.a11y-checkbox:hover { 
+    border-color: var(--color-primary); 
+    transform: scale(calc(1 + var(--zoom-focus-minnor))); 
 }
 
-.a11y-checkbox:checked::after {
-    opacity: 1; /* Mostramos el tick */
-}
-
-/* 4. Estado: Hover (Feedback visual al ratón) */
-.a11y-checkbox:hover {
-    border-color: var(--color-primary);
-}
-
-/* 5. 🟢 AHORA SÍ: El Foco Curvo Perfecto usando Box-Shadow */
+/* 🟢 FOCO CHECKBOX: Borde exterior redondeado (como fuentes) */
 .a11y-checkbox:focus-visible, 
 .a11y-checkbox:focus {
-    outline: none; /* Adiós cuadrado rígido */
-    
-    /* Sombra doble: 1 capa del color de fondo (hueco) + 1 capa azul (anillo) */
-    box-shadow: 
-        0 0 0 var(--border-width-no-focus) var(--color-card-bg), 
-        0 0 0 calc(var(--border-width-no-focus) + var(--border-width-focus)) var(--color-primary);
-}
-
-.a11y-checkbox-label {
-    display:flex; 
-    align-items:center; 
-    gap:10px; 
-    cursor:pointer; 
-    margin-top: 10px;
-}
-
-.a11y-checkbox-label span {
-    font-size: var(--a11y-option-btn-font-size);
-}
-
-/* SECCIÓN FINAL (Footer del modal) */
-.a11y-footer {
-    text-align: right; 
-    margin-top: var(--card-gap); 
-    padding-top: var(--card-padding); 
-    border-top: 1px solid var(--color-border-placeholder);
-    display: flex;
-    justify-content: flex-end;
-}
-
-/* BOTÓN RESET (Icono) */
-#a11y-reset {
-    background: transparent; 
-    border: var(--border-width-no-focus) solid var(--color-card-border); 
-    border-radius: 8px;
-    cursor: pointer; 
-    width: var(--a11y-reset-size); 
-    height: var(--a11y-reset-size);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--animation-speed) ease;
-    
-    background-color: var(--color-text-muted); 
-    -webkit-mask-image: var(--icon-reset); mask-image: var(--icon-reset);
-    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-    -webkit-mask-position: center; mask-position: center;
-    -webkit-mask-size: 60%; mask-size: 60%;
-
-    flex-shrink: 0; /* Protegemos también este botón */
-}
-
-#a11y-reset:hover,
-#a11y-reset:focus-visible,
-#a11y-reset:focus {
-    background-color: var(--color-danger); 
-    border-color: var(--color-danger);      
-    box-shadow: 0 0 var(--shadow-spread-sm) var(--color-danger-bg);
-    transform: rotate(-180deg); 
     outline: none;
+    border: var(--border-width-focus) solid var(--color-primary);
+    transform: scale(calc(1 + var(--zoom-focus-minnor)));
+}
+
+.a11y-checkbox-label { display:flex; align-items:center; gap:10px; cursor:pointer; margin-top: 10px; }
+
+/* RESET */
+#a11y-reset {
+    background: transparent; border: var(--border-width-no-focus) solid var(--color-card-border); 
+    border-radius: 8px; cursor: pointer; width: var(--a11y-reset-size); height: var(--a11y-reset-size);
+    display: flex; align-items: center; justify-content: center; transition: all var(--animation-speed) ease;
+    background-color: var(--color-text-muted); 
+    -webkit-mask: var(--icon-reset) no-repeat center / 60%; mask: var(--icon-reset) no-repeat center / 60%;
+}
+
+#a11y-reset:hover { 
+    background-color: var(--color-danger); border-color: var(--color-danger); 
+    transform: rotate(-180deg) scale(calc(1 + var(--zoom-focus-minnor))); 
+}
+
+#a11y-reset:focus-visible, #a11y-reset:focus {
+    outline: none;
+    border: var(--border-width-focus) solid var(--color-danger);
+    background-color: var(--color-danger);
+    transform: rotate(-180deg) scale(calc(1 + var(--zoom-focus-minnor)));
 }
 
 /* --- styles/style-a11y.css --- */

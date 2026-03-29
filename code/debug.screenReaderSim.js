@@ -60,7 +60,9 @@ export function enableScreenReaderSimulator() {
 
     // 🟢 FIX: Escuchar cambios nativos de checkbox/radio que no disparan el MutationObserver
     document.addEventListener('change', (e) => {
-        if (e.target.tagName === 'INPUT' && (e.target.type === 'checkbox' || e.target.type === 'radio')) {
+        if (e.target.tagName === 'INPUT' && 
+            (e.target.type === 'checkbox' || 
+                e.target.type === 'radio')) {
             _announceElement(e.target, 'update');
         }
     });
@@ -86,7 +88,8 @@ export function enableScreenReaderSimulator() {
 
                 const mode = liveRegion.getAttribute('aria-live');
                 const text = liveRegion.innerText.trim();
-                const isAssertive = mode === 'assertive' || liveRegion.getAttribute('role') === 'alert';
+                const isAssertive = mode === 'assertive' || 
+                      liveRegion.getAttribute('role') === 'alert';
                 const prefix = isAssertive ? '🚨 URGENTE' : '📢 AVISO';
                 const color = isAssertive ? '#ff0000' : '#ffa500';
                 
@@ -120,7 +123,9 @@ export function enableScreenReaderSimulator() {
         });
 
         valueUpdates.forEach(target => {
-            const val = target.getAttribute('aria-valuetext') || target.getAttribute('aria-valuenow');
+            const val = target.getAttribute('aria-valuetext') || 
+                        target.getAttribute('aria-valuenow');
+
             debug.log('a11y', debug.DEBUG_LEVELS.EXTREME, 
                 `%c🔢 CAMBIO VALOR: "${val}"`, 
                 "color: #000; background: #00ffaa; padding: 2px 6px; border-radius: 3px; font-weight: bold;");
@@ -154,7 +159,9 @@ function _announceElement(el, type = 'focus') {
     const isDisabled = el.disabled || el.getAttribute('aria-disabled') === 'true';
     const titleSuffix = isDisabled ? ' (⛔ DESHABILITADO)' : '';
 
-    const isHidden = el.getAttribute('aria-hidden') === 'true' || el.closest('[aria-hidden="true"]');
+    const isHidden = el.getAttribute('aria-hidden') === 'true' || 
+                     el.closest('[aria-hidden="true"]');
+
     const warning = isHidden ? " ⚠️ ERROR: Elemento enfocado está oculto" : "";
 
     // 🟢 Estilos Visuales Diferenciados
@@ -266,7 +273,8 @@ function _computeDescription(el) {
     }
     // Para sliders, el valor actual suele ser parte de la descripción si no es el nombre
     if (el.getAttribute('aria-valuenow')) {
-        return `Valor actual: ${el.getAttribute('aria-valuetext') || el.getAttribute('aria-valuenow')}`;
+        return `Valor actual: ${el.getAttribute('aria-valuetext') || 
+                                el.getAttribute('aria-valuenow')}`;
     }
     return '';
 }

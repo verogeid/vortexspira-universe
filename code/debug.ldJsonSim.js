@@ -65,7 +65,8 @@ export const ldJsonSim = {
         debug.log('seo_sim', debug.DEBUG_LEVELS.BASIC, "%cMeta Descripción: ", "font-weight: bold; color: #aaa", description);
         debug.log('seo_sim', debug.DEBUG_LEVELS.BASIC, "%cIdioma (lang):    ", "font-weight: bold; color: #aaa", lang);
         
-        debug.log('seo_sim', debug.DEBUG_LEVELS.BASIC, "%cEsquema JSON-LD:", "font-weight: bold; color: #00acee");
+        debug.log('seo_sim', debug.DEBUG_LEVELS.BASIC, 
+            "%cEsquema JSON-LD:", "font-weight: bold; color: #00acee");
         
         if (typeof schemaData === 'object') {
             debug.logTable('seo_sim', debug.DEBUG_LEVELS.BASIC, schemaData);

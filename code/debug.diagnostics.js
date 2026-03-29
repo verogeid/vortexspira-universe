@@ -80,7 +80,9 @@ export function _setupKeyTracker() {
 export function runFontDiagnostics() {
     if (debug.DEBUG_CONFIG.global_font < debug.DEBUG_LEVELS.BASIC) return;
 
-    debug.logGroupCollapsed('global_font', debug.DEBUG_LEVELS.BASIC, "%c📊 DIAGNÓSTICO DE TAMAÑOS REALES", "background: #222; color: #bada55; font-size: 16px; padding: 4px; border-radius: 4px;");
+    debug.logGroupCollapsed('global_font', debug.DEBUG_LEVELS.BASIC, 
+        "%c📊 DIAGNÓSTICO DE TAMAÑOS REALES", 
+        "background: #222; color: #bada55; font-size: 16px; padding: 4px; border-radius: 4px;");
 
     const root = document.documentElement;
     const rootStyle = getComputedStyle(root);
@@ -174,7 +176,7 @@ export function runFontDiagnostics() {
     const desktopDetail = document.getElementById('vista-detalle-desktop');
     
     const isDetailActive = (mobileDetail && mobileDetail.classList.contains('active')) || 
-                            (desktopDetail && desktopDetail.classList.contains('active'));
+                           (desktopDetail && desktopDetail.classList.contains('active'));
 
     if (isDetailActive) {
         debug.log('global_font', debug.DEBUG_LEVELS.BASIC, 
@@ -293,7 +295,8 @@ export function runLayoutDiagnostics() {
                     `Bottom Position: ${rect.bottom.toFixed(2)}px (Límite visual)`);
 
         debug.log('global_layout', debug.DEBUG_LEVELS.BASIC, 
-                    `Var CSS (--header-height-real): ${varHeight || 'No definida'}`);
+                    `Var CSS (--header-height-real): ${varHeight || 
+                    'No definida'}`);
         
         debug.log('global_layout', debug.DEBUG_LEVELS.BASIC, 
                     `Position: ${st.position}`);

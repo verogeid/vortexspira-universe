@@ -16,7 +16,9 @@ export function stackInitialize() {
 
 export function stackGetCurrent() {
     if (!this.STATE.historyStack || this.STATE.historyStack.length === 0) {
-        debug.logError('nav_stack', 'La pila está vacía. Inicializando.');
+        
+        debug.logError('nav_stack', 
+            'La pila está vacía. Inicializando.');
 
         this.stackInitialize();
     }

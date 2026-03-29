@@ -69,7 +69,9 @@ export const SWIPER = {
         // 🟢 Comprueba si está marcado en el modal (data-attribute) O en el sistema operativo
         const manualOverride = document.body.getAttribute('data-reduced-motion') === 'true';
 
-        const osPreference = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const osPreference = window.matchMedia && window.matchMedia(
+            '(prefers-reduced-motion: reduce)'
+        ).matches;
         
         return manualOverride || osPreference;
     },
@@ -109,7 +111,8 @@ export async function loadData(lang) {
 
         let dataSelected;
         if (mode === 'dev') {
-            debug.log('data', debug.DEBUG_LEVELS.BASIC, '🧪 MODO DEV ACTIVO');
+            debug.log('data', debug.DEBUG_LEVELS.BASIC, 
+                '🧪 MODO DEV ACTIVO');
 
             dataSelected = fullJson.dev || [];
         } else {

@@ -38,10 +38,8 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
         
         const currentLang = localStorage.getItem('vortex_lang') || 'es';
         const langLabel = currentLang === 'es' 
-            ? appInstance.getString('header.aria.langBtn') || 
-                "Idioma: Español. Cambiar a Inglés." 
-            : appInstance.getString('header.aria.langBtn') || 
-                "Language: English. Switch to Spanish.";
+            ? appInstance.getString('header.aria.langBtn')
+            : appInstance.getString('header.aria.langBtn');
 
         // 🟢 INYECTAMOS LA CUADRÍCULA DE ICONOS (44x44)
         navDropdown.innerHTML = `
@@ -117,13 +115,15 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         class="menu-link cc-license-btn" 
                         aria-label="${appInstance.getString('footer.aria.license')}"
                         title="${appInstance.getString('footer.aria.license')}">
-                        <img src="${data.MEDIA.URL.LICENSE_IMG_SRC}" 
-                            alt="" 
-                            aria-hidden="true" 
-                            class="cc-license-img">
+                        
+                        <div class="cc-license-stack" aria-hidden="true">
+                            <span class="cc-layer-plate"></span>
+                            <span class="cc-layer-bg-circles"></span>
+                            <span class="cc-layer-bg-letters"></span>
+                            <span class="cc-layer-details"></span>
+                        </div>
                     </a>
                 </div>
-
             </div>
         `;
 
@@ -260,8 +260,8 @@ function _setupListeners(appInstance, enableI18n) {
                 
                 // Actualizar Etiqueta ARIA
                 const langLabel = currentLang === 'es' 
-                    ? appInstance.getString('header.aria.langBtn') || "Idioma: Español. Cambiar a Inglés." 
-                    : appInstance.getString('header.aria.langBtn') || "Language: English. Switch to Spanish.";
+                    ? appInstance.getString('header.aria.langBtn') 
+                    : appInstance.getString('header.aria.langBtn');
                 
                 btnLang.setAttribute('aria-label', langLabel);
                 btnLang.setAttribute('title', langLabel);

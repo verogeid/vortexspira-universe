@@ -1,34 +1,23 @@
 /* --- styles/style-menu.css --- */
 
-/* --- El Panel Desplegable --- */
 .menu-dropdown {
-    /* 🟢 FIX: Fixed lo ancla al viewport de la pantalla, inmune a scrolls y overflows */
     position: fixed;
     top: calc(var(--header-height) + 2px);
-    right: 12px; /* Margen de seguridad desde el borde derecho de la pantalla */
-
-    background-color: var(--color-header-bg); /* Fondo integrado con tu tema oscuro/claro */
+    right: 12px; 
+    background-color: var(--color-header-bg); 
     border: 2px solid var(--color-separator);
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.5); 
-    
-    /* 🟢 FIX: Nunca será más ancho que la pantalla menos los márgenes de seguridad */
     width: max-content;
     min-width: min(240px, calc(var(--ui-icon-size) + var(--menu-gap) * 2)); 
     max-width: min(calc(100dvw - 24px), 
                     calc((var(--ui-icon-size) * 3) + (var(--menu-gap) * 2) + 24px));
-
-    /* 🟢 FIX: Límite de altura dinámico y scroll */
     max-height: calc(100vh - var(--header-height) - 20px);
     overflow-y: auto;
     overflow-x: hidden;
-
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) var(--color-card-bg);
-
     z-index: 9999;
-    
-    /* Animación fluida de aparición */
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -43,7 +32,6 @@
     transform: translateY(0);
 }
 
-/* --- ESTRUCTURA DE LA CUADRÍCULA --- */
 .menu-grid {
     padding: var(--menu-gap);
     display: flex;
@@ -54,14 +42,10 @@
 
 .menu-grid-row {
     display: flex;
-    flex-wrap: wrap; /* 🟢 Si es muy estrecho, los iconos saltan de línea automáticamente */
+    flex-wrap: wrap; 
     justify-content: flex-start;
     align-items: center;
     gap: var(--menu-gap);
-}
-
-.menu-separator {
-    width: 100%;
 }
 
 .menu-separator hr {
@@ -70,188 +54,196 @@
     margin: 12px 0;
 }
 
-/* --- Elementos Interactivos (Iconos Táctiles 44x44 AAA) --- */
 .menu-link {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    /* 🟢 DIMENSIONES ESTRICTAS */
     width: var(--ui-icon-size);
     height: var(--ui-icon-size);
     margin: 0;
-    padding: 8px; /* Espacio interno para que el SVG de 28x28 respire */
-
+    padding: 8px; /* Espacio de seguridad para iconos normales */
     background: transparent;
-    border: none;
-    border-radius: 8px; /* Coherente con tu UI */
+    border: 2px solid transparent; 
+    border-radius: 12px; 
     outline: none !important; 
-
-    color: var(--color-header-text); /* Base para el currentColor */
+    color: var(--color-header-text); 
     cursor: pointer;
     box-sizing: border-box;
     flex-shrink: 0;
-
     transition: all var(--animation-speed) ease;
 }
 
-/* --- Iconos SVG Regulares --- */
+/* 🟢 FOCO EN MENÚ: Limpio, sin sombras, solo escala y borde primario */
+.menu-link:focus-visible,
+.menu-link:focus {
+    background-color: var(--color-primary-bg);
+    border-color: var(--color-primary) !important;
+    transform: scale(calc(1 + var(--zoom-focus-minnor)));
+    box-shadow: none !important;
+}
+
 .menu-icon {
-    width: 100%; /* Ocupa el espacio interno que deja el padding de .menu-link */
+    width: 100%; 
     height: 100%;
-    margin: 0; /* Limpiamos el margin-right antiguo */
-
-    background-color: currentColor; /* Se tiñe mágicamente al heredar var(--color-primary) */
+    background-color: currentColor; 
     display: inline-block;
-
-    border: 2px solid transparent !important; 
-    border-radius: 8px;
-
     -webkit-mask-size: contain; mask-size: contain;
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
+    transition: transform var(--animation-speed) ease, background-color var(--animation-speed) ease;
 }
 
-/* 🟢 Brillo de iconos al hacer focus/hover */
+/* Interacción de iconos internos */
 .menu-link:hover .menu-icon,
-.menu-link:focus-visible .menu-icon,
-.menu-link:focus .menu-icon {
-    filter: drop-shadow(0 0 4px var(--color-shadow-primary));
-    transform: scale(calc(1 + var(--zoom-focus-major)));
-
+.menu-link:focus-visible .menu-icon {
     background-color: var(--color-primary);
-    border-color: var(--color-primary);
-
-    outline: none;
+    transform: scale(calc(1 + var(--zoom-focus-major)));
+    filter: none !important;
 }
 
-/* Asignación ESTRICTA a tus variables reales de style-media.css */
+/* Asignación de máscaras */
 .menu-icon.icon-a11y { -webkit-mask-image: var(--icon-a11y); mask-image: var(--icon-a11y); }
-.menu-icon.icon-lang { -webkit-mask-image: var(--icon-i18n); mask-image: var(--icon-i18n); } 
 .menu-icon.link-linkedin { -webkit-mask-image: var(--icon-social-linkedin); mask-image: var(--icon-social-linkedin); }
 .menu-icon.link-github { -webkit-mask-image: var(--icon-link-diary); mask-image: var(--icon-link-diary); }
 .menu-icon.link-landing { 
     -webkit-mask-image: var(--icon-offer); mask-image: var(--icon-offer); 
     background-color: var(--color-fire);
-    transform: translateZ(0);
 }
 .menu-icon.icon-info { -webkit-mask-image: var(--icon-info); mask-image: var(--icon-info); }
 .menu-icon.icon-bug { -webkit-mask-image: var(--icon-bug); mask-image: var(--icon-bug); }
 
-/* --- 🌍 Botón de Idioma (Sobreimpresión AAA) --- */
-.lang-btn-container {
-    position: relative;
-    overflow: hidden; /* Evita que sombras rebeldes se salgan de la caja */
-}
+/* 🟢 BOTÓN DE IDIOMA (Ajuste de Proporciones AAA) */
+.lang-btn-container { position: relative; }
 
-/* El fondo (Mundo) */
 .lang-icon-bg {
     position: absolute;
-    /* Centrado absoluto dentro de la caja de 44x44 */
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 28px; 
-    height: 28px;
     
-    background-color: currentColor; /* Hereda de .menu-link, cambia a Primario en hover */
-
+    width: calc(var(--ui-icon-size) * 0.55); 
+    height: calc(var(--ui-icon-size) * 0.55);
+    background-color: currentColor;
     -webkit-mask-image: var(--icon-i18n); mask-image: var(--icon-i18n);
     -webkit-mask-size: contain; mask-size: contain;
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
-    
     transition: all var(--animation-speed) ease;
 }
 
-/* El brillo del fondo al interactuar */
-.lang-btn-container:hover .lang-icon-bg,
-.lang-btn-container:focus-visible .lang-icon-bg,
-.lang-btn-container:focus .lang-icon-bg {
-    filter: drop-shadow(0 0 4px var(--color-shadow-primary));
-
-    transform: scale(calc(1 + var(--zoom-focus-major)));
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
-}
-
-/* El texto sobreimpreso (ES / EN) */
 .lang-text {
     position: relative;
     font-family: var(--font-family-base);
-    font-size: 0.85rem; /* Ajustado para que quepa bien dentro del cuadrado */
+    font-size: 0.75rem; /* Ligeramente menor para que no agobie al mundo */
     font-weight: bold;
-    
     z-index: 2;
     line-height: 1;
     pointer-events: none;
-    transition: all var(--animation-speed) ease;
-
-    /* REPOSO: Texto oscuro calado */
     color: var(--color-header-bg); 
-    
-    /* NITIDEZ: Stroke matemático del color del texto normal */
+    transition: all var(--animation-speed) ease;
+    /* Stroke nítido para legibilidad sobre el icono */
     text-shadow: 
         -1px -1px 0 var(--color-header-text),
          1px -1px 0 var(--color-header-text),
         -1px  1px 0 var(--color-header-text),
-         1px  1px 0 var(--color-header-text),
-         0px -1px 0 var(--color-header-text),
-         0px  1px 0 var(--color-header-text),
-        -1px  0px 0 var(--color-header-text),
-         1px  0px 0 var(--color-header-text);
+         1px  1px 0 var(--color-header-text);
 }
 
-/* INTERACCIÓN DEL TEXTO: Contraste AAA garantizado */
-.lang-btn-container:hover .lang-text,
-.lang-btn-container:focus-visible .lang-text,
-.lang-btn-container:focus .lang-text {
+/* Interacción I18N: Letras y Fondo escalan en perfecta sincronía */
+.menu-link:hover .lang-icon-bg,
+.menu-link:focus-visible .lang-icon-bg {
+    transform: translate(-50%, -50%) scale(calc(1 + var(--zoom-focus-major)));
+    background-color: var(--color-primary);
+}
+
+.menu-link:hover .lang-text,
+.menu-link:focus-visible .lang-text {
+    transform: scale(calc(1 + var(--zoom-focus-major)));
     color: var(--color-a11y-selected-text); 
-    
-    /* El stroke se mimetiza con el fondo Primario que asume el icono */
     text-shadow: 
         -1px -1px 0 var(--color-primary),
          1px -1px 0 var(--color-primary),
         -1px  1px 0 var(--color-primary),
-         1px  1px 0 var(--color-primary),
-         0px -1px 0 var(--color-primary),
-         0px  1px 0 var(--color-primary),
-        -1px  0px 0 var(--color-primary),
-         1px  0px 0 var(--color-primary);
+         1px  1px 0 var(--color-primary); /* Look limpio al interactuar */
 }
-
-/* --- 🔴 Licencia CC (Imagen Directa) --- */
 
 .cc-license-btn {
-    /* Ocupa el equivalente a 2 botones y el hueco */
-    width: calc(var(--ui-icon-size) * 2 + var(--menu-gap)) !important; 
+    width: calc(var(--ui-icon-size) * 2 + var(--menu-gap)) !important;
     height: var(--ui-icon-size);
-    padding: 4px; /* Ajuste para que la imagen respire dentro del botón */
-    
-    /* Preparamos el borde invisible que se revelará al coger foco */
-    border: 2px solid transparent !important; 
-    border-radius: 8px; 
+    padding: 6px;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
 }
 
-.cc-license-img {
+.cc-license-stack {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Encaja la imagen 88x31 perfectamente sin deformarse */
+    position: relative;
     display: block;
 }
 
-/* 🟢 Foco y Hover exclusivo para el botón de la imagen */
+/* Base común para todas las capas */
+.cc-license-stack span {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    -webkit-mask-size: contain; mask-size: contain;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center; mask-position: center;
+    transition: all var(--animation-speed) ease;
+}
+
+.cc-license-stack span {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    -webkit-mask-size: contain; mask-size: contain;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center; mask-position: center;
+    transition: background-color var(--animation-speed) ease, transform var(--animation-speed) ease;
+}
+
+/* 1. Placa (Z-index 1) -> Gris/Primario */
+.cc-layer-plate {
+    -webkit-mask-image: var(--icon-cc-plate);
+    mask-image: var(--icon-cc-plate);
+    background-color: var(--color-border-placeholder);
+    z-index: 1;
+}
+
+/* 2. Círculos de fondo (Z-index 2) -> Fondo del Header */
+.cc-layer-bg-circles {
+    -webkit-mask-image: var(--icon-cc-bg-circles);
+    mask-image: var(--icon-cc-bg-circles);
+    background-color: var(--color-header-bg);
+    z-index: 2;
+}
+
+/* 3. Letras (Z-index 3) -> Fondo del Header */
+.cc-layer-bg-letters {
+    -webkit-mask-image: var(--icon-cc-bg-letters);
+    mask-image: var(--icon-cc-bg-letters);
+    background-color: var(--color-header-bg);
+    z-index: 4;
+}
+
+/* 4. Detalles Negros (Z-index 4) -> Texto del Header */
+.cc-layer-details {
+    -webkit-mask-image: var(--icon-cc-details);
+    mask-image: var(--icon-cc-details);
+    background-color: var(--color-header-text);
+    z-index: 3;
+}
+
+/* Interacción: Solo la placa cambia a azul */
+.menu-link.cc-license-btn:hover .cc-layer-plate,
+.menu-link.cc-license-btn:focus-visible .cc-layer-plate {
+    background-color: var(--color-primary);
+}
+
 .menu-link.cc-license-btn:hover,
-.menu-link.cc-license-btn:focus-visible,
-.menu-link.cc-license-btn:focus {
-    /* Quitamos el fondo grisáceo por defecto del resto de botones */
-    background-color: transparent; 
-    
-    /* Iluminamos con tu color primario */
-    border-color: var(--color-primary) !important; 
-    box-shadow: 0 0 8px var(--color-shadow-primary);
-    
-    /* Apagamos el drop-shadow heredado de .menu-link para que no emborrone la imagen */
-    filter: none; 
+.menu-link.cc-license-btn:focus-visible {
+    transform: scale(calc(1 + var(--zoom-focus-major)));
 }
 
 /* --- styles/style-menu.css --- */

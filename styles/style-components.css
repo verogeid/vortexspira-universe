@@ -16,7 +16,7 @@
     height: var(--card-height-calc, calc( (100% - (2 * var(--card-gap))) / 3 )); 
 }
 #card-nivel-actual.visible { display: flex; }
-#card-nivel-actual h3 {
+#card-nivel-actual h2 {
     margin: 0; 
     /* ⭐️ A11Y FIX */
     font-size: var(--card-nivel-actual-h3-font-size);
@@ -193,14 +193,7 @@
 /* ========================================================= */
 #a11y-modal-overlay:not(.active),
 #main-menu-dropdown:not(.active) {
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    
-    /* Obligatorio: Como ya no usamos display:none, le decimos que flote 
-       para que no ocupe espacio físico al final del body y rompa el layout */
-    position: fixed !important; 
-    top: 0; left: 0;
+    display: none !important;
 }
 
 /* --- styles/style-components.css --- */

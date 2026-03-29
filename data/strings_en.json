@@ -104,10 +104,13 @@
       "extraWide": "Extra Wide"
     },
     "aria": {
-      "font": "Typography: ",
-      "textSize": "Text size",
-      "lineSpacing": "Line spacing",
-      "letterSpacing": "Letter and word spacing"
+      "fontCurrent": "Current typography: ",
+      "fontChange": "Change typography to ",
+      "textSize": "Adjust text size",
+      "lineSpacing": "Adjust line spacing",
+      "letterSpacing": "Adjust letter and word spacing",
+      "themeCurrent": "Current color theme: ",
+      "themeChange": "Change color theme to "
     }
   },
   "toast": {

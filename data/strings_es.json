@@ -83,9 +83,9 @@
       "theme": "Tema de Color"
     },
     "options": {
-      "atkinson": "Atkinson (Sans) 108%",
-      "serif": "Serif Clásica 108%",
-      "dyslexic": "OpenDyslexic / Lexend 108%",
+      "atkinson": "Atkinson (Sans)%",
+      "serif": "Serif Clásica%",
+      "dyslexic": "OpenDyslexic / Lexend%",
       "reduceMotion": "Reducir animaciones",
       "noBlockOpacity": "Desactivar atenuación en descripción de cursos",
       "noMaskOpacity": "Desactivar atenuación en menúes",
@@ -104,10 +104,13 @@
       "extraWide": "Muy Amplio"
     },
     "aria": {
-      "font": "Tipografía: ",
-      "textSize": "Tamaño de texto",
-      "lineSpacing": "Espaciado de línea",
-      "letterSpacing": "Ajustar espaciado entre letras y palabras"
+      "fontCurrent": "Tipografía actual: ",
+      "fontChange": "Cambiar tipografía a ",
+      "textSize": "Ajustar tamaño de texto",
+      "lineSpacing": "Ajustar espaciado de línea",
+      "letterSpacing": "Ajustar espaciado entre letras y palabras",
+      "themeCurrent": "Tema de color actual: ",
+      "themeChange": "Cambiar tema de color a "
     }
   },
   "toast": {

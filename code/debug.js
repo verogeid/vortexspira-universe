@@ -74,8 +74,11 @@ export function logDebugLevels() {
     logGroupCollapsed('global', DEBUG_LEVELS.BASIC, 'Configured DEBUG levels:');
     for (const idKey in DEBUG_CONFIG) {
         const numericValue = DEBUG_CONFIG[idKey];
-        const stringLabel = Object.keys(DEBUG_LEVELS).find(key => DEBUG_LEVELS[key] === numericValue) || numericValue;
-        log('global', DEBUG_LEVELS.BASIC, `${idKey} : ${stringLabel}`);
+        const stringLabel = Object.keys(DEBUG_LEVELS).find(
+            key => DEBUG_LEVELS[key] === numericValue) || numericValue;
+
+        log('global', DEBUG_LEVELS.BASIC, 
+            `${idKey} : ${stringLabel}`);
     }
     logGroupEnd('global', DEBUG_LEVELS.BASIC);
 }

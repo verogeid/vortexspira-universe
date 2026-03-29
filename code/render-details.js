@@ -91,7 +91,9 @@ function _generateSlidesContinuous(trackElement, rawDescription, maxContentHeigh
         titleFake.style.display = 'block';
         phantomSlide.insertBefore(titleFake, phantomSlide.firstChild);
 
-        titleHeight = titleFake.offsetHeight + parseFloat(getComputedStyle(titleFake).marginBottom || 0);
+        titleHeight = titleFake.offsetHeight + 
+            parseFloat(getComputedStyle(titleFake).marginBottom || 0);
+
         titleFake.remove();
     }
 
@@ -201,7 +203,9 @@ function _fragmentTextForSingleSlide(trackElement, rawDescription, maxContentHei
         titleFake.style.display = 'block';
         phantomSlide.insertBefore(titleFake, phantomSlide.firstChild);
         
-        titleHeight = titleFake.offsetHeight + parseFloat(getComputedStyle(titleFake).marginBottom || 0);
+        titleHeight = titleFake.offsetHeight + 
+            parseFloat(getComputedStyle(titleFake).marginBottom || 0);
+
         titleFake.remove(); // Lo quitamos para no ensuciar el cálculo de los siguientes <p>
     }
 
@@ -320,7 +324,7 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
 
     // 🟢 OBTENER EL NOMBRE DEL PADRE (Lo calculamos una sola vez para Mobile y Desktop)
     const parent = this.stackGetCurrent();
-    let parentName = this.getString('nav.breadcrumbRoot') || 'VortexSpira';
+    let parentName = this.getString('nav.breadcrumbRoot');
 
     if (parent && parent.levelId) {
         const parentNodo = this._findNodoById(parent.levelId, this.STATE.fullData.navegacion);
@@ -344,11 +348,11 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
 
         if (cardNivelActual) {
             cardNivelActual.classList.add('visible');
-            cardNivelActual.innerHTML = `<h3>${parentName}</h3>`;
+            cardNivelActual.innerHTML = `<h2>${parentName}</h2>`;
         }
 
         if (cardVolverFijaElemento) {
-            const visibleText = this.getString('nav.backBtnText') || 'Volver'; // 🟢 i18n dinámico
+            const visibleText = this.getString('nav.backBtnText'); // 🟢 i18n dinámico
 
             // Al estar dentro de un curso, el botón de volver siempre debe estar habilitado
             cardVolverFijaElemento.classList.add('visible');
@@ -376,12 +380,12 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
     // Header Mobile
     if (isMobileLayout) {
         const ariaLabel = this.getString('nav.aria.backBtn');
-        const visibleText = this.getString('nav.backBtnText') || 'Volver'; // 🟢 i18n dinámico
+        const visibleText = this.getString('nav.backBtnText'); // 🟢 i18n dinámico
         
         slidesHtml += `
             <div class="swiper-slide">
                 <article class="card card-breadcrumb-vertical" tabindex="0" role="heading" aria-level="3" style="margin-bottom: 10px;">
-                    <h3>${parentName}</h3>
+                    <h2>${parentName}</h2>
                 </article>
                 <article class="card card-volver-vertical" 
                     role="button" 
@@ -399,7 +403,7 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
     }
 
     const descripcion = curso.descripcion || this.getString('details.noDescription');
-    const readOnlyMsg = this.getString('details.aria.readOnly') || 'Elemento de solo lectura. Usa las flechas para navegar.';
+    const readOnlyMsg = this.getString('details.aria.readOnly');
     let slidesData = [];
 
     // 🟢 Táctil (HTML Puro pero Enfocable) vs No-Táctil
@@ -511,8 +515,7 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
 
     if (!document.getElementById('a11y-modal-overlay')?.classList.contains('active')) {
         // 🟢 FIX: Acumular en lugar de anunciar
-        const mensajeContexto = `${this.getString('nav.coursePrefix') || 
-                                    'Curso: '} ${curso.titulo}`;
+        const mensajeContexto = `${this.getString('nav.coursePrefix')} ${curso.titulo}`;
 
         if (this.STATE.pendingA11yContext) {
             if (!this.STATE.pendingA11yContext.includes(mensajeContexto)) {

@@ -22,11 +22,16 @@ export function initKeyboardControls() {
 
         this.STATE._lastMousedownTarget = e.target; // Apuntamos exactamente qué píxel tocó el usuario
         
-        const container = e.target.closest('#vista-central, #info-adicional, footer, #app-header, #vista-volver');
+        const container = e.target.closest(
+            '#vista-central, #info-adicional, footer, #app-header, #vista-volver'
+        );
+
         if (container) {
             this.STATE._lastActiveZoneId = container.id || container.tagName.toLowerCase();
             
-            let isInteractive = e.target.closest('a, button, summary, [tabindex="0"], [role="button"]');
+            let isInteractive = e.target.closest(
+                'a, button, summary, [tabindex="0"], [role="button"]'
+            );
             
             // 🟢 FIX SWIPER: Si el "interactivo" detectado es en realidad el contenedor físico del carrusel 
             // (que Swiper ensucia con tabindex="0"), lo anulamos. Así garantizamos que se trate como Zona Muerta.
@@ -87,6 +92,7 @@ export function initKeyboardControls() {
     // 2. NOTARIO (El Juez Final del Focusin)
     document.addEventListener('focusin', (e) => {
         const traceInfo = this.STATE.currentTraceId || 'SIN_RASTRO';
+
         debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
             `[TRACE: ${traceInfo}] 🎯 Focusin disparado para:`, e.target.tagName, e.target.id);
 
@@ -102,7 +108,9 @@ export function initKeyboardControls() {
         if (container) {
             app.STATE._lastActiveZoneId = container.id || container.tagName.toLowerCase();
             
-            const isInteractive = target.closest('a, button, summary, [tabindex="0"], [role="button"]');
+            const isInteractive = target.closest(
+                'a, button, summary, [tabindex="0"], [role="button"]'
+            );
             
             // 🟢 CLIC EN ELEMENTO INTERACTIVO
             if (isInteractive && container.id !== 'vista-central') {
@@ -120,8 +128,12 @@ export function initKeyboardControls() {
                     if (isDetached) {
                         this.STATE._lastMousedownTarget = null;
                     } else {
-                        const clickedInteractive = this.STATE._lastMousedownTarget.closest?.('a, button, summary, [tabindex="0"], [role="button"]');
-                        const userClickedHere = (clickedInteractive === isInteractive) || isInteractive.contains(this.STATE._lastMousedownTarget);
+                        const clickedInteractive = this.STATE._lastMousedownTarget.closest?.(
+                            'a, button, summary, [tabindex="0"], [role="button"]'
+                        );
+
+                        const userClickedHere = (clickedInteractive === isInteractive) || 
+                            isInteractive.contains(this.STATE._lastMousedownTarget);
                         
                         if (!userClickedHere) {
                             debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
@@ -129,10 +141,15 @@ export function initKeyboardControls() {
                             
                             const rawMemory = container.dataset.lastFocusId;
                             // 🟢 FIX PURGA (Notario): Fallback a 0 si la memoria está vacía.
-                            const lastIndex = isNaN(parseInt(rawMemory, 10)) ? 0 : parseInt(rawMemory, 10);
+                            const lastIndex = isNaN(parseInt(rawMemory, 10)) ? 
+                                                0 : 
+                                                parseInt(rawMemory, 10);
                             
                             const isVisible = (el) => el && el.offsetParent !== null;
-                            const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"], [role="button"]')).filter(isVisible);
+                            const focusables = Array.from(
+                                container.querySelectorAll(
+                                    'a, button, summary, [tabindex="0"], [role="button"]'
+                                )).filter(isVisible);
                             
                             if (focusables[lastIndex] && focusables[lastIndex] !== isInteractive) {
                                 focusables[lastIndex].dataset.vortexFocus = "true";
@@ -219,7 +236,9 @@ export function initKeyboardControls() {
             // 🟢 FIX 1: Si estoy en un Slider y pulso flechas, STOP PROPAGATION.
             // Esto evita que el evento baje hasta el listener del Swiper.
             // NO hacemos preventDefault() para que el slider nativo se mueva.
-            if (document.activeElement.type === 'range' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+            if (document.activeElement.type === 'range' && 
+                (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+
                 e.stopPropagation(); 
                 return; // Salimos de la función inmediatamente
             }
@@ -229,7 +248,11 @@ export function initKeyboardControls() {
             const isArrow = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key);
 
             if (isTab || isArrow) {
-                const focusables = Array.from(modalOverlay.querySelectorAll('button, input, [href], [tabindex]:not([tabindex="-1"])'));
+                const focusables = Array.from(
+                    modalOverlay.querySelectorAll(
+                        'button, input, [href], [tabindex]:not([tabindex="-1"])'
+                    ));
+
                 if (focusables.length === 0) return;
 
                 const first = focusables[0];
@@ -238,7 +261,8 @@ export function initKeyboardControls() {
                 const currentIndex = focusables.indexOf(current);
 
                 // EXCEPCIÓN SLIDER: Si estamos en un range, Izq/Der ajustan valor, no foco.
-                if (current.type === 'range' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+                if (current.type === 'range' && 
+                    (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
                     // Dejamos pasar el evento al input nativo
                     return; 
                 }
@@ -386,10 +410,16 @@ export function _handleActionKeys(e) {
 
     if (isSpace || isEnter) {
         const tagName = el.tagName;
-        if (tagName === 'BUTTON' || tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT') return;
+        if (tagName === 'BUTTON' || 
+            tagName === 'INPUT' || 
+            tagName === 'TEXTAREA' || 
+            tagName === 'SELECT') return;
 
         const role = el.getAttribute('role');
-        const isInteractive = role === 'button' || role === 'link' || tagName === 'A' || el.classList.contains('card');
+        const isInteractive = role === 'button' || 
+                                role === 'link' || 
+                                tagName === 'A' || 
+                                el.classList.contains('card');
 
         if (isInteractive) {
             if (isSpace) e.preventDefault(); 
@@ -399,13 +429,18 @@ export function _handleActionKeys(e) {
 }
 
 function _handleLocalSectionNavigation(key, container) {
-    const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"]'))
-                            .filter(el => el.offsetParent !== null);
+    const focusables = Array.from(container.querySelectorAll(
+        'a, button, summary, [tabindex="0"]'
+    )).filter(el => el.offsetParent !== null);
+
     const index = focusables.indexOf(document.activeElement);
     let next;
 
-    if (key === 'ArrowDown' || key === 'ArrowRight') next = (index + 1) % focusables.length;
-    else if (key === 'ArrowUp' || key === 'ArrowLeft') next = (index - 1 + focusables.length) % focusables.length;
+    if (key === 'ArrowDown' || 
+        key === 'ArrowRight') next = (index + 1) % focusables.length;
+
+    else if (key === 'ArrowUp' || 
+            key === 'ArrowLeft') next = (index - 1 + focusables.length) % focusables.length;
     
     if (next !== undefined && focusables[next]) {
         const target = focusables[next];
@@ -555,15 +590,23 @@ export function _handleFocusTrap(e, viewType) {
 
     let sequence = (isDesktop || isTabletLS) ? 
         [arrCentral, arrInfo, arrFooter, arrHeader, arrVolver] : 
-        (!isMobile ? [arrCentral, arrFooter, arrHeader, arrVolver] : [arrCentral, arrFooter, arrHeader]);
+        (!isMobile ? 
+            [arrCentral, arrFooter, arrHeader, arrVolver] : 
+            [arrCentral, arrFooter, arrHeader]);
 
     const groups = sequence.filter(g => g.length > 0);
     
-    let currentContainer = document.activeElement.closest('#vista-central, #info-adicional, footer, #app-header, #vista-volver');
+    let currentContainer = document.activeElement.closest(
+        '#vista-central, #info-adicional, footer, #app-header, #vista-volver'
+    );
+    
     let wasRecovered = false;
 
     if (!currentContainer && app.STATE._lastActiveZoneId) {
-        currentContainer = document.getElementById(app.STATE._lastActiveZoneId) || document.querySelector(app.STATE._lastActiveZoneId);
+        currentContainer = document.getElementById(
+            app.STATE._lastActiveZoneId) || 
+            document.querySelector(app.STATE._lastActiveZoneId
+        );
         wasRecovered = true;
     }
     
@@ -575,12 +618,15 @@ export function _handleFocusTrap(e, viewType) {
         else if (currentContainer.id === 'app-header') groupIdx = groups.indexOf(arrHeader);
         else if (currentContainer.id === 'vista-volver') groupIdx = groups.indexOf(arrVolver);
         
-        app.STATE._lastActiveZoneId = currentContainer.id || currentContainer.tagName.toLowerCase();
+        app.STATE._lastActiveZoneId = currentContainer.id || 
+            currentContainer.tagName.toLowerCase();
     }
     
     if (groupIdx === -1) groupIdx = 0;
 
-    const isLostFocus = !document.activeElement || document.activeElement === document.body || document.activeElement === document.documentElement;
+    const isLostFocus = !document.activeElement || 
+        document.activeElement === document.body || 
+        document.activeElement === document.documentElement;
     
     // 🟢 RESCATE ABSOLUTO DE MEMORIA 
     if (isLostFocus && !e.shiftKey) {
@@ -605,15 +651,20 @@ export function _handleFocusTrap(e, viewType) {
     // 🟢 CHIVATO MAESTRO
     debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
         `🔍 TRAP REPORT:
-        - Active Element: <${document.activeElement.tagName}> ${document.activeElement.id || document.activeElement.className}
+        - Active Element: <${document.activeElement.tagName}> 
+            ${document.activeElement.id || document.activeElement.className}
         - Foco perdido (Body): ${isLostFocus}
-        - Zona rescatada de memoria: ${wasRecovered ? 'SÍ (' + app.STATE._lastActiveZoneId + ')' : 'NO'}
+        - Zona rescatada de memoria: ${wasRecovered ? 
+                                        'SÍ (' + app.STATE._lastActiveZoneId + ')' : 
+                                        'NO'}
         - Grupo Actual Index: ${groupIdx}
         - Próximo Grupo Index (Salto): ${nextGroup}
         - Shift Pulsado: ${e.shiftKey}
         - Elemento a enfocar: <${groups[nextGroup]?.[0]?.tagName}>`);
 
-    const target = e.shiftKey ? groups[nextGroup][groups[nextGroup].length - 1] : groups[nextGroup][0];
+    const target = e.shiftKey ? 
+                    groups[nextGroup][groups[nextGroup].length - 1] : 
+                    groups[nextGroup][0];
     if (target) {
         e.preventDefault()
         target.focus();

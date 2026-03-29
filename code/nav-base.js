@@ -85,10 +85,12 @@ function _setupGlobalClickRecovery() {
         // 3. RECUPERACIÓN GLOBAL (Fallback al Swiper)
         // Solo si NO hay modal abierto.
         const isNavActive = this.DOM.vistaNav && this.DOM.vistaNav.classList.contains('active');
+
         if (document.getElementById('a11y-modal-overlay')?.classList.contains('active')) return;
 
         if (isNavActive && 
-            (document.activeElement === document.body || !document.activeElement)) {
+            (document.activeElement === document.body || 
+                !document.activeElement)) {
             this._updateFocus(false);
         }
     });
@@ -262,7 +264,10 @@ export function _updateFocusImpl(shouldSlide = true) {
                 const headerHeight = header?.offsetHeight || 0;
                 const footerHeight = document.querySelector('footer')?.offsetHeight || 0;
                 
-                const viewHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                const viewHeight = window.visualViewport ? 
+                    window.visualViewport.height : 
+                    window.innerHeight;
+
                 const bottomLimit = viewHeight - footerHeight;
 
                 // 🟢 FIX 2: Medición Inteligente

@@ -67,6 +67,31 @@ body[data-theme="contrast"] {
     
     --color-shadow-disabled: transparent;
 
+    --color-header-text: #FFFFFF;
+    
+    /* Semántica (Puros para máxima visibilidad) */
+    --color-fire: #FF931E; /* Mantener naranja original, tiene ratio > 7:1 sobre negro */
+    --color-danger: #FF0000; /* Rojo puro */
+    --color-danger-bg: rgba(255, 0, 0, 0.2);
+    --color-success: #00FF00; /* Verde puro */
+    --color-success-bg: rgba(0, 255, 0, 0.2);
+    
+    --color-border-placeholder: #BDBDBD;
+    --color-details-action-item-hover: rgba(0, 255, 255, 0.2);
+    
+    /* Notificaciones (Fondo blanco, texto negro para máxima alerta) */
+    --color-toast-bg: #FFFFFF;
+    --color-toast-text: #000000;
+    
+    /* Sombras y Filtros (Anulamos sombras dinámicas para evitar ruido visual) */
+    --color-shadow-modal: rgba(255, 255, 255, 0.2); 
+    --shadow-color-hex: #FFFFFF;
+    --shadow-opacity: 0; /* Desactivar el filtro de sombra Ghost */
+
+    /* Accesibilidad Slider */
+    --color-a11y-slider-track: #FFFFFF;
+    --color-a11y-slider-labels: #FFFFFF;
+
     /* Forzamos el esquema nativo de componentes (scrollbars, etc.) */
     color-scheme: dark;
     background-color: var(--color-bg);

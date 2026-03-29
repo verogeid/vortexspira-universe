@@ -1,371 +1,131 @@
 /* --- styles/style-theme-forced-colors.css --- */
 
 /* =========================================================
-   1. MODO SISTEMA OPERATIVO (Automático)
-   ========================================================= */
+   1. EL CEREBRO (Variables)
+   Unificamos el disparador del sistema y el manual.
+   ========================================================= 
+*/
+
 @media (forced-colors: active) {
     :root {
-        /* 🟢 MAPEO SEMÁNTICO AL SISTEMA DE WINDOWS */
+        /* Colores Base del Sistema */
+        --color-bg: Canvas !important;
+        --color-text: CanvasText !important;
+        --color-card-bg: Canvas !important;
+        --color-card-border: CanvasText !important;
+        --color-header-bg: Canvas !important;
+        --color-header-text: CanvasText !important;
+        --color-footer-text: CanvasText !important;
+        --color-mask-gradient: Canvas !important;
+
+        /* Interacción y Primarios */
         --color-primary: Highlight !important;
         --color-primary-text: HighlightText !important;
+        --color-primary-bg: transparent !important;
         
-        --color-text: CanvasText !important;
-        --color-bg: Canvas !important;
-        --color-card-bg: Canvas !important;
-        --color-header-bg: Canvas !important;
-        --color-footer-text: CanvasText !important; 
+        /* Semántica (Mapeada a texto del sistema) */
+        --color-fire: CanvasText !important;
+        --color-danger: CanvasText !important;
+        --color-danger-bg: transparent !important;
+        --color-success: CanvasText !important;
+        --color-success-bg: transparent !important;
         
-        --color-card-border: LinkText !important;
-        
-        /* Semántica de atenuados (Gris) */
+        /* Atenuados */
         --color-card-border-disabled: GrayText !important;
-        --color-border-placeholder: GrayText !important;
         --color-text-muted: GrayText !important;
+        --color-border-placeholder: GrayText !important;
         
+        /* Componentes Específicos */
+        --color-toast-bg: Canvas !important;
+        --color-toast-text: CanvasText !important;
+        --color-details-action-item-hover: transparent !important;
         --color-icon-obras: CanvasText !important;
-        
-        /* Semántica de Botones Nativos */
-        --color-btn-face: ButtonFace !important;
-        --color-btn-text: ButtonText !important;
 
+        /* Logo (Reposo = CanvasText) */
+        --color-logo-static: GrayText !important;
+        --color-logo-dynamic: CanvasText !important; 
+
+        /* Efectos (Anulados) */
         --color-shadow-primary: transparent !important;
         --color-shadow-disabled: transparent !important;
+        --color-shadow-modal: transparent !important;
+        --shadow-color-hex: transparent !important;
+        --shadow-opacity: 0 !important;
 
+        /* Accesibilidad UI */
         --color-a11y-selected-text: HighlightText !important;
+        --color-a11y-slider-track: CanvasText !important;
+        --color-a11y-slider-labels: GrayText !important;
 
         background-color: Canvas !important;
         color: CanvasText !important;
         color-scheme: light dark;
     }
-
-    /* === 1. TARJETAS === */
-    .card, #card-volver-fija-elemento {
-        border: 2px solid var(--color-card-border) !important;
-    }
-
-    .card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
-    .card:not(.disabled):not([data-tipo="relleno"]):focus-visible,
-    .card:not(.disabled):not([data-tipo="relleno"]).focus-current,
-    #card-volver-fija-elemento:focus-visible,
-    #card-volver-fija-elemento.focus-visible,
-    #card-volver-fija-elemento.focus-current {
-        border: var(--border-width-focus) solid var(--color-primary) !important;
-        outline: none !important;
-    }
-
-    .card.disabled {
-        border: var(--border-width-no-focus) solid var(--color-card-border-disabled) !important;
-        opacity: 1 !important; 
-        color: var(--color-card-border-disabled) !important;
-    }
-    
-    .card.disabled:focus-visible, .card.disabled.focus-visible {
-        border: var(--border-width-focus) solid var(--color-card-border-disabled) !important; 
-    }
-
-    .card[data-tipo="relleno"], .card.card-breadcrumb-vertical {
-        border: var(--border-width-no-focus) dashed var(--color-border-placeholder) !important;
-        opacity: 0.6;
-    }
-
-    /* === 2. ICONOS === */
-    /* 🟢 SOLO MÁSCARAS SVG (Inyección de tinta) */
-    .icon-vacio-card, 
-    .icon-obras-card,
-    .icon-obras-header,
-    .action-icon {
-        forced-color-adjust: none;
-        background-color: var(--color-text) !important; 
-    }
-
-    .card.disabled .icon-vacio-card,
-    .detail-action-btn.disabled .action-icon {
-        background-color: var(--color-card-border-disabled) !important;
-    }
-
-    /* 🟢 ICONOS DE TEXTO/EMOJI (Transparencia obligatoria) */
-    .card-icon-lead {
-        background-color: transparent !important;
-        color: var(--color-text) !important;
-    }
-    
-    /* === 3. BOTÓN A11Y === */
-    #btn-config-accesibilidad {
-        forced-color-adjust: none;
-        border: none !important;
-        background-color: var(--color-text) !important;
-    }
-    #btn-config-accesibilidad:focus-visible {
-        background-color: var(--color-primary) !important;
-    }
-
-    /* === 4. ENLACES === */
-    #info-adicional summary, #info-adicional a {
-        color: var(--color-card-border) !important;
-        text-decoration: underline;
-    }
-
-    #info-adicional summary:focus, #info-adicional a:focus, #info-adicional a:focus-visible {
-        color: var(--color-primary) !important; 
-        background-color: transparent !important;
-        text-decoration: none;
-    }
-
-    footer a.footer-license-link {
-        outline: none !important; 
-        border: var(--border-width-no-focus) solid transparent !important; 
-    }
-
-    footer a.footer-license-link:focus-visible, footer a.footer-license-link:hover {
-        border: var(--border-width-no-focus) solid var(--color-primary) !important; 
-        background-color: transparent !important;
-    }
-
-    .footer-social-link {
-        forced-color-adjust: none;
-        background-color: var(--color-text) !important; 
-        outline: none !important; border: none !important;  
-    }
-    
-    .footer-social-link:focus-visible, 
-    .footer-social-link:hover {
-        background-color: var(--color-primary) !important; 
-        outline: none !important; border: none !important;
-    }
-
-    /* === 5. VISTA DETALLE === */
-    .detail-text-fragment { 
-        border-left: var(--border-width-focus) solid transparent !important; 
-    }
-    .detail-text-fragment:focus-visible, 
-    .detail-text-fragment.focus-current {
-        border-left: var(--border-width-focus) solid var(--color-card-border-disabled) !important; 
-        background-color: transparent !important; 
-        outline: none !important; 
-    }
-
-    .detail-action-item { 
-        border-left: var(--border-width-focus) solid transparent !important; 
-    }
-    .detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) {
-        border-left: var(--border-width-focus) solid var(--color-primary) !important;
-    }
-    .detail-action-item.focus-current:has(.detail-action-btn.disabled) {
-        border-left: var(--border-width-focus) solid var(--color-card-border-disabled) !important;
-    }
-
-    .detail-action-btn:not(.disabled) { 
-        border: var(--border-width-no-focus) solid var(--color-card-border) !important; 
-    }
-    .detail-action-btn:not(.disabled):focus-visible, 
-    .detail-action-item.focus-current .detail-action-btn:not(.disabled) {
-        border: var(--border-width-no-focus) solid var(--color-primary) !important;
-    }
-    .detail-action-btn:not(.disabled):focus-visible .action-icon, 
-    .detail-action-item.focus-current .detail-action-btn:not(.disabled) .action-icon {
-        background-color: var(--color-primary) !important;
-    }
-
-    .detail-action-btn.disabled { 
-        border: var(--border-width-no-focus) solid var(--color-card-border-disabled) !important; 
-    }
-    .detail-action-btn.disabled:focus-visible, 
-    .detail-action-item.focus-current .detail-action-btn.disabled {
-        border: var(--border-width-no-focus) solid var(--color-card-border-disabled) !important;
-    }
-    .detail-action-btn.disabled:focus-visible .action-icon, 
-    .detail-action-item.focus-current .detail-action-btn.disabled .action-icon {
-        background-color: var(--color-card-border-disabled) !important;
-    }
-
-    /* 🟢 BOTÓN RESET (Tratado como máscara SVG normal) */
-    #a11y-reset { 
-        forced-color-adjust: none;
-        background-color: var(--color-text) !important; /* Tinta del icono */
-        border-color: var(--color-text) !important; 
-    }
-    #a11y-reset:hover, 
-    #a11y-reset:focus-visible { 
-        background-color: var(--color-primary) !important; /* Tinta al foco */
-        border-color: var(--color-primary) !important; 
-    }
 }
 
-/* =========================================================
-   2. MODO MANUAL (Seleccionado en Modal A11y)
-   ========================================================= */
 body[data-theme="forced"] {
+    /* Mismo mapeo para el simulador manual */
+    --color-bg: Canvas !important;
+    --color-text: CanvasText !important;
+    --color-card-bg: Canvas !important;
+    --color-card-border: CanvasText !important;
+    --color-header-bg: Canvas !important;
+    --color-header-text: CanvasText !important;
+    --color-footer-text: CanvasText !important;
+    --color-mask-gradient: Canvas !important;
     --color-primary: Highlight !important;
     --color-primary-text: HighlightText !important;
-    
-    --color-text: CanvasText !important;
-    --color-bg: Canvas !important;
-    --color-card-bg: Canvas !important;
-    --color-header-bg: Canvas !important;
-    --color-footer-text: CanvasText !important; 
-    
-    --color-card-border: LinkText !important;
+    --color-primary-bg: transparent !important;
+    --color-fire: CanvasText !important;
+    --color-danger: CanvasText !important;
+    --color-danger-bg: transparent !important;
+    --color-success: CanvasText !important;
+    --color-success-bg: transparent !important;
     --color-card-border-disabled: GrayText !important;
-    --color-border-placeholder: GrayText !important;
     --color-text-muted: GrayText !important;
-    
+    --color-border-placeholder: GrayText !important;
+    --color-toast-bg: Canvas !important;
+    --color-toast-text: CanvasText !important;
+    --color-details-action-item-hover: transparent !important;
     --color-icon-obras: CanvasText !important;
-    
-    --color-btn-face: ButtonFace !important;
-    --color-btn-text: ButtonText !important;
+
+    --color-logo-static: GrayText !important;  /* Parte estática: siempre color gris de sistema */
+    --color-logo-dynamic: CanvasText !important; /* Parte dinámica: inicia como texto normal */
 
     --color-shadow-primary: transparent !important;
     --color-shadow-disabled: transparent !important;
-
+    --color-shadow-modal: transparent !important;
+    --shadow-color-hex: transparent !important;
+    --shadow-opacity: 0 !important;
     --color-a11y-selected-text: HighlightText !important;
+    --color-a11y-slider-track: CanvasText !important;
+    --color-a11y-slider-labels: GrayText !important;
 
     background-color: Canvas !important;
     color: CanvasText !important;
-    color-scheme: light dark;
 }
 
-/* Duplicado exacto de las reglas para el atributo data-theme */
-body[data-theme="forced"] .card, 
-body[data-theme="forced"] #card-volver-fija-elemento { 
-    border: var(--border-width-no-focus) solid var(--color-card-border) !important; 
-}
-body[data-theme="forced"] .card:not(.disabled):not([data-tipo="relleno"]).focus-visible, 
-body[data-theme="forced"] .card:not(.disabled):not([data-tipo="relleno"]):focus-visible, 
-body[data-theme="forced"] .card:not(.disabled):not([data-tipo="relleno"]).focus-current, 
-body[data-theme="forced"] #card-volver-fija-elemento:focus-visible, 
-body[data-theme="forced"] #card-volver-fija-elemento.focus-visible, 
-body[data-theme="forced"] #card-volver-fija-elemento.focus-current { 
-    border: var(--border-width-focus) solid var(--color-primary) !important; 
-    outline: none !important; 
-}
-body[data-theme="forced"] .card.disabled { 
-    border: var(--border-width-no-focus) solid var(--color-card-border-disabled) !important; 
-    opacity: 1 !important; 
-    color: var(--color-card-border-disabled) !important; 
-}
-body[data-theme="forced"] .card.disabled:focus-visible, 
-body[data-theme="forced"] .card.disabled.focus-visible { 
-    border: var(--border-width-focus) solid var(--color-card-border-disabled) !important; 
-}
-body[data-theme="forced"] .card[data-tipo="relleno"], 
-body[data-theme="forced"] .card.card-breadcrumb-vertical { 
-    border: var(--border-width-no-focus) dashed var(--color-border-placeholder) !important; 
-    opacity: 0.6; 
+
+@media (forced-colors: active) {
+    #a11y-reset:hover, 
+    #a11y-reset:focus-visible {
+        /* Forzamos el color primario (Highlight) */
+        background-color: var(--color-primary) !important;
+        
+        /* 🛡️ Crucial: Evita que el navegador 'corrija' nuestro color 
+        de vuelta a CanvasText en el momento del foco */
+        forced-color-adjust: none; 
+    }
 }
 
-body[data-theme="forced"] .icon-vacio-card, 
-body[data-theme="forced"] .icon-obras-card, 
-body[data-theme="forced"] .icon-obras-header, 
-body[data-theme="forced"] .action-icon { 
-    forced-color-adjust: none; 
-    background-color: var(--color-text) !important; 
-}
-body[data-theme="forced"] .card.disabled .icon-vacio-card, 
-body[data-theme="forced"] .detail-action-btn.disabled .action-icon { 
-    background-color: var(--color-card-border-disabled) !important; 
-}
-body[data-theme="forced"] .card-icon-lead { 
-    background-color: transparent !important; 
-    color: var(--color-text) !important; 
-}
-
-body[data-theme="forced"] #btn-config-accesibilidad { 
-    forced-color-adjust: none; 
-    border: none !important; 
-    background-color: var(--color-text) !important; 
-}
-body[data-theme="forced"] #btn-config-accesibilidad:focus-visible { 
-    background-color: var(--color-primary) !important;
-}
-
-body[data-theme="forced"] #info-adicional summary, 
-body[data-theme="forced"] #info-adicional a { 
-    color: var(--color-card-border) !important; 
-    text-decoration: underline; 
-}
-body[data-theme="forced"] #info-adicional summary:focus, 
-body[data-theme="forced"] #info-adicional a:focus, 
-body[data-theme="forced"] #info-adicional a:focus-visible { 
-    color: var(--color-primary) !important; 
-    background-color: transparent !important; 
-    text-decoration: none; 
-}
-body[data-theme="forced"] footer a.footer-license-link { 
-    outline: none !important; 
-    border: var(--border-width-no-focus) solid transparent !important; 
-}
-body[data-theme="forced"] footer a.footer-license-link:focus-visible, 
-body[data-theme="forced"] footer a.footer-license-link:hover { 
-    border: var(--border-width-no-focus) solid var(--color-primary) !important; 
-    background-color: transparent !important; 
-}
-
-body[data-theme="forced"] .footer-social-link { 
-    forced-color-adjust: none; 
-    background-color: var(--color-text) !important; 
-    outline: none !important; 
-    border: none !important; 
-}
-body[data-theme="forced"] .footer-social-link:focus-visible, 
-body[data-theme="forced"] .footer-social-link:hover { 
-    background-color: var(--color-primary) !important; 
-    outline: none !important; 
-    border: none !important; 
-}
-
-body[data-theme="forced"] .detail-text-fragment { 
-    border-left: var(--border-width-focus) solid transparent !important; 
-}
-body[data-theme="forced"] .detail-text-fragment:focus-visible, 
-body[data-theme="forced"] .detail-text-fragment.focus-current { 
-    border-left: var(--border-width-focus) solid var(--color-card-border-disabled) !important; 
-    background-color: transparent !important; 
-    outline: none !important; 
-}
-
-body[data-theme="forced"] .detail-action-item { 
-    border-left: var(--border-width-focus) solid transparent !important; 
-}
-body[data-theme="forced"] .detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) { 
-    border-left: var(--border-width-focus) solid var(--color-primary) !important; 
-}
-body[data-theme="forced"] .detail-action-item.focus-current:has(.detail-action-btn.disabled) { 
-    border-left: var(--border-width-focus) dashed var(--color-card-border-disabled) !important; 
-}
-
-body[data-theme="forced"] .detail-action-btn:not(.disabled) { 
-    border: var(--border-width-no-focus) solid var(--color-card-border) !important; 
-}
-body[data-theme="forced"] .detail-action-btn:not(.disabled):focus-visible, 
-body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn:not(.disabled) { 
-    border: var(--border-width-focus) solid var(--color-primary) !important; 
-}
-body[data-theme="forced"] .detail-action-btn:not(.disabled):focus-visible .action-icon, 
-body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn:not(.disabled) .action-icon { 
-    background-color: var(--color-primary) !important; 
-}
-
-body[data-theme="forced"] .detail-action-btn.disabled { 
-    border: var(--border-width-no-focus) dashed var(--color-card-border-disabled) !important; 
-}
-body[data-theme="forced"] .detail-action-btn.disabled:focus-visible, 
-body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn.disabled { 
-    border: var(--border-width-focus) dashed var(--color-card-border-disabled) !important; 
-}
-body[data-theme="forced"] .detail-action-btn.disabled:focus-visible .action-icon, 
-body[data-theme="forced"] .detail-action-item.focus-current .detail-action-btn.disabled .action-icon { 
-    background-color: var(--color-card-border-disabled) !important; 
-}
-
-body[data-theme="forced"] #a11y-reset { 
-    forced-color-adjust: none;
-    background-color: var(--color-text) !important; /* Tinta del icono */
-    border-color: var(--color-text) !important; 
-}
 body[data-theme="forced"] #a11y-reset:hover, 
-body[data-theme="forced"] #a11y-reset:focus-visible { 
-    background-color: var(--color-primary) !important; /* Tinta al foco */
-    border-color: var(--color-primary) !important; 
+body[data-theme="forced"] #a11y-reset:focus-visible {
+    /* Forzamos el color primario (Highlight) */
+    background-color: var(--color-primary) !important;
+    
+    /* 🛡️ Crucial: Evita que el navegador 'corrija' nuestro color 
+       de vuelta a CanvasText en el momento del foco */
+    forced-color-adjust: none; 
 }
 
 /* --- styles/style-theme-forced-colors.css --- */
