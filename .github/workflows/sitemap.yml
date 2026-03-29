@@ -1,0 +1,40 @@
+name: Update Sitemap
+
+# Se ejecuta SOLO cuando hay cambios en los JSON de los cursos
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'data/cursos_es.json'
+      - 'data/cursos_en.json'
+
+jobs:
+  generate-sitemap:
+    runs-on: ubuntu-latest
+    
+    # IMPORTANTE: Permisos para que el bot pueda hacer commit
+    permissions:
+      contents: write 
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Ejecutar script generador
+        run: node scripts/generate-sitemap.mjs
+
+      - name: Comprobar cambios y hacer commit
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add sitemap.xml
+          
+          # Solo hace el commit si sitemap.xml realmente ha cambiado
+          git diff-index --quiet HEAD || git commit -m "chore: regenerar sitemap.xml por actualización de cursos"
+          git push
