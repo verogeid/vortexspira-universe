@@ -4,7 +4,7 @@
     border: var(--border-width-no-focus) solid var(--color-card-border);
     background: var(--color-card-bg);
     padding: var(--card-padding); 
-    border-radius: 12px;
+    border-radius: var(--border-radius);
     transition: all 0.2s ease;
     cursor: pointer;
     display: flex; 

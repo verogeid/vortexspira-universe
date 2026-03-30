@@ -4,13 +4,10 @@
    Liberamos el body para que tenga scroll nativo y altura automática */
 body[data-layout="mobile"][data-safe-mode="true"] {
     --header-title-size: var(--sm-mobile-header-title-size);
-    /*--header-logo-size: var(--sm-mobile-header-logo-size);
-    --header-icon-size: var(--sm-mobile-header-icon-size);
-    --header-obras-size: var(--sm-mobile-header-obras-size);*/
+
     --header-lang-font-size: var(--sm-mobile-header-lang-font-size);
 
     --footer-font-size: var(--sm-footer-font-size);
-    /*--footer-social-link-size: var(--sm-footer-social-link-size);*/
 
     --card-title-font-size: var(--sm-card-title-font-size);
     --card-desc-font-size: var(--sm-card-desc-font-size);
@@ -110,6 +107,10 @@ body[data-layout="mobile"][data-safe-mode="true"] .a11y-option-btn {
     line-height: 1.1 !important;
     height: auto !important; /* Permitir que el botón crezca verticalmente */
     min-width: 0 !important;
+}
+
+body[data-layout="mobile"][data-safe-mode="true"] footer { 
+    display: none;
 }
 
 /* --- styles/style-safe-mode.css --- */

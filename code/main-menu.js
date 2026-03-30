@@ -236,6 +236,16 @@ function _setupListeners(appInstance, enableI18n) {
         }
     });
 
+    // 🟢 CERRAR AL PERDER EL FOCO (Focus Out)
+    // navDropdown es una variable persistente en el scope del módulo.
+    navDropdown.addEventListener('focusout', (e) => {
+        // e.relatedTarget es el elemento que acaba de recibir el foco.
+        // Si el nuevo foco NO está dentro del menú, cerramos.
+        if (e.relatedTarget && !navDropdown.contains(e.relatedTarget)) {
+            toggleMenu(true); 
+        }
+    });
+    
     // 4. Conectar acciones
     navDropdown.querySelector('#menu-btn-a11y').onclick = (e) => {
         e.preventDefault();

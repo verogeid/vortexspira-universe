@@ -3,20 +3,26 @@
 .menu-dropdown {
     position: fixed;
     top: calc(var(--header-height) + 2px);
-    right: 12px; 
+    right: var(--scrollbar-gap);
     background-color: var(--color-header-bg); 
-    border: 2px solid var(--color-separator);
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5); 
+    border: var(--border-width-no-focus) solid var(--color-border-placeholder);
+    border-radius: var(--border-radius);
+    box-shadow: 0 var(--border-radius) calc(var(--border-radius) * 4) var(--color-shadow-modal); 
     width: max-content;
     min-width: min(240px, calc(var(--ui-icon-size) + var(--menu-gap) * 2)); 
     max-width: min(calc(100dvw - 24px), 
-                    calc((var(--ui-icon-size) * 3) + (var(--menu-gap) * 2) + 24px));
-    max-height: calc(100vh - var(--header-height) - 20px);
+                    calc((var(--ui-icon-size) * 3) + (var(--menu-gap) * 4) + 24px));
+
+    max-height: calc(100dvh 
+                    - var(--header-height-real, --header-height) 
+                    - var(--footer-height-real, 0px) 
+                    - var(--menu-gap) * 2);
+
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) var(--color-card-bg);
+
     z-index: 9999;
     opacity: 0;
     visibility: hidden;
@@ -46,12 +52,20 @@
     justify-content: flex-start;
     align-items: center;
     gap: var(--menu-gap);
+
+    min-height: calc(var(--ui-icon-size) + var(--menu-gap));
+    width: 100%;
+}
+
+/* 🟢 FIX: Centrado horizontal de la fila de licencia */
+.menu-grid-row:has(.cc-license-btn) {
+    justify-content: center !important;
 }
 
 .menu-separator hr {
     border: none;
-    border-top: 1px solid var(--color-separator);
-    margin: 12px 0;
+    border-top: var(--border-width-no-focus) solid var(--color-border-placeholder);
+    margin: var(--menu-gap) 0;
 }
 
 .menu-link {
@@ -61,12 +75,16 @@
     width: var(--ui-icon-size);
     height: var(--ui-icon-size);
     margin: 0;
-    padding: 8px; /* Espacio de seguridad para iconos normales */
+
+    padding: calc(var(--menu-gap) * 2); /* Espacio de seguridad para iconos normales */
+
     background: transparent;
-    border: 2px solid transparent; 
-    border-radius: 12px; 
+    border: var(--border-width-focus) solid transparent; 
+    border-radius: var(--border-radius); 
+
     outline: none !important; 
     color: var(--color-header-text); 
+
     cursor: pointer;
     box-sizing: border-box;
     flex-shrink: 0;
@@ -102,15 +120,25 @@
 }
 
 /* Asignación de máscaras */
-.menu-icon.icon-a11y { -webkit-mask-image: var(--icon-a11y); mask-image: var(--icon-a11y); }
-.menu-icon.link-linkedin { -webkit-mask-image: var(--icon-social-linkedin); mask-image: var(--icon-social-linkedin); }
-.menu-icon.link-github { -webkit-mask-image: var(--icon-link-diary); mask-image: var(--icon-link-diary); }
+.menu-icon.icon-a11y { 
+    -webkit-mask-image: var(--icon-a11y); mask-image: var(--icon-a11y); 
+}
+.menu-icon.link-linkedin { 
+    -webkit-mask-image: var(--icon-social-linkedin); mask-image: var(--icon-social-linkedin); 
+}
+.menu-icon.link-github { 
+    -webkit-mask-image: var(--icon-link-diary); mask-image: var(--icon-link-diary); 
+}
 .menu-icon.link-landing { 
     -webkit-mask-image: var(--icon-offer); mask-image: var(--icon-offer); 
     background-color: var(--color-fire);
 }
-.menu-icon.icon-info { -webkit-mask-image: var(--icon-info); mask-image: var(--icon-info); }
-.menu-icon.icon-bug { -webkit-mask-image: var(--icon-bug); mask-image: var(--icon-bug); }
+.menu-icon.icon-info { 
+    -webkit-mask-image: var(--icon-info); mask-image: var(--icon-info); 
+}
+.menu-icon.icon-bug { 
+    -webkit-mask-image: var(--icon-bug); mask-image: var(--icon-bug); 
+}
 
 /* 🟢 BOTÓN DE IDIOMA (Ajuste de Proporciones AAA) */
 .lang-btn-container { position: relative; }
@@ -167,12 +195,23 @@
 }
 
 .cc-license-btn {
-    width: calc(var(--ui-icon-size) * 2 + var(--menu-gap)) !important;
-    height: var(--ui-icon-size);
-    padding: 6px;
-    border-radius: 8px;
+    width: calc(var(--ui-icon-size) * 2 + var(--menu-gap) * 2) !important;
+    height: calc(var(--ui-icon-size) + var(--menu-gap)) !important;
+    
+    border-radius: var(--border-radius);
+    background: transparent;
+    border: var(--border-width-focus) solid transparent !important;
+    transition: all var(--animation-speed) ease;
     position: relative;
     overflow: hidden;
+}
+
+/* 🟢 INTERACCIÓN CC: Estilo rectangular con borde y fondo */
+.menu-link.cc-license-btn:hover,
+.menu-link.cc-license-btn:focus-visible {
+    background-color: var(--color-primary-bg) !important;
+    border-color: var(--color-primary) !important;
+    outline: none !important;
 }
 
 .cc-license-stack {
@@ -180,6 +219,14 @@
     height: 100%;
     position: relative;
     display: block;
+
+    transition: transform var(--animation-speed) ease;
+}
+
+/* 🟢 ESCALADO INTERNO */
+.menu-link.cc-license-btn:hover .cc-license-stack,
+.menu-link.cc-license-btn:focus-visible .cc-license-stack {
+    transform: scale(calc(1 + var(--zoom-focus-major)));
 }
 
 /* Base común para todas las capas */
@@ -190,17 +237,9 @@
     -webkit-mask-size: contain; mask-size: contain;
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
-    transition: all var(--animation-speed) ease;
-}
 
-.cc-license-stack span {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    -webkit-mask-size: contain; mask-size: contain;
-    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-    -webkit-mask-position: center; mask-position: center;
-    transition: background-color var(--animation-speed) ease, transform var(--animation-speed) ease;
+    /* 🟢 La placa debe reaccionar al color suavemente */
+    transition: background-color var(--animation-speed) ease;
 }
 
 /* 1. Placa (Z-index 1) -> Gris/Primario */
@@ -219,15 +258,7 @@
     z-index: 2;
 }
 
-/* 3. Letras (Z-index 3) -> Fondo del Header */
-.cc-layer-bg-letters {
-    -webkit-mask-image: var(--icon-cc-bg-letters);
-    mask-image: var(--icon-cc-bg-letters);
-    background-color: var(--color-header-bg);
-    z-index: 4;
-}
-
-/* 4. Detalles Negros (Z-index 4) -> Texto del Header */
+/* 3. Detalles Negros (Z-index 3) -> Fondo del Header */
 .cc-layer-details {
     -webkit-mask-image: var(--icon-cc-details);
     mask-image: var(--icon-cc-details);
@@ -235,15 +266,18 @@
     z-index: 3;
 }
 
-/* Interacción: Solo la placa cambia a azul */
+/* 4. Letras (Z-index 4) -> Detalles Negros */
+.cc-layer-bg-letters {
+    -webkit-mask-image: var(--icon-cc-bg-letters);
+    mask-image: var(--icon-cc-bg-letters);
+    background-color: var(--color-header-bg);
+    z-index: 4;
+}
+
+/* La placa cambia a azul solo en hover/foco */
 .menu-link.cc-license-btn:hover .cc-layer-plate,
 .menu-link.cc-license-btn:focus-visible .cc-layer-plate {
     background-color: var(--color-primary);
-}
-
-.menu-link.cc-license-btn:hover,
-.menu-link.cc-license-btn:focus-visible {
-    transform: scale(calc(1 + var(--zoom-focus-major)));
 }
 
 /* --- styles/style-menu.css --- */

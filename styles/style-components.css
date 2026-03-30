@@ -6,7 +6,7 @@
     padding: 1rem;
 
     border: var(--border-width-no-focus) dashed var(--color-border-placeholder);
-    background: transparent; border-radius: 12px;
+    background: transparent; border-radius: var(--border-radius);
 
     display: none; 
     flex-direction: column; justify-content: center;
@@ -48,7 +48,8 @@
     transition: all var(--animation-speed) ease; 
 
     color: var(--color-text); background: var(--color-card-bg);
-    border: var(--border-width-no-focus) solid var(--color-card-border); border-radius: 12px;
+    border: var(--border-width-no-focus) solid var(--color-card-border); 
+    border-radius: var(--border-radius);
     
     cursor: pointer;
     height: var(--card-height-calc, calc( (100% - (2 * var(--card-gap))) / 3 )); min-height: 0;
@@ -176,7 +177,8 @@
 
     padding: 1rem 2rem; 
     
-    border-radius: 12px; border: var(--border-width-no-focus) solid var(--color-card-border);
+    border-radius: var(--border-radius); 
+    border: var(--border-width-no-focus) solid var(--color-card-border);
     box-shadow: 0 5px 25px var(--color-shadow-modal);
     z-index: 9999; text-align: center; max-width: 80%;
 

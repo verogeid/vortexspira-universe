@@ -6,8 +6,10 @@
     --animation-speed: 0.3s !important;
     --opacity: 0.3;
 
+    --border-radius: 12px !important;
     --border-width-focus: 4px !important;
     --border-width-no-focus: 2px !important;
+    --scrollbar-gap: 8px !important;
     --zoom-focus-major: 0.2;
     --zoom-focus-minnor: 0.02;
 

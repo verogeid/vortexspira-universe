@@ -1107,7 +1107,9 @@ class VortexSpiraApp {
             debug.log('app', debug.DEBUG_LEVELS.DEEP, 
                         `A11y Sync: Header mide ${realHeight}px`);
         }
+
         const footer = document.querySelector('footer');
+
         if (footer) {
             const realFooterHeight = footer.offsetHeight;
             document.documentElement.style.setProperty('--footer-height-real', `${realFooterHeight}px`);
@@ -1119,7 +1121,7 @@ class VortexSpiraApp {
         const handleResize = () => {
             // 🟢 ESCUDO: Ignorar resizes causados por aplicar 'inert'
             if (this.STATE.isUIBlocked) return;
-
+            
             this._updateLayoutMode();
             this._syncHeaderDimensions();
             this._cacheDOM(); 

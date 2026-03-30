@@ -40,8 +40,4 @@ footer small {
     margin: 0 4px;
 }
 
-    body[data-layout="mobile"][data-safe-mode="true"] footer { 
-        display: none;
-    }
-
 /* --- styles/style-footer.css --- */
