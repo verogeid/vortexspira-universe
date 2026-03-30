@@ -91,8 +91,8 @@ function _generateSlidesContinuous(trackElement, rawDescription, maxContentHeigh
         titleFake.style.display = 'block';
         phantomSlide.insertBefore(titleFake, phantomSlide.firstChild);
 
-        titleHeight = titleFake.offsetHeight + 
-            parseFloat(getComputedStyle(titleFake).marginBottom || 0);
+        titleHeight = titleFake.offsetHeight + parseFloat(
+            getComputedStyle(titleFake).marginBottom || 0);
 
         titleFake.remove();
     }
@@ -203,9 +203,8 @@ function _fragmentTextForSingleSlide(trackElement, rawDescription, maxContentHei
         titleFake.style.display = 'block';
         phantomSlide.insertBefore(titleFake, phantomSlide.firstChild);
         
-        titleHeight = titleFake.offsetHeight + 
-            parseFloat(getComputedStyle(titleFake).marginBottom || 0);
-
+        titleHeight = titleFake.offsetHeight + parseFloat(
+            getComputedStyle(titleFake).marginBottom || 0);
         titleFake.remove(); // Lo quitamos para no ensuciar el cálculo de los siguientes <p>
     }
 
@@ -348,11 +347,11 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
 
         if (cardNivelActual) {
             cardNivelActual.classList.add('visible');
-            cardNivelActual.innerHTML = `<h2>${parentName}</h2>`;
+            cardNivelActual.innerHTML = `<h3>${parentName}</h3>`;
         }
 
         if (cardVolverFijaElemento) {
-            const visibleText = this.getString('nav.backBtnText'); // 🟢 i18n dinámico
+            const visibleText = this.getString('nav.backBtnText');
 
             // Al estar dentro de un curso, el botón de volver siempre debe estar habilitado
             cardVolverFijaElemento.classList.add('visible');
@@ -380,12 +379,12 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
     // Header Mobile
     if (isMobileLayout) {
         const ariaLabel = this.getString('nav.aria.backBtn');
-        const visibleText = this.getString('nav.backBtnText'); // 🟢 i18n dinámico
+        const visibleText = this.getString('nav.backBtnText');
         
         slidesHtml += `
             <div class="swiper-slide">
                 <article class="card card-breadcrumb-vertical" tabindex="0" role="heading" aria-level="3" style="margin-bottom: 10px;">
-                    <h2>${parentName}</h2>
+                    <h3>${parentName}</h3>
                 </article>
                 <article class="card card-volver-vertical" 
                     role="button" 
@@ -480,7 +479,7 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
             const iconClass = (enlace.type === 'c') ? 'icon-buy' : 
                                 (enlace.type === 'd' ? 'icon-download' : 
                                 (enlace.type === 'l' ? 'link-linkedin' : 
-                                (enlace.type === 'f' ? 'link-landing' : 
+                                (enlace.type === 'f' ? 'link-fire' : 
                                 'icon-link')));
 
             const isDisabled = !enlace.url || enlace.url === '#';
@@ -627,6 +626,7 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
         // 3. FIN DE INERCIA: El regulador maestro (El que baja las banderas)
         appInstance.STATE.detailCarouselInstance.on('transitionEnd', (swiper) => {
             const traceId = appInstance.STATE.currentTraceId || 'UNKNOWN';
+
             debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
                 `[TRACE ${traceId}] 🛑 TransitionEnd físico del carrusel alcanzado.`);
 

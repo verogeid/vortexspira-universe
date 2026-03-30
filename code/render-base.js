@@ -198,9 +198,7 @@ export function renderNavegacion() {
             } else {
                 // No está en el track -> ¿Era volver-nav?
                 if (targetId === 'volver-nav') {
-                    const volverFijoRef = this.DOM.cardVolverFijaElemento || 
-                        document.getElementById('card-volver-fija-elemento');
-
+                    const volverFijoRef = this.DOM.cardVolverFijaElemento || document.getElementById('card-volver-fija-elemento');
                     if (volverFijoRef) {
                         debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
                                     `[RENDER-FLOW] 03C. 'volver-nav' remapped to fixed button.`);
@@ -301,9 +299,7 @@ export function renderNavegacion() {
                 this.STATE.isHydrating = false;
 
                 // Limpieza preventiva
-                const volverFijoRef = this.DOM.cardVolverFijaElemento || 
-                    document.getElementById('card-volver-fija-elemento');
-
+                const volverFijoRef = this.DOM.cardVolverFijaElemento || document.getElementById('card-volver-fija-elemento');
                 if (volverFijoRef) volverFijoRef.classList.remove('focus-visible');
 
                 // 🔍 TRAZA FINAL
@@ -459,7 +455,9 @@ export function _setupResizeObserver() {
                         activeElement = this.STATE._lastFocusedElement;
                     } else {
                         if (this.DOM.track) {
-                            activeElement = this.DOM.track.querySelector(`.card[data-pos="${this.STATE.currentFocusIndex}"]`);
+                            activeElement = this.DOM.track.querySelector(
+                                `.card[data-pos="${this.STATE.currentFocusIndex}"]`
+                            );
                         }
                     }
                 }
@@ -494,7 +492,7 @@ export function _generarTarjetaHTMLImpl(nodo,
                     data-tipo="relleno" 
                     tabindex="-1" 
                     aria-hidden="true">
-                <h2>${nodo.texto}</h2>
+                <h3>${nodo.texto}</h3>
             </article>`;}
 
     if (tipoEspecial === 'volver-vertical') {
@@ -510,10 +508,10 @@ export function _generarTarjetaHTMLImpl(nodo,
                     title="${ariaLabel}"
                     tabindex="0" 
                     onclick="App._handleVolverClick()">
-                <div aria-hidden="true" class="card-volver-content">
+                <h3 aria-hidden="true" class="card-volver-content">
                     <span class="card-volver-icon"></span>
                     <span class="card-volver-text">${visibleText}</span>
-                </div>
+                </h3>
             </article>`;
     }
 
@@ -528,10 +526,10 @@ export function _generarTarjetaHTMLImpl(nodo,
                     tabindex="0" 
                     aria-label="${nodo.nombre}"
                     title="${nodo.nombre}">
-                <div class="card-inner-wrapper" aria-hidden="true">
-                    <strong><span class="card-icon-lead icon-empty-folder-card" aria-hidden="true"></span>
-                    <span id="card-title-${nodo.id}" class="card-text-content" aria-hidden="true">${nodo.nombre}</span></strong>
-                </div>
+                <h3>
+                    <span class="card-icon-lead icon-empty-folder-card" aria-hidden="true"></span>
+                    <span id="card-title-${nodo.id}" class="card-text-content" aria-hidden="true">${nodo.nombre}</span>
+                </h3>
             </article>`;
     }
 
@@ -582,10 +580,10 @@ export function _generarTarjetaHTMLImpl(nodo,
                 ${ariaDisabled} 
                 aria-label="${ariaLabelText}"
                 title="${ariaLabelText}">
-            <div class="card-inner-wrapper" aria-hidden="true">
-                <strong>${iconHTML}
-                <span id="${titleId}" class="card-text-content" aria-hidden="true">${displayTitle}</span></strong>
-            </div>
+            <h3>
+                ${iconHTML}
+                <span id="${titleId}" class="card-text-content" aria-hidden="true">${displayTitle}</span>
+            </h3>
         </article>`;
 };
 
@@ -609,17 +607,17 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
     this.DOM.cardNivelActual.classList.add('visible');
 
     // Rellenamos el contenido incondicionalmente
-    this.DOM.cardNivelActual.innerHTML = `<h2>${tituloNivel}</h2>`;
+    this.DOM.cardNivelActual.innerHTML = `<h3>${tituloNivel}</h3>`;
 
     if (isSubLevel) {
         const visibleText = this.getString('nav.backBtnText'); // 🟢 i18n dinámico
 
         this.DOM.cardVolverFijaElemento.classList.add('visible'); 
         this.DOM.cardVolverFijaElemento.innerHTML = `
-            <div aria-hidden="true" class="card-volver-content">
+            <h3 aria-hidden="true" class="card-volver-content">
                 <span class="card-volver-icon"></span>
                 <span class="card-volver-text">${visibleText}</span>
-            </div>`; 
+            </h3>`; 
         this.DOM.cardVolverFijaElemento.setAttribute('aria-label', this.getString('nav.aria.backBtn'));
         this.DOM.cardVolverFijaElemento.setAttribute('title', this.getString('nav.aria.backBtn'));
         this.DOM.cardVolverFijaElemento.tabIndex = 0;

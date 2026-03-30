@@ -160,6 +160,7 @@ export function _updateFocusImpl(shouldSlide = true) {
 
         // 🟢 FIX 2: Silenciar errores (y foco) durante el arranque (isBooting) o hidratación
         if (this.STATE.isHydrating || isResizing || this.STATE.isBooting) {
+            
             debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 
                 'Track vacío o inestable ignorado durante transición (Boot/Resize).');
 
