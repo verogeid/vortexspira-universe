@@ -32,12 +32,14 @@ export const DEBUG_CONFIG = {
     a11y: DEBUG_LEVELS.EXTREME,
     nav_stack: DEBUG_LEVELS.DISABLED,
 
+    main_menu: DEBUG_LEVELS.BASIC,
+
     // Módulos de Detalle
     nav_base: DEBUG_LEVELS.DISABLED,
     nav_base_details: DEBUG_LEVELS.DISABLED,
     
     // Módulos de Teclado
-    nav_keyboard_base: DEBUG_LEVELS.DISABLED,
+    nav_keyboard_base: DEBUG_LEVELS.BASIC,
     nav_keyboard_details: DEBUG_LEVELS.DISABLED,
     nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
 

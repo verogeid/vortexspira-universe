@@ -15,9 +15,8 @@ footer {
     align-items: center; 
     flex-wrap: nowrap; 
     
-    /* 🟢 FIX: Bloqueo estricto idéntico al header */
-    height: var(--footer-height) !important;
-    min-height: var(--footer-height);
+    min-height: var(--footer-min-height) !important;
+    max-height: var(--footer-max-height) !important;
     overflow: hidden; /* Evita que el contenido engorde la caja */
 
     box-sizing: border-box; 

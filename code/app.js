@@ -97,6 +97,8 @@ class VortexSpiraApp {
         this.setupTouchListeners = nav_mouse_swipe.setupTouchListeners;
         this._handleActionRowClick = nav_base_details._handleActionRowClick; 
         
+        this._handleDetailNavigation = nav_keyboard_details._handleDetailNavigation;
+        
         this.clearConsole = debug.logClear;
     }
 

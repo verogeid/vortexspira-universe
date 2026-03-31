@@ -104,8 +104,16 @@ export function initKeyboardControls() {
             ghosts.forEach(c => c.classList.remove('focus-visible'));
         }
 
-        const container = target.closest('#vista-central, #info-adicional, footer, #app-header, #vista-volver');
+        const container = target.closest(
+            '#vista-central, #info-adicional, #app-header, #vista-volver'
+        );
+
         if (container) {
+            // 🟢 LIMPIEZA CRUZADA: Si el foco entra en Header/Footer/Info, limpiamos detalles
+            if (app.DOM.detalleTrack && !app.DOM.detalleTrack.contains(target)) {
+                nav_base_details._clearDetailVisualStates(app);
+            }
+            
             app.STATE._lastActiveZoneId = container.id || container.tagName.toLowerCase();
             
             const isInteractive = target.closest(
@@ -129,8 +137,7 @@ export function initKeyboardControls() {
                         this.STATE._lastMousedownTarget = null;
                     } else {
                         const clickedInteractive = this.STATE._lastMousedownTarget.closest?.(
-                            'a, button, summary, [tabindex="0"], [role="button"]'
-                        );
+                            'a, button, summary, [tabindex="0"], [role="button"]');
 
                         const userClickedHere = (clickedInteractive === isInteractive) || 
                             isInteractive.contains(this.STATE._lastMousedownTarget);
@@ -544,12 +551,17 @@ export function _handleFocusTrap(e, viewType) {
         const container = document.querySelector(containerSelector);
         if (!container) return [];
         
-        const focusables = Array.from(container.querySelectorAll('a, button, summary, [tabindex="0"]')).filter(isVisible);
+        const focusables = Array.from(container.querySelectorAll(
+            'a, button, summary, [tabindex="0"]'
+        )).filter(isVisible);
         if (focusables.length === 0) return [];
 
         const lastIndex = parseInt(container.dataset.lastFocusId, 10);
+        
         if (!isNaN(lastIndex) && focusables[lastIndex]) {
-            debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, `🧠 Memoria recuperada para ${containerSelector}: index [${lastIndex}]`);
+            debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 
+                `🧠 Memoria recuperada para ${containerSelector}: index [${lastIndex}]`);
+
             return [focusables[lastIndex]];
         }
         
@@ -559,14 +571,20 @@ export function _handleFocusTrap(e, viewType) {
     const sections = {
         central: () => {
             if (viewType === 'nav') {
-                const cards = Array.from(app.DOM.track.querySelectorAll('[data-id]:not([data-tipo="relleno"])'));
+                const cards = Array.from(app.DOM.track.querySelectorAll(
+                    '[data-id]:not([data-tipo="relleno"])'
+                ));
                 const current = cards[app.STATE.currentFocusIndex];
+
                 if (isVisible(current)) return [current];
+
                 const fallback = cards.find(isVisible);
                 return fallback ? [fallback] : [];
             }
             
-            const detailElements = nav_base_details._getFocusableDetailElements(app).filter(el => !el.classList.contains('card-volver-vertical') && isVisible(el));
+            const detailElements = nav_base_details._getFocusableDetailElements(app).filter(
+                el => isVisible(el)
+            );
             
             if (app.STATE._lastDetailFocusIndex !== undefined && detailElements[app.STATE._lastDetailFocusIndex]) {
                 return [detailElements[app.STATE._lastDetailFocusIndex]];
@@ -574,30 +592,25 @@ export function _handleFocusTrap(e, viewType) {
             return detailElements; 
         },
         info: () => getGroupWithMemory('#info-adicional'),
-        footer: () => getGroupWithMemory('footer'),
         header: () => getGroupWithMemory('#app-header'),
-        volver: () => {
-            if (isMobile && viewType === 'detail') return [app.DOM.detalleTrack.querySelector('.card-volver-vertical')].filter(isVisible);
-            return [app.DOM.cardVolverFijaElemento].filter(isVisible);
-        }
+        volver: () => [app.DOM.cardVolverFijaElemento].filter(isVisible)
     };
 
     const arrCentral = sections.central();
     const arrInfo = sections.info();
-    const arrFooter = sections.footer();
     const arrHeader = sections.header();
     const arrVolver = sections.volver();
 
     let sequence = (isDesktop || isTabletLS) ? 
-        [arrCentral, arrInfo, arrFooter, arrHeader, arrVolver] : 
+        [arrCentral, arrInfo, arrHeader, arrVolver] : 
         (!isMobile ? 
-            [arrCentral, arrFooter, arrHeader, arrVolver] : 
-            [arrCentral, arrFooter, arrHeader]);
+            [arrCentral, arrHeader, arrVolver] : 
+            [arrCentral, arrHeader]);
 
     const groups = sequence.filter(g => g.length > 0);
     
     let currentContainer = document.activeElement.closest(
-        '#vista-central, #info-adicional, footer, #app-header, #vista-volver'
+        '#vista-central, #info-adicional, #app-header, #vista-volver'
     );
     
     let wasRecovered = false;
@@ -614,33 +627,47 @@ export function _handleFocusTrap(e, viewType) {
     if (currentContainer) {
         if (currentContainer.id === 'vista-central') groupIdx = groups.indexOf(arrCentral);
         else if (currentContainer.id === 'info-adicional') groupIdx = groups.indexOf(arrInfo);
-        else if (currentContainer.tagName === 'FOOTER') groupIdx = groups.indexOf(arrFooter);
         else if (currentContainer.id === 'app-header') groupIdx = groups.indexOf(arrHeader);
         else if (currentContainer.id === 'vista-volver') groupIdx = groups.indexOf(arrVolver);
         
         app.STATE._lastActiveZoneId = currentContainer.id || 
-            currentContainer.tagName.toLowerCase();
+                                      currentContainer.tagName.toLowerCase();
     }
-    
+
     if (groupIdx === -1) groupIdx = 0;
 
     const isLostFocus = !document.activeElement || 
-        document.activeElement === document.body || 
-        document.activeElement === document.documentElement;
+                        document.activeElement === document.body || 
+                        document.activeElement === document.documentElement;
     
+    debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 
+        `🔍 Focus Trap Activated:
+        - Active Element: <${document.activeElement.tagName}>
+                           ${document.activeElement.id || 
+                           document.activeElement.className}
+        - Foco perdido (Body): ${isLostFocus}
+        - Zona rescatada de memoria: ${wasRecovered ? 
+                                        'SÍ (' + app.STATE._lastActiveZoneId + ')' : 
+                                        'NO'}
+        - Grupo Actual Index: ${groupIdx}
+        - Shift Pulsado: ${e.shiftKey}
+        - Elemento a enfocar: <${groups[groupIdx]?.[0]?.tagName}>`);
+
+
     // 🟢 RESCATE ABSOLUTO DE MEMORIA 
     if (isLostFocus && !e.shiftKey) {
         // Si estábamos perdidos y pulsamos TAB normal, QUEREMOS QUEDARNOS EN LA ZONA.
-        // Y como `groups[groupIdx]` ya viene filtrado por la memoria (gracias a getGroupWithMemory),
-        // solo tenemos que enfocar su primer (y único) elemento.
+        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 
+            `🧠 Rescate de memoria activado para grupo index [${groupIdx}]. Intentando enfocar el último elemento conocido...`);
+
         const target = groups[groupIdx][0];
+
         if (target) {
             e.preventDefault();
             target.focus();
 
         }
 
-        return; // Detenemos la ejecución aquí, el rescate fue exitoso
     }
 
     // 🟢 NAVEGACIÓN NORMAL ENTRE ZONAS
@@ -649,10 +676,11 @@ export function _handleFocusTrap(e, viewType) {
         (groupIdx >= groups.length - 1 ? 0 : groupIdx + 1);
     
     // 🟢 CHIVATO MAESTRO
-    debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+    debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 
         `🔍 TRAP REPORT:
         - Active Element: <${document.activeElement.tagName}> 
-            ${document.activeElement.id || document.activeElement.className}
+                           ${document.activeElement.id || 
+                           document.activeElement.className}
         - Foco perdido (Body): ${isLostFocus}
         - Zona rescatada de memoria: ${wasRecovered ? 
                                         'SÍ (' + app.STATE._lastActiveZoneId + ')' : 

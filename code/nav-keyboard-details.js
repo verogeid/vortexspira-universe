@@ -79,7 +79,7 @@ export function _handleDetailNavigation(key) {
                 // Si es un fragmento de texto o título, simula el avance al siguiente elemento.
                 if (targetElement.classList.contains('detail-text-fragment') || 
                     targetElement.classList.contains('detail-title-slide')) {
-                        
+
                     newIndex = currentIndex + 1;
 
                     debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 

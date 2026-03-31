@@ -1,36 +1,74 @@
 /* --- styles/style-a11y.css --- */
 
+/* 🟢 PROTECCIÓN TIPOGRÁFICA AAA (Anti-desbordamiento global) */
+.a11y-modal h2,
+.a11y-modal h3,
+.a11y-checkbox-label span {
+    /* 1. Anular el bloqueo de Flexbox (permite que las cajas se encojan) */
+    min-width: 0;
+    
+    /* 2. Forzar que el texto pueda fluir en varias líneas */
+    white-space: normal !important; 
+    
+    /* 3. Comportamiento de emergencia: romper palabras si superan el 100% del ancho */
+    overflow-wrap: break-word;
+    word-break: break-word;
+    
+    /* 4. Comportamiento ortográfico: separación silábica con guion */
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
 .a11y-modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+
     background-color: var(--color-shadow-modal);
     -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary) transparent;
+    scroll-behavior: var(--scroll-behavior);
+
     z-index: 9998;
     display: none; overflow-y: auto;
     padding: 0 !important;
     align-items: center; 
     justify-content: center;
-    opacity: 0; transition: opacity 0.3s ease;
+    opacity: 0; transition: opacity var(--animation-speed) ease;
 }
 
 .a11y-modal-overlay.active { display: flex; opacity: 1; }
 
 .a11y-modal {
+    /* FORZAR LA HERENCIA GLOBAL */
+    line-height: var(--line-height-base);
+    letter-spacing: var(--letter-spacing-base);
+    word-spacing: var(--word-spacing-base);
+
     margin: auto;
     background: var(--color-card-bg);
+
     border: var(--border-width-no-focus) solid var(--color-card-border); 
-    border-radius: 12px;
+    border-radius: var(--border-radius);
+
     box-sizing: border-box !important;
     color: var(--color-text);
-    width: calc(100% - (2 * var(--ally-gap)));
+
+    width: calc(100dvw - (2 * var(--a11y-gap)));
+    max-width: calc(100dvw - var(--scrollbar-gap) * 2);
+
     padding: var(--a11y-padding);
     box-shadow: 0 10px 40px var(--color-shadow-modal); 
     position: relative;
-    max-width: 90vw;
+
     max-height: none; overflow-y: auto;
+
     transform: translateY(var(--a11y-gap)); 
     transition: transform var(--animation-speed) ease;
+
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) transparent;
+    scroll-behavior: var(--scroll-behavior);
 }
 
 .a11y-modal-overlay.active .a11y-modal { transform: translateY(0); }
@@ -38,146 +76,390 @@
 .a11y-header {
     display: flex; justify-content: space-between; align-items: center;
     margin-bottom: var(--a11y-header-margin); 
-    border-bottom: 1px solid var(--color-border-placeholder);
+    border-bottom: calc(var(--border-width-no-focus) / 2) solid var(--color-border-placeholder);
     padding-bottom: calc(var(--a11y-header-margin) / 2);
 }
 
 .a11y-header h2 { 
-    margin: 0; font-size: var(--a11y-title-font-size);
-    white-space: normal !important; word-wrap: break-word; line-height: 1.2;
+    margin: 0; 
+    font-size: var(--a11y-title-font-size);
+    line-height: calc(var(--line-height-base) * 0.9);
 }
 
 /* 🟢 BOTÓN SALIR: Scale y Sombra, pero NO borde */
 .a11y-close-btn {
-    background: transparent; border: none !important; 
+    background: transparent; 
+    border: none !important; 
+
     font-size: var(--a11y-close-btn-font-size);
-    cursor: pointer; color: var(--color-text);
-    width: var(--a11y-close-btn-size); height: var(--a11y-close-btn-size);
-    border-radius: 50%; display: flex; justify-content: center; align-items: center;
+
+    cursor: pointer; 
+    color: var(--color-text);
+    border-radius: 50%; 
+
+    width: var(--a11y-close-btn-size); 
+    height: var(--a11y-close-btn-size);
+
+    display: flex; justify-content: center; align-items: center;
+
     transition: all var(--animation-speed) ease;
     outline: none !important;
+
+    flex-shrink: 0;
 }
 
 .a11y-close-btn:hover,
 .a11y-close-btn:focus-visible,
 .a11y-close-btn:focus {
     color: var(--color-primary);
-    transform: scale(calc(1 + var(--zoom-focus-minnor)));
     box-shadow: 0 0 var(--shadow-spread-md) var(--color-shadow-primary);
 }
 
-.a11y-section { margin-bottom: var(--a11y-section-margin); width: 100%; }
+.a11y-close-btn:focus-visible,
+.a11y-close-btn:focus {
+    transform: scale(calc(1 + var(--zoom-focus-major) * 2));
+}
+
+.a11y-section { 
+    margin-bottom: var(--a11y-section-margin); 
+    width: 100%;
+}
 
 .a11y-section h3 { 
-    font-size: var(--a11y-section-font-size); margin-bottom: var(--a11y-controls-gap); 
-    opacity: calc(var(--opacity) * 3); line-height: 1.2;
+    font-size: var(--a11y-section-font-size); 
+    margin-bottom: var(--a11y-controls-gap); 
+    opacity: calc(var(--opacity) * 3);
 }
 
-.a11y-controls-group { display: flex; gap: var(--a11y-controls-gap); flex-wrap: wrap; }
+.a11y-controls-group { 
+    display: flex; 
+    gap: var(--a11y-controls-gap); 
+    flex-wrap: wrap; 
+    padding-bottom: var(--border-width-focus);
+}
 
 /* BOTONES DE OPCIÓN (Referencia de diseño) */
+/* 1. ESTADO BASE */
 .a11y-option-btn {
-    flex: 1 1 auto; padding: var(--a11y-btn-padding);
-    background: transparent; border: var(--border-width-no-focus) solid var(--color-card-border);
-    border-radius: 8px; color: var(--color-text); cursor: pointer;
+    flex: 1 1 auto; 
+    background: transparent; 
+    color: var(--color-text); 
+    
+    border: var(--border-width-no-focus) solid var(--color-card-border);
+    border-radius: calc(var(--border-radius) / 3 * 2); 
+    
+    padding: var(--a11y-btn-padding);
+
+    min-height: calc((var(--ui-icon-size) + var(--border-width-focus)) * (1 + var(--zoom-focus-minnor)) + var(--a11y-btn-padding));
+    cursor: pointer;
     font-size: var(--a11y-option-btn-font-size);
     transition: all var(--animation-speed) ease;
+    margin-bottom: var(--a11y-controls-gap);
+    box-sizing: border-box;
 }
 
+/* 2. HOVER (Ratón): Mantiene dimensiones, solo cambia color */
 .a11y-option-btn:hover { 
     border-color: var(--color-primary); 
-    transform: scale(calc(1 + var(--zoom-focus-minnor)));
 }
 
+/* 3. FOCO (Teclado): Aumenta borde, compensa padding, aplica scale */
 .a11y-option-btn:focus-visible, 
 .a11y-option-btn:focus {
     outline: none;
-    border: var(--border-width-focus) solid var(--color-primary);
+    border-color: var(--color-primary);
+    border-width: var(--border-width-focus);
+    
+    /* COMPENSACIÓN MATEMÁTICA: 
+       padding_nuevo = padding_base - (borde_foco - borde_base) 
+    */
     padding: calc(var(--a11y-btn-padding) - (var(--border-width-focus) - var(--border-width-no-focus)));
+    
     transform: scale(calc(1 + var(--zoom-focus-minnor)));
+    position: relative;
+    z-index: 2;
 }
 
-.a11y-option-btn.selected { background: var(--color-primary); color: var(--color-a11y-selected-text); border-color: var(--color-primary); }
+/* 4. SELECCIONADO (Reposo) */
+.a11y-option-btn.selected { 
+    background: var(--color-text); 
+    border-color: var(--color-card-border);
+    color: var(--color-a11y-selected-text); 
+}
+
+/* 5. SELECCIONADO + HOVER */
+.a11y-option-btn.selected:hover { 
+    background: var(--color-primary); 
+    border-color: var(--color-text);
+}
+
+/* 6. SELECCIONADO + FOCO */
+.a11y-option-btn.selected:focus-visible, 
+.a11y-option-btn.selected:focus { 
+    background: var(--color-primary); 
+    border-color: var(--color-text);
+    border-width: var(--border-width-focus);
+    
+    /* Aplicar la misma compensación al tener el foco */
+    padding: calc(var(--a11y-btn-padding) - (var(--border-width-focus) - var(--border-width-no-focus)));
+}
 
 /* SLIDERS UNIFICADOS */
-.a11y-range-wrapper { display: flex; flex-wrap: wrap-reverse; align-items: center; gap: var(--a11y-controls-gap); width: 100%; }
+.a11y-range-wrapper { 
+    display: flex; flex-wrap: wrap-reverse; 
+    align-items: center; 
+    gap: var(--a11y-controls-gap); 
+
+    width: 100%; 
+    min-height: calc((var(--ui-icon-size) + var(--border-width-focus)) * (1 + var(--zoom-focus-minnor)));
+}
 
 input[type=range].a11y-range {
-    flex: 999 1 150px; height: var(--a11y-slider-height);
-    background: var(--color-a11y-slider-track); border-radius: 5px; 
-    outline: none; -webkit-appearance: none; appearance: none; cursor: pointer;
-    border: var(--border-width-no-focus) solid transparent; /* Espacio para el borde de foco */
+    flex-grow: 1;
+
+    height: var(--ui-icon-size);
+
+    background: transparent; border: none;
+    outline: none; 
+    
+    -webkit-appearance: none; appearance: none;
+    
+    cursor: pointer;
     transition: all var(--animation-speed) ease;
 }
+input[type=range].a11y-range::-webkit-slider-runnable-track {
+    height: var(--a11y-slider-height);
 
-input[type=range].a11y-range:hover {
-    transform: scale(1.02);
+    border-radius: calc(var(--border-radius) / 4);
+
+    background: var(--color-a11y-slider-track); 
 }
-
-input[type=range].a11y-range:focus-visible, 
-input[type=range].a11y-range:focus {
-    transform: scale(1.02);
-    border: var(--border-width-focus) solid var(--color-primary); /* 🟢 Borde exterior redondeado */
-    border-radius: 8px;
-}
-
 input[type=range].a11y-range::-webkit-slider-thumb {
-    -webkit-appearance: none; width: var(--a11y-slider-thumb-size); height: var(--a11y-slider-thumb-size);
-    border-radius: 50%; background: var(--color-primary);
+    -webkit-appearance: none; 
+
+    width: var(--ui-icon-size); height: var(--ui-icon-size);
+    
+    border-radius: 50%; 
+    background: var(--color-text);
+
+    /* TRUCO DE CENTRADO: 
+       Para que una bola de 44px se centre en una línea de 6px, 
+       usamos un margen negativo: (altura_línea / 2) - (altura_bola / 2)
+    */
+    margin-top: calc(var(--a11y-slider-height) / 2 - var(--ui-icon-size) / 2);
+}
+
+input[type=range].a11y-range:focus-visible::-webkit-slider-runnable-track,
+input[type=range].a11y-range:focus::-webkit-slider-runnable-track {
+    background: var(--color-primary);
+}
+
+input[type=range].a11y-range:hover::-webkit-slider-thumb,
+input[type=range].a11y-range:focus-visible::-webkit-slider-thumb,
+input[type=range].a11y-range:focus::-webkit-slider-thumb {
+    background: var(--color-primary);
+}
+input[type=range].a11y-range:focus-visible::-webkit-slider-thumb,
+input[type=range].a11y-range:focus::-webkit-slider-thumb {
+    transform: scale(calc(1 + var(--zoom-focus-major)));
+}
+
+.a11y-range-value {
+    display: inline-block; /* Para que respete el width */
+    text-align: right;
+    flex-shrink: 0;
+}
+
+#a11y-range-val,
+#a11y-range-spacing-val,
+#a11y-range-letter-spacing-val {
+    min-width: 8ch;
+    max-width: 12ch;
 }
 
 /* CHECKBOXES UNIFICADOS */
+/* 1. Base del checkbox */
 .a11y-checkbox {
-    -webkit-appearance: none; appearance: none;
-    width: 1.25rem; height: 1.25rem;
+    -webkit-appearance: none; 
+    appearance: none;
+
+    width: var(--ui-icon-size) !important; 
+    height: var(--ui-icon-size) !important;
+
+    margin-right: calc(var(--a11y-controls-gap) / 2);
+    margin-bottom: var(--a11y-controls-gap);
+    box-sizing: border-box; 
+    
     border: var(--border-width-no-focus) solid var(--color-card-border);
-    border-radius: 4px; background-color: transparent; cursor: pointer;
-    position: relative; transition: all var(--animation-speed) ease;
+    border-radius: calc(var(--border-radius)/3); 
+    background-color: transparent; 
+
+    cursor: pointer;
+    
+    /* CAMBIO CRÍTICO: Anclaje espacial clásico compatible con <input> */
+    display: inline-block; 
+    position: relative; 
+    
+    flex-shrink: 0; 
+    transition: all var(--animation-speed) ease;
 }
 
-.a11y-checkbox::after {
-    content: ''; position: absolute; top: 45%; left: 50%; width: 25%; height: 50%;
-    border: solid var(--color-card-bg); border-width: 0 2px 2px 0;
-    transform: translate(-50%, -60%) rotate(45deg); opacity: 0;
+/* 2. Comportamiento en Hover/Foco */
+.a11y-checkbox:hover,
+.a11y-checkbox:focus-visible, 
+.a11y-checkbox:focus {
+    border-color: var(--color-primary);
 }
 
-.a11y-checkbox:checked { background-color: var(--color-primary); border-color: var(--color-primary); }
-.a11y-checkbox:checked::after { opacity: 1; }
-
-.a11y-checkbox:hover { 
-    border-color: var(--color-primary); 
-    transform: scale(calc(1 + var(--zoom-focus-minnor))); 
-}
-
-/* 🟢 FOCO CHECKBOX: Borde exterior redondeado (como fuentes) */
 .a11y-checkbox:focus-visible, 
 .a11y-checkbox:focus {
     outline: none;
-    border: var(--border-width-focus) solid var(--color-primary);
-    transform: scale(calc(1 + var(--zoom-focus-minnor)));
+    border-width: var(--border-width-focus);
+    transform: scale(calc(1 + var(--zoom-focus-major)));
 }
 
-.a11y-checkbox-label { display:flex; align-items:center; gap:10px; cursor:pointer; margin-top: 10px; }
+/* 3. La Marca (Check) - Geometría Pura y Escalada */
+.a11y-checkbox::after {
+    content: ''; /* Cadena vacía. Nada de letras. */
+    position: absolute;
+    
+    /* 1. HACEMOS LA CAJA MUCHO MÁS GRANDE */
+    /* Estas proporciones crean un check ancho y profundo */
+    width: 45%; 
+    height: 75%;
+    
+    /* 2. CENTRADO BASE */
+    top: 45%; 
+    left: 50%;
+    
+    /* 3. DIBUJAMOS LA FORMA (Hereda el color automáticamente) */
+    /* Usamos un calc para que el grosor sea proporcional al tamaño del icono */
+    border-right: calc(var(--ui-icon-size) / 8) solid currentColor;
+    border-bottom: calc(var(--ui-icon-size) / 8) solid currentColor;
+    
+    /* 4. POSICIONAMIENTO MATEMÁTICO EXACTO */
+    /* translate(-50%, -60%) clava el centro de la 'V' en el centro del input */
+    transform: translate(-50%, -60%) rotate(45deg); 
+    
+    opacity: 0;
+    transition: opacity var(--animation-speed) ease;
+    box-sizing: border-box;
+}
+
+/* 4. Estados de Selección */
+.a11y-checkbox:checked { 
+    background-color: var(--color-text); 
+    color: var(--color-bg)
+}
+
+.a11y-checkbox:checked:hover,
+.a11y-checkbox:checked:focus-visible, 
+.a11y-checkbox:checked:focus { 
+    background-color: var(--color-primary);
+    border-color: var(--color-text);
+}
+
+.a11y-checkbox:checked::after { 
+    opacity: 1; 
+}
+
+/* 5. Etiqueta */
+.a11y-checkbox-label { 
+    display: flex; 
+    align-items: center; 
+    gap: var(--a11y-controls-gap);
+    cursor: pointer; 
+    padding: var(--a11y-btn-padding);
+}
+
+.a11y-checkbox-label span {
+    /* Habilita la partición silábica nativa con guiones */
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    
+    /* Fuerza el salto de línea si la palabra supera el ancho máximo */
+    overflow-wrap: break-word;
+    word-break: break-word;
+    
+    /* BLOQUEO ESTRUCTURAL: Permite que el flex-item se encoja */
+    min-width: 0;
+    flex: 1 1 auto;
+}
 
 /* RESET */
+.a11y-footer {
+    display: flex; 
+    justify-content: flex-end; 
+    align-items: center; 
+    
+    width: 100%;             
+    box-sizing: border-box;  
+
+    padding-top: var(--a11y-gap);
+
+    border-top: calc(var(--border-width-no-focus) / 2) solid var(--color-border-placeholder);
+
+    /* 2. Elevamos el footer en el eje Z para que ningún margen colapsado superior lo tape */
+    position: relative;
+    z-index: 5;
+}
+
 #a11y-reset {
-    background: transparent; border: var(--border-width-no-focus) solid var(--color-card-border); 
-    border-radius: 8px; cursor: pointer; width: var(--a11y-reset-size); height: var(--a11y-reset-size);
-    display: flex; align-items: center; justify-content: center; transition: all var(--animation-speed) ease;
-    background-color: var(--color-text-muted); 
-    -webkit-mask: var(--icon-reset) no-repeat center / 60%; mask: var(--icon-reset) no-repeat center / 60%;
+    margin-left: auto;
+
+    background: transparent; 
+    /* El borde siempre existe pero es transparente para evitar saltos de layout */
+    border: var(--border-width-no-focus) solid transparent; 
+    border-radius: calc(var(--border-radius) / 3 * 2); 
+
+    cursor: pointer; 
+    width: var(--ui-icon-size); 
+    height: var(--ui-icon-size);
+
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    position: relative;
+    transition: all var(--animation-speed) ease;
+    
+    /* Quitamos el mask de aquí */
+    padding: 0;
 }
 
-#a11y-reset:hover { 
-    background-color: var(--color-danger); border-color: var(--color-danger); 
-    transform: rotate(-180deg) scale(calc(1 + var(--zoom-focus-minnor))); 
+/* El Icono como pseudo-elemento */
+#a11y-reset::before {
+    content: '';
+    width: 60%;
+    height: 60%;
+    background-color: var(--color-text-muted); /* Color inicial del icono */
+    -webkit-mask: var(--icon-reset) no-repeat center / contain;
+    mask: var(--icon-reset) no-repeat center / contain;
+    transition: all var(--animation-speed) ease;
 }
 
-#a11y-reset:focus-visible, #a11y-reset:focus {
+/* 🟢 ESTADO: HOVER Y FOCO */
+#a11y-reset:hover,
+#a11y-reset:focus-visible, 
+#a11y-reset:focus { 
     outline: none;
-    border: var(--border-width-focus) solid var(--color-danger);
+    /* El marco ahora es visible */
+    border-color: var(--color-danger);
+    background-color: rgba(var(--color-danger-rgb), 0.1); /* Opcional: fondo sutil */
+}
+
+/* Cambiamos el color del icono al activar */
+#a11y-reset:hover::before,
+#a11y-reset:focus-visible::before, 
+#a11y-reset:focus::before {
     background-color: var(--color-danger);
-    transform: rotate(-180deg) scale(calc(1 + var(--zoom-focus-minnor)));
+    transform: rotate(-180deg);
+}
+
+/* Escalado para Accesibilidad AAA */
+#a11y-reset:focus-visible, 
+#a11y-reset:focus {
+    border-width: var(--border-width-focus);
+    transform: scale(calc(1 + var(--zoom-focus-major)));
 }
 
 /* --- styles/style-a11y.css --- */

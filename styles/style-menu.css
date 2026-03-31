@@ -4,10 +4,12 @@
     position: fixed;
     top: calc(var(--header-height) + 2px);
     right: var(--scrollbar-gap);
+
     background-color: var(--color-header-bg); 
     border: var(--border-width-no-focus) solid var(--color-border-placeholder);
     border-radius: var(--border-radius);
     box-shadow: 0 var(--border-radius) calc(var(--border-radius) * 4) var(--color-shadow-modal); 
+
     width: max-content;
     min-width: min(240px, calc(var(--ui-icon-size) + var(--menu-gap) * 2)); 
     max-width: min(calc(100dvw - 24px), 
@@ -21,7 +23,8 @@
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: thin;
-    scrollbar-color: var(--color-primary) var(--color-card-bg);
+    scrollbar-color: var(--color-primary) transparent;
+    scroll-behavior: var(--scroll-behavior);
 
     z-index: 9999;
     opacity: 0;
@@ -64,7 +67,7 @@
 
 .menu-separator hr {
     border: none;
-    border-top: var(--border-width-no-focus) solid var(--color-border-placeholder);
+    border-top: calc(var(--border-width-no-focus) / 2) solid var(--color-border-placeholder);
     margin: var(--menu-gap) 0;
 }
 
@@ -113,7 +116,8 @@
 
 /* Interacción de iconos internos */
 .menu-link:hover .menu-icon,
-.menu-link:focus-visible .menu-icon {
+.menu-link:focus-visible .menu-icon,
+.menu-link:focus .menu-icon {
     background-color: var(--color-primary);
     transform: scale(calc(1 + var(--zoom-focus-major)));
     filter: none !important;
@@ -123,18 +127,20 @@
 .menu-icon.icon-a11y { 
     -webkit-mask-image: var(--icon-a11y); mask-image: var(--icon-a11y); 
 }
-.menu-icon.link-linkedin { 
+.menu-icon.icon-linkedin { 
     -webkit-mask-image: var(--icon-social-linkedin); mask-image: var(--icon-social-linkedin); 
 }
-.menu-icon.link-github { 
+.menu-icon.icon-github { 
     -webkit-mask-image: var(--icon-link-diary); mask-image: var(--icon-link-diary); 
 }
-.menu-icon.link-landing { 
+.menu-icon.icon-landing { 
     -webkit-mask-image: var(--icon-offer); mask-image: var(--icon-offer); 
+    -webkit-mask-size: 110%; mask-size: 110%;
     background-color: var(--color-fire);
 }
 .menu-icon.icon-info { 
     -webkit-mask-image: var(--icon-info); mask-image: var(--icon-info); 
+    -webkit-mask-size: 110%; mask-size: 110%;
 }
 .menu-icon.icon-bug { 
     -webkit-mask-image: var(--icon-bug); mask-image: var(--icon-bug); 
@@ -148,11 +154,11 @@
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     
-    width: calc(var(--ui-icon-size) * 0.55); 
-    height: calc(var(--ui-icon-size) * 0.55);
+    width: calc(var(--ui-icon-size) * 0.75); 
+    height: calc(var(--ui-icon-size) * 0.75);
     background-color: currentColor;
     -webkit-mask-image: var(--icon-i18n); mask-image: var(--icon-i18n);
-    -webkit-mask-size: contain; mask-size: contain;
+    -webkit-mask-size: 80%; mask-size: 80%;
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
     transition: all var(--animation-speed) ease;
@@ -161,7 +167,7 @@
 .lang-text {
     position: relative;
     font-family: var(--font-family-base);
-    font-size: 0.75rem; /* Ligeramente menor para que no agobie al mundo */
+    font-size: var(--menu-lang-font-size);
     font-weight: bold;
     z-index: 2;
     line-height: 1;
@@ -178,13 +184,15 @@
 
 /* Interacción I18N: Letras y Fondo escalan en perfecta sincronía */
 .menu-link:hover .lang-icon-bg,
-.menu-link:focus-visible .lang-icon-bg {
+.menu-link:focus-visible .lang-icon-bg,
+.menu-link:focus .lang-icon-bg {
     transform: translate(-50%, -50%) scale(calc(1 + var(--zoom-focus-major)));
     background-color: var(--color-primary);
 }
 
 .menu-link:hover .lang-text,
-.menu-link:focus-visible .lang-text {
+.menu-link:focus-visible .lang-text,
+.menu-link:focus .lang-text {
     transform: scale(calc(1 + var(--zoom-focus-major)));
     color: var(--color-a11y-selected-text); 
     text-shadow: 
@@ -192,6 +200,36 @@
          1px -1px 0 var(--color-primary),
         -1px  1px 0 var(--color-primary),
          1px  1px 0 var(--color-primary); /* Look limpio al interactuar */
+}
+
+.menu-link:hover .icon-landing,
+.menu-link:focus-visible .icon-landing,
+.menu-link:focus .icon-landing {
+    transform: scale(calc(1 + var(--zoom-focus-major) * 2.5));
+}
+
+.menu-link:hover .icon-info,
+.menu-link:focus-visible .icon-info,
+.menu-link:focus .icon-info {
+    transform: scale(calc(1 + var(--zoom-focus-major) * 3));
+}
+
+.menu-link:hover .icon-a11y,
+.menu-link:focus-visible .icon-a11y,
+.menu-link:focus .icon-a11y {
+    transform: scale(calc(1 + var(--zoom-focus-major) * 3));
+}
+
+.menu-link:hover .icon-linkedin,
+.menu-link:focus-visible .icon-linkedin,
+.menu-link:focus .icon-linkedin {
+    transform: scale(calc(1 + var(--zoom-focus-major) * 2.5));
+}
+
+.menu-link:hover .icon-github,
+.menu-link:focus-visible .icon-github,
+.menu-link:focus .icon-github {
+    transform: scale(calc(1 + var(--zoom-focus-major) * 2.5));
 }
 
 .cc-license-btn {
@@ -208,10 +246,12 @@
 
 /* 🟢 INTERACCIÓN CC: Estilo rectangular con borde y fondo */
 .menu-link.cc-license-btn:hover,
-.menu-link.cc-license-btn:focus-visible {
+.menu-link.cc-license-btn:focus-visible,
+.menu-link.cc-license-btn:focus {
     background-color: var(--color-primary-bg) !important;
     border-color: var(--color-primary) !important;
     outline: none !important;
+    transform: none !important; /* 🟢 La caja clicable no crece */
 }
 
 .cc-license-stack {
@@ -225,7 +265,8 @@
 
 /* 🟢 ESCALADO INTERNO */
 .menu-link.cc-license-btn:hover .cc-license-stack,
-.menu-link.cc-license-btn:focus-visible .cc-license-stack {
+.menu-link.cc-license-btn:focus-visible .cc-license-stack,
+.menu-link.cc-license-btn:focus .cc-license-stack {
     transform: scale(calc(1 + var(--zoom-focus-major)));
 }
 
@@ -276,7 +317,8 @@
 
 /* La placa cambia a azul solo en hover/foco */
 .menu-link.cc-license-btn:hover .cc-layer-plate,
-.menu-link.cc-license-btn:focus-visible .cc-layer-plate {
+.menu-link.cc-license-btn:focus-visible .cc-layer-plate, 
+.menu-link.cc-license-btn:focus .cc-layer-plate {
     background-color: var(--color-primary);
 }
 

@@ -2,14 +2,9 @@
 
 /* (max-width: 600px) */
 body[data-layout="mobile"] {
-    /* ⭐️ MAPEO DE VARIABLES: Usamos los valores mobile definidos en theme */
     --header-title-size: var(--mobile-header-title-size);
-    /*--header-logo-size: var(--mobile-header-logo-size);
-    --header-icon-size: var(--mobile-header-icon-size);
-    --header-obras-size: var(--mobile-header-obras-size);*/
 
     --footer-padding: var(--mobile-footer-padding);
-    --footer-social-gap: var(--mobile-footer-social-gap);
 
     --card-padding: var(--mobile-card-padding);
 
@@ -17,14 +12,14 @@ body[data-layout="mobile"] {
     height: 100dvh; 
     position: fixed; 
     width: 100%;
-    padding-bottom: var(--footer-height); 
+    padding-bottom: var(--footer-height-real); 
 
     padding-right: var(--card-padding); /* Espacio extra en mobile, para scroll fantasma */
 }
 
 body[data-layout="mobile"] #app-container {
     height: auto !important;
-    min-height: calc(100dvh - var(--header-height-real, 50px) - var(--footer-height-real, --footer-height));
+    min-height: calc(100dvh - var(--header-height-real, 50px) - var(--footer-height-real));
 
     margin-top: 0 !important;
 
@@ -65,7 +60,7 @@ body[data-layout="mobile"] #vista-detalle-mobile {
     width: 100% !important; 
 
     /* Ajuste de altura restando el header real */
-    height: calc(100vh - var(--header-height-real, var(--header-height)) - var(--footer-height)) !important;
+    height: calc(100vh - var(--header-height-real, var(--header-height)) - var(--footer-height-real)) !important;
 
     z-index: 99 !important;
 
@@ -161,7 +156,7 @@ body[data-layout="mobile"] .card h3 .card-text-content {
     -webkit-box-orient: vertical;
 
     /* Límite de líneas móvil */
-    -webkit-line-clamp: var(--card-h3-line-clamp); line-clamp: var(--card-h3-line-clamp);
+    -webkit-line-clamp: var(--card-line-clamp); line-clamp: var(--card-line-clamp);
     
     
     overflow: hidden;

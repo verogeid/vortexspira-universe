@@ -1,17 +1,22 @@
 /* --- styles/style-cards.css --- */
 
 .card {
+    padding: var(--card-padding);
+
     border: var(--border-width-no-focus) solid var(--color-card-border);
     background: var(--color-card-bg);
-    padding: var(--card-padding); 
     border-radius: var(--border-radius);
+
     transition: all 0.2s ease;
     cursor: pointer;
+
     display: flex; 
     flex-direction: column; 
     justify-content: center; 
+
     align-items: flex-start; 
     box-sizing: border-box; 
+
     height: 100%; 
     min-height: 150px; 
     width: 100%;
@@ -27,6 +32,8 @@
 }
 
 .card h3 { 
+    gap: var(--card-gap);
+
     margin: 0; 
     width: 100%;
     text-align: left;
@@ -35,52 +42,37 @@
     /*display: block; */
 
     font-size: var(--card-title-font-size, 1.2rem);
-    line-height: 1.3;
-
-    /* Seguridad extra: cortar si es larguísimo */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    
-    -webkit-line-clamp: var(--card-h3-line-clamp); line-clamp: var(--card-h3-line-clamp);
-    -webkit-box-orient: vertical;
-
-    hyphens: auto;            /* Permite guiones (Desarro-llo) */
-    overflow-wrap: anywhere;  /* Obliga a partir la palabra si no cabe, para no romper el layout */
+    line-height: var(--line-height-base);
 }
 
 .card h3 .card-icon-lead {
     float: none !important;
     display: block;
+}
 
-    margin-top: 0 !important;
-    /* Pequeña separación con el texto de abajo */
-    margin-bottom: var(--footer-padding); 
-    margin-right: 0;
+.card .card-text-content {
+    
 }
 
 .card h3 .card-text-content,
 .card.card-breadcrumb-vertical h3 {
     display: -webkit-box;
-    display: block;
 
-    -webkit-line-clamp: var(--card-breadcrump-h3-line-clamp); 
-    line-clamp: var(--card-breadcrump-h3-line-clamp);
+    -webkit-line-clamp: var(--card-breadcrump-line-clamp); 
+    line-clamp: var(--card-breadcrump-line-clamp);
     -webkit-box-orient: vertical;
     
-    font-size: var(--card-breadcrump-vertical-h3-font-size);
+    font-size: var(--card-breadcrump-vertical-font-size);
     
-    line-height: var(--card-breadcrump-h3-line-height);
+    line-height: var(--line-height-base);
     
-    word-break: normal; 
-    overflow-wrap: normal;
     overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 /* Descripción / Contenido */
 .card p {
     margin: 0;
-    line-height: var(--card-p-line-height);
+    line-height: var(--line-height-base);
     color: var(--color-text);
     
     /* Usamos la variable controlada */
@@ -217,12 +209,12 @@
     height: 100% !important; 
     width: 100% !important;
     margin: 0 !important;
-    gap: 12px; 
+    gap: var(--card-gap);
 }
 
 /* El texto traducido */
 .card-volver-content .card-volver-text {
-    font-size: var(--card-breadcrump-vertical-h3-font-size);
+    font-size: var(--card-breadcrump-vertical-font-size);
     font-weight: 900;
     letter-spacing: 2px;
     color: var(--color-text-main);
@@ -253,6 +245,7 @@
 .card-icon-lead,
 .card-volver-icon {
     display: inline-block;
+
     width: var(--card-icon-size);
     height: var(--card-icon-size);
     background-color: currentColor; 
@@ -263,6 +256,10 @@
     -webkit-mask-size: contain;
     mask-size: contain;
     vertical-align: middle; 
+}
+
+.card-icon-lead {
+    margin-left: calc(var(--card-padding) / 6);
 }
 
 /* Asignación específica de cada variable SVG */
@@ -294,6 +291,24 @@
 .card-volver-icon {
     -webkit-mask-image: var(--icon-back);
     mask-image: var(--icon-back);
+}
+
+.card .detail-text-fragment,
+.card .card-text-content,
+.card.card-breadcrumb-vertical {
+    /* 1. Anular el bloqueo de Flexbox (permite que las cajas se encojan) */
+    min-width: 0;
+    
+    /* 2. Forzar que el texto pueda fluir en varias líneas */
+    white-space: normal !important; 
+    
+    /* 3. Comportamiento de emergencia: romper palabras si superan el 100% del ancho */
+    overflow-wrap: break-word;
+    word-break: break-word;
+    
+    /* 4. Comportamiento ortográfico: separación silábica con guion */
+    -webkit-hyphens: auto;
+    hyphens: auto;
 }
 
 /* --- styles/style-cards.css --- */

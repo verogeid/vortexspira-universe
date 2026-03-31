@@ -564,6 +564,17 @@ function _setupListeners() {
             _updateSliderLabel(val);
 
             window.dispatchEvent(new CustomEvent('vortex-layout-refresh'));
+
+            // 🟢 NUEVO: Protección de Autoscroll AAA
+            if (document.activeElement === e.target) {
+                requestAnimationFrame(() => {
+                    e.target.scrollIntoView({ 
+                        behavior: 'auto', 
+                        block: 'nearest', 
+                        inline: 'nearest' 
+                    });
+                });
+            }
         });
 
         _domRefs.rangeSize.addEventListener('change', () => _savePreferences());
@@ -590,6 +601,17 @@ function _setupListeners() {
 
                 // 🟢 Nuevo: Lanzar evento de repintado en tiempo real (igual que tamaño)
                 window.dispatchEvent(new CustomEvent('vortex-layout-refresh'));
+
+                // 🟢 NUEVO: Protección de Autoscroll AAA
+                if (document.activeElement === e.target) {
+                    requestAnimationFrame(() => {
+                        e.target.scrollIntoView({ 
+                            behavior: 'auto', 
+                            block: 'nearest', 
+                            inline: 'nearest' 
+                        });
+                    });
+                }
             }
         });
         _domRefs.rangeSpacing.addEventListener('change', () => {
@@ -618,6 +640,16 @@ function _setupListeners() {
                 root.style.setProperty('--word-spacing-base', _prefs.wordSpacing);
 
                 window.dispatchEvent(new CustomEvent('vortex-layout-refresh'));
+
+                // 🟢 NUEVO: Protección de Autoscroll AAA
+                if (document.activeElement === e.target) {
+                    requestAnimationFrame(() => {
+                        e.target.scrollIntoView({ 
+                            behavior: 'auto', 
+                            block: 'nearest', 
+                            inline: 'nearest' });
+                    });
+                }
             }
         });
         _domRefs.rangeLetterSpacing.addEventListener('change', () => _savePreferences());

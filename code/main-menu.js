@@ -1,6 +1,7 @@
 /* --- code/main-menu.js --- */
 
 import * as data from './data.js';
+import * as debug from './debug.js';
 
 let navDropdown = null;
 let btnMainMenu = null;
@@ -83,7 +84,7 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         class="menu-link" 
                         aria-label="${appInstance.getString('footer.aria.linkedin')}"
                         title="${appInstance.getString('footer.aria.linkedin')}">
-                        <span class="menu-icon link-linkedin"></span> 
+                        <span class="menu-icon icon-linkedin"></span> 
                     </a>
                     <a role="menuitem" 
                         href="${data.MEDIA.URL.DEV_DIARY}" 
@@ -91,7 +92,7 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         class="menu-link" 
                         aria-label="${appInstance.getString('footer.aria.github')}"
                         title="${appInstance.getString('footer.aria.github')}">
-                        <span class="menu-icon link-github"></span> 
+                        <span class="menu-icon icon-github"></span> 
                     </a>
                     <a role="menuitem" 
                         href="${data.MEDIA.URL.LANDING_PAGE}" 
@@ -99,7 +100,7 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         class="menu-link" 
                         aria-label="${appInstance.getString('footer.aria.landing')}"
                         title="${appInstance.getString('footer.aria.landing')}">
-                        <span class="menu-icon link-landing"></span> 
+                        <span class="menu-icon icon-landing"></span> 
                     </a>
                 </div>
 
@@ -144,6 +145,10 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
 function toggleMenu(forceClose = false) {
     const isExpanded = btnMainMenu.getAttribute('aria-expanded') === 'true';
     const newState = forceClose ? false : !isExpanded;
+
+    debug.log('main_menu', debug.DEBUG_LEVELS.BASIC, 
+        `Toggling menu. Current state: ${isExpanded}, New state: ${newState}, Force close: ${forceClose}`);
+
     if (isExpanded === newState) return;
     
     btnMainMenu.setAttribute('aria-expanded', String(newState));
@@ -174,7 +179,10 @@ function _setupListeners(appInstance, enableI18n) {
     };
 
     document.addEventListener('click', (e) => {
-        if (btnMainMenu.getAttribute('aria-expanded') === 'true' && !navDropdown.contains(e.target) && !btnMainMenu.contains(e.target)) {
+        if (btnMainMenu.getAttribute('aria-expanded') === 'true' && 
+            !navDropdown.contains(e.target) && 
+            !btnMainMenu.contains(e.target)) {
+
             toggleMenu(true);
         }
     });
@@ -239,13 +247,15 @@ function _setupListeners(appInstance, enableI18n) {
     // 🟢 CERRAR AL PERDER EL FOCO (Focus Out)
     // navDropdown es una variable persistente en el scope del módulo.
     navDropdown.addEventListener('focusout', (e) => {
-        // e.relatedTarget es el elemento que acaba de recibir el foco.
-        // Si el nuevo foco NO está dentro del menú, cerramos.
-        if (e.relatedTarget && !navDropdown.contains(e.relatedTarget)) {
+        // 🛡️ EXCEPCIÓN CRÍTICA: Si el foco va al botón de menú, NO cerramos aquí.
+        // Dejamos que el evento 'onclick' del propio botón gestione el cierre.
+        if (e.relatedTarget && 
+            e.relatedTarget !== btnMainMenu && 
+            !navDropdown.contains(e.relatedTarget)) {
             toggleMenu(true); 
         }
     });
-    
+
     // 4. Conectar acciones
     navDropdown.querySelector('#menu-btn-a11y').onclick = (e) => {
         e.preventDefault();

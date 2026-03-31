@@ -12,7 +12,7 @@ body {
     /* 🟢 CORRECCIÓN: Usar la altura REAL calculada por JS, con fallback a la variable CSS */
     padding-top: var(--header-height-real, var(--header-height));
     
-    padding-bottom: var(--footer-height); 
+    padding-bottom: var(--footer-height-real); 
     
     /* ⭐️ A11Y: Aseguramos base 100% para respetar ajustes de navegador */
     font-size: 100%; 
@@ -97,6 +97,11 @@ body.app-loaded {
     body[data-layout="tablet-landscape"] #info-adicional.visible,
     body[data-layout="desktop"] #info-adicional.visible { 
         display: block !important; 
+    }
+
+    body[data-layout="mobile"] .footer-separator-author,
+    body[data-layout="mobile"] .footer-author-text {
+        display: none !important; 
     }
 
 #card-volver-fija-elemento:focus,

@@ -5,6 +5,7 @@ import * as debug from './debug.js';
 
 export function _getFocusableDetailElements(appInstance) {
     if (!appInstance.DOM.detalleTrack) return [];
+
     const elements = Array.from(appInstance.DOM.detalleTrack.querySelectorAll(
         '.detail-text-fragment[tabindex="0"], .detail-action-item[tabindex="0"], .card-volver-vertical[tabindex="0"]'
     )).filter(el => el.tabIndex !== -1); 
@@ -170,7 +171,7 @@ export function _updateDetailFocusState(appInstance, targetOverride = null) {
                 
                 debug.log('nav_base_details', debug.DEBUG_LEVELS.BASIC, 
                     `[TRACE ${traceId}-UDF] 🛡️ Escudo bajado.`);
-                    
+
             }, (data.SWIPER.SLIDE_SPEED || 300) + 50);
         } else {
             debug.log('nav_base_details', debug.DEBUG_LEVELS.BASIC, 

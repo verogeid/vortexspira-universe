@@ -19,7 +19,7 @@
 #card-nivel-actual h3 {
     margin: 0; 
     /* ⭐️ A11Y FIX */
-    font-size: var(--card-nivel-actual-h3-font-size);
+    font-size: var(--card-nivel-actual-font-size);
 
     color: var(--color-text); opacity: 1;
 
@@ -28,13 +28,13 @@
     display: -webkit-box; 
 
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: var(--card-nivel-actual-h3-line-clamp); 
-    line-clamp: var(--card-nivel-actual-h3-line-clamp); 
+    -webkit-line-clamp: var(--card-nivel-actual-line-clamp); 
+    line-clamp: var(--card-nivel-actual-line-clamp); 
 
-    line-height: var(--card-nivel-actual-h3-line-height); 
-    max-height: calc(var(--card-nivel-actual-h3-font-size) 
-                    * var(--card-nivel-actual-h3-line-height) 
-                    * var(--card-nivel-actual-h3-line-clamp));
+    line-height: var(--line-height-base); 
+    max-height: calc(var(--card-nivel-actual-font-size) 
+                    * var(--line-height-base)
+                    * var(--card-nivel-actual-line-clamp));
     text-overflow: ellipsis;
 }
 
@@ -58,7 +58,7 @@
 #card-volver-fija-elemento h3 { 
     margin: 0; 
     /* ⭐️ A11Y FIX */
-    font-size: var(--card-volver-fija-h3-font-size);
+    font-size: var(--card-volver-fija-font-size);
     font-weight: bold; text-align: center; 
     display: block; 
 }
@@ -79,6 +79,7 @@
 #info-adicional {
     scrollbar-width: thin;
     scrollbar-color: var(--color-primary) transparent;
+    scroll-behavior: var(--scroll-behavior);
 }
 #info-adicional::-webkit-scrollbar-thumb {
     background-color: var(--color-primary);
@@ -128,7 +129,7 @@
     opacity: 1; 
     /* ⭐️ A11Y FIX: Subido min size */
     font-size: var(--info-adicional-details-small-font-size); 
-    line-height: var(--info-adicional-details-small-line-height);
+    line-height: var(var(--line-height-base));
 }
 #info-adicional details small li:not(:first-child) { 
     padding-top: var(--card-padding); 

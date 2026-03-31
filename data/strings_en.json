@@ -77,7 +77,7 @@
     "sections": {
       "font": "Typography",
       "size": "Text Size",
-      "spacing": "Spacing",
+      "spacing": "Line spacing",
       "letterSpacing": "Letter spacing",
       "motion": "Vestibular protection and cognitive fatigue",
       "theme": "Color Theme"
@@ -89,7 +89,7 @@
       "reduceMotion": "Reduce Motion",
       "noBlockOpacity": "Disable dimming in course descriptions",
       "noMaskOpacity": "Disable dimming in menus",
-      "noZoneOpacity": "Disable zone dimming",
+      "noZoneOpacity": "Disable dimming of inactive areas",
       "themeDefault": "System (Default)",
       "themeLight": "Light Mode",
       "themeDark": "Dark Mode",

@@ -408,15 +408,19 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
             
             slidesHtml += `
                 <div class="swiper-slide">
-                    <article class="card card-breadcrumb-vertical" tabindex="0" role="heading" aria-level="3" style="margin-bottom: 10px;">
+                    <article class="card 
+                             card-breadcrumb-vertical" 
+                             tabindex="-1" 
+                             aria-hidden="true" 
+                             role="presentation">
                         <h3>${parentName}</h3>
                     </article>
                     <article class="card card-volver-vertical" 
-                        role="button" 
-                        aria-label="${ariaLabel}" 
-                        title="${ariaLabel}" 
-                        tabindex="0" 
-                        onclick="App._handleVolverClick()">
+                             role="button" 
+                            aria-label="${ariaLabel}" 
+                            title="${ariaLabel}" 
+                            tabindex="0" 
+                            onclick="App._handleVolverClick()">
                         <h3 aria-hidden="true" class="card-volver-content">
                             <span class="card-volver-icon"></span>
                             <span class="card-volver-text">${visibleText}</span>
@@ -503,8 +507,8 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
             curso.enlaces.forEach((enlace, index) => {
                 const iconClass = (enlace.type === 'c') ? 'icon-buy' : 
                                     (enlace.type === 'd' ? 'icon-download' : 
-                                    (enlace.type === 'l' ? 'link-linkedin' : 
-                                    (enlace.type === 'f' ? 'link-fire' : 
+                                    (enlace.type === 'l' ? 'icon-linkedin' : 
+                                    (enlace.type === 'f' ? 'icon-fire' : 
                                     'icon-link')));
 
                 const isDisabled = !enlace.url || enlace.url === '#';
