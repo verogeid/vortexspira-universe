@@ -13,7 +13,7 @@ export const DEBUG_LEVELS = {
 };
 
 export const DEBUG_CONFIG = {
-    global: DEBUG_LEVELS.DISABLED,
+    global: DEBUG_LEVELS.DEEP,
 
     global_imageSec: DEBUG_LEVELS.DISABLED,
 
@@ -32,20 +32,20 @@ export const DEBUG_CONFIG = {
     a11y: DEBUG_LEVELS.EXTREME,
     nav_stack: DEBUG_LEVELS.DISABLED,
 
-    main_menu: DEBUG_LEVELS.BASIC,
+    main_menu: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Detalle
-    nav_base: DEBUG_LEVELS.DISABLED,
+    nav_base: DEBUG_LEVELS.EXTREME,
     nav_base_details: DEBUG_LEVELS.DISABLED,
     
     // Módulos de Teclado
-    nav_keyboard_base: DEBUG_LEVELS.BASIC,
+    nav_keyboard_base: DEBUG_LEVELS.EXTREME,
     nav_keyboard_details: DEBUG_LEVELS.DISABLED,
-    nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
+    nav_keyboard_swipe: DEBUG_LEVELS.EXTREME,
 
     // Módulos de Mouse
     nav_mouse_details: DEBUG_LEVELS.DISABLED,
-    nav_mouse_swipe: DEBUG_LEVELS.DISABLED, 
+    nav_mouse_swipe: DEBUG_LEVELS.EXTREME, 
     
     render_base: DEBUG_LEVELS.DISABLED,
     render_details: DEBUG_LEVELS.DISABLED, 

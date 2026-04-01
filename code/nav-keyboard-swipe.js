@@ -6,12 +6,24 @@ import * as debug from './debug.js';
 export function _handleSwipeNavigation(key, appInstance) {
     const app = appInstance;
     const swiper = app.STATE.carouselInstance;
-    
-    if (!swiper) return;
+
+    // 🟢 EL SEGURO DE VIDA
+    const releaseLock = () => {
+        setTimeout(() => {
+            app.STATE.keyboardNavInProgress = false;
+        }, data.SWIPER.SLIDE_SPEED);
+    };
+
+    if (!swiper) {
+        releaseLock();
+        return;
+    }
 
     const isMobile = document.body.getAttribute('data-layout') === 'mobile';
     
-    const allValidCards = Array.from(app.DOM.track.querySelectorAll('.card:not([data-tipo="relleno"])'));
+    const allValidCards = Array.from(app.DOM.track.querySelectorAll(
+        '.card:not([data-tipo="relleno"])'
+    ));
 
     // --- LÓGICA MOBILE (Lista Vertical con Loop) ---
     if (isMobile) {
@@ -28,14 +40,18 @@ export function _handleSwipeNavigation(key, appInstance) {
                 break;
             case 'Enter':
             case ' ':
-                 const currentCard = document.activeElement.closest('.card');
-                 if (currentCard && !currentCard.classList.contains('disabled')) {
+                const currentCard = document.activeElement.closest('.card');
+                if (currentCard && !currentCard.classList.contains('disabled')) {
                     const { id, tipo } = currentCard.dataset;
                     if (tipo === 'volver-vertical') app._handleVolverClick();
                     else app._handleCardClick(id, tipo);
-                 }
-                 return;
-            default: return;
+                }
+                releaseLock();
+                return;
+
+            default: 
+                releaseLock();
+                return;
         }
 
         // Loop infinito manual para móvil
@@ -46,23 +62,52 @@ export function _handleSwipeNavigation(key, appInstance) {
             app.STATE.currentFocusIndex = newIndex;
             app._updateFocus(true);
         }
-        return; 
+        releaseLock();
+        return;
     }
 
     // --- LÓGICA DESKTOP / TABLET (Columnas) ---
 
-    const currentCard = document.activeElement.closest('.card');
-    if (!currentCard) return; // Seguridad
+    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.EXTREME, 
+        `🚀 [WHEEL TRACE 3] Inicio lógica Desktop.
+        - Foco nativo actual: <${document.activeElement.tagName}> class="${document.activeElement.className}"
+        - Índice STATE guardado: ${app.STATE.currentFocusIndex}`);
+
+    // 1. Intentamos leer el foco físico nativo
+    let currentCard = document.activeElement.closest('.card');
+
+    // 🟢 2. FIX (Blindspot del Ratón): Si no hay foco físico, rescatamos la última posición conocida del STATE
+    if (!currentCard) {
+        currentCard = app.DOM.track.querySelector(
+            `.card[data-pos="${app.STATE.currentFocusIndex}"]`
+        );
+    }
+
+    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.EXTREME, 
+        `🔍 [WHEEL TRACE 4] Resolución de Tarjeta:
+        - Tarjeta encontrada: ${!!currentCard}
+        - ID Tarjeta: ${currentCard ? currentCard.dataset.id : 'N/A'}`);
+
+    // 3. Si a pesar del rescate seguimos sin tarjeta (fallo crítico de DOM), abortamos
+    if (!currentCard) { 
+        releaseLock();
+        return; 
+    }
 
     const currentSlide = currentCard.closest('.swiper-slide');
-    if (!currentSlide) return;
+    if (!currentSlide) { releaseLock(); return; }
 
-    const columnCards = Array.from(currentSlide.querySelectorAll('.card:not([data-tipo="relleno"])'));
+    const columnCards = Array.from(currentSlide.querySelectorAll(
+        '.card:not([data-tipo="relleno"])'
+    ));
     const currentRowIndex = columnCards.indexOf(currentCard);
     const totalRowsInColumn = columnCards.length;
 
-    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, 
-                `NAV: Row ${currentRowIndex}/${totalRowsInColumn} | Key: ${key}`);
+    debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.EXTREME, 
+        `⚙️ [WHEEL TRACE 5] Pre-Switch Matemático:
+        - currentRowIndex: ${currentRowIndex}
+        - totalRowsInColumn: ${totalRowsInColumn}
+        - Lógica aplicable para ${key}: ¿Movimiento interno o salto de Swiper?`);
 
     switch (key) {
         case 'ArrowUp':
@@ -77,19 +122,24 @@ export function _handleSwipeNavigation(key, appInstance) {
                         app._updateFocus(false);
                     }
                 }
+
             } else {
                 // B. Extremo Superior
                 if (app.STATE.currentFocusIndex === 0) {
                     app.STATE.forceFocusRow = 'last'; 
+
                     debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, 
                                 "NAV: Inicio Absoluto -> Slide Anterior (Loop)");
-                    swiper.isKeyboardLockedFocus = false; 
+
+                    app.STATE.isKeyboardLockedFocus = false; 
                     swiper.slidePrev(data.SWIPER.SLIDE_SPEED);
+
                 } else {
                     app.STATE.currentFocusIndex--;
-                    swiper.isKeyboardLockedFocus = true;
+                    app.STATE.isKeyboardLockedFocus = true;
+                    
                     debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, 
-                                "🔒 FLAG: isKeyboardLockedFocus = true (Columna Anterior)");
+                              "🔒 FLAG: isKeyboardLockedFocus = true (Columna Anterior)");
                     app._updateFocus(true); 
                 }
             }
@@ -107,21 +157,25 @@ export function _handleSwipeNavigation(key, appInstance) {
                         app._updateFocus(false);
                     }
                 }
+
             } else {
                 // B. Extremo Inferior
-                // Usamos allValidCards.length como límite lógico aproximado, asumiendo data-pos secuencial
                 if (app.STATE.currentFocusIndex >= allValidCards.length - 1) {
                     app.STATE.forceFocusRow = 0; 
+
                     debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.BASIC, 
                                 "NAV: Fin Absoluto -> Slide Siguiente (Loop)");
-                    swiper.isKeyboardLockedFocus = false;
+
+                    app.STATE.isKeyboardLockedFocus = false;
                     swiper.slideNext(data.SWIPER.SLIDE_SPEED);
+                    
                 } else {
                     app.STATE.currentFocusIndex++;
-                    swiper.isKeyboardLockedFocus = true;
+                    app.STATE.isKeyboardLockedFocus = true;
                     debug.log('nav_keyboard_swipe', debug.DEBUG_LEVELS.DEEP, 
                                 "🔒 FLAG: isKeyboardLockedFocus = true (Columna Siguiente)");
                     app._updateFocus(true); 
+                    
                 }
             }
             break;
@@ -131,9 +185,9 @@ export function _handleSwipeNavigation(key, appInstance) {
                         "NAV: Izquierda -> Slide Anterior");
 
             app.STATE.forceFocusRow = null; 
-            
-            // 🔓 NO BLOQUEAMOS: Es un cambio de página, necesitamos recalcular el foco en la nueva slide
-            swiper.isKeyboardLockedFocus = false;
+
+            // 🔓 NO BLOQUEAMOS
+            app.STATE.isKeyboardLockedFocus = false;
             
             swiper.slidePrev(data.SWIPER.SLIDE_SPEED);
             break;
@@ -145,7 +199,7 @@ export function _handleSwipeNavigation(key, appInstance) {
             app.STATE.forceFocusRow = null; 
             
             // 🔓 NO BLOQUEAMOS
-            swiper.isKeyboardLockedFocus = false;
+            app.STATE.isKeyboardLockedFocus = false;
             
             swiper.slideNext(data.SWIPER.SLIDE_SPEED);
             break;
@@ -163,6 +217,8 @@ export function _handleSwipeNavigation(key, appInstance) {
             }
             break;
     }
+
+    releaseLock();
 }
 
 // --- code/nav-keyboard-swipe.js ---

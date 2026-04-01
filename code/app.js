@@ -153,6 +153,7 @@ class VortexSpiraApp {
         debug_diagnostics._setupKeyTracker?.(); 
 
         debug_diagnostics._watchFlag(this.STATE, 'keyboardNavInProgress');
+        debug_diagnostics._watchFlag(this.STATE, 'isKeyboardLockedFocus');
         debug_diagnostics._watchFlag(this.STATE, 'isNavigatingBack');
         debug_diagnostics._watchFlag(this.STATE, 'isUIBlocked');
 

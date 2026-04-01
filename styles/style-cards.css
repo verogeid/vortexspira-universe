@@ -32,40 +32,53 @@
 }
 
 .card h3 { 
+    /* MAGIA: Ahora el gap sí funciona y el contenedor respeta el 100% de la caja */
+    display: flex;
+    align-items: flex-start; /* Alinea el icono y el texto arriba */
     gap: var(--card-gap);
-
+    
     margin: 0; 
     width: 100%;
     text-align: left;
-
-    display: -webkit-box;
-    /*display: block; */
 
     font-size: var(--card-title-font-size, 1.2rem);
     line-height: var(--line-height-base);
 }
 
 .card h3 .card-icon-lead {
+    flex-shrink: 0;
     float: none !important;
     display: block;
+
+    /* 🟢 COMPENSACIÓN ÓPTICA DINÁMICA */
+    /* (Altura de la 1ª línea de texto - Altura del icono) / 2 */
+    /* 1em equivale al font-size actual del título */
+    margin-top: calc((1em * var(--line-height-base) - var(--card-icon-size)) / 2);
 }
 
-.card .card-text-content {
-    
+/* Tarjetas Normales: Se truncan con su propia variable (que tienes configurada a 3) */
+.card h3 .card-text-content {
+    /* 1. Comportamiento Flex: Ocupa el espacio que deja el icono sin desbordar */
+    flex: 1 1 auto;
+    min-width: 0; 
+
+    /* 2. Truncado AAA */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--card-line-clamp); 
+    line-clamp: var(--card-line-clamp);
+    overflow: hidden;
 }
 
-.card h3 .card-text-content,
+/* Tarjetas Verticales (Breadcrumbs): Mantienen su variable de 5 líneas */
 .card.card-breadcrumb-vertical h3 {
     display: -webkit-box;
-
+    -webkit-box-orient: vertical;
     -webkit-line-clamp: var(--card-breadcrump-line-clamp); 
     line-clamp: var(--card-breadcrump-line-clamp);
-    -webkit-box-orient: vertical;
     
     font-size: var(--card-breadcrump-vertical-font-size);
-    
     line-height: var(--line-height-base);
-    
     overflow: hidden;
 }
 

@@ -45,16 +45,18 @@ export function handleSlideChangeEnd(swiper) {
     // 🛡️ LÓGICA DE PROTECCIÓN SELECTIVA 🛡️
     // Solo bloqueamos si el teclado declaró explícitamente que tiene el control del foco exacto.
     // En Loops o giros vacíos, dejamos pasar para que el Skipper resuelva el destino.
-    if (swiper.isKeyboardLockedFocus) {
+    if (this.STATE.isKeyboardLockedFocus) {
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, 
-                    "🔒 SWIPE: Foco bloqueado por teclado. Ignorando mouse logic.");
+                  "🔒 SWIPE: Foco bloqueado por teclado. Ignorando mouse logic.");
 
-        swiper.isKeyboardLockedFocus = false; // Reset del candado
+        this.STATE.isKeyboardLockedFocus = false; 
+
         return; 
     }
 
     debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, 
-                `🏁 END SlideChange. RealIdx: ${swiper.realIndex} | ActiveIdx: ${swiper.activeIndex}`);
+              `🏁 END SlideChange. RealIdx: ${swiper.realIndex} | ActiveIdx: ${swiper.activeIndex}`
+    );
 
     const { currentFocusIndex, itemsPorColumna } = this.STATE;
 
@@ -64,20 +66,26 @@ export function handleSlideChangeEnd(swiper) {
     const activeSlideEl = swiper.slides[swiper.activeIndex];
     
     if (!activeSlideEl) {
-        debug.logWarn('nav_mouse_swipe', 'No se encontró slide activo en swiper.slides');
+        debug.logWarn('nav_mouse_swipe', 
+            'No se encontró slide activo en swiper.slides');
 
         return;
     }
 
-    // Filtramos tarjetas reales dentro del slide activo
-    const columnCards = Array.from(activeSlideEl.querySelectorAll('.card[data-id]:not([data-tipo="relleno"])'));
+    // 🟢 FIX 1: Recogemos TODA la cuadrícula geométrica (incluyendo rellenos)
+    const allCardsInSlide = Array.from(activeSlideEl.querySelectorAll('.card'));
+    
+    // 🟢 FIX 2: Filtramos las válidas SOLO para la lógica del Skipper
+    const validCards = allCardsInSlide.filter(
+        c => c.dataset.id && c.dataset.tipo !== 'relleno'
+    );
 
     debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, 
-                `Cards en slide activo: ${columnCards.length}`);
+                `Cards en slide activo: ${validCards.length}`);
 
     // ⭐️ SKIPPER ⭐️
     // Si la columna está vacía (relleno puro), saltamos automáticamente a la siguiente
-    if (columnCards.length === 0 && !isMobile) { 
+    if (validCards.length === 0 && !isMobile) {
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, 
                     `SWIPE: Columna vacía. Saltando (${_swipeDirection})...`);
 
@@ -88,10 +96,16 @@ export function handleSlideChangeEnd(swiper) {
         // sobra el aviso porque el usuario ya estará en la siguiente tarjeta útil.
         if (!data.SWIPER.prefersReducedMotion()) {
             this.announceA11y(this.getString('toast.skipColumn'), 'assertive');
-            this.STATE.emptyColumnAnnounced = true; // Marcar que ya anunciamos esta columna vacía
+
+            // Marcar que ya anunciamos esta columna vacía
+            this.STATE.emptyColumnAnnounced = true;
         }
         
-        _swipeDirection === 'next' ? swiper.slideNext(data.SWIPER.SLIDE_SPEED) : swiper.slidePrev(data.SWIPER.SLIDE_SPEED);
+        _swipeDirection === 'next' ? 
+            swiper.slideNext(data.SWIPER.SLIDE_SPEED) : 
+            swiper.slidePrev(data.SWIPER.SLIDE_SPEED);
+
+        // 🔴 NO BAJAMOS EL FLAG PADRE: El carrusel continúa en movimiento
         return; 
     }
 
@@ -100,20 +114,19 @@ export function handleSlideChangeEnd(swiper) {
         this.unblockUI();
     }
 
-    // 🟢 LLEGADA EXITOSA: Activamos semáforo y disparamos al operario de mantenimiento
+    // 🟢 LLEGADA EXITOSA DE UN SKIP: Purga física del Loop ANTES de leer geometría
     if (this.STATE.emptyColumnAnnounced) {
         debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, 
-                    "Limpiando anuncio de columna vacía tras llegada a columna con contenido.");
+                    "Limpiando anuncio de columna vacía y forzando loopFix.");
                     
-        this.STATE.emptyColumnAnnounced = false; // Reset del anuncio
-        this.STATE.pendingLoopFix = true;
-
-        swiper.emit('transitionEnd'); // 🔥 Forzamos la ejecución inmediata del listener de limpieza
-
-        // Ocultamos el aviso de salto.
+        this.STATE.emptyColumnAnnounced = false;
+        
+        swiper.loopFix();
+        swiper.update();
+        
         this.announceA11yStop();
     }
-
+    
     // ⭐️ CÁLCULO DE FOCO DESTINO ⭐️
     let targetRow;
 
@@ -122,7 +135,7 @@ export function handleSlideChangeEnd(swiper) {
                     `Usando forceFocusRow: ${this.STATE.forceFocusRow}`);
 
         if (this.STATE.forceFocusRow === 'last') {
-            targetRow = columnCards.length - 1; 
+            targetRow = validCards.length - 1; // Matemáticamente la última fila posible
         } else {
             targetRow = this.STATE.forceFocusRow; 
         }
@@ -134,7 +147,8 @@ export function handleSlideChangeEnd(swiper) {
                     `Calculando targetRow: idx(${currentFocusIndex}) % cols(${itemsPorColumna}) = ${targetRow}`);
     }
 
-    const newFocusCard = this.findBestFocusInColumn(columnCards, targetRow);
+    // 🟢 FIX 3: Le pasamos la geometría completa a la función para que el índice coincida
+    const newFocusCard = this.findBestFocusInColumn(allCardsInSlide, targetRow);
     
     if (newFocusCard) {
         // 🟢 FIX CRÍTICO: Usar 'data-pos' (Lógico) en lugar de indexOf (Físico)
@@ -150,10 +164,11 @@ export function handleSlideChangeEnd(swiper) {
                             `🚨 CORRIGIENDO FOCO: ${this.STATE.currentFocusIndex} -> ${newLogicalIndex}`);
 
                 this.STATE.currentFocusIndex = newLogicalIndex;
-            } else {
-                debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, 
+            } 
+                
+            debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.DEEP, 
                             `Foco estable (Lógico). Re-sincronizando físico.`);
-            }
+
             this._updateFocus(false); 
         }
     } else {

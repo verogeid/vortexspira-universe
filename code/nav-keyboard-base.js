@@ -6,6 +6,9 @@ import * as nav_base_details from './nav-base-details.js';
 import * as nav_keyboard_details from './nav-keyboard-details.js'; 
 import * as nav_keyboard_swipe from './nav-keyboard-swipe.js'; 
 
+let _isWheelThrottled = false;
+let _wheelThrottleTimer = null;
+
 export function initKeyboardControls() {
     debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 
                 'Inicializando controles de teclado y mouse (CAPTURE Mode).');
@@ -187,7 +190,7 @@ export function initKeyboardControls() {
         // 🟢 Borramos la huella del ratón en cuanto el usuario toca el teclado
         this.STATE._lastMousedownTarget = null; 
         
-        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 
             `📝 Listener KeyDown: ${this.STATE._lastActiveZoneId}`);
 
         // 🟢 1. CONTROL COOPERATIVO DEL MENÚ DESPLEGABLE
@@ -203,8 +206,6 @@ export function initKeyboardControls() {
                 return; // 🛑 Cortamos aquí. El _handleVolverClick() principal no se enterará.
             }
             
-            // Opcional: Evitar que las flechas de tu motor global muevan el fondo o las tarjetas
-            // si por algún motivo el foco se resbala del menú.
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
                 const navDropdown = document.getElementById('main-menu-dropdown');
                 if (navDropdown && !navDropdown.contains(document.activeElement)) {
@@ -346,10 +347,12 @@ export function initKeyboardControls() {
                 if (isNavActive) 
                     nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
 
-                else 
+                else {
                     nav_keyboard_details._handleDetailNavigation.call(app, e.key);
 
-                app.STATE.keyboardNavInProgress = false;
+                    // 🟢 Detalles es instantáneo, inyectamos su propio cooldown
+                    setTimeout(() => { app.STATE.keyboardNavInProgress = false; }, 150);
+                }
                 return;
             }
             
@@ -363,7 +366,9 @@ export function initKeyboardControls() {
                 'ArrowLeft', 
                 'ArrowRight'
             ].includes(e.key)) {
-            const isInCentralTrack = focused.closest('#track-desktop, #track-tablet, #track-mobile, #detalle-track-desktop, #detalle-track-mobile');
+            const isInCentralTrack = focused.closest(
+                '#track-desktop, #track-tablet, #track-mobile, #detalle-track-desktop, #detalle-track-mobile'
+            );
 
             if (isInCentralTrack) {
                 debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, 
@@ -378,11 +383,15 @@ export function initKeyboardControls() {
                 if (isNavActive) 
                     nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
 
-                else 
+                else {
                     nav_keyboard_details._handleDetailNavigation.call(app, e.key);
+                    setTimeout(() => { app.STATE.keyboardNavInProgress = false; }, 150);
+                }
                 
             } else {
-                const section = focused.closest('#info-adicional, footer, #app-header, #card-volver-fija, #vista-volver');
+                const section = focused.closest(
+                    '#info-adicional, #app-header, #card-volver-fija, #vista-volver'
+                );
         
                 if (section) {
                     e.preventDefault();
@@ -390,6 +399,7 @@ export function initKeyboardControls() {
 
                     if (isDetailActive) 
                         nav_base_details._clearDetailVisualStates(app);
+
                 } else if (document.activeElement === document.body) {
                     e.preventDefault();
                     app.STATE.keyboardNavInProgress = true;
@@ -397,8 +407,10 @@ export function initKeyboardControls() {
                     if (isNavActive) 
                         nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
 
-                    else if (isDetailActive) 
+                    else if (isDetailActive) {
                         nav_keyboard_details._handleDetailNavigation.call(app, e.key);
+                        setTimeout(() => { app.STATE.keyboardNavInProgress = false; }, 150);
+                    }
                 }
             }
         }
@@ -501,7 +513,12 @@ function _setupInfoAccordion() {
 }
 
 function _setupWheelListener() {
-    this.DOM.appContainer?.addEventListener('wheel', _handleGlobalWheel.bind(this), { passive: false, capture: true });
+    this.DOM.appContainer?.addEventListener(
+        'wheel', 
+        _handleGlobalWheel.bind(this), { 
+            passive: false, 
+            capture: true 
+        });
 }
 
 function _handleGlobalWheel(e) {
@@ -509,9 +526,17 @@ function _handleGlobalWheel(e) {
     const isNavActive = app.DOM.vistaNav?.classList.contains('active');
     const isDetailActive = app.DOM.vistaDetalle?.classList.contains('active');
     
-    if (app.STATE.keyboardNavInProgress || (!isNavActive && !isDetailActive)) return;
+    debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 
+        `🐭 [WHEEL TRACE 1] ${Date.now()} Evento detectado. DeltaY: ${e.deltaY}
+        - keyboardNavInProgress: ${app.STATE.keyboardNavInProgress}
+        - isNavActive: ${isNavActive}
+        - isDetailActive: ${isDetailActive}`);
+
+    if (!isNavActive && !isDetailActive) return;
     
-    const targetIsCentral = e.target.closest('#vista-central, .carousel-viewport, .detalle-viewport');
+    const targetIsCentral = e.target.closest(
+        '#vista-central, .carousel-viewport, .detalle-viewport'
+    );
     if (!targetIsCentral) return;
 
     if (e.deltaY !== 0) {
@@ -522,18 +547,30 @@ function _handleGlobalWheel(e) {
         e.stopPropagation();
         e.stopImmediatePropagation();
 
+        // 🟢 ESCUDO ANTI-SPAM FÍSICO
+        if (_isWheelThrottled) return;
+
+        // Levantamos el freno y lo programamos para soltarse
+        _isWheelThrottled = true;
+        clearTimeout(_wheelThrottleTimer);
+
+        _wheelThrottleTimer = setTimeout(() => { 
+            _isWheelThrottled = false; 
+        }, data.SWIPER.SLIDE_SPEED);
+
         const key = e.deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
         
+        // 🟢 2. LEVANTAMOS BANDERA Y DELEGAMOS
         app.STATE.keyboardNavInProgress = true; 
 
-        if (isNavActive) nav_keyboard_swipe._handleSwipeNavigation(key, app);
-        else nav_keyboard_details._handleDetailNavigation.call(app, key);
+        if (isNavActive) {
+            debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.EXTREME, 
+                `🐭 [WHEEL TRACE 2] Pasó los bloqueos. Enviando [${key}] a _handleSwipeNavigation.`);
 
-        // 🟢 FIX CRÍTICO: Bajamos la bandera incondicionalmente tras el frame actual.
-        // Si Swiper anima, lo gestionará él, pero si choca contra un borde, esto nos salva de quedarnos trabados.
-        requestAnimationFrame(() => {
-            app.STATE.keyboardNavInProgress = false; 
-        });
+            nav_keyboard_swipe._handleSwipeNavigation(key, app);
+        } else {
+            nav_keyboard_details._handleDetailNavigation.call(app, key);
+        }
     }
 }
 

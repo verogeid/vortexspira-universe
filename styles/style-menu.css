@@ -128,10 +128,10 @@
     -webkit-mask-image: var(--icon-a11y); mask-image: var(--icon-a11y); 
 }
 .menu-icon.icon-linkedin { 
-    -webkit-mask-image: var(--icon-social-linkedin); mask-image: var(--icon-social-linkedin); 
+    -webkit-mask-image: var(--icon-linkedin); mask-image: var(--icon-linkedin); 
 }
 .menu-icon.icon-github { 
-    -webkit-mask-image: var(--icon-link-diary); mask-image: var(--icon-link-diary); 
+    -webkit-mask-image: var(--icon-github); mask-image: var(--icon-github); 
 }
 .menu-icon.icon-landing { 
     -webkit-mask-image: var(--icon-offer); mask-image: var(--icon-offer); 

@@ -372,18 +372,6 @@ export function renderNavegacion() {
                         !!currentLevelState.levelId, 
                         isMobile, isTabletPortrait, isTabletLandscape, isDesktop, 
                         nodoActual); 
-
-
-    /*// 🟢 FIX 2: Bloquear robo de foco si modal activo
-    setTimeout(() => {
-        if (document.getElementById('a11y-modal-overlay')?.classList.contains('active')) {
-            debug.log('render_base', debug.DEBUG_LEVELS.DEEP, 
-                '🛡️ Foco post-render bloqueado (Modal activo).');
-            return;
-        }
-
-        this._updateFocus(false);
-    }, 100);*/
 }
 
 function _getUniqueSelector(el) {

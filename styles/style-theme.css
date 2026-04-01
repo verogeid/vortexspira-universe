@@ -72,7 +72,7 @@
     /* 📐 VARIABLES DE TARJETAS (CARDS) */
     --card-title-font-size: clamp(0.9rem, calc(1rem * var(--font-scale)), 1.3rem);
     --card-desc-font-size: clamp(0.8rem, calc(0.9rem * var(--font-scale)), 1.1rem);
-    --card-line-clamp: 3;
+    --card-line-clamp: 4;
     --card-h3-icon: 1.2em;
     --card-icon-size: 1.5rem;
 
