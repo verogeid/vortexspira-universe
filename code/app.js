@@ -44,6 +44,7 @@ class VortexSpiraApp {
             isSpecialViewActive: false,
             _lastDetailFocusIndex: 0, 
             isNavigatingBack: false, 
+            _isDraggingSwiper: false,
             isUIBlocked: false,
             isBooting: true, 
             isTouchDevice: this._isTouchDevice(),
