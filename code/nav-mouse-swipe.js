@@ -1,6 +1,6 @@
 /* --- code/nav-mouse-swipe.js --- */
 
-import * as debug from './debug.js';
+import * as debug from './debug/debug.js';
 import * as data from './data.js';
 
 let _swipeDirection = 'next';

@@ -1,7 +1,7 @@
 // --- code/nav-keyboard-details.js ---
 
 import * as nav_base_details from './nav-base-details.js'; 
-import * as debug from './debug.js'; 
+import * as debug from './debug/debug.js'; 
 import * as data from './data.js'; // Necesario para data.SWIPER.SLIDE_SPEED
 
 export function _handleDetailNavigation(key) {

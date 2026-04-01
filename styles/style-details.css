@@ -1,5 +1,7 @@
 /* --- styles/style-details.css --- */
 
+@import url('style-media-details.css');
+
 /* 1. Scroll interno y Contenedores */
 #detalle-contenido-desktop, 
 #detalle-contenido-mobile {

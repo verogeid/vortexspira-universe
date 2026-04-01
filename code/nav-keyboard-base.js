@@ -1,6 +1,6 @@
 /* --- code/nav-keyboard-base.js --- */
 
-import * as debug from './debug.js';
+import * as debug from './debug/debug.js';
 import * as data from './data.js';
 import * as nav_base_details from './nav-base-details.js'; 
 import * as nav_keyboard_details from './nav-keyboard-details.js'; 

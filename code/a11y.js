@@ -1,6 +1,6 @@
 /* --- code/a11y.js --- */
 
-import * as debug from './debug.js';
+import * as debug from './debug/debug.js';
 import * as i18n from './i18n.js';
 import * as data from './data.js';
 

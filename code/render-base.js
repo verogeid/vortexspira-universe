@@ -1,8 +1,7 @@
 /* --- code/render-base.js --- */
 
-import * as debug from './debug.js'; 
+import * as debug from './debug/debug.js'; 
 import * as data from './data.js';
-import { App } from './app.js';
 
 let _lastMode = 'desktop'; 
 let _resizeTimer; 

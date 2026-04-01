@@ -1,6 +1,6 @@
 /* --- code/nav-stack.js --- */
 
-import * as debug from './debug.js';
+import * as debug from './debug/debug.js';
 
 /**
  * Inicializa la pila de navegación con el nivel raíz.

@@ -1,7 +1,7 @@
 // --- code/nav-base-details.js ---
 
 import * as data from './data.js';
-import * as debug from './debug.js';
+import * as debug from './debug/debug.js';
 
 export function _getFocusableDetailElements(appInstance) {
     if (!appInstance.DOM.detalleTrack) return [];

@@ -1,6 +1,4 @@
 /* --- code/data.js --- */
-import * as debug from './debug.js';
-import * as main_menu from './main-menu.js';
 
 export const A11Y = {
     STORAGE_KEY: 'vortex_a11y_prefs_v1',
@@ -92,106 +90,6 @@ export const SWIPER = {
     ELEMENTS_PER_COLUMN_DESKTOP: 3,
 };
 
-export async function loadData(lang) {
-    try {
-        const filename = `./data/cursos_${lang}.json`;
 
-        debug.log('data', debug.DEBUG_LEVELS.BASIC, 
-                    `Cargando datos de cursos: ${filename}`);
-        
-        const response = await fetch(filename); 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        // Lógica de filtrado de modos (Producción vs Marketing)
-        const fullJson = await response.json();
-        const url = new URL(window.location);
-        const mode = url.searchParams.get('mode');
 
-        let dataSelected;
-        if (mode === 'dev') {
-            debug.log('data', debug.DEBUG_LEVELS.BASIC, 
-                '🧪 MODO DEV ACTIVO');
-
-            dataSelected = fullJson.dev || [];
-        } else {
-            dataSelected = fullJson.prod || [];
-        }
-
-        return { navegacion: dataSelected };
-
-    } catch (e) {
-        debug.logError('data', "Error crítico cargando cursos.", e);
-
-        throw e;
-    }
-}
-
-export function injectHeaderContent(appInstance, enableI18n = false) {
-    const header = document.getElementById('app-header');
-    const wrapper = document.getElementById('header-content-wrapper');
-
-    if (header && wrapper) {
-        const h1 = header.querySelector('h1');
-
-        if (h1) {
-            // 2. HEADER LOGO: Comprobamos si ya existe para no duplicarlo al cambiar de idioma
-            let logoLink = h1.querySelector('a');
-            
-            if (!logoLink) {
-                debug.log('data', debug.DEBUG_LEVELS.DEEP, 'Insertando enlace en Header');
-                logoLink = document.createElement('a');
-                logoLink.href = MEDIA.URL.WEBPAGE;
-                logoLink.target = "_self";
-                
-                const logoDiv = document.createElement('span');
-                logoDiv.className = 'header-logo'; 
-                logoLink.appendChild(logoDiv);
-                
-                h1.insertBefore(logoLink, h1.firstChild);
-            }
-            
-            // Siempre actualizamos el aria-label en caliente para los cambios de idioma
-            const txtLogoLink = appInstance.getString('header.aria.logoLink')
-            logoLink.setAttribute('aria-label', txtLogoLink);
-            logoLink.setAttribute('title', txtLogoLink);
-
-            // 3. DEBUG ICON (OBRAS): Solo insertamos si no existe previamente
-            if (!debug.IS_PRODUCTION) {
-                let obrasSpan = wrapper.querySelector('.icon-obras-header');
-                
-                if (!obrasSpan) {
-                    debug.log('data', debug.DEBUG_LEVELS.DEEP, 'Insertando Icono de Obras');
-                    obrasSpan = document.createElement('span');
-                    obrasSpan.className = 'icon-obras-header'; // CSS pinta el icono
-                    wrapper.insertBefore(obrasSpan, h1);
-                }
-            }
-        }
-
-        // 🟢 DELEGACIÓN ARQUITECTÓNICA: 
-        // Pasamos la responsabilidad del menú, el teclado y la UI a su propio componente
-        main_menu.initMainMenu(appInstance, wrapper, enableI18n);
-    }
-}
-
-export function injectFooterContent(appInstance) {
-    const footerContent = document.getElementById('footer-content');
-
-    if (footerContent) {
-        // Usamos appInstance.getString para TODO, incluidos los ARIA labels nuevos
-        footerContent.innerHTML = `
-            <span class="footer-copyright">
-                ${appInstance.getString('footer.copyright')}
-            </span>
-            <span class="footer-separator-author">|</span>
-            <span class="footer-author-text">
-                ${appInstance.getString('footer.author')}
-            </span> 
-            <span class="footer-separator">|</span>
-            <span class="footer-version">v${appInstance.getString('meta.version')}.build:${appInstance.getString('meta.build')}</span>
-        `;
-    }
-}
 /* --- code/data.js --- */

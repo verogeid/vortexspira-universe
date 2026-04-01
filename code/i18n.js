@@ -1,6 +1,6 @@
 /* --- code/i18n.js --- */
 
-import * as debug from './debug.js';
+import * as debug from './debug/debug.js';
 import * as data from './data.js';
 
 let _currentLang = 'es';
@@ -138,21 +138,5 @@ export function applyStrings(appInstance) {
     
     const footerAuth = document.querySelector('.footer-author-text');
     if (footerAuth) footerAuth.innerHTML = getString('footer.author');
-    
-    // Footer Arias
-    const socialMap = {
-        '.link-linkedin': 'footer.aria.linkedin',
-        '.link-github': 'footer.aria.github',
-        '.link-landing': 'footer.aria.landing',
-        '.footer-license-link': 'footer.aria.license'
-    };
-    for (const sel in socialMap) {
-        const el = document.querySelector(sel);
-        if (el) {
-            const txtSocial = getString(socialMap[sel]);
-            el.setAttribute('aria-label', txtSocial);
-            el.setAttribute('title', txtSocial);
-        }
-    }
 }
 /* --- code/i18n.js --- */

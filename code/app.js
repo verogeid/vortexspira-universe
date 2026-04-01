@@ -1,11 +1,13 @@
 /* --- code/app.js --- */
 
-import * as debug from './debug.js';
-import * as debug_ldJsonSim from './debug.ldJsonSim.js';
-import * as debug_diagnostics from './debug.diagnostics.js';
-import * as debug_screenReaderSim from './debug.screenReaderSim.js';
+import * as debug from './debug/debug.js';
+import * as debug_ldJsonSim from './debug/debug.ldJsonSim.js';
+import * as debug_diagnostics from './debug/debug.diagnostics.js';
+import * as debug_screenReaderSim from './debug/debug.screenReaderSim.js';
 
 import * as data from './data.js';
+import * as app_utils from './app-utils.js';
+
 import * as i18n from './i18n.js';
 import * as a11y from './a11y.js';
 
@@ -216,7 +218,7 @@ class VortexSpiraApp {
         try {
             const [stringsLoaded, coursesData] = await Promise.all([
                 i18n.loadStrings(targetLang),
-                data.loadData(targetLang)
+                app_utils.loadData(targetLang)
             ]);
 
             if (stringsLoaded && coursesData) {
@@ -233,7 +235,7 @@ class VortexSpiraApp {
             if (targetLang !== 'es') {
                 try {
                     await i18n.loadStrings('es');
-                    this.STATE.fullData = await data.loadData('es');
+                    this.STATE.fullData = await app_utils.loadData('es');
                     targetLang = 'es'; // Forzamos español porque el otro falló
                     loadSuccess = true;
                     // También actualizamos localStorage para no fallar en la próxima recarga
@@ -282,11 +284,11 @@ class VortexSpiraApp {
             `[app.init] Pending A11y Context actualizado: ${this.STATE.pendingA11yContext}`);
 
         // Pasamos el flag enableI18n a injectHeaderContent
-        if (data.injectHeaderContent) 
-            data.injectHeaderContent(this, enableI18n);
+        if (app_utils.injectHeaderContent) 
+            app_utils.injectHeaderContent(this, enableI18n);
 
-        if (data.injectFooterContent) 
-            data.injectFooterContent(this);
+        if (app_utils.injectFooterContent) 
+            app_utils.injectFooterContent(this);
 
         if (targetId) {
             // 🟢 FIX: Si se hace F5 o se comparte un enlace directo
@@ -502,7 +504,6 @@ class VortexSpiraApp {
         this._injectA11yAnnouncer();
     }
 
-
     // ============================================================================
     // 🛡️ MÉTODOS DE CONTROL DEL ESCUDO (UI Lock)
     // ============================================================================
@@ -618,7 +619,7 @@ class VortexSpiraApp {
             // 2. Descargamos los nuevos datos
             const [stringsLoaded, coursesData] = await Promise.all([
                 i18n.loadStrings(newLang),
-                data.loadData(newLang)
+                app_utils.loadData(newLang)
             ]);
 
             if (!stringsLoaded || !coursesData) 
@@ -660,14 +661,14 @@ class VortexSpiraApp {
             // 5. Repintamos la capa estática (Textos, Header, Footer)
             this.applyStrings();
 
-            if (data.injectHeaderContent) {
+            if (app_utils.injectHeaderContent) {
                 // Si el nuevo es EN, forzamos true. Si es ES, verificamos si EN existe.
                 const enableI18n = newLang === 'en' ? true : await this._checkEnAvailability();
-                data.injectHeaderContent(this, enableI18n);
+                app_utils.injectHeaderContent(this, enableI18n);
             }
 
-            if (data.injectFooterContent) 
-                data.injectFooterContent(this);
+            if (app_utils.injectFooterContent) 
+                app_utils.injectFooterContent(this);
 
             // 🟢 FIX A11Y UX: Usamos tu sistema de Snapshot para devolver el foco al botón de idiomas
             if (wasLangBtnFocused) {
@@ -759,7 +760,6 @@ class VortexSpiraApp {
     }
 
     // ⭐️ WRAPPERS DE NAVEGACIÓN (Para inyectar diagnóstico)
-    
     renderNavegacion() {
         render_base.renderNavegacion.call(this);
 
@@ -884,74 +884,10 @@ class VortexSpiraApp {
 
         this.updateSEO(activeCourse);
     }
+
     // 🟢 MOTOR SEO DINÁMICO E INYECCIÓN DE JSON-LD PARA BOTS/IAs
     updateSEO(curso = null) {
-        const currentLang = localStorage.getItem('vortex_lang') || 'es';
-        document.documentElement.lang = currentLang;
-
-        let title = this.getString('page.title');
-        let desc = this.getString('seo.description') || '';
-
-        // Si estamos viendo un curso, adaptamos el título y la descripción
-        if (curso) {
-            title = `${curso.titulo} | VortexSpira EdTech`;
-            // Limpiamos las etiquetas HTML (<HR>, <p>, etc) de la descripción del curso
-            desc = curso.descripcion.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim().substring(0, 155) + '...';
-        }
-
-        // 1. Actualizar Título y Meta Descripción
-        document.title = title;
-        let metaDesc = document.querySelector('meta[name="description"]');
-        if (!metaDesc) {
-            metaDesc = document.createElement('meta');
-            metaDesc.name = "description";
-            document.head.appendChild(metaDesc);
-        }
-        metaDesc.content = desc;
-
-        // 2. Inyectar JSON-LD (Datos Estructurados para IAs y Google)
-        let schemaScript = document.getElementById('vortex-json-ld');
-        if (!schemaScript) {
-            schemaScript = document.createElement('script');
-            schemaScript.id = 'vortex-json-ld';
-            schemaScript.type = 'application/ld+json';
-            document.head.appendChild(schemaScript);
-        }
-
-        if (curso) {
-            // 🟢 ESQUEMA DE CURSO (Course Schema)
-            const courseSchema = {
-                "@context": "https://schema.org",
-                "@type": "Course",
-                "name": curso.titulo,
-                "description": curso.descripcion.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim(),
-                "provider": {
-                    "@type": "Organization",
-                    "name": "VortexSpira EdTech",
-                    "sameAs": "https://www.vortexspira.com"
-                },
-                "inLanguage": currentLang === 'en' ? "en-US" : "es-ES"
-            };
-            schemaScript.textContent = JSON.stringify(courseSchema);
-        } else {
-            // 🟢 ESQUEMA DE ORGANIZACIÓN (WebSite / Organization Schema)
-            // Aquí volcamos la filosofía cognitiva e inmersiva para que los bots la entiendan
-            const aboutText = this.getString('seo.about') || desc;
-            const orgSchema = {
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                "name": "VortexSpira EdTech",
-                "url": "https://www.vortexspira.com/",
-                "description": desc,
-                "about": {
-                    "@type": "Organization",
-                    "name": "VortexSpira EdTech",
-                    "description": aboutText
-                },
-                "inLanguage": currentLang === 'en' ? "en-US" : "es-ES"
-            };
-            schemaScript.textContent = JSON.stringify(orgSchema);
-        }
+        app_utils.updateSEO(this, curso);
     }
 
     showToast(message, duration = 3000) {
@@ -1375,8 +1311,8 @@ class VortexSpiraApp {
 const appInstance = new VortexSpiraApp();
 export const init = () => appInstance.init();
 export const applyStrings = () => appInstance.applyStrings();
-export const injectHeaderContent = () => data.injectHeaderContent(appInstance);
-export const injectFooterContent = () => data.injectFooterContent(appInstance);
+export const injectHeaderContent = () => app_utils.injectHeaderContent(appInstance);
+export const injectFooterContent = () => app_utils.injectFooterContent(appInstance);
 export const _mostrarAbout = () => appInstance._mostrarAbout();
 export const App = appInstance;
 

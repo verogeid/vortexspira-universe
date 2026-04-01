@@ -106,7 +106,7 @@ ${getAlternateLinks(id)}${imageTags}
 // 4. SEGUNDA PASADA: GENERACIÓN DEL XML
 
 console.log('--- Buscando Imágenes ---');
-const imagesDir = path.join(PROJECT_ROOT, 'demoImages');
+const imagesDir = path.join(PROJECT_ROOT, 'resources/demoImages');
 const demoImages = [];
 
 if (fs.existsSync(imagesDir)) {

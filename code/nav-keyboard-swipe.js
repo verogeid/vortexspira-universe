@@ -1,7 +1,7 @@
 /* --- code/nav-keyboard-swipe.js --- */
 
 import * as data from './data.js';
-import * as debug from './debug.js';
+import * as debug from './debug/debug.js';
 
 export function _handleSwipeNavigation(key, appInstance) {
     const app = appInstance;
