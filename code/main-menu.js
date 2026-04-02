@@ -1,35 +1,16 @@
 /* --- code/main-menu.js --- */
 
 import * as data from './data.js';
-import * as debug from './debug/debug.js';
 
 let navDropdown = null;
 let btnMainMenu = null;
+let _isInitialized = false;
 
 export function initMainMenu(appInstance, wrapper, enableI18n) {
-    // 1. INYECTAR BOTÓN HAMBURGUESA
-    let controls = wrapper.querySelector('.header-controls');
-    if (!controls) {
-        controls = document.createElement('div');
-        controls.className = 'header-controls';
-        wrapper.appendChild(controls);
-    }
-
-    if (!document.getElementById('btn-main-menu')) {
-        btnMainMenu = document.createElement('button');
-        btnMainMenu.id = 'btn-main-menu';
-        btnMainMenu.setAttribute('aria-expanded', 'false');
-        btnMainMenu.setAttribute('aria-controls', 'main-menu-dropdown');
-        btnMainMenu.setAttribute('aria-label', appInstance.getString('header.aria.menuBtn'));
-        btnMainMenu.setAttribute('title', appInstance.getString('header.aria.menuBtn'));
-        btnMainMenu.tabIndex = 0;
-        
-        const iconHamburger = document.createElement('span');
-        iconHamburger.className = 'icon-hamburger';
-        iconHamburger.setAttribute('aria-hidden', 'true');
-        btnMainMenu.appendChild(iconHamburger);
-        controls.appendChild(btnMainMenu);
-    }
+    if (_isInitialized) return; // Evita inyectar el DOM dos veces si se pulsa rápido
+    
+    // Enganchamos el botón que app-utils.js ya creó en el DOM
+    btnMainMenu = document.getElementById('btn-main-menu');
 
     if (!document.getElementById('main-menu-dropdown')) {
         // 2. INYECTAR MENÚ DESPLEGABLE EN EL BODY
@@ -39,8 +20,10 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
         
         const currentLang = localStorage.getItem('vortex_lang') || 'es';
         const langLabel = currentLang === 'es' 
-            ? appInstance.getString('header.aria.langBtn')
-            : appInstance.getString('header.aria.langBtn');
+            ? appInstance.getString('header.aria.langBtn') || 
+                "Idioma: Español. Cambiar a Inglés." 
+            : appInstance.getString('header.aria.langBtn') || 
+                "Language: English. Switch to Spanish.";
 
         // 🟢 INYECTAMOS LA CUADRÍCULA DE ICONOS (44x44)
         navDropdown.innerHTML = `
@@ -125,6 +108,7 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         </div>
                     </a>
                 </div>
+
             </div>
         `;
 
@@ -140,49 +124,42 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
     }
 
     _setupListeners(appInstance, enableI18n);
+    _isInitialized = true;
 }
 
-function toggleMenu(forceClose = false) {
+// 🟢 Expuesta para que app-utils pueda forzar la apertura
+export function toggleMenu(forceClose = false) {
+    if (!btnMainMenu || !navDropdown) return;
+    
     const isExpanded = btnMainMenu.getAttribute('aria-expanded') === 'true';
     const newState = forceClose ? false : !isExpanded;
-
-    debug.log('main_menu', debug.DEBUG_LEVELS.BASIC, 
-        `Toggling menu. Current state: ${isExpanded}, New state: ${newState}, Force close: ${forceClose}`);
-
     if (isExpanded === newState) return;
     
     btnMainMenu.setAttribute('aria-expanded', String(newState));
     
     if (newState) {
-        // 🟢 LAZY LOAD: Inyectar CSS y ESPERAR a que termine antes de mostrar
-        if (window.App && typeof window.App._injectCSS === 'function') {
-            window.App._injectCSS('styles/style-menu.css', 'vortex-css-menu').then(() => {
-                navDropdown.classList.add('active');
-                setTimeout(() => {
-                    const firstItem = navDropdown.querySelector('.menu-link');
-                    if (firstItem) firstItem.focus();
-                }, 50);
-            });
-        } else {
-            navDropdown.classList.add('active');
-        }
+        navDropdown.classList.add('active');
+        setTimeout(() => {
+            const firstItem = navDropdown.querySelector('.menu-link');
+            if (firstItem) firstItem.focus();
+        }, 50);
     } else {
         navDropdown.classList.remove('active');
     }
 }
 
 function _setupListeners(appInstance, enableI18n) {
-    // 1. Clics de apertura y cierre
-    btnMainMenu.onclick = (e) => {
+    // 1. Clics de apertura y cierre (Enganchados al DOM)
+    // El click en btnMainMenu lo gestiona app-utils la primera vez, pero si
+    // el usuario cierra y vuelve a abrir, este listener toma el control.
+    btnMainMenu.addEventListener('click', (e) => {
         e.stopPropagation();
         toggleMenu();
-    };
+    });
 
     document.addEventListener('click', (e) => {
-        if (btnMainMenu.getAttribute('aria-expanded') === 'true' && 
-            !navDropdown.contains(e.target) && 
-            !btnMainMenu.contains(e.target)) {
-
+        if (btnMainMenu && btnMainMenu.getAttribute('aria-expanded') === 'true' && 
+            !navDropdown.contains(e.target) && !btnMainMenu.contains(e.target)) {
             toggleMenu(true);
         }
     });
@@ -210,18 +187,15 @@ function _setupListeners(appInstance, enableI18n) {
         else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
             e.preventDefault(); e.stopPropagation();
 
-            // 1. Identificamos todas las filas y en cuál estamos
             const rows = Array.from(navDropdown.querySelectorAll('.menu-grid-row'));
             const currentRow = currentItem.closest('.menu-grid-row');
             const rowIndex = rows.indexOf(currentRow);
             
             if (rowIndex === -1) return;
 
-            // 2. ¿En qué posición (columna) estamos dentro de nuestra fila actual?
             const itemsInCurrentRow = Array.from(currentRow.querySelectorAll('.menu-link'));
             const colIndex = itemsInCurrentRow.indexOf(currentItem);
 
-            // 3. Calculamos la fila destino (con bucle arriba/abajo)
             let targetRowIndex;
             if (e.key === 'ArrowDown') {
                 targetRowIndex = (rowIndex + 1) % rows.length;
@@ -232,27 +206,13 @@ function _setupListeners(appInstance, enableI18n) {
             const targetRow = rows[targetRowIndex];
             const itemsInTargetRow = Array.from(targetRow.querySelectorAll('.menu-link'));
 
-            // 4. Saltamos a la misma columna, o al último elemento si la fila destino es más corta
             const targetColIndex = Math.min(colIndex, itemsInTargetRow.length - 1);
             if (itemsInTargetRow[targetColIndex]) {
                 itemsInTargetRow[targetColIndex].focus();
             }
         } 
         else if (e.key === 'Tab') {
-            // Trampa de foco suave: Cerramos y el navegador sigue su camino
             toggleMenu(true);    
-        }
-    });
-
-    // 🟢 CERRAR AL PERDER EL FOCO (Focus Out)
-    // navDropdown es una variable persistente en el scope del módulo.
-    navDropdown.addEventListener('focusout', (e) => {
-        // 🛡️ EXCEPCIÓN CRÍTICA: Si el foco va al botón de menú, NO cerramos aquí.
-        // Dejamos que el evento 'onclick' del propio botón gestione el cierre.
-        if (e.relatedTarget && 
-            e.relatedTarget !== btnMainMenu && 
-            !navDropdown.contains(e.relatedTarget)) {
-            toggleMenu(true); 
         }
     });
 
@@ -260,33 +220,31 @@ function _setupListeners(appInstance, enableI18n) {
     navDropdown.querySelector('#menu-btn-a11y').onclick = (e) => {
         e.preventDefault();
         toggleMenu(true);
-        import('./a11y.js').then(module => module.openModal());
+        import('./a11y.js').then(module => module.openA11yModal(appInstance));
     };
 
     if (enableI18n) {
         const btnLang = navDropdown.querySelector('#menu-btn-lang');
-        btnLang.onclick = (e) => {
-            e.preventDefault();
-            toggleMenu(true);
-            appInstance.toggleLanguage(); // Tu función principal
-            
-            // 🟢 FIX: Actualizamos el texto y el ARIA en caliente sin recargar el menú
-            setTimeout(() => {
-                const currentLang = localStorage.getItem('vortex_lang') || 'es';
+        if (btnLang) {
+            btnLang.onclick = (e) => {
+                e.preventDefault();
+                toggleMenu(true);
+                appInstance.toggleLanguage(); 
                 
-                // Actualizar Texto visual
-                const textSpan = btnLang.querySelector('.lang-text');
-                if (textSpan) textSpan.textContent = currentLang.toUpperCase();
-                
-                // Actualizar Etiqueta ARIA
-                const langLabel = currentLang === 'es' 
-                    ? appInstance.getString('header.aria.langBtn') 
-                    : appInstance.getString('header.aria.langBtn');
-                
-                btnLang.setAttribute('aria-label', langLabel);
-                btnLang.setAttribute('title', langLabel);
-            }, 50); // Pequeño retraso de seguridad por si toggleLanguage tarda unos ms en setear el localStorage
-        };
+                setTimeout(() => {
+                    const currentLang = localStorage.getItem('vortex_lang') || 'es';
+                    const textSpan = btnLang.querySelector('.lang-text');
+                    if (textSpan) textSpan.textContent = currentLang.toUpperCase();
+                    
+                    const langLabel = currentLang === 'es' 
+                        ? appInstance.getString('header.aria.langBtn') || "Idioma: Español. Cambiar a Inglés." 
+                        : appInstance.getString('header.aria.langBtn') || "Language: English. Switch to Spanish.";
+                    
+                    btnLang.setAttribute('aria-label', langLabel);
+                    btnLang.setAttribute('title', langLabel);
+                }, 50); 
+            };
+        }
     }
 
     navDropdown.querySelector('#menu-btn-about').onclick = (e) => {

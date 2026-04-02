@@ -2,7 +2,52 @@
 
 import * as debug from './debug/debug.js';
 import * as data from './data.js';
-import * as main_menu from './main-menu.js';
+
+// Variable global para almacenar el módulo una vez descargado
+let _mainMenuModule = null;
+let _isMenuLoading = false;
+
+// 🟢 LAZY LOAD: Precarga en segundo plano
+export async function preloadMainMenu(appInstance) {
+    if (_mainMenuModule) return;
+    try {
+        appInstance._injectCSS('styles/style-menu.css', 'vortex-css-menu');
+        _mainMenuModule = await import('./main-menu.js');
+
+        debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
+            '📦 Menú precargado en background');
+
+    } catch (e) {
+        debug.logError('app_utils', 'Fallo precargando menú', e);
+    }
+}
+
+// 🟢 LAZY LOAD: Apertura real al hacer clic
+export async function openMainMenu(appInstance, enableI18n, btnElement) {
+    if (_isMenuLoading) return;
+    
+    try {
+        if (!_mainMenuModule) {
+            _isMenuLoading = true;
+            appInstance.blockUI(); // Muro de cristal si la red es lenta
+            appInstance._injectCSS('styles/style-menu.css', 'vortex-css-menu');
+            _mainMenuModule = await import('./main-menu.js');
+            appInstance.unblockUI();
+            _isMenuLoading = false;
+        }
+        
+        // 1. Inyectamos el DOM del desplegable usando tu función original
+        _mainMenuModule.initMainMenu(appInstance, document.getElementById('header-content-wrapper'), enableI18n);
+        
+        // 2. Forzamos la apertura llamando a tu toggleMenu
+        _mainMenuModule.toggleMenu(false);
+        
+    } catch (e) {
+        debug.logError('app_utils', 'Fallo abriendo menú dinámico', e);
+        appInstance.unblockUI();
+        _isMenuLoading = false;
+    }
+}
 
 export async function loadData(lang) {
     try {
@@ -48,13 +93,9 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
         const h1 = header.querySelector('h1');
 
         if (h1) {
-            // 2. HEADER LOGO: Comprobamos si ya existe para no duplicarlo al cambiar de idioma
             let logoLink = h1.querySelector('a');
             
             if (!logoLink) {
-                debug.log('app_utils', debug.DEBUG_LEVELS.DEEP, 
-                    'Insertando enlace en Header');
-
                 logoLink = document.createElement('a');
                 logoLink.href = data.MEDIA.URL.WEBPAGE;
                 logoLink.target = "_self";
@@ -66,29 +107,51 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
                 h1.insertBefore(logoLink, h1.firstChild);
             }
             
-            // Siempre actualizamos el aria-label en caliente para los cambios de idioma
-            const txtLogoLink = appInstance.getString('header.aria.logoLink')
+            const txtLogoLink = appInstance.getString('header.aria.logoLink');
             logoLink.setAttribute('aria-label', txtLogoLink);
             logoLink.setAttribute('title', txtLogoLink);
 
-            // 3. DEBUG ICON (OBRAS): Solo insertamos si no existe previamente
             if (!debug.IS_PRODUCTION) {
                 let obrasSpan = wrapper.querySelector('.icon-obras-header');
-                
                 if (!obrasSpan) {
-                    debug.log('app_utils', debug.DEBUG_LEVELS.DEEP, 
-                        'Insertando Icono de Obras');
-
                     obrasSpan = document.createElement('span');
-                    obrasSpan.className = 'icon-obras-header'; // CSS pinta el icono
+                    obrasSpan.className = 'icon-obras-header'; 
                     wrapper.insertBefore(obrasSpan, h1);
                 }
             }
         }
 
-        // 🟢 DELEGACIÓN ARQUITECTÓNICA: 
-        // Pasamos la responsabilidad del menú, el teclado y la UI a su propio componente
-        main_menu.initMainMenu(appInstance, wrapper, enableI18n);
+        // 🟢 INYECCIÓN SÍNCRONA DEL BOTÓN ORIGINAL
+        // Extraído directamente de tu main-menu.js
+        let controls = wrapper.querySelector('.header-controls');
+        if (!controls) {
+            controls = document.createElement('div');
+            controls.className = 'header-controls';
+            wrapper.appendChild(controls);
+        }
+
+        let btnMainMenu = document.getElementById('btn-main-menu');
+        if (!btnMainMenu) {
+            btnMainMenu = document.createElement('button');
+            btnMainMenu.id = 'btn-main-menu';
+            btnMainMenu.setAttribute('aria-expanded', 'false');
+            btnMainMenu.setAttribute('aria-controls', 'main-menu-dropdown');
+            btnMainMenu.setAttribute('aria-label', appInstance.getString('header.aria.menuBtn') || 'Menú');
+            btnMainMenu.setAttribute('title', appInstance.getString('header.aria.menuBtn') || 'Menú');
+            btnMainMenu.tabIndex = 0;
+            
+            const iconHamburger = document.createElement('span');
+            iconHamburger.className = 'icon-hamburger';
+            iconHamburger.setAttribute('aria-hidden', 'true');
+            btnMainMenu.appendChild(iconHamburger);
+            controls.appendChild(btnMainMenu);
+
+            // Al hacer clic, iniciamos la carga perezosa
+            btnMainMenu.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openMainMenu(appInstance, enableI18n, btnMainMenu);
+            });
+        }
     }
 }
 
@@ -237,6 +300,67 @@ export function updateSEO(appInstance, curso = null) {
     }
 
     schemaScript.textContent = JSON.stringify(jsonLdArray, null, 2);
+}
+
+let _detailsModulesPromise = null;
+
+// 🟢 LAZY LOAD: Apertura directa (Bloquea UI si la red es lenta)
+export function loadDetailsModules(appInstance) {
+    if (!_detailsModulesPromise) {
+        _detailsModulesPromise = (async () => {
+            // Muro de cristal para evitar dobles clics
+            appInstance.blockUI(); 
+            
+            // Inyectamos el CSS pesado de Detalles
+            appInstance._injectCSS('styles/style-details.css', 'vortex-css-details');
+            appInstance._injectCSS('styles/style-media-details.css', 'vortex-css-media-details');
+            
+            try {
+                // Descargamos los módulos JavaScript dinámicamente
+                const [render, keyboard] = await Promise.all([
+                    import('./render-details.js'),
+                    import('./nav-keyboard-details.js')
+                ]);
+                
+                appInstance.unblockUI();
+                debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
+                    '📦 Módulos de Detalles cargados y listos');
+                
+                return { render, keyboard };
+            } catch (e) {
+                appInstance.unblockUI();
+                debug.logError('app_utils', 'Fallo descargando detalles', e);
+                _detailsModulesPromise = null; // Permitimos reintentar si falló la red
+                return null;
+            }
+        })();
+    }
+    return _detailsModulesPromise;
+}
+
+// 🟢 LAZY LOAD: Precarga silenciosa (Fondo)
+export function preloadDetailsModules(appInstance) {
+    if (!_detailsModulesPromise) {
+        _detailsModulesPromise = (async () => {
+            appInstance._injectCSS('styles/style-details.css', 'vortex-css-details');
+            appInstance._injectCSS('styles/style-media-details.css', 'vortex-css-media-details');
+            try {
+                const [render, keyboard] = await Promise.all([
+                    import('./render-details.js'),
+                    import('./nav-keyboard-details.js')
+                ]);
+                debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
+                    '📦 Detalles precargados en background');
+
+                return { render, keyboard };
+            } catch (e) {
+                debug.logError('app_utils', 'Fallo precargando detalles en idle', e);
+                _detailsModulesPromise = null; 
+                return null;
+            }
+        })();
+    }
+    return _detailsModulesPromise;
 }
 
 /* --- code/app-utils.js --- */

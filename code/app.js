@@ -15,11 +15,9 @@ import * as nav_stack from './nav-stack.js';
 import * as nav_base from './nav-base.js';
 import * as nav_base_details from './nav-base-details.js'; 
 
-import * as render_details from './render-details.js'; 
 import * as render_base from './render-base.js';
 
 import * as nav_keyboard_base from './nav-keyboard-base.js'; 
-import * as nav_keyboard_details from './nav-keyboard-details.js'; 
 import * as nav_mouse_swipe from './nav-mouse-swipe.js';
 
 import * as render_swipe from './render-swipe.js';
@@ -100,7 +98,11 @@ class VortexSpiraApp {
         this.setupTouchListeners = nav_mouse_swipe.setupTouchListeners;
         this._handleActionRowClick = nav_base_details._handleActionRowClick; 
         
-        this._handleDetailNavigation = nav_keyboard_details._handleDetailNavigation;
+        // 🟢 PUENTE ASÍNCRONO: Si pulsan teclas en detalles, aseguramos que exista
+        this._handleDetailNavigation = async (key) => {
+            const mods = await app_utils.loadDetailsModules(this);
+            if (mods) mods.keyboard._handleDetailNavigation.call(this, key);
+        };
         
         this.clearConsole = debug.logClear;
     }
@@ -485,8 +487,22 @@ class VortexSpiraApp {
             
             // 🔓 Liberamos el flag de arranque
             this.STATE.isBooting = false;
+
             debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                 "🔓 App cargada. Activando foco real.");
+
+            // 🟢 PRECARGA EN SEGUNDO PLANO (Lazy Load Menu & Details)
+            if (window.requestIdleCallback) {
+                requestIdleCallback(() => {
+                    app_utils.preloadMainMenu(this);
+                    app_utils.preloadDetailsModules(this);
+                });
+            } else {
+                setTimeout(() => {
+                    app_utils.preloadMainMenu(this);
+                    app_utils.preloadDetailsModules(this);
+                }, data.PRELOAD_TIME);
+            }
 
             // 🟢 3. RETRASO ESTRATÉGICO DEL FOCO
             // El foco nativo INTERRUMPE cualquier locución en curso. 
@@ -781,10 +797,14 @@ class VortexSpiraApp {
                 window.matchMedia("(pointer: coarse)").matches);
     }
 
-    _mostrarDetalle(cursoId, forceRepaint = false) { 
-        render_details._mostrarDetalle.call(this, cursoId, forceRepaint);
+    async _mostrarDetalle(cursoId, forceRepaint = false) { 
+        // 🟢 ESPERAMOS A QUE LOS ARCHIVOS DE DETALLE EXISTAN
+        const mods = await app_utils.loadDetailsModules(this);
+        if (!mods) return;
+        
+        mods.render._mostrarDetalle.call(this, cursoId, forceRepaint);
         this.STATE.activeCourseId = cursoId; 
-        // Ejecutar diagnóstico tras renderizar el detalle
+        
         requestAnimationFrame(() => {
             debug_diagnostics.runFontDiagnostics?.();
             debug_diagnostics.runLayoutDiagnostics?.();
@@ -1282,13 +1302,10 @@ class VortexSpiraApp {
     // ==========================================
     // 🟢 PAGINA DE "QUIÉNES SOMOS" (FANTASMA)
     // ==========================================
-    _mostrarAbout(pushHistory = true) {
+    async _mostrarAbout(pushHistory = true) {
         debug.log('app', debug.DEBUG_LEVELS.BASIC, 
             'Abriendo página especial: Quiénes Somos');
 
-        // 🟢 FIX: Solo guardamos el origen si no estamos ya en una vista especial
-        // Esto evita que al cambiar de idioma (que llama a _mostrarAbout), 
-        // el originId pase a ser 'c-about' y perdamos el curso real.
         if (!this.STATE.isSpecialViewActive) {
             this.STATE._previousCourseId = this.STATE.activeCourseId;
         }
@@ -1304,7 +1321,7 @@ class VortexSpiraApp {
             }
         }
 
-        this._mostrarDetalle('c-about');
+        await this._mostrarDetalle('c-about');
     }
 }
 

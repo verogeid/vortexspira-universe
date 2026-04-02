@@ -1,5 +1,7 @@
 /* --- code/data.js --- */
 
+export const PRELOAD_TIME = 2000;
+
 export const A11Y = {
     STORAGE_KEY: 'vortex_a11y_prefs_v1',
     DEFAULTS: {
