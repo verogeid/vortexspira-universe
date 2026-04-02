@@ -17,8 +17,8 @@ import * as nav_base_details from './nav-base-details.js';
 
 import * as render_base from './render-base.js';
 
-import * as nav_keyboard_base from './nav-keyboard-base.js'; 
-import * as nav_mouse_swipe from './nav-mouse-swipe.js';
+//import * as nav_keyboard_base from './nav-keyboard-base.js'; 
+//import * as nav_mouse_swipe from './nav-mouse-swipe.js';
 
 import * as render_swipe from './render-swipe.js';
 import * as render_mobile from './render-mobile.js';
@@ -95,7 +95,6 @@ class VortexSpiraApp {
         this._initCarousel_Mobile = render_mobile._initCarousel_Mobile;
         this._destroyCarousel = render_swipe._destroyCarouselImpl;
         
-        this.setupTouchListeners = nav_mouse_swipe.setupTouchListeners;
         this._handleActionRowClick = nav_base_details._handleActionRowClick; 
         
         // 🟢 PUENTE ASÍNCRONO: Si pulsan teclas en detalles, aseguramos que exista
@@ -327,7 +326,62 @@ class VortexSpiraApp {
         }
 
         nav_base.setupListeners.call(this);
-        nav_keyboard_base.initKeyboardControls.call(this); 
+
+        // 1. Detector de Teclado y Rueda del Ratón (La rueda simula flechas)
+        const bootKeyboardModule = async (e) => {
+            // Ignoramos si solo pulsa teclas modificadoras
+            if (e.type === 'keydown' && ['Shift', 'Control', 'Alt', 'Meta'].includes(e.key)) return;
+            
+            document.removeEventListener('keydown', bootKeyboardModule, true);
+            document.removeEventListener('wheel', bootKeyboardModule, true);
+            
+            // 🟢 TRAMPA FÍSICA: Si fue la rueda, frenamos el primer "golpe" nativo
+            // para que la pantalla no salte bruscamente mientras baja el JS en ese milisegundo.
+            if (e.type === 'wheel') {
+                const targetIsCentral = e.target.closest(
+                    '#vista-central, .carousel-viewport, .detalle-viewport'
+                );
+                if (targetIsCentral) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }
+            
+            try {
+                const nav_keyboard_base = await import('./nav-keyboard-base.js');
+                nav_keyboard_base.initKeyboardControls.call(this);
+
+                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                    '⌨️/⚙️ Teclado o Rueda detectado. Módulo inyectado en caliente.');
+
+            } catch (err) {
+                debug.logError('app', 'Fallo al cargar módulo de teclado', err);
+            }
+        };
+        
+        // Escuchamos en fase de captura
+        document.addEventListener('keydown', bootKeyboardModule, true);
+        document.addEventListener('wheel', bootKeyboardModule, { capture: true, passive: false });
+
+        // 2. Detector de Puntero (Ratón / Touch)
+        // Agrupamos el Swipe y los clics porque la lógica de Swiper mezcla ambos mundos
+        const bootPointerModule = async () => {
+            document.removeEventListener('mousemove', bootPointerModule, true);
+            document.removeEventListener('touchstart', bootPointerModule, true);
+            
+            try {
+                const nav_mouse_swipe = await import('./nav-mouse-swipe.js');
+                nav_mouse_swipe.setupTouchListeners.call(this);
+
+                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                    '🖱️/👆 Puntero/Touch detectado. Módulo de swipe inyectado.');
+
+            } catch (err) {
+                debug.logError('app', 'Fallo al cargar módulo de puntero', err);
+            }
+        };
+        document.addEventListener('mousemove', bootPointerModule, true);
+        document.addEventListener('touchstart', bootPointerModule, true);
         
         this._updateLayoutMode();
         this._syncHeaderDimensions();
