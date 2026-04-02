@@ -22,8 +22,8 @@ jobs:
           # Contamos el histórico total de la rama (número de commits)
           BUILD_NUM=$(git rev-list --count HEAD)
 
-          FILE_ES="data/strings_es.json"
-          FILE_EN="data/strings_en.json"
+          FILE_ES="data/strings/strings_es.json"
+          FILE_EN="data/strings/strings_en.json"
 
           # Función inyectora quirúrgica
           update_json() {
@@ -48,7 +48,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
           if [[ -n $(git status -s) ]]; then
-            git add data/strings_es.json data/strings_en.json
+            git add data/strings/strings_es.json data/strings/strings_en.json
             
             # El tag [skip ci] evita un bucle infinito de ejecuciones
             git commit -m "chore: actualiza build a $BUILD_NUM [skip ci]"

@@ -6,8 +6,8 @@ on:
     branches:
       - main
     paths:
-      - 'data/cursos_es.json'
-      - 'data/cursos_en.json'
+      - 'data/courses/cursos_es.json'
+      - 'data/courses/cursos_en.json'
 
 jobs:
   generate-sitemap:

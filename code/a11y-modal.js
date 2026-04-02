@@ -487,7 +487,7 @@ function _setupListeners(appInstance) {
                 _updateModalUI();
                 
                 if (window.App && window.App.announceA11y) {
-                    const prefix = i18n.getString('modal.themeChanged');
+                    const prefix = i18n.getString('modal.aria.themeChanged');
                     window.App.announceA11y(`${prefix}${btn.innerText}`, 'polite');
                 }
             });

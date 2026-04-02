@@ -55,7 +55,7 @@ export async function openMainMenu(appInstance, enableI18n, btnElement) {
 
 export async function loadData(lang) {
     try {
-        const filename = `./data/cursos_${lang}.json`;
+        const filename = `./data/courses/cursos_${lang}.json`;
 
         debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
                     `Cargando datos de cursos: ${filename}`);
@@ -111,8 +111,10 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
                 h1.insertBefore(logoLink, h1.firstChild);
             }
             
+            const txtLogoObras = appInstance.getString('header.aria.obras');
+
             const txtLogoLink = appInstance.getString('header.aria.logoLink');
-            logoLink.setAttribute('aria-label', txtLogoLink);
+            logoLink.setAttribute('aria-label', txtLogoObras + '. ' + txtLogoLink);
             logoLink.setAttribute('title', txtLogoLink);
 
             if (!debug.IS_PRODUCTION) {
@@ -120,10 +122,6 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
                 if (!obrasSpan) {
                     obrasSpan = document.createElement('span');
                     obrasSpan.className = 'icon-obras-header'; 
-
-                    const txtLogoObras = appInstance.getString('header.aria.obras');
-                    obrasSpan.setAttribute('aria-label', txtLogoObras);
-                    obrasSpan.setAttribute('title', txtLogoObras);
 
                     wrapper.insertBefore(obrasSpan, h1);
                 }

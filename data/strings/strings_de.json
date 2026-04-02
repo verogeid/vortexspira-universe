@@ -1,0 +1,134 @@
+{
+    "meta": {
+        "version": "0.1.0",
+        "build": "875"
+    },
+    "page": {
+        "title": "VortexSpira® EdTech: Kursauswahl"
+    },
+    "seo": {
+        "description": "Lernen Sie Softwareentwicklung, QA und DevOps von Null bis zum Architekten. AAA-Plattform mit Universal Design, entkoppelter Verbalisierung und null kognitiver Ermüdung.",
+        "about": "VortexSpira EdTech: IT-Ausbildung mit AAA Universal Design. Lernen Sie Programmieren, Softwaretests (QA) und DevOps ohne technologische oder kognitive Barrieren.",
+        "org": {
+        "description": "VortexSpira EdTech ist eine Software-Engineering-Plattform mit AAA Universal Design, die entwickelt wurde, um von Null bis zum Architekten auszubilden. Durch Kognitionswissenschaft und entkoppelte Verbalisierung minimiert sie die mentale Ermüdung.",
+        "accessibilitySummary": "Erfüllt die WCAG AAA-Richtlinien. Bietet OpenDyslexic-Typografie, anpassbare Abstände, erzwungene Hochkontrast-Themes, vestibulären Schutz durch reduzierte Animationen und entkoppelte Verbalisierung mit Pausen zur Code-Assimilation."
+        },
+        "catalog": {
+        "name": "VortexSpira EdTech Schulungskatalog",
+        "description": "Immersive Ausbildung in Softwareentwicklung, Qualitätssicherung (QA) und Cybersicherheit. Offline-first PWA-Architektur."
+        }
+    },
+    "header": {
+        "title": "VortexSpira® EdTech",
+        "subtitle": "Immersives Technisches Audio-Lernen",
+        "aria": {
+        "obras": "Website im Aufbau",
+        "logoLink": "Zur Startseite von VortexSpira EdTech",
+        "menuBtn": "Hauptmenü öffnen"
+        }
+    },
+    "menu": {
+        "aria": {
+        "a11yBtn": "Barrierefreiheitseinstellungen öffnen",
+        "langBtn": "Aktuelle Sprache: Deutsch. Sprache wechseln.",
+        "langSwitch": "Sprache wird zu Spanisch gewechselt...",
+        "about": "Erfahren Sie mehr über uns und unsere Mission",
+        "linkedin": "Besuchen Sie das LinkedIn-Profil von VortexSpira®",
+        "github": "Zum Dev Diary auf GitHub gehen",
+        "landing": "Zur Landing Page gehen. Erhalten Sie 60 % Rabatt als Gründer. Die Anmeldung ist kostenlos!",
+        "license": "Creative Commons Lizenz CC BY-NC-ND 4.0 anzeigen"
+        }
+    },
+    "nav": {
+        "aria": {
+        "region": "Hauptnavigation der Kurse",
+        "backBtn": "Zum vorherigen Level zurückkehren",
+        "breadcrumb": "Aktuelles Level: ",
+        "actionCategory": "Zur Untersektion gehen:",
+        "actionCourse": "Kursdetails öffnen:"
+        },
+        "backBtnText": "Zurück",
+        "breadcrumbRoot": "Hauptebene",
+        "level": "Level",
+        "contextPrefix": "Navigieren in: ",
+        "coursePrefix": "Kurs: ",
+        "emptyState": "Auf dieser Ebene sind keine Inhalte verfügbar.",
+        "emptySection": "Noch keine Inhalte"
+    },
+    "card": {
+        "noTitle": "Ohne Titel"
+    },
+    "details": {
+        "aria": {
+        "region": "Kursdetails",
+        "readOnly": "Schreibgeschütztes Element."
+        },
+        "noDescription": "Keine Beschreibung verfügbar."
+    },
+    "footer": {
+        "copyright": "©2025",
+        "author": "Entwickelt von <span style=\"white-space: nowrap\">Diego González Fernández</span>"
+    },
+    "help": {
+        "title": "Schnelle Hilfe:",
+        "rotate": "<strong>Drehen</strong>: Ziehen, das Mausrad oder die Pfeiltasten verwenden.",
+        "back": "<strong>Zurück</strong>: [Esc] oder die Schaltfläche \"&lt; Zurück\" drücken."
+    },
+    "about": {
+        "title": "Über Uns",
+        "landing": "Werden Sie Gründer und erhalten Sie 60 % Rabatt",
+        "diary": "Lesen Sie das Dev Diary auf GitHub"
+    },
+    "modal": {
+        "title": "Barrierefreiheit",
+        "opened": "Barrierefreiheitseinstellungen geöffnet",
+        "close": "Einstellungen schließen",
+        "closed": "Barrierefreiheitseinstellungen geschlossen",
+        "reset": "Standardwerte wiederherstellen",
+        "resetSuccess": "Standardwerte wiederhergestellt",
+        "sections": {
+        "font": "Typografie",
+        "size": "Textgröße",
+        "spacing": "Zeilenabstand",
+        "letterSpacing": "Zeichenabstand",
+        "motion": "Vestibulärer Schutz und kognitive Ermüdung",
+        "theme": "Farbdesign"
+        },
+        "options": {
+        "atkinson": "Atkinson (Sans)",
+        "serif": "Klassische Serif",
+        "dyslexic": "OpenDyslexic / Lexend",
+        "reduceMotion": "Animationen reduzieren",
+        "noBlockOpacity": "Abdunklung in Kursbeschreibungen deaktivieren",
+        "noMaskOpacity": "Abdunklung in Menüs deaktivieren",
+        "noZoneOpacity": "Abdunklung in inaktiven Bereichen deaktivieren",
+        "themeDefault": "System (Standard)",
+        "themeLight": "Heller Modus",
+        "themeDark": "Dunkler Modus",
+        "themeContrast": "Hoher Kontrast",
+        "themeForced": "Erzwungene Farben",
+        "themeYellow": "Gelb auf Schwarz"
+        },
+        "spacing": {
+        "compact": "Kompakt",
+        "normal": "Normal",
+        "wide": "Weit",
+        "extraWide": "Sehr weit"
+        },
+        "aria": {
+        "fontCurrent": "Aktuelle Typografie: ",
+        "fontChange": "Typografie ändern zu ",
+        "textSize": "Textgröße anpassen",
+        "lineSpacing": "Zeilenabstand anpassen",
+        "letterSpacing": "Buchstaben- und Wortabstand anpassen",
+        "themeCurrent": "Aktuelles Farbdesign: ",
+        "themeChange": "Farbdesign ändern zu ",
+        "themeChanged": "Farbdesign geändert zu: "
+        }
+    },
+    "toast": {
+        "errorId": "Kurs nicht gefunden. Versuchen Sie, manuell zu suchen.",
+        "emptyNav": "Keine navigierbaren Elemente in diesem Abschnitt.",
+        "skipColumn": "Leere Spalte wird übersprungen..."
+    }
+}

@@ -720,7 +720,7 @@ class VortexSpiraApp {
     async _checkEnAvailability() {
         try {
             // Verificamos el archivo de datos principal como testigo
-            const response = await fetch('./data/cursos_en.json', { method: 'HEAD' });
+            const response = await fetch('./data/courses/cursos_en.json', { method: 'HEAD' });
             return response.ok;
         } catch (e) {
             debug.logWarn('app', 'Chequeo disponibilidad EN fallido', e);

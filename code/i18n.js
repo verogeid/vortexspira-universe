@@ -23,8 +23,9 @@ export function detectBrowserLanguage() {
  */
 export async function loadStrings(lang) {
     try {
-        const url = `./data/strings_${lang}.json`;
-        debug.log('i18n', debug.DEBUG_LEVELS.BASIC, `Intentando cargar textos: ${url}`);
+        const url = `./data/strings/strings_${lang}.json`;
+        debug.log('i18n', debug.DEBUG_LEVELS.BASIC, 
+            `Intentando cargar textos: ${url}`);
         
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -118,8 +119,24 @@ export function applyStrings(appInstance) {
     }
 
     const attributes = {
-        'vista-central': { 'aria-label': 'nav.aria.region' },
-        'card-volver-fija-elemento': { 'aria-label': 'nav.aria.backBtn' }
+        'vista-central': { 
+            'aria-label': 'nav.aria.region' },
+        'card-volver-fija-elemento': { 
+            'aria-label': 'nav.aria.backBtn', 'title': 'nav.aria.backBtn' },
+        'menu-btn-a11y': { 
+            'aria-label': 'menu.aria.a11yBtn', 'title': 'menu.aria.a11yBtn' },
+        'menu-btn-lang': { 
+            'aria-label': 'menu.aria.langBtn', 'title': 'menu.aria.langBtn' },
+        'menu-btn-about': { 
+            'aria-label': 'menu.aria.about', 'title': 'menu.aria.about' },
+        'menu-link-linkedin': { 
+            'aria-label': 'menu.aria.linkedin', 'title': 'menu.aria.linkedin' },
+        'menu-link-github': { 
+            'aria-label': 'menu.aria.github', 'title': 'menu.aria.github' },
+        'menu-link-landing': { 
+            'aria-label': 'menu.aria.landing', 'title': 'menu.aria.landing' },
+        'menu-link-license': { 
+            'aria-label': 'menu.aria.license', 'title': 'menu.aria.license' }
     };
 
     for (const id in attributes) {
@@ -129,6 +146,12 @@ export function applyStrings(appInstance) {
                 el.setAttribute(attr, getString(attributes[id][attr]));
             }
         }
+    }
+
+    // 🟢 Actualizar dinámicamente la insignia visual (ES/EN) del botón de idiomas
+    const langTextSpan = document.querySelector('#menu-btn-lang .lang-text');
+    if (langTextSpan) {
+        langTextSpan.textContent = _currentLang.toUpperCase();
     }
 
     // Footer (Si se maneja aquí y no dinámicamente)

@@ -81,6 +81,7 @@
     line-height: var(--line-height-base);
     
     width: 100%;
+    max-width: 80ch;
 }
 
 .detail-text-fragment .content-wrapper {

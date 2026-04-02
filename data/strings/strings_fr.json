@@ -1,0 +1,134 @@
+{
+    "meta": {
+        "version": "0.1.0",
+        "build": "875"
+    },
+    "page": {
+        "title": "VortexSpira® EdTech : Sélecteur de Cours"
+    },
+    "seo": {
+        "description": "Apprenez le développement logiciel, la QA et DevOps de zéro jusqu'à architecte. Plateforme AAA avec conception universelle, verbalisation découplée et zéro fatigue cognitive.",
+        "about": "VortexSpira EdTech : Formation IT avec Conception Universelle AAA. Apprenez la programmation, les tests de logiciels (QA) et DevOps sans barrières technologiques ni cognitives.",
+        "org": {
+            "description": "VortexSpira EdTech est une plateforme d'ingénierie logicielle avec Conception Universelle AAA, créée pour former de zéro jusqu'à architecte. Grâce à la science cognitive et à la verbalisation découplée, elle minimise la fatigue mentale.",
+            "accessibilitySummary": "Conforme aux directives WCAG AAA. Offre la typographie OpenDyslexic, un espacement adaptable, des thèmes à contraste élevé forcés, une protection vestibulaire par la réduction des animations et une verbalisation découplée avec des pauses pour l'assimilation du code."
+        },
+        "catalog": {
+            "name": "Catalogue de Formation de VortexSpira EdTech",
+            "description": "Formation immersive en développement logiciel, assurance qualité (QA) et cybersécurité. Architecture PWA hors ligne d'abord (offline-first)."
+        }
+    },
+    "header": {
+        "title": "VortexSpira® EdTech",
+        "subtitle": "Apprentissage Audio Technique Immersif",
+        "aria": {
+            "obras": "Site en cours de développement",
+            "logoLink": "Aller à l'accueil de VortexSpira EdTech",
+            "menuBtn": "Ouvrir le menu principal"
+        }
+    },
+    "menu": {
+        "aria": {
+            "a11yBtn": "Ouvrir les paramètres d'accessibilité",
+            "langBtn": "Langue actuelle : Français. Changer de langue.",
+            "langSwitch": "Changement de langue en Français...",
+            "about": "En savoir plus sur nous et notre mission",
+            "linkedin": "Visiter le profil LinkedIn de VortexSpira®",
+            "github": "Aller au Journal de Développement sur GitHub",
+            "landing": "Aller à la Landing Page. Obtenez 60 % de réduction en tant que Fondateur. L'inscription est gratuite !",
+            "license": "Voir la licence Creative Commons CC BY-NC-ND 4.0"
+        }
+    },
+    "nav": {
+        "aria": {
+            "region": "Navigation principale des cours",
+            "backBtn": "Retourner au niveau précédent",
+            "breadcrumb": "Niveau Actuel : ",
+            "actionCategory": "Aller à la sous-section :",
+            "actionCourse": "Ouvrir les détails du cours :"
+        },
+        "backBtnText": "Retour",
+        "breadcrumbRoot": "Niveau Racine",
+        "level": "Niveau",
+        "contextPrefix": "Navigation dans : ",
+        "coursePrefix": "Cours : ",
+        "emptyState": "Aucun contenu disponible à ce niveau.",
+        "emptySection": "Aucun contenu pour le moment"
+    },
+    "card": {
+        "noTitle": "Sans Titre"
+    },
+    "details": {
+        "aria": {
+            "region": "Détails du cours",
+            "readOnly": "Élément en lecture seule."
+        },
+        "noDescription": "Aucune description disponible."
+    },
+    "footer": {
+        "copyright": "©2025",
+        "author": "Développé par <span style=\"white-space: nowrap\">Diego González Fernández</span>"
+    },
+    "help": {
+        "title": "Aide Rapide :",
+        "rotate": "<strong>Pivoter</strong> : Faites glisser, utilisez la molette de la souris ou les flèches du clavier.",
+        "back": "<strong>Retour</strong> : Appuyez sur [Esc] ou sur le bouton \"&lt; Retour\"."
+    },
+    "about": {
+        "title": "Qui Sommes-Nous",
+        "landing": "Devenez Fondateur et obtenez 60 % de réduction",
+        "diary": "Lire le Dev Diary sur GitHub"
+    },
+    "modal": {
+        "title": "Accessibilité",
+        "opened": "Paramètres d'accessibilité ouverts",
+        "close": "Fermer les paramètres",
+        "closed": "Paramètres d'accessibilité fermés",
+        "reset": "Restaurer les valeurs par défaut",
+        "resetSuccess": "Valeurs par défaut restaurées",
+        "sections": {
+            "font": "Typographie",
+            "size": "Taille du Texte",
+            "spacing": "Espacement des lignes",
+            "letterSpacing": "Espacement des caractères",
+            "motion": "Protection vestibulaire et fatigue cognitive",
+            "theme": "Thème de Couleur"
+        },
+        "options": {
+            "atkinson": "Atkinson (Sans)",
+            "serif": "Serif Classique",
+            "dyslexic": "OpenDyslexic / Lexend",
+            "reduceMotion": "Réduire les animations",
+            "noBlockOpacity": "Désactiver l'atténuation dans la description des cours",
+            "noMaskOpacity": "Désactiver l'atténuation dans les menus",
+            "noZoneOpacity": "Désactiver l'atténuation des zones inactives",
+            "themeDefault": "Système (Par défaut)",
+            "themeLight": "Mode Clair",
+            "themeDark": "Mode Sombre",
+            "themeContrast": "Contraste Élevé",
+            "themeForced": "Couleurs Forcées",
+            "themeYellow": "Jaune sur Noir"
+        },
+        "spacing": {
+            "compact": "Compact",
+            "normal": "Normal",
+            "wide": "Large",
+            "extraWide": "Très Large"
+        },
+        "aria": {
+            "fontCurrent": "Typographie actuelle : ",
+            "fontChange": "Changer la typographie pour ",
+            "textSize": "Ajuster la taille du texte",
+            "lineSpacing": "Ajuster l'espacement des lignes",
+            "letterSpacing": "Ajuster l'espacement entre les lettres et les mots",
+            "themeCurrent": "Thème de couleur actuel : ",
+            "themeChange": "Changer le thème de couleur pour ",
+            "themeChanged": "Thème changé pour : "
+        }
+    },
+    "toast": {
+        "errorId": "Cours introuvable. Essayez de chercher manuellement.",
+        "emptyNav": "Aucun élément navigable dans cette section.",
+        "skipColumn": "Saut de la colonne vide..."
+    }
+}

@@ -20,9 +20,7 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
         navDropdown.className = 'menu-dropdown';
         
         const currentLang = localStorage.getItem('vortex_lang') || 'es';
-        const langLabel = currentLang === 'es' 
-            ? appInstance.getString('menu.aria.langBtn')
-            : appInstance.getString('menu.aria.langBtn');
+        const langLabel = appInstance.getString('menu.aria.langBtn');
 
         // 🟢 INYECTAMOS LA CUADRÍCULA DE ICONOS (44x44)
         navDropdown.innerHTML = `
@@ -61,6 +59,7 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
 
                 <div class="menu-grid-row" role="presentation">
                     <a role="menuitem" 
+                        id="menu-link-linkedin"
                         href="${data.MEDIA.URL.LINKEDIN}" 
                         target="_blank" 
                         class="menu-link" 
@@ -69,6 +68,7 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         <span class="menu-icon icon-linkedin"></span> 
                     </a>
                     <a role="menuitem" 
+                        id="menu-link-github"
                         href="${data.MEDIA.URL.DEV_DIARY}" 
                         target="_blank" 
                         class="menu-link" 
@@ -77,6 +77,7 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         <span class="menu-icon icon-github"></span> 
                     </a>
                     <a role="menuitem" 
+                        id="menu-link-landing"
                         href="${data.MEDIA.URL.LANDING_PAGE}" 
                         target="_blank" 
                         class="menu-link" 
@@ -93,6 +94,7 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
 
                 <div class="menu-grid-row" role="presentation">
                     <a role="menuitem" 
+                        id="menu-link-license"
                         href="${data.MEDIA.URL.LICENSE}" 
                         target="_top" 
                         class="menu-link cc-license-btn" 
@@ -230,17 +232,6 @@ function _setupListeners(appInstance, enableI18n) {
                 e.preventDefault();
                 toggleMenu(true);
                 appInstance.toggleLanguage(); 
-                
-                setTimeout(() => {
-                    const currentLang = localStorage.getItem('vortex_lang') || 'es';
-                    const textSpan = btnLang.querySelector('.lang-text');
-                    if (textSpan) textSpan.textContent = currentLang.toUpperCase();
-                    
-                    const langLabel = appInstance.getString('menu.aria.langBtn');
-                    
-                    btnLang.setAttribute('aria-label', langLabel);
-                    btnLang.setAttribute('title', langLabel);
-                }, 50); 
             };
         }
     }

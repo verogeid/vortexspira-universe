@@ -31,7 +31,7 @@
       "aria": {
         "a11yBtn": "Abrir Configuración de Accesibilidad",
         "langBtn": "Idioma actual: Español. Cambiar a Inglés.",
-        "langSwitch": "Switching language to English...",
+        "langSwitch": "Cambiando idioma a Español...",
         "about": "Saber más sobre nosotros y nuestra misión",
 
         "linkedin": "Visitar perfil de LinkedIn de VortexSpira®",
@@ -124,7 +124,8 @@
       "lineSpacing": "Ajustar espaciado de línea",
       "letterSpacing": "Ajustar espaciado entre letras y palabras",
       "themeCurrent": "Tema de color actual: ",
-      "themeChange": "Cambiar tema de color a "
+      "themeChange": "Cambiar tema de color a ",
+      "themeChanged": "Tema cambiado a: "
     }
   },
   "toast": {
