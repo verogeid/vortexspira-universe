@@ -1,7 +1,5 @@
 /* --- styles/style-menu.css --- */
 
-@import url('style-media-menu.css');
-
 .menu-dropdown {
     position: fixed;
     top: calc(var(--header-height) + 2px);

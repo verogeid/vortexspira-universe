@@ -1,6 +1,13 @@
 /* --- styles/style-details.css --- */
 
-@import url('style-media-details.css');
+.icon-download { -webkit-mask-image: var(--icon-download); mask-image: var(--icon-download); }
+.icon-buy { -webkit-mask-image: var(--icon-buy); mask-image: var(--icon-buy); }
+
+.icon-link { -webkit-mask-image: var(--icon-link); mask-image: var(--icon-link); }
+.icon-linkedin { -webkit-mask-image: var(--icon-linkedin); mask-image: var(--icon-linkedin); }
+.icon-offer { -webkit-mask-image: var(--icon-offer); mask-image: var(--icon-offer); }
+
+.icon-empty { -webkit-mask-image: var(--icon-empty); mask-image: var(--icon-empty); }
 
 /* 1. Scroll interno y Contenedores */
 #detalle-contenido-desktop, 
@@ -310,10 +317,6 @@
     -webkit-mask-position: center; mask-position: center;
     -webkit-mask-size: contain; mask-size: contain;
 }
-.icon-download { -webkit-mask-image: var(--icon-download); mask-image: var(--icon-download); }
-.icon-link { -webkit-mask-image: var(--icon-link); mask-image: var(--icon-link); }
-.icon-buy { -webkit-mask-image: var(--icon-buy); mask-image: var(--icon-buy); }
-.icon-empty { -webkit-mask-image: var(--icon-empty); mask-image: var(--icon-empty); }
 
 /* 7. Estilo Específico Botón Volver Móvil */
 button.detail-action-btn {

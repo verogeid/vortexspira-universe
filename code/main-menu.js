@@ -1,6 +1,7 @@
 /* --- code/main-menu.js --- */
 
 import * as data from './data.js';
+import * as a11y from './a11y.js';
 
 let navDropdown = null;
 let btnMainMenu = null;
@@ -20,10 +21,8 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
         
         const currentLang = localStorage.getItem('vortex_lang') || 'es';
         const langLabel = currentLang === 'es' 
-            ? appInstance.getString('header.aria.langBtn') || 
-                "Idioma: Español. Cambiar a Inglés." 
-            : appInstance.getString('header.aria.langBtn') || 
-                "Language: English. Switch to Spanish.";
+            ? appInstance.getString('menu.aria.langBtn')
+            : appInstance.getString('menu.aria.langBtn');
 
         // 🟢 INYECTAMOS LA CUADRÍCULA DE ICONOS (44x44)
         navDropdown.innerHTML = `
@@ -32,8 +31,8 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                     <button role="menuitem" 
                         id="menu-btn-a11y" 
                         class="menu-link" 
-                        aria-label="${appInstance.getString('header.aria.a11yBtn')}"
-                        title="${appInstance.getString('header.aria.a11yBtn')}">
+                        aria-label="${appInstance.getString('menu.aria.a11yBtn')}"
+                        title="${appInstance.getString('menu.aria.a11yBtn')}">
                         <span class="menu-icon icon-a11y"></span> 
                     </button>
                     ${enableI18n ? `
@@ -50,8 +49,8 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                     <button role="menuitem" 
                         id="menu-btn-about" 
                         class="menu-link" 
-                        aria-label="${appInstance.getString('footer.aria.about')}"
-                        title="${appInstance.getString('footer.aria.about')}">
+                        aria-label="${appInstance.getString('menu.aria.about')}"
+                        title="${appInstance.getString('menu.aria.about')}">
                         <span class="menu-icon icon-info"></span> 
                     </button>
                 </div>
@@ -65,24 +64,24 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         href="${data.MEDIA.URL.LINKEDIN}" 
                         target="_blank" 
                         class="menu-link" 
-                        aria-label="${appInstance.getString('footer.aria.linkedin')}"
-                        title="${appInstance.getString('footer.aria.linkedin')}">
+                        aria-label="${appInstance.getString('menu.aria.linkedin')}"
+                        title="${appInstance.getString('menu.aria.linkedin')}">
                         <span class="menu-icon icon-linkedin"></span> 
                     </a>
                     <a role="menuitem" 
                         href="${data.MEDIA.URL.DEV_DIARY}" 
                         target="_blank" 
                         class="menu-link" 
-                        aria-label="${appInstance.getString('footer.aria.github')}"
-                        title="${appInstance.getString('footer.aria.github')}">
+                        aria-label="${appInstance.getString('menu.aria.github')}"
+                        title="${appInstance.getString('menu.aria.github')}">
                         <span class="menu-icon icon-github"></span> 
                     </a>
                     <a role="menuitem" 
                         href="${data.MEDIA.URL.LANDING_PAGE}" 
                         target="_blank" 
                         class="menu-link" 
-                        aria-label="${appInstance.getString('footer.aria.landing')}"
-                        title="${appInstance.getString('footer.aria.landing')}">
+                        aria-label="${appInstance.getString('menu.aria.landing')}"
+                        title="${appInstance.getString('menu.aria.landing')}">
                         <span class="menu-icon icon-landing"></span> 
                     </a>
                 </div>
@@ -97,8 +96,8 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         href="${data.MEDIA.URL.LICENSE}" 
                         target="_top" 
                         class="menu-link cc-license-btn" 
-                        aria-label="${appInstance.getString('footer.aria.license')}"
-                        title="${appInstance.getString('footer.aria.license')}">
+                        aria-label="${appInstance.getString('menu.aria.license')}"
+                        title="${appInstance.getString('menu.aria.license')}">
                         
                         <div class="cc-license-stack" aria-hidden="true">
                             <span class="cc-layer-plate"></span>
@@ -212,11 +211,17 @@ function _setupListeners(appInstance, enableI18n) {
     });
 
     // 4. Conectar acciones
-    navDropdown.querySelector('#menu-btn-a11y').onclick = (e) => {
-        e.preventDefault();
-        toggleMenu(true);
-        import('./a11y.js').then(module => module.openA11yModal(appInstance));
-    };
+    const btnA11y = navDropdown.querySelector('#menu-btn-a11y');
+    if (btnA11y) {
+        btnA11y.onclick = (e) => {
+            e.preventDefault();
+            toggleMenu(true);
+            
+            // 🟢 Directo: Usamos la referencia 'a11y' que ya importamos arriba
+            // y llamamos a openModal (que es el nombre real en tu a11y.js)
+            a11y.openModal(appInstance);
+        };
+    }
 
     if (enableI18n) {
         const btnLang = navDropdown.querySelector('#menu-btn-lang');
@@ -231,9 +236,7 @@ function _setupListeners(appInstance, enableI18n) {
                     const textSpan = btnLang.querySelector('.lang-text');
                     if (textSpan) textSpan.textContent = currentLang.toUpperCase();
                     
-                    const langLabel = currentLang === 'es' 
-                        ? appInstance.getString('header.aria.langBtn') || "Idioma: Español. Cambiar a Inglés." 
-                        : appInstance.getString('header.aria.langBtn') || "Language: English. Switch to Spanish.";
+                    const langLabel = appInstance.getString('menu.aria.langBtn');
                     
                     btnLang.setAttribute('aria-label', langLabel);
                     btnLang.setAttribute('title', langLabel);

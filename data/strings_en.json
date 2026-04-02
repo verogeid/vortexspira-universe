@@ -22,10 +22,23 @@
     "title": "VortexSpira® EdTech",
     "subtitle": "Immersive Technical Audio-Learning",
     "aria": {
+      "obras": "Web under construction",
       "logoLink": "Go to VortexSpira EdTech home",
+      "menuBtn": "Open main menu"
+    }
+  },
+  "menu": {
+    "aria": {
       "a11yBtn": "Open Accessibility Settings",
       "langBtn": "Current language: English. Switch to Spanish.",
-      "langSwitch": "Cambiando idioma a Español..."
+      "langSwitch": "Cambiando idioma a Español...",
+      "about": "Learn more about us and our mission",
+
+      "linkedin": "Visit VortexSpira®'s LinkedIn profile",
+      "github": "Go to Development Diary on GitHub",
+      "landing": "Go to the Landing Page. Get 60% OFF as a Founder. It's free to join!",
+      
+      "license": "View Creative Commons CC BY-NC-ND 4.0 license"
     }
   },
   "nav": {
@@ -56,15 +69,7 @@
   },
   "footer": {
     "copyright": "©2025 VortexSpira®",
-    "author": "Developed by <span style=\"white-space: nowrap\">Diego González Fernández</span>",
-    "aboutText": "About Us",
-    "aria": {
-      "license": "View Creative Commons CC BY-NC-ND 4.0 license",
-      "linkedin": "Visit VortexSpira®'s LinkedIn profile",
-      "github": "Go to Development Diary on GitHub",
-      "landing": "Go to the Landing Page. Get 60% OFF as a Founder. It's free to join!",
-      "about": "Learn more about us and our mission"
-    }
+    "author": "Developed by <span style=\"white-space: nowrap\">Diego González Fernández</span>"
   },
   "help": {
     "title": "Quick Help:",
@@ -72,6 +77,7 @@
     "back": "<strong>Back</strong>: Press [Esc] or the \"&lt; Back\" button."
   },
   "about": {
+    "title": "About Us",
     "landing": "Become a Founder and get 60% OFF",
     "diary": "Read the Dev Diary on GitHub"
   },

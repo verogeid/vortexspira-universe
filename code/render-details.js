@@ -385,8 +385,10 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                         <span class="card-volver-icon"></span>
                         <span class="card-volver-text">${visibleText}</span>
                     </h3>`;
-                cardVolverFijaElemento.setAttribute('aria-label', this.getString('nav.aria.backBtn'));
-                cardVolverFijaElemento.setAttribute('title', this.getString('nav.aria.backBtn'));
+                cardVolverFijaElemento.setAttribute(
+                    'aria-label', this.getString('nav.aria.backBtn'));
+                cardVolverFijaElemento.setAttribute(
+                    'title', this.getString('nav.aria.backBtn'));
                 cardVolverFijaElemento.tabIndex = 0;
             }
 
@@ -508,7 +510,7 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                 const iconClass = (enlace.type === 'c') ? 'icon-buy' : 
                                     (enlace.type === 'd' ? 'icon-download' : 
                                     (enlace.type === 'l' ? 'icon-linkedin' : 
-                                    (enlace.type === 'f' ? 'icon-fire' : 
+                                    (enlace.type === 'f' ? 'icon-offer' : 
                                     'icon-link')));
 
                 const isDisabled = !enlace.url || enlace.url === '#';
@@ -522,7 +524,9 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                             tabindex="0" 
                             role="button">
                             <span class="detail-action-text">${enlace.texto}</span>
-                            <a ${isDisabled ? 'role="link" aria-disabled="true"' : `href="${enlace.url}" target="_blank"`} 
+                            <a ${isDisabled ? 
+                                'role="link" aria-disabled="true"' : 
+                                `href="${enlace.url}" target="_blank"`} 
                                 tabindex="-1" 
                                 aria-hidden="true" 
                                 ${style} 

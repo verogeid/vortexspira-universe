@@ -75,61 +75,64 @@ export function setupTouchListeners() {
     // 🛡️ ESCUDO MATEMÁTICO ANTI-CLIC (Foolproof Drag Detector)
     // =========================================================
     
-    const trackTarget = this.DOM.track;
-    
-    // Guardamos la coordenada de origen (ratón o dedo)
-    const recordStartCoords = (e) => {
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        this.STATE._clickStartX = clientX;
-        this.STATE._clickStartY = clientY;
-    };
-
-    trackTarget.addEventListener('mousedown', recordStartCoords, { passive: true });
-    trackTarget.addEventListener('touchstart', recordStartCoords, { passive: true });
-
-    // Evaluamos la distancia al hacer clic nativo
-    trackTarget.onclick = (e) => {
-        const swiper = this.STATE.carouselInstance;
+    // 🟢 FIX: Solo vinculamos los escuchadores al DOM global UNA VEZ en toda la vida útil
+    if (!this.STATE._globalPointerBound) {
         
-        // Nivel 1: Si Swiper bloqueó explícitamente, acatamos
-        if (swiper && !swiper.allowClick) {
-            debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, 
-                "🛑 Clic ignorado: Motor Swiper bloqueó la interacción (allowClick=false).");
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-        }
-
-        // Nivel 2: Verificación Matemática Nativa
-        let endX = e.clientX;
-        let endY = e.clientY;
+        const masterContainer = document.getElementById('app-container') || document.body;
         
-        if (endX > 0 && endY > 0 && this.STATE._clickStartX !== undefined) {
-            const distX = Math.abs(endX - this.STATE._clickStartX);
-            const distY = Math.abs(endY - this.STATE._clickStartY);
+        // Guardamos la coordenada de origen (ratón o dedo)
+        const recordStartCoords = (e) => {
+            if (!e.target.closest('#track-desktop, #track-tablet, #track-mobile')) return;
 
-            // Umbral de 10px para descartar arrastres físicos
-            if (distX > 10 || distY > 10) {
-                debug.log('nav_mouse_swipe', debug.DEBUG_LEVELS.BASIC, 
-                    `🛑 Clic bloqueado: Arrastre físico detectado (X:${distX.toFixed(0)}px, Y:${distY.toFixed(0)}px)`);
-                
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            this.STATE._clickStartX = clientX;
+            this.STATE._clickStartY = clientY;
+        };
+
+        // Evaluamos la distancia al hacer clic nativo
+        const handleClick = (e) => {
+            const clickedCard = e.target.closest('.card');
+            if (!clickedCard || !e.target.closest('#track-desktop, #track-tablet, #track-mobile')) return;
+
+            const swiper = this.STATE.carouselInstance;
+            
+            if (swiper && !swiper.allowClick) {
                 e.preventDefault();
                 e.stopPropagation();
-                
-                this.STATE._clickStartX = undefined;
-                this.STATE._clickStartY = undefined;
                 return;
             }
-        }
 
-        // Clic Limpio: Limpiamos memoria y ejecutamos tu función de negocio
-        this.STATE._clickStartX = undefined;
-        this.STATE._clickStartY = undefined;
+            let endX = e.clientX;
+            let endY = e.clientY;
+            
+            if (endX > 0 && endY > 0 && this.STATE._clickStartX !== undefined) {
+                const distX = Math.abs(endX - this.STATE._clickStartX);
+                const distY = Math.abs(endY - this.STATE._clickStartY);
 
-        this._handleTrackClick(e);
-    };
-};
+                if (distX > 10 || distY > 10) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.STATE._clickStartX = undefined;
+                    this.STATE._clickStartY = undefined;
+                    return;
+                }
+            }
+
+            this.STATE._clickStartX = undefined;
+            this.STATE._clickStartY = undefined;
+            this._handleTrackClick(e);
+        };
+
+        // Asignamos usando 'capture: true' para que intercepte ANTES que Swiper
+        masterContainer.addEventListener('mousedown', recordStartCoords, { passive: true, capture: true });
+        masterContainer.addEventListener('touchstart', recordStartCoords, { passive: true, capture: true });
+        masterContainer.addEventListener('click', handleClick, { capture: true });
+
+        // Sellamos la puerta para que no se repita
+        this.STATE._globalPointerBound = true;
+    }
+}; // <-- Fin de setupTouchListeners
 
 export function detachSwiperEvents(swiper) {
     if (!swiper) return;
@@ -226,7 +229,9 @@ export function handleSlideChangeStart(swiper) {
  * Sincroniza el foco al finalizar una transición de carrusel.
  */
 export function handleSlideChangeEnd(swiper) {
-    if (!this.STATE.carouselInstance || this.STATE.isNavigatingBack) return; 
+    if (!this.STATE.carouselInstance || 
+        this.STATE.isNavigatingBack || 
+        this.STATE._isLoopFixing) return;
 
     // 🛡️ LÓGICA DE PROTECCIÓN SELECTIVA 🛡️
     // Solo bloqueamos si el teclado declaró explícitamente que tiene el control del foco exacto.
@@ -307,9 +312,16 @@ export function handleSlideChangeEnd(swiper) {
                     
         this.STATE.emptyColumnAnnounced = false;
         
+        // 🛡️ ESCUDO ACTIVADO: Repintamos los clones sin disparar el Skipper
+        this.STATE._isLoopFixing = true;
+
         swiper.loopFix();
         swiper.update();
         
+        requestAnimationFrame(() => {
+            this.STATE._isLoopFixing = false;
+        });
+
         this.announceA11yStop();
     }
     

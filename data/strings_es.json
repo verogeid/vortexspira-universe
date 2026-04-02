@@ -22,11 +22,24 @@
     "title": "VortexSpira® EdTech",
     "subtitle": "Audio-Aprendizaje Técnico Inmersivo",
     "aria": {
+      "obras": "Página en desarrollo activo",
       "logoLink": "Ir al inicio de VortexSpira EdTech",
-      "a11yBtn": "Abrir Configuración de Accesibilidad",
-      "langBtn": "Idioma actual: Español. Cambiar a Inglés.",
-      "langSwitch": "Switching language to English..."
+      "menuBtn": "Abrir menú principal"
     }
+  },
+  "menu": {
+      "aria": {
+        "a11yBtn": "Abrir Configuración de Accesibilidad",
+        "langBtn": "Idioma actual: Español. Cambiar a Inglés.",
+        "langSwitch": "Switching language to English...",
+        "about": "Saber más sobre nosotros y nuestra misión",
+
+        "linkedin": "Visitar perfil de LinkedIn de VortexSpira®",
+        "github": "Ir al Diario de Desarrollo en GitHub",
+        "landing": "Ir a la Landing Page. Obtén un 60% OFF como Fundador. ¡Unirse es gratis!",
+
+        "license": "Ver licencia Creative Commons CC BY-NC-ND 4.0"
+      }
   },
   "nav": {
     "aria": {
@@ -56,15 +69,7 @@
   },
   "footer": {
     "copyright": "©2025",
-    "author": "Desarrollado por <span style=\"white-space: nowrap\">Diego González Fernández</span>",
-    "aboutText": "¿Quiénes somos?",
-    "aria": {
-      "license": "Ver licencia Creative Commons CC BY-NC-ND 4.0",
-      "linkedin": "Visitar perfil de LinkedIn de VortexSpira®",
-      "github": "Ir al Diario de Desarrollo en GitHub",
-      "landing": "Ir a la Landing Page. Obtén un 60% OFF como Fundador. ¡Unirse es gratis!",
-      "about": "Saber más sobre nosotros y nuestra misión"
-    }
+    "author": "Desarrollado por <span style=\"white-space: nowrap\">Diego González Fernández</span>"
   },
   "help": {
     "title": "Ayuda Rápida:",
@@ -72,6 +77,7 @@
     "back": "<strong>Vuelve</strong>: Pulsa [Esc] o el botón \"&lt; Volver\"."
   },
   "about": {
+    "title": "Quiénes Somos",
     "landing": "Hazte Fundador y obten tu 60% OFF",
     "diary": "Lee el Dev Diary en GitHub"
   },

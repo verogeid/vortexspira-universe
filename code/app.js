@@ -17,12 +17,6 @@ import * as nav_base_details from './nav-base-details.js';
 
 import * as render_base from './render-base.js';
 
-//import * as nav_keyboard_base from './nav-keyboard-base.js'; 
-//import * as nav_mouse_swipe from './nav-mouse-swipe.js';
-
-import * as render_swipe from './render-swipe.js';
-import * as render_mobile from './render-mobile.js';
-
 class VortexSpiraApp {
     constructor() {
         debug._setupConsoleInterceptor();
@@ -67,16 +61,20 @@ class VortexSpiraApp {
         this._originalFindNodoById = nav_base._findNodoById;
         this._findNodoById = (id, items) => {
             if (id === 'c-about') {
+                const broadDesc = this.getString('seo.org.description') + 
+                                  '. ' + 
+                                  this.getString('seo.org.accessibilitySummary');
+                                
                 return {
                     id: 'c-about',
-                    titulo: this.getString('footer.aboutText') || 'About Us',
-                    descripcion: (this.getString('seo.about') || '').replace(/\. /g, '. <HR>'),
+                    titulo: this.getString('about.title'),
+                    descripcion: broadDesc.replace(/\. /g, '. <HR>'),
                     enlaces: [
                         { "texto": "LinkedIn", 
                           "url": "https://www.linkedin.com/company/vortexspira", 
                           "type": "l" 
                         },
-                        { "texto": "Landing Page", 
+                        { "texto": this.getString('about.landing'), 
                           "url": "https://subscribepage.io/vortexspira", 
                           "type": "f" 
                         }
@@ -89,11 +87,23 @@ class VortexSpiraApp {
         this.findBestFocusInColumn = nav_base.findBestFocusInColumn;
 
         this._generarTarjetaHTML = render_base._generarTarjetaHTMLImpl; 
-        this._generateCardHTML_Carousel = render_swipe._generateCardHTML_Carousel;
-        this._generateCardHTML_Mobile = render_mobile._generateCardHTML_Mobile;
-        this._initCarousel_Swipe = render_swipe._initCarousel_Swipe;
-        this._initCarousel_Mobile = render_mobile._initCarousel_Mobile;
-        this._destroyCarousel = render_swipe._destroyCarouselImpl;
+
+        this.findBestFocusInColumn = nav_base.findBestFocusInColumn;
+
+        // 🟢 DESTRUCTOR UNIVERSAL (Garantiza que móvil pueda limpiar su Swiper)
+        // Se ejecuta si 'render-swipe.js' no se ha descargado aún.
+        this._destroyCarousel = () => {
+            if (this.STATE.carouselInstance) {
+
+                debug.log('app', debug.DEBUG_LEVELS.DEEP, 
+                    '🧹 Destruyendo instancia de Swiper activa...');
+
+                this.STATE.carouselInstance.destroy(true, true);
+                this.STATE.carouselInstance = null;
+            }
+        };
+
+        this._generarTarjetaHTML = render_base._generarTarjetaHTMLImpl;
         
         this._handleActionRowClick = nav_base_details._handleActionRowClick; 
         
@@ -133,6 +143,42 @@ class VortexSpiraApp {
                 }
             }
         });
+    }
+
+    // 🟢 LAZY LOAD GEOMÉTRICO: Carga de motores de renderizado
+    async _ensureRenderEngine() {
+        const layout = document.body.getAttribute('data-layout') || 'desktop';
+        
+        if (layout === 'mobile' && !this._initCarousel_Mobile) {
+            this.blockUI(); // Protegemos la UI si la red es lenta
+            try {
+                const render_mobile = await import('./render-mobile.js');
+                this._initCarousel_Mobile = render_mobile._initCarousel_Mobile;
+                this._generateCardHTML_Mobile = render_mobile._generateCardHTML_Mobile;
+
+                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                    "📱 Módulo Render Mobile cargado dinámicamente");
+
+            } catch(e) {
+                debug.logError('app', 'Fallo al cargar motor móvil', e);
+            }
+            this.unblockUI();
+            
+        } else if (layout !== 'mobile' && !this._initCarousel_Swipe) {
+            this.blockUI();
+            try {
+                const render_swipe = await import('./render-swipe.js');
+                this._initCarousel_Swipe = render_swipe._initCarousel_Swipe;
+                this._generateCardHTML_Carousel = render_swipe._generateCardHTML_Carousel;
+                this._destroyCarousel = render_swipe._destroyCarouselImpl;
+
+                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                    "💻 Módulo Render Desktop/Tablet cargado dinámicamente");
+            } catch(e) {
+                debug.logError('app', 'Fallo al cargar motor desktop', e);
+            }
+            this.unblockUI();
+        }
     }
 
     async init() {
@@ -181,6 +227,9 @@ class VortexSpiraApp {
         this._setupSmartResize();
         this._updateLayoutMode();
         this._cacheDOM();
+
+        // 🟢 Aseguramos el motor correcto para la resolución de arranque
+        await this._ensureRenderEngine();
         
         this.DOM.vistaNav = this.DOM.vistaNav || 
                             document.getElementById('vista-navegacion-desktop'); 
@@ -329,8 +378,14 @@ class VortexSpiraApp {
 
         // 1. Detector de Teclado y Rueda del Ratón (La rueda simula flechas)
         const bootKeyboardModule = async (e) => {
-            // Ignoramos si solo pulsa teclas modificadoras
-            if (e.type === 'keydown' && ['Shift', 'Control', 'Alt', 'Meta'].includes(e.key)) return;
+            // Ignoramos si solo pulsa teclas modificadoras, salvo shift
+            if (e.type === 'keydown' && 
+                [
+                    'Control', 
+                    'Alt', 
+                    'Meta'
+                ].includes(e.key)) 
+                return;
             
             document.removeEventListener('keydown', bootKeyboardModule, true);
             document.removeEventListener('wheel', bootKeyboardModule, true);
@@ -349,7 +404,11 @@ class VortexSpiraApp {
             
             try {
                 const nav_keyboard_base = await import('./nav-keyboard-base.js');
-                nav_keyboard_base.initKeyboardControls.call(this);
+                
+                // 🟢 FIX: Guardamos la función en la app para el futuro
+                this.initKeyboardControls = nav_keyboard_base.initKeyboardControls;
+                
+                this.initKeyboardControls();
 
                 debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                     '⌨️/⚙️ Teclado o Rueda detectado. Módulo inyectado en caliente.');
@@ -371,7 +430,11 @@ class VortexSpiraApp {
             
             try {
                 const nav_mouse_swipe = await import('./nav-mouse-swipe.js');
-                nav_mouse_swipe.setupTouchListeners.call(this);
+                
+                // 🟢 FIX: Guardamos la función en la app para el futuro
+                this.setupTouchListeners = nav_mouse_swipe.setupTouchListeners;
+                
+                this.setupTouchListeners();
 
                 debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                     '🖱️/👆 Puntero/Touch detectado. Módulo de swipe inyectado.');
@@ -631,7 +694,7 @@ class VortexSpiraApp {
             
             // Inyectamos todo en un solo bloque semántico
             target.setAttribute('aria-label', `${textToPrepend}. ${baseText}`);
-            target.setAttribute('title', `${textToPrepend}. ${baseText}`);
+            target.setAttribute('title', `${originalLabel}`);
             
             // Restauramos el elemento a su estado original en cuanto el usuario se mueva
             target.addEventListener('blur', function restoreAria() {
@@ -679,7 +742,7 @@ class VortexSpiraApp {
         // 2. Bloqueamos la UI (El 'inert' expulsará el foco de forma segura)
         this.blockUI();
         
-        const msg = this.getString('header.aria.langSwitch');
+        const msg = this.getString('menu.aria.langSwitch');
         this.announceA11y(msg, 'assertive');
 
         const current = localStorage.getItem('vortex_lang') || 'es';
@@ -830,7 +893,10 @@ class VortexSpiraApp {
     }
 
     // ⭐️ WRAPPERS DE NAVEGACIÓN (Para inyectar diagnóstico)
-    renderNavegacion() {
+    async renderNavegacion() {
+        // 🟢 Salvavidas: Comprobamos si el resize requiere un motor nuevo
+        await this._ensureRenderEngine();
+
         render_base.renderNavegacion.call(this);
 
         // 🟢 Restaurar el SEO genérico del catálogo
@@ -852,7 +918,10 @@ class VortexSpiraApp {
     }
 
     async _mostrarDetalle(cursoId, forceRepaint = false) { 
-        // 🟢 ESPERAMOS A QUE LOS ARCHIVOS DE DETALLE EXISTAN
+        // 🟢 Salvavidas por si entraron directo a un detalle y no tenían motor base
+        await this._ensureRenderEngine();
+
+        // 🟢 Esperamos a que los archivos de detalle existan
         const mods = await app_utils.loadDetailsModules(this);
         if (!mods) return;
         
@@ -1310,7 +1379,7 @@ class VortexSpiraApp {
         this.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop');
         
         this.DOM.header = document.getElementById('app-header');
-        //this.DOM.btnA11y = document.getElementById('btn-config-accesibilidad');
+        
         this.DOM.cardVolverFija = document.getElementById('vista-volver');
         this.DOM.cardVolverFijaElemento = document.getElementById('card-volver-fija-elemento');
         this.DOM.infoAdicional = document.getElementById('info-adicional');

@@ -119,8 +119,7 @@ export function applyStrings(appInstance) {
 
     const attributes = {
         'vista-central': { 'aria-label': 'nav.aria.region' },
-        'card-volver-fija-elemento': { 'aria-label': 'nav.aria.backBtn' },
-        'btn-config-accesibilidad': { 'aria-label': 'header.aria.a11yBtn' }
+        'card-volver-fija-elemento': { 'aria-label': 'nav.aria.backBtn' }
     };
 
     for (const id in attributes) {

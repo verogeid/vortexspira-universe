@@ -556,8 +556,6 @@ export function _generarTarjetaHTMLImpl(nodo,
         
     const ariaLabelText = `${actionPrefix} ${displayTitle}`;
 
-    // Reemplazamos aria-labelledby por aria-label y ocultamos el span interno al lector 
-    // para que no repita el nombre dos veces.
     return `
         <article class="card ${estaActivo ? '' : 'disabled'}" 
                 data-id="${nodo.id}" 

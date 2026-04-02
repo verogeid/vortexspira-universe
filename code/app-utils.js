@@ -12,6 +12,7 @@ export async function preloadMainMenu(appInstance) {
     if (_mainMenuModule) return;
     try {
         appInstance._injectCSS('styles/style-menu.css', 'vortex-css-menu');
+        appInstance._injectCSS('styles/style-media-menu.css', 'vortex-css-media-menu');
         _mainMenuModule = await import('./main-menu.js');
 
         debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
@@ -119,6 +120,11 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
                 if (!obrasSpan) {
                     obrasSpan = document.createElement('span');
                     obrasSpan.className = 'icon-obras-header'; 
+
+                    const txtLogoObras = appInstance.getString('header.aria.obras');
+                    obrasSpan.setAttribute('aria-label', txtLogoObras);
+                    obrasSpan.setAttribute('title', txtLogoObras);
+
                     wrapper.insertBefore(obrasSpan, h1);
                 }
             }
@@ -139,8 +145,8 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
             btnMainMenu.id = 'btn-main-menu';
             btnMainMenu.setAttribute('aria-expanded', 'false');
             btnMainMenu.setAttribute('aria-controls', 'main-menu-dropdown');
-            btnMainMenu.setAttribute('aria-label', appInstance.getString('header.aria.menuBtn') || 'Menú');
-            btnMainMenu.setAttribute('title', appInstance.getString('header.aria.menuBtn') || 'Menú');
+            btnMainMenu.setAttribute('aria-label', appInstance.getString('header.aria.menuBtn'));
+            btnMainMenu.setAttribute('title', appInstance.getString('header.aria.menuBtn'));
             btnMainMenu.tabIndex = 0;
             
             const iconHamburger = document.createElement('span');
@@ -317,6 +323,7 @@ export function loadDetailsModules(appInstance) {
             // Inyectamos el CSS pesado de Detalles
             appInstance._injectCSS('styles/style-details.css', 'vortex-css-details');
             appInstance._injectCSS('styles/style-media-details.css', 'vortex-css-media-details');
+            appInstance._injectCSS('styles/style-media-menu.css', 'vortex-css-media-menu');
             
             try {
                 // Descargamos los módulos JavaScript dinámicamente

@@ -307,12 +307,19 @@ export function initKeyboardControls() {
         // 🏁 FIN TRAMPA DE FOCO 🏁
         // ============================================================
 
+        // 🟢 LEER LA VERDAD ABSOLUTA DEL DOM
+        const activeNavView = document.querySelector(
+            '#vista-navegacion-desktop.active, #vista-navegacion-tablet.active, #vista-navegacion-mobile.active');
+        const isNavActive = !!activeNavView;
+
+        const activeDetailView = document.querySelector(
+            '#vista-detalle-desktop.active, #vista-detalle-mobile.active');
+        const isDetailActive = !!activeDetailView;
+
+        const focused = document.activeElement;
 
         if (!app?.DOM?.vistaNav) return; 
 
-        const isNavActive = app.DOM.vistaNav.classList.contains('active');
-        const isDetailActive = app.DOM.vistaDetalle.classList.contains('active');
-        const focused = document.activeElement;
 
         debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, 
                     `Key: ${e.key} | Target: ${e.target.tagName}`);
@@ -523,8 +530,15 @@ function _setupWheelListener() {
 
 function _handleGlobalWheel(e) {
     const app = this;
-    const isNavActive = app.DOM.vistaNav?.classList.contains('active');
-    const isDetailActive = app.DOM.vistaDetalle?.classList.contains('active');
+    
+    // 🟢 LEER LA VERDAD ABSOLUTA DEL DOM
+    const activeNavView = document.querySelector(
+        '#vista-navegacion-desktop.active, #vista-navegacion-tablet.active, #vista-navegacion-mobile.active');
+    const isNavActive = !!activeNavView;
+
+    const activeDetailView = document.querySelector(
+        '#vista-detalle-desktop.active, #vista-detalle-mobile.active');
+    const isDetailActive = !!activeDetailView;
     
     debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 
         `🐭 [WHEEL TRACE 1] ${Date.now()} Evento detectado. DeltaY: ${e.deltaY}
