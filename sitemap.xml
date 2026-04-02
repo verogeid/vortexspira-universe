@@ -4,7 +4,7 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://www.vortexspira.com/</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?lang=es" />
@@ -21,7 +21,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?lang=es" />
@@ -30,7 +30,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?lang=es" />
@@ -40,7 +40,7 @@
 
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa&amp;lang=es" />
@@ -49,7 +49,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa&amp;lang=es" />
@@ -58,7 +58,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa-adv&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa-adv&amp;lang=es" />
@@ -67,7 +67,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa-adv</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa-adv&amp;lang=es" />
@@ -76,7 +76,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=c-waqa&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=c-waqa&amp;lang=es" />
@@ -84,7 +84,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=c-waqa</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=c-waqa&amp;lang=es" />
@@ -92,7 +92,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa-perfa11y&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa-perfa11y&amp;lang=es" />
@@ -101,7 +101,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa-perfa11y</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa-perfa11y&amp;lang=es" />
@@ -110,7 +110,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa-seg&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa-seg&amp;lang=es" />
@@ -119,7 +119,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa-seg</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa-seg&amp;lang=es" />
@@ -128,7 +128,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=c-cseg&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=c-cseg&amp;lang=es" />
@@ -136,7 +136,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=c-cseg</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=c-cseg&amp;lang=es" />
@@ -144,7 +144,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa-ia&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa-ia&amp;lang=es" />
@@ -153,7 +153,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa-ia</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa-ia&amp;lang=es" />
@@ -162,7 +162,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=c-qaia&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=c-qaia&amp;lang=es" />
@@ -171,7 +171,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=c-qaia</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=c-qaia&amp;lang=es" />
@@ -180,7 +180,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds&amp;lang=es" />
@@ -189,7 +189,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds&amp;lang=es" />
@@ -198,7 +198,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-fe&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-fe&amp;lang=es" />
@@ -207,7 +207,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-fe</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-fe&amp;lang=es" />
@@ -216,7 +216,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=c-cfwp&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=c-cfwp&amp;lang=es" />
@@ -224,7 +224,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=c-cfwp</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=c-cfwp&amp;lang=es" />
@@ -232,7 +232,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-be&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-be&amp;lang=es" />
@@ -241,7 +241,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-be</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-be&amp;lang=es" />
@@ -250,7 +250,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-be-api&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-be-api&amp;lang=es" />
@@ -259,7 +259,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-be-api</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-be-api&amp;lang=es" />
@@ -268,7 +268,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-be-db&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-be-db&amp;lang=es" />
@@ -277,7 +277,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-be-db</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-be-db&amp;lang=es" />
@@ -286,7 +286,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-lg&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-lg&amp;lang=es" />
@@ -295,7 +295,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-lg</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-lg&amp;lang=es" />
@@ -304,7 +304,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-dev&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-dev&amp;lang=es" />
@@ -313,7 +313,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-dev</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-dev&amp;lang=es" />
@@ -322,7 +322,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-dev-dk&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-dev-dk&amp;lang=es" />
@@ -331,7 +331,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-dev-dk</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-dev-dk&amp;lang=es" />
@@ -340,7 +340,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-dev-cicd&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-dev-cicd&amp;lang=es" />
@@ -349,7 +349,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-dev-cicd</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-dev-cicd&amp;lang=es" />
@@ -358,7 +358,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-dev-cv&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-dev-cv&amp;lang=es" />
@@ -367,7 +367,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-dev-cv</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-dev-cv&amp;lang=es" />
@@ -376,7 +376,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-mod&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-mod&amp;lang=es" />
@@ -385,7 +385,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-mod</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-mod&amp;lang=es" />
@@ -394,7 +394,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-mod-uml&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-mod-uml&amp;lang=es" />
@@ -403,7 +403,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-mod-uml</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-mod-uml&amp;lang=es" />
@@ -412,7 +412,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-mod-ba&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-mod-ba&amp;lang=es" />
@@ -421,7 +421,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-mod-ba</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-mod-ba&amp;lang=es" />
@@ -430,7 +430,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-rec&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-rec&amp;lang=es" />
@@ -439,7 +439,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-rec</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-rec&amp;lang=es" />
@@ -448,7 +448,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=c-ing&amp;lang=es</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=c-ing&amp;lang=es" />
@@ -456,7 +456,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=c-ing</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=c-ing&amp;lang=es" />
@@ -465,7 +465,7 @@
 
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa&amp;lang=es" />
@@ -474,7 +474,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa-adv&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa-adv&amp;lang=es" />
@@ -483,7 +483,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa-perfa11y&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa-perfa11y&amp;lang=es" />
@@ -492,7 +492,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa-seg&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa-seg&amp;lang=es" />
@@ -501,7 +501,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-qa-ia&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-qa-ia&amp;lang=es" />
@@ -510,7 +510,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=c-qaia&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=c-qaia&amp;lang=es" />
@@ -519,7 +519,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds&amp;lang=es" />
@@ -528,7 +528,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-fe&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-fe&amp;lang=es" />
@@ -537,7 +537,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-be&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-be&amp;lang=es" />
@@ -546,7 +546,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-be-api&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-be-api&amp;lang=es" />
@@ -555,7 +555,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-be-db&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-be-db&amp;lang=es" />
@@ -564,7 +564,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-ds-lg&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-ds-lg&amp;lang=es" />
@@ -573,7 +573,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-dev&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-dev&amp;lang=es" />
@@ -582,7 +582,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-dev-dk&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-dev-dk&amp;lang=es" />
@@ -591,7 +591,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-dev-cicd&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-dev-cicd&amp;lang=es" />
@@ -600,7 +600,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-dev-cv&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-dev-cv&amp;lang=es" />
@@ -609,7 +609,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-mod&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-mod&amp;lang=es" />
@@ -618,7 +618,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-mod-uml&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-mod-uml&amp;lang=es" />
@@ -627,7 +627,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-mod-ba&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-mod-ba&amp;lang=es" />
@@ -636,7 +636,7 @@
   </url>
   <url>
     <loc>https://www.vortexspira.com/?id=s-rec&amp;lang=en</loc>
-    <lastmod>2026-03-29</lastmod>
+    <lastmod>2026-04-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://www.vortexspira.com/?id=s-rec&amp;lang=es" />
