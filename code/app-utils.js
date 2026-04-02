@@ -36,11 +36,14 @@ export async function openMainMenu(appInstance, enableI18n, btnElement) {
             _isMenuLoading = false;
         }
         
-        // 1. Inyectamos el DOM del desplegable usando tu función original
-        _mainMenuModule.initMainMenu(appInstance, document.getElementById('header-content-wrapper'), enableI18n);
-        
-        // 2. Forzamos la apertura llamando a tu toggleMenu
-        _mainMenuModule.toggleMenu(false);
+        // 1. Inyectamos el DOM del desplegable (si ya está inyectado, la función lo ignora)
+        _mainMenuModule.initMainMenu(
+            appInstance, 
+            document.getElementById('header-content-wrapper'), 
+            enableI18n);
+
+        // 2. Alternamos el estado
+        _mainMenuModule.toggleMenu();
         
     } catch (e) {
         debug.logError('app_utils', 'Fallo abriendo menú dinámico', e);

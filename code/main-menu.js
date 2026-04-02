@@ -149,17 +149,12 @@ export function toggleMenu(forceClose = false) {
 }
 
 function _setupListeners(appInstance, enableI18n) {
-    // 1. Clics de apertura y cierre (Enganchados al DOM)
-    // El click en btnMainMenu lo gestiona app-utils la primera vez, pero si
-    // el usuario cierra y vuelve a abrir, este listener toma el control.
-    btnMainMenu.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleMenu();
-    });
-
     document.addEventListener('click', (e) => {
-        if (btnMainMenu && btnMainMenu.getAttribute('aria-expanded') === 'true' && 
-            !navDropdown.contains(e.target) && !btnMainMenu.contains(e.target)) {
+        if (btnMainMenu && 
+            btnMainMenu.getAttribute('aria-expanded') === 'true' && 
+                !navDropdown.contains(e.target) && 
+                !btnMainMenu.contains(e.target)
+        ) {
             toggleMenu(true);
         }
     });
