@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "0.1.0",
-    "build": "875"
+    "build": "880"
   },
   "page": {
     "title": "VortexSpira® EdTech: Course Selector"
@@ -33,11 +33,9 @@
       "langBtn": "Current language: English. Switch to Spanish.",
       "langSwitch": "Switching language to English...",
       "about": "Learn more about us and our mission",
-
       "linkedin": "Visit VortexSpira®'s LinkedIn profile",
       "github": "Go to Development Diary on GitHub",
       "landing": "Go to the Landing Page. Get 60% OFF as a Founder. It's free to join!",
-      
       "license": "View Creative Commons CC BY-NC-ND 4.0 license"
     }
   },

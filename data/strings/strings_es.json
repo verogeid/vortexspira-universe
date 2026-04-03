@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": "0.1.0",
-    "build": "875"
+    "build": "880"
   },
   "page": {
     "title": "VortexSpira® EdTech: Selector de Cursos"
@@ -28,18 +28,16 @@
     }
   },
   "menu": {
-      "aria": {
-        "a11yBtn": "Abrir Configuración de Accesibilidad",
-        "langBtn": "Idioma actual: Español. Cambiar a Inglés.",
-        "langSwitch": "Cambiando idioma a Español...",
-        "about": "Saber más sobre nosotros y nuestra misión",
-
-        "linkedin": "Visitar perfil de LinkedIn de VortexSpira®",
-        "github": "Ir al Diario de Desarrollo en GitHub",
-        "landing": "Ir a la Landing Page. Obtén un 60% OFF como Fundador. ¡Unirse es gratis!",
-
-        "license": "Ver licencia Creative Commons CC BY-NC-ND 4.0"
-      }
+    "aria": {
+      "a11yBtn": "Abrir Configuración de Accesibilidad",
+      "langBtn": "Idioma actual: Español. Cambiar a Inglés.",
+      "langSwitch": "Cambiando idioma a Español...",
+      "about": "Saber más sobre nosotros y nuestra misión",
+      "linkedin": "Visitar perfil de LinkedIn de VortexSpira®",
+      "github": "Ir al Diario de Desarrollo en GitHub",
+      "landing": "Ir a la Landing Page. Obtén un 60% OFF como Fundador. ¡Unirse es gratis!",
+      "license": "Ver licencia Creative Commons CC BY-NC-ND 4.0"
+    }
   },
   "nav": {
     "aria": {
