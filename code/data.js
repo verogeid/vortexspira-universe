@@ -50,7 +50,7 @@ export const MEDIA = {
 export const VIEWPORT = {
     // MÍNIMO VITAL: ¿Necesario para ver algo útil?
     MIN_CONTENT_HEIGHT: {
-        MOBILE: 200, // Equivale a 18.75em
+        MOBILE: 230,
         TABLET: 450, // Equivale a 28.125em
         DESKTOP: 600 // Equivale a 37.5em
     },

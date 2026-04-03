@@ -340,6 +340,13 @@ class VortexSpiraApp {
         if (app_utils.injectFooterContent) 
             app_utils.injectFooterContent(this);
 
+        // 🟢 FIX CRÍTICO: Recalibración síncrona OBRIGATORIA antes de renderizar.
+        // Garantiza que el motor de renderizado y la caché del DOM leen el layout final 
+        // ya afectado por las preferencias de accesibilidad (tamaño de la fuente, etc.)
+        this._updateLayoutMode();
+        this._syncHeaderDimensions();
+        this._cacheDOM();
+        
         if (targetId) {
             // 🟢 FIX: Si se hace F5 o se comparte un enlace directo
             if (targetId === 'c-about') {
@@ -446,8 +453,8 @@ class VortexSpiraApp {
         document.addEventListener('mousemove', bootPointerModule, true);
         document.addEventListener('touchstart', bootPointerModule, true);
         
-        this._updateLayoutMode();
-        this._syncHeaderDimensions();
+        /*this._updateLayoutMode();
+        this._syncHeaderDimensions();*/
 
         // ====================================================================
         // 🛡️ ESCUDO DE CRISTAL: INTERCEPTOR UNIVERSAL (Teclado, Ratón y Touch)
@@ -694,7 +701,12 @@ class VortexSpiraApp {
             
             // Inyectamos todo en un solo bloque semántico
             target.setAttribute('aria-label', `${textToPrepend}. ${baseText}`);
-            target.setAttribute('title', `${originalLabel}`);
+
+            if (originalLabel) {
+                target.setAttribute('title', originalLabel);
+            } else {
+                target.removeAttribute('title'); 
+            }
             
             // Restauramos el elemento a su estado original en cuanto el usuario se mueva
             target.addEventListener('blur', function restoreAria() {
@@ -703,6 +715,7 @@ class VortexSpiraApp {
                     target.setAttribute('title', originalLabel);
                 } else {
                     target.removeAttribute('aria-label');
+                    target.removeAttribute('title');
                 }
                 target.removeEventListener('blur', restoreAria);
             }, { once: true });
@@ -1203,8 +1216,8 @@ class VortexSpiraApp {
     _setupSmartResize() {
         let resizeTimer;
         const handleResize = () => {
-            // 🟢 ESCUDO: Ignorar resizes causados por aplicar 'inert'
-            if (this.STATE.isUIBlocked) return;
+            // 🟢 ESCUDO: Ignorar resizes causados por inyectar CSS pesados o durante el arranque
+            if (this.STATE.isUIBlocked || this.STATE.isBooting) return;
             
             this._updateLayoutMode();
             this._syncHeaderDimensions();

@@ -3,7 +3,8 @@
 /* 🟢 PROTECCIÓN TIPOGRÁFICA AAA (Anti-desbordamiento global) */
 .a11y-modal h2,
 .a11y-modal h3,
-.a11y-checkbox-label span {
+.a11y-checkbox-label span,
+.a11y-option-btn {
     /* 1. Anular el bloqueo de Flexbox (permite que las cajas se encojan) */
     min-width: 0;
     
@@ -17,6 +18,43 @@
     /* 4. Comportamiento ortográfico: separación silábica con guion */
     -webkit-hyphens: auto;
     hyphens: auto;
+}
+
+/* =========================================================
+   🟢 ESCALADO TIPOGRÁFICO FLUIDO AAA PARA EL MODAL
+   ========================================================= */
+
+/* Texto base: Labels de checkboxes y Botones de opciones */
+.a11y-checkbox-label span,
+.a11y-option-btn {
+    font-size: var(--a11y-option-btn-font-size);
+}
+
+/* El título principal del modal */
+.a11y-header h2 {
+    font-size: var(--a11y-title-font-size);
+}
+
+/* Los subtítulos de cada sección (Fuente, Tema, etc.) */
+.a11y-section h3 {
+    font-size: var(--a11y-section-font-size);
+}
+
+/* Las etiquetas de valores (100%, Normal, etc.) */
+.a11y-range-value {
+    font-size: var(--a11y-range-value-font-size);
+}
+
+/* Tamaños para los iconos de los extremos de los sliders */
+.a11y-modal .range-icon-small {
+    font-size: var(--a11y-range-icon-small-font);
+    /* Opcional: si quieres que no se vean tan gruesos en comparación */
+    font-weight: normal; 
+}
+.a11y-modal .range-icon-large {
+    font-size: var(--a11y-range-icon-large-font);
+    /* Opcional: para darle más peso visual al icono grande */
+    font-weight: bold; 
 }
 
 .a11y-modal-overlay {
@@ -82,7 +120,6 @@
 
 .a11y-header h2 { 
     margin: 0; 
-    font-size: var(--a11y-title-font-size);
     line-height: calc(var(--line-height-base) * 0.9);
 }
 
@@ -90,8 +127,6 @@
 .a11y-close-btn {
     background: transparent; 
     border: none !important; 
-
-    font-size: var(--a11y-close-btn-font-size);
 
     cursor: pointer; 
     color: var(--color-text);
@@ -126,7 +161,6 @@
 }
 
 .a11y-section h3 { 
-    font-size: var(--a11y-section-font-size); 
     margin-bottom: var(--a11y-controls-gap); 
     opacity: calc(var(--opacity) * 3);
 }
@@ -150,9 +184,10 @@
     
     padding: var(--a11y-btn-padding);
 
-    min-height: calc((var(--ui-icon-size) + var(--border-width-focus)) * (1 + var(--zoom-focus-minnor)) + var(--a11y-btn-padding));
+    min-height: calc((var(--ui-icon-size) + var(--border-width-focus)) 
+                * (1 + var(--zoom-focus-minnor)) + var(--a11y-btn-padding));
     cursor: pointer;
-    font-size: var(--a11y-option-btn-font-size);
+    
     transition: all var(--animation-speed) ease;
     margin-bottom: var(--a11y-controls-gap);
     box-sizing: border-box;
@@ -173,7 +208,8 @@
     /* COMPENSACIÓN MATEMÁTICA: 
        padding_nuevo = padding_base - (borde_foco - borde_base) 
     */
-    padding: calc(var(--a11y-btn-padding) - (var(--border-width-focus) - var(--border-width-no-focus)));
+    padding: calc(var(--a11y-btn-padding) 
+             - (var(--border-width-focus) - var(--border-width-no-focus)));
     
     transform: scale(calc(1 + var(--zoom-focus-minnor)));
     position: relative;
@@ -203,7 +239,8 @@
     color: var(--color-a11y-selected-text);
     
     /* Aplicar la misma compensación al tener el foco */
-    padding: calc(var(--a11y-btn-padding) - (var(--border-width-focus) - var(--border-width-no-focus)));
+    padding: calc(var(--a11y-btn-padding) 
+             - (var(--border-width-focus) - var(--border-width-no-focus)));
 }
 
 /* SLIDERS UNIFICADOS */
@@ -213,7 +250,8 @@
     gap: var(--a11y-controls-gap); 
 
     width: 100%; 
-    min-height: calc((var(--ui-icon-size) + var(--border-width-focus)) * (1 + var(--zoom-focus-minnor)));
+    min-height: calc((var(--ui-icon-size) + var(--border-width-focus)) 
+                * (1 + var(--zoom-focus-minnor)));
 }
 
 input[type=range].a11y-range {

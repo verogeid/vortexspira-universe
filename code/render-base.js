@@ -298,16 +298,20 @@ export function renderNavegacion() {
                 this.STATE.isHydrating = false;
 
                 // Limpieza preventiva
-                const volverFijoRef = this.DOM.cardVolverFijaElemento || document.getElementById('card-volver-fija-elemento');
+                const volverFijoRef = this.DOM.cardVolverFijaElemento || 
+                                      document.getElementById('card-volver-fija-elemento');
+
                 if (volverFijoRef) volverFijoRef.classList.remove('focus-visible');
 
                 // 🔍 TRAZA FINAL
                 debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
-                            `[RENDER-FLOW] 04. Finally Block. Explicit: ${!!explicitExternalFocus}, Track: ${shouldFocusTrack}`);
+                            `[RENDER-FLOW] 04. Finally Block. ` + 
+                            `Explicit: ${!!explicitExternalFocus}, Track: ${shouldFocusTrack}`);
 
                 if (explicitExternalFocus) {
                     debug.log('render_base', debug.DEBUG_LEVELS.EXTREME, 
-                                `[RESTORE-DEBUG] 05. Scheduling external focus for ${explicitExternalFocus.id}`);
+                                `[RESTORE-DEBUG] 05. Scheduling external focus for ` + 
+                                `${explicitExternalFocus.id}`);
                     
                     // ⭐️ FUNCIÓN DE RESTAURACIÓN ROBUSTA ⭐️
                     const performRestoration = () => {
@@ -369,7 +373,10 @@ export function renderNavegacion() {
 
     _updateNavViews.call(this, 
                         !!currentLevelState.levelId, 
-                        isMobile, isTabletPortrait, isTabletLandscape, isDesktop, 
+                        isMobile, 
+                        isTabletPortrait, 
+                        isTabletLandscape, 
+                        isDesktop, 
                         nodoActual); 
 }
 
@@ -471,15 +478,14 @@ export function _generarTarjetaHTMLImpl(nodo,
                 </article>`;
 
     if (tipoEspecial === 'breadcrumb-vertical') {
-        // El breadcrumb es informativo, ya lo marcaste con aria-hidden=true en tu lógica original 
-        // (aunque idealmente debería ser legible si el foco pudiera llegar, pero como es tabindex="-1" está bien así para navegación visual).
+        // El breadcrumb es informativo
         return `
             <article class="card card-breadcrumb-vertical" 
                     data-id="breadcrumb-nav" 
                     data-tipo="relleno" 
                     tabindex="-1" 
                     aria-hidden="true">
-                <h3>${nodo.texto}</h3>
+                <h2>${nodo.texto}</h2>
             </article>`;}
 
     if (tipoEspecial === 'volver-vertical') {
@@ -490,15 +496,15 @@ export function _generarTarjetaHTMLImpl(nodo,
             <article class="card card-volver-vertical" 
                     data-id="volver-nav" 
                     data-tipo="volver-vertical" 
-                    role="button" 
+                    role="menuitem" 
                     aria-label="${ariaLabel}" 
                     title="${ariaLabel}"
                     tabindex="0" 
                     onclick="App._handleVolverClick()">
-                <h3 aria-hidden="true" class="card-volver-content">
+                <h2 aria-hidden="true" class="card-volver-content">
                     <span class="card-volver-icon"></span>
                     <span class="card-volver-text">${visibleText}</span>
-                </h3>
+                </h2>
             </article>`;
     }
 
@@ -508,14 +514,17 @@ export function _generarTarjetaHTMLImpl(nodo,
             <article class="card disabled" 
                     data-id="${nodo.id}" 
                     data-tipo="vacio" 
-                    role="button" 
+                    role="menuitem" 
                     aria-disabled="true"
                     tabindex="0" 
                     aria-label="${nodo.nombre}"
                     title="${nodo.nombre}">
                 <h3>
-                    <span class="card-icon-lead icon-empty-folder-card" aria-hidden="true"></span>
-                    <span id="card-title-${nodo.id}" class="card-text-content" aria-hidden="true">${nodo.nombre}</span>
+                    <span class="card-icon-lead icon-empty-folder-card" aria-hidden="true">
+                    </span>
+                    <span id="card-title-${nodo.id}" class="card-text-content" aria-hidden="true">
+                        ${nodo.nombre}
+                    </span>
                 </h3>
             </article>`;
     }
@@ -560,19 +569,20 @@ export function _generarTarjetaHTMLImpl(nodo,
         <article class="card ${estaActivo ? '' : 'disabled'}" 
                 data-id="${nodo.id}" 
                 data-tipo="${tipo}" 
-                role="button" 
+                role="menuitem" 
                 tabindex="0" 
                 ${ariaDisabled} 
                 aria-label="${ariaLabelText}"
                 title="${ariaLabelText}">
-            <h3>
+            <h2>
                 ${iconHTML}
                 <span id="${titleId}" class="card-text-content" aria-hidden="true">${displayTitle}</span>
-            </h3>
+            </h2>
         </article>`;
 };
 
-export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTabletLandscape, isDesktop, nodoActual) {
+export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, 
+                                isTabletLandscape, isDesktop, nodoActual) {
     const vistaVolver = this.DOM.cardVolverFija; 
     const infoAdicional = this.DOM.infoAdicional;
 
@@ -592,17 +602,17 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, isTablet
     this.DOM.cardNivelActual.classList.add('visible');
 
     // Rellenamos el contenido incondicionalmente
-    this.DOM.cardNivelActual.innerHTML = `<h3>${tituloNivel}</h3>`;
+    this.DOM.cardNivelActual.innerHTML = `<h2>${tituloNivel}</h2>`;
 
     if (isSubLevel) {
         const visibleText = this.getString('nav.backBtnText'); // 🟢 i18n dinámico
 
         this.DOM.cardVolverFijaElemento.classList.add('visible'); 
         this.DOM.cardVolverFijaElemento.innerHTML = `
-            <h3 aria-hidden="true" class="card-volver-content">
+            <h2 aria-hidden="true" class="card-volver-content">
                 <span class="card-volver-icon"></span>
                 <span class="card-volver-text">${visibleText}</span>
-            </h3>`; 
+            </h2>`; 
         this.DOM.cardVolverFijaElemento.setAttribute('aria-label', this.getString('nav.aria.backBtn'));
         this.DOM.cardVolverFijaElemento.setAttribute('title', this.getString('nav.aria.backBtn'));
         this.DOM.cardVolverFijaElemento.tabIndex = 0;

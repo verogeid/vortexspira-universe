@@ -11,7 +11,7 @@ body[data-layout="desktop"] #app-container {
 
     display: grid; 
     grid-template-columns: 1fr 3fr 1fr; 
-    gap: 20px; padding: 20px; box-sizing: border-box;
+    gap: var(--card-gap); padding: var(--card-padding); box-sizing: border-box;
     align-items: start; background: var(--color-bg);
 }
 
@@ -29,7 +29,6 @@ body[data-layout="desktop"] #vista-navegacion-tablet {
 body[data-layout="desktop"] .carousel-viewport {
     width: 100% !important; max-width: 100% !important;
     overflow: hidden !important;
-    /* ❌ ELIMINADO contain: paint */
 }
     
 body[data-layout="desktop"] #nav-swiper, 

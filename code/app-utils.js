@@ -11,8 +11,10 @@ let _isMenuLoading = false;
 export async function preloadMainMenu(appInstance) {
     if (_mainMenuModule) return;
     try {
-        appInstance._injectCSS('styles/style-menu.css', 'vortex-css-menu');
-        appInstance._injectCSS('styles/style-media-menu.css', 'vortex-css-media-menu');
+        appInstance._injectCSS('styles/style-menu.css', 
+                                'vortex-css-menu');
+        appInstance._injectCSS('styles/media/style-media-menu.css', 
+                                'vortex-css-media-menu');
         _mainMenuModule = await import('./main-menu.js');
 
         debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
@@ -319,9 +321,12 @@ export function loadDetailsModules(appInstance) {
             appInstance.blockUI(); 
             
             // Inyectamos el CSS pesado de Detalles
-            appInstance._injectCSS('styles/style-details.css', 'vortex-css-details');
-            appInstance._injectCSS('styles/style-media-details.css', 'vortex-css-media-details');
-            appInstance._injectCSS('styles/style-media-menu.css', 'vortex-css-media-menu');
+            appInstance._injectCSS('styles/media/style-details.css', 
+                                    'vortex-css-details');
+            appInstance._injectCSS('styles/media/style-media-details.css', 
+                                    'vortex-css-media-details');
+            appInstance._injectCSS('styles/media/style-media-menu.css', 
+                                    'vortex-css-media-menu');
             
             try {
                 // Descargamos los módulos JavaScript dinámicamente
@@ -350,8 +355,10 @@ export function loadDetailsModules(appInstance) {
 export function preloadDetailsModules(appInstance) {
     if (!_detailsModulesPromise) {
         _detailsModulesPromise = (async () => {
-            appInstance._injectCSS('styles/style-details.css', 'vortex-css-details');
-            appInstance._injectCSS('styles/style-media-details.css', 'vortex-css-media-details');
+            appInstance._injectCSS('styles/style-details.css', 
+                                    'vortex-css-details');
+            appInstance._injectCSS('styles/media/style-media-details.css', 
+                                    'vortex-css-media-details');
             try {
                 const [render, keyboard] = await Promise.all([
                     import('./render-details.js'),

@@ -23,18 +23,20 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
                 
                 // 1. Renderizamos Breadcrumb
                 // 🛑 NO le inyectamos data-pos. El sistema de navegación lo ignorará.
-                let breadcrumbHtml = this._generarTarjetaHTML(nodo, true, false, nodo.tipoEspecial);
+                let breadcrumbHtml = this._generarTarjetaHTML(
+                    nodo, true, false, nodo.tipoEspecial);
                 
                 // 2. Renderizamos Volver
                 // ✅ LE inyectamos data-pos con el logicalPos actual (será 0).
-                let volverHtml = this._generarTarjetaHTML(volverNode, true, false, volverNode.tipoEspecial);
+                let volverHtml = this._generarTarjetaHTML(
+                    volverNode, true, false, volverNode.tipoEspecial);
                 // 🟢 FIX A11Y: Inyectar ARIA en botón Volver
 
                 volverHtml = volverHtml.replace('class="card', 
                     `data-pos="${logicalPos}" 
-                    aria-posinset="${logicalPos + 1}" 
-                    aria-setsize="${totalLogicalItems}" 
-                    class="card`);
+                     aria-posinset="${logicalPos + 1}" 
+                     aria-setsize="${totalLogicalItems}" 
+                     class="card`);
                 
                 html += `<div class="swiper-slide">
                     ${breadcrumbHtml}
@@ -66,10 +68,8 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
         if (!esRelleno) {
             // 🟢 FIX A11Y: Inyectar ARIA en tarjetas normales
             cardHtml = cardHtml.replace('class="card', 
-                `data-pos="${logicalPos}" 
-                aria-posinset="${logicalPos + 1}" 
-                aria-setsize="${totalLogicalItems}" 
-                class="card`);
+                `data-pos="${logicalPos}" aria-posinset="${logicalPos + 1}" ` +
+                `aria-setsize="${totalLogicalItems}" class="card`);
 
             logicalPos++;
         }
@@ -83,7 +83,6 @@ export function _generateCardHTML_Mobile(items, itemsPerColumna) {
     return html;
 };
 
-// ... (El resto del archivo _initCarousel_Mobile se mantiene igual)
 export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobile, swiperId) {
     if (!isMobile) return;
 
@@ -112,8 +111,9 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
         freeModeSticky: true, 
 
         // 🟢 Relleno final en todos los dispositivos para details
-        slidesOffsetAfter: window.visualViewport ? window.visualViewport.height : window.innerHeight,
-
+        slidesOffsetAfter: window.visualViewport ? 
+                           window.visualViewport.height : 
+                           window.innerHeight,
 
         mousewheel: { enabled: false }, 
         keyboard: { enabled: false }, 
@@ -137,4 +137,5 @@ export function _initCarousel_Mobile(initialSwiperSlide, itemsPorColumna, isMobi
         this.setupTouchListeners(); 
     }
 };
+
 /* --- code/render-mobile.js --- */

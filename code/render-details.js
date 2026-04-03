@@ -398,7 +398,7 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
 
             if (cardNivelActual) {
                 cardNivelActual.classList.add('visible');
-                cardNivelActual.innerHTML = `<h3>${parentName}</h3>`;
+                cardNivelActual.innerHTML = `<h2>${parentName}</h2>`;
             }
 
             if (cardVolverFijaElemento) {
@@ -407,10 +407,10 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                 // Al estar dentro de un curso, el botón de volver siempre debe estar habilitado
                 cardVolverFijaElemento.classList.add('visible');
                 cardVolverFijaElemento.innerHTML = `
-                    <h3 aria-hidden="true" class="card-volver-content">
+                    <h2 aria-hidden="true" class="card-volver-content">
                         <span class="card-volver-icon"></span>
                         <span class="card-volver-text">${visibleText}</span>
-                    </h3>`;
+                    </h2>`;
                 cardVolverFijaElemento.setAttribute(
                     'aria-label', this.getString('nav.aria.backBtn'));
                 cardVolverFijaElemento.setAttribute(
@@ -441,7 +441,7 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                              tabindex="-1" 
                              aria-hidden="true" 
                              role="presentation">
-                        <h3>${parentName}</h3>
+                        <h2>${parentName}</h2>
                     </article>
                     <article class="card card-volver-vertical" 
                              role="button" 
@@ -449,10 +449,10 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                             title="${ariaLabel}" 
                             tabindex="0" 
                             onclick="App._handleVolverClick()">
-                        <h3 aria-hidden="true" class="card-volver-content">
+                        <h2 aria-hidden="true" class="card-volver-content">
                             <span class="card-volver-icon"></span>
                             <span class="card-volver-text">${visibleText}</span>
-                        </h3>
+                        </h2>
                     </article>
                 </div>
             `;
@@ -751,7 +751,7 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
                     if (!appInstance.STATE.isAutoScrolling) {
                         debug.log('render_details', debug.DEBUG_LEVELS.EXTREME, 
                             '👆 TouchEnd: Evaluando encuadre táctil.');
-                            
+
                         nav_base_details._handleSlideChangeEnd(swiper, appInstance);
                     }
                 }

@@ -3,7 +3,13 @@
 /* 1. RESET GLOBAL DEL SCROLL Y ESTRUCTURA
    Liberamos el body para que tenga scroll nativo y altura automática */
 body[data-layout="mobile"][data-safe-mode="true"] {
+    --card-padding: var(--mobile-card-padding);
+    --border-radius: var(--sm-border-radius);
+    --mobile-header-line-clamp: var(--sm-header-line-clamp);
+}
 
+body[data-layout="mobile"][data-safe-mode="true"] .card {
+    min-height: 0;
 }
 
 body[data-layout="mobile"][data-safe-mode="true"] footer { 

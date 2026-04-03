@@ -7,6 +7,7 @@
     --opacity: 0.3;
 
     --border-radius: 12px;
+    --sm-border-radius: 6px;
     --border-width-focus: 4px;
     --border-width-no-focus: 2px;
     --scrollbar-gap: 8px;
@@ -22,17 +23,20 @@
     /* 📐 VARIABLES ESTRUCTURALES BASE */
     --card-gap: 1.5vmin;
     --card-padding: 1vmin;
+    --mobile-card-padding: 0.5vmin;
 
     --nav-desktop-height: 100%; 
     --nav-carousel-top-offset: 2vmin;
-    --app-container-min-height: calc(100dvh - var(--header-height-real, 50px) - var(--footer-height-real));
+    --app-container-min-height: calc(100dvh 
+                                    - var(--header-height-real, 50px) 
+                                    - var(--footer-height-real));
 
     --font-dyslexic: 'OpenDyslexic', 'Lexend', system-ui, sans-serif !important; 
     --font-serif: 'Georgia', 'Times New Roman', serif;
     --font-atkinson: 'Atkinson Hyperlegible', system-ui, sans-serif !important;
 
     /* Tipografía Dinámica */
-    --font-family-base: var(--font-serif); 
+    --font-family-base: var(--font-atkinson); 
     
     --font-scale: 1;
     --line-height-base: 1.5;
@@ -51,63 +55,67 @@
     --menu-lang-font-size: clamp(16px, 3vmin, 27px); 
 
     /* 📐 HEADER (Valores por defecto / Desktop) */
+    --header-height: max(1rem, 
+                        calc((1rem + 1vmin) * var(--font-scale)));
     --header-gap: 4px;
-    --sm-header-gap: 2px;
+    --mobile-header-gap: 2px;
 
-    --header-height: clamp(44px, calc(var(--ui-icon-size)), 12dvh);
-    --header-title-size: clamp(1rem, calc((1rem + 1vmin) * var(--font-scale)), 2rem);
+    --header-title-size: max(1rem, calc((1rem + 1vmin) * var(--font-scale)));
     --header-logo-size: var(--ui-icon-size);
     --header-icon-size: var(--ui-icon-size);
     --header-obras-size: calc(var(--ui-icon-size) * 0.85);
-    --header-lang-font-size: clamp(0.9rem, calc(1.5vmin * var(--font-scale)), 1.5rem);
+    --header-lang-font-size: max(0.9rem, calc(1.5vmin * var(--font-scale)));
     
+    --header-line-clamp: unset;
+    --mobile-header-line-clamp: 2;
+    --sm-header-line-clamp: 1;
+
     /* 📐 FOOTER (Valores por defecto / Desktop) */
     --footer-min-height: 16px;
     --footer-max-height: 32px;
 
-    --footer-font-size: clamp(0.8rem, calc(1.5vmin * var(--font-scale)), 1.1rem);
+    --footer-font-size: max(0.8rem, calc(1.5vmin * var(--font-scale)));
     --footer-padding: clamp(2px, 1vmin, 5px);
     --footer-small-gap: clamp(5px, 2vw, 15px);
 
     /* 📐 VARIABLES DE TARJETAS (CARDS) */
-    --card-title-font-size: clamp(0.9rem, calc(1rem * var(--font-scale)), 1.3rem);
-    --card-desc-font-size: clamp(0.8rem, calc(0.9rem * var(--font-scale)), 1.1rem);
+    --card-title-font-size: max(0.9rem, calc(1rem * var(--font-scale)));
+    --card-desc-font-size: max(0.8rem, calc(0.9rem * var(--font-scale)));
     --card-line-clamp: 4;
-    --card-h3-icon: 1.2em;
+    --mobile-card-line-clamp: 3;
     --card-icon-size: 1.5rem;
+    --mobile-card-icon: 1.2em;
 
     /* Nivel Actual */
     --card-nivel-actual-line-clamp: 4;
-    --card-nivel-actual-font-size: clamp(0.9rem, calc(0.8rem * var(--font-scale)), 1.5rem);
+    --card-nivel-actual-font-size: max(0.9rem, calc(0.8rem * var(--font-scale)));
     
     /* Breadcrumb Vertical */
     --card-breadcrump-line-clamp: 5;
 
-    --card-breadcrump-vertical-font-size: 0.9rem;
-    --card-breadcrump-vertical-font-size: clamp(1rem, calc(0.9rem * var(--font-scale)), 1.4rem);
+    --card-breadcrump-vertical-font-size: max(1rem, calc(0.9rem * var(--font-scale)));
     --card-breadcrump-vertical-line-clamp: 2;
     --card-breadcrump-vertical-margin-bottom: clamp(1px, 3.5vmin, 10px);
 
     /* Botón Volver Fijo */
-    --card-volver-fija-font-size: clamp(1rem, calc(0.8rem * var(--font-scale)), 3rem); 
+    --card-volver-fija-font-size: max(1rem, calc(0.8rem * var(--font-scale))); 
 
     /* Info Adicional */
-    --info-adicional-summary-font-size: clamp(0.9rem, calc(0.8rem * var(--font-scale)), 1.2rem); 
-    --info-adicional-details-small-font-size: clamp(0.85rem, calc(0.75rem * var(--font-scale)), 1rem);
-    --info-adicional-lista-a-font-size: clamp(0.9rem, calc(0.8rem * var(--font-scale)), 1.2rem);
+    --info-adicional-summary-font-size: max(0.9rem, calc(0.8rem * var(--font-scale))); 
+    --info-adicional-details-small-font-size: max(0.85rem, calc(0.75rem * var(--font-scale)));
 
     /* 📐 A11Y Modal */
-    --a11y-title-font-size: clamp(1.1rem, calc((1rem + 1vmin) * var(--font-scale)), 1.8rem);
-    --a11y-section-font-size: clamp(0.9rem, calc((0.8rem + 0.5vmin) * var(--font-scale)), 1.2rem);
+    --a11y-title-font-size: max(1.1rem, calc((1rem + 1vmin) * var(--font-scale)));
+    --a11y-section-font-size: max(0.9rem, calc((0.8rem + 0.5vmin) * var(--font-scale)));
 
-    --a11y-close-btn-font-size: clamp(1.2rem, calc((1rem + 1vmin) * var(--font-scale)), 1.6rem);
+    --a11y-range-icon-small-font: max(0.8rem, calc(0.8rem * var(--font-scale)));
+    --a11y-range-icon-large-font: max(1.2rem, calc(1.2rem * var(--font-scale)));
+    --a11y-range-value-font-size: max(0.9rem, calc(0.9rem * var(--font-scale)));
+
+    --a11y-option-btn-font-size: max(0.8rem, calc((0.75rem + 0.5vmin) * var(--font-scale)));
+
+    --a11y-close-btn-font-size: max(1.2rem, calc((1rem + 1vmin) * var(--font-scale)));
     --a11y-close-btn-size: clamp(44px, calc(5vmin * var(--font-scale)), 50px);
-
-    --a11y-option-btn-font-size: clamp(0.8rem, calc((0.75rem + 0.5vmin) * var(--font-scale)), 1rem);
-    --a11y-slider-icon-size: clamp(0.8rem, calc(1rem * var(--font-scale)), 1.3rem);
-    --a11y-range-value-font-size: clamp(0.8rem, calc((0.75rem + 0.5vmin) * var(--font-scale)), 1rem);
-    --a11y-range-size: clamp(44px, calc(5vmin * var(--font-scale)), 50px);
-    --a11y-reset-size: clamp(44px, calc(6vmin * var(--font-scale)), 60px);
 
     --a11y-gap: 20px;
     --a11y-padding: 25px;                       /* Padding interno del modal */
@@ -119,22 +127,17 @@
 
     --a11y-controls-gap: 10px;                  /* Hueco entre botones */
     --a11y-btn-padding: 10px;                   /* Relleno botones opciones */
-    --a11y-btn-min-width: 120px;                /* Ancho mínimo botones */
-    --a11y-slider-thumb-size: 20px;             /* Bolita del slider */
     --a11y-slider-height: 6px;                  /* Grosor línea slider */
-    --a11y-slider-width: 1.5rem;                /* Ancho del slider */
 
     /* 📐 VISTA DE DETALLES */
-    --details-text-fragment-font-size: clamp(0.8rem, calc(0.9rem * var(--font-scale)), 1rem);
-    --details-title-slide-font-size: clamp(1rem, calc(1.1rem * var(--font-scale)), 1.1rem);
+    --details-text-fragment-font-size: max(0.8rem, calc(0.9rem * var(--font-scale)));
+    --details-title-slide-font-size: max(1rem, calc(1.1rem * var(--font-scale)));
 
     --detail-vertical-spacing: calc(0.5rem * var(--line-height-base, 1.5));
 
-    --details-action-btn-font-size: clamp(0.75rem, calc(0.9rem * var(--font-scale)), 1rem); 
-    --details-action-btn-size: clamp(30px, calc(4vmin * var(--font-scale)), 45px);
-    --details-action-icon-size: clamp(0.9rem, calc(1rem * var(--font-scale)), 1.1rem);
-    --details-action-text-font-size: clamp(0.75rem, calc(0.9rem * var(--font-scale)), 1rem);
-    --details-volver-btn-font-size: clamp(0.8rem, calc(1rem * var(--font-scale)), 1.1rem);
+    --details-action-btn-font-size: max(0.75rem, calc(0.9rem * var(--font-scale))); 
+    --details-action-text-font-size: max(0.75rem, calc(0.9rem * var(--font-scale)));
+    --details-volver-btn-font-size: max(0.8rem, calc(1rem * var(--font-scale)));
 }
 
 /* Aplicación de las variables al documento */

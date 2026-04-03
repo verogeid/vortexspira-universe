@@ -19,7 +19,7 @@
     }
   },
   "header": {
-    "title": "VortexSpira® EdTech",
+    "title": "VortexSpira® <span class=\"hide-mobile-visual\">EdTech</span>",
     "subtitle": "Immersive Technical Audio-Learning",
     "aria": {
       "obras": "Web under construction",

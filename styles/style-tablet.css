@@ -1,17 +1,5 @@
 /* --- styles/style-tablet.css --- */
 
-/* Tablet Portrait */
-body[data-layout="tablet-portrait"] {
-    /* ⭐️ MAPEO DE VARIABLES PORTRAIT */
-    --header-title-size: var(--tab-port-header-title-size);
-}
-
-/* Tablet Landscape */
-body[data-layout="tablet-landscape"] {
-    /* ⭐️ MAPEO DE VARIABLES LANDSCAPE */
-    --header-title-size: var(--tab-land-header-title-size);
-}
-
 /* ((min-width: 601px) and (max-width: 1023.99px)) */
 body[data-layout="tablet-portrait"] #app-container,
 body[data-layout="tablet-landscape"] #app-container {

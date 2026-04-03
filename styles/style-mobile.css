@@ -2,11 +2,11 @@
 
 /* (max-width: 600px) */
 body[data-layout="mobile"] {
-    --header-title-size: var(--mobile-header-title-size);
-
+    --header-gap: var(--mobile-header-gap);
     --footer-padding: var(--mobile-footer-padding);
-
     --card-padding: var(--mobile-card-padding);
+
+    --card-line-clamp: var(--mobile-card-line-clamp); 
 
     overflow: hidden !important; 
     height: 100dvh; 
@@ -19,12 +19,14 @@ body[data-layout="mobile"] {
 
 body[data-layout="mobile"] #app-container {
     height: auto !important;
-    min-height: calc(100dvh - var(--header-height-real, 50px) - var(--footer-height-real));
+    min-height: calc(100dvh 
+                     - var(--header-height-real, 50px) 
+                     - var(--footer-height-real));
 
     margin-top: 0 !important;
 
     padding-top: 0 !important; 
-    padding-bottom: 15px !important;
+    padding-bottom: var(--card-padding) !important;
     padding-left: 0px;
 
     display: flex; flex-direction: column;
@@ -60,7 +62,9 @@ body[data-layout="mobile"] #vista-detalle-mobile {
     width: 100% !important; 
 
     /* Ajuste de altura restando el header real */
-    height: calc(100vh - var(--header-height-real, var(--header-height)) - var(--footer-height-real)) !important;
+    height: calc(100vh 
+                 - var(--header-height-real, var(--header-height)) 
+                 - var(--footer-height-real)) !important;
 
     z-index: 99 !important;
 
@@ -79,7 +83,9 @@ body[data-layout="mobile"] #vista-detalle-mobile:not(.active) {
 /* Aplicamos las reglas a AMBOS carruseles (Nav y Detalle) */
 body[data-layout="mobile"] #nav-swiper-mobile, 
 body[data-layout="mobile"] #detalle-swiper-mobile {
-    height: calc(100vh - var(--header-height-real, 50px) - var(--footer-height-real, 6vh)) !important;
+    height: calc(100vh 
+                 - var(--header-height-real, 50px) 
+                 - var(--footer-height-real, 6vh)) !important;
     width: 100%; position: relative;
 
     overflow: hidden; 
@@ -94,7 +100,7 @@ body[data-layout="mobile"] #detalle-swiper-mobile .swiper-wrapper {
 
     width: 100%; height: auto !important; 
 
-    padding-bottom: 15dvh; 
+    padding-bottom: 15dvh;
     padding-top: var(--card-padding) !important; 
 }
 
@@ -126,46 +132,30 @@ body[data-layout="mobile"] .card-relleno-final {
 }
 
 /* 1. CAMBIO A FLEXBOX: Para crear 2 columnas (Icono | Texto) */
-body[data-layout="mobile"] .card h3 {
+body[data-layout="mobile"] .card h2 {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important; /* 🎯 CENTRADO VERTICAL */
-    gap: 12px; /* Espacio limpio entre columnas */
+
+    padding: 0 var(--card-padding) 0 var(--card-padding);
+
+    gap: var(--card-gap); /* Espacio limpio entre columnas */
     
     max-height: none !important; /* Quitamos límite de altura de desktop */
     overflow: visible !important;
 }
 
 /* 2. RESET DEL ICONO: Deja de flotar y se comporta como columna 1 */
-body[data-layout="mobile"] .card h3 .card-icon-lead,
-body[data-layout="mobile"] .card h3 .icon-empty-card,
-body[data-layout="mobile"] .card h3 .icon-obras-card {
+body[data-layout="mobile"] .card h2 .card-icon-lead,
+body[data-layout="mobile"] .card h2 .icon-empty-card,
+body[data-layout="mobile"] .card h2 .icon-obras-card {
     float: none !important;
     margin-top: 0 !important;   /* Sin ajuste óptico, centrado matemático */
     margin-right: 0 !important; /* El gap del padre controla el espacio */
 
-    /* En móvil podemos hacerlo un pelín más grande si quieres, o dejarlo heredar */
-    font-size: var(--card-h3-icon) !important; 
-    width: var(--card-h3-icon) !important;
-    height: var(--card-h3-icon) !important;
-}
-
-/* 3. TEXTO: Bloque con Ellipsis real */
-body[data-layout="mobile"] .card h3 .card-text-content {
-    display: -webkit-box !important;
-    -webkit-box-orient: vertical;
-
-    /* Límite de líneas móvil */
-    -webkit-line-clamp: var(--card-line-clamp); line-clamp: var(--card-line-clamp);
-    
-    
-    overflow: hidden;
-    text-overflow: ellipsis;
-    
-    /* 🟢 FIX: Comportamiento de palabras naturales */
-    word-break: normal !important;      /* Respeta las palabras completas */
-    overflow-wrap: normal !important;   /* Evita partir palabras a la fuerza */
-    -webkit-hyphens: none !important; hyphens: none !important; /* Evita guiones automáticos feos */
+    font-size: var(--mobile-card-icon) !important; 
+    width: var(--mobile-card-icon) !important;
+    height: var(--mobile-card-icon) !important;
 }
 
 /* 🛡️ GLOBAL MOBILE FIX: Mata el scroll horizontal fantasma */

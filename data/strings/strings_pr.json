@@ -19,7 +19,7 @@
         }
     },
     "header": {
-        "title": "VortexSpira® EdTech",
+        "title": "VortexSpira® <span class=\"hide-mobile-visual\">EdTech</span>",
         "subtitle": "Áudio-Aprendizagem Técnica Imersiva",
         "aria": {
         "obras": "Site em desenvolvimento ativo",

@@ -14,6 +14,10 @@ export function showA11yModal(appInstance) {
         _cacheDOM();
         _setupListeners(appInstance);
         _isHtmlInjected = true;
+    } else {
+        // 🟢 FIX: Si el DOM ya estaba construido, forzamos un refresco 
+        // de los textos por si el usuario ha cambiado el idioma.
+        _refreshLanguage();
     }
 
     _updateModalUI();
@@ -218,6 +222,25 @@ function _updateLetterSpacingLabel(step) {
     _domRefs.rangeLetterSpacingVal.textContent = i18n.getString(info.labelKey);
 }
 
+function _refreshLanguage() {
+    if (!_domRefs.overlay) return;
+
+    // 1. Traducir textos estáticos puros (títulos, spans, botones)
+    _domRefs.overlay.querySelectorAll('[data-i18n]').forEach(el => {
+        el.textContent = i18n.getString(el.getAttribute('data-i18n'));
+    });
+
+    // 2. Traducir atributos ARIA y Title estáticos (cerrar, rangos, checkboxes)
+    _domRefs.overlay.querySelectorAll('[data-i18n-aria]').forEach(el => {
+        const text = i18n.getString(el.getAttribute('data-i18n-aria'));
+        if (el.hasAttribute('aria-label')) el.setAttribute('aria-label', text);
+        if (el.hasAttribute('title')) el.setAttribute('title', text);
+    });
+
+    // NOTA: Los labels dinámicos (100%, Normal, etc) y los estados ARIA de 
+    // las fuentes se traducirán solos porque _updateModalUI() se ejecuta después.
+}
+
 function _injectModalHTML() {
     if (document.getElementById('a11y-modal-overlay')) return;
 
@@ -225,189 +248,270 @@ function _injectModalHTML() {
         <div id="a11y-modal-overlay" 
              class="a11y-modal-overlay" 
              aria-hidden="true">
+
             <div id="a11y-modal" 
                  class="a11y-modal" 
                  role="dialog" 
                  aria-modal="true" 
                  aria-labelledby="a11y-title">
+
                 <div class="a11y-header">
-                    <h2 id="a11y-title">${i18n.getString('modal.title')}</h2>
+                    <h2 id="a11y-title" 
+                        data-i18n="modal.title">
+                        ${i18n.getString('modal.title')}
+                    </h2>
                     <button id="a11y-close" 
                             class="a11y-close-btn" 
+                            data-i18n-aria="modal.close" 
                             aria-label="${i18n.getString('modal.close')}" 
-                            title="${i18n.getString('modal.close')}">✕</button>
+                            title="${i18n.getString('modal.close')}">
+                        ✕
+                    </button>
                 </div>
+
                 <div class="a11y-section">
-                    <h3>${i18n.getString('modal.sections.motion')}</h3>
+                    <h3 data-i18n="modal.sections.motion">
+                        ${i18n.getString('modal.sections.motion')}
+                    </h3>
                     <div class="a11y-controls-group">
                         <label class="a11y-checkbox-label">
                             <input type="checkbox" 
                                    id="a11y-reduce-motion" 
-                                   class="a11y-checkbox"
+                                   class="a11y-checkbox" 
+                                   data-i18n-aria="modal.options.reduceMotion" 
                                    title="${i18n.getString('modal.options.reduceMotion')}">
-                            <span>${i18n.getString('modal.options.reduceMotion')}</span>
+                            <span data-i18n="modal.options.reduceMotion">
+                                ${i18n.getString('modal.options.reduceMotion')}
+                            </span>
                         </label>
+
                         <label class="a11y-checkbox-label">
                             <input type="checkbox" 
                                    id="a11y-no-block-opacity" 
-                                   class="a11y-checkbox"
+                                   class="a11y-checkbox" 
+                                   data-i18n-aria="modal.options.noBlockOpacity" 
                                    title="${i18n.getString('modal.options.noBlockOpacity')}">
-                            <span>${i18n.getString('modal.options.noBlockOpacity')}</span>
+                            <span data-i18n="modal.options.noBlockOpacity">
+                                ${i18n.getString('modal.options.noBlockOpacity')}
+                            </span>
                         </label>
+
                         <label class="a11y-checkbox-label">
                             <input type="checkbox" 
                                    id="a11y-no-mask-opacity" 
-                                   class="a11y-checkbox"
+                                   class="a11y-checkbox" 
+                                   data-i18n-aria="modal.options.noMaskOpacity" 
                                    title="${i18n.getString('modal.options.noMaskOpacity')}">
-                            <span>${i18n.getString('modal.options.noMaskOpacity')}</span>
+                            <span data-i18n="modal.options.noMaskOpacity">
+                                ${i18n.getString('modal.options.noMaskOpacity')}
+                            </span>
                         </label>
+
                         <label class="a11y-checkbox-label">
                             <input type="checkbox" 
                                    id="a11y-no-zone-opacity" 
-                                   class="a11y-checkbox"
+                                   class="a11y-checkbox" 
+                                   data-i18n-aria="modal.options.noZoneOpacity" 
                                    title="${i18n.getString('modal.options.noZoneOpacity')}">
-                            <span>${i18n.getString('modal.options.noZoneOpacity')}</span>
+                            <span data-i18n="modal.options.noZoneOpacity">
+                                ${i18n.getString('modal.options.noZoneOpacity')}
+                            </span>
                         </label>
                     </div>
                 </div>
+
                 <div class="a11y-section">
-                    <h3>${i18n.getString('modal.sections.font')}</h3>
+                    <h3 data-i18n="modal.sections.font">
+                        ${i18n.getString('modal.sections.font')}
+                    </h3>
                     <div class="a11y-controls-group font-group" 
                          role="radiogroup" 
+                         data-i18n-aria="modal.sections.font" 
                          aria-label="${i18n.getString('modal.sections.font')}" 
                          title="${i18n.getString('modal.sections.font')}">
+
                         <button class="a11y-option-btn font-preview-atkinson" 
                                 role="radio" 
                                 aria-checked="false" 
                                 data-font="atkinson" 
+                                data-i18n="modal.options.atkinson" 
                                 aria-label="${i18n.getString('modal.aria.font')} Atkinson" 
                                 title="${i18n.getString('modal.aria.font')} Atkinson">
                             ${i18n.getString('modal.options.atkinson')}
                         </button>
+
                         <button class="a11y-option-btn font-preview-serif" 
                                 role="radio" 
                                 aria-checked="false" 
                                 data-font="serif" 
+                                data-i18n="modal.options.serif" 
                                 aria-label="${i18n.getString('modal.aria.font')} Serif" 
                                 title="${i18n.getString('modal.aria.font')} Serif">
                             ${i18n.getString('modal.options.serif')}
                         </button>
+
                         <button class="a11y-option-btn font-preview-dyslexic" 
                                 role="radio" 
                                 aria-checked="false" 
                                 data-font="dyslexic" 
+                                data-i18n="modal.options.dyslexic" 
                                 aria-label="${i18n.getString('modal.aria.font')} Dyslexic" 
                                 title="${i18n.getString('modal.aria.font')} Dyslexic">
                             ${i18n.getString('modal.options.dyslexic')}
                         </button>
                     </div>
                 </div>
+
                 <div class="a11y-section">
-                    <h3>${i18n.getString('modal.sections.size')}</h3>
+                    <h3 data-i18n="modal.sections.size">
+                        ${i18n.getString('modal.sections.size')}
+                    </h3>
                     <div class="a11y-range-wrapper">
-                        <span class="range-icon-small" aria-hidden="true">A</span>
+                        <span class="range-icon-small" 
+                              aria-hidden="true">
+                            A
+                        </span>
                         <input type="range" 
                                id="a11y-range-size" 
                                class="a11y-range" 
                                min="90" 
                                max="200" 
                                step="5" 
+                               data-i18n-aria="modal.aria.textSize" 
                                aria-label="${i18n.getString('modal.aria.textSize')}" 
                                title="${i18n.getString('modal.aria.textSize')}" 
                                aria-valuemin="90" 
                                aria-valuemax="200">
-                        <span class="range-icon-large" aria-hidden="true">A</span>
-                        <span id="a11y-range-val" class="a11y-range-value">100%</span>
+                        <span class="range-icon-large" 
+                              aria-hidden="true">
+                            A
+                        </span>
+                        <span id="a11y-range-val" 
+                              class="a11y-range-value">
+                            100%
+                        </span>
                     </div>
                 </div>
+
                 <div class="a11y-section">
-                    <h3>${i18n.getString('modal.sections.spacing')}</h3>
+                    <h3 data-i18n="modal.sections.spacing">
+                        ${i18n.getString('modal.sections.spacing')}
+                    </h3>
                     <div class="a11y-range-wrapper">
-                        <span class="range-icon-small" aria-hidden="true">≡</span>
+                        <span class="range-icon-small" 
+                              aria-hidden="true">
+                            ≡
+                        </span>
                         <input type="range" 
                                id="a11y-range-spacing" 
                                class="a11y-range" 
                                min="1" 
                                max="3" 
                                step="1" 
+                               data-i18n-aria="modal.aria.lineSpacing" 
                                aria-label="${i18n.getString('modal.aria.lineSpacing')}" 
                                title="${i18n.getString('modal.aria.lineSpacing')}" 
                                aria-valuemin="1" 
                                aria-valuemax="3">
-                        <span class="range-icon-large" aria-hidden="true">≡</span>
+                        <span class="range-icon-large" 
+                              aria-hidden="true">
+                            ≡
+                        </span>
                         <span id="a11y-range-spacing-val" 
                               class="a11y-range-value">
                             ${i18n.getString('modal.spacing.normal')}
                         </span>
                     </div>
                 </div>
+
                 <div class="a11y-section">
-                    <h3>${i18n.getString('modal.sections.letterSpacing')}</h3>
+                    <h3 data-i18n="modal.sections.letterSpacing">
+                        ${i18n.getString('modal.sections.letterSpacing')}
+                    </h3>
                     <div class="a11y-range-wrapper">
-                        <span class="range-icon-small" aria-hidden="true">T</span>
+                        <span class="range-icon-small" 
+                              aria-hidden="true">
+                            T
+                        </span>
                         <input type="range" 
                                id="a11y-range-letter-spacing" 
                                class="a11y-range" 
                                min="1" 
                                max="3" 
                                step="1" 
+                               data-i18n-aria="modal.aria.letterSpacing" 
                                aria-label="${i18n.getString('modal.aria.letterSpacing')}" 
-                               title="${i18n.getString('modal.aria.letterSpacing')}" aria-valuemin="1" 
+                               title="${i18n.getString('modal.aria.letterSpacing')}" 
+                               aria-valuemin="1" 
                                aria-valuemax="3">
                         <span class="range-icon-large" 
                               aria-hidden="true" 
-                              style="letter-spacing: 0.2em;">T T</span>
-                        <span id="a11y-range-letter-spacing-val" class="a11y-range-value">
+                              style="letter-spacing: 0.2em;">
+                            T T
+                        </span>
+                        <span id="a11y-range-letter-spacing-val" 
+                              class="a11y-range-value">
                             ${i18n.getString('modal.spacing.normal')}
                         </span>
                     </div>
                 </div>
                 <div class="a11y-section">
-                    <h3>${i18n.getString('modal.sections.theme')}</h3>
+                    <h3 data-i18n="modal.sections.theme">
+                        ${i18n.getString('modal.sections.theme')}
+                    </h3>
                     <div class="a11y-controls-group theme-group" 
                          role="radiogroup" 
-                         aria-label="${i18n.getString('modal.sections.theme')}" 
-                         title="${i18n.getString('modal.sections.theme')}">
+                        data-i18n-aria="modal.sections.theme" 
+                        aria-label="${i18n.getString('modal.sections.theme')}" 
+                        title="${i18n.getString('modal.sections.theme')}">
+
                         <button class="a11y-option-btn" 
                                 role="radio" 
                                 aria-checked="false" 
-                                data-theme="default">
+                                data-theme="default" 
+                                data-i18n="modal.options.themeDefault">
                             ${i18n.getString('modal.options.themeDefault')}
                         </button>
                         <button class="a11y-option-btn" 
                                 role="radio" 
                                 aria-checked="false" 
-                                data-theme="light">
+                                data-theme="light" 
+                                data-i18n="modal.options.themeLight">
                             ${i18n.getString('modal.options.themeLight')}
                         </button>
                         <button class="a11y-option-btn" 
                                 role="radio" 
                                 aria-checked="false" 
-                                data-theme="dark">
+                                data-theme="dark" 
+                                data-i18n="modal.options.themeDark">
                             ${i18n.getString('modal.options.themeDark')}
                         </button>
                         <button class="a11y-option-btn" 
                                 role="radio" 
                                 aria-checked="false" 
-                                data-theme="contrast">
+                                data-theme="contrast" 
+                                data-i18n="modal.options.themeContrast">
                             ${i18n.getString('modal.options.themeContrast')}
                         </button>
                         <button class="a11y-option-btn" 
                                 role="radio" 
                                 aria-checked="false" 
-                                data-theme="forced">
+                                data-theme="forced" 
+                                data-i18n="modal.options.themeForced">
                             ${i18n.getString('modal.options.themeForced')}
                         </button>
                         <button class="a11y-option-btn" 
                                 role="radio" 
                                 aria-checked="false" 
-                                data-theme="yellow">
+                                data-theme="yellow" 
+                                data-i18n="modal.options.themeYellow">
                             ${i18n.getString('modal.options.themeYellow')}
                         </button>
                     </div>
                 </div>
                 <div class="a11y-footer">
                     <button id="a11y-reset" 
+                            data-i18n-aria="modal.reset" 
                             aria-label="${i18n.getString('modal.reset')}" 
                             title="${i18n.getString('modal.reset')}">
                     </button>
@@ -415,6 +519,7 @@ function _injectModalHTML() {
             </div>
         </div>
     `;
+
     document.body.insertAdjacentHTML('beforeend', html);
 }
 

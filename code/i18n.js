@@ -99,7 +99,12 @@ export function applyStrings(appInstance) {
             // Lógica especial para subtítulo dentro del H1
             if (id === 'main-header-title') {
                 const subtitle = getString('header.subtitle');
-                content = `${content}<small id="main-header-subtitle">${subtitle}</small>`;
+                content = `<span class="title-text-clamp">
+                               ${content}
+                               <small id="main-header-subtitle">
+                                   ${subtitle}
+                               </small>
+                           </span>`;
             }
             el.innerHTML = content;
         }

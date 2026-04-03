@@ -9,13 +9,18 @@ export function _generateCardHTML_Carousel(items, itemsPerSlide) {
     for (let k = 0; k < itemsPerSlide; k++) {
         rellenoInicial += this._generarTarjetaHTML({ tipo: 'relleno' }, false, true);
     }
-    html += `<div class="swiper-slide"><div class="cards-column-group">${rellenoInicial}</div></div>`;
+    html += `<div class="swiper-slide">
+                <div class="cards-column-group">
+                    ${rellenoInicial}
+                </div>
+            </div>`;
 
     const totalItems = items.length;
     let totalSlotsDeseados = Math.ceil(totalItems / itemsPerSlide) * itemsPerSlide; 
 
     
-    if (totalSlotsDeseados < (data.SWIPER.NEEDED_SLIDES_TO_LOOP * itemsPerSlide)) totalSlotsDeseados = (data.SWIPER.NEEDED_SLIDES_TO_LOOP * itemsPerSlide);
+    if (totalSlotsDeseados < (data.SWIPER.NEEDED_SLIDES_TO_LOOP * itemsPerSlide))   
+        totalSlotsDeseados = (data.SWIPER.NEEDED_SLIDES_TO_LOOP * itemsPerSlide);
 
     const itemsConRelleno = [...items];
     for (let i = totalItems; i < totalSlotsDeseados; i++) {
@@ -23,9 +28,12 @@ export function _generateCardHTML_Carousel(items, itemsPerSlide) {
     }
 
     for (let i = 0; i < itemsConRelleno.length; i += itemsPerSlide) {
+
         let slideContent = '';
+
         for (let j = 0; j < itemsPerSlide; j++) {
             const item = itemsConRelleno[i + j];
+            
             if (item) {
                 const esRelleno = item.tipo === 'relleno';
                 const activo = !esRelleno && this._tieneContenidoActivo(item.id);
@@ -38,13 +46,19 @@ export function _generateCardHTML_Carousel(items, itemsPerSlide) {
                     const posInSet = logicalIndex + 1;
 
                     // Inyectamos posición y tamaño total
-                    cardHtml = cardHtml.replace('class="card', `data-pos="${logicalIndex}" aria-posinset="${posInSet}" aria-setsize="${totalItems}" class="card`);
+                    cardHtml = cardHtml.replace('class="card', 
+                        `data-pos="${logicalIndex}" aria-posinset="${posInSet}" ` + 
+                        `aria-setsize="${totalItems}" class="card`);
                 }
                 
                 slideContent += cardHtml;
             }
         }
-        html += `<div class="swiper-slide"><div class="cards-column-group">${slideContent}</div></div>`;
+        html += `<div class="swiper-slide">
+                    <div class="cards-column-group">
+                        ${slideContent}
+                    </div>
+                </div>`;
     }
     return html;
 }
