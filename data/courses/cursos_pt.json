@@ -33,8 +33,8 @@
                 "titulo": "Arquiteto de Qualidade de IA",
                 "descripcion": "A indústria está adotando a Inteligência Artificial sem compreender a sua arquitetura. Aprender a escrever prompts não é engenharia; é ofimática avançada. Este curso transforma você em um Auditor de IA de nível corporativo.<HR>🔸Arquitetura e Limites: Compreender a janela de contexto, determinismo versus probabilidade e os limites físicos dos tokens.<HR>🔸Red Teaming: Sequestrar o contexto, desencadear ciclos de sobre-alinhamento e avaliar as vulnerabilidades de segurança da caixa preta.<HR>🔸Dívida Técnica e Custos: Auditar o impacto real na infraestrutura, desde o armazenamento de rastros JSON até às regulamentações de privacidade.",
                 "enlaces": [
-                    { "texto": "Experimentar a versão freemium", "url": "#d", "type": "d" },
-                    { "texto": "Comprar o Pacote Completo", "url": "#d", "type": "c" }
+                    { "texto": "Experimentar a versão freemium", "url": "#", "type": "d" },
+                    { "texto": "Comprar o Pacote Completo", "url": "#", "type": "c" }
                 ]
                 }
             ]
