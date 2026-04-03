@@ -29,15 +29,19 @@
     },
     "menu": {
         "aria": {
-        "a11yBtn": "Abrir Configurações de Acessibilidade",
-        "langBtn": "Idioma atual: Português. Mudar de idioma.",
-        "langSwitch": "Alterando o idioma para Português...",
-        "about": "Saiba mais sobre nós e a nossa missão",
-        "linkedin": "Visitar o perfil do LinkedIn da VortexSpira®",
-        "github": "Ir para o Diário de Desenvolvimento no GitHub",
-        "landing": "Ir para a Landing Page. Obtenha 60% de desconto como Fundador. A inscrição é grátis!",
-        "license": "Ver licença Creative Commons CC BY-NC-ND 4.0"
-        }
+            "a11yBtn": "Abrir Configurações de Acessibilidade",
+            "langBtn": "Idioma atual: Português. Mudar de idioma.",
+            "langSwitch": "Alterando o idioma para Português...",
+            "about": "Saiba mais sobre nós e a nossa missão",
+            "linkedin": "Visitar o perfil do LinkedIn da VortexSpira®",
+            "github": "Ir para o Diário de Desenvolvimento no GitHub",
+            "landing": "Ir para a Landing Page. Obtenha 60% de desconto como Fundador. A inscrição é grátis!",
+            "license": "Ver licença Creative Commons CC BY-NC-ND 4.0",
+            "feedback": "Sugestões e relatório de erros",
+            "feedbackTarget": "(abre num separador novo)",
+            "auditAAA": "Declaração de Acessibilidade e Auditoria AAA"
+        },
+        "feedbackBody": "**Descreva a sua sugestão ou o problema encontrado:**\n\n**Ambiente (Mobile/PC/Leitor de telas):**\n\n**Navegador:**\n"
     },
     "nav": {
         "aria": {

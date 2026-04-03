@@ -87,9 +87,39 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                     </a>
                 </div>
 
+                <div class="menu-separator" role="presentation">
+                    <hr aria-hidden="true">
+                </div>
+
+                <div class="menu-grid-row" role="presentation">
+                    <a role="menuitem" 
+                        id="menu-link-feedback"
+                        href="https://github.com/verogeid/vortexspira-devdiary/issues/new?labels=feedback&title=[Feedback]&body=${encodeURIComponent(appInstance.getString('menu.feedbackBody'))}"
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="menu-link" 
+                        aria-label="${appInstance.getString('menu.aria.feedback')} 
+                        ${appInstance.getString('menu.aria.feedbackTarget')}"
+                        title="${appInstance.getString('menu.aria.feedback')}">
+                        <span class="menu-icon icon-bug"></span> 
+                    </a>
+
+                    <!--
+                    <a role="menuitem" 
+                        id="menu-link-aaa"
+                        href="TU_URL_DEL_INFORME_AQUI" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="menu-link" 
+                        aria-label="${appInstance.getString('menu.aria.auditAAA')}"
+                        title="${appInstance.getString('menu.aria.auditAAA')}">
+                        <span class="menu-icon icon-aaa"></span> 
+                    </a> -->
+                </div>
+
                 <div class="menu-separator" 
                     role="presentation">
-                    <hr aria-hidden="true">
+                    <!-- <hr aria-hidden="true"> -->
                 </div>
 
                 <div class="menu-grid-row" role="presentation">

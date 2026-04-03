@@ -131,7 +131,39 @@ function _generateSlidesContinuous(trackElement,
 
                     if (phantomSlide.scrollHeight > currentLimit) {
                         splitOccurred = true;
-                        rejectedWords = words.slice(i);
+
+                        // 🟢 RETROCESO SEMÁNTICO (A11Y)
+                        let cutIndex = acceptedWords.length - 1;
+                        let found = false;
+                        
+                        // 1. Buscar Puntuación Fuerte (Puntos, cierres de interrogación/exclamación)
+                        // Contempla si hay comillas o paréntesis después del punto: [.?!]["')\]]*$
+                        for (let j = acceptedWords.length - 1; j >= 0; j--) {
+                            if (/[.?!]["')\]]*$/.test(acceptedWords[j])) { cutIndex = j; found = true; break; }
+                        }
+                        
+                        // 2. Si no hay puntos, buscar Puntuación Débil (Comas, punto y coma, dos puntos, guiones)
+                        if (!found) {
+                            for (let j = acceptedWords.length - 1; j >= 0; j--) {
+                                if (/[,;:-]["')\]]*$/.test(acceptedWords[j])) { cutIndex = j; found = true; break; }
+                            }
+                        }
+
+                        // 3. Válvula de seguridad: Si respetar la pausa semántica obliga a vaciar más del 70% 
+                        // de la pantalla (ej: zoom extremo 400% sin comas), hacemos fallback al corte de palabra duro.
+                        if (found && cutIndex < Math.floor(acceptedWords.length * 0.3)) {
+                            cutIndex = acceptedWords.length - 1; 
+                        }
+
+                        // Aplicamos el corte
+                        const finalAccepted = acceptedWords.slice(0, cutIndex + 1);
+                        const returnedWords = acceptedWords.slice(cutIndex + 1);
+                        
+                        // Lo rechazado es lo que devolvemos + todo lo que quedaba en el bucle original
+                        rejectedWords = [...returnedWords, ...words.slice(i)];
+                        acceptedWords = finalAccepted;
+                        // ---------------------------------------------
+
                         break;
                     } else {
                         acceptedWords.push(word);
@@ -249,7 +281,7 @@ function _fragmentTextForSingleSlide(trackElement,
                                </p>`;
                 isFirstParagraph = false;
             } else {
-                // ❌ Es gigante. A trocear palabra por palabra
+                // ❌ Es gigante. A trocear palabra por palabra con Retroceso Semántico
                 const words = trimmed.split(' ');
                 let currentWords = [];
                 
@@ -262,21 +294,44 @@ function _fragmentTextForSingleSlide(trackElement,
                     if (phantomP.offsetHeight > currentLimit) {
                         if (currentWords.length > 1) {
                             currentWords.pop(); // Sacamos la palabra culpable
-                            // Imprimimos el párrafo seguro
+                            
+                            // 🟢 RETROCESO SEMÁNTICO (A11Y)
+                            let cutIndex = currentWords.length - 1;
+                            let found = false;
+                            
+                            for (let j = currentWords.length - 1; j >= 0; j--) {
+                                if (/[.?!]["')\]]*$/.test(currentWords[j])) { cutIndex = j; found = true; break; }
+                            }
+                            if (!found) {
+                                for (let j = currentWords.length - 1; j >= 0; j--) {
+                                    if (/[,;:-]["')\]]*$/.test(currentWords[j])) { cutIndex = j; found = true; break; }
+                                }
+                            }
+                            if (found && cutIndex < Math.floor(currentWords.length * 0.3)) {
+                                cutIndex = currentWords.length - 1;
+                            }
+
+                            const finalAccepted = currentWords.slice(0, cutIndex + 1);
+                            const returnedWords = currentWords.slice(cutIndex + 1);
+                            // ---------------------------------------------
+
+                            // Imprimimos el párrafo con el corte limpio semánticamente
                             finalHtml += `<p class="detail-text-fragment" 
                                              tabindex="0" 
                                              role="article" 
                                              aria-description="${readOnlyMsg}" 
                                              onclick="this.focus()">
-                                            ${currentWords.join(' ')}
-                                           </p>`;
+                                            ${finalAccepted.join(' ')}
+                                          </p>`;
                             
-                            // La palabra culpable inicia el siguiente párrafo
-                            currentWords = [word];
+                            // Retrocedemos el iterador para que vuelva a tragarse las palabras devueltas
+                            i = i - returnedWords.length - 1;
+                            
+                            currentWords = [];
                             isFirstParagraph = false;
                             currentLimit = maxContentHeight; // A partir de aquí tenemos toda la pantalla libre
                         } else {
-                            // Caso extremo (ej. un enlace o palabra larguísima a tamaño 200%)
+                            // Caso extremo (ej. un enlace o palabra larguísima a tamaño 200% o 400% zoom)
                             finalHtml += `<p class="detail-text-fragment" 
                                              tabindex="0" 
                                              role="article" 
@@ -289,18 +344,6 @@ function _fragmentTextForSingleSlide(trackElement,
                             currentLimit = maxContentHeight;
                         }
                     }
-                }
-                
-                // Empujar lo que sobre al final del bucle de palabras
-                if (currentWords.length > 0) {
-                    finalHtml += `<p class="detail-text-fragment" 
-                                     tabindex="0" 
-                                     role="article" 
-                                     aria-description="${readOnlyMsg}" 
-                                     onclick="this.focus()">
-                                    ${currentWords.join(' ')}
-                                  </p>`;
-                    isFirstParagraph = false;
                 }
             }
         });

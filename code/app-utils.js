@@ -321,7 +321,7 @@ export function loadDetailsModules(appInstance) {
             appInstance.blockUI(); 
             
             // Inyectamos el CSS pesado de Detalles
-            appInstance._injectCSS('styles/media/style-details.css', 
+            appInstance._injectCSS('styles/style-details.css', 
                                     'vortex-css-details');
             appInstance._injectCSS('styles/media/style-media-details.css', 
                                     'vortex-css-media-details');

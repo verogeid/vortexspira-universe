@@ -145,6 +145,10 @@
 .menu-icon.icon-bug { 
     -webkit-mask-image: var(--icon-bug); mask-image: var(--icon-bug); 
 }
+.menu-icon.icon-aaa { 
+    -webkit-mask-image: var(--icon-aaa); mask-image: var(--icon-aaa); 
+    -webkit-mask-size: 120%; mask-size: 120%;
+}
 
 /* 🟢 BOTÓN DE IDIOMA (Ajuste de Proporciones AAA) */
 .lang-btn-container { position: relative; }
@@ -230,6 +234,20 @@
 .menu-link:focus-visible .icon-github,
 .menu-link:focus .icon-github {
     transform: scale(calc(1 + var(--zoom-focus-major) * 2.5));
+}
+
+.menu-link:hover .icon-bug,
+.menu-link:focus-visible .icon-bug,
+.menu-link:focus .icon-bug {
+    transform: scale(calc(1 + var(--zoom-focus-major) * 2.5));
+}
+/* 🟢 Interacción del icono AAA */
+.menu-link:hover .icon-aaa,
+.menu-link:focus-visible .icon-aaa,
+.menu-link:focus .icon-aaa {
+    /* Le damos un poco más de punch visual al ser un sello de calidad */
+    transform: scale(calc(1 + var(--zoom-focus-major) * 2.5));
+    background-color: var(--color-primary);
 }
 
 .cc-license-btn {

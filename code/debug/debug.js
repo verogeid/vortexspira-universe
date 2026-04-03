@@ -26,7 +26,7 @@ export const DEBUG_CONFIG = {
 
     seo_sim: DEBUG_LEVELS.DISABLED,
     
-    app: DEBUG_LEVELS.EXTREME,
+    app: DEBUG_LEVELS.DISABLED,
 
     app_utils: DEBUG_LEVELS.DISABLED,
     data: DEBUG_LEVELS.DISABLED,

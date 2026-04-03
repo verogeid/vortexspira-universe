@@ -36,8 +36,12 @@
             "linkedin": "Visiter le profil LinkedIn de VortexSpira®",
             "github": "Aller au Journal de Développement sur GitHub",
             "landing": "Aller à la Landing Page. Obtenez 60 % de réduction en tant que Fondateur. L'inscription est gratuite !",
-            "license": "Voir la licence Creative Commons CC BY-NC-ND 4.0"
-        }
+            "license": "Voir la licence Creative Commons CC BY-NC-ND 4.0",
+            "feedback": "Suggestions et rapport d'erreurs",
+            "feedbackTarget": "(ouvre un nouvel onglet)",
+            "auditAAA": "Déclaration d'accessibilité et audit AAA"
+        },
+        "feedbackBody": "**Décrivez votre suggestion ou le problème rencontré :**\n\n**Environnement (Mobile/PC/Lecteur d'écran) :**\n\n**Navigateur :**\n"
     },
     "nav": {
         "aria": {

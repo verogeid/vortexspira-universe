@@ -29,15 +29,19 @@
     },
     "menu": {
         "aria": {
-        "a11yBtn": "Barrierefreiheitseinstellungen öffnen",
-        "langBtn": "Aktuelle Sprache: Deutsch. Sprache wechseln.",
-        "langSwitch": "Sprache wird zu Spanisch gewechselt...",
-        "about": "Erfahren Sie mehr über uns und unsere Mission",
-        "linkedin": "Besuchen Sie das LinkedIn-Profil von VortexSpira®",
-        "github": "Zum Dev Diary auf GitHub gehen",
-        "landing": "Zur Landing Page gehen. Erhalten Sie 60 % Rabatt als Gründer. Die Anmeldung ist kostenlos!",
-        "license": "Creative Commons Lizenz CC BY-NC-ND 4.0 anzeigen"
-        }
+            "a11yBtn": "Barrierefreiheitseinstellungen öffnen",
+            "langBtn": "Aktuelle Sprache: Deutsch. Sprache wechseln.",
+            "langSwitch": "Sprache wird zu Spanisch gewechselt...",
+            "about": "Erfahren Sie mehr über uns und unsere Mission",
+            "linkedin": "Besuchen Sie das LinkedIn-Profil von VortexSpira®",
+            "github": "Zum Dev Diary auf GitHub gehen",
+            "landing": "Zur Landing Page gehen. Erhalten Sie 60 % Rabatt als Gründer. Die Anmeldung ist kostenlos!",
+            "license": "Creative Commons Lizenz CC BY-NC-ND 4.0 anzeigen",
+            "feedback": "Vorschläge und Fehlermeldungen",
+            "feedbackTarget": "(öffnet in neuem Tab)",
+            "auditAAA": "Erklärung zur Barrierefreiheit und AAA-Audit"
+        },
+        "feedbackBody": "**Beschreiben Sie Ihren Vorschlag oder das gefundene Problem:**\n\n**Umgebung (Mobil/PC/Screenreader):**\n\n**Browser:**\n"
     },
     "nav": {
         "aria": {

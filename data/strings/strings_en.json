@@ -36,8 +36,12 @@
       "linkedin": "Visit VortexSpira®'s LinkedIn profile",
       "github": "Go to Development Diary on GitHub",
       "landing": "Go to the Landing Page. Get 60% OFF as a Founder. It's free to join!",
-      "license": "View Creative Commons CC BY-NC-ND 4.0 license"
-    }
+      "license": "View Creative Commons CC BY-NC-ND 4.0 license",
+      "feedback": "Suggestions and error reporting",
+      "feedbackTarget": "(opens in a new tab)",
+      "auditAAA": "Accessibility Statement and AAA Audit"
+    },
+    "feedbackBody": "**Describe your suggestion or the problem found:**\n\n**Environment (Mobile/PC/Screen Reader):**\n\n**Browser:**\n"
   },
   "nav": {
     "aria": {
