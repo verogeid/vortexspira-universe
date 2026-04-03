@@ -1,5 +1,56 @@
 /* --- styles/style-no-opacity.css --- */
 
+/* =========================================================
+   🟢 MOTOR DE ATENUACIÓN DE ZONAS (MACRO-FOCO)
+   ========================================================= */
+/* 1. Transición suave para evitar parpadeos bruscos */
+#app-header, 
+#vista-volver, 
+#vista-central, 
+#info-adicional {
+    transition: opacity var(--animation-speed) ease;
+}
+
+/* 2. Cuando estamos en 'header' apagamos el resto */
+body[data-active-zone="header"]:not([data-no-zone-opacity="true"]) #vista-volver,
+body[data-active-zone="header"]:not([data-no-zone-opacity="true"]) #vista-central,
+body[data-active-zone="header"]:not([data-no-zone-opacity="true"]) #info-adicional {
+    opacity: var(--opacity);
+}
+
+/* 3. Cuando estamos en 'central' (carrusel) apagamos el resto */
+body[data-active-zone="central"]:not([data-no-zone-opacity="true"]) #app-header,
+body[data-active-zone="central"]:not([data-no-zone-opacity="true"]) #vista-volver,
+body[data-active-zone="central"]:not([data-no-zone-opacity="true"]) #info-adicional {
+    opacity: var(--opacity);
+}
+
+/* 4. Cuando estamos en 'volver' (botón fijo) apagamos el resto */
+body[data-active-zone="volver"]:not([data-no-zone-opacity="true"]) #app-header,
+body[data-active-zone="volver"]:not([data-no-zone-opacity="true"]) #vista-central,
+body[data-active-zone="volver"]:not([data-no-zone-opacity="true"]) #info-adicional {
+    opacity: var(--opacity);
+}
+
+/* 5. Cuando estamos en 'info' (Quiénes somos / Ayuda) apagamos el resto */
+body[data-active-zone="info"]:not([data-no-zone-opacity="true"]) #app-header,
+body[data-active-zone="info"]:not([data-no-zone-opacity="true"]) #vista-volver,
+body[data-active-zone="info"]:not([data-no-zone-opacity="true"]) #vista-central {
+    opacity: var(--opacity);
+}
+
+/* 7. Menú y Modal oscurecen el resto de la interfaz principal */
+body[data-active-zone="menu"]:not([data-no-zone-opacity="true"]) #vista-volver,
+body[data-active-zone="menu"]:not([data-no-zone-opacity="true"]) #vista-central,
+body[data-active-zone="menu"]:not([data-no-zone-opacity="true"]) #info-adicional,
+
+body[data-active-zone="modal"]:not([data-no-zone-opacity="true"]) #app-header,
+body[data-active-zone="modal"]:not([data-no-zone-opacity="true"]) #vista-volver,
+body[data-active-zone="modal"]:not([data-no-zone-opacity="true"]) #vista-central,
+body[data-active-zone="modal"]:not([data-no-zone-opacity="true"]) #info-adicional {
+    opacity: var(--opacity);
+}
+
 /* 🟢 1. PROTECCIÓN CONTRA FATIGA COGNITIVA: DESCRIPCIÓN DE CURSOS (noBlockOpacity) */
 body[data-no-block-opacity="true"] {
     --opacity: 1 !important;
@@ -39,8 +90,7 @@ body[data-no-zone-opacity="true"] #vista-volver {
 body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #app-header,
 body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #vista-volver,
 body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #vista-central,
-body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #info-adicional,
-body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) footer {
+body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #info-adicional {
     /* Si --opacity es 0.3 -> Opacidad 0.65 */
     /* Si --opacity es 1.0 -> Opacidad 1.0 (No atenuar) */
     opacity: calc(0.5 + (var(--opacity) / 2));
@@ -56,7 +106,6 @@ body[data-active-zone="header"] #app-header,
 body[data-active-zone="volver"] #vista-volver,
 body[data-active-zone="central"] #vista-central,
 body[data-active-zone="info"] #info-adicional,
-body[data-active-zone="footer"] footer,
 body[data-active-zone="modal"] #a11y-modal-overlay {
     opacity: 1 !important;
     filter: none !important;

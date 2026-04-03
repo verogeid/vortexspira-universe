@@ -184,13 +184,14 @@
 .a11y-option-btn.selected { 
     background: var(--color-text); 
     border-color: var(--color-card-border);
-    color: var(--color-a11y-selected-text); 
+    color: var(--color-bg); 
 }
 
 /* 5. SELECCIONADO + HOVER */
 .a11y-option-btn.selected:hover { 
     background: var(--color-primary); 
     border-color: var(--color-text);
+    color: var(--color-a11y-selected-text);
 }
 
 /* 6. SELECCIONADO + FOCO */
@@ -199,6 +200,7 @@
     background: var(--color-primary); 
     border-color: var(--color-text);
     border-width: var(--border-width-focus);
+    color: var(--color-a11y-selected-text);
     
     /* Aplicar la misma compensación al tener el foco */
     padding: calc(var(--a11y-btn-padding) - (var(--border-width-focus) - var(--border-width-no-focus)));

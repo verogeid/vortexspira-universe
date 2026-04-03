@@ -205,7 +205,7 @@ function _fragmentTextForSingleSlide(trackElement,
         // Usamos el mismo HTML interno que el real
         phantomSlide.innerHTML = `
             <div class="content-wrapper">
-                <p class="detail-text-fragment" id="phantom-p" style="margin:0; padding:0;"></p>
+                <p class="detail-text-fragment" id="phantom-p"></p>
             </div>
         `;
         trackElement.appendChild(phantomSlide);
@@ -240,7 +240,13 @@ function _fragmentTextForSingleSlide(trackElement,
 
             if (phantomP.offsetHeight <= currentLimit) {
                 // ✅ Cabe entero, lo añadimos tal cual
-                finalHtml += `<p class="detail-text-fragment" tabindex="0" role="article" aria-description="${readOnlyMsg}" onclick="this.focus()">${trimmed}</p>`;
+                finalHtml += `<p class="detail-text-fragment" 
+                                 tabindex="0" 
+                                 role="article" 
+                                 aria-description="${readOnlyMsg}" 
+                                 onclick="this.focus()">
+                                ${trimmed}
+                               </p>`;
                 isFirstParagraph = false;
             } else {
                 // ❌ Es gigante. A trocear palabra por palabra
@@ -257,7 +263,13 @@ function _fragmentTextForSingleSlide(trackElement,
                         if (currentWords.length > 1) {
                             currentWords.pop(); // Sacamos la palabra culpable
                             // Imprimimos el párrafo seguro
-                            finalHtml += `<p class="detail-text-fragment" tabindex="0" role="article" aria-description="${readOnlyMsg}" onclick="this.focus()">${currentWords.join(' ')}</p>`;
+                            finalHtml += `<p class="detail-text-fragment" 
+                                             tabindex="0" 
+                                             role="article" 
+                                             aria-description="${readOnlyMsg}" 
+                                             onclick="this.focus()">
+                                            ${currentWords.join(' ')}
+                                           </p>`;
                             
                             // La palabra culpable inicia el siguiente párrafo
                             currentWords = [word];
@@ -265,7 +277,13 @@ function _fragmentTextForSingleSlide(trackElement,
                             currentLimit = maxContentHeight; // A partir de aquí tenemos toda la pantalla libre
                         } else {
                             // Caso extremo (ej. un enlace o palabra larguísima a tamaño 200%)
-                            finalHtml += `<p class="detail-text-fragment" tabindex="0" role="article" aria-description="${readOnlyMsg}" onclick="this.focus()">${currentWords.join(' ')}</p>`;
+                            finalHtml += `<p class="detail-text-fragment" 
+                                             tabindex="0" 
+                                             role="article" 
+                                             aria-description="${readOnlyMsg}" 
+                                             onclick="this.focus()">
+                                            ${currentWords.join(' ')}
+                                          </p>`;
                             currentWords = [];
                             isFirstParagraph = false;
                             currentLimit = maxContentHeight;
@@ -275,7 +293,13 @@ function _fragmentTextForSingleSlide(trackElement,
                 
                 // Empujar lo que sobre al final del bucle de palabras
                 if (currentWords.length > 0) {
-                    finalHtml += `<p class="detail-text-fragment" tabindex="0" role="article" aria-description="${readOnlyMsg}" onclick="this.focus()">${currentWords.join(' ')}</p>`;
+                    finalHtml += `<p class="detail-text-fragment" 
+                                     tabindex="0" 
+                                     role="article" 
+                                     aria-description="${readOnlyMsg}" 
+                                     onclick="this.focus()">
+                                    ${currentWords.join(' ')}
+                                  </p>`;
                     isFirstParagraph = false;
                 }
             }
@@ -291,7 +315,9 @@ function _fragmentTextForSingleSlide(trackElement,
 
 export function _mostrarDetalle(cursoId, forceRepaint = false) {
     debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
-        `Mostrando detalle para: ${cursoId} ${this.STATE.isTouchDevice ? ' en Dispositivo Táctil' : ''}`);
+        `Mostrando detalle para: 
+        ${cursoId} ${this.STATE.isTouchDevice ? 
+        ' en Dispositivo Táctil' : ''}`);
 
     // 🟢 CARGA DINÁMICA DEL CSS ANTES DE RENDERIZAR
     // Usamos el helper centralizado en App para no duplicar lógica
@@ -441,7 +467,8 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
             
             // 🟢 FIX A11Y + ZOOM EXTREMO: Fragmentamos párrafos gigantes para que quepan en la pantalla
             const maxH = _calculateMaxHeightAvailable();
-            const rawHtml = _fragmentTextForSingleSlide(this.DOM.detalleTrack, descripcion, maxH, curso.titulo, readOnlyMsg);
+            const rawHtml = _fragmentTextForSingleSlide(
+                this.DOM.detalleTrack, descripcion, maxH, curso.titulo, readOnlyMsg);
             
             slidesData = [{
                 isFirst: true,
@@ -497,8 +524,17 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                 slidesHtml += `
                     <div class="swiper-slide">
                         ${titleHtml}
-                        <div class="detail-text-fragment" data-index="${index}" role="article" tabindex="0" onclick="this.focus()" aria-description="${readOnlyMsg}" aria-posinset="${posInSet}" aria-setsize="${totalSlides}">
-                            <div class="content-wrapper">${slide.content}</div>
+                        <div class="detail-text-fragment" 
+                             data-index="${index}" 
+                             role="article" 
+                             tabindex="0" 
+                             onclick="this.focus()" 
+                             aria-description="${readOnlyMsg}" 
+                             aria-posinset="${posInSet}" 
+                             aria-setsize="${totalSlides}">
+                            <div class="content-wrapper">
+                                ${slide.content}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -561,23 +597,28 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
         }
         
         setTimeout(() => {
-            if (document.getElementById('a11y-modal-overlay')?.classList.contains('active')) return;
+            if (document.getElementById('a11y-modal-overlay')?.classList.contains('active')) 
+                return;
+
             let targetElement = null;
 
             if (isMobileLayout) {
                 targetElement = this.DOM.detalleTrack.querySelector('.card-volver-vertical');
 
-                if (!targetElement) targetElement = this.DOM.detalleTrack.querySelector('.detail-text-fragment[data-index="0"]');
+                if (!targetElement) targetElement = this.DOM.detalleTrack.querySelector(
+                                        '.detail-text-fragment[data-index="0"]');
 
             } else {
-                targetElement = this.DOM.detalleTrack.querySelector('.detail-text-fragment[data-index="0"]');
+                targetElement = this.DOM.detalleTrack.querySelector(
+                    '.detail-text-fragment[data-index="0"]');
             }
 
             if (targetElement) {
                 this.applySmartFocus(targetElement);
 
                 if (nav_base_details && 
-                    typeof nav_base_details._updateDetailFocusState === 'function') {
+                    typeof nav_base_details._updateDetailFocusState === 'function') 
+                {
                     nav_base_details._updateDetailFocusState(this);
                 }
             }
@@ -624,7 +665,8 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
     };
 
     if (typeof Swiper === 'undefined') {
-        debug.logError('render_details', 'Swiper no está cargado. Comprueba la conexión a internet.');
+        debug.logError('render_details', 
+            'Swiper no está cargado. Comprueba la conexión a internet.');
         
         return;
     }
@@ -642,14 +684,19 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
         appInstance.STATE.detailCarouselInstance.on('touchStart', () => {
             if (appInstance.STATE.keyboardNavInProgress) {
                 debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
-                    `[TRACE ${appInstance.STATE.currentTraceId}] 👆 TouchStart ignorado: Teclado en curso.`);
+                    `[TRACE ${appInstance.STATE.currentTraceId}]` + 
+                    `👆 TouchStart ignorado: Teclado en curso.`);
                 return;
             }
             
-            appInstance.STATE.currentTraceId = 'TCH-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+            appInstance.STATE.currentTraceId = 
+                'TCH-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+
             appInstance.STATE._isTouchGesturing = true;
+
             debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
-                `\n[TRACE ${appInstance.STATE.currentTraceId}] 👆 Arrastre táctil iniciado. Flag _isTouchGesturing = TRUE`);
+                `\n[TRACE ${appInstance.STATE.currentTraceId}]` + 
+                `👆 Arrastre táctil iniciado. Flag _isTouchGesturing = TRUE`);
         });
 
         // 2. RADAR: Solo actúa si es un arrastre táctil legítimo
@@ -702,7 +749,9 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
                     appInstance.STATE._isTouchGesturing = false; // Liberamos el blindaje
                     
                     if (!appInstance.STATE.isAutoScrolling) {
-                        debug.log('render_details', debug.DEBUG_LEVELS.EXTREME, '👆 TouchEnd: Evaluando encuadre táctil.');
+                        debug.log('render_details', debug.DEBUG_LEVELS.EXTREME, 
+                            '👆 TouchEnd: Evaluando encuadre táctil.');
+                            
                         nav_base_details._handleSlideChangeEnd(swiper, appInstance);
                     }
                 }

@@ -26,7 +26,7 @@
             transform var(--transition-speed) ease,
             box-shadow var(--transition-speed) ease,
             border-color var(--transition-speed) ease,
-            opacity 0.5s ease;
+            opacity var(--transition-speed) ease;
 
     filter: none !important;
 }
@@ -231,7 +231,7 @@
     font-weight: 900;
     letter-spacing: 2px;
     color: var(--color-text-main);
-    opacity: 0.9;
+    opacity: calc(var(--opacity) * 3);
 }
 
 #card-volver-fija-elemento {

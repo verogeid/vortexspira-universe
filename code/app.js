@@ -734,7 +734,8 @@ class VortexSpiraApp {
         const traceTimeStr = new Date().toISOString().split('T')[1];
 
         debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
-            `[TRACE: ${this.STATE.currentTraceId} | ${traceTimeStr}] ⏳ INICIO DE CAMBIO DE IDIOMA`);
+            `[TRACE: ${this.STATE.currentTraceId} | ${traceTimeStr}] ` + 
+            `⏳ INICIO DE CAMBIO DE IDIOMA`);
 
         // 1. Memoria de foco: ¿El usuario pulsó el botón de idiomas para iniciar esto?
         const wasLangBtnFocused = document.activeElement && document.activeElement.id === 'btn-lang-toggle';

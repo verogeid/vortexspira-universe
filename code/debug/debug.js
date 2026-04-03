@@ -22,17 +22,18 @@ export const DEBUG_CONFIG = {
     global_layout: DEBUG_LEVELS.DISABLED,
     
     global_key: DEBUG_LEVELS.DISABLED,
-    global_mouse: DEBUG_LEVELS.EXTREME,
+    global_mouse: DEBUG_LEVELS.DISABLED,
 
     seo_sim: DEBUG_LEVELS.DISABLED,
     
     app: DEBUG_LEVELS.DISABLED,
 
-    app_utils: DEBUG_LEVELS.BASIC,
+    app_utils: DEBUG_LEVELS.DISABLED,
     data: DEBUG_LEVELS.DISABLED,
     i18n: DEBUG_LEVELS.DISABLED,
 
     a11y: DEBUG_LEVELS.EXTREME,
+    a11y_modal: DEBUG_LEVELS.BASIC,
 
     nav_stack: DEBUG_LEVELS.DISABLED,
 
@@ -49,7 +50,7 @@ export const DEBUG_CONFIG = {
 
     // Módulos de Mouse
     nav_mouse_details: DEBUG_LEVELS.DISABLED,
-    nav_mouse_swipe: DEBUG_LEVELS.EXTREME, 
+    nav_mouse_swipe: DEBUG_LEVELS.DISABLED, 
     
     render_base: DEBUG_LEVELS.DISABLED,
     render_details: DEBUG_LEVELS.DISABLED, 
@@ -193,12 +194,19 @@ export function _setupConsoleInterceptor() {
     const originalConsoleLog = console.log;
 
     const SWIPER_WARNING_PATTERN = /Swiper Loop Warning/;
+    const UNUSSED_PRELOAD_FILE = /was preloaded using link preload but not used/;
     const CHROME_VIOLATION = /Violation/;
-    const CLEAR_CONSOLE_AVOIDED_PATTERN = /console\.clear\(\) se ha evitado/;
+    const CLEAR_CONSOLE_AVOIDED_PATTERN = /console\.clear\(\)/;
 
     console.warn = function(...args) {
         const message = args.join(' ');
         if (SWIPER_WARNING_PATTERN.test(message)) return;
+        originalConsoleWarn.apply(console, args);
+    };
+
+    console.warn = function(...args) {
+        const message = args.join(' ');
+        if (UNUSSED_PRELOAD_FILE.test(message)) return;
         originalConsoleWarn.apply(console, args);
     };
 

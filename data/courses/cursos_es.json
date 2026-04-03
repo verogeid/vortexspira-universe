@@ -15,7 +15,7 @@
               "titulo": "Web Architect QA Ed.",
               "descripcion": "Te han mentido. La interfaz gráfica (UI) es una ilusión; la verdad está en el DOM. Si sigues probando solo 'lo que se ve', tus reportes serán superficiales y tus automatizaciones frágiles. <HR>Este curso transforma tu perfil de Tester a Ingeniero de Calidad Holístico, enseñándote a auditar las tripas de la web (Caja Gris): <HR>🔸La Visión (DOM & Consola): Deja de adivinar. Aprende a interrogar al navegador y destapar bugs ocultos (y mentiras del Frontend) que la UI no muestra. <HR>🔸El Selector Indestructible: ¿Tus tests se rompen si cambian el diseño o el idioma? Normal, estás testeando 'pintura'. Aprenderás a enganchar tus automatizaciones a Negocio. Crearás scripts que sobreviven a rediseños completos sin tocar una línea de código. <HR>🔸Ingeniería del Caos (Network & Render): Controla el tráfico. Simula caídas de red, bloquea servicios de terceros y detecta problemas de rendimiento antes de que el usuario sufra.",
               "enlaces": [
-                { "texto": "Prueba el freemium", "url": "#d", "type": "d" },
+                { "texto": "Prueba el freemium", "url": "#", "type": "d" },
                 { "texto": "Adquirir Pack Completo", "url": "#", "type": "c" }
               ]
             }

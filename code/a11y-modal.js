@@ -53,6 +53,9 @@ export function closeModal() {
 function _updateModalUI() {
     if (!_domRefs.modal) return;
 
+    debug.log('a11y_modal', debug.DEBUG_LEVELS.EXTREME, 
+        '🎨 Ejecutando _updateModalUI. Sincronizando DOM con _prefs del Core.');
+
     // Botones de Fuente
     _domRefs.fontBtns.forEach(btn => {
         const isSelected = btn.dataset.font === a11yCore._prefs.fontType;
@@ -114,18 +117,88 @@ function _updateModalUI() {
         _updateLetterSpacingLabel(step);
     }
 
-    // Checkboxes
-    if (_domRefs.reduceMotionCb)
-        _domRefs.reduceMotionCb.checked = a11yCore._prefs.reduceMotion;
-    
-    if (_domRefs.noBlockOpacityCb) 
-        _domRefs.noBlockOpacityCb.checked = a11yCore._prefs.noBlockOpacity;
+    // ==========================================
+    // 🟢 TELEMETRÍA EN CHECKBOXES
+    // ==========================================
+    if (_domRefs.reduceMotionCb) {
+        const label = _domRefs.reduceMotionCb.closest('label');
+        if (label) {
+            label.addEventListener('mousedown', (e) => {
+                debug.log('a11y_modal', debug.DEBUG_LEVELS.EXTREME, 
+                    '👇 Mousedown en Label (ReduceMotion). Bloqueando nativo y forzando foco.');
 
-    if (_domRefs.noMaskOpacityCb) 
-        _domRefs.noMaskOpacityCb.checked = a11yCore._prefs.noMaskOpacity;
+                e.preventDefault(); 
+                _domRefs.reduceMotionCb.focus(); 
+            });
+        }
+        _domRefs.reduceMotionCb.addEventListener('change', (e) => {
+            debug.log('a11y_modal', debug.DEBUG_LEVELS.BASIC, 
+                `🔄 Evento 'change' capturado (ReduceMotion). Nuevo valor: ${e.target.checked}`);
 
-    if (_domRefs.noZoneOpacityCb)
-        _domRefs.noZoneOpacityCb.checked = a11yCore._prefs.noZoneOpacity;
+            a11yCore._prefs.reduceMotion = e.target.checked;
+            a11yCore._savePreferences();
+        });
+    }
+
+    if (_domRefs.noBlockOpacityCb) {
+        const label = _domRefs.noBlockOpacityCb.closest('label');
+        if (label) {
+            label.addEventListener('mousedown', (e) => {
+                debug.log('a11y_modal', debug.DEBUG_LEVELS.EXTREME, 
+                    '👇 Mousedown en Label (NoBlockOpacity). Bloqueando nativo y forzando foco.');
+
+                e.preventDefault(); 
+                _domRefs.noBlockOpacityCb.focus(); 
+            });
+        }
+        _domRefs.noBlockOpacityCb.addEventListener('change', (e) => {
+            debug.log('a11y_modal', debug.DEBUG_LEVELS.BASIC, 
+                `🔄 Evento 'change' capturado (NoBlockOpacity). Nuevo valor: ${e.target.checked}`);
+
+            a11yCore._prefs.noBlockOpacity = e.target.checked;
+            a11yCore._savePreferences();
+        });
+    }
+
+    if (_domRefs.noMaskOpacityCb) {
+        const label = _domRefs.noMaskOpacityCb.closest('label');
+        if (label) {
+            label.addEventListener('mousedown', (e) => {
+                debug.log('a11y_modal', debug.DEBUG_LEVELS.EXTREME, 
+                    '👇 Mousedown en Label (NoMaskOpacity). Bloqueando nativo y forzando foco.');
+
+                e.preventDefault(); 
+                _domRefs.noMaskOpacityCb.focus(); 
+            });
+        }
+        _domRefs.noMaskOpacityCb.addEventListener('change', (e) => {
+            debug.log('a11y_modal', debug.DEBUG_LEVELS.BASIC, 
+                `🔄 Evento 'change' capturado (NoMaskOpacity). Nuevo valor: ${e.target.checked}`);
+
+            a11yCore._prefs.noMaskOpacity = e.target.checked;
+            a11yCore._savePreferences();
+        });
+    }
+
+    if (_domRefs.noZoneOpacityCb) {
+        const label = _domRefs.noZoneOpacityCb.closest('label');
+        if (label) {
+            label.addEventListener('mousedown', (e) => {
+                debug.log('a11y_modal', debug.DEBUG_LEVELS.EXTREME, 
+                    '👇 Mousedown en Label (NoZoneOpacity). Bloqueando nativo y forzando foco.');
+
+                e.preventDefault(); 
+                _domRefs.noZoneOpacityCb.focus(); 
+            });
+        }
+        _domRefs.noZoneOpacityCb.addEventListener('change', (e) => {
+            debug.log('a11y_modal', debug.DEBUG_LEVELS.BASIC, 
+                `🔄 Evento 'change' capturado (NoZoneOpacity). Nuevo valor: ${e.target.checked}`);
+
+            a11yCore._prefs.noZoneOpacity = e.target.checked;
+            a11yCore._savePreferences();
+        });
+    }
 }
 
 function _updateSliderLabel(pct) {
@@ -170,25 +243,29 @@ function _injectModalHTML() {
                         <label class="a11y-checkbox-label">
                             <input type="checkbox" 
                                    id="a11y-reduce-motion" 
-                                   class="a11y-checkbox">
+                                   class="a11y-checkbox"
+                                   title="${i18n.getString('modal.options.reduceMotion')}">
                             <span>${i18n.getString('modal.options.reduceMotion')}</span>
                         </label>
                         <label class="a11y-checkbox-label">
                             <input type="checkbox" 
                                    id="a11y-no-block-opacity" 
-                                   class="a11y-checkbox">
+                                   class="a11y-checkbox"
+                                   title="${i18n.getString('modal.options.noBlockOpacity')}">
                             <span>${i18n.getString('modal.options.noBlockOpacity')}</span>
                         </label>
                         <label class="a11y-checkbox-label">
                             <input type="checkbox" 
                                    id="a11y-no-mask-opacity" 
-                                   class="a11y-checkbox">
+                                   class="a11y-checkbox"
+                                   title="${i18n.getString('modal.options.noMaskOpacity')}">
                             <span>${i18n.getString('modal.options.noMaskOpacity')}</span>
                         </label>
                         <label class="a11y-checkbox-label">
                             <input type="checkbox" 
                                    id="a11y-no-zone-opacity" 
-                                   class="a11y-checkbox">
+                                   class="a11y-checkbox"
+                                   title="${i18n.getString('modal.options.noZoneOpacity')}">
                             <span>${i18n.getString('modal.options.noZoneOpacity')}</span>
                         </label>
                     </div>
@@ -347,7 +424,7 @@ function _cacheDOM() {
         modal: document.getElementById('a11y-modal'),
         closeBtn: document.getElementById('a11y-close'),
         resetBtn: document.getElementById('a11y-reset'),
-        fontBtns: document.querySelectorAll('[data-font]'),
+        fontBtns: document.querySelectorAll('.font-group [data-font]'),
         rangeSize: document.getElementById('a11y-range-size'),
         rangeVal: document.getElementById('a11y-range-val'),
         rangeSpacing: document.getElementById('a11y-range-spacing'),
@@ -375,8 +452,8 @@ function _setupListeners(appInstance) {
     _domRefs.fontBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             a11yCore._prefs.fontType = btn.dataset.font;
-            a11yCore._applyPreferences();
-            a11yCore._savePreferences();
+            
+            a11yCore._savePreferences(null, true);
             _updateModalUI();
         });
     });
@@ -403,7 +480,7 @@ function _setupListeners(appInstance) {
                 });
             }
         });
-        _domRefs.rangeSize.addEventListener('change', () => a11yCore._savePreferences());
+        _domRefs.rangeSize.addEventListener('change', () => a11yCore._savePreferences(null, true));
     }
 
     // Slider Espaciado
@@ -440,7 +517,9 @@ function _setupListeners(appInstance) {
                 }
             }
         });
-        _domRefs.rangeSpacing.addEventListener('change', () => a11yCore._savePreferences());
+        _domRefs.rangeSpacing.addEventListener('change', () => {
+            a11yCore._savePreferences(null, true)
+        });
     }
 
     // Slider Espaciado de Caracteres
@@ -474,7 +553,8 @@ function _setupListeners(appInstance) {
                 }
             }
         });
-        _domRefs.rangeLetterSpacing.addEventListener('change', () => a11yCore._savePreferences());
+        _domRefs.rangeLetterSpacing.addEventListener('change', () => {
+            a11yCore._savePreferences(null, true)});
     }
 
     // Botones de Tema
@@ -482,7 +562,7 @@ function _setupListeners(appInstance) {
         _domRefs.themeBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 a11yCore._prefs.theme = btn.dataset.theme;
-                a11yCore._applyPreferences();
+                
                 a11yCore._savePreferences();
                 _updateModalUI();
                 
@@ -505,7 +585,7 @@ function _setupListeners(appInstance) {
         }
         _domRefs.reduceMotionCb.addEventListener('change', (e) => {
             a11yCore._prefs.reduceMotion = e.target.checked;
-            a11yCore._applyPreferences();
+            
             a11yCore._savePreferences();
         });
     }
@@ -513,7 +593,7 @@ function _setupListeners(appInstance) {
     if (_domRefs.noBlockOpacityCb) {
         _domRefs.noBlockOpacityCb.addEventListener('change', (e) => {
             a11yCore._prefs.noBlockOpacity = e.target.checked;
-            a11yCore._applyPreferences();
+            
             a11yCore._savePreferences();
         });
     }
@@ -521,7 +601,7 @@ function _setupListeners(appInstance) {
     if (_domRefs.noMaskOpacityCb) {
         _domRefs.noMaskOpacityCb.addEventListener('change', (e) => {
             a11yCore._prefs.noMaskOpacity = e.target.checked;
-            a11yCore._applyPreferences();
+            
             a11yCore._savePreferences();
         });
     }
@@ -529,7 +609,7 @@ function _setupListeners(appInstance) {
     if (_domRefs.noZoneOpacityCb) {
         _domRefs.noZoneOpacityCb.addEventListener('change', (e) => {
             a11yCore._prefs.noZoneOpacity = e.target.checked;
-            a11yCore._applyPreferences();
+            
             a11yCore._savePreferences();
         });
     }
@@ -539,8 +619,8 @@ function _setupListeners(appInstance) {
         _domRefs.resetBtn.addEventListener('click', () => {
             // Reasignamos el objeto sin romper la referencia exportada
             Object.assign(a11yCore._prefs, data.A11Y.DEFAULTS);
-            a11yCore._applyPreferences();
-            a11yCore._savePreferences();
+            
+            a11yCore._savePreferences(null, true);
             _updateModalUI();
             
             if (window.App && window.App.announceA11y) {

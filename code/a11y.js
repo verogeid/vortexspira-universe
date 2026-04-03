@@ -28,11 +28,12 @@ function _loadPreferences() {
 }
 
 // 🟢 Expuesta para que el Modal (cuando se cargue) pueda guardar los cambios
-export function _savePreferences(newPrefs) {
+export function _savePreferences(newPrefs, forceResize = false) {
     _prefs = { ..._prefs, ...newPrefs };
     try {
         localStorage.setItem(data.A11Y.STORAGE_KEY, JSON.stringify(_prefs));
-        _applyPreferences();
+        
+        _applyPreferences(forceResize);
         debug.log('a11y', debug.DEBUG_LEVELS.BASIC, 
             'Preferencias guardadas desde UI.');
     } catch (e) {
@@ -43,7 +44,7 @@ export function _savePreferences(newPrefs) {
 /**
  * Aplica las variables CSS al :root
  */
-export function _applyPreferences() {
+export function _applyPreferences(forceResize = false) {
     const root = document.documentElement;
     
     // 🟢 1. Familia: Usar data-attribute para que style-fonts.css haga el trabajo
@@ -119,16 +120,10 @@ export function _applyPreferences() {
     document.body.setAttribute('data-no-mask-opacity', _prefs.noMaskOpacity ? 'true' : 'false');
     document.body.setAttribute('data-no-zone-opacity', _prefs.noZoneOpacity ? 'true' : 'false');
 
-    // LAZY LOAD: Desactivar opacidades (Solo se baja el archivo si marca algún check)
-    if (_prefs.noBlockOpacity || _prefs.noMaskOpacity || _prefs.noZoneOpacity) {
-        if (window.App) window.App._injectCSS('styles/style-no-opacity.css', 'vortex-css-opacity');
-    } else {
-        const opacityLink = document.getElementById('vortex-css-opacity');
-        if (opacityLink) opacityLink.remove();
+    // ⭐️ Disparar evento de resize SOLO si lo solicitamos explícitamente
+    if (forceResize) {
+        window.dispatchEvent(new Event('resize'));
     }
-
-    // ⭐️ Disparar evento de resize para que app.js recalcule el layout inmediatamente
-    window.dispatchEvent(new Event('resize'));
 }
 
 // 🟢 EL PUENTE ASÍNCRONO HACIA LA UI

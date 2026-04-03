@@ -1,0 +1,135 @@
+{
+    "prod": [
+        {
+        "id": "s-qa",
+        "nombre": "Tests de Logiciels (QA)",
+        "subsecciones": [
+            {
+            "id": "s-qa-adv",
+            "nombre": "QA Avancée",
+            "subsecciones": [],
+            "cursos": []
+            },
+            {
+            "id": "s-qa-perfa11y",
+            "nombre": "Performance et Accessibilité (A11y)",
+            "subsecciones": [],
+            "cursos": []
+            },
+            {
+            "id": "s-qa-seg",
+            "nombre": "Cybersécurité",
+            "subsecciones": [],
+            "cursos": []
+            },
+            {
+            "id": "s-qa-ia",
+            "nombre": "Audit d'IA",
+            "subsecciones": [],
+            "cursos": [
+                {
+                "id": "c-qaia",
+                "enObras": true,
+                "titulo": "Architecte Qualité IA",
+                "descripcion": "L'industrie adopte l'Intelligence Artificielle sans en comprendre l'architecture. Apprendre à écrire des prompts n'est pas de l'ingénierie ; c'est de la bureautique avancée. Ce cours vous transforme en un Auditeur IA de niveau entreprise.<HR>🔸Architecture et Limites : Comprendre la fenêtre de contexte, le déterminisme face aux probabilités et les limites physiques des tokens.<HR>🔸Red Teaming : Détourner le contexte, déclencher des boucles de sur-alignement et évaluer les vulnérabilités de sécurité de la boîte noire.<HR>🔸Dette Technique et Coûts : Auditer l'impact réel sur l'infrastructure, du stockage des traces JSON aux réglementations sur la confidentialité.",
+                "enlaces": [
+                    { "texto": "Essayer la version freemium", "url": "#d", "type": "d" },
+                    { "texto": "Acheter le Pack Complet", "url": "#d", "type": "c" }
+                ]
+                }
+            ]
+            }
+        ],
+        "cursos": []
+        },
+        {
+        "id": "s-ds",
+        "nombre": "Développement de Logiciels",
+        "subsecciones": [
+            {
+            "id": "s-ds-fe",
+            "nombre": "Front-End",
+            "subsecciones": [],
+            "cursos": []
+            },
+            {
+            "id": "s-ds-be",
+            "nombre": "Back-End",
+            "subsecciones": [
+                {
+                "id": "s-ds-be-api",
+                "nombre": "API",
+                "subsecciones": [],
+                "cursos": []
+                },
+                {
+                "id": "s-ds-be-db",
+                "nombre": "Bases de Données",
+                "subsecciones": [],
+                "cursos": []
+                }
+            ],
+            "cursos": []
+            },
+            {
+            "id": "s-ds-lg",
+            "nombre": "Fondamentaux et Langages",
+            "subsecciones": [],
+            "cursos": []
+            }
+        ],
+        "cursos": []
+        },
+        {
+        "id": "s-dev",
+        "nombre": "DevOps et Infrastructure",
+        "subsecciones": [
+            {
+            "id": "s-dev-dk",
+            "nombre": "Conteneurs et Orchestration",
+            "subsecciones": [],
+            "cursos": []
+            },
+            {
+            "id": "s-dev-cicd",
+            "nombre": "Intégration Continue (CI/CD)",
+            "subsecciones": [],
+            "cursos": []
+            },
+            {
+            "id": "s-dev-cv",
+            "nombre": "Contrôle de Version",
+            "subsecciones": [],
+            "cursos": []
+            }
+        ],
+        "cursos": []
+        },
+        {
+        "id": "s-mod",
+        "nombre": "Modélisation et Métier",
+        "subsecciones": [
+            {
+            "id": "s-mod-uml",
+            "nombre": "Architecture et UML",
+            "subsecciones": [],
+            "cursos": []
+            },
+            {
+            "id": "s-mod-ba",
+            "nombre": "Analyse d'Affaires (Jira, BDD)",
+            "subsecciones": [],
+            "cursos": []
+            }
+        ],
+        "cursos": []
+        },
+        {
+        "id": "s-rec",
+        "nombre": "Ressources Additionnelles",
+        "subsecciones": [],
+        "cursos": []
+        }
+    ],
+    "dev": []
+}

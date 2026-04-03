@@ -11,19 +11,33 @@ function _setupMacroFocusTracker() {
         'volver': '#vista-volver',
         'central': '#vista-central',
         'info': '#info-adicional',
-        'footer': 'footer',
-        'modal': '#a11y-modal-overlay'
+        'modal': '#a11y-modal-overlay',
+        'menu': '#main-menu-dropdown'
     };
 
-    document.addEventListener('focusin', (e) => {
-        // Buscamos a qué zona pertenece el elemento que acaba de recibir foco
+    const updateZone = (target, eventType) => {
+        if (!target || typeof target.closest !== 'function') return;
+
         for (const [key, selector] of Object.entries(zones)) {
-            if (e.target.closest(selector)) {
-                document.body.setAttribute('data-active-zone', key);
+            if (target.closest(selector)) {
+                const currentZone = document.body.getAttribute('data-active-zone');
+                if (currentZone !== key) {
+                    document.body.setAttribute('data-active-zone', key);
+                    debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 
+                        `🌐 [ZONAS] Cambio a zona activa: '${key}' (Vía ${eventType})`);
+                }
                 break;
             }
         }
-    });
+    };
+
+    // 🟢 Mantenemos el 'capture: true' para que Swiper no asesine el evento
+    document.addEventListener('focusin', (e) => updateZone(e.target, 'focusin'), { capture: true });
+    document.addEventListener('mousedown', (e) => updateZone(e.target, 'mousedown'), { passive: true, capture: true });
+    document.addEventListener('touchstart', (e) => updateZone(e.target, 'touchstart'), { passive: true, capture: true });
+    
+    debug.log('nav_base', debug.DEBUG_LEVELS.BASIC, 
+        '🌐 [ZONAS] Rastreador macro-foco INICIALIZADO (Modo Capture).');
 }
 
 export function setupListeners() {
@@ -39,7 +53,11 @@ export function setupListeners() {
 function _setupDetailFocusHandler() {
     document.addEventListener('focusin', (e) => {
         if (this.DOM.vistaDetalle?.classList.contains('active')) {
-            const focusedIsContent = e.target.closest('.detail-text-fragment, .detail-action-item, .card-volver-vertical, #card-volver-fija-elemento');
+            const focusedIsContent = e.target.closest(
+                '.detail-text-fragment, ' + 
+                '.detail-action-item, ' + 
+                '.card-volver-vertical, ' + 
+                '#card-volver-fija-elemento');
             if (focusedIsContent) nav_base_details._updateDetailFocusState(this);
         }
     });
@@ -48,7 +66,8 @@ function _setupDetailFocusHandler() {
 function _setupGlobalClickRecovery() {
     document.addEventListener('click', (e) => {
         const target = e.target;
-        const interactive = target.closest('a, button, input, textarea, select, summary, [tabindex]:not([tabindex="-1"])');
+        const interactive = target.closest(
+            'a, button, input, textarea, select, summary, [tabindex]:not([tabindex="-1"])');
 
         // 1. Si el usuario clicó en algo interactivo, dejamos que el navegador haga su trabajo.
         if (interactive) {
@@ -60,7 +79,8 @@ function _setupGlobalClickRecovery() {
         // 2. RECUPERACIÓN DE FOCO EN ZONAS SEGURAS
         // Si clicamos en el fondo vacío de una zona segura (Header, Footer, ModalOverlay),
         // buscamos el primer elemento interactivo y le damos el foco para que no se pierda.
-        const zone = target.closest('#app-header, footer, #info-adicional, #vista-volver, #a11y-modal-overlay');
+        const zone = target.closest(
+            '#app-header, #info-adicional, #vista-volver, #a11y-modal-overlay, #main-menu-dropdown');
 
         if (zone) {
             // Verificar si el modal está abierto para no romper la trampa de foco
@@ -73,7 +93,8 @@ function _setupGlobalClickRecovery() {
                 return;
             }
 
-            const focusable = zone.querySelector('a, button, input, textarea, select, summary, [tabindex]:not([tabindex="-1"])');
+            const focusable = zone.querySelector(
+                'a, button, input, textarea, select, summary, [tabindex]:not([tabindex="-1"])');
             if (focusable) {
                 // 🟢 RESTAURAR FOCO: "Obviamente quiero que vuelva..."
                 focusable.focus({ preventScroll: true });
@@ -228,7 +249,7 @@ export function _updateFocusImpl(shouldSlide = true) {
     });
 
     debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
-                `_updateFocusImpl: Idx=${targetPos} | Slide=${shouldSlide} | TargetFound=${!!target}`);
+        `_updateFocusImpl: Idx=${targetPos} | Slide=${shouldSlide} | TargetFound=${!!target}`);
 
     if (target) {
         target.classList.add('focus-visible');
@@ -245,10 +266,10 @@ export function _updateFocusImpl(shouldSlide = true) {
         if (isMobile || isDetailView) {
             if (document.activeElement === target) {
                 debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
-                            `_updateFocusImpl: Foco ya establecido. Ignorando llamada redundante.`);
+                    `_updateFocusImpl: Foco ya establecido. Ignorando llamada redundante.`);
             } else {
                 debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
-                            `_updateFocusImpl: Estableciendo foco físico en móvil.`);
+                    `_updateFocusImpl: Estableciendo foco físico en móvil.`);
 
                 // 🟢 Bloquear el scroll nativo del navegador
                 // Esto evita el "primer salto" donde el navegador pone el elemento bajo el header.
@@ -366,22 +387,24 @@ export function _updateFocusImpl(shouldSlide = true) {
                         const visibleAhora = newTop >= headerHeight - 1; // Tolerancia 1px
                         const icono = visibleAhora ? '✅' : '❌';
                         debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
-                            `${icono} POST-CORRECCIÓN: Nuevo Top=${newTop.toFixed(1)}px. ¿Visible? ${visibleAhora}`);
+                            `${icono} POST-CORRECCIÓN: Nuevo Top=${newTop.toFixed(1)}px.` +
+                            ` ¿Visible? ${visibleAhora}`);
                     }, data.SWIPER.SLIDE_SPEED + 50); // Esperar a que termine la transición (300ms + margen)
 
                 } else {
                     debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
-                        `✅ VISIBLE: El elemento está libre (Top ${topRef.toFixed(1)} >= Header ${headerHeight})`);
+                        `✅ VISIBLE: El elemento está libre (Top ${topRef.toFixed(1)} >= ` + 
+                        `Header ${headerHeight})`);
                 }
             }
         } else {
             // Desktop behavior
             if (document.activeElement === target) {
                 debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
-                            `_updateFocusImpl: Foco ya establecido. Ignorando llamada redundante.`);
+                    `_updateFocusImpl: Foco ya establecido. Ignorando llamada redundante.`);
             } else {
                 debug.log('nav_base', debug.DEBUG_LEVELS.EXTREME, 
-                            `_updateFocusImpl: Estableciendo foco físico en desktop.`);
+                    `_updateFocusImpl: Estableciendo foco físico en desktop.`);
 
                 // Foco físico
                 this.applySmartFocus(target);
