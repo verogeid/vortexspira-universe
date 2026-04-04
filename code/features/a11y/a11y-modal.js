@@ -22,28 +22,41 @@ export function showA11yModal(appInstance) {
 
     _updateModalUI();
     
-    _domRefs.overlay.classList.add('active');
-    _domRefs.overlay.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+    // 🟢 Damos 1 milisegundo al motor CSS para reconocer el nuevo HTML 
+    // antes de activarlo, garantizando que la transición fluida funcione.
+    requestAnimationFrame(() => {
+        if (!_domRefs.overlay) return;
+        
+        _domRefs.overlay.classList.add('active');
+        _domRefs.overlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
 
-    if (window.App && typeof window.App.applySmartFocus === 'function') {
-        window.App.STATE.pendingA11yContext = i18n.getString('modal.opened');
-        window.App.applySmartFocus(_domRefs.closeBtn);
-    } else {
-        _domRefs.closeBtn.focus();
-    }
+        if (window.App && typeof window.App.applySmartFocus === 'function') {
+            window.App.STATE.pendingA11yContext = i18n.getString('modal.opened');
+            window.App.applySmartFocus(_domRefs.closeBtn);
+
+        } else {
+            _domRefs.closeBtn.focus();
+        }
+    });
 }
 
 export function closeModal() {
     if (!_domRefs.overlay) return;
 
-    _domRefs.overlay.classList.remove('active');
-    _domRefs.overlay.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-
-    // Devolvemos el foco al botón hamburguesa principal de la cabecera
+    // 1. Guardar referencia del botón destino antes de destruir el entorno
     const btnMainMenu = document.getElementById('btn-main-menu');
 
+    // 2. 💥 DESTRUCCIÓN TOTAL (Nuke it from orbit)
+    // El navegador elimina el nodo, sus dimensiones y su historial de scroll.
+    _domRefs.overlay.remove();
+
+    // 3. Limpiar estado y memoria
+    document.body.style.overflow = '';
+    _isHtmlInjected = false; 
+    _domRefs = {}; // Garbage Collection: liberamos las referencias
+
+    // 4. Asentar el foco de vuelta en la aplicación principal
     if (btnMainMenu) {
         if (window.App && typeof window.App.applySmartFocus === 'function') {
             window.App.STATE.pendingA11yContext = i18n.getString('modal.closed');
@@ -223,12 +236,12 @@ function _injectModalHTML() {
 
                         <label class="a11y-checkbox-label">
                             <input type="checkbox" 
-                                   id="a11y-no-block-opacity" 
+                                   id="a11y-no-zone-opacity" 
                                    class="a11y-checkbox" 
-                                   data-i18n-aria="modal.options.noBlockOpacity" 
-                                   title="${i18n.getString('modal.options.noBlockOpacity')}">
-                            <span data-i18n="modal.options.noBlockOpacity">
-                                ${i18n.getString('modal.options.noBlockOpacity')}
+                                   data-i18n-aria="modal.options.noZoneOpacity" 
+                                   title="${i18n.getString('modal.options.noZoneOpacity')}">
+                            <span data-i18n="modal.options.noZoneOpacity">
+                                ${i18n.getString('modal.options.noZoneOpacity')}
                             </span>
                         </label>
 
@@ -245,14 +258,15 @@ function _injectModalHTML() {
 
                         <label class="a11y-checkbox-label">
                             <input type="checkbox" 
-                                   id="a11y-no-zone-opacity" 
+                                   id="a11y-no-block-opacity" 
                                    class="a11y-checkbox" 
-                                   data-i18n-aria="modal.options.noZoneOpacity" 
-                                   title="${i18n.getString('modal.options.noZoneOpacity')}">
-                            <span data-i18n="modal.options.noZoneOpacity">
-                                ${i18n.getString('modal.options.noZoneOpacity')}
+                                   data-i18n-aria="modal.options.noBlockOpacity" 
+                                   title="${i18n.getString('modal.options.noBlockOpacity')}">
+                            <span data-i18n="modal.options.noBlockOpacity">
+                                ${i18n.getString('modal.options.noBlockOpacity')}
                             </span>
                         </label>
+
                     </div>
                 </div>
 

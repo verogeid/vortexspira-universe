@@ -115,7 +115,7 @@
     --a11y-option-btn-font-size: max(0.8rem, calc((0.75rem + 0.5vmin) * var(--font-scale)));
 
     --a11y-close-btn-font-size: max(1.2rem, calc((1rem + 1vmin) * var(--font-scale)));
-    --a11y-close-btn-size: clamp(44px, calc(5vmin * var(--font-scale)), 50px);
+    --a11y-close-btn-size: max(44px, calc(5vmin * var(--font-scale)));
 
     --a11y-gap: 20px;
     --a11y-padding: 25px;                       /* Padding interno del modal */

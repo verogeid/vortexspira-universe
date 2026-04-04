@@ -132,6 +132,8 @@
     color: var(--color-text);
     border-radius: 50%; 
 
+    font-size: var(--a11y-close-btn-font-size);
+
     width: var(--a11y-close-btn-size); 
     height: var(--a11y-close-btn-size);
 
