@@ -378,4 +378,31 @@ export function preloadDetailsModules(appInstance) {
     return _detailsModulesPromise;
 }
 
+// ============================================================================
+// 👻 GENERADOR DE NODOS FANTASMA (ABOUT)
+// ============================================================================
+export function buildAboutNode(appInstance) {
+    const broadDesc = appInstance.getString('seo.org.description') + 
+                      '. ' + 
+                      appInstance.getString('seo.org.accessibilitySummary');
+                    
+    return {
+        id: 'c-about',
+        titulo: appInstance.getString('about.title'),
+        descripcion: broadDesc.replace(/\. /g, '. <HR>'),
+        enlaces: [
+            { 
+                "texto": "LinkedIn", 
+                "url": "https://www.linkedin.com/company/vortexspira", 
+                "type": "l" 
+            },
+            { 
+                "texto": appInstance.getString('about.landing'), 
+                "url": "https://subscribepage.io/vortexspira", 
+                "type": "f" 
+            }
+        ]
+    };
+}
+
 /* --- code/app-utils.js --- */

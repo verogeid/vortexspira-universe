@@ -8,6 +8,7 @@ import * as app_utils from './app-utils.js';
 import * as app_feedback from './app-feedback.js';
 import * as app_layout from './app-layout.js';
 import * as app_router from './app-router.js';
+import * as app_events from './app-events.js';
 
 import * as i18n from './i18n.js';
 import * as a11y from './a11y.js';
@@ -58,32 +59,13 @@ class VortexSpiraApp {
         this.stackUpdateCurrentFocus = nav_stack.stackUpdateCurrentFocus;
         this.stackBuildFromId = nav_stack.stackBuildFromId;
 
-        // 🟢 INTERCEPTOR: Fabricamos "c-about" al vuelo para NO tocar this.STATE.fullData.navegacion
+        // 🟢 INTERCEPTOR DE DATOS: Delegado a app-utils
         this._originalFindNodoById = nav_base._findNodoById;
         this._findNodoById = (id, items) => {
-            if (id === 'c-about') {
-                const broadDesc = this.getString('seo.org.description') + 
-                                  '. ' + 
-                                  this.getString('seo.org.accessibilitySummary');
-                                
-                return {
-                    id: 'c-about',
-                    titulo: this.getString('about.title'),
-                    descripcion: broadDesc.replace(/\. /g, '. <HR>'),
-                    enlaces: [
-                        { "texto": "LinkedIn", 
-                          "url": "https://www.linkedin.com/company/vortexspira", 
-                          "type": "l" 
-                        },
-                        { "texto": this.getString('about.landing'), 
-                          "url": "https://subscribepage.io/vortexspira", 
-                          "type": "f" 
-                        }
-                    ]
-                };
-            }
+            if (id === 'c-about') return app_utils.buildAboutNode(this);
             return this._originalFindNodoById(id, items);
         };
+
         this._tieneContenidoActivo = nav_base._tieneContenidoActivoImpl;
         this.findBestFocusInColumn = nav_base.findBestFocusInColumn;
 
@@ -404,137 +386,8 @@ class VortexSpiraApp {
 
         nav_base.setupListeners.call(this);
 
-        // 1. Detector de Teclado y Rueda del Ratón (La rueda simula flechas)
-        const bootKeyboardModule = async (e) => {
-            // Ignoramos si solo pulsa teclas modificadoras, salvo shift
-            if (e.type === 'keydown' && 
-                [
-                    'Control', 
-                    'Alt', 
-                    'Meta'
-                ].includes(e.key)) 
-                return;
-            
-            document.removeEventListener('keydown', bootKeyboardModule, true);
-            document.removeEventListener('wheel', bootKeyboardModule, true);
-            
-            // 🟢 TRAMPA FÍSICA: Si fue la rueda, frenamos el primer "golpe" nativo
-            // para que la pantalla no salte bruscamente mientras baja el JS en ese milisegundo.
-            if (e.type === 'wheel') {
-                const targetIsCentral = e.target.closest(
-                    '#vista-central, .carousel-viewport, .detalle-viewport'
-                );
-                if (targetIsCentral) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            }
-            
-            try {
-                const nav_keyboard_base = await import('./nav-keyboard-base.js');
-                
-                // 🟢 FIX: Guardamos la función en la app para el futuro
-                this.initKeyboardControls = nav_keyboard_base.initKeyboardControls;
-                
-                this.initKeyboardControls();
-
-                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                    '⌨️/⚙️ Teclado o Rueda detectado. Módulo inyectado en caliente.');
-
-            } catch (err) {
-                debug.logError('app', 'Fallo al cargar módulo de teclado', err);
-            }
-        };
-        
-        // Escuchamos en fase de captura
-        document.addEventListener('keydown', bootKeyboardModule, true);
-        document.addEventListener('wheel', bootKeyboardModule, { capture: true, passive: false });
-
-        // 2. Detector de Puntero (Ratón / Touch)
-        // Agrupamos el Swipe y los clics porque la lógica de Swiper mezcla ambos mundos
-        const bootPointerModule = async () => {
-            document.removeEventListener('mousemove', bootPointerModule, true);
-            document.removeEventListener('touchstart', bootPointerModule, true);
-            
-            try {
-                const nav_mouse_swipe = await import('./nav-mouse-swipe.js');
-                
-                // 🟢 FIX: Guardamos la función en la app para el futuro
-                this.setupTouchListeners = nav_mouse_swipe.setupTouchListeners;
-                
-                this.setupTouchListeners();
-
-                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                    '🖱️/👆 Puntero/Touch detectado. Módulo de swipe inyectado.');
-
-            } catch (err) {
-                debug.logError('app', 'Fallo al cargar módulo de puntero', err);
-            }
-        };
-        document.addEventListener('mousemove', bootPointerModule, true);
-        document.addEventListener('touchstart', bootPointerModule, true);
-
-        // ====================================================================
-        // 🛡️ ESCUDO DE CRISTAL: INTERCEPTOR UNIVERSAL (Teclado, Ratón y Touch)
-        // Atrapa las interacciones en Fase de Captura (antes de procesarlas)
-        // ====================================================================
-        const preventInteraction = (e) => {
-            if (this.STATE.isUIBlocked) {
-                // Permitimos soltar teclas, pero bloqueamos la acción en sí
-                if (e.type !== 'keyup') {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
-                        `🛡️ Escudo activo. Bloqueado: ${e.type} ${e.key || ''}`);
-                }
-            }
-        };
-
-        // Escuchamos en fase de captura (true)
-        document.addEventListener('keydown', preventInteraction, true);
-        document.addEventListener('mousedown', preventInteraction, true);
-        document.addEventListener('click', preventInteraction, true);
-        document.addEventListener('touchstart', preventInteraction, { passive: false, capture: true });
-        document.addEventListener('touchmove', preventInteraction, { passive: false, capture: true });
-        // ====================================================================
-
-        window.addEventListener('vortex-layout-refresh', () => {
-            // 🟢 ESCUDO: Evitar re-renders fantasmas
-            if (this.STATE.isUIBlocked) return;
-
-            const prevMode = document.body.getAttribute('data-layout');
-            this._updateLayoutMode();
-            const newMode = document.body.getAttribute('data-layout');
-            this._syncHeaderDimensions();
-
-            // 🟢 LÓGICA DE ACTUALIZACIÓN INTELIGENTE
-            // Si hay cambio de layout, forzamos render.
-            // Si solo es un ajuste menor (mismo modo), dejamos que _mostrarDetalle decida con los buckets.
-            const forceRender = (prevMode !== newMode);
-
-            if (forceRender) {
-                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                            `Layout Change (${prevMode} -> ${newMode}). Forzando render...`);
-                this._cacheDOM();
-            } else {
-                debug.log('app', debug.DEBUG_LEVELS.DEEP, 
-                            `Layout Refresh (Mismo modo). Delegando a buckets.`);
-            }
-
-            if (this.STATE.activeCourseId) {
-                // Pasamos forceRender para saltarnos el chequeo de buckets si cambió el layout drásticamente
-                this._mostrarDetalle(this.STATE.activeCourseId, forceRender);
-            } else if (forceRender) {
-                this.renderNavegacion();
-            }
-
-            // Diagnóstico tras refresco de layout
-            requestAnimationFrame(() => {
-                this.runFontDiagnostics?.();
-                this.runLayoutDiagnostics?.();
-            });
-        });
+        // 🟢 Encender el Sistema Nervioso Central (Input, UI Lock y Refresco)
+        app_events.setupGlobalListeners(this);
         
         // 🟢 NAVEGADOR: Escuchar los botones nativos de Atrás / Adelante delegados al Router
         app_router.setupNavigationListener(this);
