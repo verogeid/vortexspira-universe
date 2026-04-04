@@ -1,4 +1,5 @@
-/* --- code/debug.ldJsonSim.js --- */
+/* --- code/debug/debug.ldJsonSim.js --- */
+
 import * as debug from './debug.js';
 
 export const ldJsonSim = {
@@ -78,4 +79,4 @@ export const ldJsonSim = {
     }
 };
 
-/* --- code/debug.ldJsonSim.js --- */
+/* --- code/debug/debug.ldJsonSim.js --- */

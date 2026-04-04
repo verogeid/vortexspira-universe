@@ -1,4 +1,4 @@
-// --- code/debug.js ---
+// --- code/debug/debug.js ---
 
 export const IS_PRODUCTION = false;
 export const CLEAR_CONSOLE_ON_START = true;
@@ -223,4 +223,4 @@ export function _setupConsoleInterceptor() {
     };
 }
 
-// --- code/debug.js ---
+// --- code/debug/debug.js ---

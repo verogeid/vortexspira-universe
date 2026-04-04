@@ -1,0 +1,42 @@
+/* --- styles/components/style-footer.css --- */
+
+footer { 
+    position: fixed; 
+    bottom: 0; 
+
+    /* Padding dinámico (clamp) en lugar de fijo (5px) */
+    /* Si hay poca altura (dvh), el padding baja a 2px para dejar sitio a los iconos */
+    padding: var(--footer-padding);
+
+    width: 100%;
+    color: var(--color-footer-text); text-align: center;
+    background: var(--color-header-bg); z-index: 100; 
+    display: flex; justify-content: center; 
+    align-items: center; 
+    flex-wrap: nowrap; 
+    
+    min-height: var(--footer-min-height) !important;
+    max-height: var(--footer-max-height) !important;
+    overflow: hidden; /* Evita que el contenido engorde la caja */
+
+    box-sizing: border-box; 
+    font-size: var(--footer-font-size);
+}
+
+footer small { 
+    display: flex; align-items: center; 
+
+    gap: var(--footer-small-gap); 
+    flex-wrap: nowrap;
+
+    width: 100%; justify-content: center;
+    height: 100%; 
+}
+
+.footer-separator,
+.footer-separator-author {
+    opacity: 0.4;
+    margin: 0 4px;
+}
+
+/* --- styles/components/style-footer.css --- */

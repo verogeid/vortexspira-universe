@@ -1,4 +1,4 @@
-// --- code/debug.screenReaderSim.js ---
+// --- code/debug/debug.screenReaderSim.js ---
 
 import * as debug from './debug.js';
 
@@ -312,4 +312,4 @@ function _computeState(el) {
     return states;
 }
 
-// --- code/debug.screenReaderSim.js ---
+// --- code/debug/debug.screenReaderSim.js ---

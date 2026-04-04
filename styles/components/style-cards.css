@@ -1,0 +1,337 @@
+/* --- styles/components/style-cards.css --- */
+
+.card {
+    padding: var(--card-padding);
+
+    border: var(--border-width-no-focus) solid var(--color-card-border);
+    background: var(--color-card-bg);
+    border-radius: var(--border-radius);
+
+    transition: all var(--transition-speed) ease;
+    cursor: pointer;
+
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+
+    align-items: flex-start; 
+    box-sizing: border-box; 
+
+    height: 100%; 
+    min-height: 150px; 
+    width: 100%;
+    overflow: hidden; 
+
+    transition: 
+            transform var(--transition-speed) ease,
+            box-shadow var(--transition-speed) ease,
+            border-color var(--transition-speed) ease,
+            opacity var(--transition-speed) ease;
+
+    filter: none !important;
+}
+
+.card h2 { 
+    /* MAGIA: Ahora el gap sí funciona y el contenedor respeta el 100% de la caja */
+    display: flex;
+    align-items: flex-start; /* Alinea el icono y el texto arriba */
+    gap: var(--card-gap);
+    
+    margin: 0; 
+    width: 100%;
+    text-align: left;
+
+    font-size: var(--card-title-font-size, 1.2rem);
+    line-height: var(--line-height-base);
+}
+
+.card h2 .card-icon-lead {
+    flex-shrink: 0;
+    float: none !important;
+    display: block;
+
+    /* 🟢 COMPENSACIÓN ÓPTICA DINÁMICA */
+    /* (Altura de la 1ª línea de texto - Altura del icono) / 2 */
+    /* 1em equivale al font-size actual del título */
+    margin-top: calc((1em * var(--line-height-base) - var(--card-icon-size)) / 2);
+}
+
+/* Tarjetas Normales: Se truncan con su propia variable (que tienes configurada a 3) */
+.card h2 .card-text-content {
+    /* 1. Comportamiento Flex: Ocupa el espacio que deja el icono sin desbordar */
+    flex: 1 1 auto;
+    min-width: 0; 
+
+    /* 2. Truncado AAA */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--card-line-clamp); 
+    line-clamp: var(--card-line-clamp);
+    overflow: hidden;
+
+    /* Separación silábica (actuará en las líneas 1 y 2) */
+    -webkit-hyphens: auto;
+    hyphens: auto;
+
+    /* El salvavidas para el bug de WebKit: 
+       Fuerza la ruptura de la última palabra antes de que el motor 
+       de guiones secuestre el final de la caja, garantizando los '...' */
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+/* Tarjetas Verticales (Breadcrumbs): Mantienen su variable de 5 líneas */
+.card.card-breadcrumb-vertical h2 {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--card-breadcrump-line-clamp); 
+    line-clamp: var(--card-breadcrump-line-clamp);
+    
+    font-size: var(--card-breadcrump-vertical-font-size);
+    line-height: var(--line-height-base);
+    overflow: hidden;
+}
+
+/* Descripción / Contenido */
+.card p {
+    margin: 0;
+    line-height: var(--line-height-base);
+    color: var(--color-text);
+    
+    /* Usamos la variable controlada */
+    font-size: var(--card-desc-font-size, 1rem);
+}
+
+/* Tipos Especiales */
+.card.card-breadcrumb-vertical {
+    border-color: var(--color-border-placeholder);
+    background: transparent; 
+    min-height: 50px;
+    opacity: 1; 
+    font-size: var(--card-breadcrump-vertical-font-size);
+    cursor: default; 
+    text-align: left;
+    justify-content: center; 
+    pointer-events: none !important;
+
+    margin-bottom: var(--card-breadcrump-vertical-margin-bottom);
+
+}
+
+.card.card-breadcrumb-vertical h2 {
+    -webkit-line-clamp: var(--card-breadcrump-vertical-line-clamp); 
+    line-clamp: var(--card-breadcrump-vertical-line-clamp);
+}
+
+.card.card-volver-vertical { 
+    min-height: 50px; 
+    align-items: center; 
+}
+
+.card.card-volver-vertical h2 {
+    text-align: center;
+}
+
+.card:not(.focus-visible) {
+    filter: saturate(0.8);
+}
+.card.focus-visible {
+    opacity: 1 !important;
+    filter: saturate(1) !important;
+}
+
+/* 🟢 REGLA 1: Card de RELLENO (Borde fino punteado) */
+.card[data-tipo="relleno"] {
+    border: var(--border-width-no-focus) dashed var(--color-border-placeholder) !important; 
+    background: transparent; 
+    pointer-events: none; 
+    cursor: default;
+}
+
+/* 🟢 REGLA 2: Card NO relleno (Borde fino continuo) - Estado Reposo */
+.card:not([data-tipo="relleno"]) {
+    border-style: solid;
+    border-width: var(--border-width-no-focus);
+    border-color: var(--color-card-border);
+}
+
+/* Reposo de Tarjeta Deshabilitada */
+.card.disabled:not([data-tipo="relleno"]) {
+    border-color: var(--color-card-border-disabled);
+    opacity: calc(var(--opacity) * 1.5);
+}
+.card.card-breadcrumb-vertical {
+    border-style: dashed;
+}
+
+/* 🟢 REGLA 3: HOVER */
+/* Hover Habilitada */
+.card:not(.disabled):not([data-tipo="relleno"]):hover {
+    outline: none; 
+    border-width: var(--border-width-no-focus); /* Borde fino */
+    border-color: var(--color-primary);
+    transform: scale(calc(1 + (var(--zoom-focus-minnor) * 2)));
+    box-shadow: 0 0 var(--shadow-spread-lg) var(--color-shadow-primary); 
+}
+
+/* Hover Deshabilitada */
+.card.disabled:not([data-tipo="relleno"]):hover {
+    outline: none; 
+    border-width: var(--border-width-no-focus); /* Borde fino */
+    border-color: var(--color-card-border-disabled);
+    transform: scale(calc(1 + (var(--zoom-focus-minnor) * 2)));
+    box-shadow: 0 0 var(--shadow-spread-md) var(--color-shadow-disabled); 
+    opacity: calc(var(--opacity) * 3); 
+}
+
+/* 🟢 REGLA 4: FOCO ABSOLUTO */
+/* Tarjetas Normales */
+.card:not(.disabled):not([data-tipo="relleno"]).focus-visible,
+.card:not(.disabled):not([data-tipo="relleno"]):focus,
+.card:not(.disabled):not([data-tipo="relleno"]).focus-current { 
+    outline: none !important; 
+    border-width: var(--border-width-focus) !important; 
+    border-color: var(--color-primary) !important;
+    transform: scale(calc(1 + (var(--zoom-focus-minnor) * 2))) !important;
+    box-shadow: 0 0 var(--shadow-spread-lg) var(--color-shadow-primary) !important; 
+    color: var(--color-primary) !important; 
+    opacity: 1 !important;
+    filter: saturate(1) !important;
+}
+
+/* Tarjetas Deshabilitadas (El foco debe verse en inglés) */
+.card.disabled:not([data-tipo="relleno"]).focus-visible, 
+.card.disabled:not([data-tipo="relleno"]):focus,
+.card.disabled:not([data-tipo="relleno"]).focus-current {
+    outline: none !important;
+    border-width: var(--border-width-focus) !important; 
+    border-color: var(--color-card-border-disabled) !important;
+    transform: scale(calc(1 + (var(--zoom-focus-minnor) * 2))) !important;
+    box-shadow: 0 0 var(--shadow-spread-md) var(--color-shadow-disabled) !important; 
+    opacity: calc(var(--opacity) * 3) !important; 
+    color: var(--color-text-muted) !important;
+    filter: saturate(1) !important;
+}
+
+/* Fix extra WebKit */
+.card {
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+}
+
+/* ==========================================================================
+   TARJETA VOLVER (Ocupación total del espacio)
+   ========================================================================== */
+
+/* Contenedor interno que expande icono y texto */
+.card-volver-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    
+    height: 100% !important; 
+    width: 100% !important;
+    margin: 0 !important;
+    gap: var(--card-gap);
+}
+
+/* El texto traducido */
+.card-volver-content .card-volver-text {
+    font-size: var(--card-breadcrump-vertical-font-size);
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: var(--color-text-main);
+    opacity: calc(var(--opacity) * 3);
+}
+
+#card-volver-fija-elemento {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    height: 100%;
+}
+
+#card-volver-fija-elemento .card-volver-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--card-gap);
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* ==========================================================================
+   ICONOGRAFÍA GLOBAL (MÁSCARAS SVG)
+   ========================================================================== */
+.card-icon-lead,
+.card-volver-icon {
+    display: inline-block;
+
+    width: var(--card-icon-size);
+    height: var(--card-icon-size);
+    background-color: currentColor; 
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    vertical-align: middle; 
+}
+
+.card-icon-lead {
+    margin-left: calc(var(--card-padding) / 6);
+}
+
+/* Asignación específica de cada variable SVG */
+.card-folder-icon {
+    -webkit-mask-image: var(--icon-folder);
+    mask-image: var(--icon-folder);
+}
+
+.card-course-icon {
+    -webkit-mask-image: var(--icon-course);
+    mask-image: var(--icon-course);
+}
+
+.card-obras-icon {
+    -webkit-mask-image: var(--icon-obras);
+    mask-image: var(--icon-obras);
+}
+
+.icon-empty-card {
+    -webkit-mask-image: var(--icon-empty);
+    mask-image: var(--icon-empty);
+}
+
+.icon-empty-folder-card {
+    -webkit-mask-image: var(--icon-empty-folder);
+    mask-image: var(--icon-empty-folder);
+}
+
+.card-volver-icon {
+    -webkit-mask-image: var(--icon-back);
+    mask-image: var(--icon-back);
+}
+
+.card .detail-text-fragment,
+.card .card-text-content,
+.card.card-breadcrumb-vertical {
+    /* 1. Anular el bloqueo de Flexbox (permite que las cajas se encojan) */
+    min-width: 0;
+    
+    /* 2. Forzar que el texto pueda fluir en varias líneas */
+    white-space: normal !important; 
+    
+    /* 3. Comportamiento de emergencia: romper palabras si superan el 100% del ancho */
+    overflow-wrap: break-word;
+    word-break: break-word;
+    
+    /* 4. Comportamiento ortográfico: separación silábica con guion */
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}
+
+/* --- styles/components/style-cards.css --- */
