@@ -92,6 +92,4 @@ export const SWIPER = {
     ELEMENTS_PER_COLUMN_DESKTOP: 3,
 };
 
-
-
 /* --- code/data.js --- */

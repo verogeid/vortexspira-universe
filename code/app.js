@@ -1,12 +1,13 @@
 /* --- code/app.js --- */
 
 import * as debug from './debug/debug.js';
-import * as debug_ldJsonSim from './debug/debug.ldJsonSim.js';
-import * as debug_diagnostics from './debug/debug.diagnostics.js';
-import * as debug_screenReaderSim from './debug/debug.screenReaderSim.js';
 
 import * as data from './data.js';
 import * as app_utils from './app-utils.js';
+
+import * as app_feedback from './app-feedback.js';
+import * as app_layout from './app-layout.js';
+import * as app_router from './app-router.js';
 
 import * as i18n from './i18n.js';
 import * as a11y from './a11y.js';
@@ -41,7 +42,7 @@ class VortexSpiraApp {
             _isDraggingSwiper: false,
             isUIBlocked: false,
             isBooting: true, 
-            isTouchDevice: this._isTouchDevice(),
+            isTouchDevice: app_layout.isTouchDevice(),
             pendingA11yContext: null,
             emptyColumnAnnounced: false, // Para evitar repetir anuncio de "Columna vacía"
             pendingLoopFix: false, // 🟢 Semáforo para el arreglo del loop
@@ -195,33 +196,53 @@ class VortexSpiraApp {
         debug.log('app', debug.DEBUG_LEVELS.BASIC, 
             "🚀 Iniciando App (Modo Silencioso activado)...");
 
-        debug_ldJsonSim.ldJsonSim.init(); // 🟢 Activamos el espía de SEO/IA
+        // 🟢 INYECCIÓN DINÁMICA DE HERRAMIENTAS DE DEBUG
+        // 1. Simulador SEO / LD-JSON
+        if (debug.DEBUG_CONFIG.seo_sim >= debug.DEBUG_LEVELS.BASIC) {
+            import('./debug/debug.ldJsonSim.js').then(m => m.ldJsonSim.init())
+                .catch(e => debug.logError('app', 'Error cargando ldJsonSim', e));
+        }
 
-        debug_diagnostics._setupGlobalClickListener();
-        debug_diagnostics._setupFocusTracker();
-        debug_diagnostics._setupFocusMethodInterceptor();
-        debug_diagnostics._setupKeyTracker?.(); 
+        // 2. Diagnósticos de Layout, Focos y Teclado
+        const loadDiag = debug.DEBUG_CONFIG.global >= debug.DEBUG_LEVELS.DISABLED ||
+                         debug.DEBUG_CONFIG.global_focus >= debug.DEBUG_LEVELS.DISABLED ||
+                         debug.DEBUG_CONFIG.global_font >= debug.DEBUG_LEVELS.DISABLED ||
+                         debug.DEBUG_CONFIG.global_layout >= debug.DEBUG_LEVELS.DISABLED ||
+                         debug.DEBUG_CONFIG.global_key >= debug.DEBUG_LEVELS.DISABLED ||
+                         debug.DEBUG_CONFIG.global_mouse >= debug.DEBUG_LEVELS.DISABLED;
+        
+        if (loadDiag) {
+            import('./debug/debug.diagnostics.js').then(d => {
+                d._setupGlobalClickListener();
+                d._setupFocusTracker();
+                d._setupFocusMethodInterceptor();
+                if (d._setupKeyTracker) d._setupKeyTracker();
 
-        debug_diagnostics._watchFlag(this.STATE, 'keyboardNavInProgress');
-        debug_diagnostics._watchFlag(this.STATE, 'isKeyboardLockedFocus');
-        debug_diagnostics._watchFlag(this.STATE, 'isNavigatingBack');
-        debug_diagnostics._watchFlag(this.STATE, 'isUIBlocked');
+                d._watchFlag(this.STATE, 'keyboardNavInProgress');
+                d._watchFlag(this.STATE, 'isKeyboardLockedFocus');
+                d._watchFlag(this.STATE, 'isNavigatingBack');
+                d._watchFlag(this.STATE, 'isUIBlocked');
+                d._watchFlag(this.STATE, '_lastMousedownTarget');
+                d._watchFlag(this.STATE, '_lastActiveZoneId');
 
-        debug_diagnostics._watchFlag(this.STATE, '_lastMousedownTarget');
-        debug_diagnostics._watchFlag(this.STATE, '_lastActiveZoneId');
+                // 🟢 Guardamos las funciones en la instancia para uso posterior
+                this._runFontDiagnostics = d.runFontDiagnostics;
+                this._runLayoutDiagnostics = d.runLayoutDiagnostics;
+            }).catch(e => debug.logError('app', 'Error cargando diagnostics', e));
+        }
 
-        // 🟢 AUTO-ARRANQUE INTELIGENTE DEL SIMULADOR E2E
-        // Se ejecuta aquí, centralizado en App, si la configuración lo pide.
-        if (!debug.IS_PRODUCTION) {
-            // Exponer para debug manual si se desea
-            window.simularLector = debug_screenReaderSim.enableScreenReaderSimulator;
-
-            // Arrancar automáticamente si el nivel de debug de a11y es alto
-            if (debug.DEBUG_CONFIG.a11y >= debug.DEBUG_LEVELS.EXTREME) {
-                // Como init() se suele llamar en DOMContentLoaded, podemos arrancar directo.
-                // Si no, la función tiene sus propias guardas, pero aquí garantizamos que sea parte del ciclo de inicio.
-                debug_screenReaderSim.enableScreenReaderSimulator();
-            }
+        // 3. Simulador de Lector de Pantallas
+        // Lo exponemos globalmente para que puedas llamarlo desde la consola si lo necesitas
+        window.simularLector = () => {
+            import('./debug/debug.screenReaderSim.js').then(m => {
+                window.simularLector = m.enableScreenReaderSimulator;
+                m.enableScreenReaderSimulator();
+            }).catch(e => debug.logError('app', 'Error cargando SR Sim', e));
+        };
+        
+        // Si la configuración es EXTREME, lo auto-arrancamos
+        if (debug.DEBUG_CONFIG.a11y >= debug.DEBUG_LEVELS.EXTREME) {
+            window.simularLector();
         }
 
         this._setupSmartResize();
@@ -346,7 +367,7 @@ class VortexSpiraApp {
         this._updateLayoutMode();
         this._syncHeaderDimensions();
         this._cacheDOM();
-        
+
         if (targetId) {
             // 🟢 FIX: Si se hace F5 o se comparte un enlace directo
             if (targetId === 'c-about') {
@@ -452,9 +473,6 @@ class VortexSpiraApp {
         };
         document.addEventListener('mousemove', bootPointerModule, true);
         document.addEventListener('touchstart', bootPointerModule, true);
-        
-        /*this._updateLayoutMode();
-        this._syncHeaderDimensions();*/
 
         // ====================================================================
         // 🛡️ ESCUDO DE CRISTAL: INTERCEPTOR UNIVERSAL (Teclado, Ratón y Touch)
@@ -513,95 +531,13 @@ class VortexSpiraApp {
 
             // Diagnóstico tras refresco de layout
             requestAnimationFrame(() => {
-                debug_diagnostics.runFontDiagnostics?.();
-                debug_diagnostics.runLayoutDiagnostics?.();
+                this.runFontDiagnostics?.();
+                this.runLayoutDiagnostics?.();
             });
         });
         
-        // 🟢 NAVEGADOR: Escuchar los botones nativos de Atrás / Adelante
-        window.addEventListener('popstate', (event) => {
-            const urlParams = new URL(window.location);
-            const targetId = urlParams.searchParams.get('id');
-            const targetLang = urlParams.searchParams.get('lang');
-            
-            // 🟢 DETECTAR CAMBIO DE IDIOMA DESDE EL NAVEGADOR
-            const currentLang = localStorage.getItem('vortex_lang') || 'es';
-            if (targetLang && targetLang !== currentLang) {
-
-                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                    `Cambio de idioma detectado vía Back/Next: ${targetLang}`);
-
-                // Forzamos reload para que el motor cargue los JSON correctos del historial
-                window.location.reload(); 
-                return;
-            }
-
-            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                `Navegación nativa detectada. Destino ID: ${targetId} | Lang: ${targetLang}`);
-
-            if (targetId) {
-                if (targetId === 'c-about') {
-                    this._mostrarAbout(); // false = no empujar historial
-                    return; 
-                }
-
-                // 🟢 MEJORA DE CONSISTENCIA: ¿El destino ya está en nuestra pila?
-                const stackIndex = this.STATE.historyStack.findIndex(s => s.levelId === targetId);
-                
-                if (stackIndex !== -1 && stackIndex < this.STATE.historyStack.length - 1) {
-                    // Es una navegación hacia atrás conocida. Rebobinamos la pila.
-                    debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                        `Retroceso detectado hacia nivel conocido: ${targetId}. Rebobinando pila.`);
-                    
-                    while (this.STATE.historyStack.length - 1 > stackIndex) {
-                        this.stackPop();
-                    }
-                    
-                    // Al haber hecho pop, el nivel actual de la pila YA tiene el focusId guardado.
-                    // Solo tenemos que ocultar detalles y renderizar.
-                    if (this.DOM.vistaDetalle) {
-                        this.DOM.vistaDetalle.classList.remove('active');
-                        this.DOM.vistaDetalle.style.display = 'none';
-                    }
-                    this.STATE.activeCourseId = null;
-                    
-                    // Marcamos como navegación atrás para que renderNavegacion use el focusId guardado
-                    this.STATE.isNavigatingBack = true; 
-                    this.renderNavegacion();
-                    return;
-                }
-                
-                if (this.stackBuildFromId(targetId, this.STATE.fullData)) { 
-                    const nodo = this._findNodoById(targetId, this.STATE.fullData.navegacion);
-                    
-                    if (nodo && (nodo.titulo || nodo.descripcion)) { 
-                        this._mostrarDetalle(targetId);
-                    } else {
-                        if (this.DOM.vistaDetalle) {
-                            this.DOM.vistaDetalle.classList.remove('active');
-                            this.DOM.vistaDetalle.style.display = 'none';
-                        }
-                        this.STATE.activeCourseId = null;
-                        this.renderNavegacion();
-                    }
-                } else {
-                    if (this.DOM.vistaDetalle) {
-                        this.DOM.vistaDetalle.classList.remove('active');
-                        this.DOM.vistaDetalle.style.display = 'none';
-                    }
-                    this.stackInitialize(); 
-                    this.renderNavegacion();
-                }
-            } else {
-                if (this.DOM.vistaDetalle) {
-                    this.DOM.vistaDetalle.classList.remove('active');
-                    this.DOM.vistaDetalle.style.display = 'none';
-                }
-                this.STATE.activeCourseId = null;
-                this.stackInitialize(); 
-                this.renderNavegacion();
-            }
-        });
+        // 🟢 NAVEGADOR: Escuchar los botones nativos de Atrás / Adelante delegados al Router
+        app_router.setupNavigationListener(this);
         
         this.STATE.initialRenderComplete = true; 
 
@@ -635,56 +571,14 @@ class VortexSpiraApp {
             setTimeout(() => {
                 this._updateFocus(false);
 
-                debug_diagnostics.runFontDiagnostics?.();
-                debug_diagnostics.runLayoutDiagnostics?.();
+                this.runFontDiagnostics?.();
+                this.runLayoutDiagnostics?.();
             }, 1000); 
 
         }, 200); 
 
         this._injectA11yAnnouncer();
     }
-
-    // ============================================================================
-    // 🛡️ MÉTODOS DE CONTROL DEL ESCUDO (UI Lock)
-    // ============================================================================
-    blockUI() {
-        this.STATE.isUIBlocked = true;
-        document.body.classList.add('ui-blocked');
-
-        // 🟢 CAPA DE INVISIBILIDAD ABSOLUTA: Usamos 'inert'
-        // 'inert' quita el foco automáticamente, bloquea clics y oculta al lector de pantalla
-        // sin violar las reglas de accesibilidad del navegador.
-        if (this.DOM.appContainer) 
-            this.DOM.appContainer.setAttribute('inert', '');
-
-        if (this.DOM.header) 
-            this.DOM.header.setAttribute('inert', '');
-
-        const footer = document.querySelector('footer');
-        if (footer) 
-            footer.setAttribute('inert', '');
-
-        debug.log('app', debug.DEBUG_LEVELS.EXTREME, '🛡️ ESCUDO ACTIVADO: UI Bloqueada');
-    }
-
-    unblockUI() {
-        this.STATE.isUIBlocked = false;
-        document.body.classList.remove('ui-blocked');
-
-        // 🟢 RETIRAR CAPA DE INVISIBILIDAD
-        if (this.DOM.appContainer) 
-            this.DOM.appContainer.removeAttribute('inert');
-
-        if (this.DOM.header) 
-            this.DOM.header.removeAttribute('inert');
-
-        const footer = document.querySelector('footer');
-        if (footer) 
-            footer.removeAttribute('inert');
-
-        debug.log('app', debug.DEBUG_LEVELS.EXTREME, '🛡️ ESCUDO DESACTIVADO: UI Liberada');
-    }
-    // ============================================================================
 
     // ============================================================================
     // 🧠 SMART FOCUS: Fusión de Contexto y Foco en un solo evento
@@ -741,169 +635,9 @@ class VortexSpiraApp {
         }
     }
 
-    // 🟢 Cambio de Idioma en Caliente (Hot Swap)
-    async toggleLanguage() {
-        this.STATE.currentTraceId = `SWAP_${Date.now()}`;
-        const traceTimeStr = new Date().toISOString().split('T')[1];
-
-        debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
-            `[TRACE: ${this.STATE.currentTraceId} | ${traceTimeStr}] ` + 
-            `⏳ INICIO DE CAMBIO DE IDIOMA`);
-
-        // 1. Memoria de foco: ¿El usuario pulsó el botón de idiomas para iniciar esto?
-        const wasLangBtnFocused = document.activeElement && document.activeElement.id === 'btn-lang-toggle';
-
-        // 2. Bloqueamos la UI (El 'inert' expulsará el foco de forma segura)
-        this.blockUI();
-        
-        const msg = this.getString('menu.aria.langSwitch');
-        this.announceA11y(msg, 'assertive');
-
-        const current = localStorage.getItem('vortex_lang') || 'es';
-        const newLang = current === 'es' ? 'en' : 'es';
-        
-        try {
-            // 2. Descargamos los nuevos datos
-            const [stringsLoaded, coursesData] = await Promise.all([
-                i18n.loadStrings(newLang),
-                app_utils.loadData(newLang)
-            ]);
-
-            if (!stringsLoaded || !coursesData) 
-                throw new Error("Fallo al cargar nuevos diccionarios");
-
-            // 3. Preparamos la URL base
-            const url = new URL(window.location);
-            url.searchParams.set('lang', newLang);
-            const targetId = url.searchParams.get('id');
-
-            // 3. Aplicamos el nuevo estado base
-            this.STATE.fullData = coursesData;
-            localStorage.setItem('vortex_lang', newLang);
-            document.documentElement.lang = newLang;
-
-            // 🟢 FIX CRÍTICO: DESTRUCCIÓN TOTAL DE LA PILA INMEDIATA
-            // Lo hacemos antes de repintar nada para evitar condiciones de carrera con el ResizeObserver
-            this.stackInitialize();
-            this.STATE.activeCourseId = null;
-
-            if (this.DOM.vistaDetalle) 
-                this.DOM.vistaDetalle.classList.remove('active');
-
-            // 🟢 PURGA DE MEMORIA DEL NOTARIO
-            // Borramos los atributos data-last-focus-id de todas las zonas
-            // para que el teclado parta de cero en la nueva interfaz.
-            ['app-header', 'vista-volver', 'info-adicional', 'vista-central'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.removeAttribute('data-last-focus-id');
-            });
-
-            debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
-                `[TRACE: ${this.STATE.currentTraceId}] 🧹 Limpiando _lastMousedownTarget y _lastActiveZoneId...`);
-
-            // Reseteamos la zona activa
-            this.STATE._lastActiveZoneId = null;
-            this.STATE._lastMousedownTarget = null;
-
-            // 5. Repintamos la capa estática (Textos, Header, Footer)
-            this.applyStrings();
-
-            if (app_utils.injectHeaderContent) {
-                // Si el nuevo es EN, forzamos true. Si es ES, verificamos si EN existe.
-                const enableI18n = newLang === 'en' ? true : await this._checkEnAvailability();
-                app_utils.injectHeaderContent(this, enableI18n);
-            }
-
-            if (app_utils.injectFooterContent) 
-                app_utils.injectFooterContent(this);
-
-            // 🟢 FIX A11Y UX: Usamos tu sistema de Snapshot para devolver el foco al botón de idiomas
-            if (wasLangBtnFocused) {
-                this.STATE.resizeSnapshot = { type: 'ID', value: 'btn-lang-toggle' };
-            } 
-
-            // 6. ⭐️ RECONSTRUCCIÓN BASADA EN LA URL ⭐️
-            if (targetId) {
-                // 🟢 FIX: Si estamos en c-about, reconstruimos la pila para el origen, no para el fantasma
-                if (targetId === 'c-about') {
-                    const originId = this.STATE._previousCourseId; // El curso que estaba debajo
-                    
-                    if (originId && this.stackBuildFromId(originId, this.STATE.fullData)) {
-                        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                            `Pila base reconstruida para ${originId} tras cambio de idioma.`);
-
-                    } else {
-                        // Si no hay curso previo, intentamos reconstruir al menos hasta la última categoría
-                        this.stackInitialize(); 
-                    }
-
-                    window.history.replaceState({}, '', url);
-                    this._mostrarAbout(false); // Repintamos c-about en el nuevo idioma
-                }
-                else if (this.stackBuildFromId(targetId, this.STATE.fullData)) {
-                    debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                        `Pila reconstruida para ID ${targetId} en ${newLang}`);
-
-                    // 🟢 IMPORTANTE: pushState aquí anota el cambio de idioma en el historial del navegador
-                    window.history.pushState({}, '', url);
-                    
-                    const nodo = this._findNodoById(targetId, this.STATE.fullData.navegacion);
-                    if (nodo && (nodo.titulo || nodo.descripcion)) {
-                        this._mostrarDetalle(targetId, true);
-                    } else {
-                        this.renderNavegacion();
-                    }
-                } else {
-                    debug.logWarn('app', 
-                        `El nodo ${targetId} no existe en ${newLang}. Degradando a raíz.`);
-
-                    this.stackInitialize(); 
-                    url.searchParams.delete('id');
-                    window.history.replaceState({}, '', url);
-
-                    // 🟢 ID ROTO DETECTADO DURANTE EL CAMBIO DE IDIOMA
-                    const errorMsg = this.getString('toast.errorId');
-                    if (this.STATE.pendingA11yContext) {
-                        this.STATE.pendingA11yContext += ". " + errorMsg;
-                    } else {
-                        this.STATE.pendingA11yContext = errorMsg;
-                    }
-
-                    this.renderNavegacion(); 
-                    this.showToast(this.getString('toast.errorId'));
-                
-                }
-            } else {
-                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                    "No hay ID en la URL. Mostrando raíz.");
-
-                window.history.replaceState({}, '', url);
-                this.renderNavegacion();
-            }
-
-            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                `Idioma cambiado a ${newLang}. Interfaz actualizada.`);
-
-            // 7. Liberamos la UI (El DOM vuelve a ser visible)
-            this.unblockUI();
-
-            debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
-                `[TRACE: ${this.STATE.currentTraceId}] ✅ FIN DE CAMBIO DE IDIOMA. Escudos bajados.`);
-
-            // 🟢 LIMPIEZA ASÍNCRONA DEL SNAPSHOT
-            // Le damos tiempo de sobra a renderNavegacion para que consuma la orden de foco
-            // antes de borrarla de la memoria para futuros redimensionados.
-            setTimeout(() => {
-                this.STATE.resizeSnapshot = null;
-            }, 500);
-
-        } catch (error) {
-            debug.logError('app', 
-                'Fallo crítico durante el Hot Swap de idioma', error);
-
-            // Si todo falla, forzamos recarga tradicional como salvavidas
-            window.location.reload();
-        }
+    // 🟢 Cambio de Idioma en Caliente (Hot Swap) delegado al Router
+    async toggleLanguage() { 
+        await app_router.toggleLanguage(this); 
     }
 
     // ⭐️ WRAPPERS DE NAVEGACIÓN (Para inyectar diagnóstico)
@@ -918,17 +652,9 @@ class VortexSpiraApp {
 
         // Ejecutar diagnóstico tras renderizar el menú
         requestAnimationFrame(() => {
-            debug_diagnostics.runFontDiagnostics?.();
-            debug_diagnostics.runLayoutDiagnostics?.();
+            this.runFontDiagnostics?.();
+            this.runLayoutDiagnostics?.();
         });
-    }
-
-    // 🟢 HELPER: Detección de entorno táctil (Físico vs Virtual)
-    _isTouchDevice() {
-        return (('ontouchstart' in window) ||
-                (navigator.maxTouchPoints > 0) ||
-                (navigator.msMaxTouchPoints > 0) ||
-                window.matchMedia("(pointer: coarse)").matches);
     }
 
     async _mostrarDetalle(cursoId, forceRepaint = false) { 
@@ -943,8 +669,8 @@ class VortexSpiraApp {
         this.STATE.activeCourseId = cursoId; 
         
         requestAnimationFrame(() => {
-            debug_diagnostics.runFontDiagnostics?.();
-            debug_diagnostics.runLayoutDiagnostics?.();
+            this.runFontDiagnostics?.();
+            this.runLayoutDiagnostics?.();
         });
     }
 
@@ -997,8 +723,8 @@ class VortexSpiraApp {
         nav_base._handleVolverClick.call(this); 
         
         requestAnimationFrame(() => {
-            debug_diagnostics.runFontDiagnostics?.();
-            debug_diagnostics.runLayoutDiagnostics?.();
+            this.runFontDiagnostics?.();
+            this.runLayoutDiagnostics?.();
         });
     }
 
@@ -1042,423 +768,40 @@ class VortexSpiraApp {
         this.updateSEO(activeCourse);
     }
 
+    // ============================================================================
     // 🟢 MOTOR SEO DINÁMICO E INYECCIÓN DE JSON-LD PARA BOTS/IAs
+    // ============================================================================
     updateSEO(curso = null) {
         app_utils.updateSEO(this, curso);
     }
 
-    showToast(message, duration = 3000) {
-        if (!this.DOM.toast) 
-            return;
+    // ============================================================================
+    // 🛡️ MÉTODOS DE FEEDBACK DELEGADOS
+    // ============================================================================
+    blockUI() { app_feedback.blockUI(this); }
+    unblockUI() { app_feedback.unblockUI(this); }
 
-        // 🟢 ANTI-SPAM DE TOAST
-        // Si el mensaje es idéntico al que ya se muestra y el toast está activo,
-        // no hacemos NADA (ni siquiera reiniciamos el timer, para que no sea eterno si se spamea).
-        // Esto evita que el lector de pantalla lea 8 veces "Columna vacía".
-        if (this.DOM.toast.classList.contains('active') && this.DOM.toast.textContent === message) {
-            debug.log('app', debug.DEBUG_LEVELS.DEEP, 
-                `🚫 Toast duplicado ignorado: "${message}"`);
+    showToast(message, duration = 3000) { app_feedback.showToast(this, message, duration); }
+    hideToast() { app_feedback.hideToast(this); }
 
-            return;
-        }
+    _injectA11yAnnouncer() { app_feedback.injectA11yAnnouncer(this); }
+    announceA11y(message, mode = 'polite') { app_feedback.announceA11y(this, message, mode); }
+    announceA11yStop() { app_feedback.announceA11yStop(this); }
 
-        // 1. Bloquear UI
-        this.STATE.isUIBlocked = true;
-        document.body.classList.add('ui-blocked'); // Útil para CSS (cursor: wait)
-        
-        // 2. Preparar mensaje A11y (Vaciar primero)
-        this.DOM.toast.textContent = '';
-        this.DOM.toast.classList.remove('active');
-        
-        // Limpiar timer anterior si existía
-        if (this._toastTimer) clearTimeout(this._toastTimer);
-
-        // Usamos requestAnimationFrame para asegurar que el DOM procesa el vaciado
-        requestAnimationFrame(() => {
-            this.DOM.toast.textContent = message;
-            this.DOM.toast.classList.add('active');
-            
-            // 3. Gestionar duración
-            if (duration !== null) {
-                this._toastTimer = setTimeout(() => {
-                    this.hideToast();
-                }, duration);
-            } else {
-                debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                            'Toast persistente activado (UI Bloqueada). Esperando hideToast().');
-            }
-        });
-    }
-
-    // 🟢 Para ocultar el toast manualmente cuando ya no sea necesario
-    hideToast() {
-        if (!this.DOM.toast) 
-            return;
-
-        this.DOM.toast.classList.remove('active');
-        if (this._toastTimer) clearTimeout(this._toastTimer);
-
-        // Desbloquear UI
-        this.STATE.isUIBlocked = false;
-        document.body.classList.remove('ui-blocked');
-
-        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                    'Toast oculto. UI Desbloqueada.');
-    }
-
-    // 🟢 NUEVO: Inyectar contenedor exclusivo para voz
-    _injectA11yAnnouncer() {
-        // Si ya existen, salimos
-        if (document.getElementById('a11y-announcer-polite')) return;
-        
-        // Helper para crear canales
-        const createAnnouncer = (id, type) => {
-            const el = document.createElement('div');
-            el.id = id;
-            el.setAttribute('role', type === 'assertive' ? 'alert' : 'status');
-            el.setAttribute('aria-live', type);
-            el.setAttribute('aria-atomic', 'true');
-            
-            // Estilo sr-only (invisible pero legible)
-            Object.assign(el.style, {
-                position: 'absolute',
-                width: '1px',
-                height: '1px',
-                padding: '0',
-                overflow: 'hidden',
-                clip: 'rect(0, 0, 0, 0)',
-                whiteSpace: 'nowrap',
-                border: '0',
-                pointerEvents: 'none' // Asegura que no interfiera con interacciones táctiles o de mouse
-            });
-            
-            document.body.appendChild(el);
-            return el;
-        };
-
-        // Creamos los dos canales
-        this.DOM.announcerPolite = createAnnouncer('a11y-announcer-polite', 'polite');
-        this.DOM.announcerAssertive = createAnnouncer('a11y-announcer-assertive', 'assertive');
-        
-        // Mantenemos referencia legacy por si acaso (opcional)
-        this.DOM.announcer = this.DOM.announcerPolite;
-    }
-
-    // 🟢 FIX A11Y: Usar el canal dedicado
-    announceA11y(message, mode = 'polite') {
-        // 🟢 Si el modal de A11y está abierto, SILENCIO TOTAL en el resto de la app.
-        // Esto evita que al cambiar el tamaño de fuente (y repintarse el fondo) 
-        // el lector se ponga a leer el contenido del swiper
-        const modal = document.getElementById('a11y-modal-overlay');
-
-        if (modal && modal.classList.contains('active')) {
-            debug.log('app', debug.DEBUG_LEVELS.DEEP, 
-                `🤫 Silenciado por Modal A11y: "${message}"`);
-
-            return;
-        }
-
-        // Aseguramos que existan los canales
-        this._injectA11yAnnouncer();
-
-        const el = mode === 'assertive' ? this.DOM.announcerAssertive : this.DOM.announcerPolite;
-
-        // 🟢 TRUE ANTI-SPAM: Si el mensaje ya es el mismo, NO TOCAR EL DOM.
-        if (this.STATE._lastAnnounced === message) {
-            debug.log('app', debug.DEBUG_LEVELS.DEEP, 
-                `🚫 Anti-Spam: Ignorando mensaje repetido "${message}"`);
-
-            return; 
-        }
-
-        // Si es un mensaje nuevo, limpiamos y ponemos el nuevo
-        this.STATE._lastAnnounced = message;
-        el.textContent = ''; 
-        
-        // Usamos un tick muy breve para asegurar que el SR note el cambio si veníamos de otro texto
-        setTimeout(() => {
-            el.textContent = message;
-            debug.log('app', debug.DEBUG_LEVELS.DEEP, `🗣️ Locutor (${mode}): "${message}"`);
-        }, 10);
-    }
-
-    announceA11yStop() {
-        if (this.DOM.announcerPolite) 
-            this.DOM.announcerPolite.textContent = '';
-
-        if (this.DOM.announcerAssertive) 
-            this.DOM.announcerAssertive.textContent = '';
-
-        this.STATE._lastAnnounced = null; // 🟢 Resetear memoria al detener
-
-        debug.log('a11y', debug.DEBUG_LEVELS.DEEP, 
-            `🗣️ Locutor detenido.`);
-    }
-
-    _syncHeaderDimensions() {
-        const header = document.getElementById('app-header');
-        if (header) {
-            const realHeight = header.offsetHeight;
-            document.documentElement.style.setProperty('--header-height-real', `${realHeight}px`);
-
-            debug.log('app', debug.DEBUG_LEVELS.DEEP, 
-                        `A11y Sync: Header mide ${realHeight}px`);
-        }
-
-        const footer = document.querySelector('footer');
-
-        if (footer) {
-            const realFooterHeight = footer.offsetHeight;
-            document.documentElement.style.setProperty('--footer-height-real', `${realFooterHeight}px`);
-        }
-    }
-
-    _setupSmartResize() {
-        let resizeTimer;
-        const handleResize = () => {
-            // 🟢 ESCUDO: Ignorar resizes causados por inyectar CSS pesados o durante el arranque
-            if (this.STATE.isUIBlocked || this.STATE.isBooting) return;
-            
-            this._updateLayoutMode();
-            this._syncHeaderDimensions();
-            this._cacheDOM(); 
-            
-            if (this.STATE.fullData) {
-                if (this.STATE.activeCourseId) {
-                    debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                                `SmartResize: Manteniendo vista detalle.`);
-
-                    requestAnimationFrame(() => {
-                        this._mostrarDetalle(this.STATE.activeCourseId, false);
-                    });
-                } else {
-                    debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                                `SmartResize: Refrescando menú.`);
-
-                    requestAnimationFrame(() => {
-                        this.renderNavegacion();
-                    });
-                }
-            }
-        };
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(handleResize, 100); 
-        });
-
-        // 2. 🟢 ZOOM TÁCTIL (Pinch-to-zoom)
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', () => {
-                // Usamos un debounce más corto para que se sienta reactivo al hacer zoom
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(handleResize, 100); 
-            });
-        }
-    }
-
-    _updateLayoutMode() {
-        const rootStyle = getComputedStyle(document.documentElement);
-        // 1. Detectar el "Elefante" (Zoom de Accesibilidad)
-        const scale = parseFloat(rootStyle.getPropertyValue('--font-scale')) || 1;
-        
-        // 🟢 FIX CRÍTICO: El bucle de 15px del Scrollbar
-        const realWidth = window.innerWidth;
-
-        // 🟢 FIX ZOOM: Usar visualViewport si existe, sino fallback a innerWidth
-        const realHeight = window.visualViewport ? 
-                        window.visualViewport.height : 
-                        window.innerHeight;
-        
-        // Para el ancho, SOLO pisamos el innerWidth si el usuario está
-        // activamente haciendo "pinch-to-zoom" táctil (escala > 1).
-        if (window.visualViewport && window.visualViewport.scale > 1) {
-            realWidth = window.visualViewport.width;
-        }
-        
-        // 2. Determinar Modo Inicial por ANCHO
-        const effectiveWidth = realWidth / scale;
-        const effectiveHeight = realHeight / scale;
-        
-        let candidateMode;
-        
-        if (effectiveWidth <= data.VIEWPORT.MAX_WIDTH.MOBILE) {
-            candidateMode = 'mobile';
-                
-        } else if (effectiveWidth <= data.VIEWPORT.MAX_WIDTH.TABLET_PORTRAIT) {
-            candidateMode = 'tablet-portrait';
-                
-        } else if (effectiveWidth <= data.VIEWPORT.MAX_WIDTH.TABLET_LANDSCAPE) {
-            candidateMode = 'tablet-landscape';
-
-        } else candidateMode = 'desktop';
-
-        // 3. 🚨 LÓGICA DE CAÍDA EN CASCADA (FALLBACK) POR ALTURA 🚨
-        // Si no cabe verticalmente, degradamos al siguiente diseño más compacto.
-
-        // Desktop (3 filas) -> Si no cabe, baja a Tablet Landscape (2 filas)
-        if (candidateMode === 'desktop') {
-            if (effectiveHeight < data.VIEWPORT.MIN_CONTENT_HEIGHT.DESKTOP) {
-                debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
-                            `Fallback Altura: Desktop -> Tablet Landscape`);
-                
-                candidateMode = 'tablet-landscape';
-            }
-        }
-
-        // Tablet Landscape (2 filas ancho) -> Si no cabe, baja a Tablet Portrait (2 filas estrecho)
-        if (candidateMode === 'tablet-landscape') {
-            if (effectiveHeight < data.VIEWPORT.MIN_CONTENT_HEIGHT.TABLET) {
-                debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
-                            `Fallback Altura: Tablet Landscape -> Tablet Portrait`);
-
-                candidateMode = 'tablet-portrait';
-            }
-        } 
-
-        // Tablet Portrait (2 filas estrecho) -> Si no cabe, baja a Mobile (1 fila)
-        if (candidateMode === 'tablet-portrait') {
-            if (effectiveHeight < data.VIEWPORT.MIN_CONTENT_HEIGHT.TABLET) {
-                debug.log('app', debug.DEBUG_LEVELS.EXTREME, 
-                            `Fallback Altura: Tablet Portrait -> Mobile`);
-
-                candidateMode = 'mobile';
-            }
-        } 
-
-        // Safe Mode (Último recurso, SOLO en Mobile)
-        // Si ya estamos en Mobile y aun así no cabemos, liberamos el footer.
-        let enableSafeMode = false;
-        
-        if (candidateMode === 'mobile') {
-            if (effectiveHeight < data.VIEWPORT.MIN_CONTENT_HEIGHT.MOBILE) {
-                enableSafeMode = true;
-            }
-        } 
-
-        // 4. Aplicar el Modo Final
-        const currentMode = document.body.getAttribute('data-layout');
-        if (currentMode !== candidateMode) {
-            document.body.setAttribute('data-layout', candidateMode);
-
-            // 🟢 NUEVO: Inyección dinámica del CSS de Layout
-            let cssFile = candidateMode;
-            // Si es tablet-portrait o tablet-landscape, ambos usan style-tablet.css
-            if (candidateMode.includes('tablet')) {
-                cssFile = 'tablet'; 
-            }
-            
-            // Inyectamos el archivo exacto que el usuario necesita
-            this._injectCSS(`styles/style-${cssFile}.css`, 'vortex-css-layout');
-
-            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                        `Layout Final: ${candidateMode} (W:${effectiveWidth.toFixed(0)} / H:${effectiveHeight.toFixed(0)})`);
-        }
-
-        const currentSafe = document.body.getAttribute('data-safe-mode') === 'true';
-        if (enableSafeMode !== currentSafe) {
-            document.body.setAttribute('data-safe-mode', enableSafeMode ? 'true' : 'false');
-            
-            // 🟢 INYECCIÓN DINÁMICA DE SAFE MODE
-            if (enableSafeMode) {
-                this._injectCSS('styles/style-safe-mode.css', 'vortex-css-safe');
-            } else {
-                // Si la pantalla vuelve a crecer, eliminamos el CSS para limpiar la memoria
-                const safeLink = document.getElementById('vortex-css-safe');
-                if (safeLink) safeLink.remove();
-            }
-
-            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                `🛡️ Safe Mode: ${enableSafeMode ? 'ON' : 'OFF'} (Solo Mobile) | Eff.Height: ${effectiveHeight.toFixed(0)}px`);
-            
-            if (!enableSafeMode) {
-                window.scrollTo(0, 0);
-                if (this.STATE.carouselInstance) 
-                    requestAnimationFrame(() => this.STATE.carouselInstance.update());
-            }
-        }
-    }
-    
-    _cacheDOM() {
-        const layout = document.body.getAttribute('data-layout') || 'desktop';
-        const isMobile = layout === 'mobile';
-        const isDesktopView = layout === 'desktop'; 
-        
-        debug.log('app', debug.DEBUG_LEVELS.DEEP, 
-                    `Refrescando caché DOM. Modo: ${layout}`);
-
-        this.DOM.vistaDetalleDesktop = document.getElementById('vista-detalle-desktop');
-        this.DOM.vistaDetalleMobile = document.getElementById('vista-detalle-mobile');
-        
-        this.DOM.vistaDetalle = isMobile ? this.DOM.vistaDetalleMobile : this.DOM.vistaDetalleDesktop;
-        this.DOM.detalleTrack = isMobile ? document.getElementById('detalle-track-mobile') : document.getElementById('detalle-track-desktop');
-        
-        this.DOM.header = document.getElementById('app-header');
-        
-        this.DOM.cardVolverFija = document.getElementById('vista-volver');
-        this.DOM.cardVolverFijaElemento = document.getElementById('card-volver-fija-elemento');
-        this.DOM.infoAdicional = document.getElementById('info-adicional');
-        this.DOM.cardNivelActual = document.getElementById('card-nivel-actual');
-        this.DOM.appContainer = document.getElementById('app-container');
-        this.DOM.toast = document.getElementById('toast-notification'); 
-
-        // 🟢 FIX A11Y: Configurar Toast
-        if (this.DOM.toast) {
-            if (!this.DOM.toast.getAttribute('role')) 
-                this.DOM.toast.setAttribute('role', 'status'); 
-
-            if (!this.DOM.toast.getAttribute('aria-hidden')) 
-                this.DOM.toast.setAttribute('aria-hidden', true);
-        }
-
-        // 🟢 FIX A11Y: SILENCIAR RUIDO (Quitar aria-live de elementos que no deben hablar solos)
-        // El track y el título no deben anunciar cambios automáticos, nosotros controlamos el foco y los avisos.
-        if (this.DOM.cardNivelActual) 
-            this.DOM.cardNivelActual.removeAttribute('aria-live');
-
-        if (isMobile) {
-            this.DOM.vistaNav = document.getElementById('vista-navegacion-mobile');
-            this.DOM.track = document.getElementById('track-mobile');
-
-        } else if (isDesktopView) {
-            this.DOM.vistaNav = document.getElementById('vista-navegacion-desktop');
-            this.DOM.track = document.getElementById('track-desktop');
-
-        } else { 
-            this.DOM.vistaNav = document.getElementById('vista-navegacion-tablet');
-            this.DOM.track = document.getElementById('track-tablet');
-        }
-
-        // Limpieza extra de tracks
-        if (this.DOM.track) this.DOM.track.removeAttribute('aria-live');
-        ['track-desktop', 'track-tablet', 'track-mobile'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.removeAttribute('aria-live');
-        });
-    }
+    // ============================================================================
+    // 📐 MÉTODOS DE LAYOUT DELEGADOS
+    // ============================================================================
+    _isTouchDevice() { return app_layout.isTouchDevice(); }
+    _syncHeaderDimensions() { app_layout.syncHeaderDimensions(this); }
+    _setupSmartResize() { app_layout.setupSmartResize(this); }
+    _updateLayoutMode() { app_layout.updateLayoutMode(this); }
+    _cacheDOM() { app_layout.cacheDOM(this); }
 
     // ==========================================
     // 🟢 PAGINA DE "QUIÉNES SOMOS" (FANTASMA)
     // ==========================================
     async _mostrarAbout(pushHistory = true) {
-        debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-            'Abriendo página especial: Quiénes Somos');
-
-        if (!this.STATE.isSpecialViewActive) {
-            this.STATE._previousCourseId = this.STATE.activeCourseId;
-        }
-
-        this.STATE.activeCourseId = 'c-about';
-        this.STATE.isSpecialViewActive = true; 
-
-        if (pushHistory) {
-            const url = new URL(window.location);
-            if (url.searchParams.get('id') !== 'c-about') {
-                url.searchParams.set('id', 'c-about');
-                window.history.pushState({}, '', url);
-            }
-        }
-
-        await this._mostrarDetalle('c-about');
+        await app_router.mostrarAbout(this, pushHistory);
     }
 }
 
