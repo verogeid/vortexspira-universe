@@ -1,89 +1,108 @@
 # 📚 Documentación para el Mantenedor (VortexSpira UI)
 
-Este documento detalla el propósito y la función de todos los archivos del proyecto para facilitar su mantenimiento y desarrollo futuro, reflejando la arquitectura orientada a componentes, el enrutamiento tipo SPA y la accesibilidad nivel AAA.
+Este documento detalla el propósito de todos los archivos del proyecto para facilitar su mantenimiento y desarrollo futuro, reflejando la arquitectura SPA modular y la accesibilidad AAA.
 
 ---
 
-## 1. Archivos de Estructura y Datos
+## 1. Archivos de Raíz y Configuración Web
 
-| Archivo | Propósito Principal | Nota Crítica |
-| :--- | :--- | :--- |
-| **`index.html`** | **Estructura HTML Principal.** Define la estructura base, la importación de scripts modulares, el Grid de la app (`#app-container`) y el HTML del Modal de Accesibilidad (`#a11y-modal-overlay`). | Contiene la precarga (`preload`) de las tipografías de alta legibilidad (Atkinson/Lexend). |
-| **`data/cursos_es.json` / `_en.json`** | **Fuente de Datos Principal.** Contiene la jerarquía (`navegacion`) de secciones, subsecciones, cursos y sus enlaces. | Separados por idioma para escalabilidad internacional. |
-| **`data/strings_es.json` / `_en.json`** | **Diccionario de Internacionalización.** Textos de la interfaz, etiquetas `aria-label`, mensajes de estado (toast) y locuciones para el *Screen Reader*. | El motor `i18n.js` los inyecta dinámicamente. |
-
----
-
-## 2. Archivos de Lógica (Directorio `code/`)
-
-### A. Núcleo, Flujo y Configuración
-
-| Archivo | Propósito Principal | Nota Crítica |
-| :--- | :--- | :--- |
-| **`app.js`** | **Entry Point / Orquestador.** Inicializa la app (`VortexSpiraApp`), el `STATE` global, el `ResizeObserver`, escucha a la *History API* (`popstate`) e inyecta el locutor ARIA. | Gestiona el renderizado preventivo para evitar spam de foco en el arranque (`isBooting`). |
-| **`data.js`** | **Constantes y Configuración.** Define *breakpoints* (`VIEWPORT`), comportamiento de Swiper, los valores por defecto de Accesibilidad (`A11Y`) y URLs. | |
-| **`i18n.js`** | **Motor de Internacionalización.** Carga los JSON de idioma, aplica textos al DOM y gestiona el idioma del `<html>`. | |
-| **`a11y.js`** | **Controlador de Accesibilidad.** Gestiona el Modal A11y, guardado en `localStorage`, y la inyección de atributos dinámicos (`data-theme`, `data-reduced-motion`) al `<body>`. | |
-| **`nav-stack.js`** | **Gestión del Historial Lógico.** Maneja la pila profunda de navegación y la reconstrucción matemática por *deep linking* (IDs de URL). | |
-
-### B. Depuración y Diagnóstico (Herramientas de Mantenedor)
-
-| Archivo | Propósito Principal | Nota Crítica |
-| :--- | :--- | :--- |
-| **`debug.js`** | **Sistema de Logging Maestro.** Define niveles (`DEBUG_LEVELS`) e intercepta la consola. | |
-| **`debug.screenReaderSim.js`** | **Simulador de Lector de Pantalla.** Analiza el DOM (nombres accesibles, roles, estados ARIA nativos e inyectados) y los imprime en consola. | Soporta lectura de descripciones y posiciones (`aria-posinset`). |
-| **`debug.diagnostics.js`** | **Trazabilidad Visual.** Rastrea el foco activo, eventos globales y cambios de layout para asegurar la estabilidad visual. | |
-
-### C. Navegación, Interacción y Foco
-
-| Archivo | Propósito Principal | Nota Crítica |
-| :--- | :--- | :--- |
-| **`nav-base.js`** | **Manejadores Core.** Controla clics (`_handleCardClick`), botón volver, escritura en URL (`history.pushState`) y el **Cálculo de Foco y Colisiones (`_updateFocusImpl`)**. | **CRÍTICO:** Aquí reside el sistema de `clamping` y el `delta` para mover el contenido si el Header lo tapa. |
-| **`nav-base-details.js`** | **Lógica de Vista de Detalle.** Unifica la interacción de la vista de lectura y los botones de acción/compra. | |
-| **`nav-mouse-swipe.js`** | **Control de Ratón/Táctil.** Sustituto evolucionado de `nav-tactil.js`. Maneja la rueda del ratón y la función *Skipper* (salto automático de columnas vacías). | |
-| **`nav-keyboard-base.js`** | **Controles de Teclado (Menú).** Atrapa eventos de teclado, maneja flechas de dirección y bloquea robos de foco indebidos. | |
-| **`nav-keyboard-details.js` / `-swipe.js`** | **Controles de Teclado Específicos.** Delegan el comportamiento de las flechas dentro de las vistas de detalle o carruseles interactivos. | |
-
-### D. Renderizado y Generación de HTML
-
-| Archivo | Propósito Principal | Nota Crítica |
-| :--- | :--- | :--- |
-| **`render-base.js`** | **Motor de Renderizado Maestro.** Coordina las vistas, restaura el foco tras redimensionar (Snapshots) y genera el HTML base de la tarjeta. | Inyecta las variables `aria-label` compuestas. |
-| **`render-swipe.js`** | **Renderizado Desktop/Tablet.** Configura el Swiper horizontal y calcula índices lógicos de ARIA. | |
-| **`render-mobile.js`** | **Renderizado Móvil.** Configura el Swiper vertical en modo *FreeMode* para scroll fluido. | |
-| **`render-details.js`** | **Renderizado de Detalles.** Inyecta los fragmentos de texto con `aria-description`. Alterna entre modo *Structural* (HTML nativo) y *Continuous Flow* (cálculo de altura dinámica). | |
+| Archivo | Propósito |
+| :--- | :--- |
+| **`index.html`** | Punto de entrada. Define el Grid base (`#app-container`) e importa scripts y estilos. |
+| **`MAINTAINER_DOCS.md`** | Esta documentación técnica. |
+| **`README.md`** | Descripción general para repositorios. |
+| **`LICENSE`** | Términos de licencia propietaria. |
+| **`CNAME`** | Configuración de dominio para GitHub Pages. |
+| **`robots.txt` / `sitemap.xml`** | Configuración para SEO y rastreadores. |
+| **`favicon.ico`** | Icono del sitio. |
+| **`server.bat` / `server.sh`** | Scripts para lanzar un servidor local (Windows/Unix). |
 
 ---
 
-## 3. Archivos de Estilo (Directorio `styles/`)
+## 2. Lógica de Aplicación (`code/`)
 
-### A. Core y Layout
+### A. core/ (Arquitectura SPA)
+* **`app.js`**: Orquestador principal. Inicializa el `STATE` y los observadores de layout.
+* **`app-events.js`**: Bus de eventos global para comunicación desacoplada.
+* **`app-layout.js`**: Lógica de gestión de dimensiones y visibilidad del viewport.
+* **`app-router.js`**: Manejo de rutas SPA y sincronización con la *History API*.
 
-| Archivo | Propósito Principal | Nota Crítica |
-| :--- | :--- | :--- |
-| **`style-base.css`** | **Capa de Importación.** Orquesta la importación de todo el CSS en el orden específico de cascada. | |
-| **`style-layout.css`** | **Estructura Grid.** Define las áreas principales y el manejo de visibilidad de las vistas centrales. | |
-| **`style-desktop.css` / `style-tablet.css` / `style-mobile.css`** | **Responsividad.** Media queries específicos por dispositivo. `style-mobile.css` maneja el *Safe Mode* (ocultación de footer). | |
-| **`style-header.css` / `-footer.css`** | Estilos específicos para la cabecera (logo, animaciones) y el pie de página. | |
-| **`style-a11y.css`** | **Panel de Accesibilidad.** Estilos del modal flotante, checkboxes interactivos (`accent-color`) y declaración `@font-face` (Atkinson Hyperlegible, Lexend). | |
+### B. services/ (Utilidades y Datos)
+* **`data.js`**: Constantes globales, URLs de Hotmart y parámetros por defecto de A11y.
+* **`i18n.js`**: Motor de internacionalización. Carga y aplica los strings del DOM.
+* **`app-utils.js`**: Funciones auxiliares para manipulación de DOM y tiempos.
 
-### B. Theming y Accesibilidad (Nivel AAA)
+### C. features/ (Funcionalidades)
+* **a11y/**:
+    * `a11y.js`: Controlador de guardado y aplicación de preferencias (temas, fuentes).
+    * `a11y-modal.js`: Lógica del modal interactivo de configuración AAA.
+    * `app-feedback.js`: Gestión del sistema de sugerencias y reporte de errores.
+* **navigation/**:
+    * `nav-base.js`: Lógica core de navegación y cálculo de colisiones de foco.
+    * `nav-base-pc.js`: Ajustes de navegación para dispositivos con puntero.
+    * `nav-base-details.js`: Comportamiento de la vista inmersiva de curso.
+    * `nav-keyboard-base.js` / `-details.js` / `-swipe.js`: Manejadores de eventos de teclado.
+    * `nav-mouse-swipe.js`: Soporte para scroll con rueda y gestos táctiles.
+    * `nav-stack.js`: Gestión de la pila de historial para el botón "Volver".
 
-| Archivo | Propósito Principal | Nota Crítica |
-| :--- | :--- | :--- |
-| **`style-theme.css`** | **Theming Base.** Definición primaria de variables CSS (colores, sombras, tamaños). | |
-| **`style-reduce-motion.css`** | **Modo "Sin Animaciones".** Apaga transiciones y *smooth scroll* vía Media Query del S.O. y atributo `[data-reduced-motion="true"]`. | |
-| **`style-theme-scheme-light.css` / `-dark.css`** | **Esquemas Claro y Oscuro.** Responde al sistema operativo y a la sobreescritura manual del usuario (`data-theme="light/dark"`). | |
-| **`style-theme-contrast.css`** | **Alto Contraste.** Maximiza bordes y elimina sombras suaves para usuarios con dificultades visuales. | |
-| **`style-theme-forced-colors.css`** | **Colores Forzados.** Extrae los colores semánticos nativos de Windows (`Canvas`, `ButtonText`, `Highlight`) para máximo rigor. | |
-| **`style-theme-yellow.css`** | **Baja Visión (Amarillo sobre Negro).** Tema extremo de accesibilidad para fotofobia severa y cataratas. | |
+### D. render/ (Generación de UI)
+* **`render-base.js`**: Generador de HTML para tarjetas y restauración de snapshots de foco.
+* **`render-details.js`**: Inyección de contenidos con `aria-description` y flujo continuo.
+* **`render-mobile.js`**: Implementación de Swiper vertical (Mobile).
+* **`render-swipe.js`**: Implementación de Swiper horizontal (Desktop/Tablet).
 
-### C. Componentes
+### E. components/ (UI Modular)
+* **`main-menu.js`**: Lógica del componente de menú principal de navegación.
 
-| Archivo | Propósito Principal | Nota Crítica |
-| :--- | :--- | :--- |
-| **`style-cards.css`** | Diseño base de las tarjetas, hover, focos (`focus-visible` / `focus-current`) y tarjetas deshabilitadas. | |
-| **`style-details.css`** | Diseño de la vista inmersiva de lectura, difuminado contextual (*blur*) de elementos no enfocados y botones de acción. | |
-| **`style-components.css`** | Toast notifications, Breadcrumbs y el botón flotante fijo de `volver`. | |
-| **`style-media.css`** | **Recursos y Multimedia.** Gestiona la carga de tipografías base, iconos SVG mediante `background-image` (como las máscaras de los botones) y ajustes responsivos de imágenes/medios. | Separa el "peso gráfico" de la estructura lógica del CSS. |
+### F. debug/ (Herramientas de Diagnóstico)
+* **`debug.js`**: Sistema central de logs. Nunca eliminar líneas, usar flags.
+* **`debug.diagnostics.js`**: Rastreador de eventos de foco y cambios de layout.
+* **`debug.screenReaderSim.js`**: Simulador de lector de pantalla (análisis de accesibilidad).
+* **`debug.ldJsonSim.js`**: Verificador de datos estructurados para SEO.
 
+---
+
+## 3. Datos e Internacionalización (`data/`)
+
+### courses/ (Contenido Educativo)
+* `cursos_es.json`, `cursos_en.json`, `cursos_fr.json`, `cursos_pt.json`, `cursos_de.json`.
+
+### strings/ (Diccionarios de Interfaz)
+* `strings_es.json`, `strings_en.json`, `strings_fr.json`, `strings_pt.json`, `strings_de.json`.
+* **Nota**: Aquí se define `feedback` y `feedbackTarget`.
+
+---
+
+## 4. Recursos (`resources/`)
+
+* **fonts/**: Fuentes `AtkinsonHyperlegible` y `Lexend` (Regular/Bold).
+* **images/**: Logotipos en formato PNG y SVG.
+* **demoImages/**: Activos visuales para documentación y demostraciones de la PWA.
+
+---
+
+## 5. Estilos (`styles/`)
+
+### base/ (Cimientos)
+* `style-fonts.css`, `style-layout.css`, `style-no-opacity.css`, `style-reduce-motion.css`.
+
+### layouts/ (Responsividad)
+* `style-desktop.css`, `style-tablet.css`, `style-mobile.css`, `style-safe-mode.css`.
+
+### components/ (Interfaz)
+* `style-a11y.css`, `style-cards.css`, `style-components.css`, `style-details.css`, `style-footer.css`, `style-header.css`, `style-menu.css`.
+
+### themes/ (Temas AAA)
+* `style-theme.css` (Variables raíz).
+* `style-theme-scheme-light.css` / `-dark.css`.
+* `style-theme-contrast.css` (Alto contraste).
+* `style-theme-yellow.css` (Baja visión).
+* `style-theme-forced-colors.css` / `-mobile.css` (Contraste forzado del SO).
+
+### media/ (Multimedia y Máscaras)
+* `style-media-base.css`, `style-media-details.css`, `style-media-menu.css`.
+
+---
+
+## 6. Scripts de Automatización (`scripts/`)
+* **`generate-sitemap.mjs`**: Script Node.js para actualizar el sitemap según los JSON de cursos.
