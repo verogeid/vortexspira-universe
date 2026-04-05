@@ -35,7 +35,7 @@ Como desarrollador independiente, dedico mi tiempo a perfeccionar una arquitectu
 
 Tu apoyo financia directamente el tiempo de ingeniería senior necesario para mantener estos estándares sin compromisos.
 
-> **[👉 Convertirme en patrocinador en GitHub](https://github.com/sponsors/verogeid)**
+> **[![](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=white)](https://github.com/sponsors/verogeid)**
 
 ---
 
