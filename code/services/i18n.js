@@ -159,6 +159,24 @@ export function applyStrings(appInstance) {
         }
     }
 
+    // 🟢 HOT SWAP: Textos Visuales Internos del Menú (Fat Buttons en Desktop)
+    const menuVisualTextsById = {
+        'menu-btn-a11y': 'menu.aria.a11yBtn',
+        'menu-btn-lang': 'menu.aria.langBtn',
+        'menu-btn-linkedin': 'menu.aria.linkedin',
+        'menu-btn-github': 'menu.aria.landing',
+        'menu-btn-about': 'menu.aria.about',
+        'menu-btn-feedback': 'menu.aria.feedback' 
+    };
+
+    for (const id in menuVisualTextsById) {
+        // Buscamos específicamente el span con la clase .menu-text dentro de cada botón
+        const textSpan = document.querySelector(`#${id} .menu-text`);
+        if (textSpan) {
+            textSpan.textContent = getString(menuVisualTextsById[id]);
+        }
+    }
+
     // 🟢 Actualizar dinámicamente la insignia visual (ES/EN) del botón de idiomas
     const langTextSpan = document.querySelector('#menu-btn-lang .lang-text');
     if (langTextSpan) {

@@ -22,7 +22,7 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
         const currentLang = localStorage.getItem('vortex_lang') || 'es';
         const langLabel = appInstance.getString('menu.aria.langBtn');
 
-        // 🟢 INYECTAMOS LA CUADRÍCULA DE ICONOS (44x44)
+        // 🟢 INYECTAMOS LA CUADRÍCULA (Iconos en Móvil, Lista Detallada en Desktop)
         navDropdown.innerHTML = `
             <div class="menu-grid" role="menu">
                 <div class="menu-grid-row" role="presentation">
@@ -31,25 +31,90 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         class="menu-link" 
                         aria-label="${appInstance.getString('menu.aria.a11yBtn')}"
                         title="${appInstance.getString('menu.aria.a11yBtn')}">
-                        <span class="menu-icon icon-a11y"></span> 
+
+                        <span class="menu-icon icon-a11y" aria-hidden="true"></span> 
+
+                        <span class="menu-text" aria-hidden="true">
+                            ${appInstance.getString('menu.aria.a11yBtn')}
+                        </span>
                     </button>
+
                     ${enableI18n ? `
                     <button role="menuitem" 
                         id="menu-btn-lang" 
                         class="menu-link lang-btn-container" 
                         aria-label="${langLabel}"
                         title="${langLabel}">
-                        <span class="lang-icon-bg" aria-hidden="true"></span>
-                        <span class="lang-text" aria-hidden="true">
-                            ${currentLang.toUpperCase()}
+
+                        <div class="icon-wrapper" aria-hidden="true">
+                            <span class="lang-icon-bg"></span>
+                            <span class="lang-text">
+                                ${currentLang.toUpperCase()}
+                            </span>
+                        </div>
+
+                        <span class="menu-text" aria-hidden="true">
+                            ${langLabel}
                         </span>
                     </button>` : ''}
+
                     <button role="menuitem" 
                         id="menu-btn-about" 
                         class="menu-link" 
                         aria-label="${appInstance.getString('menu.aria.about')}"
                         title="${appInstance.getString('menu.aria.about')}">
-                        <span class="menu-icon icon-info"></span> 
+
+                        <span class="menu-icon icon-info" aria-hidden="true"></span>
+
+                        <span class="menu-text" aria-hidden="true">
+                            ${appInstance.getString('menu.aria.about')}
+                        </span>
+                    </button>
+
+                </div>
+
+                <div class="menu-separator" role="presentation">
+                    <hr aria-hidden="true">
+                </div>
+
+                <div class="menu-grid-row" role="presentation">
+                    <button role="menuitem" 
+                        id="menu-btn-linkedin"
+                        class="menu-link" 
+                        aria-label="${appInstance.getString('menu.aria.linkedin')}"
+                        title="${appInstance.getString('menu.aria.linkedin')}">
+
+                        <span class="menu-icon icon-linkedin" aria-hidden="true"></span> 
+
+                        <span class="menu-text" aria-hidden="true">
+                            ${appInstance.getString('menu.aria.linkedin')}
+                        </span>
+                    </button>
+
+                    <button role="menuitem" 
+                        id="menu-btn-github"
+                        class="menu-link" 
+                        aria-label="${appInstance.getString('menu.aria.github')}"
+                        title="${appInstance.getString('menu.aria.github')}">
+
+                        <span class="menu-icon icon-github" aria-hidden="true"></span> 
+
+                        <span class="menu-text" aria-hidden="true">
+                            ${appInstance.getString('menu.aria.github')}
+                        </span>
+                    </button>
+
+                    <button role="menuitem" 
+                        id="menu-btn-landing"
+                        class="menu-link" 
+                        aria-label="${appInstance.getString('menu.aria.landing')}"
+                        title="${appInstance.getString('menu.aria.landing')}">
+
+                        <span class="menu-icon icon-landing" aria-hidden="true"></span> 
+
+                        <span class="menu-text" aria-hidden="true">
+                            ${appInstance.getString('menu.aria.landing')}
+                        </span>
                     </button>
                 </div>
 
@@ -58,68 +123,22 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                 </div>
 
                 <div class="menu-grid-row" role="presentation">
-                    <a role="menuitem" 
-                        id="menu-link-linkedin"
-                        href="${data.MEDIA.URL.LINKEDIN}" 
-                        target="_blank" 
+                    <button role="menuitem" 
+                        id="menu-btn-feedback"
                         class="menu-link" 
-                        aria-label="${appInstance.getString('menu.aria.linkedin')}"
-                        title="${appInstance.getString('menu.aria.linkedin')}">
-                        <span class="menu-icon icon-linkedin"></span> 
-                    </a>
-                    <a role="menuitem" 
-                        id="menu-link-github"
-                        href="${data.MEDIA.URL.DEV_DIARY}" 
-                        target="_blank" 
-                        class="menu-link" 
-                        aria-label="${appInstance.getString('menu.aria.github')}"
-                        title="${appInstance.getString('menu.aria.github')}">
-                        <span class="menu-icon icon-github"></span> 
-                    </a>
-                    <a role="menuitem" 
-                        id="menu-link-landing"
-                        href="${data.MEDIA.URL.LANDING_PAGE}" 
-                        target="_blank" 
-                        class="menu-link" 
-                        aria-label="${appInstance.getString('menu.aria.landing')}"
-                        title="${appInstance.getString('menu.aria.landing')}">
-                        <span class="menu-icon icon-landing"></span> 
-                    </a>
+                        aria-label="${appInstance.getString('menu.aria.feedback')} ${appInstance.getString('menu.aria.feedbackTarget')}"
+                        title="${appInstance.getString('menu.aria.feedback')}">
+
+                        <span class="menu-icon icon-bug" aria-hidden="true"></span> 
+
+                        <span class="menu-text" aria-hidden="true">
+                            ${appInstance.getString('menu.aria.feedback')}
+                        </span>
+                    </button>
                 </div>
 
                 <div class="menu-separator" role="presentation">
-                    <hr aria-hidden="true">
-                </div>
-
-                <div class="menu-grid-row" role="presentation">
-                    <a role="menuitem" 
-                        id="menu-link-feedback"
-                        href="https://github.com/verogeid/vortexspira-devdiary/issues/new?labels=feedback&title=[Feedback]&body=${encodeURIComponent(appInstance.getString('menu.feedbackBody'))}"
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        class="menu-link" 
-                        aria-label="${appInstance.getString('menu.aria.feedback')} 
-                        ${appInstance.getString('menu.aria.feedbackTarget')}"
-                        title="${appInstance.getString('menu.aria.feedback')}">
-                        <span class="menu-icon icon-bug"></span> 
-                    </a>
-
-                    <!--
-                    <a role="menuitem" 
-                        id="menu-link-aaa"
-                        href="TU_URL_DEL_INFORME_AQUI" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        class="menu-link" 
-                        aria-label="${appInstance.getString('menu.aria.auditAAA')}"
-                        title="${appInstance.getString('menu.aria.auditAAA')}">
-                        <span class="menu-icon icon-aaa"></span> 
-                    </a> -->
-                </div>
-
-                <div class="menu-separator" 
-                    role="presentation">
-                    <!-- <hr aria-hidden="true"> -->
+                    <hr aria-hidden="true" style="opacity: 0;">
                 </div>
 
                 <div class="menu-grid-row" role="presentation">
@@ -130,7 +149,7 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         class="menu-link cc-license-btn" 
                         aria-label="${appInstance.getString('menu.aria.license')}"
                         title="${appInstance.getString('menu.aria.license')}">
-                        
+
                         <div class="cc-license-stack" aria-hidden="true">
                             <span class="cc-layer-plate"></span>
                             <span class="cc-layer-bg-circles"></span>
@@ -139,11 +158,9 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                         </div>
                     </a>
                 </div>
-
             </div>
         `;
 
-        // 🟢 FIX: Inyectarlo en el body, fuera del header
         const existingMenu = document.getElementById('main-menu-dropdown');
         if (existingMenu) existingMenu.remove();
 
@@ -152,6 +169,30 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
             appContainer.insertBefore(navDropdown, document.getElementById('vista-volver'));
         else
             document.body.appendChild(navDropdown);
+
+        // 🟢 NUEVO: Lógica de enrutamiento para los nuevos botones
+        const setupExternalButton = (id, urlOrFunction) => {
+            const btn = navDropdown.querySelector(id);
+            if (btn) {
+                btn.onclick = (e) => {
+                    e.preventDefault();
+                    toggleMenu(true); // Cierra el menú al hacer clic
+                    
+                    // Comprobamos si le pasamos un string (URL) o una función generadora (Feedback)
+                    const targetUrl = typeof urlOrFunction === 'function' ? urlOrFunction() : urlOrFunction;
+                    window.open(targetUrl, '_blank', 'noopener,noreferrer');
+                };
+            }
+        };
+
+        setupExternalButton('#menu-btn-linkedin', data.MEDIA.URL.LINKEDIN);
+        setupExternalButton('#menu-btn-github', data.MEDIA.URL.DEV_DIARY);
+        setupExternalButton('#menu-btn-landing', data.MEDIA.URL.LANDING_PAGE);
+        
+        // Al Feedback le pasamos una función para que calcule el string codificado en el momento del clic
+        setupExternalButton('#menu-btn-feedback', () => {
+            return `https://github.com/verogeid/vortexspira-devdiary/issues/new?labels=feedback&title=[Feedback]&body=${encodeURIComponent(appInstance.getString('menu.feedbackBody'))}`;
+        });
     }
 
     _setupListeners(appInstance, enableI18n);
@@ -198,19 +239,21 @@ function _setupListeners(appInstance, enableI18n) {
 
         if (currentIndex === -1) return;
 
+        const isMobile = document.body.getAttribute('data-layout') === 'mobile';
+
         // 🟢 NAVEGACIÓN HORIZONTAL (Secuencial clásica)
-        if (e.key === 'ArrowRight') {
+        if ((e.key === 'ArrowRight') || (!isMobile && e.key === 'ArrowDown')) {
             e.preventDefault(); e.stopPropagation();
             const nextIndex = (currentIndex + 1) % allItems.length;
             allItems[nextIndex].focus();
         } 
-        else if (e.key === 'ArrowLeft') {
+        else if ((e.key === 'ArrowLeft') || (!isMobile && e.key === 'ArrowUp')) {
             e.preventDefault(); e.stopPropagation();
             const prevIndex = (currentIndex - 1 + allItems.length) % allItems.length;
             allItems[prevIndex].focus();
         } 
         // 🟢 NAVEGACIÓN VERTICAL (Espacial entre filas)
-        else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        else if (isMobile && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
             e.preventDefault(); e.stopPropagation();
 
             const rows = Array.from(navDropdown.querySelectorAll('.menu-grid-row'));
