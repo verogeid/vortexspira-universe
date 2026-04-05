@@ -7,22 +7,55 @@ import * as data from './data.js';
 let _mainMenuModule = null;
 let _isMenuLoading = false;
 
-// 🟢 LAZY LOAD: Precarga en segundo plano
-export async function preloadMainMenu(appInstance) {
-    if (_mainMenuModule) return;
-    try {
-        appInstance._injectCSS('styles/components/style-menu.css', 
-                                'vortex-css-menu');
-        appInstance._injectCSS('styles/media/style-media-menu.css', 
-                                'vortex-css-media-menu');
-        _mainMenuModule = await import('../components/main-menu.js');
+// Memoria caché para detalles
+let _detailsCssPromise = null;
+let _detailsJsPromise = null;
 
-        debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
-            '📦 Menú precargado en background');
+// Memoria caché dividida para el Menú
+let _menuCssPromise = null;
+let _menuJsPromise = null;
 
-    } catch (e) {
-        debug.logError('app_utils', 'Fallo precargando menú', e);
+// 🟢 LAZY LOAD DEL MENÚ: Precarga modularizada (Lighthouse Friendly)
+export function preloadMainMenu(appInstance, type = 'all') {
+    
+    if (type === 'all' || type === 'css') {
+        if (!_menuCssPromise) {
+            _menuCssPromise = (async () => {
+                appInstance._injectCSS('styles/components/style-menu.css', 
+                                       'vortex-css-menu');
+                appInstance._injectCSS('styles/media/style-media-menu.css', 
+                                       'vortex-css-media-menu');
+                debug.log('app_utils', debug.DEBUG_LEVELS.DEEP, '🎨 CSS del Menú precargado');
+            })();
+        }
     }
+
+    if (type === 'all' || type === 'js') {
+        if (!_menuJsPromise) {
+            _menuJsPromise = (async () => {
+                try {
+                    const menuModule = await import('../components/main-menu.js');
+
+                    debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
+                        '📦 JS del Menú Principal cargado en memoria');
+
+                    return menuModule;
+
+                } catch (e) {
+                    debug.logError('app_utils', 'Fallo cargando JS del menú', e);
+                    _menuJsPromise = null; 
+                    return null;
+                }
+            })();
+        }
+    }
+
+    return type === 'css' ? _menuCssPromise : _menuJsPromise;
+}
+
+export async function loadMainMenu(appInstance) {
+    // Cuando el usuario hace clic en el botón de hamburguesa
+    return await preloadMainMenu(appInstance, 'all');
 }
 
 // 🟢 LAZY LOAD: Apertura real al hacer clic
@@ -314,78 +347,51 @@ export function updateSEO(appInstance, curso = null) {
     schemaScript.textContent = JSON.stringify(jsonLdArray, null, 2);
 }
 
-let _detailsModulesPromise = null;
-
-// 🟢 LAZY LOAD: Apertura directa (Bloquea UI si la red es lenta)
-export function loadDetailsModules(appInstance) {
-    if (!_detailsModulesPromise) {
-        _detailsModulesPromise = (async () => {
-            // Muro de cristal para evitar dobles clics
-            appInstance.blockUI(); 
-            
-            // Inyectamos el CSS pesado de Detalles
-            appInstance._injectCSS('styles/components/style-details.css', 
-                                    'vortex-css-details');
-            appInstance._injectCSS('styles/media/style-media-details.css', 
-                                    'vortex-css-media-details');
-            appInstance._injectCSS('styles/media/style-media-menu.css', 
-                                    'vortex-css-media-menu');
-            
-            try {
-                // Descargamos los módulos JavaScript dinámicamente
-                const [render, keyboard] = await Promise.all([
-                    import('../render/render-details.js'),
-                    import('../features/navigation/nav-keyboard-details.js')
-                ]);
-                
-                appInstance.unblockUI();
-
-                debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
-                    '📦 Módulos de Detalles cargados y listos');
-                
-                return { render, keyboard };
-
-            } catch (e) {
-                appInstance.unblockUI();
-
-                debug.logError('app_utils', 'Fallo descargando detalles', e);
-
-                _detailsModulesPromise = null; // Permitimos reintentar si falló la red
-                return null;
-            }
-        })();
+// 🟢 LAZY LOAD: Precarga modularizada (Lighthouse Friendly)
+export function preloadDetailsModules(appInstance, type = 'all') {
+    
+    if (type === 'all' || type === 'css') {
+        if (!_detailsCssPromise) {
+            _detailsCssPromise = (async () => {
+                appInstance._injectCSS('styles/components/style-details.css', 
+                                       'vortex-css-details');
+                appInstance._injectCSS('styles/media/style-media-details.css', 
+                                       'vortex-css-media-details');
+                debug.log('app_utils', debug.DEBUG_LEVELS.DEEP, '🎨 CSS de Detalles precargado');
+            })();
+        }
     }
-    return _detailsModulesPromise;
+
+    if (type === 'all' || type === 'js') {
+        if (!_detailsJsPromise) {
+            _detailsJsPromise = (async () => {
+                try {
+                    const [render, keyboard] = await Promise.all([
+                        import('../render/render-details.js'),
+                        import('../features/navigation/nav-keyboard-details.js')
+                    ]);
+
+                    debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
+                        '📦 JS de Detalles cargado en memoria');
+
+                    return { render, keyboard };
+
+                } catch (e) {
+                    debug.logError('app_utils', 'Fallo cargando JS de detalles', e);
+                    _detailsJsPromise = null; 
+                    return null;
+                }
+            })();
+        }
+    }
+
+    // El Orquestador necesita el objeto con los módulos JS al hacer clic
+    return type === 'css' ? _detailsCssPromise : _detailsJsPromise;
 }
 
-// 🟢 LAZY LOAD: Precarga silenciosa (Fondo)
-export function preloadDetailsModules(appInstance) {
-    if (!_detailsModulesPromise) {
-        _detailsModulesPromise = (async () => {
-            appInstance._injectCSS('styles/components/style-details.css', 
-                                    'vortex-css-details');
-            appInstance._injectCSS('styles/media/style-media-details.css', 
-                                    'vortex-css-media-details');
-            try {
-                const [render, keyboard] = await Promise.all([
-                    import('../render/render-details.js'),
-                    import('../features/navigation/nav-keyboard-details.js')
-                ]);
-
-                debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
-                    '📦 Detalles precargados en background');
-
-                return { render, keyboard };
-
-            } catch (e) {
-                debug.logError('app_utils', 'Fallo precargando detalles en idle', e);
-
-                _detailsModulesPromise = null; 
-                return null;
-            }
-        })();
-    }
-    return _detailsModulesPromise;
+export async function loadDetailsModules(appInstance) {
+    // Cuando el usuario hace clic, pedimos 'all' para asegurar que ambos existan
+    return await preloadDetailsModules(appInstance, 'all');
 }
 
 // ============================================================================

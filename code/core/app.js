@@ -404,13 +404,13 @@ class VortexSpiraApp {
             // 🟢 PRECARGA EN SEGUNDO PLANO (Lazy Load Menu & Details)
             if (window.requestIdleCallback) {
                 requestIdleCallback(() => {
-                    app_utils.preloadMainMenu(this);
-                    app_utils.preloadDetailsModules(this);
+                    app_utils.preloadMainMenu(this, 'css');
+                    app_utils.preloadDetailsModules(this, 'css');
                 });
             } else {
                 setTimeout(() => {
-                    app_utils.preloadMainMenu(this);
-                    app_utils.preloadDetailsModules(this);
+                    app_utils.preloadMainMenu(this, 'css');
+                    app_utils.preloadDetailsModules(this, 'css');
                 }, data.PRELOAD_TIME);
             }
 

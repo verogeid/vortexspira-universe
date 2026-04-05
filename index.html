@@ -12,84 +12,70 @@
 
     <title>VortexSpira® EdTech: Selector de Cursos</title> 
 
-    <link rel="icon" 
-          href="/favicon.ico" 
-          type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="modulepreload" href="code/services/app-utils.js">
     <link rel="modulepreload" href="code/features/a11y/app-feedback.js">
     <link rel="modulepreload" href="code/core/app-layout.js">
     <link rel="modulepreload" href="code/core/app-router.js">
     <link rel="modulepreload" href="code/core/app-events.js">
-
     <link rel="modulepreload" href="code/features/a11y/a11y.js">
     <link rel="modulepreload" href="code/services/data.js">
 
-    <!-- 1. Preconectar al origen del JS/CSS externo -->
     <link rel="preconnect" href="https://jsdelivr.net" crossorigin>
 
-    <!-- 2. Fuentes -->
-    <link rel="preload" 
-          href="resources/fonts/AtkinsonHyperlegible-Regular.woff2" 
-          as="font" 
-          type="font/woff2" 
-          crossorigin="anonymous">
+    <link rel="preload" href="resources/fonts/AtkinsonHyperlegible-Regular.woff2" 
+          as="font" type="font/woff2" crossorigin="anonymous">
+    <link rel="preload" href="resources/fonts/Lexend-Regular.woff2" 
+          as="font" type="font/woff2" crossorigin="anonymous">
+    <link rel="preload" href="resources/fonts/AtkinsonHyperlegible-Bold.woff2" 
+          as="font" type="font/woff2" crossorigin="anonymous">
+    <link rel="preload" href="resources/fonts/Lexend-Bold.woff2" 
+          as="font" type="font/woff2" crossorigin="anonymous">
 
-    <link rel="preload" 
-          href="resources/fonts/Lexend-Regular.woff2" 
-          as="font" 
-          type="font/woff2" 
-          crossorigin="anonymous">
-
-    <link rel="preload" 
-          href="resources/fonts/AtkinsonHyperlegible-Bold.woff2" 
-          as="font" 
-          type="font/woff2" 
-          crossorigin="anonymous">
-
-    <link rel="preload" 
-          href="resources/fonts/Lexend-Bold.woff2" 
-          as="font" 
-          type="font/woff2" 
-          crossorigin="anonymous">
-
-    <!-- 3. CSS de Swiper -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
-    <!-- Estructura -->
     <link rel="stylesheet" href="styles/themes/style-theme.css">
     <link rel="stylesheet" href="styles/base/style-layout.css">
     <link rel="stylesheet" href="styles/components/style-cards.css">
     <link rel="stylesheet" href="styles/components/style-components.css">
     <link rel="stylesheet" href="styles/components/style-header.css">
     <link rel="stylesheet" href="styles/components/style-footer.css">
+
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" 
+          as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    </noscript>
+
+    <link rel="preload" href="styles/base/style-fonts.css" 
+          as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="styles/base/style-fonts.css">
+    </noscript>
     
-    <!-- 4. Estilos -->
-    <link rel="stylesheet" href="styles/base/style-fonts.css">
-    <link rel="stylesheet" href="styles/media/style-media-base.css">
+    <link rel="preload" href="styles/media/style-media-base.css" 
+          as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="styles/media/style-media-base.css">
+    </noscript>
 
-    <link rel="stylesheet" href="styles/base/style-no-opacity.css">
+    <link rel="preload" href="styles/base/style-no-opacity.css" 
+          as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="styles/base/style-no-opacity.css">
+    </noscript>
 
-    <link rel="stylesheet" 
-          href="styles/themes/style-theme-contrast.css" 
+    <link rel="stylesheet" href="styles/themes/style-theme-contrast.css" 
           media="(prefers-contrast: more)">
-
-    <link rel="stylesheet" 
-          href="styles/themes/style-theme-forced-colors.css" 
+    <link rel="stylesheet" href="styles/themes/style-theme-forced-colors.css" 
           media="(forced-colors: active)">
-
-    <link rel="stylesheet" 
-          href="styles/base/style-reduce-motion.css" 
+    <link rel="stylesheet" href="styles/base/style-reduce-motion.css" 
           media="(prefers-reduced-motion: reduce)">
-
-    <link rel="stylesheet" 
-          href="styles/themes/style-theme-scheme-light.css" 
+    <link rel="stylesheet" href="styles/themes/style-theme-scheme-light.css" 
           media="(prefers-color-scheme: light)">
-
-    <link rel="stylesheet" 
-          href="styles/themes/style-theme-scheme-dark.css" 
+    <link rel="stylesheet" href="styles/themes/style-theme-scheme-dark.css" 
           media="(prefers-color-scheme: dark)">
 </head>
+
 <body>
 
     <header id="app-header">
