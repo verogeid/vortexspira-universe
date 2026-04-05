@@ -24,7 +24,7 @@ header {
     min-height: var(--header-height);
     
     display: flex;
-    align-items: safe center;
+    align-items: center;
     justify-content: space-between;
     gap: var(--header-gap);
     padding: 0; 
@@ -199,17 +199,25 @@ header h1 a:focus .header-logo::before {
 }
 
 body[data-layout="desktop"] #main-header-subtitle { 
-    display: inline-block; 
+    display: inline-block !important; /* 🟢 LA LLAVE: Forzamos la caja física para que no sea inline puro */
+    vertical-align: middle; /* 🎯 Alinea el centro de la caja con el centro tipográfico del padre */
+    
     max-width: 30rch;
     width: auto; 
     text-align: left;
-    font-size: 0.5em; /* Relativo al padre, escala bien */
-    opacity: 0.8;
-    vertical-align: top;
-    margin-left: 0.3em;
+    font-size: 0.5em; 
+    
+    margin-left: 0.8em; 
+    margin-top: 0; 
+    margin-bottom: 0;
+
     white-space: normal; 
-    text-overflow: initial;
-    overflow: initial;
+    line-height: 1.2; 
+    
+    /* 🟢 AHORA SÍ: Como el elemento ya es una caja física (inline-block), 
+       el transform funcionará a la perfección. 
+       Ajusta este valor (ej: 0.1em o 0.2em) para el centrado óptico final. */
+    transform: translateY(0.1em);
 }
 body[data-layout="mobile"] #main-header-subtitle,
 body[data-layout="tablet-portrait"] #main-header-subtitle,
@@ -263,6 +271,13 @@ body[data-layout="mobile"] header h1 a {
     align-items: center !important;
 }
 
+/* 🟢 FIX: Convertimos el contenedor de texto en Flexbox para alinear sus hijos */
+body[data-layout="desktop"] header h1 .title-text-clamp {
+    display: flex;
+    flex-direction: row;
+    align-items: center; /* 🎯 Esto centra matemáticamente 1 o 2 líneas */
+    white-space: nowrap; /* Evita que VortexSpira se parta */
+}
 /* 🟢 2. El Motor de Texto: Se encarga de limitar a 2 líneas y poner los '...' */
 body[data-layout="mobile"] header h1 .title-text-clamp {
     /* 🛡️ LA LLAVE MAESTRA: Evita el desbordamiento interno de Flexbox */
