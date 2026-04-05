@@ -17,9 +17,9 @@ export const DEBUG_CONFIG = {
 
     global_imageSec: DEBUG_LEVELS.DISABLED,
 
-    global_focus: DEBUG_LEVELS.DISABLED,
+    global_focus: DEBUG_LEVELS.EXTREME,
     global_font: DEBUG_LEVELS.DISABLED,
-    global_layout: DEBUG_LEVELS.DISABLED,
+    global_layout: DEBUG_LEVELS.EXTREME,
     
     global_key: DEBUG_LEVELS.DISABLED,
     global_mouse: DEBUG_LEVELS.DISABLED,
@@ -29,6 +29,10 @@ export const DEBUG_CONFIG = {
     app: DEBUG_LEVELS.DISABLED,
 
     app_utils: DEBUG_LEVELS.DISABLED,
+    app_events: DEBUG_LEVELS.EXTREME,
+    app_layouts: DEBUG_LEVELS.EXTREME,
+    app_router: DEBUG_LEVELS.DISABLED,
+
     data: DEBUG_LEVELS.DISABLED,
     i18n: DEBUG_LEVELS.DISABLED,
 
@@ -41,6 +45,7 @@ export const DEBUG_CONFIG = {
 
     // Módulos de Detalle
     nav_base: DEBUG_LEVELS.DISABLED,
+    nav_base_pc: DEBUG_LEVELS.DISABLED,
     nav_base_details: DEBUG_LEVELS.DISABLED,
     
     // Módulos de Teclado
@@ -54,7 +59,8 @@ export const DEBUG_CONFIG = {
     
     render_base: DEBUG_LEVELS.DISABLED,
     render_details: DEBUG_LEVELS.DISABLED, 
-    render_swipe: DEBUG_LEVELS.DISABLED
+    render_swipe: DEBUG_LEVELS.DISABLED,
+    render_mobile: DEBUG_LEVELS.DISABLED
 };
 
 /* ============================================================

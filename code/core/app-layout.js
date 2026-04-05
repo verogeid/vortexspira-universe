@@ -63,7 +63,8 @@ export function syncHeaderDimensions(app) {
 
 export function setupSmartResize(app) {
     let resizeTimer;
-    const handleResize = () => {
+
+    const handleResize = async () => {
         if (app.STATE.isUIBlocked || app.STATE.isBooting) return;
         
         // 1. 📸 EL NOTARIO TOMA LA FOTO ANTES DE QUE SE DESTRUYA NADA
@@ -78,25 +79,18 @@ export function setupSmartResize(app) {
                 debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                     `SmartResize: Manteniendo vista detalle.`);
 
-                requestAnimationFrame(() => {
-                    app._mostrarDetalle(app.STATE.activeCourseId, false);
-                });
-
-                // 2. 🔄 EL NOTARIO RESTAURA
-                if (app.restoreFocusSnapshot) app.restoreFocusSnapshot();
+                await app._mostrarDetalle(app.STATE.activeCourseId, false);
 
             } else {
                 debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                     `SmartResize: Refrescando menú.`);
 
-                requestAnimationFrame(() => {
-                    app.renderNavegacion();
-                });
-
-                // 2. 🔄 EL NOTARIO RESTAURA
-                if (app.restoreFocusSnapshot) app.restoreFocusSnapshot();
+                await app.renderNavegacion();
             }
         }
+
+        // 2. 🔄 EL NOTARIO RESTAURA
+        if (app.restoreFocusSnapshot) app.restoreFocusSnapshot();
     };
     
     window.addEventListener('resize', () => {
@@ -208,8 +202,12 @@ export function updateLayoutMode(app) {
         
         if (!enableSafeMode) {
             window.scrollTo(0, 0);
-            if (app.STATE.carouselInstance) 
-                requestAnimationFrame(() => app.STATE.carouselInstance.update());
+            
+            requestAnimationFrame(() => {
+                if (app.STATE && app.STATE.carouselInstance) {
+                    app.STATE.carouselInstance.update();
+                }
+            });
         }
     }
 }

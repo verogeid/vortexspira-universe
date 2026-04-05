@@ -82,7 +82,7 @@ export function setupGlobalListeners(app) {
     // ============================================================================
     // 🔄 4. LISTENER DE REFREZCO DE LAYOUT (A11Y Font Size / Zoom)
     // ============================================================================
-    window.addEventListener('vortex-layout-refresh', () => {
+    window.addEventListener('vortex-layout-refresh', async () => {
         if (app.STATE.isUIBlocked) return;
 
         // 1. 📸 EL NOTARIO TOMA LA FOTO
@@ -103,25 +103,21 @@ export function setupGlobalListeners(app) {
             debug.log('app', debug.DEBUG_LEVELS.DEEP, 
                 `Layout Refresh (Mismo modo). Delegando a buckets.`);
 
-            app._mostrarDetalle(app.STATE.activeCourseId, forceRender);
-
-            if (app.restoreFocusSnapshot) app.restoreFocusSnapshot();
+            await app._mostrarDetalle(app.STATE.activeCourseId, forceRender);
 
         } else if (forceRender) {
             debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                 `Layout Change (${prevMode} -> ${newMode}). Forzando render...`);
 
-            app.renderNavegacion();
+            await app.renderNavegacion();
 
-            if (app.restoreFocusSnapshot) app.restoreFocusSnapshot();
         } else {
             debug.log('app', debug.DEBUG_LEVELS.DEEP, 
                 `Layout Refresh (Mismo modo). Forzar re-encuadre.`);
-
-            // Aunque no se regenere el DOM, Swiper puede haberse descolocado. Forzamos re-encuadre.
-            if (app.restoreFocusSnapshot) app.restoreFocusSnapshot();
         }
 
+        if (app.restoreFocusSnapshot) app.restoreFocusSnapshot();
+        
         requestAnimationFrame(() => {
             app._runFontDiagnostics?.();
             app._runLayoutDiagnostics?.();

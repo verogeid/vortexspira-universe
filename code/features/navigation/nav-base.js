@@ -157,12 +157,26 @@ export function _handleVolverClick() {
 };
 
 export function _updateFocusImpl(shouldSlide = true) {
-    // Si el modal de accesibilidad está abierto, la navegación principal tiene prohibido
-    // robar el foco, aunque se haya redibujado el fondo por un cambio de fuente.
-    if (document.getElementById('a11y-modal-overlay')?.classList.contains('active')) {
+    if (this.STATE.isBooting) {
+        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
+            'Ignorando _updateFocus durante el arranque.');
 
-        debug.log('global_focus', debug.DEBUG_LEVELS.DEEP, 
-            '🛡️ _updateFocus bloqueado: Modal A11y está activo.');
+        return;
+    }
+
+    // 🟢 ESCUDO ANTI-SECUESTRO (Protección de Capas Superiores)
+    const mainMenu = document.getElementById('main-menu-dropdown');
+    if (mainMenu && mainMenu.classList.contains('active')) {
+        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
+            '🛡️ Escudo Foco: Menú abierto. Abortando auto-foco del carrusel.');
+
+        return;
+    }
+
+    const a11yModal = document.getElementById('a11y-modal-overlay');
+    if (a11yModal && a11yModal.classList.contains('active')) {
+        debug.log('nav_base', debug.DEBUG_LEVELS.DEEP, 
+            '🛡️ Escudo Foco: Modal A11y abierto. Abortando auto-foco del carrusel.');
 
         return;
     }
