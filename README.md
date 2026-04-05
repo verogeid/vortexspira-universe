@@ -1,4 +1,4 @@
-# <img src="./images/logo.svg" alt="VortexSpira Logo" height="44" target="_top"/> **VortexSpira® EdTech**
+# <img src="./resources/images/logo.svg" alt="VortexSpira Logo" height="44" target="_top"/> **VortexSpira® EdTech**
 
 Expositor de cursos de VortexSpira® e-learning mentor
 
