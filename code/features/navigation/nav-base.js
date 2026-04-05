@@ -160,7 +160,7 @@ export function _updateFocusImpl(shouldSlide = true) {
     // Si el modal de accesibilidad está abierto, la navegación principal tiene prohibido
     // robar el foco, aunque se haya redibujado el fondo por un cambio de fuente.
     if (document.getElementById('a11y-modal-overlay')?.classList.contains('active')) {
-        
+
         debug.log('global_focus', debug.DEBUG_LEVELS.DEEP, 
             '🛡️ _updateFocus bloqueado: Modal A11y está activo.');
 
@@ -507,14 +507,120 @@ export function _tieneContenidoActivoImpl(nodoId) {
     return (nodo.subsecciones || []).some(sub => this._tieneContenidoActivo(sub.id));
 }
 
-export function findBestFocusInColumn(columnCards, targetRow) {
-    const isValid = (card) => card && card.dataset.id && card.dataset.tipo !== 'relleno';
-    if (isValid(columnCards[targetRow])) return columnCards[targetRow];
-    for (let i = 1; i < columnCards.length; i++) {
-        if (isValid(columnCards[targetRow - i])) return columnCards[targetRow - i];
-        if (isValid(columnCards[targetRow + i])) return columnCards[targetRow + i];
+// ============================================================================
+// 📸 PROTOCOLO DE EMERGENCIA DEL NOTARIO (Traslación Espacial Matemática)
+// ============================================================================
+export function takeFocusSnapshot(app) {
+    const activeEl = document.activeElement;
+    if (!activeEl || activeEl === document.body) return null;
+
+    // 1. Contexto de Origen
+    const originLayout = document.body.getAttribute('data-layout') || 'desktop';
+    const isMobileOrigin = originLayout === 'mobile';
+
+    // 2. Identificar qué tocábamos
+    const isFixedVolver = activeEl.id === 'card-volver-fija-elemento';
+    
+    let isMobileVolver = false;
+    let dataPos = null;
+
+    const cardContainer = activeEl.closest('.card');
+    if (cardContainer) {
+        isMobileVolver = cardContainer.getAttribute('data-tipo') === 'volver-vertical';
+        dataPos = cardContainer.getAttribute('data-pos');
     }
-    return null;
+
+    const snapshot = {
+        id: activeEl.id || null, // Para botones genéricos fuera de la app (menú, header)
+        isMobileOrigin: isMobileOrigin,
+        isVolver: isFixedVolver || isMobileVolver,
+        dataPos: dataPos !== null ? parseInt(dataPos, 10) : null
+    };
+    
+    app.STATE.resizeSnapshot = snapshot;
+    debug.log('nav', debug.DEBUG_LEVELS.DEEP, 
+        `📸 Notario: Captura -> Volver? ${snapshot.isVolver}, POS: ${snapshot.dataPos}, Origen Móvil? ${snapshot.isMobileOrigin}`);
+        
+    return snapshot;
+}
+
+export function restoreFocusSnapshot(app) {
+    const snap = app.STATE.resizeSnapshot;
+    if (!snap) return;
+
+    // requestAnimationFrame asegura que Swiper ya ha renderizado el nuevo DOM
+    requestAnimationFrame(() => {
+        let targetEl = null;
+        
+        // 1. Contexto de Destino
+        const currentLayout = document.body.getAttribute('data-layout') || 'desktop';
+        const isMobileDest = currentLayout === 'mobile';
+
+        // 🟢 2. CASO A: EL BOTÓN VOLVER
+        if (snap.isVolver) {
+            if (isMobileDest) {
+                targetEl = document.querySelector('.card[data-tipo="volver-vertical"]');
+            } else {
+                targetEl = document.getElementById('card-volver-fija-elemento');
+            }
+        }
+        
+        // 🟢 3. CASO B: LAS TARJETAS (Cálculo Matemático)
+        else if (snap.dataPos !== null) {
+            let targetPos = snap.dataPos;
+
+            // Transmutación Espacial
+            if (snap.isMobileOrigin && !isMobileDest) {
+                // Venimos de móvil (volver ocupaba la pos 0). Al ir a PC, restamos 1.
+                targetPos = targetPos - 1; 
+            } else if (!snap.isMobileOrigin && isMobileDest) {
+                // Venimos de PC. Al ir a móvil, 'volver' ocupa la pos 0, así que sumamos 1.
+                targetPos = targetPos + 1;
+            }
+            // (Si el origen y el destino son iguales, targetPos se queda como estaba)
+
+            // Aseguramos no buscar índices negativos por si acaso
+            if (targetPos >= 0) {
+                targetEl = document.querySelector(`.card[data-pos="${targetPos}"]`);
+            }
+        }
+        
+        // 🟢 4. CASO C: ELEMENTOS ESTÁTICOS (Fallback para Header, Menú, etc)
+        else if (snap.id) {
+            targetEl = document.getElementById(snap.id);
+        }
+
+        // 🟢 5. APLICAR EL FOCO
+        if (targetEl) {
+            debug.log('nav', debug.DEBUG_LEVELS.DEEP, `🔄 Notario: Foco matemático restaurado.`);
+            
+            if (typeof app.applySmartFocus === 'function') {
+                app.applySmartFocus(targetEl);
+            } else {
+                targetEl.focus({ preventScroll: true });
+            }
+
+            // Obligamos a la cámara a mirar la tarjeta
+            if (app.STATE.carouselInstance) {
+                const targetSlide = targetEl.closest('.swiper-slide');
+
+                if (targetSlide) {
+                    const loopIndex = targetSlide.dataset.swiperSlideIndex;
+
+                    if (loopIndex !== undefined) {
+                        app.STATE.carouselInstance.slideToLoop(parseInt(loopIndex, 10), 0, false);
+                    } else {
+                        // Móvil no tiene loop
+                        const rawIndex = Array.from(targetSlide.parentNode.children).indexOf(targetSlide);
+                        app.STATE.carouselInstance.slideTo(rawIndex, 0, false);
+                    }
+                }
+            }
+        }
+        
+        // Limpiamos la memoria
+        app.STATE.resizeSnapshot = null; 
+    });
 }
 
 /* --- code/features/navigation/nav-base.js --- */

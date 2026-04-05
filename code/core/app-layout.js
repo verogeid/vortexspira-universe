@@ -66,6 +66,9 @@ export function setupSmartResize(app) {
     const handleResize = () => {
         if (app.STATE.isUIBlocked || app.STATE.isBooting) return;
         
+        // 1. 📸 EL NOTARIO TOMA LA FOTO ANTES DE QUE SE DESTRUYA NADA
+        if (app.takeFocusSnapshot) app.takeFocusSnapshot();
+
         updateLayoutMode(app);
         syncHeaderDimensions(app);
         cacheDOM(app); 
@@ -78,6 +81,10 @@ export function setupSmartResize(app) {
                 requestAnimationFrame(() => {
                     app._mostrarDetalle(app.STATE.activeCourseId, false);
                 });
+
+                // 2. 🔄 EL NOTARIO RESTAURA
+                if (app.restoreFocusSnapshot) app.restoreFocusSnapshot();
+
             } else {
                 debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                     `SmartResize: Refrescando menú.`);
@@ -85,6 +92,9 @@ export function setupSmartResize(app) {
                 requestAnimationFrame(() => {
                     app.renderNavegacion();
                 });
+
+                // 2. 🔄 EL NOTARIO RESTAURA
+                if (app.restoreFocusSnapshot) app.restoreFocusSnapshot();
             }
         }
     };

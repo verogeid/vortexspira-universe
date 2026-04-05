@@ -2,6 +2,7 @@
 
 import * as debug from '../debug/debug.js';
 import * as data from '../services/data.js';
+import * as nav_base_pc from '../features/navigation/nav-base-pc.js';
 
 export function _generateCardHTML_Carousel(items, itemsPerSlide) {
     let html = '';
@@ -117,38 +118,31 @@ export function _initCarousel_Swipe(initialSwiperSlide, itemsPorColumna, isMobil
         this.STATE.carouselInstance = new Swiper(swiperId, swiperConfig);
 
         if (this.STATE.carouselInstance) {
-            // 🟢 FIX A11Y: Escudo para Modo "Reduce Motion" (Transiciones a 0s)
-            this.STATE.carouselInstance.on('slideChange', () => {
+            
+            // 🟢 1. VINCULACIÓN DEL FOCO LÓGICO DE PC (El Skipper)
+            this.STATE.carouselInstance.on('slideChangeTransitionStart', (swiper) => {
+                nav_base_pc.handleSlideChangeStart(this, swiper);
+            });
+            
+            this.STATE.carouselInstance.on('slideChangeTransitionEnd', (swiper) => {
+                nav_base_pc.handleSlideChangeEnd(this, swiper);
+            });
+
+            // 🟢 2. ESCUDO PARA MODO "REDUCE MOTION" (Transiciones a 0s)
+            this.STATE.carouselInstance.on('slideChange', (swiper) => {
                 if (!this.STATE.isBooting) {
                     const isReduceMotion = document.body.getAttribute('data-reduced-motion') === 'true';
                     
-                    if (isReduceMotion && this.STATE.pendingLoopFix) {
-                        this.STATE.pendingLoopFix = false;
-                        
-                        // Usamos requestAnimationFrame para dejar que el DOM asiente el nuevo índice
-                        // antes de destruir y regenerar los clones
-                        requestAnimationFrame(() => {
-                            this.STATE.carouselInstance.loopFix();
-                            this.STATE.carouselInstance.update();
-
-                            debug.log('render_swipe', debug.DEBUG_LEVELS.DEEP, 
-                                '🔧 LoopFix aplicado en frío (Reduce Motion activado).');
-                        });
-                    }
-                }
-            });
-
-            // 🟢 Listener quirúrgico para arreglar el desfase de clones
-            this.STATE.carouselInstance.on('transitionEnd', () => {
-                if (!this.STATE.isBooting) {
-                    if (this.STATE.pendingLoopFix) {
-                        this.STATE.pendingLoopFix = false; // Reset inmediato
-
-                        this.STATE.carouselInstance.loopFix();
-                        this.STATE.carouselInstance.update();
-
-                        debug.log('render_swipe', debug.DEBUG_LEVELS.DEEP, 
-                            '🔧 LoopFix aplicado tras navegación.');
+                    if (isReduceMotion) {
+                        if (this.STATE.pendingLoopFix) {
+                            this.STATE.pendingLoopFix = false;
+                            requestAnimationFrame(() => {
+                                this.STATE.carouselInstance.loopFix();
+                                this.STATE.carouselInstance.update();
+                            });
+                        }
+                        // Forzamos el Skipper manualmente sin esperar el final de transición
+                        requestAnimationFrame(() => nav_base_pc.handleSlideChangeEnd(this, swiper));
                     }
                 }
             });

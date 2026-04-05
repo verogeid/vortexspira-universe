@@ -67,11 +67,8 @@ class VortexSpiraApp {
         };
 
         this._tieneContenidoActivo = nav_base._tieneContenidoActivoImpl;
-        this.findBestFocusInColumn = nav_base.findBestFocusInColumn;
 
         this._generarTarjetaHTML = render_base._generarTarjetaHTMLImpl; 
-
-        this.findBestFocusInColumn = nav_base.findBestFocusInColumn;
 
         // 🟢 DESTRUCTOR UNIVERSAL (Garantiza que móvil pueda limpiar su Swiper)
         // Se ejecuta si 'render-swipe.js' no se ha descargado aún.
@@ -649,6 +646,12 @@ class VortexSpiraApp {
     _setupSmartResize() { app_layout.setupSmartResize(this); }
     _updateLayoutMode() { app_layout.updateLayoutMode(this); }
     _cacheDOM() { app_layout.cacheDOM(this); }
+
+    // ============================================================================
+    // 🧭 MÉTODOS DE NAVEGACIÓN Y FOCO
+    // ============================================================================
+    takeFocusSnapshot() { nav_base.takeFocusSnapshot(this); }
+    restoreFocusSnapshot() { nav_base.restoreFocusSnapshot(this); }
 
     // ==========================================
     // 🟢 PAGINA DE "QUIÉNES SOMOS" (FANTASMA)

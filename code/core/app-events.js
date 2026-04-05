@@ -85,6 +85,9 @@ export function setupGlobalListeners(app) {
     window.addEventListener('vortex-layout-refresh', () => {
         if (app.STATE.isUIBlocked) return;
 
+        // 1. 📸 EL NOTARIO TOMA LA FOTO
+        if (app.takeFocusSnapshot) app.takeFocusSnapshot();
+
         const prevMode = document.body.getAttribute('data-layout');
         app._updateLayoutMode();
         const newMode = document.body.getAttribute('data-layout');
@@ -93,18 +96,30 @@ export function setupGlobalListeners(app) {
         const forceRender = (prevMode !== newMode);
 
         if (forceRender) {
-            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
-                `Layout Change (${prevMode} -> ${newMode}). Forzando render...`);
             app._cacheDOM();
-        } else {
-            debug.log('app', debug.DEBUG_LEVELS.DEEP, 
-                `Layout Refresh (Mismo modo). Delegando a buckets.`);
         }
 
         if (app.STATE.activeCourseId) {
+            debug.log('app', debug.DEBUG_LEVELS.DEEP, 
+                `Layout Refresh (Mismo modo). Delegando a buckets.`);
+
             app._mostrarDetalle(app.STATE.activeCourseId, forceRender);
+
+            if (app.restoreFocusSnapshot) app.restoreFocusSnapshot();
+
         } else if (forceRender) {
+            debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                `Layout Change (${prevMode} -> ${newMode}). Forzando render...`);
+
             app.renderNavegacion();
+
+            if (app.restoreFocusSnapshot) app.restoreFocusSnapshot();
+        } else {
+            debug.log('app', debug.DEBUG_LEVELS.DEEP, 
+                `Layout Refresh (Mismo modo). Forzar re-encuadre.`);
+
+            // Aunque no se regenere el DOM, Swiper puede haberse descolocado. Forzamos re-encuadre.
+            if (app.restoreFocusSnapshot) app.restoreFocusSnapshot();
         }
 
         requestAnimationFrame(() => {
