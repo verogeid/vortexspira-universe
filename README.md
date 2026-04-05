@@ -23,7 +23,7 @@ Hasta un 60% OFF en el pre-lanzamiento de todos los cursos, si te conviertes en 
 
 ## 💖 Apoya el desarrollo de VortexSpira
 
-VortexSpira no es solo una plataforma de aprendizaje; es un compromiso técnico para que la web no deje a nadie atrás [cite: 2026-03-13]. Mientras la industria se conforma con lo básico, este proyecto ha sido construido para alcanzar la excelencia técnica y humana.
+VortexSpira no es solo una plataforma de aprendizaje; es un compromiso técnico para que la web no deje a nadie atrás. Mientras la industria se conforma con lo básico, este proyecto ha sido construido para alcanzar la excelencia técnica y humana.
 
 ### 🛠️ Hitos alcanzados en el entorno de desarrollo:
 * **Accesibilidad AAA:** 100/100 tanto en Mobile como en Desktop.
