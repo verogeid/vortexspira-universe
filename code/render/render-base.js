@@ -480,29 +480,29 @@ export function _generarTarjetaHTMLImpl(nodo,
 
     const tipoEspecial = tipoEspecialArg || nodo.tipoEspecial;
     if (esRelleno) 
-        return `<article class="card card--relleno" 
+        return `<div class="card card-relleno" 
                         data-tipo="relleno" 
                         tabindex="-1" 
                         aria-hidden="true">
-                </article>`;
+                </div>`;
 
     if (tipoEspecial === 'breadcrumb-vertical') {
         // El breadcrumb es informativo
         return `
-            <article class="card card-breadcrumb-vertical" 
+            <div class="card card-breadcrumb-vertical" 
                     data-id="breadcrumb-nav" 
                     data-tipo="relleno" 
                     tabindex="-1" 
                     aria-hidden="true">
                 <h2>${nodo.texto}</h2>
-            </article>`;}
+            </div>`;}
 
     if (tipoEspecial === 'volver-vertical') {
         const ariaLabel = this.getString('nav.aria.backBtn');
         const visibleText = this.getString('nav.backBtnText');
 
         return `
-            <article class="card card-volver-vertical" 
+            <div class="card card-volver-vertical" 
                     data-id="volver-nav" 
                     data-tipo="volver-vertical" 
                     role="menuitem" 
@@ -514,13 +514,13 @@ export function _generarTarjetaHTMLImpl(nodo,
                     <span class="card-volver-icon"></span>
                     <span class="card-volver-text">${visibleText}</span>
                 </h2>
-            </article>`;
+            </div>`;
     }
 
     // 🟢 RENDERIZADO DE CARPETA VACÍA ("Sin contenido aún")
     if (tipoEspecial === 'empty') {
         return `
-            <article class="card disabled" 
+            <div class="card disabled" 
                     data-id="${nodo.id}" 
                     data-tipo="vacio" 
                     role="menuitem" 
@@ -528,14 +528,13 @@ export function _generarTarjetaHTMLImpl(nodo,
                     tabindex="0" 
                     aria-label="${nodo.nombre}"
                     title="${nodo.nombre}">
-                <h3>
-                    <span class="card-icon-lead icon-empty-folder-card" aria-hidden="true">
-                    </span>
-                    <span id="card-title-${nodo.id}" class="card-text-content" aria-hidden="true">
+                <h3 aria-hidden="true">
+                    <span class="card-icon-lead icon-empty-folder-card"></span>
+                    <span id="card-title-${nodo.id}" class="card-text-content">
                         ${nodo.nombre}
                     </span>
                 </h3>
-            </article>`;
+            </div>`;
     }
 
     const isCourse = !!nodo.titulo;
@@ -575,7 +574,7 @@ export function _generarTarjetaHTMLImpl(nodo,
     const ariaLabelText = `${actionPrefix} ${displayTitle}`;
 
     return `
-        <article class="card ${estaActivo ? '' : 'disabled'}" 
+        <div class="card ${estaActivo ? '' : 'disabled'}" 
                 data-id="${nodo.id}" 
                 data-tipo="${tipo}" 
                 role="menuitem" 
@@ -583,11 +582,11 @@ export function _generarTarjetaHTMLImpl(nodo,
                 ${ariaDisabled} 
                 aria-label="${ariaLabelText}"
                 title="${ariaLabelText}">
-            <h2>
+            <h2 aria-hidden="true">
                 ${iconHTML}
-                <span id="${titleId}" class="card-text-content" aria-hidden="true">${displayTitle}</span>
+                <span id="${titleId}" class="card-text-content">${displayTitle}</span>
             </h2>
-        </article>`;
+        </div>`;
 };
 
 export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait, 

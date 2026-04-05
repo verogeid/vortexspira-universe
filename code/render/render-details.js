@@ -482,14 +482,14 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
             
             slidesHtml += `
                 <div class="swiper-slide">
-                    <article class="card 
+                    <div class="card 
                              card-breadcrumb-vertical" 
                              tabindex="-1" 
                              aria-hidden="true" 
                              role="presentation">
                         <h2>${parentName}</h2>
-                    </article>
-                    <article class="card card-volver-vertical" 
+                    </div>
+                    <div class="card card-volver-vertical" 
                              role="button" 
                             aria-label="${ariaLabel}" 
                             title="${ariaLabel}" 
@@ -499,7 +499,7 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                             <span class="card-volver-icon"></span>
                             <span class="card-volver-text">${visibleText}</span>
                         </h2>
-                    </article>
+                    </div>
                 </div>
             `;
         }
@@ -612,16 +612,17 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                             onclick="App._handleActionRowClick(event)" 
                             tabindex="0" 
                             role="button">
-                            <span class="detail-action-text">${enlace.texto}</span>
-                            <a ${isDisabled ? 
-                                'role="link" aria-disabled="true"' : 
-                                `href="${enlace.url}" target="_blank"`} 
-                                tabindex="-1" 
+
+                            <span class="detail-action-text">
+                                ${enlace.texto}
+                            </span>
+
+                            <span tabindex="-1" 
                                 aria-hidden="true" 
                                 ${style} 
                                 class="detail-action-btn ${isDisabled ? 'disabled' : ''}">
                                 <i class="action-icon ${isDisabled ? 'icon-empty' : iconClass}"></i>
-                            </a>
+                            </span>
                         </div>
                     </div>
                 `;
@@ -738,7 +739,7 @@ function _initDetailCarousel(appInstance, swiperId, initialSlideIndex) {
         appInstance.STATE.detailCarouselInstance.on('touchStart', () => {
 
             if (appInstance.STATE.keyboardNavInProgress) {
-                
+
                 debug.log('render_details', debug.DEBUG_LEVELS.BASIC, 
                     `[TRACE ${appInstance.STATE.currentTraceId}]` + 
                     `👆 TouchStart ignorado: Teclado en curso.`);

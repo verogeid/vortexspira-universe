@@ -10,8 +10,8 @@ export function _generateCardHTML_Carousel(items, itemsPerSlide) {
     for (let k = 0; k < itemsPerSlide; k++) {
         rellenoInicial += this._generarTarjetaHTML({ tipo: 'relleno' }, false, true);
     }
-    html += `<div class="swiper-slide">
-                <div class="cards-column-group">
+    html += `<div class="swiper-slide" role="presentation">
+                <div class="cards-column-group" role="presentation">
                     ${rellenoInicial}
                 </div>
             </div>`;
@@ -55,8 +55,8 @@ export function _generateCardHTML_Carousel(items, itemsPerSlide) {
                 slideContent += cardHtml;
             }
         }
-        html += `<div class="swiper-slide">
-                    <div class="cards-column-group">
+        html += `<div class="swiper-slide" role="presentation">
+                    <div class="cards-column-group" role="presentation">
                         ${slideContent}
                     </div>
                 </div>`;
