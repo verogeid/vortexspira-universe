@@ -2,6 +2,13 @@
 
 export const IS_PRODUCTION = false;
 export const CLEAR_CONSOLE_ON_START = true;
+export const FORCE_SILENCE_ON_MOBILE = true;
+
+export const isMuted = () => FORCE_SILENCE_ON_MOBILE && 
+                       (('ontouchstart' in window) ||
+                        (navigator.maxTouchPoints > 0) ||
+                        (navigator.msMaxTouchPoints > 0) ||
+                        window.matchMedia("(pointer: coarse)").matches);
 
 // Niveles de depuración estándar
 export const DEBUG_LEVELS = {
@@ -17,9 +24,9 @@ export const DEBUG_CONFIG = {
 
     global_imageSec: DEBUG_LEVELS.DISABLED,
 
-    global_focus: DEBUG_LEVELS.EXTREME,
+    global_focus: DEBUG_LEVELS.DISABLED,
     global_font: DEBUG_LEVELS.DISABLED,
-    global_layout: DEBUG_LEVELS.EXTREME,
+    global_layout: DEBUG_LEVELS.DISABLED,
     
     global_key: DEBUG_LEVELS.DISABLED,
     global_mouse: DEBUG_LEVELS.DISABLED,
@@ -29,8 +36,8 @@ export const DEBUG_CONFIG = {
     app: DEBUG_LEVELS.DISABLED,
 
     app_utils: DEBUG_LEVELS.DISABLED,
-    app_events: DEBUG_LEVELS.EXTREME,
-    app_layouts: DEBUG_LEVELS.EXTREME,
+    app_events: DEBUG_LEVELS.DISABLED,
+    app_layouts: DEBUG_LEVELS.DISABLED,
     app_router: DEBUG_LEVELS.DISABLED,
 
     data: DEBUG_LEVELS.DISABLED,
@@ -84,7 +91,11 @@ function _printWithPrefix(method, moduleName, args) {
  * Función para mostrar los niveles de depuración configurados en consola.
  */
 export function logDebugLevels() {
-    logGroupCollapsed('global', DEBUG_LEVELS.BASIC, 'Configured DEBUG levels:');
+    if (isMuted()) return;
+
+    logGroupCollapsed('global', DEBUG_LEVELS.BASIC, 
+        'Configured DEBUG levels:');
+
     for (const idKey in DEBUG_CONFIG) {
         const numericValue = DEBUG_CONFIG[idKey];
         const stringLabel = Object.keys(DEBUG_LEVELS).find(
@@ -100,6 +111,8 @@ export function logDebugLevels() {
  * Función vaciar la consola al iniciar la aplicación, si está configurada para hacerlo.
  */
 export function logClear() {
+    if (isMuted()) return;
+
     if (CLEAR_CONSOLE_ON_START) {
         console.clear();
     }
@@ -109,6 +122,8 @@ export function logClear() {
  * Función de logging centralizada.
  */
 export function log(moduleName, requiredLevel, ...args) {
+    if (isMuted()) return;
+
     if (DEBUG_CONFIG[moduleName] >= requiredLevel) {
         if (IS_PRODUCTION && requiredLevel === DEBUG_LEVELS.TELEMETRY) {
             console.info(`[TELEMETRÍA - ${moduleName}]`, ...args);
@@ -122,6 +137,8 @@ export function log(moduleName, requiredLevel, ...args) {
  * Muestra una advertencia.
  */
 export function logWarn(moduleName, ...args) {
+    if (isMuted()) return;
+
     if (DEBUG_CONFIG[moduleName] >= DEBUG_LEVELS.BASIC) {
         if (!IS_PRODUCTION) {
             _printWithPrefix(console.warn, moduleName, args);
@@ -133,6 +150,8 @@ export function logWarn(moduleName, ...args) {
  * Muestra una stack trace.
  */
 export function logTrace(moduleName, ...args) {
+    if (isMuted()) return;
+
     if (DEBUG_CONFIG[moduleName] >= DEBUG_LEVELS.BASIC) {
         if (!IS_PRODUCTION) {
             _printWithPrefix(console.trace, moduleName, args);
@@ -153,6 +172,8 @@ export function logError(moduleName, ...args) {
  * Inicia un grupo colapsado.
  */
 export function logGroupCollapsed(moduleName, requiredLevel, ...args) {
+    if (isMuted()) return;
+
     if (DEBUG_CONFIG[moduleName] >= requiredLevel && !IS_PRODUCTION) {
         _printWithPrefix(console.groupCollapsed, moduleName, args);
     }
@@ -162,6 +183,8 @@ export function logGroupCollapsed(moduleName, requiredLevel, ...args) {
  * Inicia un grupo expandido.
  */
 export function logGroupExpanded(moduleName, requiredLevel, ...args) {
+    if (isMuted()) return;
+
     if (DEBUG_CONFIG[moduleName] >= requiredLevel && !IS_PRODUCTION) {
         _printWithPrefix(console.group, moduleName, args);
     }
@@ -171,6 +194,8 @@ export function logGroupExpanded(moduleName, requiredLevel, ...args) {
  * Cierra el grupo actual.
  */
 export function logGroupEnd(moduleName, requiredLevel = DEBUG_LEVELS.BASIC) {
+    if (isMuted()) return;
+
     if (DEBUG_CONFIG[moduleName] >= requiredLevel && !IS_PRODUCTION) {
         console.groupEnd();
     }
@@ -180,6 +205,8 @@ export function logGroupEnd(moduleName, requiredLevel = DEBUG_LEVELS.BASIC) {
  * Muestra el resultado en una tabla
  */
 export function logTable(moduleName, requiredLevel, data) {
+    if (isMuted()) return;
+
     if (DEBUG_CONFIG[moduleName] >= requiredLevel)
         console.table(data);
 };
@@ -188,6 +215,8 @@ export function logTable(moduleName, requiredLevel, data) {
  * Muestra un arbol de atributos
  */
 export function logDir(moduleName, requiredLevel, data) {
+    if (isMuted()) return;
+
     if (DEBUG_CONFIG[moduleName] >= requiredLevel)
         console.dir(data);
 };

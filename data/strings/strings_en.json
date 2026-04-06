@@ -46,6 +46,7 @@
   "nav": {
     "aria": {
       "region": "Main course navigation",
+      "controls": "Navigation controls",
       "backBtn": "Go back to previous level",
       "breadcrumb": "Current Level: ",
       "actionCategory": "Go to subsection:",

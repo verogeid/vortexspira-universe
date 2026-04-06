@@ -92,8 +92,6 @@ class VortexSpiraApp {
             const mods = await app_utils.loadDetailsModules(this);
             if (mods) mods.keyboard._handleDetailNavigation.call(this, key);
         };
-        
-        this.clearConsole = debug.logClear();
     }
 
     // 🟢 HELPER MEJORADO: Inyector de CSS Asíncrono
@@ -175,53 +173,55 @@ class VortexSpiraApp {
         debug.log('app', debug.DEBUG_LEVELS.BASIC, 
             "🚀 Iniciando App (Modo Silencioso activado)...");
 
-        // 🟢 INYECCIÓN DINÁMICA DE HERRAMIENTAS DE DEBUG
-        // 1. Simulador SEO / LD-JSON
-        if (debug.DEBUG_CONFIG.seo_sim >= debug.DEBUG_LEVELS.BASIC) {
-            import('../debug/debug.ldJsonSim.js').then(m => m.ldJsonSim.init())
-                .catch(e => debug.logError('app', 'Error cargando ldJsonSim', e));
-        }
+        if (!debug.isMuted) {
+            // 🟢 INYECCIÓN DINÁMICA DE HERRAMIENTAS DE DEBUG
+            // 1. Simulador SEO / LD-JSON
+            if (debug.DEBUG_CONFIG.seo_sim >= debug.DEBUG_LEVELS.BASIC) {
+                import('../debug/debug.ldJsonSim.js').then(m => m.ldJsonSim.init())
+                    .catch(e => debug.logError('app', 'Error cargando ldJsonSim', e));
+            }
 
-        // 2. Diagnósticos de Layout, Focos y Teclado
-        const loadDiag = debug.DEBUG_CONFIG.global >= debug.DEBUG_LEVELS.DISABLED ||
-                         debug.DEBUG_CONFIG.global_focus >= debug.DEBUG_LEVELS.DISABLED ||
-                         debug.DEBUG_CONFIG.global_font >= debug.DEBUG_LEVELS.DISABLED ||
-                         debug.DEBUG_CONFIG.global_layout >= debug.DEBUG_LEVELS.DISABLED ||
-                         debug.DEBUG_CONFIG.global_key >= debug.DEBUG_LEVELS.DISABLED ||
-                         debug.DEBUG_CONFIG.global_mouse >= debug.DEBUG_LEVELS.DISABLED;
-        
-        if (loadDiag) {
-            import('../debug/debug.diagnostics.js').then(d => {
-                d._setupGlobalClickListener();
-                d._setupFocusTracker();
-                d._setupFocusMethodInterceptor();
-                if (d._setupKeyTracker) d._setupKeyTracker();
+            // 2. Diagnósticos de Layout, Focos y Teclado
+            const loadDiag = debug.DEBUG_CONFIG.global >= debug.DEBUG_LEVELS.DISABLED ||
+                            debug.DEBUG_CONFIG.global_focus >= debug.DEBUG_LEVELS.DISABLED ||
+                            debug.DEBUG_CONFIG.global_font >= debug.DEBUG_LEVELS.DISABLED ||
+                            debug.DEBUG_CONFIG.global_layout >= debug.DEBUG_LEVELS.DISABLED ||
+                            debug.DEBUG_CONFIG.global_key >= debug.DEBUG_LEVELS.DISABLED ||
+                            debug.DEBUG_CONFIG.global_mouse >= debug.DEBUG_LEVELS.DISABLED;
+            
+            if (loadDiag) {
+                import('../debug/debug.diagnostics.js').then(d => {
+                    d._setupGlobalClickListener();
+                    d._setupFocusTracker();
+                    d._setupFocusMethodInterceptor();
+                    if (d._setupKeyTracker) d._setupKeyTracker();
 
-                d._watchFlag(this.STATE, 'keyboardNavInProgress');
-                d._watchFlag(this.STATE, 'isKeyboardLockedFocus');
-                d._watchFlag(this.STATE, 'isNavigatingBack');
-                d._watchFlag(this.STATE, 'isUIBlocked');
-                d._watchFlag(this.STATE, '_lastMousedownTarget');
-                d._watchFlag(this.STATE, '_lastActiveZoneId');
+                    d._watchFlag(this.STATE, 'keyboardNavInProgress');
+                    d._watchFlag(this.STATE, 'isKeyboardLockedFocus');
+                    d._watchFlag(this.STATE, 'isNavigatingBack');
+                    d._watchFlag(this.STATE, 'isUIBlocked');
+                    d._watchFlag(this.STATE, '_lastMousedownTarget');
+                    d._watchFlag(this.STATE, '_lastActiveZoneId');
 
-                // 🟢 Guardamos las funciones en la instancia para uso posterior
-                this._runFontDiagnostics = d.runFontDiagnostics;
-                this._runLayoutDiagnostics = d.runLayoutDiagnostics;
-            }).catch(e => debug.logError('app', 'Error cargando diagnostics', e));
-        }
+                    // 🟢 Guardamos las funciones en la instancia para uso posterior
+                    this._runFontDiagnostics = d.runFontDiagnostics;
+                    this._runLayoutDiagnostics = d.runLayoutDiagnostics;
+                }).catch(e => debug.logError('app', 'Error cargando diagnostics', e));
+            }
 
-        // 3. Simulador de Lector de Pantallas
-        // Lo exponemos globalmente para que puedas llamarlo desde la consola si lo necesitas
-        window.simularLector = () => {
-            import('../debug/debug.screenReaderSim.js').then(m => {
-                window.simularLector = m.enableScreenReaderSimulator;
-                m.enableScreenReaderSimulator();
-            }).catch(e => debug.logError('app', 'Error cargando SR Sim', e));
-        };
-        
-        // Si la configuración es EXTREME, lo auto-arrancamos
-        if (debug.DEBUG_CONFIG.a11y >= debug.DEBUG_LEVELS.EXTREME) {
-            window.simularLector();
+            // 3. Simulador de Lector de Pantallas
+            // Lo exponemos globalmente para que puedas llamarlo desde la consola si lo necesitas
+            window.simularLector = () => {
+                import('../debug/debug.screenReaderSim.js').then(m => {
+                    window.simularLector = m.enableScreenReaderSimulator;
+                    m.enableScreenReaderSimulator();
+                }).catch(e => debug.logError('app', 'Error cargando SR Sim', e));
+            };
+            
+            // Si la configuración es EXTREME, lo auto-arrancamos
+            if (debug.DEBUG_CONFIG.a11y >= debug.DEBUG_LEVELS.EXTREME) {
+                window.simularLector();
+            }
         }
 
         this._setupSmartResize();
@@ -401,16 +401,14 @@ class VortexSpiraApp {
             debug.log('app', debug.DEBUG_LEVELS.BASIC, 
                 "🔓 App cargada. Activando foco real.");
 
-            // 🟢 PRECARGA EN SEGUNDO PLANO (Lazy Load Menu & Details)
+            // 🟢 PRECARGA EN SEGUNDO PLANO (Lazy Load Menu)
             if (window.requestIdleCallback) {
                 requestIdleCallback(() => {
                     app_utils.preloadMainMenu(this, 'css');
-                    app_utils.preloadDetailsModules(this, 'css');
                 });
             } else {
                 setTimeout(() => {
                     app_utils.preloadMainMenu(this, 'css');
-                    app_utils.preloadDetailsModules(this, 'css');
                 }, data.PRELOAD_TIME);
             }
 
@@ -496,6 +494,25 @@ class VortexSpiraApp {
         await this._ensureRenderEngine();
 
         render_base.renderNavegacion.call(this);
+
+        // 🟢 2. PUNTO EXACTO DE PRECARGA:
+        // Miramos directamente el track para ver si hay alguna tarjeta que lleve a 'detalle'
+        const tieneCursos = this.DOM.track?.querySelector('[data-tipo="curso"]') !== null;
+
+        if (tieneCursos) {
+            debug.log('app', debug.DEBUG_LEVELS.DEEP, 
+                "🎯 Tarjetas de curso detectadas en el track. Iniciando precarga de detalles...");
+
+            if (window.requestIdleCallback) {
+                requestIdleCallback(() => {
+                    app_utils.preloadDetailsModules(this, 'css');
+                });
+            } else {
+                setTimeout(() => {
+                    app_utils.preloadDetailsModules(this, 'css');
+                }, data.PRELOAD_TIME);
+            }
+        }
 
         // 🟢 Restaurar el SEO genérico del catálogo
         this.updateSEO(null);

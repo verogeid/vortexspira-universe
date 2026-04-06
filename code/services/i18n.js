@@ -55,26 +55,21 @@ export function getCurrentLang() {
 /* 🟢 MODIFICADO: Soporte para claves anidadas (dot notation) manteniendo tu gestión de errores */
 export function getString(key) {
 
-    if (!_loadedStrings) {
+    if (!_loadedStrings || !key) {
         debug.logWarn('i18n', `Intento de leer clave sin cargar strings: ${key}`);
         
         return `[${key}]`;
     }
+    console.log(`Buscando clave: ${key}`);
 
-    const keys = key.split('.');
-    let value = _loadedStrings;
+    const value = key.split('.').reduce((obj, property) => {
+        return (obj && obj[property] !== undefined) ? obj[property] : undefined;
+    }, _loadedStrings);
+
+    console.log(`Valor recuperado: ${value}`);
     
-    for (const k of keys) {
-        if (value && value[k] !== undefined) {
-            value = value[k];
-
-        } else {
-            debug.logWarn('i18n', `Clave no encontrada: ${key}`);
-
-            return `[${key}]`;
-        }
-    }
-    return value;
+    // Si no se encuentra o el resultado no es una cadena, devolvemos la clave
+    return (typeof value === 'string') ? value : `[${key}]`;
 }
 
 /**
@@ -92,6 +87,7 @@ export function applyStrings(appInstance) {
     // Mapeo ID -> Clave JSON (Actualizado a Jerárquico)
     const elementsById = {
         'main-header-title': 'header.title',
+        'main-header-subtitle': 'header.subtitle',
         'info-adicional-titulo-ayuda': 'help.title',
         'info-adicional-ayuda-gira': 'help.rotate',
         'info-adicional-ayuda-vuelve': 'help.back'
@@ -100,19 +96,8 @@ export function applyStrings(appInstance) {
     for (const id in elementsById) {
         const el = document.getElementById(id);
         if (el) {
-            let content = getString(elementsById[id]);
+            el.innerHTML = getString(elementsById[id]);
             
-            // Lógica especial para subtítulo dentro del H1
-            if (id === 'main-header-title') {
-                const subtitle = getString('header.subtitle');
-                content = `<span class="title-text-clamp">
-                               ${content}
-                               <small id="main-header-subtitle">
-                                   ${subtitle}
-                               </small>
-                           </span>`;
-            }
-            el.innerHTML = content;
         }
     }
 
@@ -158,6 +143,16 @@ export function applyStrings(appInstance) {
             }
         }
     }
+
+    // 🟢 Traducir etiquetas ARIA dinámicas
+    document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+        const key = el.getAttribute('data-i18n-aria');
+        const translated = getString(key);
+        if (translated) {
+            el.setAttribute('aria-label', translated);
+            el.setAttribute('title', translated);
+        }
+    });
 
     // 🟢 HOT SWAP: Textos Visuales Internos del Menú (Fat Buttons en Desktop)
     const menuVisualTextsById = {

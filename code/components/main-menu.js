@@ -1,7 +1,9 @@
 /* --- code/components/main-menu.js --- */
 
+import * as debug from '../debug/debug.js'
 import * as data from '../services/data.js';
 import * as a11y from '../features/a11y/a11y.js';
+import * as app_utils from '../services/app-utils.js'
 
 let navDropdown = null;
 let btnMainMenu = null;
@@ -211,6 +213,21 @@ export function toggleMenu(forceClose = false) {
     
     if (newState) {
         navDropdown.classList.add('active');
+
+        debug.log('main_menu', debug.DEBUG_LEVELS.DEEP, 
+            "🎯 Iniciando precarga de detalles...");
+
+        // 🟢 PRECARGA EN SEGUNDO PLANO (Lazy Load Details)
+        if (window.requestIdleCallback) {
+            requestIdleCallback(() => {
+                app_utils.preloadDetailsModules(this, 'css');
+            });
+        } else {
+            setTimeout(() => {
+                app_utils.preloadDetailsModules(this, 'css');
+            }, data.PRELOAD_TIME);
+        }
+
         setTimeout(() => {
             const firstItem = navDropdown.querySelector('.menu-link');
             if (firstItem) firstItem.focus();

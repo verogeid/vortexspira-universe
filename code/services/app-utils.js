@@ -134,19 +134,32 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
         const h1 = header.querySelector('h1');
 
         if (h1) {
+            // 1. Recuperamos o creamos el Logo
             let logoLink = h1.querySelector('a');
-            
+
             if (!logoLink) {
                 logoLink = document.createElement('a');
                 logoLink.href = data.MEDIA.URL.WEBPAGE;
                 logoLink.target = "_self";
-                
                 const logoDiv = document.createElement('span');
                 logoDiv.className = 'header-logo'; 
                 logoLink.appendChild(logoDiv);
-                
-                h1.insertBefore(logoLink, h1.firstChild);
             }
+            
+            const content = appInstance.getString('header.title');
+            const subtitle = appInstance.getString('header.subtitle');
+            
+            h1.innerHTML = ''; // Limpiamos para asegurar el orden Logo -> Texto
+            h1.appendChild(logoLink);
+            
+            // Inyectamos el bloque de título y subtítulo (Lógica movida de i18n)
+            const titleHtml = `<span class="title-text-clamp">
+                                   ${content}
+                                   <small id="main-header-subtitle">
+                                       ${subtitle}
+                                   </small>
+                               </span>`;
+            h1.insertAdjacentHTML('beforeend', titleHtml);
             
             const txtLogoObras = appInstance.getString('header.aria.obras');
 
@@ -166,7 +179,6 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
         }
 
         // 🟢 INYECCIÓN SÍNCRONA DEL BOTÓN ORIGINAL
-        // Extraído directamente de tu main-menu.js
         let controls = wrapper.querySelector('.header-controls');
         if (!controls) {
             controls = document.createElement('div');

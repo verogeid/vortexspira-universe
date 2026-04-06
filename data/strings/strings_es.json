@@ -46,6 +46,7 @@
   "nav": {
     "aria": {
       "region": "Navegación principal de cursos",
+      "controls": "Controles de navegación",
       "backBtn": "Volver al nivel anterior",
       "breadcrumb": "Nivel Actual: ",
       "actionCategory": "Ir a la subsección:",
