@@ -60,14 +60,14 @@ export function getString(key) {
         
         return `[${key}]`;
     }
-    console.log(`Buscando clave: ${key}`);
 
     const value = key.split('.').reduce((obj, property) => {
         return (obj && obj[property] !== undefined) ? obj[property] : undefined;
     }, _loadedStrings);
 
-    console.log(`Valor recuperado: ${value}`);
-    
+    debug.log('i18n', debug.DEBUG_LEVELS.DEEP, 
+        `Valor encontrado para la key (${key}): ${value}`);
+
     // Si no se encuentra o el resultado no es una cadena, devolvemos la clave
     return (typeof value === 'string') ? value : `[${key}]`;
 }
