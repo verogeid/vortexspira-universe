@@ -1,3 +1,4 @@
+[![](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=white)](https://github.com/sponsors/verogeid)
 # <img src="./resources/images/logo.svg" alt="VortexSpira Logo" height="44" target="_top"/> **VortexSpira® EdTech**
 
 Expositor de cursos de VortexSpira® e-learning mentor. Una arquitectura diseñada para la excelencia técnica (0ms TBT) y la inclusión universal (WCAG 2.2 AAA).
@@ -17,20 +18,23 @@ Expositor de cursos de VortexSpira® e-learning mentor. Una arquitectura diseña
 VortexSpira no es solo una plataforma de aprendizaje; es un compromiso de ingeniería. Estos son los resultados obtenidos en abril de 2026 tras auditorías híbridas (Manual + Axe-Core + Lighthouse + WebPageTest):
 
 ### 📱 Rendimiento Mobile
-![Lighthouse Mobile Results](./resources/images/VortexSpira-EdTech-LightHouse-Mobile-Test-Results.webp)
-* **Performance:** 85/100 (Optimizado para redes estranguladas).
+* **Performance:** 84/100 (Optimizado para redes estranguladas).
 * **Total Blocking Time (TBT):** 0 ms (Determinismo total en la ejecución).
 * **Accesibilidad, SEO & Buenas Prácticas:** 100/100
 
 ### 💻 Rendimiento Desktop
-![Lighthouse Desktop Results](./resources/images/VortexSpira-EdTech-LightHouse-Desktop-Test-Results.webp)
 * **Performance:** 99/100
 * **Accesibilidad, SEO & Buenas Prácticas:** 100/100
 
 ### 🛡️ Certificación de Accesibilidad WCAG 2.2 AAA
-![Axe-Core AAA Results](./resources/images/VortexSpira-EdTech-Axe-Core-AAA-WCAG22-Test-Results.webp)
 * **Resultado Axe-Core:** 0 problemas detectados.
 * **Foco y DOM:** Gestión manual de nodos para garantizar la sincronización total con lectores de pantalla y eliminar errores de persistencia de scroll.
+
+---
+
+| **Lighthouse Mobile** | **Lighthouse Desktop** | **Axe-Core AAA** |
+| :--- | :--- | :--- |
+| [<img src="./resources/images/VortexSpira-EdTech-LightHouse-Mobile-Test-Results.webp" width="250">](./resources/images/VortexSpira-EdTech-LightHouse-Mobile-Test-Results.webp) | [<img src="./resources/images/VortexSpira-EdTech-LightHouse-Desktop-Test-Results.webp" width="250">](./resources/images/VortexSpira-EdTech-LightHouse-Desktop-Test-Results.webp) | [<img src="./resources/images/VortexSpira-EdTech-Axe-Core-AAA-WCAG22-Test-Results.webp" width="250">](./resources/images/VortexSpira-EdTech-Axe-Core-AAA-WCAG22-Test-Results.webp) |
 
 ---
 
