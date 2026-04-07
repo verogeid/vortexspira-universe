@@ -18,7 +18,7 @@ Expositor de cursos de VortexSpira® e-learning mentor. Una arquitectura diseña
 VortexSpira no es solo una plataforma de aprendizaje; es un compromiso de ingeniería. Estos son los resultados obtenidos en abril de 2026 tras auditorías híbridas (Manual + Axe-Core + Lighthouse + WebPageTest):
 
 ### 📱 Rendimiento Mobile
-* **Performance:** 84/100 (Optimizado para redes estranguladas).
+* **Performance:** 91/100 (Optimizado para redes estranguladas).
 * **Total Blocking Time (TBT):** 0 ms (Determinismo total en la ejecución).
 * **Accesibilidad, SEO & Buenas Prácticas:** 100/100
 
