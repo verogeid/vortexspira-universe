@@ -164,9 +164,11 @@ export function logTrace(moduleName, ...args) {
  */
 export function logError(moduleName, ...args) {
     if (isMuted()) return;
-    
-    if (!IS_PRODUCTION) {
-        _printWithPrefix(console.error, moduleName, args);
+
+    if (DEBUG_CONFIG[moduleName] >= DEBUG_LEVELS.BASIC) {
+        if (!IS_PRODUCTION) {
+            _printWithPrefix(console.error, moduleName, args);
+        }
     }
 }
 

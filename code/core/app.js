@@ -341,6 +341,9 @@ class VortexSpiraApp {
         if (app_utils.injectFooterContent) 
             app_utils.injectFooterContent(this);
 
+        if (app_utils.initAnalytics)
+            app_utils.initAnalytics();
+
         // 🟢 FIX CRÍTICO: Recalibración síncrona OBRIGATORIA antes de renderizar.
         // Garantiza que el motor de renderizado y la caché del DOM leen el layout final 
         // ya afectado por las preferencias de accesibilidad (tamaño de la fuente, etc.)

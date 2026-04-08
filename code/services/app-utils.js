@@ -465,4 +465,36 @@ export function buildAuditNode() {
     };
 }
 
+// ============================================================================
+// 📊 ANALÍTICAS DE CLOUDFLARE (PRODUCCIÓN SOLAMENTE)
+// ============================================================================
+export function initAnalytics() {
+    // 1. Detectar si estamos en el entorno local
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    // 2. Si es local, abortamos y lo notificamos en tu consola de debug
+    if (isLocalhost) {
+        debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
+            '🛡️ Cloudflare Analytics: Bloqueado (Entorno Local detectado).');
+        return;
+    }
+
+    // 3. Prevención de inyección duplicada (por si el router lo llama varias veces)
+    if (document.getElementById('cloudflare-analytics-script')) {
+        return;
+    }
+
+    // 4. Inyección dinámica para entornos de producción/testing reales
+    const script = document.createElement('script');
+    script.id = 'cloudflare-analytics-script';
+    script.defer = true;
+    script.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    script.setAttribute('data-cf-beacon', '{"token": "86e170bf7cb7417590e362758db3e43b"}');
+    
+    document.head.appendChild(script);
+    
+    debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
+        '📊 Cloudflare Analytics: Tracker inyectado correctamente.');
+}
+
 /* --- code/services/app-utils.js --- */
