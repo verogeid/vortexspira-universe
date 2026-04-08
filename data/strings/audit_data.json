@@ -2,21 +2,51 @@
   "es": {
     "title": "Informe de Auditoría Técnica WCAG 2.2 AAA",
     "intro": "Proyecto validado el 6 de abril de 2026. Auditoría híbrida (Manual + Automatizada) centrada en la eliminación de barreras cognitivas.",
-    "section1": "<strong>1. Métricas Lighthouse (v13.0):</strong> Arquitectura de alto rendimiento.<ul><li>Mobile: 91/100</li><li>Desktop: 99/100</li><li>TBT: 0ms en producción</li></ul>",
-    "section2": "<strong>2. Gestión de Accesibilidad:</strong> <ul><li>Control manual del orden de tabulación y determinismo del DOM.</li><li>Escalado de fuente al 200% (WCAG 1.4.4) sin pérdida de funcionalidad.</li></ul>",
-    "section3": "<strong>3. Auditoría Axe-core:</strong><ul><li>0 fallos detectados bajo el estándar WCAG 2.2 Nivel AAA.</li><li>Verificación estricta de jerarquía semántica y contraste dinámico.</li></ul>",
-    "section4": "<strong>4. Infraestructura WebPageTest:</strong><br>Entrega vía Edge Computing (Cloudflare). Stress Test en hardware de entrada (Android One, 4G): <ul><li>TBT 0.53s</li></ul>",
-    "conclusion": "<strong>Conclusión:</strong><br>VortexSpira® garantiza un aprendizaje sin ruido en el hilo principal ni barreras técnicas.",
-    "downloadBtn": "Descargar PDF Original"
+    "section1": "<strong>1. Métricas Lighthouse (v13.0):</strong> Arquitectura de alto rendimiento.<br>• Mobile: 91/100.<br>• Desktop: 99/100.<br>• TBT: 0ms en producción.",
+    "section2": "<strong>2. Gestión de Accesibilidad:</strong><br>• Control manual del orden de tabulación y determinismo del DOM.<br>• Escalado de fuente al 200% (WCAG 1.4.4) sin pérdida de funcionalidad.",
+    "section3": "<strong>3. Auditoría Axe-core:</strong><br>• 0 fallos detectados bajo el estándar WCAG 2.2 Nivel AAA.<br>• Verificación estricta de jerarquía semántica y contraste dinámico.",
+    "section4": "<strong>4. Infraestructura WebPageTest:</strong><br>Entrega vía Edge Computing (Cloudflare). Stress Test en hardware de entrada (Android One, 4G):<br>• TBT 0.53s",
+    "conclusion": "<strong>Conclusión:</strong> VortexSpira® garantiza un aprendizaje sin ruido en el hilo principal ni barreras técnicas.",
+    "downloadBtn": "Descargar Auditoria en PDF"
   },
   "en": {
-    "title": "Technical Audit Report WCAG 2.2 AAA",
-    "intro": "Project validated on April 6, 2026. Hybrid audit (Manual + Automated) focused on eliminating cognitive barriers.",
-    "section1": "<strong>1. Lighthouse Metrics (v13.0):</strong> High-performance architecture. Mobile: 91/100 | Desktop: 99/100. TBT: 0ms in production.",
-    "section2": "<strong>2. Accessibility Management:</strong> Manual tab order control and DOM determinism. 200% font scaling (WCAG 1.4.4) without loss of functionality.",
-    "section3": "<strong>3. Axe-core Audit:</strong> 0 failures detected under WCAG 2.2 Level AAA standard. Strict verification of semantic hierarchy and dynamic contrast.",
-    "section4": "<strong>4. WebPageTest Infrastructure:</strong> Delivery via Edge Computing (Cloudflare). Stress Test on entry-level hardware (Android One, 4G): TBT 0.53s.",
-    "conclusion": "<strong>Conclusion:</strong> VortexSpira® ensures learning without main-thread noise or technical barriers.",
-    "downloadBtn": "Download Signed PDF"
+    "title": "WCAG 2.2 AAA Technical Audit Report",
+    "intro": "Project validated on April 6, 2026. Hybrid audit (Manual + Automated) focused on the elimination of cognitive barriers.",
+    "section1": "<strong>1. Lighthouse Metrics (v13.0):</strong> High-performance architecture.<br>• Mobile: 91/100.<br>• Desktop: 99/100.<br>• TBT: 0ms in production.",
+    "section2": "<strong>2. Accessibility Management:</strong><br>• Manual control of tab order and DOM determinism.<br>• Font scaling to 200% (WCAG 1.4.4) without loss of functionality.",
+    "section3": "<strong>3. Axe-core Audit:</strong><br>• 0 failures detected under the WCAG 2.2 Level AAA standard.<br>• Strict verification of semantic hierarchy and dynamic contrast.",
+    "section4": "<strong>4. WebPageTest Infrastructure:</strong><br>Delivery via Edge Computing (Cloudflare). Stress Test on entry-level hardware (Android One, 4G):<br>• TBT 0.53s.",
+    "conclusion": "<strong>Conclusion:</strong> VortexSpira® guarantees learning without main thread noise or technical barriers.",
+    "downloadBtn": "Download Audit in PDF (Spanish only)"
+  },
+  "fr": {
+    "title": "Rapport d'Audit Technique WCAG 2.2 AAA",
+    "intro": "Projet validé le 6 avril 2026. Audit hybride (Manuel + Automatisé) centré sur l'élimination des barrières cognitives.",
+    "section1": "<strong>1. Métriques Lighthouse (v13.0) :</strong> Architecture haute performance.<br>• Mobile : 91/100.<br>• Desktop : 99/100.<br>• TBT : 0ms en production.",
+    "section2": "<strong>2. Gestion de l'Accessibilité :</strong><br>• Contrôle manuel de l'ordre de tabulation et déterminisme du DOM.<br>• Agrandissement de la police à 200 % (WCAG 1.4.4) sans perte de fonctionnalité.",
+    "section3": "<strong>3. Audit Axe-core :</strong><br>• 0 défaut détecté selon le standard WCAG 2.2 Niveau AAA.<br>• Vérification stricte de la hiérarchie sémantique et du contraste dynamique.",
+    "section4": "<strong>4. Infrastructure WebPageTest :</strong><br>Diffusion via Edge Computing (Cloudflare). Stress Test sur matériel d'entrée de gamme (Android One, 4G) :<br>• TBT 0.53s.",
+    "conclusion": "<strong>Conclusion :</strong> VortexSpira® garantit un apprentissage sans bruit sur le thread principal ni barrières techniques.",
+    "downloadBtn": "Télécharger l'Audit en PDF (uniquement en espagnol)"
+  },
+  "de": {
+    "title": "Technischer Audit-Bericht WCAG 2.2 AAA",
+    "intro": "Projekt validiert am 6. April 2026. Hybrides Audit (Manuell + Automatisiert) mit Fokus auf die Beseitigung kognitiver Barrieren.",
+    "section1": "<strong>1. Lighthouse-Metriken (v13.0):</strong> Hochleistungsarchitektur.<br>• Mobile: 91/100.<br>• Desktop: 99/100.<br>• TBT: 0ms in Produktion.",
+    "section2": "<strong>2. Barrierefreiheitsmanagement:</strong><br>• Manuelle Steuerung der Tabulator-Reihenfolge und DOM-Determinismus.<br>• Skalierung der Schrift auf 200% (WCAG 1.4.4) ohne Funktionsverlust.",
+    "section3": "<strong>3. Axe-core Audit:</strong><br>• 0 Fehler erkannt nach WCAG 2.2 Level AAA Standard.<br>• Strenge Überprüfung der semantischen Hierarchie und des dynamischen Kontrasts.",
+    "section4": "<strong>4. WebPageTest-Infrastruktur:</strong><br>Bereitstellung über Edge Computing (Cloudflare). Stresstest auf Einstiegshardware (Android One, 4G):<br>• TBT 0.53s.",
+    "conclusion": "<strong>Fazit:</strong> VortexSpira® garantiert Lernen ohne Rauschen im Main-Thread oder technische Barrieren.",
+    "downloadBtn": "Audit als PDF herunterladen (nur auf Spanisch)"
+  },
+  "pt": {
+    "title": "Relatório de Auditoria Técnica WCAG 2.2 AAA",
+    "intro": "Projeto validado em 6 de abril de 2026. Auditoria híbrida (Manual + Automatizada) focada na eliminação de barreiras cognitivas.",
+    "section1": "<strong>1. Métricas Lighthouse (v13.0):</strong> Arquitetura de alto desempenho.<br>• Mobile: 91/100.<br>• Desktop: 99/100.<br>• TBT: 0ms em produção.",
+    "section2": "<strong>2. Gestão de Acessibilidade:</strong><br>• Controle manual da ordem de tabulação e determinismo do DOM.<br>• Ampliação de fonte para 200% (WCAG 1.4.4) sem perda de funcionalidade.",
+    "section3": "<strong>3. Auditoria Axe-core:</strong><br>• 0 falhas detectadas sob o padrão WCAG 2.2 Nível AAA.<br>• Verificação estrita de hierarquia semântica e contraste dinâmico.",
+    "section4": "<strong>4. Infraestrutura WebPageTest:</strong><br>Entrega via Edge Computing (Cloudflare). Stress Test em hardware de entrada (Android One, 4G):<br>• TBT 0.53s.",
+    "conclusion": "<strong>Conclusão:</strong> VortexSpira® garante um aprendizado sem ruído na thread principal ou barreiras técnicas.",
+    "downloadBtn": "Baixar Auditoria em PDF (apenas em espanhol)"
   }
 }

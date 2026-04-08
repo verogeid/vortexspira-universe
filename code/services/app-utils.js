@@ -245,7 +245,7 @@ export function updateSEO(appInstance, curso = null) {
         title = `${curso.titulo} | VortexSpira EdTech`;
 
         debug.log('app_utils', debug.DEBUG_LEVELS.BASIC, 
-            `Actualizando SEO para curso: ${curso}`);
+            'Actualizando SEO para curso: ', curso);
             
         desc = curso.descripcion.replace(/<[^>]*>?/gm, ' ')
                                 .replace(/\s+/g, ' ').trim().substring(0, 155) + '...';
