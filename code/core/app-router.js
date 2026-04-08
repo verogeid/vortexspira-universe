@@ -83,6 +83,19 @@ export async function toggleLanguage(app) {
                 window.history.replaceState({}, '', url);
                 app._mostrarAbout(false); 
             }
+            else if (targetId === 'c-audit') {
+                const originId = app.STATE._previousCourseId; 
+                
+                if (originId && app.stackBuildFromId(originId, app.STATE.fullData)) {
+                    debug.log('app', debug.DEBUG_LEVELS.BASIC, 
+                        `Pila base reconstruida para ${originId} tras cambio de idioma.`);
+                } else {
+                    app.stackInitialize(); 
+                }
+
+                window.history.replaceState({}, '', url);
+                app._mostrarAudit(false); 
+            }
             else if (app.stackBuildFromId(targetId, app.STATE.fullData)) {
                 window.history.pushState({}, '', url);
                 
@@ -145,6 +158,11 @@ export function setupNavigationListener(app) {
         if (targetId) {
             if (targetId === 'c-about') {
                 app._mostrarAbout(false); 
+                return; 
+            }
+
+            if (targetId === 'c-audit') {
+                app._mostrarAudit(false);
                 return; 
             }
 
@@ -222,6 +240,21 @@ export async function mostrarAbout(app, pushHistory = true) {
     }
 
     await app._mostrarDetalle('c-about');
+}
+
+export async function mostrarAudit(app, pushHistory = true) {
+    await app_utils.preloadAuditData();
+
+    if (!app.STATE.isSpecialViewActive) app.STATE._previousCourseId = app.STATE.activeCourseId;
+    app.STATE.activeCourseId = 'c-audit';
+    app.STATE.isSpecialViewActive = true; 
+
+    if (pushHistory) {
+        const url = new URL(window.location);
+        url.searchParams.set('id', 'c-audit');
+        window.history.pushState({}, '', url);
+    }
+    await app._mostrarDetalle('c-audit');
 }
 
 /* --- code/core/app-router.js --- */

@@ -1,0 +1,22 @@
+{
+  "es": {
+    "title": "Informe de Auditoría Técnica WCAG 2.2 AAA",
+    "intro": "Proyecto validado el 6 de abril de 2026. Auditoría híbrida (Manual + Automatizada) centrada en la eliminación de barreras cognitivas.",
+    "section1": "<strong>1. Métricas Lighthouse (v13.0):</strong> Arquitectura de alto rendimiento.<ul><li>Mobile: 91/100</li><li>Desktop: 99/100</li><li>TBT: 0ms en producción</li></ul>",
+    "section2": "<strong>2. Gestión de Accesibilidad:</strong> <ul><li>Control manual del orden de tabulación y determinismo del DOM.</li><li>Escalado de fuente al 200% (WCAG 1.4.4) sin pérdida de funcionalidad.</li></ul>",
+    "section3": "<strong>3. Auditoría Axe-core:</strong><ul><li>0 fallos detectados bajo el estándar WCAG 2.2 Nivel AAA.</li><li>Verificación estricta de jerarquía semántica y contraste dinámico.</li></ul>",
+    "section4": "<strong>4. Infraestructura WebPageTest:</strong><br>Entrega vía Edge Computing (Cloudflare). Stress Test en hardware de entrada (Android One, 4G): <ul><li>TBT 0.53s</li></ul>",
+    "conclusion": "<strong>Conclusión:</strong><br>VortexSpira® garantiza un aprendizaje sin ruido en el hilo principal ni barreras técnicas.",
+    "downloadBtn": "Descargar PDF Original"
+  },
+  "en": {
+    "title": "Technical Audit Report WCAG 2.2 AAA",
+    "intro": "Project validated on April 6, 2026. Hybrid audit (Manual + Automated) focused on eliminating cognitive barriers.",
+    "section1": "<strong>1. Lighthouse Metrics (v13.0):</strong> High-performance architecture. Mobile: 91/100 | Desktop: 99/100. TBT: 0ms in production.",
+    "section2": "<strong>2. Accessibility Management:</strong> Manual tab order control and DOM determinism. 200% font scaling (WCAG 1.4.4) without loss of functionality.",
+    "section3": "<strong>3. Axe-core Audit:</strong> 0 failures detected under WCAG 2.2 Level AAA standard. Strict verification of semantic hierarchy and dynamic contrast.",
+    "section4": "<strong>4. WebPageTest Infrastructure:</strong> Delivery via Edge Computing (Cloudflare). Stress Test on entry-level hardware (Android One, 4G): TBT 0.53s.",
+    "conclusion": "<strong>Conclusion:</strong> VortexSpira® ensures learning without main-thread noise or technical barriers.",
+    "downloadBtn": "Download Signed PDF"
+  }
+}

@@ -63,6 +63,7 @@ class VortexSpiraApp {
         this._originalFindNodoById = nav_base._findNodoById;
         this._findNodoById = (id, items) => {
             if (id === 'c-about') return app_utils.buildAboutNode(this);
+            if (id === 'c-audit') return app_utils.buildAuditNode();
             return this._originalFindNodoById(id, items);
         };
 
@@ -351,6 +352,9 @@ class VortexSpiraApp {
             // 🟢 FIX: Si se hace F5 o se comparte un enlace directo
             if (targetId === 'c-about') {
                 this._mostrarAbout();
+
+            } else if (targetId === 'c-audit') {
+                this._mostrarAudit();
 
             } else if (this.stackBuildFromId(targetId, this.STATE.fullData)) { 
                 const nodo = this._findNodoById(targetId, this.STATE.fullData.navegacion);
@@ -675,6 +679,13 @@ class VortexSpiraApp {
     // ==========================================
     async _mostrarAbout(pushHistory = true) {
         await app_router.mostrarAbout(this, pushHistory);
+    }
+
+    // ==========================================
+    // 🟢 PAGINA DE AUDITORIA AAA
+    // ==========================================
+    async _mostrarAudit(pushHistory = true) {
+        await app_router.mostrarAudit(this, pushHistory);
     }
 }
 

@@ -6,8 +6,9 @@ import * as debug from '../../debug/debug.js';
 export function _getFocusableDetailElements(appInstance) {
     if (!appInstance.DOM.detalleTrack) return [];
 
+    // 🟢 Buscamos la etiqueta <a> directamente
     const elements = Array.from(appInstance.DOM.detalleTrack.querySelectorAll(
-        '.detail-text-fragment[tabindex="0"], .detail-action-item[tabindex="0"], .card-volver-vertical[tabindex="0"]'
+        '.detail-text-fragment[tabindex="0"], a.detail-action-link[tabindex="0"], .card-volver-vertical[tabindex="0"]'
     )).filter(el => el.tabIndex !== -1); 
 
     debug.log('nav_base_details', debug.DEBUG_LEVELS.EXTREME, 
@@ -22,7 +23,7 @@ export function _getFocusableDetailElements(appInstance) {
 export function _clearDetailVisualStates(appInstance) {
     if (!appInstance.DOM.detalleTrack) return;
 
-    appInstance.DOM.detalleTrack.querySelectorAll('.detail-text-fragment, .detail-action-item, .card-volver-vertical')
+    appInstance.DOM.detalleTrack.querySelectorAll('.detail-text-fragment, .detail-action-item, a.detail-action-link, .card-volver-vertical')
         .forEach(el => el.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2'));
 
     appInstance.DOM.cardVolverFijaElemento?.classList.remove('focus-current', 'focus-adj-1', 'focus-adj-2');
@@ -166,12 +167,19 @@ export function _updateDetailFocusState(appInstance, targetOverride = null) {
             clearTimeout(appInstance.STATE._autoScrollTimeout);
 
             appInstance.STATE._autoScrollTimeout = setTimeout(() => {
+                const elementToRestore = focusableElements[appInstance.STATE._lastDetailFocusIndex];
+
                 if (typeof appInstance.unblockUI === 'function') {
                     appInstance.unblockUI();
                 }
 
                 // Actualizamos visuales post-animación
                 swiper.update();
+
+                // 🟢 FIX: Si swiper.update() robó el foco, lo devolvemos
+                if (elementToRestore && document.activeElement !== elementToRestore) {
+                    elementToRestore.focus({ preventScroll: true });
+                }
                 
                 debug.log('nav_base_details', debug.DEBUG_LEVELS.BASIC, 
                     `[TRACE ${traceId}-UDF] 🛡️ Escudo bajado.`);
@@ -223,12 +231,29 @@ export function _handleSlideChangeEnd(swiper, appInstance) {
 }
 
 export function _handleActionRowClick(e) {
-    debug.log('nav_base_details', debug.DEBUG_LEVELS.BASIC, 
-        'Fila de acción interactuada. Evaluando foco...');
+    if (window.App && window.App.STATE.isUIBlocked) {
+        e.preventDefault();
+        return;
+    }
 
-    e.currentTarget.focus();
+    // 1. Si el clic viene directamente del enlace (por un clic de ratón en el icono 
+    // o por un Enter nativo del teclado), no hacemos nada. Dejamos que el navegador trabaje.
+    const clickedLink = e.target.closest('a.detail-action-link');
+    if (clickedLink) {
+        return;
+    }
 
-    _updateDetailFocusState(App);
+    // 2. Si el usuario pinchó con el ratón en la fila (área vacía o en el texto), 
+    // buscamos el enlace interno y forzamos su activación.
+    const target = e.currentTarget;
+    const link = target.querySelector('a.detail-action-link');
+    
+    if (link && link.getAttribute('href')) {
+        const btn = link.querySelector('.detail-action-btn');
+        if (btn && !btn.classList.contains('disabled')) {
+            link.click();
+        }
+    }
 };
 
 // 🟢 NUEVO: Aplica las clases de opacidad visual sin mover el carrusel ni forzar foco físico

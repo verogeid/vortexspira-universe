@@ -8,10 +8,13 @@ import * as app_utils from '../services/app-utils.js'
 let navDropdown = null;
 let btnMainMenu = null;
 let _isInitialized = false;
+let _app = null;
 
 export function initMainMenu(appInstance, wrapper, enableI18n) {
     if (_isInitialized) return; // Evita inyectar el DOM dos veces si se pulsa rápido
     
+    _app = appInstance;
+
     // Enganchamos el botón que app-utils.js ya creó en el DOM
     btnMainMenu = document.getElementById('btn-main-menu');
 
@@ -137,6 +140,19 @@ export function initMainMenu(appInstance, wrapper, enableI18n) {
                             ${appInstance.getString('menu.aria.feedback')}
                         </span>
                     </button>
+
+                    <button role="menuitem" 
+                        id="menu-btn-audit" 
+                        class="menu-link" 
+                        aria-label="${appInstance.getString('menu.aria.auditAAA')}"
+                        title="${appInstance.getString('menu.aria.auditAAA')}">
+
+                        <span class="menu-icon icon-aaa" aria-hidden="true"></span> 
+
+                        <span class="menu-text" aria-hidden="true">
+                            ${appInstance.getString('menu.aria.auditAAA')}
+                        </span>
+                    </button>
                 </div>
 
                 <div class="menu-separator" role="presentation">
@@ -220,11 +236,11 @@ export function toggleMenu(forceClose = false) {
         // 🟢 PRECARGA EN SEGUNDO PLANO (Lazy Load Details)
         if (window.requestIdleCallback) {
             requestIdleCallback(() => {
-                app_utils.preloadDetailsModules(this, 'css');
+                app_utils.preloadDetailsModules(_app, 'css');
             });
         } else {
             setTimeout(() => {
-                app_utils.preloadDetailsModules(this, 'css');
+                app_utils.preloadDetailsModules(_app, 'css');
             }, data.PRELOAD_TIME);
         }
 
@@ -333,6 +349,14 @@ function _setupListeners(appInstance, enableI18n) {
             window.App._mostrarAbout();
         }
     };
+
+    navDropdown.querySelector('#menu-btn-audit').onclick = (e) => {
+    e.preventDefault();
+    toggleMenu(true);
+    if (window.App && typeof window.App._mostrarAudit === 'function') {
+        window.App._mostrarAudit();
+    }
+};
 }
 
 /* --- code/components/main-menu.js --- */

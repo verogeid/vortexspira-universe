@@ -15,6 +15,9 @@ let _detailsJsPromise = null;
 let _menuCssPromise = null;
 let _menuJsPromise = null;
 
+// Memoria caché para la auditoría
+let _auditDataMap = null;
+
 // 🟢 LAZY LOAD DEL MENÚ: Precarga modularizada (Lighthouse Friendly)
 export function preloadMainMenu(appInstance, type = 'all') {
     
@@ -430,6 +433,35 @@ export function buildAboutNode(appInstance) {
                 "type": "f" 
             }
         ]
+    };
+}
+
+export async function preloadAuditData() {
+    if (_auditDataMap) return true;
+    try {
+        const response = await fetch('./data/strings/audit_data.json');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        _auditDataMap = await response.json();
+        return true;
+
+    } catch (e) {
+        debug.logError('app_utils', 'Fallo pre-carga auditoría', e);
+        return false;
+    }
+}
+
+export function buildAuditNode() {
+    if (!_auditDataMap) {
+        // Fallback de seguridad por si el renderizado llega antes que el fetch
+        return { id: 'c-audit', titulo: "Cargando...", descripcion: "..." };
+    }
+    const content = _auditDataMap[document.documentElement.lang] || _auditDataMap['es'];
+
+    return {
+        id: 'c-audit',
+        titulo: content.title,
+        descripcion: `${content.intro} <HR> ${content.section1} <HR> ${content.section2} <HR> ${content.section3} <HR> ${content.section4} <HR> ${content.conclusion}`,
+        enlaces: [{ "texto": content.downloadBtn, "url": data.MEDIA.URL.AUDIT_PDF, "type": "d" }]
     };
 }
 

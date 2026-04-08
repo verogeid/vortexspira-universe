@@ -604,25 +604,36 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
 
                 const isDisabled = !enlace.url || enlace.url === '#';
                 const style = isDisabled ? 'style="pointer-events: none;"' : '';
+                
+                const targetAttr = (enlace.type === 'd') ? 'download' : 'target="_blank" rel="noopener noreferrer"';
+                const hrefAttr = isDisabled ? '' : `href="${enlace.url}"`;
+                const ariaLabel = `aria-label="${enlace.texto}"`;
+
+                // 🟢 A11Y FIX: Indicamos semánticamente que es un botón, y si está deshabilitado
                 const ariaDisabledAttr = isDisabled ? 'aria-disabled="true"' : '';
+
                 slidesHtml += `
                     <div class="swiper-slide detail-action-slide">
-                        <div class="detail-action-item" 
-                            ${ariaDisabledAttr} 
-                            onclick="App._handleActionRowClick(event)" 
-                            tabindex="0" 
-                            role="button">
+                        <div class="detail-action-item" onclick="App._handleActionRowClick(event)">
 
-                            <span class="detail-action-text">
+                            <span class="detail-action-text" aria-hidden="true">
                                 ${enlace.texto}
                             </span>
 
-                            <span tabindex="-1" 
-                                aria-hidden="true" 
-                                ${style} 
-                                class="detail-action-btn ${isDisabled ? 'disabled' : ''}">
-                                <i class="action-icon ${isDisabled ? 'icon-empty' : iconClass}"></i>
-                            </span>
+                            <a ${hrefAttr} 
+                               ${targetAttr} 
+                               ${ariaLabel}
+                               ${ariaDisabledAttr}
+                               role="button"
+                               class="detail-action-link"
+                               tabindex="0">
+                                
+                                <span aria-hidden="true" 
+                                    ${style} 
+                                    class="detail-action-btn ${isDisabled ? 'disabled' : ''}">
+                                    <i class="action-icon ${isDisabled ? 'icon-empty' : iconClass}"></i>
+                                </span>
+                            </a>
                         </div>
                     </div>
                 `;

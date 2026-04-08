@@ -62,21 +62,32 @@ export function _handleDetailNavigation(key) {
                     targetElement.id === 'card-volver-fija-elemento') {
 
                     app._handleVolverClick();
-                    return;
+                    return true; // Terminamos y prevenimos default
                 }
                 
-                // Si es un botón de acción (detail-action-item)
-                if (targetElement.classList.contains('detail-action-item')) {
+                // 🟢 Si el elemento con foco es nuestro enlace <a>
+                if (targetElement.classList.contains('detail-action-link')) {
                     const btn = targetElement.querySelector('.detail-action-btn');
+                    
                     if (btn && !btn.classList.contains('disabled')) {
-                        btn.click(); 
-
                         debug.log('nav_keyboard_details', debug.DEBUG_LEVELS.DEEP, 
-                            `[TRACE ${app.STATE.currentTraceId}] Botón de acción activado.`);
+                            `[TRACE ${app.STATE.currentTraceId}] Enlace accionado por teclado.`);
 
-                        return;
+                        targetElement.focus();
+                        
+                        // Si es ESPACIO: HTML no hace clic por defecto, forzamos clic y prevenimos scroll
+                        if (key === ' ') {
+                            targetElement.click();
+                            return true; 
+                        }
+
+                        // 🟢 Si es ENTER: Ya NO hacemos targetElement.click() aquí.
+                        // Al devolver false, el comportamiento nativo de HTML hará el clic perfecto 
+                        // y validado por Chrome de forma automática.
+                        return false;
                     }
-                } 
+                    return true;
+                }
                 
                 // Si es un fragmento de texto o título, simula el avance al siguiente elemento.
                 if (targetElement.classList.contains('detail-text-fragment') || 
@@ -103,7 +114,7 @@ export function _handleDetailNavigation(key) {
                     `[TRACE ${app.STATE.currentTraceId}] Enter/Space: ` +
                     `No hay contenido enfocable en el índice actual.`);
 
-                return; 
+                return true;
             }
             break;
     }

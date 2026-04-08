@@ -197,11 +197,14 @@
     background: transparent;
     transition: background-color var(--animation-speed) ease;
 
-    /* 🟢 El BORDE envuelve a toda la fila */
+    /* El BORDE envuelve a toda la fila */
     border-left: var(--border-width-focus) solid transparent;
     border-radius: 4px;
 }
-.detail-action-item:hover { 
+
+/* 🟢 Igualamos el color de fondo para Hover y Foco */
+.detail-action-item:hover,
+.detail-action-item:has(a.detail-action-link.focus-current) { 
     background-color: var(--color-details-action-item-hover); 
 }
 
@@ -215,21 +218,37 @@
     transition: all var(--animation-speed) ease;
 }
 
-/* 1. Label de un Botón HABILITADO (Se pinta de color interactivo sólido) */
-.detail-action-item.focus-current:has(.detail-action-btn:not(.disabled)) {
+/* 🟢 A11Y FIX: Transferir estados visuales del link al padre usando :has() */
+
+/* 1. Label de un Botón HABILITADO */
+.detail-action-item:has(a.detail-action-link.focus-current .detail-action-btn:not(.disabled)) {
     border-left-color: var(--color-primary);
     border-left-style: solid;
+    opacity: 1;
 }
 
-/* 2. Label de un Botón DESHABILITADO (Se pinta de color silenciado a guiones) */
-.detail-action-item.focus-current:has(.detail-action-btn.disabled) {
+/* 2. Label de un Botón DESHABILITADO */
+.detail-action-item:has(a.detail-action-link.focus-current .detail-action-btn.disabled) {
     border-left-color: var(--color-text-muted);
     border-left-style: solid;
+    opacity: 1;
 }
 
-/* 🟢 NUEVO: Pintamos el borde del texto SOLO cuando la opción completa tiene el foco */
-.detail-action-item.focus-current .detail-action-text {
-    border-left-color: var(--color-text);
+/* 4. Transferimos las atenuaciones de scroll al padre */
+.detail-action-item:has(a.detail-action-link.focus-adj-1) {
+    filter: none !important;
+    opacity: calc(var(--opacity) * 2);
+}
+
+.detail-action-item:has(a.detail-action-link.focus-adj-2) {
+    filter: none !important;
+    opacity: var(--opacity);
+}
+
+/* 5. Mantenemos el outline nativo del enlace interno apagado */
+a.detail-action-link {
+    outline: none !important;
+    text-decoration: none;
 }
 
 /* 5. BOTÓN DE ACCIÓN */
@@ -249,6 +268,7 @@
     overflow: hidden; 
 }
 
+/* Botón Habilitado - Hover nativo */
 .detail-action-btn:not(.disabled):hover,
 .detail-action-item:hover .detail-action-btn:not(.disabled) { 
     border-color: var(--color-primary);
@@ -258,10 +278,10 @@
     outline: none;
 }
 
-.detail-action-btn:not(.disabled):focus-visible,
-.detail-action-item.focus-current .detail-action-btn:not(.disabled) { 
+/* 🟢 Botón Habilitado - Foco (Activado cuando a.detail-action-link tiene .focus-current) */
+.detail-action-item:has(a.detail-action-link.focus-current) .detail-action-btn:not(.disabled) { 
     outline: none !important;
-    border-color: var(--border-width-focus) solid var(--color-primary);   
+    border: var(--border-width-focus) solid var(--color-primary) !important;   
     color: var(--color-primary) !important; 
     box-shadow: 0 0 15px var(--color-shadow-primary);
     transform: scale(calc(1 + var(--zoom-focus-major)));
@@ -291,6 +311,7 @@
     display: block !important;
 }
 
+/* Botón Deshabilitado - Hover nativo */
 .detail-action-btn.disabled:hover,
 .detail-action-item:hover .detail-action-btn.disabled { 
     outline: none;
@@ -300,12 +321,11 @@
     color: var(--color-text); 
 }
 
-.detail-action-btn.disabled:focus-visible,
-.detail-action-item.focus-current .detail-action-btn.disabled { 
+/* 🟢 Botón Deshabilitado - Foco */
+.detail-action-item:has(a.detail-action-link.focus-current) .detail-action-btn.disabled { 
     outline: none !important;
     transform: scale(calc(1 + (var(--zoom-focus-minnor)*2)));
-
-    border: var(--border-width-no-focus) dashed var(--color-text-muted); 
+    border: var(--border-width-no-focus) dashed var(--color-text-muted) !important; 
     color: var(--color-text-muted) !important; 
     box-shadow: 0 0 15px var(--color-shadow-disabled); 
 }
@@ -325,7 +345,6 @@ button.detail-action-btn {
     padding: 0.5rem 1rem !important; 
     border-radius: 20px !important; margin-bottom: 0; 
     font-weight: bold; aspect-ratio: auto; 
-    /* A11Y FIX */
     font-size: var(--details-volver-btn-font-size);
     background: var(--color-card-bg); 
 }

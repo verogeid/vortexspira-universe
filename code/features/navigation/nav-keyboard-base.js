@@ -348,23 +348,32 @@ export function initKeyboardControls() {
         // 3. ENTER / SPACE
         if (e.key === 'Enter' || e.key === ' ' || e.code === 'Space') {
             const isInSwipe = focused.closest('#track-desktop, #track-tablet, #track-mobile');
-            const isInDetail = focused.closest('#detalle-track-desktop, #detalle-track-mobile');
+            const isInDetail = focused.closest('#detalle-track-desktop, #detalle-track-mobile') ||
+                               (isDetailActive && app.STATE._lastActiveZoneId === 'vista-central');
 
             if (isInSwipe || isInDetail) {
-                e.preventDefault();
+                
                 e.stopPropagation(); 
                 
                 app.STATE.keyboardNavInProgress = true;
                 
+                let allowDefault = true;
+
                 if (isNavActive) 
                     nav_keyboard_swipe._handleSwipeNavigation(e.key, app);
 
                 else {
-                    nav_keyboard_details._handleDetailNavigation.call(app, e.key);
+                    allowDefault = nav_keyboard_details._handleDetailNavigation.call(app, e.key);
 
                     // 🟢 Detalles es instantáneo, inyectamos su propio cooldown
                     setTimeout(() => { app.STATE.keyboardNavInProgress = false; }, 150);
                 }
+                // 🟢 El Notario de Chrome: Prevenimos el comportamiento nativo SOLO 
+                // si el controlador no nos ha devuelto un 'false' explícito.
+                if (allowDefault !== false) {
+                    e.preventDefault();
+                }
+
                 return;
             }
             
@@ -378,6 +387,13 @@ export function initKeyboardControls() {
                 'ArrowLeft', 
                 'ArrowRight'
             ].includes(e.key)) {
+
+            // 🟢 FIX NATIVO: Si el usuario pulsa Alt, Ctrl o Meta (Cmd), 
+            // es un atajo de sistema/navegador. Dejamos pasar el evento intacto.
+            if (e.altKey || e.ctrlKey || e.metaKey) {
+                return; 
+            }
+            
             const isInCentralTrack = focused.closest(
                 '#track-desktop, #track-tablet, #track-mobile, #detalle-track-desktop, #detalle-track-mobile'
             );
