@@ -1,7 +1,7 @@
 /* --- styles/style-theme-prefers-color-scheme-dark.css --- */
 
 /* =========================================================
-   1. MODO SISTEMA OPERATIVO (Automático)
+   1. MODO SISTEMA OPERATIVO (Automático / Base OSCURA)
    ========================================================= */
 @media (prefers-color-scheme: dark) {
     :root {   
