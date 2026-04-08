@@ -163,6 +163,8 @@ export function logTrace(moduleName, ...args) {
  * Muestra un error.
  */
 export function logError(moduleName, ...args) {
+    if (isMuted()) return;
+    
     if (!IS_PRODUCTION) {
         _printWithPrefix(console.error, moduleName, args);
     }
