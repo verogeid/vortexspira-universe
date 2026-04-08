@@ -177,6 +177,23 @@ langs.forEach(lang => {
     }
 });
 
+// 🟢 Inyectar manualmente las vistas estáticas del sistema
+console.log('Inyectando rutas estáticas (c-about, c-audit)...');
+
+const staticViews = [
+    { id: 'c-about', priority: '0.8' },
+    { id: 'c-audit', priority: '0.7' }
+];
+
+staticViews.forEach(view => {
+    // 1. Ruta explícita en Español
+    addUrlBlock(`${BASE_URL}?id=${view.id}&amp;lang=es`, view.id, view.priority);
+    // 2. Ruta explícita en Inglés
+    addUrlBlock(`${BASE_URL}?id=${view.id}&amp;lang=en`, view.id, view.priority);
+    // 3. Ruta default (resuelve en Español sin el parámetro lang)
+    addUrlBlock(`${BASE_URL}?id=${view.id}`, view.id, view.priority);
+});
+
 // 5. GUARDAR ARCHIVO
 console.log('\n--- Guardando sitemap.xml ---');
 const xml = `<?xml version="1.0" encoding="UTF-8"?>

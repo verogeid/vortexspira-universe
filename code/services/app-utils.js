@@ -268,18 +268,20 @@ export function updateSEO(appInstance, curso = null) {
         document.head.appendChild(schemaScript);
     }
 
+    const baseUrl = window.location.origin;
+
     // 1. ESQUEMA BASE: Organización (Textos puros desde i18n)
     const orgSchema = {
         "@context": "https://schema.org",
         "@type": "EducationalOrganization",
-        "@id": "https://www.vortexspira.com/#organization",
+        "@id": `${baseUrl}/#organization`,
         "name": "VortexSpira EdTech",
         "alternateName": "VortexSpira",
-        "url": "https://www.vortexspira.com",
-        "logo": "https://www.vortexspira.com/logo.png",
+        "url": baseUrl,
+        "logo": `${baseUrl}/resources/image/logo.png`, // 🟢 FIX: Ruta correcta y dinámica
         "description": appInstance.getString('seo.org.description'),
         "sameAs": [
-            "https://www.linkedin.com/company/vortexspira"
+            data.MEDIA.URL.LINKEDIN_VORTEX
         ],
         "accessibilityAPI": "ARIA",
         "accessibilityControl": ["fullKeyboardControl", "fullMouseControl", "fullTouchControl"],
@@ -291,28 +293,33 @@ export function updateSEO(appInstance, curso = null) {
     let jsonLdArray = [orgSchema];
 
     if (curso) {
-        // 2. ESTADO CURSO
-        const courseSchema = {
+        // 🟢 FIX SEO: Diferenciamos cursos reales de páginas estáticas
+        const isStaticPage = curso.id === 'c-about' || curso.id === 'c-audit';
+        const schemaType = isStaticPage ? (curso.id === 'c-about' ? 'AboutPage' : 'WebPage') : 'Course';
+        const schemaIdHash = isStaticPage ? 'page' : 'course';
+
+        // 2. ESTADO CURSO O PÁGINA ESTÁTICA
+        const itemSchema = {
             "@context": "https://schema.org",
-            "@type": "Course",
-            "@id": `https://www.vortexspira.com/?id=${curso.id}#course`,
+            "@type": schemaType,
+            "@id": `${baseUrl}/?id=${curso.id}#${schemaIdHash}`,
             "name": curso.titulo,
             "description": curso.descripcion.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim(),
-            "provider": { "@id": "https://www.vortexspira.com/#organization" },
+            "provider": { "@id": `${baseUrl}/#organization` },
             "inLanguage": currentLang === 'en' ? "en-US" : "es-ES"
         };
-        jsonLdArray.push(courseSchema);
+        jsonLdArray.push(itemSchema);
 
     } else {
         // 3. ESTADO CATÁLOGO
         const websiteSchema = {
             "@context": "https://schema.org",
             "@type": "WebSite",
-            "@id": "https://www.vortexspira.com/#website",
+            "@id": `${baseUrl}/#website`,
             "name": "VortexSpira EdTech",
-            "url": "https://www.vortexspira.com/",
+            "url": baseUrl,
             "description": desc,
-            "publisher": { "@id": "https://www.vortexspira.com/#organization" },
+            "publisher": { "@id": `${baseUrl}/#organization` },
             "inLanguage": currentLang === 'en' ? "en-US" : "es-ES"
         };
         jsonLdArray.push(websiteSchema);
@@ -333,7 +340,7 @@ export function updateSEO(appInstance, curso = null) {
                             "@type": "Course",
                             "name": item.titulo,
                             "description": item.descripcion ? item.descripcion.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim() : "",
-                            "url": `https://www.vortexspira.com/?id=${item.id}`
+                            "url": `${baseUrl}/?id=${item.id}`
                         }
                     });
                 }
@@ -350,7 +357,7 @@ export function updateSEO(appInstance, curso = null) {
             const catalogSchema = {
                 "@context": "https://schema.org",
                 "@type": "ItemList",
-                "@id": "https://www.vortexspira.com/#catalog",
+                "@id": `${baseUrl}/#catalog`,
                 "name": appInstance.getString('seo.catalog.name'),
                 "description": appInstance.getString('seo.catalog.description'),
                 "itemListElement": itemListElements
