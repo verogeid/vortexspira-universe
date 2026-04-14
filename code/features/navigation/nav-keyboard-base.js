@@ -312,6 +312,12 @@ export function initKeyboardControls() {
         // 🏁 FIN TRAMPA DE FOCO 🏁
         // ============================================================
 
+        // Si el usuario pulsa Alt, Ctrl o Meta (Cmd), es un atajo de sistema/navegador. 
+        // Dejamos pasar el evento intacto para no secuestrar el navegador.
+        if (e.altKey || e.ctrlKey || e.metaKey) {
+            return; 
+        }
+
         // 🟢 LEER LA VERDAD ABSOLUTA DEL DOM
         const activeNavView = document.querySelector(
             '#vista-navegacion-desktop.active, #vista-navegacion-tablet.active, #vista-navegacion-mobile.active');
@@ -324,7 +330,6 @@ export function initKeyboardControls() {
         const focused = document.activeElement;
 
         if (!app?.DOM?.vistaNav) return; 
-
 
         debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.DEEP, 
             `Key: ${e.key} | Target: ${e.target.tagName}`);
@@ -339,7 +344,6 @@ export function initKeyboardControls() {
 
         // 2. TAB
         if (e.key === 'Tab') {
-            e.preventDefault();
             if (isDetailActive) nav_base_details._clearDetailVisualStates(app);
             _handleFocusTrap.call(app, e, isNavActive ? 'nav' : 'detail');
             return; 
@@ -387,12 +391,6 @@ export function initKeyboardControls() {
                 'ArrowLeft', 
                 'ArrowRight'
             ].includes(e.key)) {
-
-            // 🟢 FIX NATIVO: Si el usuario pulsa Alt, Ctrl o Meta (Cmd), 
-            // es un atajo de sistema/navegador. Dejamos pasar el evento intacto.
-            if (e.altKey || e.ctrlKey || e.metaKey) {
-                return; 
-            }
             
             const isInCentralTrack = focused.closest(
                 '#track-desktop, #track-tablet, #track-mobile, #detalle-track-desktop, #detalle-track-mobile'
@@ -675,10 +673,10 @@ export function _handleFocusTrap(e, viewType) {
     const arrVolver = sections.volver();
 
     let sequence = (isDesktop || isTabletLS) ? 
-        [arrCentral, arrInfo, arrHeader, arrVolver] : 
+        [arrHeader, arrVolver, arrCentral, arrInfo] : 
         (!isMobile ? 
-            [arrCentral, arrHeader, arrVolver] : 
-            [arrCentral, arrHeader]);
+            [arrHeader, arrVolver, arrCentral] : 
+            [arrHeader, arrCentral]);
 
     const groups = sequence.filter(g => g.length > 0);
     
@@ -742,9 +740,32 @@ export function _handleFocusTrap(e, viewType) {
     }
 
     // 🟢 NAVEGACIÓN NORMAL ENTRE ZONAS
-    let nextGroup = e.shiftKey ? 
-        (groupIdx <= 0 ? groups.length - 1 : groupIdx - 1) : 
-        (groupIdx >= groups.length - 1 ? 0 : groupIdx + 1);
+    let nextGroup;
+    let isEscaping = false;
+
+    if (e.shiftKey) {
+        if (groupIdx <= 0) {
+            isEscaping = true; // Límite superior: dejamos salir al navegador (URL bar, etc)
+        } else {
+            nextGroup = groupIdx - 1;
+        }
+    } else {
+        if (groupIdx >= groups.length - 1) {
+            isEscaping = true; // Límite inferior: dejamos salir al navegador
+        } else {
+            nextGroup = groupIdx + 1;
+        }
+    }
+
+    if (isEscaping) {
+        debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 
+            `🔍 TRAP REPORT: Saliendo de la app hacia la interfaz del navegador. ` +
+            `Límite alcanzado.`);
+        
+        // 🟢 CLAVE: Terminamos la ejecución SIN hacer e.preventDefault().
+        // Esto permite que el Tabulador salte a la barra de direcciones o pestañas.
+        return; 
+    }
     
     // 🟢 CHIVATO MAESTRO
     debug.log('nav_keyboard_base', debug.DEBUG_LEVELS.BASIC, 
@@ -763,9 +784,8 @@ export function _handleFocusTrap(e, viewType) {
                     groups[nextGroup][groups[nextGroup].length - 1] : 
                     groups[nextGroup][0];
     if (target) {
-        e.preventDefault()
+        e.preventDefault();
         target.focus();
-
     }
 }
 
