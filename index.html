@@ -15,15 +15,17 @@
 
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
+    <link rel="preload" href="data/strings/strings_es.json" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="data/courses/cursos_es.json" as="fetch" crossorigin="anonymous">
+
     <link rel="modulepreload" href="code/services/app-utils.js">
+    <link rel="modulepreload" href="code/services/data.js">
+
     <link rel="modulepreload" href="code/features/a11y/app-feedback.js">
     <link rel="modulepreload" href="code/core/app-layout.js">
     <link rel="modulepreload" href="code/core/app-router.js">
     <link rel="modulepreload" href="code/core/app-events.js">
     <link rel="modulepreload" href="code/features/a11y/a11y.js">
-    <link rel="modulepreload" href="code/services/data.js">
-
-    <link rel="preconnect" href="https://jsdelivr.net" crossorigin>
 
     <link rel="preload" href="resources/fonts/AtkinsonHyperlegible-Regular.woff2" 
           as="font" type="font/woff2" crossorigin="anonymous">
@@ -41,10 +43,10 @@
     <link rel="stylesheet" href="styles/components/style-header.css">
     <link rel="stylesheet" href="styles/components/style-footer.css">
 
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" 
+    <link rel="preload" href="styles/vendor/swiper-bundle.min.css" 
           as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+        <link rel="stylesheet" href="styles/vendor/swiper-bundle.min.css">
     </noscript>
 
     <link rel="preload" href="styles/base/style-fonts.css" 
@@ -149,7 +151,7 @@
 
     <footer><small id="footer-content"></small></footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    <script src="code/vendor/swiper-bundle.min.js" defer></script>
     <script type="module" src="code/core/app.js"></script> 
     <script type="module">
         import * as app from './code/core/app.js';
