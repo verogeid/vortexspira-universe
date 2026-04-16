@@ -37,7 +37,7 @@ body.app-loaded {
 .card-volver-icon,
 .card-icon-lead,
 .menu-icon,
-.cc-layer-plate, .cc-layer-bg-circles, .cc-layer-bg-letters, .cc-layer-details,
+.cc-layer-plate,
 .action-icon,
 .info-adicional-titulo-ayuda::before {
     background-color: var(--color-header-text);
@@ -54,6 +54,19 @@ body.app-loaded {
         mask-image var(--animation-speed) ease-out,
         -webkit-mask-image var(--animation-speed) ease-out,
         background-color var(--animation-speed) ease;
+}
+
+/* 2. REFINAMIENTO PARA LA LICENCIA CC */
+/* Al ser capas superpuestas, el placeholder del plato (plate) es suficiente */
+.cc-layer-bg-circles,
+.cc-layer-bg-letters,
+.cc-layer-details {
+    opacity: 0;
+}
+/* Cuando el CSS de media carga, las hacemos aparecer */
+[class^="cc-layer-"].active, 
+.cc-layer-plate {
+    opacity: 1;
 }
 
 #vista-central {
