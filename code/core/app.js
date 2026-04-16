@@ -411,11 +411,11 @@ class VortexSpiraApp {
             // 🟢 PRECARGA EN SEGUNDO PLANO (Lazy Load Menu)
             if (window.requestIdleCallback) {
                 requestIdleCallback(() => {
-                    app_utils.preloadMainMenu(this, 'css');
+                    app_utils.preloadMainMenu(this, 'all');
                 });
             } else {
                 setTimeout(() => {
-                    app_utils.preloadMainMenu(this, 'css');
+                    app_utils.preloadMainMenu(this, 'all');
                 }, data.PRELOAD_TIME);
             }
 
@@ -512,11 +512,11 @@ class VortexSpiraApp {
 
             if (window.requestIdleCallback) {
                 requestIdleCallback(() => {
-                    app_utils.preloadDetailsModules(this, 'css');
+                    app_utils.preloadDetailsModules(this, 'all');
                 });
             } else {
                 setTimeout(() => {
-                    app_utils.preloadDetailsModules(this, 'css');
+                    app_utils.preloadDetailsModules(this, 'all');
                 }, data.PRELOAD_TIME);
             }
         }

@@ -31,6 +31,31 @@ body.app-loaded {
     opacity: 1;
 }
 
+.icon-obras-header,
+.header-logo::after, .header-logo::before,
+.icon-hamburguer, 
+.card-volver-icon,
+.card-icon-lead,
+.menu-icon,
+.cc-layer-plate, .cc-layer-bg-circles, .cc-layer-bg-letters, .cc-layer-details,
+.action-icon,
+.info-adicional-titulo-ayuda::before {
+    background-color: var(--color-header-text);
+    /* 🟢 Evita el cuadrado: máscara circular de color suave por defecto */
+    -webkit-mask-image: radial-gradient(circle, black 70%, transparent 75%);
+    mask-image: radial-gradient(circle, black 70%, transparent 75%);
+
+    -webkit-mask-size: contain; mask-size: contain;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center; mask-position: center;
+
+    /* 🟢 Forzamos al navegador a estar atento al cambio de propiedad */
+    transition: 
+        mask-image var(--animation-speed) ease-out,
+        -webkit-mask-image var(--animation-speed) ease-out,
+        background-color var(--animation-speed) ease;
+}
+
 #vista-central {
     grid-column: 2 / 3; 
     width: 100%; height: 100%; position: relative; 

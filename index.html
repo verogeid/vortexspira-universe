@@ -13,71 +13,147 @@
 
     <title>VortexSpira® EdTech: Selector de Cursos</title> 
 
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link
+        rel="icon"
+        href="/favicon.ico"
+        type="image/x-icon">
 
-    <link rel="preload" href="data/strings/strings_es.json" as="fetch" crossorigin="anonymous">
-    <link rel="preload" href="data/courses/cursos_es.json" as="fetch" crossorigin="anonymous">
+    <link
+        rel="preload"
+        href="data/strings/strings_es.json"
+        as="fetch"
+        crossorigin="anonymous">
+    <link
+        rel="preload"
+        href="data/courses/cursos_es.json"
+        as="fetch"
+        crossorigin="anonymous">
 
-    <link rel="modulepreload" href="code/services/app-utils.js">
-    <link rel="modulepreload" href="code/services/data.js">
+    <link
+        rel="modulepreload"
+        href="code/core/app.js">
+    <link
+        rel="modulepreload"
+        href="code/services/app-utils.js">
+    <link
+        rel="modulepreload"
+        href="code/services/data.js">
 
-    <link rel="modulepreload" href="code/render/render-base.js">
-    <link rel="modulepreload" href="code/features/a11y/app-feedback.js">
-    <link rel="modulepreload" href="code/core/app-layout.js">
-    <link rel="modulepreload" href="code/core/app-router.js">
-    <link rel="modulepreload" href="code/core/app-events.js">
-    <link rel="modulepreload" href="code/features/a11y/a11y.js">
 
-    <link rel="stylesheet" href="styles/themes/style-theme.css">
-    <link rel="stylesheet" href="styles/base/style-layout.css">
-    <link rel="stylesheet" href="styles/components/style-cards.css">
-    <link rel="stylesheet" href="styles/components/style-components.css">
-    <link rel="stylesheet" href="styles/components/style-header.css">
-    <link rel="stylesheet" href="styles/components/style-footer.css">
+    <link
+        rel="preload"
+        href="code/vendor/swiper-bundle.min.js"
+        as="script">
 
-    <link rel="preload" href="styles/vendor/swiper-bundle.min.css" 
-          as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link
+        rel="stylesheet"
+        href="styles/themes/style-theme.css">
+    <link
+        rel="stylesheet"
+        href="styles/base/style-layout.css">
+
+    <link
+        rel="preload"
+        href="styles/components/style-header.css"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <link
+        rel="preload"
+        href="styles/components/style-footer.css"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <link
+        rel="preload"
+        href="styles/components/style-cards.css"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <link
+        rel="preload"
+        href="styles/components/style-components.css"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <link
+        rel="preload"
+        href="styles/vendor/swiper-bundle.min.css"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <link
+        rel="preload"
+        href="styles/base/style-fonts.css"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <link
+        rel="preload"
+        href="styles/base/style-no-opacity.css"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+
+    <link
+        rel="preload"
+        href="styles/media/style-media-base.css"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <link
+        rel="preload"
+        href="styles/media/style-media-menu.css"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <link
+        rel="preload"
+        href="styles/media/style-media-details.css"
+        as="style"
+        onload="this.onload=null;this.rel='stylesheet'">
+
+    <link
+        rel="stylesheet"
+        href="styles/themes/style-theme-contrast.css"
+        media="(prefers-contrast: more)">
+    <link
+        rel="stylesheet"
+        href="styles/themes/style-theme-forced-colors.css"
+        media="(forced-colors: active)">
+    <link
+        rel="stylesheet"
+        href="styles/base/style-reduce-motion.css"
+        media="(prefers-reduced-motion: reduce)">
+    <link
+        rel="stylesheet"
+        href="styles/themes/style-theme-scheme-light.css"
+        media="(prefers-color-scheme: light)">
+    <link
+        rel="stylesheet"
+        href="styles/themes/style-theme-scheme-dark.css"
+        media="(prefers-color-scheme: dark)">
+
     <noscript>
-        <link rel="stylesheet" href="styles/vendor/swiper-bundle.min.css">
+        <link
+            rel="stylesheet"
+            href="styles/components/style-header.css">
+        <link
+            rel="stylesheet"
+            href="styles/components/style-footer.css">
+        <link
+            rel="stylesheet"
+            href="styles/components/style-cards.css">
+        <link
+            rel="stylesheet"
+            href="styles/components/style-components.css">
+        <link
+            rel="stylesheet"
+            href="styles/vendor/swiper-bundle.min.css">
+        <link
+            rel="stylesheet"
+            href="styles/base/style-fonts.css">
+        <link
+            rel="stylesheet"
+            href="styles/media/style-media-base.css">
+        <link
+            rel="stylesheet"
+            href="styles/media/style-media-menu.css">
+        <link
+            rel="stylesheet"
+            href="styles/media/style-media-details.css">
     </noscript>
-
-    <link rel="preload" href="resources/fonts/AtkinsonHyperlegible-Regular.woff2" 
-          as="font" type="font/woff2" crossorigin="anonymous">
-    <link rel="preload" href="resources/fonts/Lexend-Regular.woff2" 
-          as="font" type="font/woff2" crossorigin="anonymous">
-    <link rel="preload" href="resources/fonts/AtkinsonHyperlegible-Bold.woff2" 
-          as="font" type="font/woff2" crossorigin="anonymous">
-    <link rel="preload" href="resources/fonts/Lexend-Bold.woff2" 
-          as="font" type="font/woff2" crossorigin="anonymous">
-
-    <link rel="preload" href="styles/base/style-fonts.css" 
-          as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="styles/base/style-fonts.css">
-    </noscript>
-    
-    <link rel="preload" href="styles/media/style-media-base.css" 
-          as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="styles/media/style-media-base.css">
-    </noscript>
-
-    <link rel="preload" href="styles/base/style-no-opacity.css" 
-          as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-        <link rel="stylesheet" href="styles/base/style-no-opacity.css">
-    </noscript>
-
-    <link rel="stylesheet" href="styles/themes/style-theme-contrast.css" 
-          media="(prefers-contrast: more)">
-    <link rel="stylesheet" href="styles/themes/style-theme-forced-colors.css" 
-          media="(forced-colors: active)">
-    <link rel="stylesheet" href="styles/base/style-reduce-motion.css" 
-          media="(prefers-reduced-motion: reduce)">
-    <link rel="stylesheet" href="styles/themes/style-theme-scheme-light.css" 
-          media="(prefers-color-scheme: light)">
-    <link rel="stylesheet" href="styles/themes/style-theme-scheme-dark.css" 
-          media="(prefers-color-scheme: dark)">
 </head>
 
 <body>

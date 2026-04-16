@@ -236,11 +236,11 @@ export function toggleMenu(forceClose = false) {
         // 🟢 PRECARGA EN SEGUNDO PLANO (Lazy Load Details)
         if (window.requestIdleCallback) {
             requestIdleCallback(() => {
-                app_utils.preloadDetailsModules(_app, 'css');
+                app_utils.preloadDetailsModules(_app, 'all');
             });
         } else {
             setTimeout(() => {
-                app_utils.preloadDetailsModules(_app, 'css');
+                app_utils.preloadDetailsModules(_app, 'all');
             }, data.PRELOAD_TIME);
         }
 
