@@ -49,6 +49,8 @@ body.app-loaded {
     -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
     -webkit-mask-position: center; mask-position: center;
 
+    opacity: 1;
+
     /* 🟢 Forzamos al navegador a estar atento al cambio de propiedad */
     transition: 
         mask-image var(--animation-speed) ease-out,
@@ -61,12 +63,8 @@ body.app-loaded {
 .cc-layer-bg-circles,
 .cc-layer-bg-letters,
 .cc-layer-details {
-    opacity: 0;
-}
-/* Cuando el CSS de media carga, las hacemos aparecer */
-[class^="cc-layer-"].active, 
-.cc-layer-plate {
-    opacity: 1;
+    -webkit-mask-image: none;
+    mask-image: none;
 }
 
 #vista-central {
