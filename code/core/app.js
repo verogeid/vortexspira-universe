@@ -255,6 +255,8 @@ class VortexSpiraApp {
             targetLang = localStorage.getItem('vortex_lang') || i18n.detectBrowserLanguage(); 
             langSource = localStorage.getItem('vortex_lang') ? 'Storage' : 'Browser';
             
+            if (langSource === 'Browser') localStorage.setItem('vortex_lang', targetLang);
+
             // 🟢 FIX URL: Forzamos el idioma en la URL (creándolo si no existe o actualizándolo)
             url.searchParams.set('lang', targetLang);
             window.history.replaceState({}, '', url);
