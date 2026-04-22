@@ -77,8 +77,6 @@
 #btn-volver-navegacion { display: none !important; } 
 
 #info-adicional {
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-primary) transparent;
     scroll-behavior: var(--scroll-behavior);
 }
 #info-adicional::-webkit-scrollbar-thumb {

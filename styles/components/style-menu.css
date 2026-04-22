@@ -19,8 +19,7 @@
 
     overflow-y: auto;
     overflow-x: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-primary) transparent;
+    
     scroll-behavior: var(--scroll-behavior);
 
     z-index: 9999;

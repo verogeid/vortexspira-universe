@@ -157,4 +157,36 @@ body.ui-blocked * {
     touch-action: none !important; /* Bloquea gestos de scroll nativos en móvil */
 }
 
+/* 🟢 SCROLLBARS AAA (Visibles, Contrastados y Accesibles) */
+* {
+    /* Estándar W3C moderno (Firefox) */
+    scrollbar-width: auto; /* NUNCA usar 'thin' en AAA */
+    scrollbar-color: var(--color-border-placeholder) var(--color-primary-bg);
+}
+
+/* Webkit (Chrome, Edge, Safari) */
+*::-webkit-scrollbar {
+    /* AAA: Ancho suficiente para interacción motriz (Target Size) */
+    width: 14px; 
+    height: 14px;
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--color-primary-bg);
+    border-left: var(--border-width-no-focus) solid var(--color-border-placeholder);
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: var(--color-border-placeholder);
+    border-radius: var(--border-radius);
+    
+    /* Crea un falso margen para que no toque los bordes, pero mantiene el hit-area grande */
+    border: var(----border-width-no-focus) solid var(--color-primary-bg); 
+}
+
+*::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:active {
+    /* Feedback visual inmediato al interactuar */
+    background-color: var(--color-primary); 
+}
 /* --- styles/base/style-layout.css --- */
