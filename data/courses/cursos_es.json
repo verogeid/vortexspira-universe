@@ -8,15 +8,165 @@
           "id": "s-qa-adv",
           "nombre": "QA Avanzado",
           "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-qa-perfa11y",
+          "nombre": "Performance y Accesibilidad (A11y)",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-qa-seg",
+          "nombre": "Ciberseguridad",
+          "subsecciones": [],
+          "cursos": [
+            {
+              "id": "c-cseg",
+              "enObras": true,
+              "includes": ["bowasp_01", "bowasp_02"],
+              "titulo": "Cyberseguridad Beyond-OWASP",
+              "descripcion": "Hoy es tu primer día como becario en la empresa. El experto en ciberseguridad es tu mentor y te va a enseñar todo lo que sabe. <HR>Una simulación con la que entenderás no solo el qué y el cómo, sino el porqué. Aprenderás a auditar una web, y hasta tu propia red doméstica o empresarial. Porque la superficie de ataque está en todas partes. <HR>Una simulación que va más allá del típico libro de texto. Anticípate al hacker o al desastre natural o digital.",
+              "enlaces": [
+                { "texto": "Prueba el freemium", "url": "#", "type": "d" },
+                { "texto": "Pack completo", "url": "#", "type": "c", "moduleId": "bowasp", "prodType": "pack", "includes": ["bowasp_01", "bowasp_02"] },
+                { "texto": "Modulo 01: Vulnerabilidades Web (OWASP)", "url": "#", "type": "c", "moduleId": "bowasp_01", "prodType": "module" },
+                { "texto": "Modulo 02: Auditoria Integral y DevSecOps", "url": "#", "type": "c", "moduleId": "bowasp_02", "prodType": "module" }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "s-qa-ia",
+          "nombre": "Auditoría de IA",
+          "subsecciones": [],
+          "cursos": [
+            {
+              "id": "c-qaia",
+              "enObras": true,
+              "includes": ["qaia_01", "qaia_02"],
+              "titulo": "Arquitecto QA en IA",
+              "descripcion": "La industria está abrazando la Inteligencia Artificial sin entender su arquitectura. Aprender a escribir prompts no es ingeniería; es ofimática avanzada. Este curso te transforma en un Auditor de IA a nivel corporativo.<HR>🔸Arquitectura y Límites: Entiende la ventana de contexto, el determinismo frente a la probabilidad y los límites físicos de los tokens.<HR>🔸Red Teaming: Secuestra el contexto, provoca bucles de sobrealineación y evalúa las vulnerabilidades de seguridad de la caja negra.<HR>🔸Deuda Técnica y Costes: Audita el impacto real en la infraestructura, desde el almacenamiento de trazas JSON hasta las normativas de privacidad.",
+              "enlaces": [
+                { "texto": "Prueba el freemium", "url": "#", "type": "d" },
+                { "texto": "Pack completo", "url": "#", "type": "c", "moduleId": "qaia", "prodType": "pack", "includes": ["qaia_01", "qaia_02"] },
+                { "texto": "Módulo 01: Auditoría de IA", "url": "#", "type": "c", "moduleId": "qaia_01", "prodType": "module" },
+                { "texto": "Módulo 02: Arquitectura de seguridad y DevSecOps", "url": "#", "type": "c", "moduleId": "qaia_02", "prodType": "module" }
+              ]
+            }
+          ]
+        }
+      ],
+      "cursos": []
+    },
+    {
+      "id": "s-ds",
+      "nombre": "Desarrollo de Software",
+      "subsecciones": [
+        {
+          "id": "s-ds-fe",
+          "nombre": "Front-End",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-ds-be",
+          "nombre": "Back-End",
+          "subsecciones": [
+            {
+              "id": "s-ds-be-api",
+              "nombre": "API",
+              "subsecciones": [],
+              "cursos": []
+            },
+            {
+              "id": "s-ds-be-db",
+              "nombre": "Bases de Datos",
+              "subsecciones": [],
+              "cursos": []
+            }
+          ],
+          "cursos": []
+        },
+        {
+          "id": "s-ds-lg",
+          "nombre": "Fundamentos y Lenguajes",
+          "subsecciones": [],
+          "cursos": []
+        }
+      ],
+      "cursos": []
+    },
+    {
+      "id": "s-dev",
+      "nombre": "DevOps e Infraestructura",
+      "subsecciones": [
+        {
+          "id": "s-dev-dk",
+          "nombre": "Contenedores y Orquestación",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-dev-cicd",
+          "nombre": "Integración Continua (CI/CD)",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-dev-cv",
+          "nombre": "Control de Versiones",
+          "subsecciones": [],
+          "cursos": []
+        }
+      ],
+      "cursos": []
+    },
+    {
+      "id": "s-mod",
+      "nombre": "Modelado y Negocio",
+      "subsecciones": [
+        {
+          "id": "s-mod-uml",
+          "nombre": "Arquitectura y UML",
+          "subsecciones": [],
+          "cursos": []
+        },
+        {
+          "id": "s-mod-ba",
+          "nombre": "Business Analysis (Jira, BDD)",
+          "subsecciones": [],
+          "cursos": []
+        }
+      ],
+      "cursos": []
+    },
+    {
+      "id": "s-rec",
+      "nombre": "Recursos Adicionales",
+      "subsecciones": [],
+      "cursos": []
+    }
+  ],
+  "dev": [
+    {
+      "id": "s-qa",
+      "nombre": "Pruebas de Software (QA)",
+      "subsecciones": [
+        {
+          "id": "s-qa-adv",
+          "nombre": "QA Avanzado",
+          "subsecciones": [],
           "cursos": [
             {
               "id": "c-waqa",
               "enObras": true,
+              "includes": ["waqa_01"],
               "titulo": "Web Architect QA Ed.",
               "descripcion": "Te han mentido. La interfaz gráfica (UI) es una ilusión; la verdad está en el DOM. Si sigues probando solo 'lo que se ve', tus reportes serán superficiales y tus automatizaciones frágiles. <HR>Este curso transforma tu perfil de Tester a Ingeniero de Calidad Holístico, enseñándote a auditar las tripas de la web (Caja Gris): <HR>🔸La Visión (DOM & Consola): Deja de adivinar. Aprende a interrogar al navegador y destapar bugs ocultos (y mentiras del Frontend) que la UI no muestra. <HR>🔸El Selector Indestructible: ¿Tus tests se rompen si cambian el diseño o el idioma? Normal, estás testeando 'pintura'. Aprenderás a enganchar tus automatizaciones a Negocio. Crearás scripts que sobreviven a rediseños completos sin tocar una línea de código. <HR>🔸Ingeniería del Caos (Network & Render): Controla el tráfico. Simula caídas de red, bloquea servicios de terceros y detecta problemas de rendimiento antes de que el usuario sufra.",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#", "type": "d" },
-                { "texto": "Adquirir Pack Completo", "url": "#", "type": "c", "moduleId": "waqa", "prodType": "pack" }
+                { "texto": "Pack Completo", "url": "#", "type": "c", "moduleId": "waqa", "prodType": "pack", "includes": ["waqa_01"] }
               ]
             }
           ]
@@ -35,13 +185,14 @@
             {
               "id": "c-cseg",
               "enObras": true,
+              "includes": ["bowasp_01", "bowasp_02"],
               "titulo": "Cyberseguridad Beyond-OWASP",
               "descripcion": "Hoy es tu primer día como becario en la empresa. El experto en ciberseguridad es tu mentor y te va a enseñar todo lo que sabe. <HR>Una simulación con la que entenderás no solo el qué y el cómo, sino el porqué. Aprenderás a auditar una web, y hasta tu propia red doméstica o empresarial. Porque la superficie de ataque está en todas partes. <HR>Una simulación que va más allá del típico libro de texto. Anticípate al hacker o al desastre natural o digital.",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#", "type": "d" },
-                { "texto": "Adquirir pack completo", "url": "#", "type": "c", "moduleId": "bowasp", "prodType": "pack" },
-                { "texto": "Adquirir Modulo 01: Vulnerabilidades Web (OWASP)", "url": "#", "type": "c", "moduleId": "bowasp_01", "prodType": "module" },
-                { "texto": "Adquirir Modulo 02: Auditoria Integral y DevSecOps", "url": "#", "type": "c", "moduleId": "bowasp_02", "prodType": "module" }
+                { "texto": "Pack completo", "url": "#", "type": "c", "moduleId": "bowasp", "prodType": "pack", "includes": ["bowasp_01", "bowasp_02"] },
+                { "texto": "Modulo 01: Vulnerabilidades Web (OWASP)", "url": "#", "type": "c", "moduleId": "bowasp_01", "prodType": "module" },
+                { "texto": "Modulo 02: Auditoria Integral y DevSecOps", "url": "#", "type": "c", "moduleId": "bowasp_02", "prodType": "module" }
               ]
             }
           ]
@@ -54,13 +205,14 @@
             {
               "id": "c-qaia",
               "enObras": true,
+              "includes": ["qaia_01", "qaia_02"],
               "titulo": "Arquitecto QA en IA",
               "descripcion": "La industria está abrazando la Inteligencia Artificial sin entender su arquitectura. Aprender a escribir prompts no es ingeniería; es ofimática avanzada. Este curso te transforma en un Auditor de IA a nivel corporativo.<HR>🔸Arquitectura y Límites: Entiende la ventana de contexto, el determinismo frente a la probabilidad y los límites físicos de los tokens.<HR>🔸Red Teaming: Secuestra el contexto, provoca bucles de sobrealineación y evalúa las vulnerabilidades de seguridad de la caja negra.<HR>🔸Deuda Técnica y Costes: Audita el impacto real en la infraestructura, desde el almacenamiento de trazas JSON hasta las normativas de privacidad.",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#", "type": "d" },
-                { "texto": "Adquirir pack completo", "url": "#", "type": "c", "moduleId": "qaia", "prodType": "pack" },
-                { "texto": "Adquirir Módulo 01: Auditoría de IA", "url": "#", "type": "c", "moduleId": "qaia_01", "prodType": "module" },
-                { "texto": "Adquirir Módulo 02: Arquitectura de seguridad y DevSecOps", "url": "#", "type": "c", "moduleId": "qaia_02", "prodType": "module" }
+                { "texto": "Pack completo", "url": "#", "type": "c", "moduleId": "qaia", "prodType": "pack", "includes": ["qaia_01", "qaia_02"] },
+                { "texto": "Módulo 01: Auditoría de IA", "url": "#", "type": "c", "moduleId": "qaia_01", "prodType": "module" },
+                { "texto": "Módulo 02: Arquitectura de seguridad y DevSecOps", "url": "#", "type": "c", "moduleId": "qaia_02", "prodType": "module" }
               ]
             }
           ]
@@ -80,14 +232,15 @@
             {
               "id": "c-cfwp",
               "enObras": true,
+              "includes": ["cfwp_html", "cfwp_css", "cfwp_js"],
               "titulo": "Web Architect Front-End",
               "descripcion": "Acabo de salir del Kick-off del nuevo e-commerce y tú eres mi refuerzo. Olvida los tutoriales de 'Hola Mundo'; aquí trabajamos con metodología Shift Left. No vamos a tirar líneas de código, vamos a construir un edificio.<HR>🔸Sprint 1 (HTML5): Los cimientos semánticos y accesibles. Sin esto, el proyecto se hunde.<HR>🔸Sprint 2 (CSS3): La fachada, el diseño responsivo y la identidad visual.<HR>🔸Sprint 3 (JavaScript): La maquinaria interna, la lógica y la interactividad.<HR>Al terminar, no solo tendrás una app; tendrás la mentalidad para levantar cualquier proyecto web desde cero sin deuda técnica.",
               "enlaces": [
                 { "texto": "Prueba el freemium", "url": "#", "type": "d" },
-                { "texto": "Adquirir Paquete Completo", "url": "#", "type": "c", "moduleId": "cfwp", "prodType": "pack" },
-                { "texto": "Adquirir Módulo HTML", "url": "#", "type": "c", "moduleId": "cfwp_html", "prodType": "module" },
-                { "texto": "Adquirir Módulo CSS", "url": "#", "type": "c", "moduleId": "cfwp_css", "prodType": "module" },
-                { "texto": "Adquirir Módulo JavaScript", "url": "#", "type": "c", "moduleId": "cfwp_js", "prodType": "module" }
+                { "texto": "Paquete Completo", "url": "#", "type": "c", "moduleId": "cfwp", "prodType": "pack", "includes": ["cfwp_html", "cfwp_css", "cfwp_js"] },
+                { "texto": "Módulo HTML", "url": "#", "type": "c", "moduleId": "cfwp_html", "prodType": "module" },
+                { "texto": "Módulo CSS", "url": "#", "type": "c", "moduleId": "cfwp_css", "prodType": "module" },
+                { "texto": "Módulo JavaScript", "url": "#", "type": "c", "moduleId": "cfwp_js", "prodType": "module" }
               ]
             }
           ]
@@ -172,18 +325,18 @@
         {
           "id": "c-ing",
           "enObras": true,
+          "includes": ["english_01", "english_02", "english_03"],
           "titulo": "Inglés: De A0 a C1+",
           "descripcion": "Aprendizaje inmersivo. La ciencia cognitiva a tu disposición para aprender idiomas. <HR>🔸Aprenderás a verbalizar correctamente desde el primer momento. <HR>🔸Escuchas una voz nativa diciendo exactamente lo mismo. <HR>🔸La visión periférica aprenderá cómo se escribe. <HR>🔸Gramática en los últimos capítulos, cuando ya dominas el idioma.",
           "enlaces": [
             { "texto": "Prueba el freemium", "url": "#", "type": "d"},
-            { "texto": "Adquirir pack completo", "url": "#", "type": "c", "moduleId": "english", "prodType": "pack" },
-            { "texto": "Adquirir A0 a A1+", "url": "#", "type": "c", "moduleId": "english_01", "prodType": "module" },
-            { "texto": "Adquirir A2 a B1+", "url": "#", "type": "c", "moduleId": "english_02", "prodType": "module" },
-            { "texto": "Adquirir B2 a C1+", "url": "#", "type": "c", "moduleId": "english_03", "prodType": "module" }
+            { "texto": "Pack completo", "url": "#", "type": "c", "moduleId": "english", "prodType": "pack", "includes": ["english_01", "english_02", "english_03"] },
+            { "texto": "De A0 a A1+", "url": "#", "type": "c", "moduleId": "english_01", "prodType": "module" },
+            { "texto": "De A2 a B1+", "url": "#", "type": "c", "moduleId": "english_02", "prodType": "module" },
+            { "texto": "De B2 a C1+", "url": "#", "type": "c", "moduleId": "english_03", "prodType": "module" }
           ]
         }
       ]
     }
-  ],
-  "dev": []
+  ]
 }
