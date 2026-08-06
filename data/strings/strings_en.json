@@ -24,7 +24,8 @@
     "aria": {
       "obras": "Web under construction",
       "logoLink": "Go to VortexSpira EdTech home",
-      "menuBtn": "Open main menu"
+      "menuBtn": "Open main menu",
+      "toolbar": "Header controls"
     }
   },
   "menu": {

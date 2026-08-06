@@ -8,8 +8,8 @@ export function _getFocusableDetailElements(appInstance) {
 
     // 🟢 Buscamos la etiqueta <a> directamente
     const elements = Array.from(appInstance.DOM.detalleTrack.querySelectorAll(
-        '.detail-text-fragment[tabindex="0"], a.detail-action-link[tabindex="0"], .card-volver-vertical[tabindex="0"]'
-    )).filter(el => el.tabIndex !== -1); 
+        '.detail-text-fragment, a.detail-action-link, .card-volver-vertical[tabindex="0"]'
+    )); 
 
     debug.log('nav_base_details', debug.DEBUG_LEVELS.EXTREME, 
         `_getFocusableDetailElements: Encontrados ${elements.length} elementos enfocables.`);
@@ -154,9 +154,9 @@ export function _updateDetailFocusState(appInstance, targetOverride = null) {
                 `[TRACE ${traceId}-UDF] 🎥 setTranslate: ${physicalTrans.toFixed(1)} ` +
                 `-> ${newTrans.toFixed(1)}`);
             
-                // 🛡️ 1. LEVANTAR ESCUDO GLOBAL: Bloqueamos teclado, ratón y touch
             if (typeof appInstance.blockUI === 'function') {
-                appInstance.blockUI();
+                // 🟢 LLAMADA CON SOFT-LOCK
+                appInstance.blockUI(false);
             }
             
             swiper.setTransition(data.SWIPER.SLIDE_SPEED || 300); 
@@ -173,11 +173,10 @@ export function _updateDetailFocusState(appInstance, targetOverride = null) {
                     appInstance.unblockUI();
                 }
 
-                // Actualizamos visuales post-animación
                 swiper.update();
 
-                // 🟢 FIX: Si swiper.update() robó el foco, lo devolvemos
                 if (elementToRestore && document.activeElement !== elementToRestore) {
+                    elementToRestore.dataset.vortexFocus = "true";
                     elementToRestore.focus({ preventScroll: true });
                 }
                 

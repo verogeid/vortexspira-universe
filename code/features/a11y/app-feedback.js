@@ -5,12 +5,12 @@ import * as debug from '../../debug/debug.js';
 // ============================================================================
 // 🛡️ MÉTODOS DE CONTROL DEL ESCUDO (UI Lock)
 // ============================================================================
-export function blockUI(app) {
+export function blockUI(app, setInert = true) {
     app.STATE.isUIBlocked = true;
     document.body.classList.add('ui-blocked');
 
     // 🟢 CAPA DE INVISIBILIDAD ABSOLUTA: Usamos 'inert'
-    if (app.DOM.appContainer) 
+    if (app.DOM.appContainer && setInert)
         app.DOM.appContainer.setAttribute('inert', '');
 
     if (app.DOM.header) 

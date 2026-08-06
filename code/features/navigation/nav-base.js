@@ -606,7 +606,8 @@ export function restoreFocusSnapshot(app) {
 
         // 🟢 5. APLICAR EL FOCO
         if (targetEl) {
-            debug.log('nav', debug.DEBUG_LEVELS.DEEP, `🔄 Notario: Foco matemático restaurado.`);
+            debug.log('nav', debug.DEBUG_LEVELS.DEEP, 
+                `🔄 Notario: Foco matemático restaurado.`);
             
             if (typeof app.applySmartFocus === 'function') {
                 app.applySmartFocus(targetEl);

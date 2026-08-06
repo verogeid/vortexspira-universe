@@ -2,7 +2,7 @@
 
 export const IS_PRODUCTION = false;
 export const CLEAR_CONSOLE_ON_START = true;
-export const FORCE_SILENCE_ON_MOBILE = true;
+export const FORCE_SILENCE_ON_MOBILE = false;
 
 export const isMuted = () => FORCE_SILENCE_ON_MOBILE && 
                        (('ontouchstart' in window) ||
@@ -20,15 +20,15 @@ export const DEBUG_LEVELS = {
 };
 
 export const DEBUG_CONFIG = {
-    global: DEBUG_LEVELS.DISABLED,
+    global: DEBUG_LEVELS.BASIC,
 
     global_imageSec: DEBUG_LEVELS.DISABLED,
 
-    global_focus: DEBUG_LEVELS.DISABLED,
+    global_focus: DEBUG_LEVELS.EXTREME,
     global_font: DEBUG_LEVELS.DISABLED,
     global_layout: DEBUG_LEVELS.DISABLED,
     
-    global_key: DEBUG_LEVELS.DISABLED,
+    global_key: DEBUG_LEVELS.EXTREME,
     global_mouse: DEBUG_LEVELS.DISABLED,
 
     seo_sim: DEBUG_LEVELS.DISABLED,
@@ -53,11 +53,11 @@ export const DEBUG_CONFIG = {
     // Módulos de Detalle
     nav_base: DEBUG_LEVELS.DISABLED,
     nav_base_pc: DEBUG_LEVELS.DISABLED,
-    nav_base_details: DEBUG_LEVELS.DISABLED,
+    nav_base_details: DEBUG_LEVELS.EXTREME,
     
     // Módulos de Teclado
-    nav_keyboard_base: DEBUG_LEVELS.DISABLED,
-    nav_keyboard_details: DEBUG_LEVELS.DISABLED,
+    nav_keyboard_base: DEBUG_LEVELS.EXTREME,
+    nav_keyboard_details: DEBUG_LEVELS.EXTREME,
     nav_keyboard_swipe: DEBUG_LEVELS.DISABLED,
 
     // Módulos de Mouse
@@ -65,7 +65,7 @@ export const DEBUG_CONFIG = {
     nav_mouse_swipe: DEBUG_LEVELS.DISABLED, 
     
     render_base: DEBUG_LEVELS.DISABLED,
-    render_details: DEBUG_LEVELS.DISABLED, 
+    render_details: DEBUG_LEVELS.EXTREME, 
     render_swipe: DEBUG_LEVELS.DISABLED,
     render_mobile: DEBUG_LEVELS.DISABLED
 };

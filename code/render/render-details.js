@@ -276,12 +276,9 @@ function _fragmentTextForSingleSlide(trackElement,
             if (phantomP.offsetHeight <= currentLimit) {
                 // ✅ Cabe entero, lo añadimos tal cual
                 finalHtml += `<p class="detail-text-fragment" 
-                                 tabindex="0" 
-                                 role="article" 
+                                 tabindex="-1" 
                                  aria-description="${readOnlyMsg}" 
-                                 onclick="this.focus()">
-                                ${trimmed}
-                               </p>`;
+                                 onclick="this.focus()">${trimmed}</p>`;
                 isFirstParagraph = false;
             } else {
                 // ❌ Es gigante. A trocear palabra por palabra con Retroceso Semántico
@@ -320,12 +317,9 @@ function _fragmentTextForSingleSlide(trackElement,
 
                             // Imprimimos el párrafo con el corte limpio semánticamente
                             finalHtml += `<p class="detail-text-fragment" 
-                                             tabindex="0" 
-                                             role="article" 
+                                             tabindex="-1" 
                                              aria-description="${readOnlyMsg}" 
-                                             onclick="this.focus()">
-                                            ${finalAccepted.join(' ')}
-                                          </p>`;
+                                             onclick="this.focus()">${finalAccepted.join(' ')}</p>`;
                             
                             // Retrocedemos el iterador para que vuelva a tragarse las palabras devueltas
                             i = i - returnedWords.length - 1;
@@ -336,12 +330,9 @@ function _fragmentTextForSingleSlide(trackElement,
                         } else {
                             // Caso extremo (ej. un enlace o palabra larguísima a tamaño 200% o 400% zoom)
                             finalHtml += `<p class="detail-text-fragment" 
-                                             tabindex="0" 
-                                             role="article" 
+                                             tabindex="-1" 
                                              aria-description="${readOnlyMsg}" 
-                                             onclick="this.focus()">
-                                            ${currentWords.join(' ')}
-                                          </p>`;
+                                             onclick="this.focus()">${currentWords.join(' ')}</p>`;
                             currentWords = [];
                             isFirstParagraph = false;
                             currentLimit = maxContentHeight;
@@ -414,6 +405,9 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
         
         if (this.DOM.detalleTrack) {
             this.DOM.detalleTrack.removeAttribute('aria-live');
+            // 🟢 1. BLINDAJE: Decimos a los lectores que la zona está ocupada cargando
+            this.DOM.detalleTrack.setAttribute('aria-busy', 'true');
+
             this.DOM.detalleTrack.innerHTML = ''; 
         }
         const swiperId = isMobileLayout ? '#detalle-swiper-mobile' : '#detalle-swiper-desktop';
@@ -457,10 +451,11 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                         <span class="card-volver-icon"></span>
                         <span class="card-volver-text">${visibleText}</span>
                     </h2>`;
+                const ariaLabel = this.getString('nav.aria.backBtn');
                 cardVolverFijaElemento.setAttribute(
-                    'aria-label', this.getString('nav.aria.backBtn'));
+                    'aria-label', ariaLabel);
                 cardVolverFijaElemento.setAttribute(
-                    'title', this.getString('nav.aria.backBtn'));
+                    'title', ariaLabel);
                 cardVolverFijaElemento.tabIndex = 0;
             }
 
@@ -471,6 +466,14 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
             if (infoAdicional) 
                 infoAdicional.classList.remove('visible');
         }
+
+        // CÁLCULO DE ARIA-POSINSET Y ARIA-SETSIZE
+        const hasVolver = isMobileLayout ? 1 : 0;
+        const textItemsCount = 1; // Solo se numera el primer bloque de texto
+        const actionItemsCount = curso.enlaces ? curso.enlaces.length : 0;
+        const totalAriaSetSize = hasVolver + textItemsCount + actionItemsCount;
+        
+        let currentAriaPos = 1;
 
         // GENERACIÓN DE CONTENIDO
         let slidesHtml = '';
@@ -490,18 +493,19 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                         <h2>${parentName}</h2>
                     </div>
                     <div class="card card-volver-vertical" 
-                             role="button" 
-                            aria-label="${ariaLabel}" 
-                            title="${ariaLabel}" 
-                            tabindex="0" 
-                            onclick="App._handleVolverClick()">
-                        <h2 aria-hidden="true" class="card-volver-content">
-                            <span class="card-volver-icon"></span>
-                            <span class="card-volver-text">${visibleText}</span>
-                        </h2>
+                         role="button" 
+                         aria-label="${ariaLabel}" 
+                         title="${ariaLabel}" 
+                         tabindex="0" 
+                         aria-posinset="${currentAriaPos}" 
+                         aria-setsize="${totalAriaSetSize}" 
+                         onclick="App._handleVolverClick()"><h2 
+                            aria-hidden="true" class="card-volver-content"><span class="card-volver-icon"></span><span class="card-volver-text">${visibleText}</span></h2>
                     </div>
                 </div>
             `;
+
+            currentAriaPos++;
         }
 
         const descripcion = curso.descripcion || this.getString('details.noDescription');
@@ -547,9 +551,6 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
             }
         }
 
-        // 🟢 FIX A11Y: Guardamos el tamaño total de fragmentos
-        const totalSlides = slidesData.length;
-
         slidesData.forEach((slide, index) => {
             let titleHtml = '';
             if (slide.isFirst) {
@@ -572,19 +573,22 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                 `;
             } else {
                 // 🟢 ESCRITORIO: Bloques enfocables individualmente
-                const posInSet = index + 1; // 🟢 FIX A11Y: Posición actual
+                const isFirstText = index === 0;
+                // El primer bloque de texto lleva tabindex 0 (solo en desktop) y la numeración
+                const tabIndex = (isFirstText && !isMobileLayout) ? "0" : "-1";
+                const ariaAttrs = isFirstText ? `aria-posinset="${currentAriaPos}" aria-setsize="${totalAriaSetSize}"` : '';
+
+                if (isFirstText) currentAriaPos++;
 
                 slidesHtml += `
                     <div class="swiper-slide">
                         ${titleHtml}
                         <div class="detail-text-fragment" 
                              data-index="${index}" 
-                             role="article" 
-                             tabindex="0" 
+                             tabindex="${tabIndex}" 
                              onclick="this.focus()" 
                              aria-description="${readOnlyMsg}" 
-                             aria-posinset="${posInSet}" 
-                             aria-setsize="${totalSlides}">
+                             ${ariaAttrs}>
                             <div class="content-wrapper">
                                 ${slide.content}
                             </div>
@@ -626,21 +630,21 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                                ${ariaDisabledAttr}
                                role="button"
                                class="detail-action-link"
-                               tabindex="0">
-                                
-                                <span aria-hidden="true" 
+                               tabindex="-1" 
+                               aria-posinset="${currentAriaPos}"
+                               aria-setsize="${totalAriaSetSize}"><span aria-hidden="true" 
                                     ${style} 
-                                    class="detail-action-btn ${isDisabled ? 'disabled' : ''}">
-                                    <i class="action-icon ${isDisabled ? 'icon-empty' : iconClass}"></i>
-                                </span>
-                            </a>
+                                    class="detail-action-btn ${isDisabled ? 'disabled' : ''}"><i class="action-icon ${isDisabled ? 'icon-empty' : iconClass}"></i></span></a>
                         </div>
                     </div>
                 `;
+
+                currentAriaPos++;
             });
         }
 
         if (this.DOM.detalleTrack) {
+            this.DOM.detalleTrack.setAttribute('role', 'application');
             this.DOM.detalleTrack.innerHTML = slidesHtml;
         }
 
@@ -661,33 +665,42 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
             }
         }
         
-        setTimeout(() => {
-            if (document.getElementById('a11y-modal-overlay')?.classList.contains('active')) 
-                return;
-
-            let targetElement = null;
-
-            if (isMobileLayout) {
-                targetElement = this.DOM.detalleTrack.querySelector('.card-volver-vertical');
-
-                if (!targetElement) targetElement = this.DOM.detalleTrack.querySelector(
-                                        '.detail-text-fragment[data-index="0"]');
-
-            } else {
-                targetElement = this.DOM.detalleTrack.querySelector(
-                    '.detail-text-fragment[data-index="0"]');
-            }
-
-            if (targetElement) {
-                this.applySmartFocus(targetElement);
-
-                if (nav_base_details && 
-                    typeof nav_base_details._updateDetailFocusState === 'function') 
-                {
-                    nav_base_details._updateDetailFocusState(this);
+        // 🟢 2. USAR REQUESTANIMATIONFRAME EN LUGAR DE SETTIMEOUT
+        requestAnimationFrame(() => {
+            // Doble rAF asegura que el DOM y Swiper ya han recalculado geometrías
+            requestAnimationFrame(() => { 
+                if (document.getElementById('a11y-modal-overlay')?.classList.contains('active')) {
+                    this.DOM.detalleTrack?.removeAttribute('aria-busy');
+                    return;
                 }
-            }
-        }, 200);
+
+                let targetElement = null;
+
+                if (isMobileLayout) {
+                    targetElement = this.DOM.detalleTrack.querySelector('.card-volver-vertical');
+
+                    if (!targetElement) 
+                        targetElement = this.DOM.detalleTrack.querySelector(
+                                        '.detail-text-fragment[data-index="0"]');
+                } else {
+                    targetElement = this.DOM.detalleTrack.querySelector(
+                                    '.detail-text-fragment[data-index="0"]');
+                }
+
+                if (targetElement) {
+                    this.applySmartFocus(targetElement);
+
+                    if (nav_base_details && 
+                        typeof nav_base_details._updateDetailFocusState === 'function') 
+                    {
+                        nav_base_details._updateDetailFocusState(this);
+                    }
+                }
+
+                // 🟢 3. DESBLOQUEO: Una vez el foco está colocado, levantamos el aria-busy
+                this.DOM.detalleTrack?.removeAttribute('aria-busy');
+            });
+        });
 
     }).catch(err => {
         debug.logError('render_details', 'Error al cargar el CSS de detalles:', err);

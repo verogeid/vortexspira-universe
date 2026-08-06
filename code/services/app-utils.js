@@ -156,19 +156,14 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
             h1.appendChild(logoLink);
             
             // Inyectamos el bloque de título y subtítulo (Lógica movida de i18n)
-            const titleHtml = `<span class="title-text-clamp">
-                                   ${content}
-                                   <small id="main-header-subtitle">
-                                       ${subtitle}
-                                   </small>
-                               </span>`;
+            const titleHtml = `<span class="title-text-clamp">${content}<small id="main-header-subtitle">${subtitle}</small></span>`;
             h1.insertAdjacentHTML('beforeend', titleHtml);
             
             const txtLogoObras = appInstance.getString('header.aria.obras');
 
             const txtLogoLink = appInstance.getString('header.aria.logoLink');
             logoLink.setAttribute('aria-label', txtLogoObras + '. ' + txtLogoLink);
-            logoLink.setAttribute('title', txtLogoLink);
+            logoLink.setAttribute('title', txtLogoObras + '. ' + txtLogoLink);
 
             if (!debug.IS_PRODUCTION) {
                 let obrasSpan = wrapper.querySelector('.icon-obras-header');
@@ -195,8 +190,10 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
             btnMainMenu.id = 'btn-main-menu';
             btnMainMenu.setAttribute('aria-expanded', 'false');
             btnMainMenu.setAttribute('aria-controls', 'main-menu-dropdown');
-            btnMainMenu.setAttribute('aria-label', appInstance.getString('header.aria.menuBtn'));
-            btnMainMenu.setAttribute('title', appInstance.getString('header.aria.menuBtn'));
+
+            const ariaLabelText = appInstance.getString('header.aria.menuBtn');
+            btnMainMenu.setAttribute('aria-label', ariaLabelText);
+            btnMainMenu.setAttribute('title', ariaLabelText);
             btnMainMenu.tabIndex = 0;
             
             const iconHamburger = document.createElement('span');
@@ -220,13 +217,9 @@ export function injectFooterContent(appInstance) {
     if (footerContent) {
         // Usamos appInstance.getString para TODO, incluidos los ARIA labels nuevos
         footerContent.innerHTML = `
-            <span class="footer-copyright">
-                ${appInstance.getString('footer.copyright')}
-            </span>
+            <span class="footer-copyright">${appInstance.getString('footer.copyright')}</span>
             <span class="footer-separator-author">|</span>
-            <span class="footer-author-text">
-                ${appInstance.getString('footer.author')}
-            </span> 
+            <span class="footer-author-text">${appInstance.getString('footer.author')}</span> 
             <span class="footer-separator">|</span>
             <span class="footer-version">v${appInstance.getString('meta.version')}.build:${appInstance.getString('meta.build')}</span>
         `;

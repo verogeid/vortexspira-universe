@@ -22,9 +22,10 @@
         "title": "VortexSpira® <span class=\"hide-mobile-visual\">EdTech</span>",
         "subtitle": "Áudio-Aprendizagem Técnica Imersiva",
         "aria": {
-        "obras": "Site em desenvolvimento ativo",
-        "logoLink": "Ir para a página inicial da VortexSpira EdTech",
-        "menuBtn": "Abrir menu principal"
+            "obras": "Site em desenvolvimento ativo",
+            "logoLink": "Ir para a página inicial da VortexSpira EdTech",
+            "menuBtn": "Abrir menu principal",
+            "toolbar": "Controles de cabeçalho"
         }
     },
     "menu": {

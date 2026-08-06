@@ -580,7 +580,7 @@ export function _generarTarjetaHTMLImpl(nodo,
                 role="menuitem" 
                 tabindex="0" 
                 ${ariaDisabled} 
-                aria-label="${ariaLabelText}"
+                aria-label="${ariaLabelText}" 
                 title="${ariaLabelText}">
             <h2 aria-hidden="true">
                 ${iconHTML}
@@ -621,8 +621,10 @@ export function _updateNavViews(isSubLevel, isMobile, isTabletPortrait,
                 <span class="card-volver-icon"></span>
                 <span class="card-volver-text">${visibleText}</span>
             </h2>`; 
-        this.DOM.cardVolverFijaElemento.setAttribute('aria-label', this.getString('nav.aria.backBtn'));
-        this.DOM.cardVolverFijaElemento.setAttribute('title', this.getString('nav.aria.backBtn'));
+
+        const ariaLabel = this.getString('nav.aria.backBtn');
+        this.DOM.cardVolverFijaElemento.setAttribute('aria-label', ariaLabel);
+        this.DOM.cardVolverFijaElemento.setAttribute('title', ariaLabel);
         this.DOM.cardVolverFijaElemento.tabIndex = 0;
 
     } else {

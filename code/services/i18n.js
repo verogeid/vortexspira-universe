@@ -132,8 +132,10 @@ export function applyStrings(appInstance) {
         'menu-link-landing': { 
             'aria-label': 'menu.aria.landing', 'title': 'menu.aria.landing' },
         'menu-link-license': { 
-            'aria-label': 'menu.aria.license', 'title': 'menu.aria.license' }
-    };
+            'aria-label': 'menu.aria.license', 'title': 'menu.aria.license' },
+        'header-content-wrapper': {
+            'aria-label': 'header.aria.toolbar' }
+    }
 
     for (const id in attributes) {
         const el = document.getElementById(id);

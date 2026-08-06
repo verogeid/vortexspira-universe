@@ -330,8 +330,11 @@ class VortexSpiraApp {
         // 🟢 2. AVISO DE BIENVENIDA (Universal, sin hardcodear español)
         let appName = this.getString('header.title');
         
+        // 🟢 FIX: Limpiamos las etiquetas HTML para que NVDA no las lea literalmente en el aria-label
+        let cleanAppName = appName.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
+        
         // 🟢 FIX: En lugar de gritarlo, lo guardamos para el primer elemento enfocado
-        this.STATE.pendingA11yContext = appName;
+        this.STATE.pendingA11yContext = cleanAppName;
 
         debug.log('a11y', debug.DEBUG_LEVELS.EXTREME,
             `[app.init] Pending A11y Context actualizado: ${this.STATE.pendingA11yContext}`);
@@ -445,6 +448,8 @@ class VortexSpiraApp {
 
         if (this.STATE.pendingA11yContext) {
             const originalLabel = target.getAttribute('aria-label');
+            const originalTitle = target.getAttribute('title');
+
             const textToPrepend = this.STATE.pendingA11yContext;
             
             // Si no tiene aria-label (ej: fragmento de texto), usamos su texto visible
@@ -452,22 +457,22 @@ class VortexSpiraApp {
             
             // Inyectamos todo en un solo bloque semántico
             target.setAttribute('aria-label', `${textToPrepend}. ${baseText}`);
-
-            if (originalLabel) {
-                target.setAttribute('title', originalLabel);
-            } else {
-                target.removeAttribute('title'); 
-            }
+            target.removeAttribute('title');
             
             // Restauramos el elemento a su estado original en cuanto el usuario se mueva
             target.addEventListener('blur', function restoreAria() {
+                // Restaurar aria-label
                 if (originalLabel !== null) {
                     target.setAttribute('aria-label', originalLabel);
-                    target.setAttribute('title', originalLabel);
                 } else {
                     target.removeAttribute('aria-label');
-                    target.removeAttribute('title');
                 }
+                
+                // 🟢 Restaurar title
+                if (originalTitle !== null) {
+                    target.setAttribute('title', originalTitle);
+                }
+                
                 target.removeEventListener('blur', restoreAria);
             }, { once: true });
 
@@ -654,7 +659,7 @@ class VortexSpiraApp {
     // ============================================================================
     // 🛡️ MÉTODOS DE FEEDBACK DELEGADOS
     // ============================================================================
-    blockUI() { app_feedback.blockUI(this); }
+    blockUI(setInert = true) { app_feedback.blockUI(this, setInert); }
     unblockUI() { app_feedback.unblockUI(this); }
 
     showToast(message, duration = 3000) { app_feedback.showToast(this, message, duration); }
