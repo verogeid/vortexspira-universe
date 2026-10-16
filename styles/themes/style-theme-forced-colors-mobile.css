@@ -5,36 +5,36 @@
    Soluciona el bug de opacidad de "Highlight" en Android/iOS
    ========================================================= */
 body[data-theme="forced"][data-terminal="touch"] {
-    --color-primary: #00FFFF !important;       /* Cian puro y sólido */
-    --color-primary-text: #000000 !important;  
+    --color-primary: #00e5ff !important; /* Cian puro y sólido anti-deslumbramiento */
+    --color-primary-text: #0a0a0c !important;  
     
-    --color-text: #FFFFFF !important;          
-    --color-bg: #000000 !important;            
-    --color-card-bg: #000000 !important;
-    --color-header-bg: #000000 !important;
-    --color-footer-text: #FFFFFF !important; 
+    --color-text: #f2f2f7 !important; /* Blanco platino (evita halation en OLED) */       
+    --color-bg: #0a0a0c !important; /* Negro carbón profundo anti-fotofobia */
+    --color-card-bg: #0a0a0c !important;
+    --color-header-bg: #0a0a0c !important;
+    --color-footer-text: #f2f2f7 !important; 
     
-    --color-card-border: #FFFFFF !important;
+    --color-card-border: #f2f2f7 !important;
     
     /* Atenuados en gris sólido */
-    --color-card-border-disabled: #888888 !important;
-    --color-border-placeholder: #888888 !important;
-    --color-text-muted: #888888 !important;
+    --color-card-border-disabled: #8a8a95 !important;
+    --color-border-placeholder: #8a8a95 !important;
+    --color-text-muted: #c7c7cf !important;
     
-    --color-icon-obras: #FFFFFF !important;
+    --color-icon-obras: #ffea00 !important;
     
-    --color-btn-face: #000000 !important;
-    --color-btn-text: #FFFFFF !important;
+    --color-btn-face: #0a0a0c !important;
+    --color-btn-text: #f2f2f7 !important;
 
-    --color-a11y-selected-text: #000000 !important;
+    --color-a11y-selected-text: #0a0a0c !important;
 
     /* 🟢 Variables faltantes: Mapeo Duro para terminales móviles */
-    --color-mask-gradient: #000000 !important;
-    --color-header-text: #FFFFFF !important;
+    --color-mask-gradient: #0a0a0c !important;
+    --color-header-text: #f2f2f7 !important;
     
-    --color-fire: #FFFFFF !important;
-    --color-danger: #FFFFFF !important;
-    --color-success: #FFFFFF !important;
+    --color-fire: #ff931e !important;
+    --color-danger: #ff4d4d !important;
+    --color-success: #00e600 !important;
     
     --color-primary-bg: transparent !important;
     --color-danger-bg: transparent !important;
@@ -42,20 +42,20 @@ body[data-theme="forced"][data-terminal="touch"] {
     
     --color-shadow-primary: transparent !important;
     --color-shadow-disabled: transparent !important;
-    --color-shadow-modal: #000000 !important;
+    --color-shadow-modal: #0a0a0c !important;
     
-    --color-toast-bg: #000000 !important;
-    --color-toast-text: #FFFFFF !important;
+    --color-toast-bg: #f2f2f7 !important;
+    --color-toast-text: #0a0a0c !important;
     --color-details-action-item-hover: transparent !important;
     
-    --color-logo-static: #FFFFFF !important;
-    --color-logo-dynamic: #00FFFF !important; /* El cian puro que usas en hover táctil */
+    --color-logo-static: #f2f2f7 !important;
+    --color-logo-dynamic: #00e5ff !important; /* El cian puro que usas en hover táctil */
     
     --shadow-color-hex: transparent !important;
     --shadow-opacity: 0 !important;
     
-    --color-a11y-slider-track: #FFFFFF !important;
-    --color-a11y-slider-labels: #888888 !important;
+    --color-a11y-slider-track: #f2f2f7 !important;
+    --color-a11y-slider-labels: #c7c7cf !important;
 }
 
 /* --- styles/style-theme-forced-colors-mobile.css --- */
