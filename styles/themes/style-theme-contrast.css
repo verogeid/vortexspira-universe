@@ -5,34 +5,56 @@
    ========================================================= */
 @media (prefers-contrast: more) {
     :root {
-        /* Fondo y Contraste */
-        --color-bg: #000000;
-        --color-text: #FFFFFF;
-        --color-card-bg: #000000; /* Fondo de tarjeta negro sólido */
-        --color-mask-gradient: rgba(0, 0, 0, 0.9); /* Máscaras sólidas */
+        /* Fondo y Contraste (Anti-negro absoluto) */
+        --color-bg: #0a0a0c;
+        --color-text: #f2f2f7;
+        --color-card-bg: #0a0a0c; 
+        --color-mask-gradient: rgba(10, 10, 12, 0.9); 
         
-        /* Foco y Énfasis (Cian puro de alto contraste) */
-        --color-primary: #00FFFF;
-        --color-primary-bg: rgba(0, 255, 255, 0.1);
-        --color-shadow-primary: transparent; /* Se elimina la sombra */
+        /* Foco y Énfasis (Cian de alto contraste anti-fotofobia) */
+        --color-primary: #00e5ff;
+        --color-primary-bg: rgba(0, 229, 255, 0.15);
+        --color-shadow-primary: transparent; 
         
-        /* Bordes y Deshabilitado */
-        --color-card-border: #FFFFFF; /* Borde de tarjeta blanco */
-        --color-card-border-disabled: #BDBDBD; /* Gris claro */
-        --color-text-muted: #BDBDBD;
+        /* Bordes y Deshabilitado (Anti-blanco absoluto) */
+        --color-card-border: #f2f2f7; 
+        --color-card-border-disabled: #a0a0ab; 
+        --color-text-muted: #c7c7cf;
         
         /* Footer/Header */
-        --color-header-bg: #000000;
-        --color-footer-text: #FFFFFF;
+        --color-header-bg: #0a0a0c;
+        --color-header-text: #f2f2f7;
+        --color-footer-text: #f2f2f7;
         
         /* ⭐️ Amarillo de alto contraste para Obras ⭐️ */
-        --color-icon-obras: #FFFF00; /* Amarillo Puro (Alto Contraste) */
+        --color-icon-obras: #ffea00; 
 
-        --color-logo-static: #FFFFFF;
+        --color-logo-static: #f2f2f7;
         --color-logo-dynamic: var(--color-icon-obras);
         
-        /* Eliminamos las sombras en las variables */
         --color-shadow-disabled: transparent;
+
+        /* Semántica de Alto Contraste adaptada */
+        --color-fire: #ff931e;
+        --color-danger: #ff3333;
+        --color-danger-bg: rgba(255, 51, 51, 0.2);
+        --color-success: #00e600;
+        --color-success-bg: rgba(0, 230, 0, 0.2);
+
+        --color-border-placeholder: #a0a0ab;
+        --color-details-action-item-hover: rgba(0, 229, 255, 0.2);
+        
+        /* Notificaciones (Fondo platino, texto carbón para máxima alerta sin cegar) */--color-toast-bg: #f2f2f7;
+        --color-toast-text: #0a0a0c;
+        
+        /* Sombras y Filtros */
+        --color-shadow-modal: rgba(242, 242, 247, 0.2); 
+        --shadow-color-hex: #f2f2f7;
+        --shadow-opacity: 0; /* Desactivar el filtro de sombra Ghost */
+
+        /* Accesibilidad Slider */
+        --color-a11y-slider-track: #f2f2f7;
+        --color-a11y-slider-labels: #f2f2f7;
 
         color-scheme: dark;
         background-color: var(--color-bg);
@@ -44,55 +66,57 @@
    2. MODO MANUAL (Seleccionado en Modal A11y)
    ========================================================= */
 body[data-theme="contrast"] {
-    --color-bg: #000000;
-    --color-text: #FFFFFF;
-    --color-card-bg: #000000; 
-    --color-mask-gradient: rgba(0, 0, 0, 0.9); 
+    /* Fondo y Contraste (Anti-negro absoluto) */
+    --color-bg: #0a0a0c;
+    --color-text: #f2f2f7;
+    --color-card-bg: #0a0a0c; 
+    --color-mask-gradient: rgba(10, 10, 12, 0.9); 
     
-    --color-primary: #00FFFF;
-    --color-primary-bg: rgba(0, 255, 255, 0.1);
+    /* Foco y Énfasis (Cian de alto contraste anti-fotofobia) */
+    --color-primary: #00e5ff;
+    --color-primary-bg: rgba(0, 229, 255, 0.15);
     --color-shadow-primary: transparent; 
     
-    --color-card-border: #FFFFFF; 
-    --color-card-border-disabled: #BDBDBD; 
-    --color-text-muted: #BDBDBD;
+    /* Bordes y Deshabilitado (Anti-blanco absoluto) */
+    --color-card-border: #f2f2f7; 
+    --color-card-border-disabled: #a0a0ab; 
+    --color-text-muted: #c7c7cf;
     
-    --color-header-bg: #000000;
-    --color-footer-text: #FFFFFF;
+    /* Footer/Header */
+    --color-header-bg: #0a0a0c;
+    --color-header-text: #f2f2f7;
+    --color-footer-text: #f2f2f7;
     
-    --color-icon-obras: #FFFF00; 
+    /* ⭐️ Amarillo de alto contraste para Obras ⭐️ */
+    --color-icon-obras: #ffea00; 
 
-    --color-logo-static: #FFFFFF;
+    --color-logo-static: #f2f2f7;
     --color-logo-dynamic: var(--color-icon-obras);
     
     --color-shadow-disabled: transparent;
 
-    --color-header-text: #FFFFFF;
+    /* Semántica de Alto Contraste adaptada */
+    --color-fire: #ff931e;
+    --color-danger: #ff3333;
+    --color-danger-bg: rgba(255, 51, 51, 0.2);
+    --color-success: #00e600;
+    --color-success-bg: rgba(0, 230, 0, 0.2);
+
+    --color-border-placeholder: #a0a0ab;
+    --color-details-action-item-hover: rgba(0, 229, 255, 0.2);
     
-    /* Semántica (Puros para máxima visibilidad) */
-    --color-fire: #FF931E; /* Mantener naranja original, tiene ratio > 7:1 sobre negro */
-    --color-danger: #FF0000; /* Rojo puro */
-    --color-danger-bg: rgba(255, 0, 0, 0.2);
-    --color-success: #00FF00; /* Verde puro */
-    --color-success-bg: rgba(0, 255, 0, 0.2);
+    /* Notificaciones (Fondo platino, texto carbón para máxima alerta sin cegar) */--color-toast-bg: #f2f2f7;
+    --color-toast-text: #0a0a0c;
     
-    --color-border-placeholder: #BDBDBD;
-    --color-details-action-item-hover: rgba(0, 255, 255, 0.2);
-    
-    /* Notificaciones (Fondo blanco, texto negro para máxima alerta) */
-    --color-toast-bg: #FFFFFF;
-    --color-toast-text: #000000;
-    
-    /* Sombras y Filtros (Anulamos sombras dinámicas para evitar ruido visual) */
-    --color-shadow-modal: rgba(255, 255, 255, 0.2); 
-    --shadow-color-hex: #FFFFFF;
+    /* Sombras y Filtros */
+    --color-shadow-modal: rgba(242, 242, 247, 0.2); 
+    --shadow-color-hex: #f2f2f7;
     --shadow-opacity: 0; /* Desactivar el filtro de sombra Ghost */
 
     /* Accesibilidad Slider */
-    --color-a11y-slider-track: #FFFFFF;
-    --color-a11y-slider-labels: #FFFFFF;
+    --color-a11y-slider-track: #f2f2f7;
+    --color-a11y-slider-labels: #f2f2f7;
 
-    /* Forzamos el esquema nativo de componentes (scrollbars, etc.) */
     color-scheme: dark;
     background-color: var(--color-bg);
     color: var(--color-text);
