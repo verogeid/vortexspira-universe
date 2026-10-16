@@ -82,12 +82,23 @@ export function stackBuildFromId(targetId, fullData) {
     if (!targetId || !fullData || !fullData.navegacion) return false;
 
     let path = []; 
+    let targetIsCourseInNode = false;
+
     function findPath(nodes, currentPath) {
         if (!nodes) return false;
         for (const node of nodes) {
             const newPath = [...currentPath, node];
-            if (node.id === targetId || (node.cursos && node.cursos.find(c => c.id === targetId))) {
+            // Si el nodo coincide directamente con el ID buscado
+            if (node.id === targetId) {
                 path = newPath;
+                targetIsCourseInNode = false;
+                return true;
+            }
+            
+            // Si el ID está dentro de los cursos de este nodo
+            if (node.cursos && node.cursos.find(c => c.id === targetId)) {
+                path = newPath;
+                targetIsCourseInNode = true;
                 return true;
             }
             if (node.subsecciones && findPath(node.subsecciones, newPath)) return true;
@@ -102,7 +113,10 @@ export function stackBuildFromId(targetId, fullData) {
             focusId: path.length > 0 ? path[0].id : null 
         }];
 
-        for (let i = 0; i < path.length; i++) {
+        // Si es un curso directo en un nodo de la raíz o un elemento de primer nivel
+        const limit = targetIsCourseInNode ? path.length : path.length - 1;
+
+        for (let i = 0; i < limit; i++) {
             const node = path[i];
             const nextNode = path[i+1]; // El nodo hijo que será el foco en este nivel
             
