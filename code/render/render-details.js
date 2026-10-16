@@ -472,8 +472,6 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
         const textItemsCount = 1; // Solo se numera el primer bloque de texto
         const actionItemsCount = curso.enlaces ? curso.enlaces.length : 0;
         const totalAriaSetSize = hasVolver + textItemsCount + actionItemsCount;
-        
-        let currentAriaPos = 1;
 
         // GENERACIÓN DE CONTENIDO
         let slidesHtml = '';
@@ -497,15 +495,11 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                          aria-label="${ariaLabel}" 
                          title="${ariaLabel}" 
                          tabindex="0" 
-                         aria-posinset="${currentAriaPos}" 
-                         aria-setsize="${totalAriaSetSize}" 
                          onclick="App._handleVolverClick()"><h2 
                             aria-hidden="true" class="card-volver-content"><span class="card-volver-icon"></span><span class="card-volver-text">${visibleText}</span></h2>
                     </div>
                 </div>
             `;
-
-            currentAriaPos++;
         }
 
         const descripcion = curso.descripcion || this.getString('details.noDescription');
@@ -576,9 +570,6 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                 const isFirstText = index === 0;
                 // El primer bloque de texto lleva tabindex 0 (solo en desktop) y la numeración
                 const tabIndex = (isFirstText && !isMobileLayout) ? "0" : "-1";
-                const ariaAttrs = isFirstText ? `aria-posinset="${currentAriaPos}" aria-setsize="${totalAriaSetSize}"` : '';
-
-                if (isFirstText) currentAriaPos++;
 
                 slidesHtml += `
                     <div class="swiper-slide">
@@ -587,8 +578,7 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                              data-index="${index}" 
                              tabindex="${tabIndex}" 
                              onclick="this.focus()" 
-                             aria-description="${readOnlyMsg}" 
-                             ${ariaAttrs}>
+                             aria-description="${readOnlyMsg}">
                             <div class="content-wrapper">
                                 ${slide.content}
                             </div>
@@ -630,16 +620,12 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
                                ${ariaDisabledAttr}
                                role="button"
                                class="detail-action-link"
-                               tabindex="-1" 
-                               aria-posinset="${currentAriaPos}"
-                               aria-setsize="${totalAriaSetSize}"><span aria-hidden="true" 
+                               tabindex="-1"><span aria-hidden="true" 
                                     ${style} 
                                     class="detail-action-btn ${isDisabled ? 'disabled' : ''}"><i class="action-icon ${isDisabled ? 'icon-empty' : iconClass}"></i></span></a>
                         </div>
                     </div>
                 `;
-
-                currentAriaPos++;
             });
         }
 

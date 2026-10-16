@@ -5,47 +5,47 @@
    ========================================================= */
 @media (prefers-color-scheme: light) {
     :root {
-        --color-bg: #f4f4f4;
-        --color-card-bg: rgba(255, 255, 255, 0.7);
-        --color-mask-gradient: rgba(244, 244, 244, 0.4);
-        --color-text: #111;
-        --color-card-border: #575757;
-        --color-card-border-disabled: #999;
+        --color-bg: #d7d5d0;
+        --color-card-bg: rgba(220, 218, 213, 0.7);
+        --color-mask-gradient: rgba(215, 213, 208, 0.4);
+        --color-text: #2d2d2b;
+        --color-card-border: #363634;
+        --color-card-border-disabled: #757570;
         
-        /* 🟢 FIX: Unificamos al color de máximo contraste (Ratio > 8:1) */
-        --color-primary: #0033CC;
-        --color-primary-bg: rgba(0, 51, 204, 0.1);
+        /* 🟢 FIX: Unificamos al color de máximo contraste (Ratio > 7:1) */
+        --color-primary: #002699;
+        --color-primary-bg: rgba(0, 38, 153, 0.1);
         
-        --color-danger: #b2000d;
-        --color-danger-bg: rgba(220, 53, 69, 0.1);
-        --color-success: #196b2c;
-        --color-success-bg: rgba(40, 167, 69, 0.1);
-        --color-border-placeholder: #aaa; 
-        --color-text-muted: #595959;
-        --color-header-bg: #fff;
-        --color-header-text: #222;
-        --color-footer-text: #222;
-        --color-fire: #FF931E;
+        --color-danger: #8a000a;
+        --color-danger-bg: rgba(138, 0, 10, 0.1);
+        --color-success: #00611c;
+        --color-success-bg: rgba(15, 77, 29, 0.1);
+        --color-border-placeholder: #757570; 
+        --color-text-muted: #363634;
+        --color-header-bg: #dcdad5;
+        --color-header-text: #2f2f2d;
+        --color-footer-text: #2f2f2d;
+        --color-fire: #e07b00;
 
         --color-shadow-primary: rgba(0, 123, 255, 0.4);
         --color-shadow-disabled: rgba(150, 150, 150, 0.2);
-        --color-shadow-modal: rgba(0, 0, 0, 0.5);
-        --color-toast-bg: #222;
-        --color-toast-text: #fff;
-        --color-details-action-item-hover: rgba(255, 255, 255, 0.05);
+        --color-shadow-modal: rgba(24, 24, 24, 0.5);
+        --color-toast-bg: #2d2d2b;
+        --color-toast-text: #dcdad5;
+        --color-details-action-item-hover: rgba(220, 218, 213, 0.05);
 
         /* Color para el icono de Obras (Orange/Yellow en modo claro) */
-        --color-icon-obras: #804a00; 
+        --color-icon-obras: #9e5400; 
 
-        --color-logo-static: #595959;
+        --color-logo-static: #363634;
         --color-logo-dynamic: var(--color-icon-obras);
 
         /* ⭐️ Control dinámico del filtro SVG */
-        --shadow-color-hex: #969696; /* Color puro de la sombra Ghost (gris por defecto) */
+        --shadow-color-hex: #858580; /* Color puro de la sombra Ghost (gris por defecto) */
         --shadow-opacity: 0.8;       /* Opacidad base de la sombra Ghost */
 
-        --color-a11y-selected-text: #ffffff;
-        --color-a11y-slider-track: #888; 
+        --color-a11y-selected-text: #dcdad5;
+        --color-a11y-slider-track: #6e6e6a; 
         --color-a11y-slider-labels: var(--color-text-muted);
 
         color-scheme: light;
@@ -58,48 +58,49 @@
    2. MODO MANUAL (Seleccionado en Modal A11y)
    ========================================================= */
 body[data-theme="light"] {
-    --color-bg: #f4f4f4;
-    --color-card-bg: rgba(255, 255, 255, 0.7);
-    --color-mask-gradient: rgba(244, 244, 244, 0.4);
-    --color-text: #111;
-    --color-card-border: #575757;
-    --color-card-border-disabled: #999;
+    --color-bg: #d7d5d0;
+    --color-card-bg: rgba(220, 218, 213, 0.7);
+    --color-mask-gradient: rgba(215, 213, 208, 0.4);
+    --color-text: #2d2d2b;
+    --color-card-border: #363634;
+    --color-card-border-disabled: #757570;
     
-    /* 🟢 FIX: Unificamos al color de máximo contraste (Ratio > 8:1) */
-    --color-primary: #0033CC;
-    --color-primary-bg: rgba(0, 51, 204, 0.1);
+    /* 🟢 FIX: Unificamos al color de máximo contraste (Ratio > 7:1) */
+    --color-primary: #002699;
+    --color-primary-bg: rgba(0, 38, 153, 0.1);
     
-    --color-danger: #b2000d;
-    --color-danger-bg: rgba(220, 53, 69, 0.1);
-    --color-success: #196b2c;
-    --color-success-bg: rgba(40, 167, 69, 0.1);
-    --color-border-placeholder: #aaa; 
-    --color-text-muted: #595959;
-    --color-header-bg: #fff;
-    --color-header-text: #222;
-    --color-footer-text: #222;
-    --color-fire: #FF931E;
+    --color-danger: #8a000a;
+    --color-danger-bg: rgba(138, 0, 10, 0.1);
+    --color-success: #00611c;
+    --color-success-bg: rgba(15, 77, 29, 0.1);
+    --color-border-placeholder: #757570; 
+    --color-text-muted: #363634;
+    --color-header-bg: #dcdad5;
+    --color-header-text: #2f2f2d;
+    --color-footer-text: #2f2f2d;
+    --color-fire: #e07b00;
 
     --color-shadow-primary: rgba(0, 123, 255, 0.4);
     --color-shadow-disabled: rgba(150, 150, 150, 0.2);
-    --color-shadow-modal: rgba(0, 0, 0, 0.5);
-    --color-toast-bg: #222;
-    --color-toast-text: #fff;
-    --color-details-action-item-hover: rgba(255, 255, 255, 0.05);
+    --color-shadow-modal: rgba(24, 24, 24, 0.5);
+    --color-toast-bg: #2d2d2b;
+    --color-toast-text: #dcdad5;
+    --color-details-action-item-hover: rgba(220, 218, 213, 0.05);
 
-    --color-icon-obras: #804a00; 
+    /* Color para el icono de Obras (Orange/Yellow en modo claro) */
+    --color-icon-obras: #9e5400; 
 
-    --color-logo-static: #595959;
+    --color-logo-static: #363634;
     --color-logo-dynamic: var(--color-icon-obras);
 
-    --shadow-color-hex: #969696; 
-    --shadow-opacity: 0.8;       
+    /* ⭐️ Control dinámico del filtro SVG */
+    --shadow-color-hex: #858580; /* Color puro de la sombra Ghost (gris por defecto) */
+    --shadow-opacity: 0.8;       /* Opacidad base de la sombra Ghost */
 
-    --color-a11y-selected-text: #ffffff;
-    --color-a11y-slider-track: #888; 
+    --color-a11y-selected-text: #dcdad5;
+    --color-a11y-slider-track: #6e6e6a; 
     --color-a11y-slider-labels: var(--color-text-muted);
 
-    /* Forzamos el esquema nativo de componentes (scrollbars, etc.) */
     color-scheme: light;
     background-color: var(--color-bg);
     color: var(--color-text);
