@@ -24,10 +24,10 @@
         --color-primary-bg: transparent !important;
         
         /* Semántica (Mapeada a texto del sistema) */
-        --color-fire: CanvasText !important;
-        --color-danger: CanvasText !important;
+        --color-fire: Highlight !important;
+        --color-danger: Highlight !important;
         --color-danger-bg: transparent !important;
-        --color-success: CanvasText !important;
+        --color-success: Highlight !important;
         --color-success-bg: transparent !important;
         
         /* Atenuados */
@@ -76,10 +76,10 @@ body[data-theme="forced"] {
     --color-primary: Highlight !important;
     --color-primary-text: HighlightText !important;
     --color-primary-bg: transparent !important;
-    --color-fire: CanvasText !important;
-    --color-danger: CanvasText !important;
+    --color-fire: Highlight !important;
+    --color-danger: Highlight !important;
     --color-danger-bg: transparent !important;
-    --color-success: CanvasText !important;
+    --color-success: Highlight !important;
     --color-success-bg: transparent !important;
     --color-card-border-disabled: GrayText !important;
     --color-text-muted: GrayText !important;

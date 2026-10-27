@@ -17,9 +17,9 @@ body[data-theme="forced"][data-terminal="touch"] {
     --color-card-border: #f2f2f7 !important;
     
     /* Atenuados en gris sólido */
-    --color-card-border-disabled: #8a8a95 !important;
-    --color-border-placeholder: #8a8a95 !important;
-    --color-text-muted: #c7c7cf !important;
+    --color-card-border-disabled: #787882 !important;
+    --color-border-placeholder: #787882 !important;
+    --color-text-muted: #a8a8af !important;
     
     --color-icon-obras: #ffea00 !important;
     
@@ -33,7 +33,7 @@ body[data-theme="forced"][data-terminal="touch"] {
     --color-header-text: #f2f2f7 !important;
     
     --color-fire: #ff931e !important;
-    --color-danger: #ff4d4d !important;
+    --color-danger: #ff3333 !important;
     --color-success: #00e600 !important;
     
     --color-primary-bg: transparent !important;

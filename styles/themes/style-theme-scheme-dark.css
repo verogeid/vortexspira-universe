@@ -9,35 +9,35 @@
         --color-card-bg: rgba(218, 218, 218, 0.03);
         --color-mask-gradient: rgba(28, 28, 30, 0.4);
         --color-primary: #00cfeb;
-        --color-text: #aeaeae;
+        --color-text: #c4c4c4;
         --color-card-border: #a4a4a4; 
-        --color-card-border-disabled: #68686b; 
-        --color-border-placeholder: #5a5a5d; 
+        --color-card-border-disabled: #c4c4c4; 
+        --color-border-placeholder: #c4c4c4; 
         --color-header-bg: #262629;
-        --color-header-text: #bababa;
-        --color-footer-text: #b5b5b5;
+        --color-header-text: #d1d1d1;
+        --color-footer-text: #d1d1d1;
         
         --color-primary-bg: rgba(0, 207, 235, 0.1); 
         
         --color-danger: #ff8585;
         --color-danger-bg: rgba(255, 133, 133, 0.1);
         
-        --color-success: #61e07b;
-        --color-success-bg: rgba(97, 224, 123, 0.1);
+        --color-success: #44d662;
+        --color-success-bg: rgba(68, 214, 98, 0.1);
         
-        --color-fire: #FF931E;
+        --color-fire: #ff9d2e;
         
         --color-details-action-item-hover: rgba(218, 218, 218, 0.05);
         --shadow-opacity: 0.8;
 
-        --color-text-muted: #a4a4a4;
-        --color-shadow-primary: rgba(0, 123, 255, 0.4); 
-        --color-shadow-disabled: rgba(170, 170, 170, 0.8);
+        --color-text-muted: #a6a6a6;
+        --color-shadow-primary: rgba(0, 207, 235, 0.65);
+        --color-shadow-disabled: rgba(209, 209, 209, 0.85);
         --color-shadow-modal: rgba(18, 18, 20, 0.75); 
         --color-toast-bg: #262629;
-        --color-toast-text: #bababa;
+        --color-toast-text: #d1d1d1;
 
-        --color-icon-obras: #FFC107;
+        --color-icon-obras: #ff9d2e;
 
         --color-logo-static: #a4a4a4;
         --color-logo-dynamic: var(--color-icon-obras);
@@ -63,41 +63,41 @@ body[data-theme="dark"] {
     --color-card-bg: rgba(218, 218, 218, 0.03);
     --color-mask-gradient: rgba(28, 28, 30, 0.4);
     --color-primary: #00cfeb;
-    --color-text: #aeaeae;
+    --color-text: #c4c4c4;
     --color-card-border: #a4a4a4; 
-    --color-card-border-disabled: #68686b; 
-    --color-border-placeholder: #5a5a5d; 
+    --color-card-border-disabled: #c4c4c4; 
+    --color-border-placeholder: #c4c4c4; 
     --color-header-bg: #262629;
-    --color-header-text: #bababa;
-    --color-footer-text: #b5b5b5;
+    --color-header-text: #d1d1d1;
+    --color-footer-text: #d1d1d1;
     
     --color-primary-bg: rgba(0, 207, 235, 0.1); 
     
-    --color-danger: #ff8585;
+    --color-danger: #ffb3b3;
     --color-danger-bg: rgba(255, 133, 133, 0.1);
     
-    --color-success: #61e07b;
+    --color-success: #6be685;
     --color-success-bg: rgba(97, 224, 123, 0.1);
     
-    --color-fire: #FF931E;
+    --color-fire: #ffb866;
     
     --color-details-action-item-hover: rgba(218, 218, 218, 0.05);
     --shadow-opacity: 0.8;
 
-    --color-text-muted: #a4a4a4;
-    --color-shadow-primary: rgba(0, 123, 255, 0.4); 
-    --color-shadow-disabled: rgba(170, 170, 170, 0.8);
+    --color-text-muted: #a6a6a6;
+    --color-shadow-primary: rgba(0, 207, 235, 0.65);
+    --color-shadow-disabled: rgba(209, 209, 209, 0.85);
     --color-shadow-modal: rgba(18, 18, 20, 0.75); 
     --color-toast-bg: #262629;
-    --color-toast-text: #bababa;
+    --color-toast-text: #d1d1d1;
 
-    --color-icon-obras: #FFC107;
+    --color-icon-obras: #ffb866;
 
     --color-logo-static: #a4a4a4;
     --color-logo-dynamic: var(--color-icon-obras);
 
     /* ⭐️ Variables añadidas para el control dinámico del filtro SVG (Dark Mode) ⭐️ */
-    --shadow-color-hex: #888888;
+    --shadow-color-hex: #c4c4c4;
 
     --color-a11y-selected-text: #1c1c1e;
     --color-a11y-slider-track: #5a5a5d;
