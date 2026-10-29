@@ -117,4 +117,13 @@ body[data-active-zone="modal"] #a11y-modal-overlay {
     color: var(--color-text);
 }
 
+/* 7. Desactivar opacidad en hover del contenedor */
+body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #app-header:hover,
+body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #vista-volver:hover,
+body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #vista-central:hover,
+body[data-active-zone]:not([data-active-zone="none"]):not([data-no-zone-opacity="true"]) #info-adicional:hover {
+    opacity: 1;
+    filter: none;
+}
+
 /* --- styles/base/style-no-opacity.css --- */
