@@ -112,7 +112,11 @@
     cursor: default; 
     text-align: left;
     justify-content: center; 
-    pointer-events: none !important;
+
+    /*pointer-events: none !important;*/
+    /* FIX: Mano abierta */
+    cursor: -webkit-grab;
+    cursor: grab;
 
     margin-bottom: var(--card-breadcrump-vertical-margin-bottom);
 
@@ -144,8 +148,11 @@
 .card[data-tipo="relleno"] {
     border: var(--border-width-no-focus) dashed var(--color-border-placeholder) !important; 
     background: transparent; 
-    pointer-events: none; 
-    cursor: default;
+    
+    /* FIX: Mano abierta para arrastrar */
+    /*pointer-events: none;*/
+    cursor: -webkit-grab;
+    cursor: grab;
 }
 
 /* 🟢 REGLA 2: Card NO relleno (Borde fino continuo) - Estado Reposo */
@@ -159,6 +166,9 @@
 .card.disabled:not([data-tipo="relleno"]) {
     border-color: var(--color-card-border-disabled);
     opacity: calc(var(--opacity) * 1.5);
+
+    /* FIX: Flecha estándar para indicar que carece de acción de clic */
+    cursor: default;
 }
 .card.card-breadcrumb-vertical {
     border-style: dashed;
@@ -332,6 +342,147 @@
     /* 4. Comportamiento ortográfico: separación silábica con guion */
     -webkit-hyphens: auto;
     hyphens: auto;
+}
+
+/* ==========================================================================
+   🎯 SISTEMA NERVIOSO DEL CURSOR (MOUSE / TOUCH)
+   Adaptado para Chromium, WebKit y Gecko.
+   ========================================================================== */
+
+/* ----------------------------------------------------
+   1. LA BASE: Tarjetas genéricas (No-Swiper)
+------------------------------------------------------- */
+/* Interactiva Base */
+.card {
+    cursor: pointer;
+}
+/* Deshabilitada Base (Flecha prohibida o estándar) */
+.card.disabled:not([data-tipo="relleno"]) {
+    cursor: default !important; /* Si quisieras usar "not-allowed", cambialo aquí, pero default es más estándar en interfaces touch */
+}
+
+/* ----------------------------------------------------
+   2. RELLENO Y BREADCRUMB
+------------------------------------------------------- */
+/* En escritorio/tablet NO forman parte del Swiper, no hacen nada */
+.card[data-tipo="relleno"],
+.card.card-breadcrumb-vertical {
+    cursor: default !important; /* En desktop, son cajas muertas */
+}
+
+/* ----------------------------------------------------
+   3. SWIPER MÓVIL (VERTICAL)
+   Todo dentro de este Swiper se puede arrastrar (grab)
+------------------------------------------------------- */
+body[data-layout="mobile"] .swiper-wrapper {
+    cursor: -webkit-grab;
+    cursor: grab;
+}
+body[data-layout="mobile"] .swiper-wrapper:active {
+    cursor: -webkit-grabbing;
+    cursor: grabbing;
+}
+
+/* El Breadcrumb en móvil SÍ pertenece al Swiper, así que hereda la mano */
+body[data-layout="mobile"] .card.card-breadcrumb-vertical {
+    cursor: -webkit-grab !important;
+    cursor: grab !important;
+}
+
+/* Tarjetas interactivas en móvil: 
+   Muestran 'pointer' en reposo (para incitar al clic), 
+   pero cambian a 'grabbing' (mano cerrada) al arrastrar el contenedor */
+body[data-layout="mobile"] .swiper-wrapper:active .card:not(.disabled) {
+    cursor: -webkit-grabbing !important;
+    cursor: grabbing !important;
+}
+
+/* Tarjetas deshabilitadas en móvil:
+   Al ser parte del carrusel, permiten agarrarse para hacer scroll.
+   En reposo muestran 'grab', al pulsar muestran 'grabbing'. */
+body[data-layout="mobile"] .card.disabled:not([data-tipo="relleno"]) {
+    cursor: -webkit-grab !important;
+    cursor: grab !important;
+}
+body[data-layout="mobile"] .swiper-wrapper:active .card.disabled:not([data-tipo="relleno"]) {
+    cursor: -webkit-grabbing !important;
+    cursor: grabbing !important;
+}
+
+/* Botón Volver (Móvil) - Se comporta como tarjeta interactiva */
+body[data-layout="mobile"] .card.card-volver-vertical {
+    cursor: pointer !important;
+}
+body[data-layout="mobile"] .swiper-wrapper:active .card.card-volver-vertical {
+    cursor: -webkit-grabbing !important;
+    cursor: grabbing !important;
+}
+
+
+/* ----------------------------------------------------
+   4. SWIPER DESKTOP / TABLET (HORIZONTAL)
+------------------------------------------------------- */
+/* Contenedor principal: permite arrastre */
+body[data-layout="desktop"] .swiper-wrapper,
+body[data-layout="tablet-portrait"] .swiper-wrapper,
+body[data-layout="tablet-landscape"] .swiper-wrapper {
+    cursor: -webkit-grab;
+    cursor: grab;
+}
+body[data-layout="desktop"] .swiper-wrapper:active,
+body[data-layout="tablet-portrait"] .swiper-wrapper:active,
+body[data-layout="tablet-landscape"] .swiper-wrapper:active {
+    cursor: -webkit-grabbing;
+    cursor: grabbing;
+}
+
+/* Las tarjetas de RELLENO en Desktop/Tablet SÍ están dentro del Swiper,
+   por lo que el usuario puede agarrarlas para arrastrar el carrusel. */
+body[data-layout="desktop"] .card[data-tipo="relleno"],
+body[data-layout="tablet-portrait"] .card[data-tipo="relleno"],
+body[data-layout="tablet-landscape"] .card[data-tipo="relleno"] {
+    cursor: -webkit-grab !important;
+    cursor: grab !important;
+}
+body[data-layout="desktop"] .swiper-wrapper:active .card[data-tipo="relleno"],
+body[data-layout="tablet-portrait"] .swiper-wrapper:active .card[data-tipo="relleno"],
+body[data-layout="tablet-landscape"] .swiper-wrapper:active .card[data-tipo="relleno"] {
+    cursor: -webkit-grabbing !important;
+    cursor: grabbing !important;
+}
+
+/* Tarjetas interactivas (Pointer -> Grabbing) */
+body[data-layout="desktop"] .swiper-wrapper:active .card:not(.disabled):not([data-tipo="relleno"]),
+body[data-layout="tablet-portrait"] .swiper-wrapper:active .card:not(.disabled):not([data-tipo="relleno"]),
+body[data-layout="tablet-landscape"] .swiper-wrapper:active .card:not(.disabled):not([data-tipo="relleno"]) {
+    cursor: -webkit-grabbing !important;
+    cursor: grabbing !important;
+}
+
+/* Tarjetas deshabilitadas (Grab -> Grabbing) */
+body[data-layout="desktop"] .card.disabled:not([data-tipo="relleno"]),
+body[data-layout="tablet-portrait"] .card.disabled:not([data-tipo="relleno"]),
+body[data-layout="tablet-landscape"] .card.disabled:not([data-tipo="relleno"]) {
+    cursor: -webkit-grab !important;
+    cursor: grab !important;
+}
+body[data-layout="desktop"] .swiper-wrapper:active .card.disabled:not([data-tipo="relleno"]),
+body[data-layout="tablet-portrait"] .swiper-wrapper:active .card.disabled:not([data-tipo="relleno"]),
+body[data-layout="tablet-landscape"] .swiper-wrapper:active .card.disabled:not([data-tipo="relleno"]) {
+    cursor: -webkit-grabbing !important;
+    cursor: grabbing !important;
+}
+
+
+/* ----------------------------------------------------
+   5. BOTÓN VOLVER (ESTÁTICO - Desktop / Tablet)
+   Está fuera del Swiper, no se puede arrastrar.
+------------------------------------------------------- */
+#card-volver-fija-elemento {
+    cursor: pointer !important;
+}
+#card-volver-fija-elemento:active {
+    cursor: pointer !important; /* Nunca cambia a grabbing porque no es arrastrable */
 }
 
 /* --- styles/components/style-cards.css --- */
