@@ -437,13 +437,18 @@ export function buildAboutNode(appInstance) {
         enlaces: [
             { 
                 "texto": "LinkedIn", 
-                "url": "https://www.linkedin.com/company/vortexspira", 
+                "url": data.MEDIA.URL.LINKEDIN, 
                 "type": "l" 
             },
             { 
                 "texto": appInstance.getString('about.landing'), 
-                "url": "https://subscribepage.io/vortexspira", 
+                "url": data.MEDIA.URL.LANDING_PAGE, 
                 "type": "f" 
+            },
+            { 
+                "texto": "Dev Diary", 
+                "url": data.MEDIA.URL.DEV_DIARY, 
+                "type": "g" 
             }
         ]
     };

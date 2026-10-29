@@ -7,15 +7,15 @@
         "title": "VortexSpira® EdTech: Kursauswahl"
     },
     "seo": {
-        "description": "Lernen Sie Softwareentwicklung, QA und DevOps von Null bis zum Architekten. AAA-Plattform mit Universal Design, entkoppelter Verbalisierung und null kognitiver Ermüdung.",
-        "about": "VortexSpira EdTech: IT-Ausbildung mit AAA Universal Design. Lernen Sie Programmieren, Softwaretests (QA) und DevOps ohne technologische oder kognitive Barrieren.",
+        "description": "Lernen Sie Softwareentwicklung, QA und DevSecOps von null auf Architekt. AAA-Plattform mit neuroergonomischem Universal Design, entkoppelter Verbalisierung und null kognitiver Ermüdung.",
+        "about": "VortexSpira EdTech: IT-Ausbildung mit neuroergonomischem AAA Universal Design. Lernen Sie Programmierung, Softwaretests (QA) und DevSecOps ohne technologische oder kognitive Barrieren.",
         "org": {
-        "description": "VortexSpira EdTech ist eine Software-Engineering-Plattform mit AAA Universal Design, die entwickelt wurde, um von Null bis zum Architekten auszubilden. Durch Kognitionswissenschaft und entkoppelte Verbalisierung minimiert sie die mentale Ermüdung.",
-        "accessibilitySummary": "Erfüllt die WCAG AAA-Richtlinien. Bietet OpenDyslexic-Typografie, anpassbare Abstände, erzwungene Hochkontrast-Themes, vestibulären Schutz durch reduzierte Animationen und entkoppelte Verbalisierung mit Pausen zur Code-Assimilation."
-        },
+            "description": "VortexSpira EdTech ist eine Software-Engineering-Plattform mit neuroergonomischem AAA Universal Design, die entwickelt wurde, um vom Null-Level bis zum Architekten auszubilden. Durch Kognitionswissenschaft und entkoppelte Verbalisierung wird die mentale Ermüdung minimiert.",
+            "accessibilitySummary": "Erfüllt die WCAG 2.2 AAA-Richtlinien. Bietet Lexend-Typografie (unter Berücksichtigung von OpenDyslexic, falls im System konfiguriert) oder Atkinson Hyperlegible, anpassbare Abstände, erzwungene Hochkontrast-Themes, vestibulären Schutz durch reduzierte Animationen und entkoppelte Verbalisierung mit Pausen zur Code-Assimilation oder Diktierzeit. Ermöglicht das Kopieren spezifischer Textfragmente und bietet vollständige Tastaturnavigation. Die Plattform ist auf Mobilgeräten, Tablets und PCs vollständig nutzbar, mit umfassender Unterstützung für Screenreader."
+            },
         "catalog": {
-        "name": "VortexSpira EdTech Schulungskatalog",
-        "description": "Immersive Ausbildung in Softwareentwicklung, Qualitätssicherung (QA) und Cybersicherheit. Offline-first PWA-Architektur."
+            "name": "VortexSpira EdTech Schulungskatalog",
+            "description": "Immersive Ausbildung in Softwareentwicklung, Qualitätssicherung (QA) und Cybersicherheit. Offline-first PWA-Architektur."
         }
     },
     "header": {

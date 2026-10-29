@@ -7,16 +7,16 @@
     "title": "VortexSpira® EdTech: Course Selector"
   },
   "seo": {
-    "description": "Learn software development, QA, and DevOps from scratch to architect. AAA platform with universal design, decoupled verbalization, and zero cognitive fatigue.",
-    "about": "VortexSpira EdTech: IT Training with AAA Universal Design. Learn programming, software testing (QA), and DevOps without technological or cognitive barriers.",
-    "org": {
-      "description": "VortexSpira EdTech is an AAA Universal Design software engineering platform, created to train from scratch to architect. Through cognitive science and decoupled verbalization, it minimizes mental fatigue.",
-      "accessibilitySummary": "Complies with WCAG AAA guidelines. Offers OpenDyslexic typography, adaptable spacing, forced high-contrast themes, vestibular protection through reduced animations, and decoupled verbalization with pauses for code assimilation."
-    },
-    "catalog": {
-      "name": "VortexSpira EdTech Training Catalog",
-      "description": "Immersive training in software development, quality assurance (QA), and cybersecurity. Offline-first PWA architecture."
-    }
+      "description": "Learn software development, QA, and DevSecOps from beginner to architect. AAA platform with neuroergonomic universal design, decoupled verbalization, and zero cognitive fatigue.",
+      "about": "VortexSpira EdTech: IT training with neuroergonomic AAA Universal Design. Learn programming, software testing (QA), and DevSecOps without technological or cognitive barriers.",
+      "org": {
+        "description": "VortexSpira EdTech is a software engineering platform featuring neuroergonomic AAA Universal Design, created to train users from level zero to architect. Through cognitive science and decoupled verbalization, it minimizes mental fatigue.",
+        "accessibilitySummary": "Complies with WCAG 2.2 AAA guidelines. Offers Lexend typography (respecting OpenDyslexic if configured on your system) or Atkinson Hyperlegible, adaptable spacing, forced high-contrast themes, vestibular protection through reduced motion, and decoupled verbalization with pauses for code assimilation or dictation time. Includes copy functionality for specific text fragments and full keyboard navigation. The platform is fully usable on mobile, tablet, and PC, with comprehensive screen reader support."
+      },
+      "catalog": {
+        "name": "VortexSpira EdTech Training Catalog",
+        "description": "Immersive training in software development, quality assurance (QA), and cybersecurity. Offline-first PWA architecture."
+      }
   },
   "header": {
     "title": "VortexSpira® <span class=\"hide-mobile-visual\">EdTech</span>",

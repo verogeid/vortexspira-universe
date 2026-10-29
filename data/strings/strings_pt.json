@@ -7,15 +7,15 @@
         "title": "VortexSpira® EdTech: Seletor de Cursos"
     },
     "seo": {
-        "description": "Aprenda desenvolvimento de software, QA e DevOps do zero a arquiteto. Plataforma AAA com design universal, verbalização desacoplada e zero fadiga cognitiva.",
-        "about": "VortexSpira EdTech: Formação de TI com Design Universal AAA. Aprenda programação, testes de software (QA) e DevOps sem barreiras tecnológicas ou cognitivas.",
+        "description": "Aprenda desenvolvimento de software, QA e DevSecOps do nível zero a arquiteto. Plataforma AAA com design universal neuroergonômico, verbalização desacoplada e zero fadiga cognitiva.",
+        "about": "VortexSpira EdTech: Treinamento em TI com Design Universal AAA neuroergonômico. Aprenda programação, testes de software (QA) e DevSecOps sem barreiras tecnológicas ou cognitivas.",
         "org": {
-        "description": "VortexSpira EdTech é uma plataforma de engenharia de software com Design Universal AAA, criada para formar do zero a arquiteto. Através da ciência cognitiva e verbalização desacoplada, minimiza a fadiga mental.",
-        "accessibilitySummary": "Cumpre as diretrizes WCAG AAA. Oferece tipografia OpenDyslexic, espaçamento adaptável, temas de alto contraste forçados, proteção vestibular através da redução de animações e verbalização desacoplada com pausas para a assimilação de código."
+            "description": "VortexSpira EdTech é uma plataforma de engenharia de software com Design Universal AAA neuroergonômico, criada para treinar do nível zero ao arquiteto. Através da ciência cognitiva e verbalização desacoplada, minimiza a fadiga mental.",
+            "accessibilitySummary": "Cumpre as diretrizes WCAG 2.2 AAA. Oferece tipografia Lexend (respeitando OpenDyslexic se configurada no sistema) ou Atkinson Hyperlegible, espaçamento adaptável, temas de alto contraste forçado, proteção vestibular através da redução de animações e verbalização desacoplada com pausas para assimilação de código ou tempo de ditado. Permite a cópia de fragmentos de texto específicos e oferece navegação total pelo teclado. Plataforma 100% utilizável em celulares, tablets e PCs, com suporte integral para leitores de tela."
         },
         "catalog": {
-        "name": "Catálogo de Formação da VortexSpira EdTech",
-        "description": "Formação imersiva em desenvolvimento de software, garantia de qualidade (QA) e cibersegurança. Arquitetura PWA offline-first."
+            "name": "Catálogo de Treinamento VortexSpira EdTech",
+            "description": "Treinamento imersivo em desenvolvimento de software, garantia de qualidade (QA) e cibersegurança. Arquitetura PWA offline-first."
         }
     },
     "header": {

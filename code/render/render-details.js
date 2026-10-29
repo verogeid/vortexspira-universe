@@ -592,9 +592,10 @@ export function _mostrarDetalle(cursoId, forceRepaint = false) {
             curso.enlaces.forEach((enlace, index) => {
                 const iconClass = (enlace.type === 'c') ? 'icon-buy' : 
                                     (enlace.type === 'd' ? 'icon-download' : 
+                                    (enlace.type === 'g' ? 'icon-github' :
                                     (enlace.type === 'l' ? 'icon-linkedin' : 
                                     (enlace.type === 'f' ? 'icon-offer' : 
-                                    'icon-link')));
+                                    'icon-link'))));
 
                 const isDisabled = !enlace.url || enlace.url === '#';
                 const style = isDisabled ? 'style="pointer-events: none;"' : '';

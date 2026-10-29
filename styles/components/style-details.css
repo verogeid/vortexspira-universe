@@ -3,6 +3,7 @@
 .icon-download { -webkit-mask-image: var(--icon-download); mask-image: var(--icon-download); }
 .icon-buy { -webkit-mask-image: var(--icon-buy); mask-image: var(--icon-buy); }
 
+.icon-github { -webkit-mask-image: var(--icon-github); mask-image: var(--icon-github); }
 .icon-link { -webkit-mask-image: var(--icon-link); mask-image: var(--icon-link); }
 .icon-linkedin { -webkit-mask-image: var(--icon-linkedin); mask-image: var(--icon-linkedin); }
 .icon-offer { -webkit-mask-image: var(--icon-offer); mask-image: var(--icon-offer); }

@@ -7,15 +7,15 @@
         "title": "VortexSpira® EdTech : Sélecteur de Cours"
     },
     "seo": {
-        "description": "Apprenez le développement logiciel, la QA et DevOps de zéro jusqu'à architecte. Plateforme AAA avec conception universelle, verbalisation découplée et zéro fatigue cognitive.",
-        "about": "VortexSpira EdTech : Formation IT avec Conception Universelle AAA. Apprenez la programmation, les tests de logiciels (QA) et DevOps sans barrières technologiques ni cognitives.",
+        "description": "Apprenez le développement logiciel, la QA et le DevSecOps du niveau débutant jusqu'à architecte. Plateforme AAA avec conception universelle neuroergonomique, verbalisation découplée et zéro fatigue cognitive.",
+        "about": "VortexSpira EdTech : Formation informatique avec Conception Universelle AAA neuroergonomique. Apprenez la programmation, les tests logiciels (QA) et le DevSecOps sans barrières technologiques ni cognitives.",
         "org": {
-            "description": "VortexSpira EdTech est une plateforme d'ingénierie logicielle avec Conception Universelle AAA, créée pour former de zéro jusqu'à architecte. Grâce à la science cognitive et à la verbalisation découplée, elle minimise la fatigue mentale.",
-            "accessibilitySummary": "Conforme aux directives WCAG AAA. Offre la typographie OpenDyslexic, un espacement adaptable, des thèmes à contraste élevé forcés, une protection vestibulaire par la réduction des animations et une verbalisation découplée avec des pauses pour l'assimilation du code."
+            "description": "VortexSpira EdTech est une plateforme d'ingénierie logicielle dotée d'une conception universelle AAA neuroergonomique, créée pour former du niveau zéro jusqu'à architecte. Grâce à la science cognitive et à la verbalisation découplée, elle minimise la fatigue mentale.",
+            "accessibilitySummary": "Conforme aux directives WCAG 2.2 AAA. Propose la typographie Lexend (respectant OpenDyslexic si configurée sur le système) ou Atkinson Hyperlegible, un espacement adaptable, des thèmes à contraste élevé forcés, une protection vestibulaire par la réduction des animations et une verbalisation découplée avec des pauses pour l'assimilation du code ou le temps de dictée. Permet la copie de fragments de texte spécifiques et offre une navigation totale au clavier. Plateforme 100% utilisable sur mobiles, tablettes et PC, avec prise en charge intégrale des lecteurs d'écran."
         },
         "catalog": {
-            "name": "Catalogue de Formation de VortexSpira EdTech",
-            "description": "Formation immersive en développement logiciel, assurance qualité (QA) et cybersécurité. Architecture PWA hors ligne d'abord (offline-first)."
+            "name": "Catalogue de Formation VortexSpira EdTech",
+            "description": "Formation immersive en développement logiciel, assurance qualité (QA) et cybersécurité. Architecture PWA hors-ligne (offline-first)."
         }
     },
     "header": {
