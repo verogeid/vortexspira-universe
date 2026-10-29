@@ -137,30 +137,43 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
         const h1 = header.querySelector('h1');
 
         if (h1) {
-            // 1. Recuperamos o creamos el Logo
-            let logoLink = h1.querySelector('a');
+            // 🟢 FIX CRÍTICO: Usar parentNode garantiza que nunca falle la inserción 
+            // aunque el DOM haya sido modificado por hidratación o ejecuciones previas.
+            const realParent = h1.parentNode;
+
+            // 1. Recuperamos o creamos el grupo contenedor (Fuera del H1)
+            let titleGroup = wrapper.querySelector('.header-title-group');
+            if (!titleGroup) {
+                titleGroup = document.createElement('div');
+                titleGroup.className = 'header-title-group';
+                realParent.insertBefore(titleGroup, h1);
+                titleGroup.appendChild(h1); 
+            }
+
+            // 2. Recuperamos o creamos el Logo (Fuera del H1)
+            let logoLink = titleGroup.querySelector('.header-logo-link');
 
             if (!logoLink) {
                 logoLink = document.createElement('a');
+                logoLink.className = 'header-logo-link';
+                // Asumiendo que 'data' está importado en app-utils.js
                 logoLink.href = data.MEDIA.URL.WEBPAGE;
                 logoLink.target = "_self";
+                
                 const logoDiv = document.createElement('span');
                 logoDiv.className = 'header-logo'; 
                 logoLink.appendChild(logoDiv);
+                
+                titleGroup.insertBefore(logoLink, h1);
             }
             
             const content = appInstance.getString('header.title');
             const subtitle = appInstance.getString('header.subtitle');
             
-            h1.innerHTML = ''; // Limpiamos para asegurar el orden Logo -> Texto
-            h1.appendChild(logoLink);
-            
-            // Inyectamos el bloque de título y subtítulo (Lógica movida de i18n)
-            const titleHtml = `<span class="title-text-clamp">${content}<small id="main-header-subtitle">${subtitle}</small></span>`;
-            h1.insertAdjacentHTML('beforeend', titleHtml);
+            // 3. Inyectamos el texto puramente semántico en el H1
+            h1.innerHTML = `<span class="title-text-clamp">${content}<small id="main-header-subtitle">${subtitle}</small></span>`;
             
             const txtLogoObras = appInstance.getString('header.aria.obras');
-
             const txtLogoLink = appInstance.getString('header.aria.logoLink');
             logoLink.setAttribute('aria-label', txtLogoObras + '. ' + txtLogoLink);
             logoLink.setAttribute('title', txtLogoObras + '. ' + txtLogoLink);
@@ -170,13 +183,13 @@ export function injectHeaderContent(appInstance, enableI18n = false) {
                 if (!obrasSpan) {
                     obrasSpan = document.createElement('span');
                     obrasSpan.className = 'icon-obras-header'; 
-
-                    wrapper.insertBefore(obrasSpan, h1);
+                    // 🟢 FIX CRÍTICO: Insertamos sobre el padre dinámico del grupo
+                    titleGroup.parentNode.insertBefore(obrasSpan, titleGroup);
                 }
             }
         }
 
-        // 🟢 INYECCIÓN SÍNCRONA DEL BOTÓN ORIGINAL
+        // 4. INYECCIÓN SÍNCRONA DEL BOTÓN ORIGINAL
         let controls = wrapper.querySelector('.header-controls');
         if (!controls) {
             controls = document.createElement('div');

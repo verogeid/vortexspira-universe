@@ -39,7 +39,8 @@ header {
     align-items: center;
 }
 
-header #main-header-title { 
+/* 🟢 NUEVO: El grupo hereda la posición y el flexbox que antes tenía el H1 */
+.header-title-group {
     position: absolute; 
     left: 50%; 
     transform: translateX(-50%); 
@@ -47,22 +48,25 @@ header #main-header-title {
     align-items: center;
     justify-content: center; 
     flex-wrap: nowrap;
-    
+    gap: var(--header-gap); 
+    width: 100%;
+    max-width: calc(100dvw - 2 * var(--header-padding) - 2 * var(--ui-icon-size));
+    z-index: 99; 
+}
+
+/* 🟢 MODIFICADO: El H1 se queda solo con responsabilidades tipográficas */
+header #main-header-title { 
     /* ⭐️ VARIABLE: Tamaño de fuente del título */
     font-size: var(--header-title-size); 
     
     margin: 0; padding: 0; line-height: var(--line-height-base); 
-    gap: var(--header-gap); 
     flex-grow: 0;
-
-    width: 100%;
-    max-width: calc(100dvw - 2 * var(--header-padding) - 2 * var(--ui-icon-size));
     white-space: nowrap; 
     text-overflow: ellipsis; 
-    z-index: 99; 
 }
 
-header h1 a {
+/* 🟢 MODIFICADO: Referenciamos el logo desde el nuevo grupo en lugar del H1 */
+.header-title-group .header-logo-link {
     outline: none;
     text-decoration: none;
     display: inline-flex; /* Vital: permite que el span interno tenga tamaño */
@@ -117,18 +121,18 @@ header h1 a {
 }
 
 /* Efectos Hover/Focus: Cambia SOLO la parte dinámica a Azul */
-header h1 a:hover .header-logo::after,
-header h1 a:focus-visible .header-logo::after,
-header h1 a:focus .header-logo::after {
+.header-title-group .header-logo-link:hover .header-logo::after,
+.header-title-group .header-logo-link:focus-visible .header-logo::after,
+.header-title-group .header-logo-link:focus .header-logo::after {
     background-color: var(--color-primary); 
     filter: drop-shadow(0 0 6px var(--color-shadow-primary));
 }
-header h1 a:hover .header-logo::after,
-header h1 a:focus-visible .header-logo::after,
-header h1 a:focus .header-logo::after,
-header h1 a:hover .header-logo::before,
-header h1 a:focus-visible .header-logo::before,
-header h1 a:focus .header-logo::before {
+.header-title-group .header-logo-link:hover .header-logo::after,
+.header-title-group .header-logo-link:focus-visible .header-logo::after,
+.header-title-group .header-logo-link:focus .header-logo::after,
+.header-title-group .header-logo-link:hover .header-logo::before,
+.header-title-group .header-logo-link:focus-visible .header-logo::before,
+.header-title-group .header-logo-link:focus .header-logo::before {
     transform: scale(calc(1 + var(--zoom-focus-major)));
 }
 
@@ -238,8 +242,9 @@ body[data-layout="mobile"] header {
     padding: 0 var(--mobile-card-padding);
 }
 
-body[data-layout="mobile"] header h1 {
-    position: relative !important; /* Deja de ser absoluto para ocupar espacio real */
+/* 🟢 MÓVIL: Transferir el override del H1 al grupo */
+body[data-layout="mobile"] .header-title-group {
+    position: relative !important; 
     left: auto !important;
     transform: none !important;
 
@@ -259,11 +264,16 @@ body[data-layout="mobile"] header h1 {
     margin: 0 auto !important;
 
     gap: var(--header-gap);
-    /*padding: 4px 0 !important;*/
+}
+
+body[data-layout="mobile"] header #main-header-title {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* 🟢 2. El Logo: Blindado para no ser aplastado por el texto */
-body[data-layout="mobile"] header h1 a {
+body[data-layout="mobile"] .header-title-group .header-logo-link {
     flex-shrink: 0 !important; /* ⛔️ PROHIBIDO ENCOGER EL LOGO */
     display: inline-flex;
     height: auto; 
@@ -315,7 +325,7 @@ body[data-layout="mobile"] .hide-mobile-visual {
     border: 0 !important;
 }
 
-body[data-layout="mobile"] header h1 .header-logo {
+body[data-layout="mobile"] .header-title-group .header-logo {
     flex-shrink: 0;
     width: var(--ui-icon-size);
     height: var(--ui-icon-size);
